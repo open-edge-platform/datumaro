@@ -64,7 +64,7 @@ from datumaro.components.errors import (
     UndefinedLabel,
 )
 from datumaro.components.media import Image, TableRow
-from datumaro.components.transformer import ItemTransform, Transform
+from datumaro.components.transformer import ItemTransform, TabularTransform, Transform
 from datumaro.util import NOTSET, filter_dict, parse_json_file, parse_str_enum_value, take_by
 from datumaro.util.annotation_util import find_group_leader, find_instances
 from datumaro.util.tabular_util import emoji_pattern
@@ -1864,7 +1864,7 @@ class AstypeAnnotations(ItemTransform):
         return self.wrap_item(item, annotations=annotations)
 
 
-class Clean(ItemTransform):
+class Clean(TabularTransform):
     """
     A class used to refine the media items in a dataset.|n
     |n
@@ -1883,8 +1883,10 @@ class Clean(ItemTransform):
     def __init__(
         self,
         extractor: IDataset,
+        batch_size: int = 1,
+        num_workers: int = 0,
     ):
-        super().__init__(extractor)
+        super().__init__(extractor, batch_size, num_workers)
 
         self._outlier_value = {}
         self._missing_value = {}

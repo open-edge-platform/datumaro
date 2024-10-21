@@ -72,6 +72,80 @@ class ItemTransform(Transform):
                 yield item
 
 
+class TabularTransform(Transform):
+    """A transformation class for processing dataset items in batches with optional parallelism.
+
+    This class takes a dataset extractor, batch size, and number of worker threads to process
+    dataset items. Depending on the number of workers specified, it can process items either
+    sequentially (single-process) or in parallel (multi-process), making it efficient for
+    batch transformations.
+
+    Parameters:
+        extractor: The dataset extractor to obtain items from.
+        batch_size: The batch size for processing items. Default is 1.
+        num_workers: The number of worker threads to use for parallel processing.
+            Set to 0 for single-process mode. Default is 0.
+    """
+
+    def __init__(
+        self,
+        extractor: IDataset,
+        batch_size: int = 1,
+        num_workers: int = 0,
+    ):
+        super().__init__(extractor)
+        self._batch_size = batch_size
+        if not (isinstance(num_workers, int) and num_workers >= 0):
+            raise ValueError(
+                f"num_workers should be a non negative integer, but it is {num_workers}"
+            )
+        self._num_workers = num_workers
+
+    def __iter__(self) -> Iterator[DatasetItem]:
+        if self._num_workers == 0:
+            return self._iter_single_proc()
+        return self._iter_multi_procs()
+
+    def _iter_multi_procs(self):
+        with ThreadPool(processes=self._num_workers) as pool:
+
+            def _producer_gen():
+                for batch in take_by(self._extractor, self._batch_size):
+                    future = pool.apply_async(
+                        func=self._process_batch,
+                        args=(batch,),
+                    )
+                    yield future
+
+            with consumer_generator(producer_generator=_producer_gen()) as consumer_gen:
+                for future in consumer_gen:
+                    for item in future.get():
+                        yield item
+
+    def _iter_single_proc(self) -> Iterator[DatasetItem]:
+        for batch in take_by(self._extractor, self._batch_size):
+            for item in self._process_batch(batch=batch):
+                yield item
+
+    def transform_item(self, item: DatasetItem) -> Optional[DatasetItem]:
+        """
+        Returns a modified copy of the input item.
+
+        Avoid changing and returning the input item, because it can lead to
+        unexpected problems. Use wrap_item() or item.wrap() to simplify copying.
+        """
+
+        raise NotImplementedError()
+
+    def _process_batch(
+        self,
+        batch: List[DatasetItem],
+    ) -> List[DatasetItem]:
+        results = [self.transform_item(item) for item in batch]
+
+        return results
+
+
 class ModelTransform(Transform):
     """A transformation class for applying a model's inference to dataset items.
 

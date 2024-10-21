@@ -23,6 +23,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (<https://github.com/openvinotoolkit/datumaro/pull/1603>)
 - Optimize path assignment to handle point cloud in JSON without images
   (<https://github.com/openvinotoolkit/datumaro/pull/1643>)
+- Set TabularTransform to process clean transform in parallel
+  (<https://github.com/openvinotoolkit/datumaro/pull/1648>)
 
 ### Bug fixes
 - Fix datumaro format to load visibility information from Points annotations
