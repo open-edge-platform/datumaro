@@ -1,0 +1,484 @@
+{
+ "cells": [
+  {
+   "attachments": {},
+   "cell_type": "markdown",
+   "id": "0c0b77ed",
+   "metadata": {},
+   "source": [
+    "# Merge Heterogeneous Datasets for Detection\n",
+    "\n",
+    "[![Jupyter Notebook](https://img.shields.io/badge/jupyter-%23FA0F00.svg?style=for-the-badge&logo=jupyter&logoColor=white)](https://github.com/openvinotoolkit/datumaro/blob/develop/notebooks/02_merge_heterogeneous_datasets_for_detection.ipynb)\n",
+    "\n",
+    "Datumaro supports merging heterogeneous datasets into a unified data format.\n",
+    "\n",
+    "In this example, we import two heterogeneous detection datasets and export a merged dataset into a unified data format.\n",
+    "\n",
+    "First, we import two datasets, i.e., MS-COCO and Pascal-VOC, and transforms them with `filter` duplicates, `reindex` ids, and `remap` labels before merging.\n",
+    "\n",
+    "Then, we perform the `intersect` merge operation and split into `train`, `val`, and `test` subsets for AI practices."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "id": "7c962a87",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "WARNING:root:File './coco_dataset/annotations/image_info_test-dev2017.json' was skipped, could't match this file with any of these tasks: coco_instances\n",
+      "WARNING:root:File './coco_dataset/annotations/image_info_test2017.json' was skipped, could't match this file with any of these tasks: coco_instances\n",
+      "WARNING:root:File './coco_dataset/annotations/image_info_unlabeled2017.json' was skipped, could't match this file with any of these tasks: coco_instances\n",
+      "WARNING:root:File './coco_dataset/annotations/person_keypoints_val2017.json' was skipped, could't match this file with any of these tasks: coco_instances\n",
+      "WARNING:root:File './coco_dataset/annotations/captions_val2017.json' was skipped, could't match this file with any of these tasks: coco_instances\n",
+      "WARNING:root:File './coco_dataset/annotations/person_keypoints_train2017.json' was skipped, could't match this file with any of these tasks: coco_instances\n",
+      "WARNING:root:File './coco_dataset/annotations/captions_train2017.json' was skipped, could't match this file with any of these tasks: coco_instances\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "MS-COCO dataset:\n",
+      "Dataset\n",
+      "\tsize=123287\n",
+      "\tsource_path=./coco_dataset\n",
+      "\tmedia_type=<class 'datumaro.components.media.Image'>\n",
+      "\tannotated_items_count=122218\n",
+      "\tannotations_count=1915643\n",
+      "subsets\n",
+      "\ttrain2017: # of items=118287, # of annotated items=117266, # of annotations=1836996, annotation types=['mask', 'polygon', 'bbox']\n",
+      "\tval2017: # of items=5000, # of annotated items=4952, # of annotations=78647, annotation types=['mask', 'polygon', 'bbox']\n",
+      "infos\n",
+      "\tcategories\n",
+      "\tlabel: ['person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat', 'traffic light', 'fire hydrant', 'stop sign', 'parking meter', 'bench', 'bird', 'cat', 'dog', 'horse', 'sheep', 'cow', 'elephant', 'bear', 'zebra', 'giraffe', 'backpack', 'umbrella', 'handbag', 'tie', 'suitcase', 'frisbee', 'skis', 'snowboard', 'sports ball', 'kite', 'baseball bat', 'baseball glove', 'skateboard', 'surfboard', 'tennis racket', 'bottle', 'wine glass', 'cup', 'fork', 'knife', 'spoon', 'bowl', 'banana', 'apple', 'sandwich', 'orange', 'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair', 'couch', 'potted plant', 'bed', 'dining table', 'toilet', 'tv', 'laptop', 'mouse', 'remote', 'keyboard', 'cell phone', 'microwave', 'oven', 'toaster', 'sink', 'refrigerator', 'book', 'clock', 'vase', 'scissors', 'teddy bear', 'hair drier', 'toothbrush']\n",
+      "\n",
+      "Pascal-VOC dataset:\n",
+      "Dataset\n",
+      "\tsize=10022\n",
+      "\tsource_path=./VOCdevkit/VOC2007\n",
+      "\tmedia_type=<class 'datumaro.components.media.Image'>\n",
+      "\tannotated_items_count=10022\n",
+      "\tannotations_count=31324\n",
+      "subsets\n",
+      "\ttrain: # of items=2501, # of annotated items=2501, # of annotations=7844, annotation types=['bbox']\n",
+      "\ttrainval: # of items=5011, # of annotated items=5011, # of annotations=15662, annotation types=['bbox']\n",
+      "\tval: # of items=2510, # of annotated items=2510, # of annotations=7818, annotation types=['bbox']\n",
+      "infos\n",
+      "\tcategories\n",
+      "\tlabel: ['background', 'aeroplane', 'bicycle', 'bird', 'boat', 'bottle', 'bus', 'car', 'cat', 'chair', 'cow', 'diningtable', 'dog', 'horse', 'motorbike', 'person', 'pottedplant', 'sheep', 'sofa', 'train', 'tvmonitor', 'ignored']\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Copyright (C) 2021 Intel Corporation\n",
+    "#\n",
+    "# SPDX-License-Identifier: MIT\n",
+    "\n",
+    "import datumaro as dm\n",
+    "\n",
+    "coco_path = \"./coco_dataset\"\n",
+    "coco_dataset = dm.Dataset.import_from(coco_path, format=\"coco_instances\")\n",
+    "\n",
+    "voc_path = \"./VOCdevkit/VOC2007\"\n",
+    "voc_dataset = dm.Dataset.import_from(voc_path, format=\"voc_detection\")\n",
+    "\n",
+    "print(\"MS-COCO dataset:\")\n",
+    "print(coco_dataset)\n",
+    "\n",
+    "print(\"Pascal-VOC dataset:\")\n",
+    "print(voc_dataset)"
+   ]
+  },
+  {
+   "attachments": {},
+   "cell_type": "markdown",
+   "id": "4e4dbbab",
+   "metadata": {},
+   "source": [
+    "## Filter Duplicates\n",
+    "\n",
+    "Here, we reject subset `trainval` in Pascal-VOC data, because it caueses duplicates."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "id": "0220bf67",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Dataset\n",
+       "\tsize=5011\n",
+       "\tsource_path=./VOCdevkit/VOC2007\n",
+       "\tmedia_type=<class 'datumaro.components.media.Image'>\n",
+       "\tannotated_items_count=5011\n",
+       "\tannotations_count=15662\n",
+       "subsets\n",
+       "\ttrain: # of items=2501, # of annotated items=2501, # of annotations=7844, annotation types=['bbox']\n",
+       "\tval: # of items=2510, # of annotated items=2510, # of annotations=7818, annotation types=['bbox']\n",
+       "infos\n",
+       "\tcategories\n",
+       "\tlabel: ['background', 'aeroplane', 'bicycle', 'bird', 'boat', 'bottle', 'bus', 'car', 'cat', 'chair', 'cow', 'diningtable', 'dog', 'horse', 'motorbike', 'person', 'pottedplant', 'sheep', 'sofa', 'train', 'tvmonitor', 'ignored']"
+      ]
+     },
+     "execution_count": 22,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "voc_dataset.filter('/item[subset!=\"trainval\"]')"
+   ]
+  },
+  {
+   "attachments": {},
+   "cell_type": "markdown",
+   "id": "321f13fa",
+   "metadata": {},
+   "source": [
+    "## Transform - Remap Label Names\n",
+    "\n",
+    "Since many labels defined in Pascal-VOC data are also included in MS-COCO data, one-to-one mapping of most classes is possible.\n",
+    "\n",
+    "Meanwhile, the number 61 of MS-COCO labels corresponding to roadside, animals, household items, foods, accessories, and kitchen utensils will be mapped to the Pascal-VOC's `background` class to merge them into a single unified dataset.\n",
+    "\n",
+    "<style type=\"text/css\">\n",
+    ".tg  {border-collapse:collapse;border-spacing:0;}\n",
+    ".tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;\n",
+    "  overflow:hidden;padding:10px 5px;word-break:normal;}\n",
+    ".tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;\n",
+    "  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}\n",
+    ".tg .tg-9wq8{border-color:inherit;text-align:center;vertical-align:middle}\n",
+    "</style>\n",
+    "<table class=\"blueTable\">\n",
+    "<thead>\n",
+    "<tr>\n",
+    "<th>MS-COCO</th>\n",
+    "<th>Pascal-VOC</th>\n",
+    "</tr>\n",
+    "</thead>\n",
+    "<tbody>\n",
+    "<tr>\n",
+    "<td>person</td>\n",
+    "<td>person</td>\n",
+    "</tr>\n",
+    "<tr>\n",
+    "<td>bicycle</td>\n",
+    "<td>bicycle</td>\n",
+    "</tr>\n",
+    "<tr>\n",
+    "<td>car</td>\n",
+    "<td>car</td>\n",
+    "</tr>\n",
+    "<tr>\n",
+    "<td>motorcycle</td>\n",
+    "<td>motorbike</td>\n",
+    "</tr>\n",
+    "<tr>\n",
+    "<td>airplane</td>\n",
+    "<td>aeroplane</td>\n",
+    "</tr>\n",
+    "<tr>\n",
+    "<td>bus</td>\n",
+    "<td>bus</td>\n",
+    "</tr>\n",
+    "<tr>\n",
+    "<td>train</td>\n",
+    "<td>train</td>\n",
+    "</tr>\n",
+    "<tr>\n",
+    "<td>boat</td>\n",
+    "<td>boat</td>\n",
+    "</tr>\n",
+    "<tr>\n",
+    "<td>bird</td>\n",
+    "<td>bird</td>\n",
+    "</tr>\n",
+    "<tr>\n",
+    "<td>cat</td>\n",
+    "<td>cat</td>\n",
+    "</tr>\n",
+    "<tr>\n",
+    "<td>dog</td>\n",
+    "<td>dog</td>\n",
+    "</tr>\n",
+    "<tr>\n",
+    "<td>horse</td>\n",
+    "<td>horse</td>\n",
+    "</tr>\n",
+    "<tr>\n",
+    "<td>sheep</td>\n",
+    "<td>sheep</td>\n",
+    "</tr>\n",
+    "<tr>\n",
+    "<td>cow</td>\n",
+    "<td>cow</td>\n",
+    "</tr>\n",
+    "<tr>\n",
+    "<td>bottle</td>\n",
+    "<td>bottle</td>\n",
+    "</tr>\n",
+    "<tr>\n",
+    "<td>chair</td>\n",
+    "<td>chair</td>\n",
+    "</tr>\n",
+    "<tr>\n",
+    "<td>couch</td>\n",
+    "<td>sofa</td>\n",
+    "</tr>\n",
+    "<tr>\n",
+    "<td>potted plant</td>\n",
+    "<td>pottedplant</td>\n",
+    "</tr>\n",
+    "<tr>\n",
+    "<td>dining table</td>\n",
+    "<td>diningtable</td>\n",
+    "</tr>\n",
+    "<tr>\n",
+    "<td>tv</td>\n",
+    "<td>tvmonitor</td>\n",
+    "</tr>\n",
+    "<tr>\n",
+    "<td>others (61 classes)</td>\n",
+    "<td>background</td>\n",
+    "</tr>\n",
+    "</tbody>\n",
+    "</table>"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 23,
+   "id": "5d77a2e5",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "{'motorcycle': 'motorbike', 'airplane': 'aeroplane', 'couch': 'sofa', 'potted plant': 'pottedplant', 'dining table': 'diningtable', 'tv': 'tvmonitor', 'truck': 'background', 'traffic light': 'background', 'fire hydrant': 'background', 'stop sign': 'background', 'parking meter': 'background', 'bench': 'background', 'elephant': 'background', 'bear': 'background', 'zebra': 'background', 'giraffe': 'background', 'backpack': 'background', 'umbrella': 'background', 'handbag': 'background', 'tie': 'background', 'suitcase': 'background', 'frisbee': 'background', 'skis': 'background', 'snowboard': 'background', 'sports ball': 'background', 'kite': 'background', 'baseball bat': 'background', 'baseball glove': 'background', 'skateboard': 'background', 'surfboard': 'background', 'tennis racket': 'background', 'wine glass': 'background', 'cup': 'background', 'fork': 'background', 'knife': 'background', 'spoon': 'background', 'bowl': 'background', 'banana': 'background', 'apple': 'background', 'sandwich': 'background', 'orange': 'background', 'broccoli': 'background', 'carrot': 'background', 'hot dog': 'background', 'pizza': 'background', 'donut': 'background', 'cake': 'background', 'bed': 'background', 'toilet': 'background', 'laptop': 'background', 'mouse': 'background', 'remote': 'background', 'keyboard': 'background', 'cell phone': 'background', 'microwave': 'background', 'oven': 'background', 'toaster': 'background', 'sink': 'background', 'refrigerator': 'background', 'book': 'background', 'clock': 'background', 'vase': 'background', 'scissors': 'background', 'teddy bear': 'background', 'hair drier': 'background', 'toothbrush': 'background'}\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "Dataset\n",
+       "\tsize=123287\n",
+       "\tsource_path=./coco_dataset\n",
+       "\tmedia_type=<class 'datumaro.components.media.Image'>\n",
+       "\tannotated_items_count=122218\n",
+       "\tannotations_count=1915643\n",
+       "subsets\n",
+       "\ttrain2017: # of items=118287, # of annotated items=117266, # of annotations=1836996, annotation types=['mask', 'polygon', 'bbox']\n",
+       "\tval2017: # of items=5000, # of annotated items=4952, # of annotations=78647, annotation types=['mask', 'polygon', 'bbox']\n",
+       "infos\n",
+       "\tcategories\n",
+       "\tlabel: ['person', 'bicycle', 'car', 'motorbike', 'aeroplane', 'bus', 'train', 'background', 'boat', 'bird', 'cat', 'dog', 'horse', 'sheep', 'cow', 'bottle', 'chair', 'sofa', 'pottedplant', 'diningtable', 'tvmonitor']"
+      ]
+     },
+     "execution_count": 23,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "identicals = [\n",
+    "    \"person\",\n",
+    "    \"bicycle\",\n",
+    "    \"car\",\n",
+    "    \"bus\",\n",
+    "    \"train\",\n",
+    "    \"boat\",\n",
+    "    \"bird\",\n",
+    "    \"cat\",\n",
+    "    \"dog\",\n",
+    "    \"horse\",\n",
+    "    \"sheep\",\n",
+    "    \"cow\",\n",
+    "    \"bottle\",\n",
+    "    \"chair\",\n",
+    "]\n",
+    "mappings = {\n",
+    "    \"motorcycle\": \"motorbike\",\n",
+    "    \"airplane\": \"aeroplane\",\n",
+    "    \"couch\": \"sofa\",\n",
+    "    \"potted plant\": \"pottedplant\",\n",
+    "    \"dining table\": \"diningtable\",\n",
+    "    \"tv\": \"tvmonitor\",\n",
+    "}\n",
+    "\n",
+    "for label in coco_dataset.categories()[dm.AnnotationType.label]:\n",
+    "    if label.name in identicals or label.name in mappings:\n",
+    "        continue\n",
+    "    mappings.update({label.name: \"background\"})\n",
+    "\n",
+    "print(mappings)\n",
+    "coco_dataset.transform(\"remap_labels\", mapping=mappings)"
+   ]
+  },
+  {
+   "attachments": {},
+   "cell_type": "markdown",
+   "id": "6cb37943",
+   "metadata": {},
+   "source": [
+    "## Reindex Items\n",
+    "\n",
+    "To avoid conflicts within `id`s when merging, we need to reindex items to be exclusive."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 24,
+   "id": "38dfa759",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Dataset\n",
+       "\tsize=5011\n",
+       "\tsource_path=./VOCdevkit/VOC2007\n",
+       "\tmedia_type=<class 'datumaro.components.media.Image'>\n",
+       "\tannotated_items_count=5011\n",
+       "\tannotations_count=15662\n",
+       "subsets\n",
+       "\ttrain: # of items=2501, # of annotated items=2501, # of annotations=7844, annotation types=['bbox']\n",
+       "\tval: # of items=2510, # of annotated items=2510, # of annotations=7818, annotation types=['bbox']\n",
+       "infos\n",
+       "\tcategories\n",
+       "\tlabel: ['background', 'aeroplane', 'bicycle', 'bird', 'boat', 'bottle', 'bus', 'car', 'cat', 'chair', 'cow', 'diningtable', 'dog', 'horse', 'motorbike', 'person', 'pottedplant', 'sheep', 'sofa', 'train', 'tvmonitor', 'ignored']"
+      ]
+     },
+     "execution_count": 24,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "coco_dataset.transform(\"reindex\", start=0)\n",
+    "voc_dataset.transform(\"reindex\", start=len(coco_dataset))"
+   ]
+  },
+  {
+   "attachments": {},
+   "cell_type": "markdown",
+   "id": "892c5d4f",
+   "metadata": {},
+   "source": [
+    "## Merge Heterogenous Datasets\n",
+    "\n",
+    "Since we have already aligned two datasets into a homogeneous form, we have to choose `merge_policy=\"intersect\"` here."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 25,
+   "id": "0bbe1798",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Dataset\n",
+      "\tsize=128298\n",
+      "\tsource_path=None\n",
+      "\tmedia_type=<class 'datumaro.components.media.Image'>\n",
+      "\tannotated_items_count=127229\n",
+      "\tannotations_count=1931305\n",
+      "subsets\n",
+      "\ttrain: # of items=2501, # of annotated items=2501, # of annotations=7844, annotation types=['bbox']\n",
+      "\ttrain2017: # of items=118287, # of annotated items=117266, # of annotations=1836996, annotation types=['mask', 'polygon', 'bbox']\n",
+      "\tval: # of items=2510, # of annotated items=2510, # of annotations=7818, annotation types=['bbox']\n",
+      "\tval2017: # of items=5000, # of annotated items=4952, # of annotations=78647, annotation types=['mask', 'polygon', 'bbox']\n",
+      "infos\n",
+      "\tcategories\n",
+      "\tlabel: ['person', 'bicycle', 'car', 'motorbike', 'aeroplane', 'bus', 'train', 'background', 'boat', 'bird', 'cat', 'dog', 'horse', 'sheep', 'cow', 'bottle', 'chair', 'sofa', 'pottedplant', 'diningtable', 'tvmonitor', 'ignored']\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "merged = dm.HLOps.merge(coco_dataset, voc_dataset, merge_policy=\"intersect\")\n",
+    "print(merged)"
+   ]
+  },
+  {
+   "attachments": {},
+   "cell_type": "markdown",
+   "id": "c38d7701",
+   "metadata": {},
+   "source": [
+    "## Split into Subsets\n",
+    "\n",
+    "For AI practices, we now reorganize the merged data into `train`, `val`, and `test` subsets."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 26,
+   "id": "8c61333b",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Dataset\n",
+      "\tsize=128298\n",
+      "\tsource_path=None\n",
+      "\tmedia_type=<class 'datumaro.components.media.Image'>\n",
+      "\tannotated_items_count=127229\n",
+      "\tannotations_count=1931305\n",
+      "subsets\n",
+      "\ttest: # of items=38490, # of annotated items=38173, # of annotations=580468, annotation types=['mask', 'polygon', 'bbox']\n",
+      "\ttrain: # of items=64149, # of annotated items=63600, # of annotations=967532, annotation types=['mask', 'polygon', 'bbox']\n",
+      "\tval: # of items=25659, # of annotated items=25456, # of annotations=383305, annotation types=['mask', 'polygon', 'bbox']\n",
+      "infos\n",
+      "\tcategories\n",
+      "\tlabel: ['person', 'bicycle', 'car', 'motorbike', 'aeroplane', 'bus', 'train', 'background', 'boat', 'bird', 'cat', 'dog', 'horse', 'sheep', 'cow', 'bottle', 'chair', 'sofa', 'pottedplant', 'diningtable', 'tvmonitor', 'ignored']\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "merged.transform(\"random_split\", splits=[(\"train\", 0.5), (\"val\", 0.2), (\"test\", 0.3)])\n",
+    "print(merged)"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.16"
+  },
+  "vscode": {
+   "interpreter": {
+    "hash": "2c90c27300db58db001afd16f11e1f7b3963289e57b88abca6a1181a312b2e73"
+   }
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
