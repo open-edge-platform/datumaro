@@ -1,0 +1,604 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>datumaro.plugins.data_formats.market1501 &#8212; Datumaro 1.10.0rc1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=8b7c274f" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../../../../_static/documentation_options.js?v=0c3350b6"></script>
+    <script src="../../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/plugins/data_formats/market1501';</script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.10.0rc1 documentation - Home"/>
+    <script>document.write(`<img src="../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.10.0rc1 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../docs/index.html">
+                        Docs
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../docs/index.html">
+                        Docs
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">datumaro.plu...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for datumaro.plugins.data_formats.market1501</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (C) 2020-2023 Intel Corporation</span>
+<span class="c1">#</span>
+<span class="c1"># SPDX-License-Identifier: MIT</span>
+
+<span class="kn">import</span> <span class="nn">errno</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetBase</span><span class="p">,</span> <span class="n">DatasetItem</span>
+<span class="kn">from</span> <span class="nn">datumaro.components.errors</span> <span class="kn">import</span> <span class="n">MediaTypeError</span>
+<span class="kn">from</span> <span class="nn">datumaro.components.exporter</span> <span class="kn">import</span> <span class="n">Exporter</span>
+<span class="kn">from</span> <span class="nn">datumaro.components.format_detection</span> <span class="kn">import</span> <span class="n">FormatDetectionConfidence</span>
+<span class="kn">from</span> <span class="nn">datumaro.components.importer</span> <span class="kn">import</span> <span class="n">ImportContext</span><span class="p">,</span> <span class="n">Importer</span>
+<span class="kn">from</span> <span class="nn">datumaro.components.media</span> <span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span> <span class="nn">datumaro.util</span> <span class="kn">import</span> <span class="n">str_to_bool</span>
+<span class="kn">from</span> <span class="nn">datumaro.util.image</span> <span class="kn">import</span> <span class="n">find_images</span>
+
+
+<div class="viewcode-block" id="Market1501Path">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.market1501.html#datumaro.plugins.data_formats.market1501.Market1501Path">[docs]</a>
+<span class="k">class</span> <span class="nc">Market1501Path</span><span class="p">:</span>
+    <span class="n">QUERY_DIR</span> <span class="o">=</span> <span class="s2">&quot;query&quot;</span>
+    <span class="n">BBOX_DIR</span> <span class="o">=</span> <span class="s2">&quot;bounding_box_&quot;</span>
+    <span class="n">IMAGE_EXT</span> <span class="o">=</span> <span class="s2">&quot;.jpg&quot;</span>
+    <span class="n">PATTERN</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^(-?\d+)_c(\d+)s(\d+)_(\d+)_(\d+)(.*)&quot;</span><span class="p">)</span>
+    <span class="n">LIST_PREFIX</span> <span class="o">=</span> <span class="s2">&quot;images_&quot;</span>
+    <span class="n">UNKNOWN_ID</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">ATTRIBUTES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;person_id&quot;</span><span class="p">,</span> <span class="s2">&quot;camera_id&quot;</span><span class="p">,</span> <span class="s2">&quot;track_id&quot;</span><span class="p">,</span> <span class="s2">&quot;frame_id&quot;</span><span class="p">,</span> <span class="s2">&quot;bbox_id&quot;</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="Market1501Base">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.market1501.html#datumaro.plugins.data_formats.market1501.Market1501Base">[docs]</a>
+<span class="k">class</span> <span class="nc">Market1501Base</span><span class="p">(</span><span class="n">DatasetBase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">ctx</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ImportContext</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">NotADirectoryError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOTDIR</span><span class="p">,</span> <span class="s2">&quot;Can&#39;t find dataset directory&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
+
+        <span class="n">subsets</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="n">pf</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">Market1501Path</span><span class="o">.</span><span class="n">BBOX_DIR</span><span class="p">)</span> <span class="ow">and</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">pf</span><span class="p">):</span>
+                <span class="n">subset</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">Market1501Path</span><span class="o">.</span><span class="n">BBOX_DIR</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="n">subsets</span><span class="p">[</span><span class="n">subset</span><span class="p">]</span> <span class="o">=</span> <span class="n">pf</span>
+
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">Market1501Path</span><span class="o">.</span><span class="n">LIST_PREFIX</span><span class="p">)</span> <span class="ow">and</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">pf</span><span class="p">):</span>
+                <span class="n">subset</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">Market1501Path</span><span class="o">.</span><span class="n">LIST_PREFIX</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="n">subset</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">subset</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">subsets</span><span class="p">[</span><span class="n">subset</span><span class="p">]</span> <span class="o">=</span> <span class="n">pf</span>
+
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">Market1501Path</span><span class="o">.</span><span class="n">QUERY_DIR</span><span class="p">)</span> <span class="ow">and</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">pf</span><span class="p">):</span>
+                <span class="n">subset</span> <span class="o">=</span> <span class="n">Market1501Path</span><span class="o">.</span><span class="n">QUERY_DIR</span>
+                <span class="n">subsets</span><span class="p">[</span><span class="n">subset</span><span class="p">]</span> <span class="o">=</span> <span class="n">pf</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_items</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">subset</span><span class="p">,</span> <span class="n">subset_path</span> <span class="ow">in</span> <span class="n">subsets</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_load_items</span><span class="p">(</span><span class="n">subset</span><span class="p">,</span> <span class="n">subset_path</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span>
+
+    <span class="k">def</span> <span class="nf">_load_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset</span><span class="p">,</span> <span class="n">subset_path</span><span class="p">):</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">paths</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">subset_path</span><span class="p">):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">subset_path</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">paths</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">find_images</span><span class="p">(</span><span class="n">subset_path</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">image_path</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">paths</span><span class="p">):</span>
+            <span class="n">item_id</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">image_path</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isabs</span><span class="p">(</span><span class="n">image_path</span><span class="p">):</span>
+                <span class="n">item_id</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span>
+            <span class="n">item_id</span> <span class="o">=</span> <span class="n">item_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">sep</span><span class="p">,</span> <span class="n">maxsplit</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="n">attributes</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">search</span> <span class="o">=</span> <span class="n">Market1501Path</span><span class="o">.</span><span class="n">PATTERN</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">item_id</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">search</span><span class="p">:</span>
+                <span class="n">attribute_values</span> <span class="o">=</span> <span class="n">search</span><span class="o">.</span><span class="n">groups</span><span class="p">()[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span>
+                <span class="n">attributes</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s2">&quot;person_id&quot;</span><span class="p">:</span> <span class="n">attribute_values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                    <span class="s2">&quot;camera_id&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">attribute_values</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
+                    <span class="s2">&quot;track_id&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">attribute_values</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+                    <span class="s2">&quot;frame_id&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">attribute_values</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>
+                    <span class="s2">&quot;bbox_id&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">attribute_values</span><span class="p">[</span><span class="mi">4</span><span class="p">]),</span>
+                    <span class="s2">&quot;query&quot;</span><span class="p">:</span> <span class="n">subset</span> <span class="o">==</span> <span class="n">Market1501Path</span><span class="o">.</span><span class="n">QUERY_DIR</span><span class="p">,</span>
+                <span class="p">}</span>
+
+                <span class="n">custom_name</span> <span class="o">=</span> <span class="n">search</span><span class="o">.</span><span class="n">groups</span><span class="p">()[</span><span class="mi">5</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">custom_name</span><span class="p">:</span>
+                    <span class="n">item_id</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">item_id</span><span class="p">),</span> <span class="n">custom_name</span><span class="p">)</span>
+
+            <span class="n">item</span> <span class="o">=</span> <span class="n">items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item_id</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="n">DatasetItem</span><span class="p">(</span>
+                    <span class="nb">id</span><span class="o">=</span><span class="n">item_id</span><span class="p">,</span>
+                    <span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span>
+                    <span class="n">media</span><span class="o">=</span><span class="n">Image</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">image_path</span><span class="p">),</span>
+                    <span class="n">attributes</span><span class="o">=</span><span class="n">attributes</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">items</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span>
+
+        <span class="k">return</span> <span class="n">items</span></div>
+
+
+
+<div class="viewcode-block" id="Market1501Importer">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.market1501.html#datumaro.plugins.data_formats.market1501.Market1501Importer">[docs]</a>
+<span class="k">class</span> <span class="nc">Market1501Importer</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
+    <span class="n">DETECT_CONFIDENCE</span> <span class="o">=</span> <span class="n">FormatDetectionConfidence</span><span class="o">.</span><span class="n">MEDIUM</span>
+
+<div class="viewcode-block" id="Market1501Importer.find_sources">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.market1501.html#datumaro.plugins.data_formats.market1501.Market1501Importer.find_sources">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">dirname</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">dirname</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">Market1501Path</span><span class="o">.</span><span class="n">BBOX_DIR</span><span class="p">,</span> <span class="n">Market1501Path</span><span class="o">.</span><span class="n">QUERY_DIR</span><span class="p">,</span> <span class="n">Market1501Path</span><span class="o">.</span><span class="n">LIST_PREFIX</span><span class="p">)</span>
+            <span class="p">):</span>
+                <span class="k">return</span> <span class="p">[{</span><span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span> <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="n">Market1501Base</span><span class="o">.</span><span class="n">NAME</span><span class="p">}]</span></div>
+
+
+<div class="viewcode-block" id="Market1501Importer.get_file_extensions">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.market1501.html#datumaro.plugins.data_formats.market1501.Market1501Importer.get_file_extensions">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_file_extensions</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;.jpg&quot;</span><span class="p">]</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Market1501Exporter">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.market1501.html#datumaro.plugins.data_formats.market1501.Market1501Exporter">[docs]</a>
+<span class="k">class</span> <span class="nc">Market1501Exporter</span><span class="p">(</span><span class="n">Exporter</span><span class="p">):</span>
+    <span class="n">DEFAULT_IMAGE_EXT</span> <span class="o">=</span> <span class="n">Market1501Path</span><span class="o">.</span><span class="n">IMAGE_EXT</span>
+
+    <span class="k">def</span> <span class="nf">_make_dir_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="n">dirname</span> <span class="o">=</span> <span class="n">Market1501Path</span><span class="o">.</span><span class="n">BBOX_DIR</span> <span class="o">+</span> <span class="n">item</span><span class="o">.</span><span class="n">subset</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;query&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">query</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">query</span> <span class="o">=</span> <span class="n">str_to_bool</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">query</span><span class="p">:</span>
+            <span class="n">dirname</span> <span class="o">=</span> <span class="n">Market1501Path</span><span class="o">.</span><span class="n">QUERY_DIR</span>
+        <span class="k">return</span> <span class="n">dirname</span>
+
+    <span class="k">def</span> <span class="nf">_apply_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">(),</span> <span class="n">Image</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">MediaTypeError</span><span class="p">(</span><span class="s2">&quot;Media type is not an image&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">subset_name</span><span class="p">,</span> <span class="n">subset</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">subsets</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">annotation</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">used_frames</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">subset</span><span class="p">:</span>
+                <span class="n">dirname</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_dir_name</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+                <span class="n">image_name</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span>
+                <span class="n">pid</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;person_id&quot;</span><span class="p">)</span>
+                <span class="n">match</span> <span class="o">=</span> <span class="n">Market1501Path</span><span class="o">.</span><span class="n">PATTERN</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span> <span class="ow">and</span> <span class="n">pid</span><span class="p">:</span>
+                    <span class="n">cid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;camera_id&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
+                    <span class="n">tid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;track_id&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+                    <span class="n">bbid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;bbox_id&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+                    <span class="n">fid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+                        <span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                            <span class="s2">&quot;frame_id&quot;</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">used_frames</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">pid</span><span class="p">,</span> <span class="n">cid</span><span class="p">,</span> <span class="n">tid</span><span class="p">),</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span> <span class="o">+</span> <span class="mi">1</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+                    <span class="n">image_name</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                        <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">image_name</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pid</span><span class="si">}</span><span class="s2">_c</span><span class="si">{</span><span class="n">cid</span><span class="si">}</span><span class="s2">s</span><span class="si">{</span><span class="n">tid</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">fid</span><span class="si">:</span><span class="s2">06d</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">bbid</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+
+                <span class="n">image_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_image_filename</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">image_name</span><span class="p">,</span> <span class="n">subdir</span><span class="o">=</span><span class="n">dirname</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_media</span> <span class="ow">and</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_save_image</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">image_path</span><span class="p">))</span>
+
+                <span class="n">attrs</span> <span class="o">=</span> <span class="n">Market1501Path</span><span class="o">.</span><span class="n">PATTERN</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">image_name</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">attrs</span><span class="p">:</span>
+                    <span class="n">attrs</span> <span class="o">=</span> <span class="n">attrs</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+                    <span class="n">used_frames</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">attrs</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">attrs</span><span class="p">[</span><span class="mi">3</span><span class="p">]))</span>
+                <span class="n">annotation</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">image_path</span>
+
+            <span class="n">annotation_file</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">Market1501Path</span><span class="o">.</span><span class="n">LIST_PREFIX</span> <span class="o">+</span> <span class="n">subset_name</span> <span class="o">+</span> <span class="s2">&quot;.txt&quot;</span>
+            <span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">annotation_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

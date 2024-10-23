@@ -1,0 +1,4094 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Transform Dataset: Re-id, Reindexing, Remapping, etc. &#8212; Datumaro 1.10.0rc1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/nbsphinx-code-cells.css?v=2aa19091" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=8b7c274f" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../../../_static/documentation_options.js?v=0c3350b6"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/jupyter_notebook_examples/notebooks/05_transform';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Tile your Dataset to Cope with High-Resolution Images" href="06_tiling.html" />
+    <link rel="prev" title="Transform" href="../transform.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.10.0rc1 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.10.0rc1 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../../index.html">
+                        Docs
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../../index.html">
+                        Docs
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Get Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/introduction.html">Introduction</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../get-started/quick-start-guide/index.html">Quick Start Guide</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../get-started/quick-start-guide/installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../get-started/quick-start-guide/usage.html">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../get-started/quick-start-guide/examples.html">Examples</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Level Up</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../level-up/basic_skills/index.html">Basic Skills</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/basic_skills/01_project_manipulation.html">Level 1: Project Manipulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/basic_skills/02_dataset_download.html">Level 2: Dataset download</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/basic_skills/03_dataset_import_export.html">Level 3: Data Import and Export</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/basic_skills/04_detect_data_format.html">Level 4: Detect Data Format from an Unknown Dataset</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../level-up/intermediate_skills/index.html">Intermediate Skills</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/05_data_aggregation.html">Level 5: Data Subset Aggregation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/06_data_comparison.html">Level 6: Data Comparison with Two Heterogeneous Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/07_data_merge.html">Level 7: Merge Two Heterogeneous Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/08_data_validate.html">Level 8: Dataset Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/09_data_filtering.html">Level 9: Dataset Filtering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/10_data_exploration.html">Level 10: Dataset Explorartion from a Query Image/Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/11_data_generation.html">Level 11: Data Generation</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../level-up/advanced_skills/index.html">Advanced Skills</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/advanced_skills/12_project_versioning.html">Level 12: Project Versioning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/advanced_skills/13_pseudo_label_generation.html">Level 13: Pseudo Label Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/advanced_skills/14_data_pruning.html">Level 14: Dataset Pruning</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Formats</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../data-formats/formats/index.html">Supported Data Formats</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/ade20k2017.html">ADE20k (v2017)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/ade20k2020.html">ADE20k (v2020)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/align_celeba.html">Align CelebA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/arrow.html">Arrow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/ava_action.html">AVA Action</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/brats.html">BraTS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/brats_numpy.html">BraTS Numpy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/celeba.html">CelebA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/cifar.html">CIFAR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/cityscapes.html">Cityscapes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/coco.html">COCO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/common_semantic_segmentation.html">Common Semantic Segmentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/common_super_resolution.html">Common Super Resolution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/cvat.html">CVAT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/datumaro_binary.html">DatumaroBinary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/datumaro.html">Datumaro</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/dota.html">DOTA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/icdar.html">ICDAR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/image_zip.html">Image zip</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/imagenet.html">ImageNet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/kaggle.html">Kaggle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/kinetics.html">Kinetics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/kitti.html">KITTI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/kitti_raw.html">Velodyne Points / KITTI Raw 3D</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/labelme.html">LabelMe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/lfw.html">LFW</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mapillary_vistas.html">Mapillary Vistas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/market1501.html">Market-1501</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mars.html">MARS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mmdet.html">MMDetection COCO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mnist.html">MNIST</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mot.html">Multiple Object Tracking (MOT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mots.html">Multiple Object Tracking and Segmentation (MOTS)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mpii_json.html">MPII Human Pose JSON</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mpii.html">MPII Human Pose</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mvtec.html">MVTec AD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/nyu_depth_v2.html">NYU Depth Dataset V2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/open_images.html">Open Images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/pascal_voc.html">Pascal VOC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/roboflow.html">Roboflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/segment_anything.html">Segment Anything</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/sly_pointcloud.html">Supervisely Point Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/synthia.html">SYNTHIA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/tabular.html">Tabular</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/vgg_face2.html">Vgg Face2 CSV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/video.html">Video</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/vott_csv.html">VoTT CSV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/vott_json.html">VoTT JSON</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/wider_face.html">WIDER Face</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/yolo.html">YOLO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/yolo_ultralytics.html">YOLO-Ultralytics</a></li>
+</ul>
+</li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../data-formats/media_formats.html">Supported Media Formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data-formats/datumaro_format.html">Datumaro Format</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Hands-on Examples</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../dataset_IO.html">Dataset I/O</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="14_import_export_det_data.html">Import and Export Public Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="15_import_export_seg_data.html">Import and Export Public Semantic Segmentation Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09_encrypt_dataset.html">Encrypt Your Dataset</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../manipulate.html">Manipulate</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="01_merge_multiple_datasets_for_classification.html">Merge Multiple Datasets for Classification Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_merge_heterogeneous_datasets_for_detection.html">Merge Heterogeneous Datasets for Detection</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../explore.html">Explore</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="03_visualize.html">Visualize Your Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_data_explorer.html">Find Most Similar Data from Image or Text Queries</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../refine.html">Refine</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="11_validate.html">Validate Dataset To Detect Anomalies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_correct_dataset.html">Correct Dataset from Validation Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_filter.html">Filter Data through Your Query</a></li>
+<li class="toctree-l2"><a class="reference internal" href="17_data_pruning.html">Prune Dataset to extract representative subset</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../transform.html">Transform</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-10"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Transform Dataset: Re-id, Reindexing, Remapping, etc.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_tiling.html">Tile your Dataset to Cope with High-Resolution Images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="18_bbox_to_instance_mask_using_sam.html">Transform bounding box to instance mask annotations using Segment Anything Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="19_automatic_instance_mask_gen_using_sam.html">Automatic instance mask annotations generation using Segment Anything Model</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../e2e_example.html">From Datumaro to Model Training</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-11"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="08_e2e_example_yolo_ultralytics_trainer.html">Train Your OpenVINO™ Model Using YoloV8 Trainer For Any Dataset Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10_noisy_label_detection_cls.html">Noisy label detection for classification tasks from training loss dynamics statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="13_noisy_label_detection_det.html">Noisy label detection for detection tasks from training loss dynamics statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="16_missing_annotation_detection.html">Missing Annotation Detection</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Command Line Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/overview.html">Overview</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../command-reference/context_free/index.html">Context-free Commands</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-12"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/compare.html">Compare</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/convert.html">Convert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/detect.html">Detect</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/dinfo.html">Info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/download.html">Download</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/explain.html">Explain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/explorer.html">Explore</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/filter.html">Filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/generate.html">Generate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/merge.html">Merge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/patch.html">Patch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/prune.html">Prune</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/stats.html">Stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/transform.html">Transform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/validate.html">Validate</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../command-reference/context/index.html">Context Commands</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-13"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context/checkout.html">Checkout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context/commit.html">Commit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context/create.html">Create</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context/export.html">Export</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context/log.html">Log</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context/models.html">Model (context)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context/projects.html">Project (context)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context/sources.html">Source (context)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context/status.html">Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context/util.html">Util</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../command-reference/helper/index.html">Helper Commands</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-14"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/helper/format.html">Format</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../reference/datumaro_module.html">Datumaro Module</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-15"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../reference/_autosummary/datumaro.html">datumaro</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-16"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../reference/_autosummary/datumaro.cli.html">datumaro.cli</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-17"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.cli.commands.html">datumaro.cli.commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.cli.contexts.html">datumaro.cli.contexts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.cli.helpers.html">datumaro.cli.helpers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.cli.util.html">datumaro.cli.util</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.html">datumaro.components</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-18"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.abstracts.html">datumaro.components.abstracts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.algorithms.html">datumaro.components.algorithms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.annotation.html">datumaro.components.annotation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.annotations.html">datumaro.components.annotations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.cli_plugin.html">datumaro.components.cli_plugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.comparator.html">datumaro.components.comparator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.config.html">datumaro.components.config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.config_model.html">datumaro.components.config_model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.contexts.html">datumaro.components.contexts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.crypter.html">datumaro.components.crypter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.dataset.html">datumaro.components.dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.dataset_base.html">datumaro.components.dataset_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.dataset_item_storage.html">datumaro.components.dataset_item_storage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.dataset_storage.html">datumaro.components.dataset_storage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.environment.html">datumaro.components.environment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.errors.html">datumaro.components.errors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.exporter.html">datumaro.components.exporter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.extractor_tfds.html">datumaro.components.extractor_tfds</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.filter.html">datumaro.components.filter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.format_detection.html">datumaro.components.format_detection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.generator.html">datumaro.components.generator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.hl_ops.html">datumaro.components.hl_ops</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.importer.html">datumaro.components.importer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.launcher.html">datumaro.components.launcher</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.lazy_plugin.html">datumaro.components.lazy_plugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.media.html">datumaro.components.media</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.merge.html">datumaro.components.merge</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.operations.html">datumaro.components.operations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.progress_reporting.html">datumaro.components.progress_reporting</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.project.html">datumaro.components.project</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.registry.html">datumaro.components.registry</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.shift_analyzer.html">datumaro.components.shift_analyzer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.transformer.html">datumaro.components.transformer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.validator.html">datumaro.components.validator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.visualizer.html">datumaro.components.visualizer</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/_autosummary/datumaro.errors.html">datumaro.errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/_autosummary/datumaro.ops.html">datumaro.ops</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.html">datumaro.plugins</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-19"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.accuracy_checker_plugin.html">datumaro.plugins.accuracy_checker_plugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.anchor_generator.html">datumaro.plugins.anchor_generator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.configurable_validator.html">datumaro.plugins.configurable_validator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.data_formats.html">datumaro.plugins.data_formats</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.explorer.html">datumaro.plugins.explorer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.framework_converter.html">datumaro.plugins.framework_converter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.inference_server_plugin.html">datumaro.plugins.inference_server_plugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.missing_annotation_detection.html">datumaro.plugins.missing_annotation_detection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.ndr.html">datumaro.plugins.ndr</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.openvino_plugin.html">datumaro.plugins.openvino_plugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.sam_transforms.html">datumaro.plugins.sam_transforms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.sampler.html">datumaro.plugins.sampler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.specs.html">datumaro.plugins.specs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.splitter.html">datumaro.plugins.splitter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.synthetic_data.html">datumaro.plugins.synthetic_data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.tiling.html">datumaro.plugins.tiling</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.transforms.html">datumaro.plugins.transforms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.validators.html">datumaro.plugins.validators</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/_autosummary/datumaro.project.html">datumaro.project</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/_autosummary/datumaro.rust_api.html">datumaro.rust_api</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.html">datumaro.util</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-20"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.annotation_util.html">datumaro.util.annotation_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.attrs_util.html">datumaro.util.attrs_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.definitions.html">datumaro.util.definitions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.file_utils.html">datumaro.util.file_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.image.html">datumaro.util.image</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.image_cache.html">datumaro.util.image_cache</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.import_util.html">datumaro.util.import_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.log_utils.html">datumaro.util.log_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.mask_tools.html">datumaro.util.mask_tools</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.meta_file_util.html">datumaro.util.meta_file_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.multi_procs_util.html">datumaro.util.multi_procs_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.os_util.html">datumaro.util.os_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.pickle_util.html">datumaro.util.pickle_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.samples.html">datumaro.util.samples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.scope.html">datumaro.util.scope</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.tabular_util.html">datumaro.util.tabular_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.telemetry_stub.html">datumaro.util.telemetry_stub</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.telemetry_utils.html">datumaro.util.telemetry_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.tf_util.html">datumaro.util.tf_util</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/_autosummary/datumaro.version.html">datumaro.version</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/supported_plugins.html">Supported Plugins</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Explanation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../explanation/concept.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../explanation/architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../explanation/project.html">Command-Line Workflow</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../explanation/plugins/index.html">Plugins</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-21"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../explanation/plugins/openvino_plugin.html">OpenVINO™ Inference Interpreter</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Misc</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user-manual/how_to_use_datumaro.html">How to use Datumaro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user-manual/model_preparation.html">Model Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user-manual/extending.html">Extending</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user-manual/how_to_control_tm_data_collection.html">How to control telemetry data collection</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Release Notes</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../release_notes.html">Release Notes</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-22"><i class="fa-solid fa-chevron-down"></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Docs</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../transform.html" class="nav-link">Transform</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">Transform...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="Transform-Dataset:-Re-id,-Reindexing,-Remapping,-etc.">
+<h1>Transform Dataset: Re-id, Reindexing, Remapping, etc.<a class="headerlink" href="#Transform-Dataset:-Re-id,-Reindexing,-Remapping,-etc." title="Link to this heading">#</a></h1>
+<p><a class="reference external" href="https://github.com/openvinotoolkit/datumaro/blob/develop/notebooks/05_transform.ipynb"><img alt="Jupyter Notebook" src="https://img.shields.io/badge/jupyter-%23FA0F00.svg?style=for-the-badge&amp;logo=jupyter&amp;logoColor=white" /></a></p>
+<p>In this notebook example, we will take a look at Datumaro transform api, where transform provides splitting and merging subsets, redefining annotation information, reidentifying media, and task-changing with the modification of the annotation format, e.g., from masks to polygons, from bounding boxes to masks, from shapes to bounding boxes, etc.</p>
+<section id="Prerequisite">
+<h2>Prerequisite<a class="headerlink" href="#Prerequisite" title="Link to this heading">#</a></h2>
+<section id="Download-COCO-2017-validation-dataset">
+<h3>Download COCO 2017 validation dataset<a class="headerlink" href="#Download-COCO-2017-validation-dataset" title="Link to this heading">#</a></h3>
+<p>Please refer <a class="github reference external" href="https://github.com/openvinotoolkit/datumaro/blob/develop/notebooks/03_visualize.ipynb">openvinotoolkit/datumaro</a> to prepare COCO 2017 validation dataset.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Copyright (C) 2022 Intel Corporation</span>
+<span class="c1">#</span>
+<span class="c1"># SPDX-License-Identifier: MIT</span>
+
+<span class="kn">import</span> <span class="nn">datumaro</span> <span class="k">as</span> <span class="nn">dm</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="s2">&quot;coco_dataset&quot;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;coco_instances&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Representation for sample COCO dataset&quot;</span><span class="p">)</span>
+<span class="n">dataset</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+WARNING:root:File &#39;coco_dataset/annotations/panoptic_train2017.json&#39; was skipped, could&#39;t match this file with any of these tasks: coco_instances
+WARNING:root:File &#39;coco_dataset/annotations/panoptic_val2017.json&#39; was skipped, could&#39;t match this file with any of these tasks: coco_instances
+WARNING:root:File &#39;coco_dataset/annotations/person_keypoints_val2017.json&#39; was skipped, could&#39;t match this file with any of these tasks: coco_instances
+WARNING:root:File &#39;coco_dataset/annotations/captions_val2017.json&#39; was skipped, could&#39;t match this file with any of these tasks: coco_instances
+WARNING:root:File &#39;coco_dataset/annotations/person_keypoints_train2017.json&#39; was skipped, could&#39;t match this file with any of these tasks: coco_instances
+WARNING:root:File &#39;coco_dataset/annotations/captions_train2017.json&#39; was skipped, could&#39;t match this file with any of these tasks: coco_instances
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Representation for sample COCO dataset
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Dataset
+        size=123287
+        source_path=coco_dataset
+        media_type=&lt;class &#39;datumaro.components.media.Image&#39;&gt;
+        annotated_items_count=122218
+        annotations_count=1018861
+subsets
+        train2017: # of items=118287, # of annotated items=117266, # of annotations=976995, annotation types=[&#39;mask&#39;, &#39;polygon&#39;]
+        val2017: # of items=5000, # of annotated items=4952, # of annotations=41866, annotation types=[&#39;mask&#39;, &#39;polygon&#39;]
+categories
+        label: [&#39;person&#39;, &#39;bicycle&#39;, &#39;car&#39;, &#39;motorcycle&#39;, &#39;airplane&#39;, &#39;bus&#39;, &#39;train&#39;, &#39;truck&#39;, &#39;boat&#39;, &#39;traffic light&#39;, &#39;fire hydrant&#39;, &#39;stop sign&#39;, &#39;parking meter&#39;, &#39;bench&#39;, &#39;bird&#39;, &#39;cat&#39;, &#39;dog&#39;, &#39;horse&#39;, &#39;sheep&#39;, &#39;cow&#39;, &#39;elephant&#39;, &#39;bear&#39;, &#39;zebra&#39;, &#39;giraffe&#39;, &#39;backpack&#39;, &#39;umbrella&#39;, &#39;handbag&#39;, &#39;tie&#39;, &#39;suitcase&#39;, &#39;frisbee&#39;, &#39;skis&#39;, &#39;snowboard&#39;, &#39;sports ball&#39;, &#39;kite&#39;, &#39;baseball bat&#39;, &#39;baseball glove&#39;, &#39;skateboard&#39;, &#39;surfboard&#39;, &#39;tennis racket&#39;, &#39;bottle&#39;, &#39;wine glass&#39;, &#39;cup&#39;, &#39;fork&#39;, &#39;knife&#39;, &#39;spoon&#39;, &#39;bowl&#39;, &#39;banana&#39;, &#39;apple&#39;, &#39;sandwich&#39;, &#39;orange&#39;, &#39;broccoli&#39;, &#39;carrot&#39;, &#39;hot dog&#39;, &#39;pizza&#39;, &#39;donut&#39;, &#39;cake&#39;, &#39;chair&#39;, &#39;couch&#39;, &#39;potted plant&#39;, &#39;bed&#39;, &#39;dining table&#39;, &#39;toilet&#39;, &#39;tv&#39;, &#39;laptop&#39;, &#39;mouse&#39;, &#39;remote&#39;, &#39;keyboard&#39;, &#39;cell phone&#39;, &#39;microwave&#39;, &#39;oven&#39;, &#39;toaster&#39;, &#39;sink&#39;, &#39;refrigerator&#39;, &#39;book&#39;, &#39;clock&#39;, &#39;vase&#39;, &#39;scissors&#39;, &#39;teddy bear&#39;, &#39;hair drier&#39;, &#39;toothbrush&#39;]
+</pre></div></div>
+</div>
+</section>
+<section id="Transform-media-ID">
+<h3>Transform media ID<a class="headerlink" href="#Transform-media-ID" title="Link to this heading">#</a></h3>
+<p>We first modify the <code class="docutils literal notranslate"><span class="pre">media_id</span></code> through transformation. The original <code class="docutils literal notranslate"><span class="pre">media_id</span></code> are given by below.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">subsets</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">subsets</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Subset candidates:&quot;</span><span class="p">,</span> <span class="n">subsets</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">get_ids</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">ids</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">subset</span> <span class="o">==</span> <span class="n">subset</span><span class="p">:</span>
+            <span class="n">ids</span> <span class="o">+=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">ids</span>
+
+
+<span class="n">get_ids</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">subsets</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Subset candidates: [&#39;val2017&#39;, &#39;train2017&#39;]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;000000397133&#39;,
+ &#39;000000037777&#39;,
+ &#39;000000252219&#39;,
+ &#39;000000087038&#39;,
+ &#39;000000174482&#39;,
+ &#39;000000403385&#39;,
+ &#39;000000006818&#39;,
+ &#39;000000480985&#39;,
+ &#39;000000458054&#39;,
+ &#39;000000331352&#39;,
+ &#39;000000296649&#39;,
+ &#39;000000386912&#39;,
+ &#39;000000502136&#39;,
+ &#39;000000491497&#39;,
+ &#39;000000184791&#39;,
+ &#39;000000348881&#39;,
+ &#39;000000289393&#39;,
+ &#39;000000522713&#39;,
+ &#39;000000181666&#39;,
+ &#39;000000017627&#39;,
+ &#39;000000143931&#39;,
+ &#39;000000303818&#39;,
+ &#39;000000463730&#39;,
+ &#39;000000460347&#39;,
+ &#39;000000322864&#39;,
+ &#39;000000226111&#39;,
+ &#39;000000153299&#39;,
+ &#39;000000308394&#39;,
+ &#39;000000456496&#39;,
+ &#39;000000058636&#39;,
+ &#39;000000041888&#39;,
+ &#39;000000184321&#39;,
+ &#39;000000565778&#39;,
+ &#39;000000297343&#39;,
+ &#39;000000336587&#39;,
+ &#39;000000122745&#39;,
+ &#39;000000219578&#39;,
+ &#39;000000555705&#39;,
+ &#39;000000443303&#39;,
+ &#39;000000500663&#39;,
+ &#39;000000418281&#39;,
+ &#39;000000025560&#39;,
+ &#39;000000403817&#39;,
+ &#39;000000085329&#39;,
+ &#39;000000329323&#39;,
+ &#39;000000239274&#39;,
+ &#39;000000286994&#39;,
+ &#39;000000511321&#39;,
+ &#39;000000314294&#39;,
+ &#39;000000233771&#39;,
+ &#39;000000475779&#39;,
+ &#39;000000301867&#39;,
+ &#39;000000312421&#39;,
+ &#39;000000185250&#39;,
+ &#39;000000356427&#39;,
+ &#39;000000572517&#39;,
+ &#39;000000270244&#39;,
+ &#39;000000516316&#39;,
+ &#39;000000125211&#39;,
+ &#39;000000562121&#39;,
+ &#39;000000360661&#39;,
+ &#39;000000016228&#39;,
+ &#39;000000382088&#39;,
+ &#39;000000266409&#39;,
+ &#39;000000430961&#39;,
+ &#39;000000080671&#39;,
+ &#39;000000577539&#39;,
+ &#39;000000104612&#39;,
+ &#39;000000476258&#39;,
+ &#39;000000448365&#39;,
+ &#39;000000035197&#39;,
+ &#39;000000349860&#39;,
+ &#39;000000180135&#39;,
+ &#39;000000486438&#39;,
+ &#39;000000400573&#39;,
+ &#39;000000109798&#39;,
+ &#39;000000370677&#39;,
+ &#39;000000238866&#39;,
+ &#39;000000369370&#39;,
+ &#39;000000502737&#39;,
+ &#39;000000515579&#39;,
+ &#39;000000515445&#39;,
+ &#39;000000173383&#39;,
+ &#39;000000438862&#39;,
+ &#39;000000180560&#39;,
+ &#39;000000347693&#39;,
+ &#39;000000039956&#39;,
+ &#39;000000321214&#39;,
+ &#39;000000474028&#39;,
+ &#39;000000066523&#39;,
+ &#39;000000355257&#39;,
+ &#39;000000142092&#39;,
+ &#39;000000063154&#39;,
+ &#39;000000199551&#39;,
+ &#39;000000239347&#39;,
+ &#39;000000514508&#39;,
+ &#39;000000473237&#39;,
+ &#39;000000228144&#39;,
+ &#39;000000206027&#39;,
+ &#39;000000078915&#39;,
+ &#39;000000551215&#39;,
+ &#39;000000544519&#39;,
+ &#39;000000096493&#39;,
+ &#39;000000023899&#39;,
+ &#39;000000340175&#39;,
+ &#39;000000578500&#39;,
+ &#39;000000366141&#39;,
+ &#39;000000057597&#39;,
+ &#39;000000559842&#39;,
+ &#39;000000434230&#39;,
+ &#39;000000428454&#39;,
+ &#39;000000399462&#39;,
+ &#39;000000261061&#39;,
+ &#39;000000168330&#39;,
+ &#39;000000383384&#39;,
+ &#39;000000342006&#39;,
+ &#39;000000217285&#39;,
+ &#39;000000236412&#39;,
+ &#39;000000524456&#39;,
+ &#39;000000153343&#39;,
+ &#39;000000095786&#39;,
+ &#39;000000326541&#39;,
+ &#39;000000213086&#39;,
+ &#39;000000231339&#39;,
+ &#39;000000508730&#39;,
+ &#39;000000550426&#39;,
+ &#39;000000368294&#39;,
+ &#39;000000171190&#39;,
+ &#39;000000301135&#39;,
+ &#39;000000580294&#39;,
+ &#39;000000494869&#39;,
+ &#39;000000033638&#39;,
+ &#39;000000329219&#39;,
+ &#39;000000034873&#39;,
+ &#39;000000186980&#39;,
+ &#39;000000127182&#39;,
+ &#39;000000356387&#39;,
+ &#39;000000367680&#39;,
+ &#39;000000263796&#39;,
+ &#39;000000117425&#39;,
+ &#39;000000365387&#39;,
+ &#39;000000487583&#39;,
+ &#39;000000504711&#39;,
+ &#39;000000363840&#39;,
+ &#39;000000214720&#39;,
+ &#39;000000379453&#39;,
+ &#39;000000311295&#39;,
+ &#39;000000029393&#39;,
+ &#39;000000278848&#39;,
+ &#39;000000166391&#39;,
+ &#39;000000048153&#39;,
+ &#39;000000459153&#39;,
+ &#39;000000295713&#39;,
+ &#39;000000223130&#39;,
+ &#39;000000273132&#39;,
+ &#39;000000198960&#39;,
+ &#39;000000344059&#39;,
+ &#39;000000410428&#39;,
+ &#39;000000087875&#39;,
+ &#39;000000450758&#39;,
+ &#39;000000458790&#39;,
+ &#39;000000460160&#39;,
+ &#39;000000458109&#39;,
+ &#39;000000030675&#39;,
+ &#39;000000566524&#39;,
+ &#39;000000338428&#39;,
+ &#39;000000545826&#39;,
+ &#39;000000166277&#39;,
+ &#39;000000269314&#39;,
+ &#39;000000476415&#39;,
+ &#39;000000292082&#39;,
+ &#39;000000360137&#39;,
+ &#39;000000122046&#39;,
+ &#39;000000352684&#39;,
+ &#39;000000512836&#39;,
+ &#39;000000008021&#39;,
+ &#39;000000107226&#39;,
+ &#39;000000084477&#39;,
+ &#39;000000562243&#39;,
+ &#39;000000181859&#39;,
+ &#39;000000177015&#39;,
+ &#39;000000292236&#39;,
+ &#39;000000121506&#39;,
+ &#39;000000288042&#39;,
+ &#39;000000453860&#39;,
+ &#39;000000500257&#39;,
+ &#39;000000113403&#39;,
+ &#39;000000125062&#39;,
+ &#39;000000375015&#39;,
+ &#39;000000334719&#39;,
+ &#39;000000134112&#39;,
+ &#39;000000283520&#39;,
+ &#39;000000031269&#39;,
+ &#39;000000319721&#39;,
+ &#39;000000165351&#39;,
+ &#39;000000347265&#39;,
+ &#39;000000414170&#39;,
+ &#39;000000231508&#39;,
+ &#39;000000389381&#39;,
+ &#39;000000118921&#39;,
+ &#39;000000021503&#39;,
+ &#39;000000000785&#39;,
+ &#39;000000300842&#39;,
+ &#39;000000105014&#39;,
+ &#39;000000261982&#39;,
+ &#39;000000034205&#39;,
+ &#39;000000099242&#39;,
+ &#39;000000314709&#39;,
+ &#39;000000460494&#39;,
+ &#39;000000339442&#39;,
+ &#39;000000541055&#39;,
+ &#39;000000409475&#39;,
+ &#39;000000464786&#39;,
+ &#39;000000378605&#39;,
+ &#39;000000331817&#39;,
+ &#39;000000218091&#39;,
+ &#39;000000578545&#39;,
+ &#39;000000363207&#39;,
+ &#39;000000372577&#39;,
+ &#39;000000212166&#39;,
+ &#39;000000172571&#39;,
+ &#39;000000294831&#39;,
+ &#39;000000084431&#39;,
+ &#39;000000323355&#39;,
+ &#39;000000355325&#39;,
+ &#39;000000100582&#39;,
+ &#39;000000555412&#39;,
+ &#39;000000004495&#39;,
+ &#39;000000009483&#39;,
+ &#39;000000326082&#39;,
+ &#39;000000398237&#39;,
+ &#39;000000507223&#39;,
+ &#39;000000031050&#39;,
+ &#39;000000239537&#39;,
+ &#39;000000340930&#39;,
+ &#39;000000011813&#39;,
+ &#39;000000281414&#39;,
+ &#39;000000537991&#39;,
+ &#39;000000284282&#39;,
+ &#39;000000321333&#39;,
+ &#39;000000521282&#39;,
+ &#39;000000108026&#39;,
+ &#39;000000243204&#39;,
+ &#39;000000177935&#39;,
+ &#39;000000038829&#39;,
+ &#39;000000397327&#39;,
+ &#39;000000501523&#39;,
+ &#39;000000555050&#39;,
+ &#39;000000376442&#39;,
+ &#39;000000187243&#39;,
+ &#39;000000356347&#39;,
+ &#39;000000293044&#39;,
+ &#39;000000560279&#39;,
+ &#39;000000042276&#39;,
+ &#39;000000534827&#39;,
+ &#39;000000190756&#39;,
+ &#39;000000482917&#39;,
+ &#39;000000300659&#39;,
+ &#39;000000199977&#39;,
+ &#39;000000442480&#39;,
+ &#39;000000384350&#39;,
+ &#39;000000383621&#39;,
+ &#39;000000189828&#39;,
+ &#39;000000412894&#39;,
+ &#39;000000537153&#39;,
+ &#39;000000361103&#39;,
+ &#39;000000392722&#39;,
+ &#39;000000338560&#39;,
+ &#39;000000264535&#39;,
+ &#39;000000295231&#39;,
+ &#39;000000154947&#39;,
+ &#39;000000212559&#39;,
+ &#39;000000458755&#39;,
+ &#39;000000104782&#39;,
+ &#39;000000315257&#39;,
+ &#39;000000130599&#39;,
+ &#39;000000227187&#39;,
+ &#39;000000151662&#39;,
+ &#39;000000461275&#39;,
+ &#39;000000523811&#39;,
+ &#39;000000456559&#39;,
+ &#39;000000101068&#39;,
+ &#39;000000140640&#39;,
+ &#39;000000516708&#39;,
+ &#39;000000544605&#39;,
+ &#39;000000385190&#39;,
+ &#39;000000338986&#39;,
+ &#39;000000053994&#39;,
+ &#39;000000061171&#39;,
+ &#39;000000314034&#39;,
+ &#39;000000291490&#39;,
+ &#39;000000152740&#39;,
+ &#39;000000024919&#39;,
+ &#39;000000079837&#39;,
+ &#39;000000021903&#39;,
+ &#39;000000564133&#39;,
+ &#39;000000337055&#39;,
+ &#39;000000110638&#39;,
+ &#39;000000034139&#39;,
+ &#39;000000080340&#39;,
+ &#39;000000083113&#39;,
+ &#39;000000173033&#39;,
+ &#39;000000255664&#39;,
+ &#39;000000072813&#39;,
+ &#39;000000545129&#39;,
+ &#39;000000546011&#39;,
+ &#39;000000121031&#39;,
+ &#39;000000172547&#39;,
+ &#39;000000369081&#39;,
+ &#39;000000509131&#39;,
+ &#39;000000578922&#39;,
+ &#39;000000464089&#39;,
+ &#39;000000453708&#39;,
+ &#39;000000177714&#39;,
+ &#39;000000459887&#39;,
+ &#39;000000155179&#39;,
+ &#39;000000261116&#39;,
+ &#39;000000396274&#39;,
+ &#39;000000029640&#39;,
+ &#39;000000141328&#39;,
+ &#39;000000308430&#39;,
+ &#39;000000043314&#39;,
+ &#39;000000273715&#39;,
+ &#39;000000456303&#39;,
+ &#39;000000406611&#39;,
+ &#39;000000475064&#39;,
+ &#39;000000466567&#39;,
+ &#39;000000137246&#39;,
+ &#39;000000015079&#39;,
+ &#39;000000296284&#39;,
+ &#39;000000226147&#39;,
+ &#39;000000226903&#39;,
+ &#39;000000127517&#39;,
+ &#39;000000162092&#39;,
+ &#39;000000131379&#39;,
+ &#39;000000366611&#39;,
+ &#39;000000263969&#39;,
+ &#39;000000551439&#39;,
+ &#39;000000474167&#39;,
+ &#39;000000159458&#39;,
+ &#39;000000554735&#39;,
+ &#39;000000099428&#39;,
+ &#39;000000386352&#39;,
+ &#39;000000173004&#39;,
+ &#39;000000311394&#39;,
+ &#39;000000578489&#39;,
+ &#39;000000189310&#39;,
+ &#39;000000491366&#39;,
+ &#39;000000448076&#39;,
+ &#39;000000293804&#39;,
+ &#39;000000312237&#39;,
+ &#39;000000221291&#39;,
+ &#39;000000141821&#39;,
+ &#39;000000410650&#39;,
+ &#39;000000199310&#39;,
+ &#39;000000323151&#39;,
+ &#39;000000089648&#39;,
+ &#39;000000219283&#39;,
+ &#39;000000471869&#39;,
+ &#39;000000520264&#39;,
+ &#39;000000111179&#39;,
+ &#39;000000151000&#39;,
+ &#39;000000100624&#39;,
+ &#39;000000332570&#39;,
+ &#39;000000057238&#39;,
+ &#39;000000502732&#39;,
+ &#39;000000135561&#39;,
+ &#39;000000008277&#39;,
+ &#39;000000173044&#39;,
+ &#39;000000168458&#39;,
+ &#39;000000512194&#39;,
+ &#39;000000370042&#39;,
+ &#39;000000189436&#39;,
+ &#39;000000533958&#39;,
+ &#39;000000117645&#39;,
+ &#39;000000221708&#39;,
+ &#39;000000202228&#39;,
+ &#39;000000403565&#39;,
+ &#39;000000211042&#39;,
+ &#39;000000492878&#39;,
+ &#39;000000441586&#39;,
+ &#39;000000547816&#39;,
+ &#39;000000306733&#39;,
+ &#39;000000530099&#39;,
+ &#39;000000312278&#39;,
+ &#39;000000097679&#39;,
+ &#39;000000564127&#39;,
+ &#39;000000251065&#39;,
+ &#39;000000003845&#39;,
+ &#39;000000138819&#39;,
+ &#39;000000205834&#39;,
+ &#39;000000348708&#39;,
+ &#39;000000166521&#39;,
+ &#39;000000485802&#39;,
+ &#39;000000099054&#39;,
+ &#39;000000022969&#39;,
+ &#39;000000570539&#39;,
+ &#39;000000278353&#39;,
+ &#39;000000158548&#39;,
+ &#39;000000461405&#39;,
+ &#39;000000176606&#39;,
+ &#39;000000044699&#39;,
+ &#39;000000559956&#39;,
+ &#39;000000268996&#39;,
+ &#39;000000011197&#39;,
+ &#39;000000483667&#39;,
+ &#39;000000448810&#39;,
+ &#39;000000000724&#39;,
+ &#39;000000051961&#39;,
+ &#39;000000375278&#39;,
+ &#39;000000302165&#39;,
+ &#39;000000131131&#39;,
+ &#39;000000098839&#39;,
+ &#39;000000402992&#39;,
+ &#39;000000465675&#39;,
+ &#39;000000240754&#39;,
+ &#39;000000021167&#39;,
+ &#39;000000148730&#39;,
+ &#39;000000384468&#39;,
+ &#39;000000253742&#39;,
+ &#39;000000186873&#39;,
+ &#39;000000082180&#39;,
+ &#39;000000446522&#39;,
+ &#39;000000552902&#39;,
+ &#39;000000125405&#39;,
+ &#39;000000110211&#39;,
+ &#39;000000016010&#39;,
+ &#39;000000064462&#39;,
+ &#39;000000314182&#39;,
+ &#39;000000248980&#39;,
+ &#39;000000068387&#39;,
+ &#39;000000429281&#39;,
+ &#39;000000345466&#39;,
+ &#39;000000352900&#39;,
+ &#39;000000118367&#39;,
+ &#39;000000113235&#39;,
+ &#39;000000311303&#39;,
+ &#39;000000163640&#39;,
+ &#39;000000370999&#39;,
+ &#39;000000001490&#39;,
+ &#39;000000329456&#39;,
+ &#39;000000570471&#39;,
+ &#39;000000088269&#39;,
+ &#39;000000260470&#39;,
+ &#39;000000193494&#39;,
+ &#39;000000252776&#39;,
+ &#39;000000201072&#39;,
+ &#39;000000018150&#39;,
+ &#39;000000337498&#39;,
+ &#39;000000521405&#39;,
+ &#39;000000518770&#39;,
+ &#39;000000201646&#39;,
+ &#39;000000036936&#39;,
+ &#39;000000059044&#39;,
+ &#39;000000172946&#39;,
+ &#39;000000234607&#39;,
+ &#39;000000532690&#39;,
+ &#39;000000323895&#39;,
+ &#39;000000384670&#39;,
+ &#39;000000050326&#39;,
+ &#39;000000205542&#39;,
+ &#39;000000217957&#39;,
+ &#39;000000162035&#39;,
+ &#39;000000415727&#39;,
+ &#39;000000046252&#39;,
+ &#39;000000182021&#39;,
+ &#39;000000231747&#39;,
+ &#39;000000090284&#39;,
+ &#39;000000286553&#39;,
+ &#39;000000488736&#39;,
+ &#39;000000063602&#39;,
+ &#39;000000383386&#39;,
+ &#39;000000450686&#39;,
+ &#39;000000005060&#39;,
+ &#39;000000286523&#39;,
+ &#39;000000120420&#39;,
+ &#39;000000579655&#39;,
+ &#39;000000117908&#39;,
+ &#39;000000550322&#39;,
+ &#39;000000322844&#39;,
+ &#39;000000218362&#39;,
+ &#39;000000213224&#39;,
+ &#39;000000223747&#39;,
+ &#39;000000297578&#39;,
+ &#39;000000458992&#39;,
+ &#39;000000078266&#39;,
+ &#39;000000164602&#39;,
+ &#39;000000440475&#39;,
+ &#39;000000101762&#39;,
+ &#39;000000557501&#39;,
+ &#39;000000203317&#39;,
+ &#39;000000368940&#39;,
+ &#39;000000569917&#39;,
+ &#39;000000144798&#39;,
+ &#39;000000284623&#39;,
+ &#39;000000520301&#39;,
+ &#39;000000127987&#39;,
+ &#39;000000063740&#39;,
+ &#39;000000036494&#39;,
+ &#39;000000210032&#39;,
+ &#39;000000488270&#39;,
+ &#39;000000067180&#39;,
+ &#39;000000281179&#39;,
+ &#39;000000064359&#39;,
+ &#39;000000126226&#39;,
+ &#39;000000190923&#39;,
+ &#39;000000150265&#39;,
+ &#39;000000216739&#39;,
+ &#39;000000038048&#39;,
+ &#39;000000354829&#39;,
+ &#39;000000525155&#39;,
+ &#39;000000163314&#39;,
+ &#39;000000259571&#39;,
+ &#39;000000561679&#39;,
+ &#39;000000236166&#39;,
+ &#39;000000153529&#39;,
+ &#39;000000473015&#39;,
+ &#39;000000379800&#39;,
+ &#39;000000253835&#39;,
+ &#39;000000034071&#39;,
+ &#39;000000036861&#39;,
+ &#39;000000569565&#39;,
+ &#39;000000219271&#39;,
+ &#39;000000205647&#39;,
+ &#39;000000460841&#39;,
+ &#39;000000123131&#39;,
+ &#39;000000334006&#39;,
+ &#39;000000511599&#39;,
+ &#39;000000229858&#39;,
+ &#39;000000174004&#39;,
+ &#39;000000519764&#39;,
+ &#39;000000137576&#39;,
+ &#39;000000087470&#39;,
+ &#39;000000009769&#39;,
+ &#39;000000558114&#39;,
+ &#39;000000205776&#39;,
+ &#39;000000163257&#39;,
+ &#39;000000475678&#39;,
+ &#39;000000085478&#39;,
+ &#39;000000318080&#39;,
+ &#39;000000361551&#39;,
+ &#39;000000236784&#39;,
+ &#39;000000092839&#39;,
+ &#39;000000042296&#39;,
+ &#39;000000560266&#39;,
+ &#39;000000486479&#39;,
+ &#39;000000127955&#39;,
+ &#39;000000307658&#39;,
+ &#39;000000417465&#39;,
+ &#39;000000342971&#39;,
+ &#39;000000011760&#39;,
+ &#39;000000069106&#39;,
+ &#39;000000070158&#39;,
+ &#39;000000176634&#39;,
+ &#39;000000281447&#39;,
+ &#39;000000552371&#39;,
+ &#39;000000361919&#39;,
+ &#39;000000560256&#39;,
+ &#39;000000138115&#39;,
+ &#39;000000114871&#39;,
+ &#39;000000374369&#39;,
+ &#39;000000123213&#39;,
+ &#39;000000123321&#39;,
+ &#39;000000015278&#39;,
+ &#39;000000357742&#39;,
+ &#39;000000439854&#39;,
+ &#39;000000465836&#39;,
+ &#39;000000414385&#39;,
+ &#39;000000131556&#39;,
+ &#39;000000322724&#39;,
+ &#39;000000320664&#39;,
+ &#39;000000481390&#39;,
+ &#39;000000109916&#39;,
+ &#39;000000276434&#39;,
+ &#39;000000579635&#39;,
+ &#39;000000295316&#39;,
+ &#39;000000571313&#39;,
+ &#39;000000183127&#39;,
+ &#39;000000115898&#39;,
+ &#39;000000146358&#39;,
+ &#39;000000329542&#39;,
+ &#39;000000189752&#39;,
+ &#39;000000290163&#39;,
+ &#39;000000091406&#39;,
+ &#39;000000322352&#39;,
+ &#39;000000223959&#39;,
+ &#39;000000326248&#39;,
+ &#39;000000218439&#39;,
+ &#39;000000453722&#39;,
+ &#39;000000293625&#39;,
+ &#39;000000411817&#39;,
+ &#39;000000546964&#39;,
+ &#39;000000215259&#39;,
+ &#39;000000573094&#39;,
+ &#39;000000560011&#39;,
+ &#39;000000038576&#39;,
+ &#39;000000147729&#39;,
+ &#39;000000579307&#39;,
+ &#39;000000154425&#39;,
+ &#39;000000432898&#39;,
+ &#39;000000404923&#39;,
+ &#39;000000130586&#39;,
+ &#39;000000163057&#39;,
+ &#39;000000007511&#39;,
+ &#39;000000067406&#39;,
+ &#39;000000290179&#39;,
+ &#39;000000248752&#39;,
+ &#39;000000054593&#39;,
+ &#39;000000116208&#39;,
+ &#39;000000340697&#39;,
+ &#39;000000450303&#39;,
+ &#39;000000494427&#39;,
+ &#39;000000137294&#39;,
+ &#39;000000410880&#39;,
+ &#39;000000311180&#39;,
+ &#39;000000091654&#39;,
+ &#39;000000181796&#39;,
+ &#39;000000002431&#39;,
+ &#39;000000349184&#39;,
+ &#39;000000298396&#39;,
+ &#39;000000472046&#39;,
+ &#39;000000074058&#39;,
+ &#39;000000058029&#39;,
+ &#39;000000134096&#39;,
+ &#39;000000111951&#39;,
+ &#39;000000103585&#39;,
+ &#39;000000210273&#39;,
+ &#39;000000352584&#39;,
+ &#39;000000446651&#39;,
+ &#39;000000194875&#39;,
+ &#39;000000052017&#39;,
+ &#39;000000336309&#39;,
+ &#39;000000227478&#39;,
+ &#39;000000339870&#39;,
+ &#39;000000080666&#39;,
+ &#39;000000033707&#39;,
+ &#39;000000327601&#39;,
+ &#39;000000255749&#39;,
+ &#39;000000008762&#39;,
+ &#39;000000526392&#39;,
+ &#39;000000535578&#39;,
+ &#39;000000580757&#39;,
+ &#39;000000165039&#39;,
+ &#39;000000148719&#39;,
+ &#39;000000108440&#39;,
+ &#39;000000489842&#39;,
+ &#39;000000579818&#39;,
+ &#39;000000423229&#39;,
+ &#39;000000323828&#39;,
+ &#39;000000166287&#39;,
+ &#39;000000101420&#39;,
+ &#39;000000334555&#39;,
+ &#39;000000196759&#39;,
+ &#39;000000411665&#39;,
+ &#39;000000061418&#39;,
+ &#39;000000526751&#39;,
+ &#39;000000024021&#39;,
+ &#39;000000277020&#39;,
+ &#39;000000047828&#39;,
+ &#39;000000183716&#39;,
+ &#39;000000271997&#39;,
+ &#39;000000008532&#39;,
+ &#39;000000094336&#39;,
+ &#39;000000390555&#39;,
+ &#39;000000250282&#39;,
+ &#39;000000068409&#39;,
+ &#39;000000002299&#39;,
+ &#39;000000011051&#39;,
+ &#39;000000066038&#39;,
+ &#39;000000360960&#39;,
+ &#39;000000360097&#39;,
+ &#39;000000421455&#39;,
+ &#39;000000504589&#39;,
+ &#39;000000464522&#39;,
+ &#39;000000454750&#39;,
+ &#39;000000509735&#39;,
+ &#39;000000023034&#39;,
+ &#39;000000141671&#39;,
+ &#39;000000506656&#39;,
+ &#39;000000272566&#39;,
+ &#39;000000045728&#39;,
+ &#39;000000424551&#39;,
+ &#39;000000341719&#39;,
+ &#39;000000072795&#39;,
+ &#39;000000078959&#39;,
+ &#39;000000417285&#39;,
+ &#39;000000002157&#39;,
+ &#39;000000043816&#39;,
+ &#39;000000455555&#39;,
+ &#39;000000535306&#39;,
+ &#39;000000030504&#39;,
+ &#39;000000093353&#39;,
+ &#39;000000530052&#39;,
+ &#39;000000473118&#39;,
+ &#39;000000091779&#39;,
+ &#39;000000283113&#39;,
+ &#39;000000226130&#39;,
+ &#39;000000097278&#39;,
+ &#39;000000567640&#39;,
+ &#39;000000532493&#39;,
+ &#39;000000045550&#39;,
+ &#39;000000156643&#39;,
+ &#39;000000430056&#39;,
+ &#39;000000410456&#39;,
+ &#39;000000441286&#39;,
+ &#39;000000279541&#39;,
+ &#39;000000000885&#39;,
+ &#39;000000378284&#39;,
+ &#39;000000156076&#39;,
+ &#39;000000143572&#39;,
+ &#39;000000229849&#39;,
+ &#39;000000039551&#39;,
+ &#39;000000056344&#39;,
+ &#39;000000193348&#39;,
+ &#39;000000016958&#39;,
+ &#39;000000572678&#39;,
+ &#39;000000106235&#39;,
+ &#39;000000341681&#39;,
+ &#39;000000083172&#39;,
+ &#39;000000343524&#39;,
+ &#39;000000395801&#39;,
+ &#39;000000388056&#39;,
+ &#39;000000259690&#39;,
+ &#39;000000235836&#39;,
+ &#39;000000343218&#39;,
+ &#39;000000205105&#39;,
+ &#39;000000513283&#39;,
+ &#39;000000176446&#39;,
+ &#39;000000371677&#39;,
+ &#39;000000308531&#39;,
+ &#39;000000497599&#39;,
+ &#39;000000455352&#39;,
+ &#39;000000236914&#39;,
+ &#39;000000232684&#39;,
+ &#39;000000415238&#39;,
+ &#39;000000290843&#39;,
+ &#39;000000519522&#39;,
+ &#39;000000144784&#39;,
+ &#39;000000167486&#39;,
+ &#39;000000392228&#39;,
+ &#39;000000488673&#39;,
+ &#39;000000191013&#39;,
+ &#39;000000080057&#39;,
+ &#39;000000570169&#39;,
+ &#39;000000224807&#39;,
+ &#39;000000163562&#39;,
+ &#39;000000136355&#39;,
+ &#39;000000492362&#39;,
+ &#39;000000102707&#39;,
+ &#39;000000232563&#39;,
+ &#39;000000010977&#39;,
+ &#39;000000051598&#39;,
+ &#39;000000032285&#39;,
+ &#39;000000520910&#39;,
+ &#39;000000131273&#39;,
+ &#39;000000206411&#39;,
+ &#39;000000472375&#39;,
+ &#39;000000481404&#39;,
+ &#39;000000471991&#39;,
+ &#39;000000017436&#39;,
+ &#39;000000177934&#39;,
+ &#39;000000165518&#39;,
+ &#39;000000571718&#39;,
+ &#39;000000459467&#39;,
+ &#39;000000135673&#39;,
+ &#39;000000134886&#39;,
+ &#39;000000485895&#39;,
+ &#39;000000287545&#39;,
+ &#39;000000577182&#39;,
+ &#39;000000289222&#39;,
+ &#39;000000372819&#39;,
+ &#39;000000310072&#39;,
+ &#39;000000087144&#39;,
+ &#39;000000430875&#39;,
+ &#39;000000060347&#39;,
+ &#39;000000042070&#39;,
+ &#39;000000420916&#39;,
+ &#39;000000453584&#39;,
+ &#39;000000296224&#39;,
+ &#39;000000122606&#39;,
+ &#39;000000311909&#39;,
+ &#39;000000579893&#39;,
+ &#39;000000284296&#39;,
+ &#39;000000221017&#39;,
+ &#39;000000315001&#39;,
+ &#39;000000439715&#39;,
+ &#39;000000284991&#39;,
+ &#39;000000389566&#39;,
+ &#39;000000078843&#39;,
+ &#39;000000122927&#39;,
+ &#39;000000225532&#39;,
+ &#39;000000013659&#39;,
+ &#39;000000153568&#39;,
+ &#39;000000395633&#39;,
+ &#39;000000419096&#39;,
+ &#39;000000203488&#39;,
+ &#39;000000361268&#39;,
+ &#39;000000466125&#39;,
+ &#39;000000414795&#39;,
+ &#39;000000508101&#39;,
+ &#39;000000253386&#39;,
+ &#39;000000222991&#39;,
+ &#39;000000530854&#39;,
+ &#39;000000351810&#39;,
+ &#39;000000338624&#39;,
+ &#39;000000138492&#39;,
+ &#39;000000263463&#39;,
+ &#39;000000226592&#39;,
+ &#39;000000378454&#39;,
+ &#39;000000020059&#39;,
+ &#39;000000227686&#39;,
+ &#39;000000476215&#39;,
+ &#39;000000297698&#39;,
+ &#39;000000247917&#39;,
+ &#39;000000439522&#39;,
+ &#39;000000479448&#39;,
+ &#39;000000424721&#39;,
+ &#39;000000026690&#39;,
+ &#39;000000558854&#39;,
+ &#39;000000176901&#39;,
+ &#39;000000334767&#39;,
+ &#39;000000301563&#39;,
+ &#39;000000086755&#39;,
+ &#39;000000194471&#39;,
+ &#39;000000420281&#39;,
+ &#39;000000533206&#39;,
+ &#39;000000099810&#39;,
+ &#39;000000334483&#39;,
+ &#39;000000089670&#39;,
+ &#39;000000482275&#39;,
+ &#39;000000404805&#39;,
+ &#39;000000002261&#39;,
+ &#39;000000425702&#39;,
+ &#39;000000036844&#39;,
+ &#39;000000012576&#39;,
+ &#39;000000361238&#39;,
+ &#39;000000108253&#39;,
+ &#39;000000319935&#39;,
+ &#39;000000003934&#39;,
+ &#39;000000029596&#39;,
+ &#39;000000047740&#39;,
+ &#39;000000077460&#39;,
+ &#39;000000014439&#39;,
+ &#39;000000571893&#39;,
+ &#39;000000447314&#39;,
+ &#39;000000181303&#39;,
+ &#39;000000058350&#39;,
+ &#39;000000026465&#39;,
+ &#39;000000246968&#39;,
+ &#39;000000536947&#39;,
+ &#39;000000076731&#39;,
+ &#39;000000286182&#39;,
+ &#39;000000433980&#39;,
+ &#39;000000561366&#39;,
+ &#39;000000380913&#39;,
+ &#39;000000032887&#39;,
+ &#39;000000517687&#39;,
+ &#39;000000213035&#39;,
+ &#39;000000399205&#39;,
+ &#39;000000349837&#39;,
+ &#39;000000350002&#39;,
+ &#39;000000131431&#39;,
+ &#39;000000356248&#39;,
+ &#39;000000334399&#39;,
+ &#39;000000057150&#39;,
+ &#39;000000363666&#39;,
+ &#39;000000507235&#39;,
+ &#39;000000169996&#39;,
+ &#39;000000226417&#39;,
+ &#39;000000481573&#39;,
+ &#39;000000056127&#39;,
+ &#39;000000123480&#39;,
+ &#39;000000274687&#39;,
+ &#39;000000164637&#39;,
+ &#39;000000178028&#39;,
+ &#39;000000493286&#39;,
+ &#39;000000348216&#39;,
+ &#39;000000345027&#39;,
+ &#39;000000571804&#39;,
+ &#39;000000140658&#39;,
+ &#39;000000102644&#39;,
+ &#39;000000581615&#39;,
+ &#39;000000279887&#39;,
+ &#39;000000230008&#39;,
+ &#39;000000284698&#39;,
+ &#39;000000102356&#39;,
+ &#39;000000456394&#39;,
+ &#39;000000323709&#39;,
+ &#39;000000452122&#39;,
+ &#39;000000579158&#39;,
+ &#39;000000525322&#39;,
+ &#39;000000033114&#39;,
+ &#39;000000008690&#39;,
+ &#39;000000381639&#39;,
+ &#39;000000217614&#39;,
+ &#39;000000284445&#39;,
+ &#39;000000468124&#39;,
+ &#39;000000187144&#39;,
+ &#39;000000273198&#39;,
+ &#39;000000095843&#39;,
+ &#39;000000417779&#39;,
+ &#39;000000447342&#39;,
+ &#39;000000166563&#39;,
+ &#39;000000490125&#39;,
+ &#39;000000561009&#39;,
+ &#39;000000183675&#39;,
+ &#39;000000290248&#39;,
+ &#39;000000532058&#39;,
+ &#39;000000214200&#39;,
+ &#39;000000578093&#39;,
+ &#39;000000369751&#39;,
+ &#39;000000429011&#39;,
+ &#39;000000301061&#39;,
+ &#39;000000105264&#39;,
+ &#39;000000267434&#39;,
+ &#39;000000370711&#39;,
+ &#39;000000025393&#39;,
+ &#39;000000471087&#39;,
+ &#39;000000106757&#39;,
+ &#39;000000183648&#39;,
+ &#39;000000358525&#39;,
+ &#39;000000049269&#39;,
+ &#39;000000079144&#39;,
+ &#39;000000519688&#39;,
+ &#39;000000431727&#39;,
+ &#39;000000130699&#39;,
+ &#39;000000215245&#39;,
+ &#39;000000091921&#39;,
+ &#39;000000218424&#39;,
+ &#39;000000473974&#39;,
+ &#39;000000405249&#39;,
+ &#39;000000235784&#39;,
+ &#39;000000521540&#39;,
+ &#39;000000537506&#39;,
+ &#39;000000119445&#39;,
+ &#39;000000507015&#39;,
+ &#39;000000173830&#39;,
+ &#39;000000356498&#39;,
+ &#39;000000435081&#39;,
+ &#39;000000018575&#39;,
+ &#39;000000373315&#39;,
+ &#39;000000227765&#39;,
+ &#39;000000013546&#39;,
+ &#39;000000067310&#39;,
+ &#39;000000125936&#39;,
+ &#39;000000389109&#39;,
+ &#39;000000322211&#39;,
+ &#39;000000184384&#39;,
+ &#39;000000426329&#39;,
+ &#39;000000128476&#39;,
+ &#39;000000414034&#39;,
+ &#39;000000450488&#39;,
+ &#39;000000099182&#39;,
+ &#39;000000051738&#39;,
+ &#39;000000099039&#39;,
+ &#39;000000075456&#39;,
+ &#39;000000134882&#39;,
+ &#39;000000442323&#39;,
+ &#39;000000232489&#39;,
+ &#39;000000351823&#39;,
+ &#39;000000065736&#39;,
+ &#39;000000001000&#39;,
+ &#39;000000379842&#39;,
+ &#39;000000013923&#39;,
+ &#39;000000559543&#39;,
+ &#39;000000185890&#39;,
+ &#39;000000357978&#39;,
+ &#39;000000129492&#39;,
+ &#39;000000261097&#39;,
+ &#39;000000410510&#39;,
+ &#39;000000039951&#39;,
+ &#39;000000306700&#39;,
+ &#39;000000146457&#39;,
+ &#39;000000214224&#39;,
+ &#39;000000332845&#39;,
+ &#39;000000255483&#39;,
+ &#39;000000222455&#39;,
+ &#39;000000187271&#39;,
+ &#39;000000462629&#39;,
+ &#39;000000544565&#39;,
+ &#39;000000369771&#39;,
+ &#39;000000035963&#39;,
+ &#39;000000289516&#39;,
+ &#39;000000334309&#39;,
+ &#39;000000452084&#39;,
+ &#39;000000301718&#39;,
+ &#39;000000429598&#39;,
+ &#39;000000165257&#39;,
+ &#39;000000093437&#39;,
+ &#39;000000413552&#39;,
+ &#39;000000062025&#39;,
+ &#39;000000017379&#39;,
+ &#39;000000176778&#39;,
+ &#39;000000104572&#39;,
+ &#39;000000090108&#39;,
+ &#39;000000157124&#39;,
+ &#39;000000089556&#39;,
+ &#39;000000266206&#39;,
+ &#39;000000086220&#39;,
+ &#39;000000508602&#39;,
+ ...]
+</pre></div></div>
+</div>
+<p>We here adopt <code class="docutils literal notranslate"><span class="pre">reindex</span></code> transformation to make <code class="docutils literal notranslate"><span class="pre">media_id</span></code> be incrementing from <code class="docutils literal notranslate"><span class="pre">start</span></code>.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reindexing_dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s2">&quot;reindex&quot;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">get_ids</span><span class="p">(</span><span class="n">reindexing_dataset</span><span class="p">,</span> <span class="n">subsets</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;0&#39;,
+ &#39;1&#39;,
+ &#39;2&#39;,
+ &#39;3&#39;,
+ &#39;4&#39;,
+ &#39;5&#39;,
+ &#39;6&#39;,
+ &#39;7&#39;,
+ &#39;8&#39;,
+ &#39;9&#39;,
+ &#39;10&#39;,
+ &#39;11&#39;,
+ &#39;12&#39;,
+ &#39;13&#39;,
+ &#39;14&#39;,
+ &#39;15&#39;,
+ &#39;16&#39;,
+ &#39;17&#39;,
+ &#39;18&#39;,
+ &#39;19&#39;,
+ &#39;20&#39;,
+ &#39;21&#39;,
+ &#39;22&#39;,
+ &#39;23&#39;,
+ &#39;24&#39;,
+ &#39;25&#39;,
+ &#39;26&#39;,
+ &#39;27&#39;,
+ &#39;28&#39;,
+ &#39;29&#39;,
+ &#39;30&#39;,
+ &#39;31&#39;,
+ &#39;32&#39;,
+ &#39;33&#39;,
+ &#39;34&#39;,
+ &#39;35&#39;,
+ &#39;36&#39;,
+ &#39;37&#39;,
+ &#39;38&#39;,
+ &#39;39&#39;,
+ &#39;40&#39;,
+ &#39;41&#39;,
+ &#39;42&#39;,
+ &#39;43&#39;,
+ &#39;44&#39;,
+ &#39;45&#39;,
+ &#39;46&#39;,
+ &#39;47&#39;,
+ &#39;48&#39;,
+ &#39;49&#39;,
+ &#39;50&#39;,
+ &#39;51&#39;,
+ &#39;52&#39;,
+ &#39;53&#39;,
+ &#39;54&#39;,
+ &#39;55&#39;,
+ &#39;56&#39;,
+ &#39;57&#39;,
+ &#39;58&#39;,
+ &#39;59&#39;,
+ &#39;60&#39;,
+ &#39;61&#39;,
+ &#39;62&#39;,
+ &#39;63&#39;,
+ &#39;64&#39;,
+ &#39;65&#39;,
+ &#39;66&#39;,
+ &#39;67&#39;,
+ &#39;68&#39;,
+ &#39;69&#39;,
+ &#39;70&#39;,
+ &#39;71&#39;,
+ &#39;72&#39;,
+ &#39;73&#39;,
+ &#39;74&#39;,
+ &#39;75&#39;,
+ &#39;76&#39;,
+ &#39;77&#39;,
+ &#39;78&#39;,
+ &#39;79&#39;,
+ &#39;80&#39;,
+ &#39;81&#39;,
+ &#39;82&#39;,
+ &#39;83&#39;,
+ &#39;84&#39;,
+ &#39;85&#39;,
+ &#39;86&#39;,
+ &#39;87&#39;,
+ &#39;88&#39;,
+ &#39;89&#39;,
+ &#39;90&#39;,
+ &#39;91&#39;,
+ &#39;92&#39;,
+ &#39;93&#39;,
+ &#39;94&#39;,
+ &#39;95&#39;,
+ &#39;96&#39;,
+ &#39;97&#39;,
+ &#39;98&#39;,
+ &#39;99&#39;,
+ &#39;100&#39;,
+ &#39;101&#39;,
+ &#39;102&#39;,
+ &#39;103&#39;,
+ &#39;104&#39;,
+ &#39;105&#39;,
+ &#39;106&#39;,
+ &#39;107&#39;,
+ &#39;108&#39;,
+ &#39;109&#39;,
+ &#39;110&#39;,
+ &#39;111&#39;,
+ &#39;112&#39;,
+ &#39;113&#39;,
+ &#39;114&#39;,
+ &#39;115&#39;,
+ &#39;116&#39;,
+ &#39;117&#39;,
+ &#39;118&#39;,
+ &#39;119&#39;,
+ &#39;120&#39;,
+ &#39;121&#39;,
+ &#39;122&#39;,
+ &#39;123&#39;,
+ &#39;124&#39;,
+ &#39;125&#39;,
+ &#39;126&#39;,
+ &#39;127&#39;,
+ &#39;128&#39;,
+ &#39;129&#39;,
+ &#39;130&#39;,
+ &#39;131&#39;,
+ &#39;132&#39;,
+ &#39;133&#39;,
+ &#39;134&#39;,
+ &#39;135&#39;,
+ &#39;136&#39;,
+ &#39;137&#39;,
+ &#39;138&#39;,
+ &#39;139&#39;,
+ &#39;140&#39;,
+ &#39;141&#39;,
+ &#39;142&#39;,
+ &#39;143&#39;,
+ &#39;144&#39;,
+ &#39;145&#39;,
+ &#39;146&#39;,
+ &#39;147&#39;,
+ &#39;148&#39;,
+ &#39;149&#39;,
+ &#39;150&#39;,
+ &#39;151&#39;,
+ &#39;152&#39;,
+ &#39;153&#39;,
+ &#39;154&#39;,
+ &#39;155&#39;,
+ &#39;156&#39;,
+ &#39;157&#39;,
+ &#39;158&#39;,
+ &#39;159&#39;,
+ &#39;160&#39;,
+ &#39;161&#39;,
+ &#39;162&#39;,
+ &#39;163&#39;,
+ &#39;164&#39;,
+ &#39;165&#39;,
+ &#39;166&#39;,
+ &#39;167&#39;,
+ &#39;168&#39;,
+ &#39;169&#39;,
+ &#39;170&#39;,
+ &#39;171&#39;,
+ &#39;172&#39;,
+ &#39;173&#39;,
+ &#39;174&#39;,
+ &#39;175&#39;,
+ &#39;176&#39;,
+ &#39;177&#39;,
+ &#39;178&#39;,
+ &#39;179&#39;,
+ &#39;180&#39;,
+ &#39;181&#39;,
+ &#39;182&#39;,
+ &#39;183&#39;,
+ &#39;184&#39;,
+ &#39;185&#39;,
+ &#39;186&#39;,
+ &#39;187&#39;,
+ &#39;188&#39;,
+ &#39;189&#39;,
+ &#39;190&#39;,
+ &#39;191&#39;,
+ &#39;192&#39;,
+ &#39;193&#39;,
+ &#39;194&#39;,
+ &#39;195&#39;,
+ &#39;196&#39;,
+ &#39;197&#39;,
+ &#39;198&#39;,
+ &#39;199&#39;,
+ &#39;200&#39;,
+ &#39;201&#39;,
+ &#39;202&#39;,
+ &#39;203&#39;,
+ &#39;204&#39;,
+ &#39;205&#39;,
+ &#39;206&#39;,
+ &#39;207&#39;,
+ &#39;208&#39;,
+ &#39;209&#39;,
+ &#39;210&#39;,
+ &#39;211&#39;,
+ &#39;212&#39;,
+ &#39;213&#39;,
+ &#39;214&#39;,
+ &#39;215&#39;,
+ &#39;216&#39;,
+ &#39;217&#39;,
+ &#39;218&#39;,
+ &#39;219&#39;,
+ &#39;220&#39;,
+ &#39;221&#39;,
+ &#39;222&#39;,
+ &#39;223&#39;,
+ &#39;224&#39;,
+ &#39;225&#39;,
+ &#39;226&#39;,
+ &#39;227&#39;,
+ &#39;228&#39;,
+ &#39;229&#39;,
+ &#39;230&#39;,
+ &#39;231&#39;,
+ &#39;232&#39;,
+ &#39;233&#39;,
+ &#39;234&#39;,
+ &#39;235&#39;,
+ &#39;236&#39;,
+ &#39;237&#39;,
+ &#39;238&#39;,
+ &#39;239&#39;,
+ &#39;240&#39;,
+ &#39;241&#39;,
+ &#39;242&#39;,
+ &#39;243&#39;,
+ &#39;244&#39;,
+ &#39;245&#39;,
+ &#39;246&#39;,
+ &#39;247&#39;,
+ &#39;248&#39;,
+ &#39;249&#39;,
+ &#39;250&#39;,
+ &#39;251&#39;,
+ &#39;252&#39;,
+ &#39;253&#39;,
+ &#39;254&#39;,
+ &#39;255&#39;,
+ &#39;256&#39;,
+ &#39;257&#39;,
+ &#39;258&#39;,
+ &#39;259&#39;,
+ &#39;260&#39;,
+ &#39;261&#39;,
+ &#39;262&#39;,
+ &#39;263&#39;,
+ &#39;264&#39;,
+ &#39;265&#39;,
+ &#39;266&#39;,
+ &#39;267&#39;,
+ &#39;268&#39;,
+ &#39;269&#39;,
+ &#39;270&#39;,
+ &#39;271&#39;,
+ &#39;272&#39;,
+ &#39;273&#39;,
+ &#39;274&#39;,
+ &#39;275&#39;,
+ &#39;276&#39;,
+ &#39;277&#39;,
+ &#39;278&#39;,
+ &#39;279&#39;,
+ &#39;280&#39;,
+ &#39;281&#39;,
+ &#39;282&#39;,
+ &#39;283&#39;,
+ &#39;284&#39;,
+ &#39;285&#39;,
+ &#39;286&#39;,
+ &#39;287&#39;,
+ &#39;288&#39;,
+ &#39;289&#39;,
+ &#39;290&#39;,
+ &#39;291&#39;,
+ &#39;292&#39;,
+ &#39;293&#39;,
+ &#39;294&#39;,
+ &#39;295&#39;,
+ &#39;296&#39;,
+ &#39;297&#39;,
+ &#39;298&#39;,
+ &#39;299&#39;,
+ &#39;300&#39;,
+ &#39;301&#39;,
+ &#39;302&#39;,
+ &#39;303&#39;,
+ &#39;304&#39;,
+ &#39;305&#39;,
+ &#39;306&#39;,
+ &#39;307&#39;,
+ &#39;308&#39;,
+ &#39;309&#39;,
+ &#39;310&#39;,
+ &#39;311&#39;,
+ &#39;312&#39;,
+ &#39;313&#39;,
+ &#39;314&#39;,
+ &#39;315&#39;,
+ &#39;316&#39;,
+ &#39;317&#39;,
+ &#39;318&#39;,
+ &#39;319&#39;,
+ &#39;320&#39;,
+ &#39;321&#39;,
+ &#39;322&#39;,
+ &#39;323&#39;,
+ &#39;324&#39;,
+ &#39;325&#39;,
+ &#39;326&#39;,
+ &#39;327&#39;,
+ &#39;328&#39;,
+ &#39;329&#39;,
+ &#39;330&#39;,
+ &#39;331&#39;,
+ &#39;332&#39;,
+ &#39;333&#39;,
+ &#39;334&#39;,
+ &#39;335&#39;,
+ &#39;336&#39;,
+ &#39;337&#39;,
+ &#39;338&#39;,
+ &#39;339&#39;,
+ &#39;340&#39;,
+ &#39;341&#39;,
+ &#39;342&#39;,
+ &#39;343&#39;,
+ &#39;344&#39;,
+ &#39;345&#39;,
+ &#39;346&#39;,
+ &#39;347&#39;,
+ &#39;348&#39;,
+ &#39;349&#39;,
+ &#39;350&#39;,
+ &#39;351&#39;,
+ &#39;352&#39;,
+ &#39;353&#39;,
+ &#39;354&#39;,
+ &#39;355&#39;,
+ &#39;356&#39;,
+ &#39;357&#39;,
+ &#39;358&#39;,
+ &#39;359&#39;,
+ &#39;360&#39;,
+ &#39;361&#39;,
+ &#39;362&#39;,
+ &#39;363&#39;,
+ &#39;364&#39;,
+ &#39;365&#39;,
+ &#39;366&#39;,
+ &#39;367&#39;,
+ &#39;368&#39;,
+ &#39;369&#39;,
+ &#39;370&#39;,
+ &#39;371&#39;,
+ &#39;372&#39;,
+ &#39;373&#39;,
+ &#39;374&#39;,
+ &#39;375&#39;,
+ &#39;376&#39;,
+ &#39;377&#39;,
+ &#39;378&#39;,
+ &#39;379&#39;,
+ &#39;380&#39;,
+ &#39;381&#39;,
+ &#39;382&#39;,
+ &#39;383&#39;,
+ &#39;384&#39;,
+ &#39;385&#39;,
+ &#39;386&#39;,
+ &#39;387&#39;,
+ &#39;388&#39;,
+ &#39;389&#39;,
+ &#39;390&#39;,
+ &#39;391&#39;,
+ &#39;392&#39;,
+ &#39;393&#39;,
+ &#39;394&#39;,
+ &#39;395&#39;,
+ &#39;396&#39;,
+ &#39;397&#39;,
+ &#39;398&#39;,
+ &#39;399&#39;,
+ &#39;400&#39;,
+ &#39;401&#39;,
+ &#39;402&#39;,
+ &#39;403&#39;,
+ &#39;404&#39;,
+ &#39;405&#39;,
+ &#39;406&#39;,
+ &#39;407&#39;,
+ &#39;408&#39;,
+ &#39;409&#39;,
+ &#39;410&#39;,
+ &#39;411&#39;,
+ &#39;412&#39;,
+ &#39;413&#39;,
+ &#39;414&#39;,
+ &#39;415&#39;,
+ &#39;416&#39;,
+ &#39;417&#39;,
+ &#39;418&#39;,
+ &#39;419&#39;,
+ &#39;420&#39;,
+ &#39;421&#39;,
+ &#39;422&#39;,
+ &#39;423&#39;,
+ &#39;424&#39;,
+ &#39;425&#39;,
+ &#39;426&#39;,
+ &#39;427&#39;,
+ &#39;428&#39;,
+ &#39;429&#39;,
+ &#39;430&#39;,
+ &#39;431&#39;,
+ &#39;432&#39;,
+ &#39;433&#39;,
+ &#39;434&#39;,
+ &#39;435&#39;,
+ &#39;436&#39;,
+ &#39;437&#39;,
+ &#39;438&#39;,
+ &#39;439&#39;,
+ &#39;440&#39;,
+ &#39;441&#39;,
+ &#39;442&#39;,
+ &#39;443&#39;,
+ &#39;444&#39;,
+ &#39;445&#39;,
+ &#39;446&#39;,
+ &#39;447&#39;,
+ &#39;448&#39;,
+ &#39;449&#39;,
+ &#39;450&#39;,
+ &#39;451&#39;,
+ &#39;452&#39;,
+ &#39;453&#39;,
+ &#39;454&#39;,
+ &#39;455&#39;,
+ &#39;456&#39;,
+ &#39;457&#39;,
+ &#39;458&#39;,
+ &#39;459&#39;,
+ &#39;460&#39;,
+ &#39;461&#39;,
+ &#39;462&#39;,
+ &#39;463&#39;,
+ &#39;464&#39;,
+ &#39;465&#39;,
+ &#39;466&#39;,
+ &#39;467&#39;,
+ &#39;468&#39;,
+ &#39;469&#39;,
+ &#39;470&#39;,
+ &#39;471&#39;,
+ &#39;472&#39;,
+ &#39;473&#39;,
+ &#39;474&#39;,
+ &#39;475&#39;,
+ &#39;476&#39;,
+ &#39;477&#39;,
+ &#39;478&#39;,
+ &#39;479&#39;,
+ &#39;480&#39;,
+ &#39;481&#39;,
+ &#39;482&#39;,
+ &#39;483&#39;,
+ &#39;484&#39;,
+ &#39;485&#39;,
+ &#39;486&#39;,
+ &#39;487&#39;,
+ &#39;488&#39;,
+ &#39;489&#39;,
+ &#39;490&#39;,
+ &#39;491&#39;,
+ &#39;492&#39;,
+ &#39;493&#39;,
+ &#39;494&#39;,
+ &#39;495&#39;,
+ &#39;496&#39;,
+ &#39;497&#39;,
+ &#39;498&#39;,
+ &#39;499&#39;,
+ &#39;500&#39;,
+ &#39;501&#39;,
+ &#39;502&#39;,
+ &#39;503&#39;,
+ &#39;504&#39;,
+ &#39;505&#39;,
+ &#39;506&#39;,
+ &#39;507&#39;,
+ &#39;508&#39;,
+ &#39;509&#39;,
+ &#39;510&#39;,
+ &#39;511&#39;,
+ &#39;512&#39;,
+ &#39;513&#39;,
+ &#39;514&#39;,
+ &#39;515&#39;,
+ &#39;516&#39;,
+ &#39;517&#39;,
+ &#39;518&#39;,
+ &#39;519&#39;,
+ &#39;520&#39;,
+ &#39;521&#39;,
+ &#39;522&#39;,
+ &#39;523&#39;,
+ &#39;524&#39;,
+ &#39;525&#39;,
+ &#39;526&#39;,
+ &#39;527&#39;,
+ &#39;528&#39;,
+ &#39;529&#39;,
+ &#39;530&#39;,
+ &#39;531&#39;,
+ &#39;532&#39;,
+ &#39;533&#39;,
+ &#39;534&#39;,
+ &#39;535&#39;,
+ &#39;536&#39;,
+ &#39;537&#39;,
+ &#39;538&#39;,
+ &#39;539&#39;,
+ &#39;540&#39;,
+ &#39;541&#39;,
+ &#39;542&#39;,
+ &#39;543&#39;,
+ &#39;544&#39;,
+ &#39;545&#39;,
+ &#39;546&#39;,
+ &#39;547&#39;,
+ &#39;548&#39;,
+ &#39;549&#39;,
+ &#39;550&#39;,
+ &#39;551&#39;,
+ &#39;552&#39;,
+ &#39;553&#39;,
+ &#39;554&#39;,
+ &#39;555&#39;,
+ &#39;556&#39;,
+ &#39;557&#39;,
+ &#39;558&#39;,
+ &#39;559&#39;,
+ &#39;560&#39;,
+ &#39;561&#39;,
+ &#39;562&#39;,
+ &#39;563&#39;,
+ &#39;564&#39;,
+ &#39;565&#39;,
+ &#39;566&#39;,
+ &#39;567&#39;,
+ &#39;568&#39;,
+ &#39;569&#39;,
+ &#39;570&#39;,
+ &#39;571&#39;,
+ &#39;572&#39;,
+ &#39;573&#39;,
+ &#39;574&#39;,
+ &#39;575&#39;,
+ &#39;576&#39;,
+ &#39;577&#39;,
+ &#39;578&#39;,
+ &#39;579&#39;,
+ &#39;580&#39;,
+ &#39;581&#39;,
+ &#39;582&#39;,
+ &#39;583&#39;,
+ &#39;584&#39;,
+ &#39;585&#39;,
+ &#39;586&#39;,
+ &#39;587&#39;,
+ &#39;588&#39;,
+ &#39;589&#39;,
+ &#39;590&#39;,
+ &#39;591&#39;,
+ &#39;592&#39;,
+ &#39;593&#39;,
+ &#39;594&#39;,
+ &#39;595&#39;,
+ &#39;596&#39;,
+ &#39;597&#39;,
+ &#39;598&#39;,
+ &#39;599&#39;,
+ &#39;600&#39;,
+ &#39;601&#39;,
+ &#39;602&#39;,
+ &#39;603&#39;,
+ &#39;604&#39;,
+ &#39;605&#39;,
+ &#39;606&#39;,
+ &#39;607&#39;,
+ &#39;608&#39;,
+ &#39;609&#39;,
+ &#39;610&#39;,
+ &#39;611&#39;,
+ &#39;612&#39;,
+ &#39;613&#39;,
+ &#39;614&#39;,
+ &#39;615&#39;,
+ &#39;616&#39;,
+ &#39;617&#39;,
+ &#39;618&#39;,
+ &#39;619&#39;,
+ &#39;620&#39;,
+ &#39;621&#39;,
+ &#39;622&#39;,
+ &#39;623&#39;,
+ &#39;624&#39;,
+ &#39;625&#39;,
+ &#39;626&#39;,
+ &#39;627&#39;,
+ &#39;628&#39;,
+ &#39;629&#39;,
+ &#39;630&#39;,
+ &#39;631&#39;,
+ &#39;632&#39;,
+ &#39;633&#39;,
+ &#39;634&#39;,
+ &#39;635&#39;,
+ &#39;636&#39;,
+ &#39;637&#39;,
+ &#39;638&#39;,
+ &#39;639&#39;,
+ &#39;640&#39;,
+ &#39;641&#39;,
+ &#39;642&#39;,
+ &#39;643&#39;,
+ &#39;644&#39;,
+ &#39;645&#39;,
+ &#39;646&#39;,
+ &#39;647&#39;,
+ &#39;648&#39;,
+ &#39;649&#39;,
+ &#39;650&#39;,
+ &#39;651&#39;,
+ &#39;652&#39;,
+ &#39;653&#39;,
+ &#39;654&#39;,
+ &#39;655&#39;,
+ &#39;656&#39;,
+ &#39;657&#39;,
+ &#39;658&#39;,
+ &#39;659&#39;,
+ &#39;660&#39;,
+ &#39;661&#39;,
+ &#39;662&#39;,
+ &#39;663&#39;,
+ &#39;664&#39;,
+ &#39;665&#39;,
+ &#39;666&#39;,
+ &#39;667&#39;,
+ &#39;668&#39;,
+ &#39;669&#39;,
+ &#39;670&#39;,
+ &#39;671&#39;,
+ &#39;672&#39;,
+ &#39;673&#39;,
+ &#39;674&#39;,
+ &#39;675&#39;,
+ &#39;676&#39;,
+ &#39;677&#39;,
+ &#39;678&#39;,
+ &#39;679&#39;,
+ &#39;680&#39;,
+ &#39;681&#39;,
+ &#39;682&#39;,
+ &#39;683&#39;,
+ &#39;684&#39;,
+ &#39;685&#39;,
+ &#39;686&#39;,
+ &#39;687&#39;,
+ &#39;688&#39;,
+ &#39;689&#39;,
+ &#39;690&#39;,
+ &#39;691&#39;,
+ &#39;692&#39;,
+ &#39;693&#39;,
+ &#39;694&#39;,
+ &#39;695&#39;,
+ &#39;696&#39;,
+ &#39;697&#39;,
+ &#39;698&#39;,
+ &#39;699&#39;,
+ &#39;700&#39;,
+ &#39;701&#39;,
+ &#39;702&#39;,
+ &#39;703&#39;,
+ &#39;704&#39;,
+ &#39;705&#39;,
+ &#39;706&#39;,
+ &#39;707&#39;,
+ &#39;708&#39;,
+ &#39;709&#39;,
+ &#39;710&#39;,
+ &#39;711&#39;,
+ &#39;712&#39;,
+ &#39;713&#39;,
+ &#39;714&#39;,
+ &#39;715&#39;,
+ &#39;716&#39;,
+ &#39;717&#39;,
+ &#39;718&#39;,
+ &#39;719&#39;,
+ &#39;720&#39;,
+ &#39;721&#39;,
+ &#39;722&#39;,
+ &#39;723&#39;,
+ &#39;724&#39;,
+ &#39;725&#39;,
+ &#39;726&#39;,
+ &#39;727&#39;,
+ &#39;728&#39;,
+ &#39;729&#39;,
+ &#39;730&#39;,
+ &#39;731&#39;,
+ &#39;732&#39;,
+ &#39;733&#39;,
+ &#39;734&#39;,
+ &#39;735&#39;,
+ &#39;736&#39;,
+ &#39;737&#39;,
+ &#39;738&#39;,
+ &#39;739&#39;,
+ &#39;740&#39;,
+ &#39;741&#39;,
+ &#39;742&#39;,
+ &#39;743&#39;,
+ &#39;744&#39;,
+ &#39;745&#39;,
+ &#39;746&#39;,
+ &#39;747&#39;,
+ &#39;748&#39;,
+ &#39;749&#39;,
+ &#39;750&#39;,
+ &#39;751&#39;,
+ &#39;752&#39;,
+ &#39;753&#39;,
+ &#39;754&#39;,
+ &#39;755&#39;,
+ &#39;756&#39;,
+ &#39;757&#39;,
+ &#39;758&#39;,
+ &#39;759&#39;,
+ &#39;760&#39;,
+ &#39;761&#39;,
+ &#39;762&#39;,
+ &#39;763&#39;,
+ &#39;764&#39;,
+ &#39;765&#39;,
+ &#39;766&#39;,
+ &#39;767&#39;,
+ &#39;768&#39;,
+ &#39;769&#39;,
+ &#39;770&#39;,
+ &#39;771&#39;,
+ &#39;772&#39;,
+ &#39;773&#39;,
+ &#39;774&#39;,
+ &#39;775&#39;,
+ &#39;776&#39;,
+ &#39;777&#39;,
+ &#39;778&#39;,
+ &#39;779&#39;,
+ &#39;780&#39;,
+ &#39;781&#39;,
+ &#39;782&#39;,
+ &#39;783&#39;,
+ &#39;784&#39;,
+ &#39;785&#39;,
+ &#39;786&#39;,
+ &#39;787&#39;,
+ &#39;788&#39;,
+ &#39;789&#39;,
+ &#39;790&#39;,
+ &#39;791&#39;,
+ &#39;792&#39;,
+ &#39;793&#39;,
+ &#39;794&#39;,
+ &#39;795&#39;,
+ &#39;796&#39;,
+ &#39;797&#39;,
+ &#39;798&#39;,
+ &#39;799&#39;,
+ &#39;800&#39;,
+ &#39;801&#39;,
+ &#39;802&#39;,
+ &#39;803&#39;,
+ &#39;804&#39;,
+ &#39;805&#39;,
+ &#39;806&#39;,
+ &#39;807&#39;,
+ &#39;808&#39;,
+ &#39;809&#39;,
+ &#39;810&#39;,
+ &#39;811&#39;,
+ &#39;812&#39;,
+ &#39;813&#39;,
+ &#39;814&#39;,
+ &#39;815&#39;,
+ &#39;816&#39;,
+ &#39;817&#39;,
+ &#39;818&#39;,
+ &#39;819&#39;,
+ &#39;820&#39;,
+ &#39;821&#39;,
+ &#39;822&#39;,
+ &#39;823&#39;,
+ &#39;824&#39;,
+ &#39;825&#39;,
+ &#39;826&#39;,
+ &#39;827&#39;,
+ &#39;828&#39;,
+ &#39;829&#39;,
+ &#39;830&#39;,
+ &#39;831&#39;,
+ &#39;832&#39;,
+ &#39;833&#39;,
+ &#39;834&#39;,
+ &#39;835&#39;,
+ &#39;836&#39;,
+ &#39;837&#39;,
+ &#39;838&#39;,
+ &#39;839&#39;,
+ &#39;840&#39;,
+ &#39;841&#39;,
+ &#39;842&#39;,
+ &#39;843&#39;,
+ &#39;844&#39;,
+ &#39;845&#39;,
+ &#39;846&#39;,
+ &#39;847&#39;,
+ &#39;848&#39;,
+ &#39;849&#39;,
+ &#39;850&#39;,
+ &#39;851&#39;,
+ &#39;852&#39;,
+ &#39;853&#39;,
+ &#39;854&#39;,
+ &#39;855&#39;,
+ &#39;856&#39;,
+ &#39;857&#39;,
+ &#39;858&#39;,
+ &#39;859&#39;,
+ &#39;860&#39;,
+ &#39;861&#39;,
+ &#39;862&#39;,
+ &#39;863&#39;,
+ &#39;864&#39;,
+ &#39;865&#39;,
+ &#39;866&#39;,
+ &#39;867&#39;,
+ &#39;868&#39;,
+ &#39;869&#39;,
+ &#39;870&#39;,
+ &#39;871&#39;,
+ &#39;872&#39;,
+ &#39;873&#39;,
+ &#39;874&#39;,
+ &#39;875&#39;,
+ &#39;876&#39;,
+ &#39;877&#39;,
+ &#39;878&#39;,
+ &#39;879&#39;,
+ &#39;880&#39;,
+ &#39;881&#39;,
+ &#39;882&#39;,
+ &#39;883&#39;,
+ &#39;884&#39;,
+ &#39;885&#39;,
+ &#39;886&#39;,
+ &#39;887&#39;,
+ &#39;888&#39;,
+ &#39;889&#39;,
+ &#39;890&#39;,
+ &#39;891&#39;,
+ &#39;892&#39;,
+ &#39;893&#39;,
+ &#39;894&#39;,
+ &#39;895&#39;,
+ &#39;896&#39;,
+ &#39;897&#39;,
+ &#39;898&#39;,
+ &#39;899&#39;,
+ &#39;900&#39;,
+ &#39;901&#39;,
+ &#39;902&#39;,
+ &#39;903&#39;,
+ &#39;904&#39;,
+ &#39;905&#39;,
+ &#39;906&#39;,
+ &#39;907&#39;,
+ &#39;908&#39;,
+ &#39;909&#39;,
+ &#39;910&#39;,
+ &#39;911&#39;,
+ &#39;912&#39;,
+ &#39;913&#39;,
+ &#39;914&#39;,
+ &#39;915&#39;,
+ &#39;916&#39;,
+ &#39;917&#39;,
+ &#39;918&#39;,
+ &#39;919&#39;,
+ &#39;920&#39;,
+ &#39;921&#39;,
+ &#39;922&#39;,
+ &#39;923&#39;,
+ &#39;924&#39;,
+ &#39;925&#39;,
+ &#39;926&#39;,
+ &#39;927&#39;,
+ &#39;928&#39;,
+ &#39;929&#39;,
+ &#39;930&#39;,
+ &#39;931&#39;,
+ &#39;932&#39;,
+ &#39;933&#39;,
+ &#39;934&#39;,
+ &#39;935&#39;,
+ &#39;936&#39;,
+ &#39;937&#39;,
+ &#39;938&#39;,
+ &#39;939&#39;,
+ &#39;940&#39;,
+ &#39;941&#39;,
+ &#39;942&#39;,
+ &#39;943&#39;,
+ &#39;944&#39;,
+ &#39;945&#39;,
+ &#39;946&#39;,
+ &#39;947&#39;,
+ &#39;948&#39;,
+ &#39;949&#39;,
+ &#39;950&#39;,
+ &#39;951&#39;,
+ &#39;952&#39;,
+ &#39;953&#39;,
+ &#39;954&#39;,
+ &#39;955&#39;,
+ &#39;956&#39;,
+ &#39;957&#39;,
+ &#39;958&#39;,
+ &#39;959&#39;,
+ &#39;960&#39;,
+ &#39;961&#39;,
+ &#39;962&#39;,
+ &#39;963&#39;,
+ &#39;964&#39;,
+ &#39;965&#39;,
+ &#39;966&#39;,
+ &#39;967&#39;,
+ &#39;968&#39;,
+ &#39;969&#39;,
+ &#39;970&#39;,
+ &#39;971&#39;,
+ &#39;972&#39;,
+ &#39;973&#39;,
+ &#39;974&#39;,
+ &#39;975&#39;,
+ &#39;976&#39;,
+ &#39;977&#39;,
+ &#39;978&#39;,
+ &#39;979&#39;,
+ &#39;980&#39;,
+ &#39;981&#39;,
+ &#39;982&#39;,
+ &#39;983&#39;,
+ &#39;984&#39;,
+ &#39;985&#39;,
+ &#39;986&#39;,
+ &#39;987&#39;,
+ &#39;988&#39;,
+ &#39;989&#39;,
+ &#39;990&#39;,
+ &#39;991&#39;,
+ &#39;992&#39;,
+ &#39;993&#39;,
+ &#39;994&#39;,
+ &#39;995&#39;,
+ &#39;996&#39;,
+ &#39;997&#39;,
+ &#39;998&#39;,
+ &#39;999&#39;,
+ ...]
+</pre></div></div>
+</div>
+<p>By adopting <code class="docutils literal notranslate"><span class="pre">id_from_image_name</span></code>, we can rollback the <code class="docutils literal notranslate"><span class="pre">media_id</span></code> to be the media name.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rollback_dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s2">&quot;id_from_image_name&quot;</span><span class="p">)</span>
+<span class="n">get_ids</span><span class="p">(</span><span class="n">rollback_dataset</span><span class="p">,</span> <span class="n">subsets</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;000000397133&#39;,
+ &#39;000000037777&#39;,
+ &#39;000000252219&#39;,
+ &#39;000000087038&#39;,
+ &#39;000000174482&#39;,
+ &#39;000000403385&#39;,
+ &#39;000000006818&#39;,
+ &#39;000000480985&#39;,
+ &#39;000000458054&#39;,
+ &#39;000000331352&#39;,
+ &#39;000000296649&#39;,
+ &#39;000000386912&#39;,
+ &#39;000000502136&#39;,
+ &#39;000000491497&#39;,
+ &#39;000000184791&#39;,
+ &#39;000000348881&#39;,
+ &#39;000000289393&#39;,
+ &#39;000000522713&#39;,
+ &#39;000000181666&#39;,
+ &#39;000000017627&#39;,
+ &#39;000000143931&#39;,
+ &#39;000000303818&#39;,
+ &#39;000000463730&#39;,
+ &#39;000000460347&#39;,
+ &#39;000000322864&#39;,
+ &#39;000000226111&#39;,
+ &#39;000000153299&#39;,
+ &#39;000000308394&#39;,
+ &#39;000000456496&#39;,
+ &#39;000000058636&#39;,
+ &#39;000000041888&#39;,
+ &#39;000000184321&#39;,
+ &#39;000000565778&#39;,
+ &#39;000000297343&#39;,
+ &#39;000000336587&#39;,
+ &#39;000000122745&#39;,
+ &#39;000000219578&#39;,
+ &#39;000000555705&#39;,
+ &#39;000000443303&#39;,
+ &#39;000000500663&#39;,
+ &#39;000000418281&#39;,
+ &#39;000000025560&#39;,
+ &#39;000000403817&#39;,
+ &#39;000000085329&#39;,
+ &#39;000000329323&#39;,
+ &#39;000000239274&#39;,
+ &#39;000000286994&#39;,
+ &#39;000000511321&#39;,
+ &#39;000000314294&#39;,
+ &#39;000000233771&#39;,
+ &#39;000000475779&#39;,
+ &#39;000000301867&#39;,
+ &#39;000000312421&#39;,
+ &#39;000000185250&#39;,
+ &#39;000000356427&#39;,
+ &#39;000000572517&#39;,
+ &#39;000000270244&#39;,
+ &#39;000000516316&#39;,
+ &#39;000000125211&#39;,
+ &#39;000000562121&#39;,
+ &#39;000000360661&#39;,
+ &#39;000000016228&#39;,
+ &#39;000000382088&#39;,
+ &#39;000000266409&#39;,
+ &#39;000000430961&#39;,
+ &#39;000000080671&#39;,
+ &#39;000000577539&#39;,
+ &#39;000000104612&#39;,
+ &#39;000000476258&#39;,
+ &#39;000000448365&#39;,
+ &#39;000000035197&#39;,
+ &#39;000000349860&#39;,
+ &#39;000000180135&#39;,
+ &#39;000000486438&#39;,
+ &#39;000000400573&#39;,
+ &#39;000000109798&#39;,
+ &#39;000000370677&#39;,
+ &#39;000000238866&#39;,
+ &#39;000000369370&#39;,
+ &#39;000000502737&#39;,
+ &#39;000000515579&#39;,
+ &#39;000000515445&#39;,
+ &#39;000000173383&#39;,
+ &#39;000000438862&#39;,
+ &#39;000000180560&#39;,
+ &#39;000000347693&#39;,
+ &#39;000000039956&#39;,
+ &#39;000000321214&#39;,
+ &#39;000000474028&#39;,
+ &#39;000000066523&#39;,
+ &#39;000000355257&#39;,
+ &#39;000000142092&#39;,
+ &#39;000000063154&#39;,
+ &#39;000000199551&#39;,
+ &#39;000000239347&#39;,
+ &#39;000000514508&#39;,
+ &#39;000000473237&#39;,
+ &#39;000000228144&#39;,
+ &#39;000000206027&#39;,
+ &#39;000000078915&#39;,
+ &#39;000000551215&#39;,
+ &#39;000000544519&#39;,
+ &#39;000000096493&#39;,
+ &#39;000000023899&#39;,
+ &#39;000000340175&#39;,
+ &#39;000000578500&#39;,
+ &#39;000000366141&#39;,
+ &#39;000000057597&#39;,
+ &#39;000000559842&#39;,
+ &#39;000000434230&#39;,
+ &#39;000000428454&#39;,
+ &#39;000000399462&#39;,
+ &#39;000000261061&#39;,
+ &#39;000000168330&#39;,
+ &#39;000000383384&#39;,
+ &#39;000000342006&#39;,
+ &#39;000000217285&#39;,
+ &#39;000000236412&#39;,
+ &#39;000000524456&#39;,
+ &#39;000000153343&#39;,
+ &#39;000000095786&#39;,
+ &#39;000000326541&#39;,
+ &#39;000000213086&#39;,
+ &#39;000000231339&#39;,
+ &#39;000000508730&#39;,
+ &#39;000000550426&#39;,
+ &#39;000000368294&#39;,
+ &#39;000000171190&#39;,
+ &#39;000000301135&#39;,
+ &#39;000000580294&#39;,
+ &#39;000000494869&#39;,
+ &#39;000000033638&#39;,
+ &#39;000000329219&#39;,
+ &#39;000000034873&#39;,
+ &#39;000000186980&#39;,
+ &#39;000000127182&#39;,
+ &#39;000000356387&#39;,
+ &#39;000000367680&#39;,
+ &#39;000000263796&#39;,
+ &#39;000000117425&#39;,
+ &#39;000000365387&#39;,
+ &#39;000000487583&#39;,
+ &#39;000000504711&#39;,
+ &#39;000000363840&#39;,
+ &#39;000000214720&#39;,
+ &#39;000000379453&#39;,
+ &#39;000000311295&#39;,
+ &#39;000000029393&#39;,
+ &#39;000000278848&#39;,
+ &#39;000000166391&#39;,
+ &#39;000000048153&#39;,
+ &#39;000000459153&#39;,
+ &#39;000000295713&#39;,
+ &#39;000000223130&#39;,
+ &#39;000000273132&#39;,
+ &#39;000000198960&#39;,
+ &#39;000000344059&#39;,
+ &#39;000000410428&#39;,
+ &#39;000000087875&#39;,
+ &#39;000000450758&#39;,
+ &#39;000000458790&#39;,
+ &#39;000000460160&#39;,
+ &#39;000000458109&#39;,
+ &#39;000000030675&#39;,
+ &#39;000000566524&#39;,
+ &#39;000000338428&#39;,
+ &#39;000000545826&#39;,
+ &#39;000000166277&#39;,
+ &#39;000000269314&#39;,
+ &#39;000000476415&#39;,
+ &#39;000000292082&#39;,
+ &#39;000000360137&#39;,
+ &#39;000000122046&#39;,
+ &#39;000000352684&#39;,
+ &#39;000000512836&#39;,
+ &#39;000000008021&#39;,
+ &#39;000000107226&#39;,
+ &#39;000000084477&#39;,
+ &#39;000000562243&#39;,
+ &#39;000000181859&#39;,
+ &#39;000000177015&#39;,
+ &#39;000000292236&#39;,
+ &#39;000000121506&#39;,
+ &#39;000000288042&#39;,
+ &#39;000000453860&#39;,
+ &#39;000000500257&#39;,
+ &#39;000000113403&#39;,
+ &#39;000000125062&#39;,
+ &#39;000000375015&#39;,
+ &#39;000000334719&#39;,
+ &#39;000000134112&#39;,
+ &#39;000000283520&#39;,
+ &#39;000000031269&#39;,
+ &#39;000000319721&#39;,
+ &#39;000000165351&#39;,
+ &#39;000000347265&#39;,
+ &#39;000000414170&#39;,
+ &#39;000000231508&#39;,
+ &#39;000000389381&#39;,
+ &#39;000000118921&#39;,
+ &#39;000000021503&#39;,
+ &#39;000000000785&#39;,
+ &#39;000000300842&#39;,
+ &#39;000000105014&#39;,
+ &#39;000000261982&#39;,
+ &#39;000000034205&#39;,
+ &#39;000000099242&#39;,
+ &#39;000000314709&#39;,
+ &#39;000000460494&#39;,
+ &#39;000000339442&#39;,
+ &#39;000000541055&#39;,
+ &#39;000000409475&#39;,
+ &#39;000000464786&#39;,
+ &#39;000000378605&#39;,
+ &#39;000000331817&#39;,
+ &#39;000000218091&#39;,
+ &#39;000000578545&#39;,
+ &#39;000000363207&#39;,
+ &#39;000000372577&#39;,
+ &#39;000000212166&#39;,
+ &#39;000000172571&#39;,
+ &#39;000000294831&#39;,
+ &#39;000000084431&#39;,
+ &#39;000000323355&#39;,
+ &#39;000000355325&#39;,
+ &#39;000000100582&#39;,
+ &#39;000000555412&#39;,
+ &#39;000000004495&#39;,
+ &#39;000000009483&#39;,
+ &#39;000000326082&#39;,
+ &#39;000000398237&#39;,
+ &#39;000000507223&#39;,
+ &#39;000000031050&#39;,
+ &#39;000000239537&#39;,
+ &#39;000000340930&#39;,
+ &#39;000000011813&#39;,
+ &#39;000000281414&#39;,
+ &#39;000000537991&#39;,
+ &#39;000000284282&#39;,
+ &#39;000000321333&#39;,
+ &#39;000000521282&#39;,
+ &#39;000000108026&#39;,
+ &#39;000000243204&#39;,
+ &#39;000000177935&#39;,
+ &#39;000000038829&#39;,
+ &#39;000000397327&#39;,
+ &#39;000000501523&#39;,
+ &#39;000000555050&#39;,
+ &#39;000000376442&#39;,
+ &#39;000000187243&#39;,
+ &#39;000000356347&#39;,
+ &#39;000000293044&#39;,
+ &#39;000000560279&#39;,
+ &#39;000000042276&#39;,
+ &#39;000000534827&#39;,
+ &#39;000000190756&#39;,
+ &#39;000000482917&#39;,
+ &#39;000000300659&#39;,
+ &#39;000000199977&#39;,
+ &#39;000000442480&#39;,
+ &#39;000000384350&#39;,
+ &#39;000000383621&#39;,
+ &#39;000000189828&#39;,
+ &#39;000000412894&#39;,
+ &#39;000000537153&#39;,
+ &#39;000000361103&#39;,
+ &#39;000000392722&#39;,
+ &#39;000000338560&#39;,
+ &#39;000000264535&#39;,
+ &#39;000000295231&#39;,
+ &#39;000000154947&#39;,
+ &#39;000000212559&#39;,
+ &#39;000000458755&#39;,
+ &#39;000000104782&#39;,
+ &#39;000000315257&#39;,
+ &#39;000000130599&#39;,
+ &#39;000000227187&#39;,
+ &#39;000000151662&#39;,
+ &#39;000000461275&#39;,
+ &#39;000000523811&#39;,
+ &#39;000000456559&#39;,
+ &#39;000000101068&#39;,
+ &#39;000000140640&#39;,
+ &#39;000000516708&#39;,
+ &#39;000000544605&#39;,
+ &#39;000000385190&#39;,
+ &#39;000000338986&#39;,
+ &#39;000000053994&#39;,
+ &#39;000000061171&#39;,
+ &#39;000000314034&#39;,
+ &#39;000000291490&#39;,
+ &#39;000000152740&#39;,
+ &#39;000000024919&#39;,
+ &#39;000000079837&#39;,
+ &#39;000000021903&#39;,
+ &#39;000000564133&#39;,
+ &#39;000000337055&#39;,
+ &#39;000000110638&#39;,
+ &#39;000000034139&#39;,
+ &#39;000000080340&#39;,
+ &#39;000000083113&#39;,
+ &#39;000000173033&#39;,
+ &#39;000000255664&#39;,
+ &#39;000000072813&#39;,
+ &#39;000000545129&#39;,
+ &#39;000000546011&#39;,
+ &#39;000000121031&#39;,
+ &#39;000000172547&#39;,
+ &#39;000000369081&#39;,
+ &#39;000000509131&#39;,
+ &#39;000000578922&#39;,
+ &#39;000000464089&#39;,
+ &#39;000000453708&#39;,
+ &#39;000000177714&#39;,
+ &#39;000000459887&#39;,
+ &#39;000000155179&#39;,
+ &#39;000000261116&#39;,
+ &#39;000000396274&#39;,
+ &#39;000000029640&#39;,
+ &#39;000000141328&#39;,
+ &#39;000000308430&#39;,
+ &#39;000000043314&#39;,
+ &#39;000000273715&#39;,
+ &#39;000000456303&#39;,
+ &#39;000000406611&#39;,
+ &#39;000000475064&#39;,
+ &#39;000000466567&#39;,
+ &#39;000000137246&#39;,
+ &#39;000000015079&#39;,
+ &#39;000000296284&#39;,
+ &#39;000000226147&#39;,
+ &#39;000000226903&#39;,
+ &#39;000000127517&#39;,
+ &#39;000000162092&#39;,
+ &#39;000000131379&#39;,
+ &#39;000000366611&#39;,
+ &#39;000000263969&#39;,
+ &#39;000000551439&#39;,
+ &#39;000000474167&#39;,
+ &#39;000000159458&#39;,
+ &#39;000000554735&#39;,
+ &#39;000000099428&#39;,
+ &#39;000000386352&#39;,
+ &#39;000000173004&#39;,
+ &#39;000000311394&#39;,
+ &#39;000000578489&#39;,
+ &#39;000000189310&#39;,
+ &#39;000000491366&#39;,
+ &#39;000000448076&#39;,
+ &#39;000000293804&#39;,
+ &#39;000000312237&#39;,
+ &#39;000000221291&#39;,
+ &#39;000000141821&#39;,
+ &#39;000000410650&#39;,
+ &#39;000000199310&#39;,
+ &#39;000000323151&#39;,
+ &#39;000000089648&#39;,
+ &#39;000000219283&#39;,
+ &#39;000000471869&#39;,
+ &#39;000000520264&#39;,
+ &#39;000000111179&#39;,
+ &#39;000000151000&#39;,
+ &#39;000000100624&#39;,
+ &#39;000000332570&#39;,
+ &#39;000000057238&#39;,
+ &#39;000000502732&#39;,
+ &#39;000000135561&#39;,
+ &#39;000000008277&#39;,
+ &#39;000000173044&#39;,
+ &#39;000000168458&#39;,
+ &#39;000000512194&#39;,
+ &#39;000000370042&#39;,
+ &#39;000000189436&#39;,
+ &#39;000000533958&#39;,
+ &#39;000000117645&#39;,
+ &#39;000000221708&#39;,
+ &#39;000000202228&#39;,
+ &#39;000000403565&#39;,
+ &#39;000000211042&#39;,
+ &#39;000000492878&#39;,
+ &#39;000000441586&#39;,
+ &#39;000000547816&#39;,
+ &#39;000000306733&#39;,
+ &#39;000000530099&#39;,
+ &#39;000000312278&#39;,
+ &#39;000000097679&#39;,
+ &#39;000000564127&#39;,
+ &#39;000000251065&#39;,
+ &#39;000000003845&#39;,
+ &#39;000000138819&#39;,
+ &#39;000000205834&#39;,
+ &#39;000000348708&#39;,
+ &#39;000000166521&#39;,
+ &#39;000000485802&#39;,
+ &#39;000000099054&#39;,
+ &#39;000000022969&#39;,
+ &#39;000000570539&#39;,
+ &#39;000000278353&#39;,
+ &#39;000000158548&#39;,
+ &#39;000000461405&#39;,
+ &#39;000000176606&#39;,
+ &#39;000000044699&#39;,
+ &#39;000000559956&#39;,
+ &#39;000000268996&#39;,
+ &#39;000000011197&#39;,
+ &#39;000000483667&#39;,
+ &#39;000000448810&#39;,
+ &#39;000000000724&#39;,
+ &#39;000000051961&#39;,
+ &#39;000000375278&#39;,
+ &#39;000000302165&#39;,
+ &#39;000000131131&#39;,
+ &#39;000000098839&#39;,
+ &#39;000000402992&#39;,
+ &#39;000000465675&#39;,
+ &#39;000000240754&#39;,
+ &#39;000000021167&#39;,
+ &#39;000000148730&#39;,
+ &#39;000000384468&#39;,
+ &#39;000000253742&#39;,
+ &#39;000000186873&#39;,
+ &#39;000000082180&#39;,
+ &#39;000000446522&#39;,
+ &#39;000000552902&#39;,
+ &#39;000000125405&#39;,
+ &#39;000000110211&#39;,
+ &#39;000000016010&#39;,
+ &#39;000000064462&#39;,
+ &#39;000000314182&#39;,
+ &#39;000000248980&#39;,
+ &#39;000000068387&#39;,
+ &#39;000000429281&#39;,
+ &#39;000000345466&#39;,
+ &#39;000000352900&#39;,
+ &#39;000000118367&#39;,
+ &#39;000000113235&#39;,
+ &#39;000000311303&#39;,
+ &#39;000000163640&#39;,
+ &#39;000000370999&#39;,
+ &#39;000000001490&#39;,
+ &#39;000000329456&#39;,
+ &#39;000000570471&#39;,
+ &#39;000000088269&#39;,
+ &#39;000000260470&#39;,
+ &#39;000000193494&#39;,
+ &#39;000000252776&#39;,
+ &#39;000000201072&#39;,
+ &#39;000000018150&#39;,
+ &#39;000000337498&#39;,
+ &#39;000000521405&#39;,
+ &#39;000000518770&#39;,
+ &#39;000000201646&#39;,
+ &#39;000000036936&#39;,
+ &#39;000000059044&#39;,
+ &#39;000000172946&#39;,
+ &#39;000000234607&#39;,
+ &#39;000000532690&#39;,
+ &#39;000000323895&#39;,
+ &#39;000000384670&#39;,
+ &#39;000000050326&#39;,
+ &#39;000000205542&#39;,
+ &#39;000000217957&#39;,
+ &#39;000000162035&#39;,
+ &#39;000000415727&#39;,
+ &#39;000000046252&#39;,
+ &#39;000000182021&#39;,
+ &#39;000000231747&#39;,
+ &#39;000000090284&#39;,
+ &#39;000000286553&#39;,
+ &#39;000000488736&#39;,
+ &#39;000000063602&#39;,
+ &#39;000000383386&#39;,
+ &#39;000000450686&#39;,
+ &#39;000000005060&#39;,
+ &#39;000000286523&#39;,
+ &#39;000000120420&#39;,
+ &#39;000000579655&#39;,
+ &#39;000000117908&#39;,
+ &#39;000000550322&#39;,
+ &#39;000000322844&#39;,
+ &#39;000000218362&#39;,
+ &#39;000000213224&#39;,
+ &#39;000000223747&#39;,
+ &#39;000000297578&#39;,
+ &#39;000000458992&#39;,
+ &#39;000000078266&#39;,
+ &#39;000000164602&#39;,
+ &#39;000000440475&#39;,
+ &#39;000000101762&#39;,
+ &#39;000000557501&#39;,
+ &#39;000000203317&#39;,
+ &#39;000000368940&#39;,
+ &#39;000000569917&#39;,
+ &#39;000000144798&#39;,
+ &#39;000000284623&#39;,
+ &#39;000000520301&#39;,
+ &#39;000000127987&#39;,
+ &#39;000000063740&#39;,
+ &#39;000000036494&#39;,
+ &#39;000000210032&#39;,
+ &#39;000000488270&#39;,
+ &#39;000000067180&#39;,
+ &#39;000000281179&#39;,
+ &#39;000000064359&#39;,
+ &#39;000000126226&#39;,
+ &#39;000000190923&#39;,
+ &#39;000000150265&#39;,
+ &#39;000000216739&#39;,
+ &#39;000000038048&#39;,
+ &#39;000000354829&#39;,
+ &#39;000000525155&#39;,
+ &#39;000000163314&#39;,
+ &#39;000000259571&#39;,
+ &#39;000000561679&#39;,
+ &#39;000000236166&#39;,
+ &#39;000000153529&#39;,
+ &#39;000000473015&#39;,
+ &#39;000000379800&#39;,
+ &#39;000000253835&#39;,
+ &#39;000000034071&#39;,
+ &#39;000000036861&#39;,
+ &#39;000000569565&#39;,
+ &#39;000000219271&#39;,
+ &#39;000000205647&#39;,
+ &#39;000000460841&#39;,
+ &#39;000000123131&#39;,
+ &#39;000000334006&#39;,
+ &#39;000000511599&#39;,
+ &#39;000000229858&#39;,
+ &#39;000000174004&#39;,
+ &#39;000000519764&#39;,
+ &#39;000000137576&#39;,
+ &#39;000000087470&#39;,
+ &#39;000000009769&#39;,
+ &#39;000000558114&#39;,
+ &#39;000000205776&#39;,
+ &#39;000000163257&#39;,
+ &#39;000000475678&#39;,
+ &#39;000000085478&#39;,
+ &#39;000000318080&#39;,
+ &#39;000000361551&#39;,
+ &#39;000000236784&#39;,
+ &#39;000000092839&#39;,
+ &#39;000000042296&#39;,
+ &#39;000000560266&#39;,
+ &#39;000000486479&#39;,
+ &#39;000000127955&#39;,
+ &#39;000000307658&#39;,
+ &#39;000000417465&#39;,
+ &#39;000000342971&#39;,
+ &#39;000000011760&#39;,
+ &#39;000000069106&#39;,
+ &#39;000000070158&#39;,
+ &#39;000000176634&#39;,
+ &#39;000000281447&#39;,
+ &#39;000000552371&#39;,
+ &#39;000000361919&#39;,
+ &#39;000000560256&#39;,
+ &#39;000000138115&#39;,
+ &#39;000000114871&#39;,
+ &#39;000000374369&#39;,
+ &#39;000000123213&#39;,
+ &#39;000000123321&#39;,
+ &#39;000000015278&#39;,
+ &#39;000000357742&#39;,
+ &#39;000000439854&#39;,
+ &#39;000000465836&#39;,
+ &#39;000000414385&#39;,
+ &#39;000000131556&#39;,
+ &#39;000000322724&#39;,
+ &#39;000000320664&#39;,
+ &#39;000000481390&#39;,
+ &#39;000000109916&#39;,
+ &#39;000000276434&#39;,
+ &#39;000000579635&#39;,
+ &#39;000000295316&#39;,
+ &#39;000000571313&#39;,
+ &#39;000000183127&#39;,
+ &#39;000000115898&#39;,
+ &#39;000000146358&#39;,
+ &#39;000000329542&#39;,
+ &#39;000000189752&#39;,
+ &#39;000000290163&#39;,
+ &#39;000000091406&#39;,
+ &#39;000000322352&#39;,
+ &#39;000000223959&#39;,
+ &#39;000000326248&#39;,
+ &#39;000000218439&#39;,
+ &#39;000000453722&#39;,
+ &#39;000000293625&#39;,
+ &#39;000000411817&#39;,
+ &#39;000000546964&#39;,
+ &#39;000000215259&#39;,
+ &#39;000000573094&#39;,
+ &#39;000000560011&#39;,
+ &#39;000000038576&#39;,
+ &#39;000000147729&#39;,
+ &#39;000000579307&#39;,
+ &#39;000000154425&#39;,
+ &#39;000000432898&#39;,
+ &#39;000000404923&#39;,
+ &#39;000000130586&#39;,
+ &#39;000000163057&#39;,
+ &#39;000000007511&#39;,
+ &#39;000000067406&#39;,
+ &#39;000000290179&#39;,
+ &#39;000000248752&#39;,
+ &#39;000000054593&#39;,
+ &#39;000000116208&#39;,
+ &#39;000000340697&#39;,
+ &#39;000000450303&#39;,
+ &#39;000000494427&#39;,
+ &#39;000000137294&#39;,
+ &#39;000000410880&#39;,
+ &#39;000000311180&#39;,
+ &#39;000000091654&#39;,
+ &#39;000000181796&#39;,
+ &#39;000000002431&#39;,
+ &#39;000000349184&#39;,
+ &#39;000000298396&#39;,
+ &#39;000000472046&#39;,
+ &#39;000000074058&#39;,
+ &#39;000000058029&#39;,
+ &#39;000000134096&#39;,
+ &#39;000000111951&#39;,
+ &#39;000000103585&#39;,
+ &#39;000000210273&#39;,
+ &#39;000000352584&#39;,
+ &#39;000000446651&#39;,
+ &#39;000000194875&#39;,
+ &#39;000000052017&#39;,
+ &#39;000000336309&#39;,
+ &#39;000000227478&#39;,
+ &#39;000000339870&#39;,
+ &#39;000000080666&#39;,
+ &#39;000000033707&#39;,
+ &#39;000000327601&#39;,
+ &#39;000000255749&#39;,
+ &#39;000000008762&#39;,
+ &#39;000000526392&#39;,
+ &#39;000000535578&#39;,
+ &#39;000000580757&#39;,
+ &#39;000000165039&#39;,
+ &#39;000000148719&#39;,
+ &#39;000000108440&#39;,
+ &#39;000000489842&#39;,
+ &#39;000000579818&#39;,
+ &#39;000000423229&#39;,
+ &#39;000000323828&#39;,
+ &#39;000000166287&#39;,
+ &#39;000000101420&#39;,
+ &#39;000000334555&#39;,
+ &#39;000000196759&#39;,
+ &#39;000000411665&#39;,
+ &#39;000000061418&#39;,
+ &#39;000000526751&#39;,
+ &#39;000000024021&#39;,
+ &#39;000000277020&#39;,
+ &#39;000000047828&#39;,
+ &#39;000000183716&#39;,
+ &#39;000000271997&#39;,
+ &#39;000000008532&#39;,
+ &#39;000000094336&#39;,
+ &#39;000000390555&#39;,
+ &#39;000000250282&#39;,
+ &#39;000000068409&#39;,
+ &#39;000000002299&#39;,
+ &#39;000000011051&#39;,
+ &#39;000000066038&#39;,
+ &#39;000000360960&#39;,
+ &#39;000000360097&#39;,
+ &#39;000000421455&#39;,
+ &#39;000000504589&#39;,
+ &#39;000000464522&#39;,
+ &#39;000000454750&#39;,
+ &#39;000000509735&#39;,
+ &#39;000000023034&#39;,
+ &#39;000000141671&#39;,
+ &#39;000000506656&#39;,
+ &#39;000000272566&#39;,
+ &#39;000000045728&#39;,
+ &#39;000000424551&#39;,
+ &#39;000000341719&#39;,
+ &#39;000000072795&#39;,
+ &#39;000000078959&#39;,
+ &#39;000000417285&#39;,
+ &#39;000000002157&#39;,
+ &#39;000000043816&#39;,
+ &#39;000000455555&#39;,
+ &#39;000000535306&#39;,
+ &#39;000000030504&#39;,
+ &#39;000000093353&#39;,
+ &#39;000000530052&#39;,
+ &#39;000000473118&#39;,
+ &#39;000000091779&#39;,
+ &#39;000000283113&#39;,
+ &#39;000000226130&#39;,
+ &#39;000000097278&#39;,
+ &#39;000000567640&#39;,
+ &#39;000000532493&#39;,
+ &#39;000000045550&#39;,
+ &#39;000000156643&#39;,
+ &#39;000000430056&#39;,
+ &#39;000000410456&#39;,
+ &#39;000000441286&#39;,
+ &#39;000000279541&#39;,
+ &#39;000000000885&#39;,
+ &#39;000000378284&#39;,
+ &#39;000000156076&#39;,
+ &#39;000000143572&#39;,
+ &#39;000000229849&#39;,
+ &#39;000000039551&#39;,
+ &#39;000000056344&#39;,
+ &#39;000000193348&#39;,
+ &#39;000000016958&#39;,
+ &#39;000000572678&#39;,
+ &#39;000000106235&#39;,
+ &#39;000000341681&#39;,
+ &#39;000000083172&#39;,
+ &#39;000000343524&#39;,
+ &#39;000000395801&#39;,
+ &#39;000000388056&#39;,
+ &#39;000000259690&#39;,
+ &#39;000000235836&#39;,
+ &#39;000000343218&#39;,
+ &#39;000000205105&#39;,
+ &#39;000000513283&#39;,
+ &#39;000000176446&#39;,
+ &#39;000000371677&#39;,
+ &#39;000000308531&#39;,
+ &#39;000000497599&#39;,
+ &#39;000000455352&#39;,
+ &#39;000000236914&#39;,
+ &#39;000000232684&#39;,
+ &#39;000000415238&#39;,
+ &#39;000000290843&#39;,
+ &#39;000000519522&#39;,
+ &#39;000000144784&#39;,
+ &#39;000000167486&#39;,
+ &#39;000000392228&#39;,
+ &#39;000000488673&#39;,
+ &#39;000000191013&#39;,
+ &#39;000000080057&#39;,
+ &#39;000000570169&#39;,
+ &#39;000000224807&#39;,
+ &#39;000000163562&#39;,
+ &#39;000000136355&#39;,
+ &#39;000000492362&#39;,
+ &#39;000000102707&#39;,
+ &#39;000000232563&#39;,
+ &#39;000000010977&#39;,
+ &#39;000000051598&#39;,
+ &#39;000000032285&#39;,
+ &#39;000000520910&#39;,
+ &#39;000000131273&#39;,
+ &#39;000000206411&#39;,
+ &#39;000000472375&#39;,
+ &#39;000000481404&#39;,
+ &#39;000000471991&#39;,
+ &#39;000000017436&#39;,
+ &#39;000000177934&#39;,
+ &#39;000000165518&#39;,
+ &#39;000000571718&#39;,
+ &#39;000000459467&#39;,
+ &#39;000000135673&#39;,
+ &#39;000000134886&#39;,
+ &#39;000000485895&#39;,
+ &#39;000000287545&#39;,
+ &#39;000000577182&#39;,
+ &#39;000000289222&#39;,
+ &#39;000000372819&#39;,
+ &#39;000000310072&#39;,
+ &#39;000000087144&#39;,
+ &#39;000000430875&#39;,
+ &#39;000000060347&#39;,
+ &#39;000000042070&#39;,
+ &#39;000000420916&#39;,
+ &#39;000000453584&#39;,
+ &#39;000000296224&#39;,
+ &#39;000000122606&#39;,
+ &#39;000000311909&#39;,
+ &#39;000000579893&#39;,
+ &#39;000000284296&#39;,
+ &#39;000000221017&#39;,
+ &#39;000000315001&#39;,
+ &#39;000000439715&#39;,
+ &#39;000000284991&#39;,
+ &#39;000000389566&#39;,
+ &#39;000000078843&#39;,
+ &#39;000000122927&#39;,
+ &#39;000000225532&#39;,
+ &#39;000000013659&#39;,
+ &#39;000000153568&#39;,
+ &#39;000000395633&#39;,
+ &#39;000000419096&#39;,
+ &#39;000000203488&#39;,
+ &#39;000000361268&#39;,
+ &#39;000000466125&#39;,
+ &#39;000000414795&#39;,
+ &#39;000000508101&#39;,
+ &#39;000000253386&#39;,
+ &#39;000000222991&#39;,
+ &#39;000000530854&#39;,
+ &#39;000000351810&#39;,
+ &#39;000000338624&#39;,
+ &#39;000000138492&#39;,
+ &#39;000000263463&#39;,
+ &#39;000000226592&#39;,
+ &#39;000000378454&#39;,
+ &#39;000000020059&#39;,
+ &#39;000000227686&#39;,
+ &#39;000000476215&#39;,
+ &#39;000000297698&#39;,
+ &#39;000000247917&#39;,
+ &#39;000000439522&#39;,
+ &#39;000000479448&#39;,
+ &#39;000000424721&#39;,
+ &#39;000000026690&#39;,
+ &#39;000000558854&#39;,
+ &#39;000000176901&#39;,
+ &#39;000000334767&#39;,
+ &#39;000000301563&#39;,
+ &#39;000000086755&#39;,
+ &#39;000000194471&#39;,
+ &#39;000000420281&#39;,
+ &#39;000000533206&#39;,
+ &#39;000000099810&#39;,
+ &#39;000000334483&#39;,
+ &#39;000000089670&#39;,
+ &#39;000000482275&#39;,
+ &#39;000000404805&#39;,
+ &#39;000000002261&#39;,
+ &#39;000000425702&#39;,
+ &#39;000000036844&#39;,
+ &#39;000000012576&#39;,
+ &#39;000000361238&#39;,
+ &#39;000000108253&#39;,
+ &#39;000000319935&#39;,
+ &#39;000000003934&#39;,
+ &#39;000000029596&#39;,
+ &#39;000000047740&#39;,
+ &#39;000000077460&#39;,
+ &#39;000000014439&#39;,
+ &#39;000000571893&#39;,
+ &#39;000000447314&#39;,
+ &#39;000000181303&#39;,
+ &#39;000000058350&#39;,
+ &#39;000000026465&#39;,
+ &#39;000000246968&#39;,
+ &#39;000000536947&#39;,
+ &#39;000000076731&#39;,
+ &#39;000000286182&#39;,
+ &#39;000000433980&#39;,
+ &#39;000000561366&#39;,
+ &#39;000000380913&#39;,
+ &#39;000000032887&#39;,
+ &#39;000000517687&#39;,
+ &#39;000000213035&#39;,
+ &#39;000000399205&#39;,
+ &#39;000000349837&#39;,
+ &#39;000000350002&#39;,
+ &#39;000000131431&#39;,
+ &#39;000000356248&#39;,
+ &#39;000000334399&#39;,
+ &#39;000000057150&#39;,
+ &#39;000000363666&#39;,
+ &#39;000000507235&#39;,
+ &#39;000000169996&#39;,
+ &#39;000000226417&#39;,
+ &#39;000000481573&#39;,
+ &#39;000000056127&#39;,
+ &#39;000000123480&#39;,
+ &#39;000000274687&#39;,
+ &#39;000000164637&#39;,
+ &#39;000000178028&#39;,
+ &#39;000000493286&#39;,
+ &#39;000000348216&#39;,
+ &#39;000000345027&#39;,
+ &#39;000000571804&#39;,
+ &#39;000000140658&#39;,
+ &#39;000000102644&#39;,
+ &#39;000000581615&#39;,
+ &#39;000000279887&#39;,
+ &#39;000000230008&#39;,
+ &#39;000000284698&#39;,
+ &#39;000000102356&#39;,
+ &#39;000000456394&#39;,
+ &#39;000000323709&#39;,
+ &#39;000000452122&#39;,
+ &#39;000000579158&#39;,
+ &#39;000000525322&#39;,
+ &#39;000000033114&#39;,
+ &#39;000000008690&#39;,
+ &#39;000000381639&#39;,
+ &#39;000000217614&#39;,
+ &#39;000000284445&#39;,
+ &#39;000000468124&#39;,
+ &#39;000000187144&#39;,
+ &#39;000000273198&#39;,
+ &#39;000000095843&#39;,
+ &#39;000000417779&#39;,
+ &#39;000000447342&#39;,
+ &#39;000000166563&#39;,
+ &#39;000000490125&#39;,
+ &#39;000000561009&#39;,
+ &#39;000000183675&#39;,
+ &#39;000000290248&#39;,
+ &#39;000000532058&#39;,
+ &#39;000000214200&#39;,
+ &#39;000000578093&#39;,
+ &#39;000000369751&#39;,
+ &#39;000000429011&#39;,
+ &#39;000000301061&#39;,
+ &#39;000000105264&#39;,
+ &#39;000000267434&#39;,
+ &#39;000000370711&#39;,
+ &#39;000000025393&#39;,
+ &#39;000000471087&#39;,
+ &#39;000000106757&#39;,
+ &#39;000000183648&#39;,
+ &#39;000000358525&#39;,
+ &#39;000000049269&#39;,
+ &#39;000000079144&#39;,
+ &#39;000000519688&#39;,
+ &#39;000000431727&#39;,
+ &#39;000000130699&#39;,
+ &#39;000000215245&#39;,
+ &#39;000000091921&#39;,
+ &#39;000000218424&#39;,
+ &#39;000000473974&#39;,
+ &#39;000000405249&#39;,
+ &#39;000000235784&#39;,
+ &#39;000000521540&#39;,
+ &#39;000000537506&#39;,
+ &#39;000000119445&#39;,
+ &#39;000000507015&#39;,
+ &#39;000000173830&#39;,
+ &#39;000000356498&#39;,
+ &#39;000000435081&#39;,
+ &#39;000000018575&#39;,
+ &#39;000000373315&#39;,
+ &#39;000000227765&#39;,
+ &#39;000000013546&#39;,
+ &#39;000000067310&#39;,
+ &#39;000000125936&#39;,
+ &#39;000000389109&#39;,
+ &#39;000000322211&#39;,
+ &#39;000000184384&#39;,
+ &#39;000000426329&#39;,
+ &#39;000000128476&#39;,
+ &#39;000000414034&#39;,
+ &#39;000000450488&#39;,
+ &#39;000000099182&#39;,
+ &#39;000000051738&#39;,
+ &#39;000000099039&#39;,
+ &#39;000000075456&#39;,
+ &#39;000000134882&#39;,
+ &#39;000000442323&#39;,
+ &#39;000000232489&#39;,
+ &#39;000000351823&#39;,
+ &#39;000000065736&#39;,
+ &#39;000000001000&#39;,
+ &#39;000000379842&#39;,
+ &#39;000000013923&#39;,
+ &#39;000000559543&#39;,
+ &#39;000000185890&#39;,
+ &#39;000000357978&#39;,
+ &#39;000000129492&#39;,
+ &#39;000000261097&#39;,
+ &#39;000000410510&#39;,
+ &#39;000000039951&#39;,
+ &#39;000000306700&#39;,
+ &#39;000000146457&#39;,
+ &#39;000000214224&#39;,
+ &#39;000000332845&#39;,
+ &#39;000000255483&#39;,
+ &#39;000000222455&#39;,
+ &#39;000000187271&#39;,
+ &#39;000000462629&#39;,
+ &#39;000000544565&#39;,
+ &#39;000000369771&#39;,
+ &#39;000000035963&#39;,
+ &#39;000000289516&#39;,
+ &#39;000000334309&#39;,
+ &#39;000000452084&#39;,
+ &#39;000000301718&#39;,
+ &#39;000000429598&#39;,
+ &#39;000000165257&#39;,
+ &#39;000000093437&#39;,
+ &#39;000000413552&#39;,
+ &#39;000000062025&#39;,
+ &#39;000000017379&#39;,
+ &#39;000000176778&#39;,
+ &#39;000000104572&#39;,
+ &#39;000000090108&#39;,
+ &#39;000000157124&#39;,
+ &#39;000000089556&#39;,
+ &#39;000000266206&#39;,
+ &#39;000000086220&#39;,
+ &#39;000000508602&#39;,
+ ...]
+</pre></div></div>
+</div>
+</section>
+<section id="Transform-annotation">
+<h3>Transform annotation<a class="headerlink" href="#Transform-annotation" title="Link to this heading">#</a></h3>
+<p>For the task-chanining or merging multiple heterogeneous datasets, we need to redefine the class definition. Datumaro provides this class redefinition through <code class="docutils literal notranslate"><span class="pre">remap_labels</span></code> as below.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mapping</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;motorcycle&quot;</span><span class="p">:</span> <span class="s2">&quot;bicycle&quot;</span><span class="p">,</span> <span class="s2">&quot;bus&quot;</span><span class="p">:</span> <span class="s2">&quot;car&quot;</span><span class="p">,</span> <span class="s2">&quot;truck&quot;</span><span class="p">:</span> <span class="s2">&quot;car&quot;</span><span class="p">}</span>
+<span class="n">remap_label_dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s2">&quot;remap_labels&quot;</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="n">mapping</span><span class="p">)</span>
+<span class="n">remap_label_dataset</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Dataset
+        size=123287
+        source_path=coco_dataset
+        media_type=&lt;class &#39;datumaro.components.media.Image&#39;&gt;
+        annotated_items_count=122218
+        annotations_count=1018861
+subsets
+        train2017: # of items=118287, # of annotated items=117266, # of annotations=976995, annotation types=[&#39;mask&#39;, &#39;polygon&#39;]
+        val2017: # of items=5000, # of annotated items=4952, # of annotations=41866, annotation types=[&#39;mask&#39;, &#39;polygon&#39;]
+categories
+        label: [&#39;person&#39;, &#39;bicycle&#39;, &#39;car&#39;, &#39;airplane&#39;, &#39;train&#39;, &#39;boat&#39;, &#39;traffic light&#39;, &#39;fire hydrant&#39;, &#39;stop sign&#39;, &#39;parking meter&#39;, &#39;bench&#39;, &#39;bird&#39;, &#39;cat&#39;, &#39;dog&#39;, &#39;horse&#39;, &#39;sheep&#39;, &#39;cow&#39;, &#39;elephant&#39;, &#39;bear&#39;, &#39;zebra&#39;, &#39;giraffe&#39;, &#39;backpack&#39;, &#39;umbrella&#39;, &#39;handbag&#39;, &#39;tie&#39;, &#39;suitcase&#39;, &#39;frisbee&#39;, &#39;skis&#39;, &#39;snowboard&#39;, &#39;sports ball&#39;, &#39;kite&#39;, &#39;baseball bat&#39;, &#39;baseball glove&#39;, &#39;skateboard&#39;, &#39;surfboard&#39;, &#39;tennis racket&#39;, &#39;bottle&#39;, &#39;wine glass&#39;, &#39;cup&#39;, &#39;fork&#39;, &#39;knife&#39;, &#39;spoon&#39;, &#39;bowl&#39;, &#39;banana&#39;, &#39;apple&#39;, &#39;sandwich&#39;, &#39;orange&#39;, &#39;broccoli&#39;, &#39;carrot&#39;, &#39;hot dog&#39;, &#39;pizza&#39;, &#39;donut&#39;, &#39;cake&#39;, &#39;chair&#39;, &#39;couch&#39;, &#39;potted plant&#39;, &#39;bed&#39;, &#39;dining table&#39;, &#39;toilet&#39;, &#39;tv&#39;, &#39;laptop&#39;, &#39;mouse&#39;, &#39;remote&#39;, &#39;keyboard&#39;, &#39;cell phone&#39;, &#39;microwave&#39;, &#39;oven&#39;, &#39;toaster&#39;, &#39;sink&#39;, &#39;refrigerator&#39;, &#39;book&#39;, &#39;clock&#39;, &#39;vase&#39;, &#39;scissors&#39;, &#39;teddy bear&#39;, &#39;hair drier&#39;, &#39;toothbrush&#39;]
+</pre></div></div>
+</div>
+</section>
+<section id="Split-datasets">
+<h3>Split datasets<a class="headerlink" href="#Split-datasets" title="Link to this heading">#</a></h3>
+<p>From now on, we are going to give examples of extracting the subset of the imported dataset and splitting this into multiple subsets. Datumaro provides two types of splitter; one is the per-sample level random splitter from the given ratio of subsets and the other is the task-specific splitter under consideration of annotation instances.</p>
+<p>We first extract the validation dataset and split this into multiple cross-validation datasets.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># from datumaro.components.dataset import Dataset</span>
+
+<span class="n">val_dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+    <span class="s1">&#39;/item[subset=&quot;val2017&quot;]&#39;</span>
+<span class="p">)</span>  <span class="c1"># or Dataset(dataset.get_subset(subsets[0]))</span>
+<span class="n">val_dataset</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Dataset
+        size=5000
+        source_path=coco_dataset
+        media_type=&lt;class &#39;datumaro.components.media.Image&#39;&gt;
+        annotated_items_count=4952
+        annotations_count=41866
+subsets
+        val2017: # of items=5000, # of annotated items=4952, # of annotations=41866, annotation types=[&#39;mask&#39;, &#39;polygon&#39;]
+categories
+        label: [&#39;person&#39;, &#39;bicycle&#39;, &#39;car&#39;, &#39;airplane&#39;, &#39;train&#39;, &#39;boat&#39;, &#39;traffic light&#39;, &#39;fire hydrant&#39;, &#39;stop sign&#39;, &#39;parking meter&#39;, &#39;bench&#39;, &#39;bird&#39;, &#39;cat&#39;, &#39;dog&#39;, &#39;horse&#39;, &#39;sheep&#39;, &#39;cow&#39;, &#39;elephant&#39;, &#39;bear&#39;, &#39;zebra&#39;, &#39;giraffe&#39;, &#39;backpack&#39;, &#39;umbrella&#39;, &#39;handbag&#39;, &#39;tie&#39;, &#39;suitcase&#39;, &#39;frisbee&#39;, &#39;skis&#39;, &#39;snowboard&#39;, &#39;sports ball&#39;, &#39;kite&#39;, &#39;baseball bat&#39;, &#39;baseball glove&#39;, &#39;skateboard&#39;, &#39;surfboard&#39;, &#39;tennis racket&#39;, &#39;bottle&#39;, &#39;wine glass&#39;, &#39;cup&#39;, &#39;fork&#39;, &#39;knife&#39;, &#39;spoon&#39;, &#39;bowl&#39;, &#39;banana&#39;, &#39;apple&#39;, &#39;sandwich&#39;, &#39;orange&#39;, &#39;broccoli&#39;, &#39;carrot&#39;, &#39;hot dog&#39;, &#39;pizza&#39;, &#39;donut&#39;, &#39;cake&#39;, &#39;chair&#39;, &#39;couch&#39;, &#39;potted plant&#39;, &#39;bed&#39;, &#39;dining table&#39;, &#39;toilet&#39;, &#39;tv&#39;, &#39;laptop&#39;, &#39;mouse&#39;, &#39;remote&#39;, &#39;keyboard&#39;, &#39;cell phone&#39;, &#39;microwave&#39;, &#39;oven&#39;, &#39;toaster&#39;, &#39;sink&#39;, &#39;refrigerator&#39;, &#39;book&#39;, &#39;clock&#39;, &#39;vase&#39;, &#39;scissors&#39;, &#39;teddy bear&#39;, &#39;hair drier&#39;, &#39;toothbrush&#39;]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">splits</span> <span class="o">=</span> <span class="p">((</span><span class="s2">&quot;val1&quot;</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;val2&quot;</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;val3&quot;</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;val4&quot;</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;val5&quot;</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">))</span>
+<span class="n">crossval_dataset</span> <span class="o">=</span> <span class="n">val_dataset</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s2">&quot;random_split&quot;</span><span class="p">,</span> <span class="n">splits</span><span class="o">=</span><span class="n">splits</span><span class="p">)</span>
+<span class="n">crossval_dataset</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Dataset
+        size=5000
+        source_path=coco_dataset
+        media_type=&lt;class &#39;datumaro.components.media.Image&#39;&gt;
+        annotated_items_count=4952
+        annotations_count=41866
+subsets
+        val1: # of items=1000, # of annotated items=991, # of annotations=8344, annotation types=[&#39;mask&#39;, &#39;polygon&#39;]
+        val2: # of items=1000, # of annotated items=991, # of annotations=7646, annotation types=[&#39;mask&#39;, &#39;polygon&#39;]
+        val3: # of items=1000, # of annotated items=993, # of annotations=8625, annotation types=[&#39;mask&#39;, &#39;polygon&#39;]
+        val4: # of items=1000, # of annotated items=986, # of annotations=8752, annotation types=[&#39;mask&#39;, &#39;polygon&#39;]
+        val5: # of items=1000, # of annotated items=991, # of annotations=8499, annotation types=[&#39;mask&#39;, &#39;polygon&#39;]
+categories
+        label: [&#39;person&#39;, &#39;bicycle&#39;, &#39;car&#39;, &#39;airplane&#39;, &#39;train&#39;, &#39;boat&#39;, &#39;traffic light&#39;, &#39;fire hydrant&#39;, &#39;stop sign&#39;, &#39;parking meter&#39;, &#39;bench&#39;, &#39;bird&#39;, &#39;cat&#39;, &#39;dog&#39;, &#39;horse&#39;, &#39;sheep&#39;, &#39;cow&#39;, &#39;elephant&#39;, &#39;bear&#39;, &#39;zebra&#39;, &#39;giraffe&#39;, &#39;backpack&#39;, &#39;umbrella&#39;, &#39;handbag&#39;, &#39;tie&#39;, &#39;suitcase&#39;, &#39;frisbee&#39;, &#39;skis&#39;, &#39;snowboard&#39;, &#39;sports ball&#39;, &#39;kite&#39;, &#39;baseball bat&#39;, &#39;baseball glove&#39;, &#39;skateboard&#39;, &#39;surfboard&#39;, &#39;tennis racket&#39;, &#39;bottle&#39;, &#39;wine glass&#39;, &#39;cup&#39;, &#39;fork&#39;, &#39;knife&#39;, &#39;spoon&#39;, &#39;bowl&#39;, &#39;banana&#39;, &#39;apple&#39;, &#39;sandwich&#39;, &#39;orange&#39;, &#39;broccoli&#39;, &#39;carrot&#39;, &#39;hot dog&#39;, &#39;pizza&#39;, &#39;donut&#39;, &#39;cake&#39;, &#39;chair&#39;, &#39;couch&#39;, &#39;potted plant&#39;, &#39;bed&#39;, &#39;dining table&#39;, &#39;toilet&#39;, &#39;tv&#39;, &#39;laptop&#39;, &#39;mouse&#39;, &#39;remote&#39;, &#39;keyboard&#39;, &#39;cell phone&#39;, &#39;microwave&#39;, &#39;oven&#39;, &#39;toaster&#39;, &#39;sink&#39;, &#39;refrigerator&#39;, &#39;book&#39;, &#39;clock&#39;, &#39;vase&#39;, &#39;scissors&#39;, &#39;teddy bear&#39;, &#39;hair drier&#39;, &#39;toothbrush&#39;]
+</pre></div></div>
+</div>
+<p>Furthermore, Datumaro provides the split function in the viewpoint of annotation instead of sample through a task-specific splitter. By performing below, we can get the well-distributed validation datasets in terms of the number of annotations.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datumaro.plugins.splitter</span> <span class="k">as</span> <span class="nn">splitter</span>
+
+<span class="n">task</span> <span class="o">=</span> <span class="n">splitter</span><span class="o">.</span><span class="n">SplitTask</span><span class="o">.</span><span class="n">segmentation</span><span class="o">.</span><span class="n">name</span>
+<span class="n">splits</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;val1&quot;</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;val2&quot;</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;val3&quot;</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;val4&quot;</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;val5&quot;</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)]</span>
+
+<span class="n">crossval_per_ann_dataset</span> <span class="o">=</span> <span class="n">val_dataset</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s2">&quot;split&quot;</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="n">task</span><span class="p">,</span> <span class="n">splits</span><span class="o">=</span><span class="n">splits</span><span class="p">)</span>
+<span class="n">crossval_per_ann_dataset</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Dataset
+        size=5000
+        source_path=coco_dataset
+        media_type=&lt;class &#39;datumaro.components.media.Image&#39;&gt;
+        annotated_items_count=4952
+        annotations_count=41866
+subsets
+        val1: # of items=1000, # of annotated items=1000, # of annotations=8368, annotation types=[&#39;mask&#39;, &#39;polygon&#39;]
+        val2: # of items=967, # of annotated items=919, # of annotations=8374, annotation types=[&#39;mask&#39;, &#39;polygon&#39;]
+        val3: # of items=1032, # of annotated items=1032, # of annotations=8374, annotation types=[&#39;mask&#39;, &#39;polygon&#39;]
+        val4: # of items=987, # of annotated items=987, # of annotations=8376, annotation types=[&#39;mask&#39;, &#39;polygon&#39;]
+        val5: # of items=1014, # of annotated items=1014, # of annotations=8374, annotation types=[&#39;mask&#39;, &#39;polygon&#39;]
+categories
+        label: [&#39;person&#39;, &#39;bicycle&#39;, &#39;car&#39;, &#39;airplane&#39;, &#39;train&#39;, &#39;boat&#39;, &#39;traffic light&#39;, &#39;fire hydrant&#39;, &#39;stop sign&#39;, &#39;parking meter&#39;, &#39;bench&#39;, &#39;bird&#39;, &#39;cat&#39;, &#39;dog&#39;, &#39;horse&#39;, &#39;sheep&#39;, &#39;cow&#39;, &#39;elephant&#39;, &#39;bear&#39;, &#39;zebra&#39;, &#39;giraffe&#39;, &#39;backpack&#39;, &#39;umbrella&#39;, &#39;handbag&#39;, &#39;tie&#39;, &#39;suitcase&#39;, &#39;frisbee&#39;, &#39;skis&#39;, &#39;snowboard&#39;, &#39;sports ball&#39;, &#39;kite&#39;, &#39;baseball bat&#39;, &#39;baseball glove&#39;, &#39;skateboard&#39;, &#39;surfboard&#39;, &#39;tennis racket&#39;, &#39;bottle&#39;, &#39;wine glass&#39;, &#39;cup&#39;, &#39;fork&#39;, &#39;knife&#39;, &#39;spoon&#39;, &#39;bowl&#39;, &#39;banana&#39;, &#39;apple&#39;, &#39;sandwich&#39;, &#39;orange&#39;, &#39;broccoli&#39;, &#39;carrot&#39;, &#39;hot dog&#39;, &#39;pizza&#39;, &#39;donut&#39;, &#39;cake&#39;, &#39;chair&#39;, &#39;couch&#39;, &#39;potted plant&#39;, &#39;bed&#39;, &#39;dining table&#39;, &#39;toilet&#39;, &#39;tv&#39;, &#39;laptop&#39;, &#39;mouse&#39;, &#39;remote&#39;, &#39;keyboard&#39;, &#39;cell phone&#39;, &#39;microwave&#39;, &#39;oven&#39;, &#39;toaster&#39;, &#39;sink&#39;, &#39;refrigerator&#39;, &#39;book&#39;, &#39;clock&#39;, &#39;vase&#39;, &#39;scissors&#39;, &#39;teddy bear&#39;, &#39;hair drier&#39;, &#39;toothbrush&#39;]
+</pre></div></div>
+</div>
+<p>Lastly, we can rename the subset as below.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mapping</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;val1&quot;</span><span class="p">:</span> <span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="s2">&quot;val2&quot;</span><span class="p">:</span> <span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="s2">&quot;val3&quot;</span><span class="p">:</span> <span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="s2">&quot;val4&quot;</span><span class="p">:</span> <span class="s2">&quot;val&quot;</span><span class="p">,</span> <span class="s2">&quot;val5&quot;</span><span class="p">:</span> <span class="s2">&quot;test&quot;</span><span class="p">}</span>
+<span class="n">test_dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s2">&quot;map_subsets&quot;</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="n">mapping</span><span class="p">)</span>
+<span class="n">test_dataset</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Dataset
+        size=5000
+        source_path=coco_dataset
+        media_type=&lt;class &#39;datumaro.components.media.Image&#39;&gt;
+        annotated_items_count=4952
+        annotations_count=41866
+subsets
+        test: # of items=1014, # of annotated items=1014, # of annotations=8374, annotation types=[&#39;mask&#39;, &#39;polygon&#39;]
+        train: # of items=2999, # of annotated items=2951, # of annotations=25116, annotation types=[&#39;mask&#39;, &#39;polygon&#39;]
+        val: # of items=987, # of annotated items=987, # of annotations=8376, annotation types=[&#39;mask&#39;, &#39;polygon&#39;]
+categories
+        label: [&#39;person&#39;, &#39;bicycle&#39;, &#39;car&#39;, &#39;airplane&#39;, &#39;train&#39;, &#39;boat&#39;, &#39;traffic light&#39;, &#39;fire hydrant&#39;, &#39;stop sign&#39;, &#39;parking meter&#39;, &#39;bench&#39;, &#39;bird&#39;, &#39;cat&#39;, &#39;dog&#39;, &#39;horse&#39;, &#39;sheep&#39;, &#39;cow&#39;, &#39;elephant&#39;, &#39;bear&#39;, &#39;zebra&#39;, &#39;giraffe&#39;, &#39;backpack&#39;, &#39;umbrella&#39;, &#39;handbag&#39;, &#39;tie&#39;, &#39;suitcase&#39;, &#39;frisbee&#39;, &#39;skis&#39;, &#39;snowboard&#39;, &#39;sports ball&#39;, &#39;kite&#39;, &#39;baseball bat&#39;, &#39;baseball glove&#39;, &#39;skateboard&#39;, &#39;surfboard&#39;, &#39;tennis racket&#39;, &#39;bottle&#39;, &#39;wine glass&#39;, &#39;cup&#39;, &#39;fork&#39;, &#39;knife&#39;, &#39;spoon&#39;, &#39;bowl&#39;, &#39;banana&#39;, &#39;apple&#39;, &#39;sandwich&#39;, &#39;orange&#39;, &#39;broccoli&#39;, &#39;carrot&#39;, &#39;hot dog&#39;, &#39;pizza&#39;, &#39;donut&#39;, &#39;cake&#39;, &#39;chair&#39;, &#39;couch&#39;, &#39;potted plant&#39;, &#39;bed&#39;, &#39;dining table&#39;, &#39;toilet&#39;, &#39;tv&#39;, &#39;laptop&#39;, &#39;mouse&#39;, &#39;remote&#39;, &#39;keyboard&#39;, &#39;cell phone&#39;, &#39;microwave&#39;, &#39;oven&#39;, &#39;toaster&#39;, &#39;sink&#39;, &#39;refrigerator&#39;, &#39;book&#39;, &#39;clock&#39;, &#39;vase&#39;, &#39;scissors&#39;, &#39;teddy bear&#39;, &#39;hair drier&#39;, &#39;toothbrush&#39;]
+</pre></div></div>
+</div>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../transform.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Transform</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="06_tiling.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Tile your Dataset to Cope with High-Resolution Images</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Prerequisite">Prerequisite</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Download-COCO-2017-validation-dataset">Download COCO 2017 validation dataset</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Transform-media-ID">Transform media ID</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Transform-annotation">Transform annotation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Split-datasets">Split datasets</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../_sources/docs/jupyter_notebook_examples/notebooks/05_transform.ipynb.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

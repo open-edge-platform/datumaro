@@ -1,0 +1,766 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>queue &#8212; Datumaro 1.10.0rc1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=8b7c274f" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../_static/documentation_options.js?v=0c3350b6"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/queue';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.10.0rc1 documentation - Home"/>
+    <script>document.write(`<img src="../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.10.0rc1 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../docs/index.html">
+                        Docs
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../docs/index.html">
+                        Docs
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">queue</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for queue</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;A multi-producer, multi-consumer queue.&#39;&#39;&#39;</span>
+
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">types</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">deque</span>
+<span class="kn">from</span> <span class="nn">heapq</span> <span class="kn">import</span> <span class="n">heappush</span><span class="p">,</span> <span class="n">heappop</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">monotonic</span> <span class="k">as</span> <span class="n">time</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">_queue</span> <span class="kn">import</span> <span class="n">SimpleQueue</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">SimpleQueue</span> <span class="o">=</span> <span class="kc">None</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Empty&#39;</span><span class="p">,</span> <span class="s1">&#39;Full&#39;</span><span class="p">,</span> <span class="s1">&#39;Queue&#39;</span><span class="p">,</span> <span class="s1">&#39;PriorityQueue&#39;</span><span class="p">,</span> <span class="s1">&#39;LifoQueue&#39;</span><span class="p">,</span> <span class="s1">&#39;SimpleQueue&#39;</span><span class="p">]</span>
+
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">_queue</span> <span class="kn">import</span> <span class="n">Empty</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">class</span> <span class="nc">Empty</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+        <span class="s1">&#39;Exception raised by Queue.get(block=0)/get_nowait().&#39;</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="Full">
+<a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Full">[docs]</a>
+<span class="k">class</span> <span class="nc">Full</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="s1">&#39;Exception raised by Queue.put(block=0)/put_nowait().&#39;</span>
+    <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="Queue">
+<a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Queue">[docs]</a>
+<span class="k">class</span> <span class="nc">Queue</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Create a queue object with a given maximum size.</span>
+
+<span class="sd">    If maxsize is &lt;= 0, the queue size is infinite.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maxsize</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxsize</span> <span class="o">=</span> <span class="n">maxsize</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span><span class="n">maxsize</span><span class="p">)</span>
+
+        <span class="c1"># mutex must be held whenever the queue is mutating.  All methods</span>
+        <span class="c1"># that acquire mutex must release it before returning.  mutex</span>
+        <span class="c1"># is shared between the three conditions, so acquiring and</span>
+        <span class="c1"># releasing the conditions also acquires and releases mutex.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mutex</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+
+        <span class="c1"># Notify not_empty whenever an item is added to the queue; a</span>
+        <span class="c1"># thread waiting to get is notified then.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">not_empty</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Condition</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mutex</span><span class="p">)</span>
+
+        <span class="c1"># Notify not_full whenever an item is removed from the queue;</span>
+        <span class="c1"># a thread waiting to put is notified then.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">not_full</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Condition</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mutex</span><span class="p">)</span>
+
+        <span class="c1"># Notify all_tasks_done whenever the number of unfinished tasks</span>
+        <span class="c1"># drops to zero; thread waiting to join() is notified to resume</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_tasks_done</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Condition</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mutex</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unfinished_tasks</span> <span class="o">=</span> <span class="mi">0</span>
+
+<div class="viewcode-block" id="Queue.task_done">
+<a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Queue.task_done">[docs]</a>
+    <span class="k">def</span> <span class="nf">task_done</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Indicate that a formerly enqueued task is complete.</span>
+
+<span class="sd">        Used by Queue consumer threads.  For each get() used to fetch a task,</span>
+<span class="sd">        a subsequent call to task_done() tells the queue that the processing</span>
+<span class="sd">        on the task is complete.</span>
+
+<span class="sd">        If a join() is currently blocking, it will resume when all items</span>
+<span class="sd">        have been processed (meaning that a task_done() call was received</span>
+<span class="sd">        for every item that had been put() into the queue).</span>
+
+<span class="sd">        Raises a ValueError if called more times than there were items</span>
+<span class="sd">        placed in the queue.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_tasks_done</span><span class="p">:</span>
+            <span class="n">unfinished</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unfinished_tasks</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">unfinished</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">unfinished</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;task_done() called too many times&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">all_tasks_done</span><span class="o">.</span><span class="n">notify_all</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">unfinished_tasks</span> <span class="o">=</span> <span class="n">unfinished</span></div>
+
+
+<div class="viewcode-block" id="Queue.join">
+<a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Queue.join">[docs]</a>
+    <span class="k">def</span> <span class="nf">join</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Blocks until all items in the Queue have been gotten and processed.</span>
+
+<span class="sd">        The count of unfinished tasks goes up whenever an item is added to the</span>
+<span class="sd">        queue. The count goes down whenever a consumer thread calls task_done()</span>
+<span class="sd">        to indicate the item was retrieved and all work on it is complete.</span>
+
+<span class="sd">        When the count of unfinished tasks drops to zero, join() unblocks.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_tasks_done</span><span class="p">:</span>
+            <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">unfinished_tasks</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">all_tasks_done</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Queue.qsize">
+<a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Queue.qsize">[docs]</a>
+    <span class="k">def</span> <span class="nf">qsize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Return the approximate size of the queue (not reliable!).&#39;&#39;&#39;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">mutex</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qsize</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Queue.empty">
+<a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Queue.empty">[docs]</a>
+    <span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Return True if the queue is empty, False otherwise (not reliable!).</span>
+
+<span class="sd">        This method is likely to be removed at some point.  Use qsize() == 0</span>
+<span class="sd">        as a direct substitute, but be aware that either approach risks a race</span>
+<span class="sd">        condition where a queue can grow before the result of empty() or</span>
+<span class="sd">        qsize() can be used.</span>
+
+<span class="sd">        To create code that needs to wait for all queued tasks to be</span>
+<span class="sd">        completed, the preferred technique is to use the join() method.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">mutex</span><span class="p">:</span>
+            <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qsize</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Queue.full">
+<a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Queue.full">[docs]</a>
+    <span class="k">def</span> <span class="nf">full</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Return True if the queue is full, False otherwise (not reliable!).</span>
+
+<span class="sd">        This method is likely to be removed at some point.  Use qsize() &gt;= n</span>
+<span class="sd">        as a direct substitute, but be aware that either approach risks a race</span>
+<span class="sd">        condition where a queue can shrink before the result of full() or</span>
+<span class="sd">        qsize() can be used.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">mutex</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxsize</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qsize</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Queue.put">
+<a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Queue.put">[docs]</a>
+    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Put an item into the queue.</span>
+
+<span class="sd">        If optional args &#39;block&#39; is true and &#39;timeout&#39; is None (the default),</span>
+<span class="sd">        block if necessary until a free slot is available. If &#39;timeout&#39; is</span>
+<span class="sd">        a non-negative number, it blocks at most &#39;timeout&#39; seconds and raises</span>
+<span class="sd">        the Full exception if no free slot was available within that time.</span>
+<span class="sd">        Otherwise (&#39;block&#39; is false), put an item on the queue if a free slot</span>
+<span class="sd">        is immediately available, else raise the Full exception (&#39;timeout&#39;</span>
+<span class="sd">        is ignored in that case).</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_full</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxsize</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">block</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qsize</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxsize</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">Full</span>
+                <span class="k">elif</span> <span class="n">timeout</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qsize</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxsize</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">not_full</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+                <span class="k">elif</span> <span class="n">timeout</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;timeout&#39; must be a non-negative number&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">endtime</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span> <span class="o">+</span> <span class="n">timeout</span>
+                    <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qsize</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxsize</span><span class="p">:</span>
+                        <span class="n">remaining</span> <span class="o">=</span> <span class="n">endtime</span> <span class="o">-</span> <span class="n">time</span><span class="p">()</span>
+                        <span class="k">if</span> <span class="n">remaining</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="n">Full</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">not_full</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">remaining</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_put</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">unfinished_tasks</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">not_empty</span><span class="o">.</span><span class="n">notify</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Queue.get">
+<a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Queue.get">[docs]</a>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Remove and return an item from the queue.</span>
+
+<span class="sd">        If optional args &#39;block&#39; is true and &#39;timeout&#39; is None (the default),</span>
+<span class="sd">        block if necessary until an item is available. If &#39;timeout&#39; is</span>
+<span class="sd">        a non-negative number, it blocks at most &#39;timeout&#39; seconds and raises</span>
+<span class="sd">        the Empty exception if no item was available within that time.</span>
+<span class="sd">        Otherwise (&#39;block&#39; is false), return an item if one is immediately</span>
+<span class="sd">        available, else raise the Empty exception (&#39;timeout&#39; is ignored</span>
+<span class="sd">        in that case).</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">not_empty</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">block</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qsize</span><span class="p">():</span>
+                    <span class="k">raise</span> <span class="n">Empty</span>
+            <span class="k">elif</span> <span class="n">timeout</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qsize</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">not_empty</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="n">timeout</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;timeout&#39; must be a non-negative number&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">endtime</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span> <span class="o">+</span> <span class="n">timeout</span>
+                <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qsize</span><span class="p">():</span>
+                    <span class="n">remaining</span> <span class="o">=</span> <span class="n">endtime</span> <span class="o">-</span> <span class="n">time</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">remaining</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">Empty</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">not_empty</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">remaining</span><span class="p">)</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">not_full</span><span class="o">.</span><span class="n">notify</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">item</span></div>
+
+
+<div class="viewcode-block" id="Queue.put_nowait">
+<a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Queue.put_nowait">[docs]</a>
+    <span class="k">def</span> <span class="nf">put_nowait</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Put an item into the queue without blocking.</span>
+
+<span class="sd">        Only enqueue the item if a free slot is immediately available.</span>
+<span class="sd">        Otherwise raise the Full exception.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Queue.get_nowait">
+<a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Queue.get_nowait">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_nowait</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Remove and return an item from the queue without blocking.</span>
+
+<span class="sd">        Only get an item if one is immediately available. Otherwise</span>
+<span class="sd">        raise the Empty exception.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+    <span class="c1"># Override these methods to implement other queue organizations</span>
+    <span class="c1"># (e.g. stack or priority queue).</span>
+    <span class="c1"># These will only be called with appropriate locks held</span>
+
+    <span class="c1"># Initialize the queue representation</span>
+    <span class="k">def</span> <span class="nf">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maxsize</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="n">deque</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_qsize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="p">)</span>
+
+    <span class="c1"># Put a new item in the queue</span>
+    <span class="k">def</span> <span class="nf">_put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+    <span class="c1"># Get an item from the queue</span>
+    <span class="k">def</span> <span class="nf">_get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span>
+
+    <span class="n">__class_getitem__</span> <span class="o">=</span> <span class="nb">classmethod</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">GenericAlias</span><span class="p">)</span></div>
+
+
+
+<span class="k">class</span> <span class="nc">PriorityQueue</span><span class="p">(</span><span class="n">Queue</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Variant of Queue that retrieves open entries in priority order (lowest first).</span>
+
+<span class="sd">    Entries are typically tuples of the form:  (priority number, data).</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maxsize</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">_qsize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="n">heappush</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">heappop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">LifoQueue</span><span class="p">(</span><span class="n">Queue</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Variant of Queue that retrieves most recently added entries first.&#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maxsize</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">_qsize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+
+
+<span class="k">class</span> <span class="nc">_PySimpleQueue</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Simple, unbounded FIFO queue.</span>
+
+<span class="sd">    This pure Python implementation is not reentrant.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># Note: while this pure Python version provides fairness</span>
+    <span class="c1"># (by using a threading.Semaphore which is itself fair, being based</span>
+    <span class="c1">#  on threading.Condition), fairness is not part of the API contract.</span>
+    <span class="c1"># This allows the C version to use a different implementation.</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_queue</span> <span class="o">=</span> <span class="n">deque</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_count</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Semaphore</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Put the item on the queue.</span>
+
+<span class="sd">        The optional &#39;block&#39; and &#39;timeout&#39; arguments are ignored, as this method</span>
+<span class="sd">        never blocks.  They are provided for compatibility with the Queue class.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_count</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Remove and return an item from the queue.</span>
+
+<span class="sd">        If optional args &#39;block&#39; is true and &#39;timeout&#39; is None (the default),</span>
+<span class="sd">        block if necessary until an item is available. If &#39;timeout&#39; is</span>
+<span class="sd">        a non-negative number, it blocks at most &#39;timeout&#39; seconds and raises</span>
+<span class="sd">        the Empty exception if no item was available within that time.</span>
+<span class="sd">        Otherwise (&#39;block&#39; is false), return an item if one is immediately</span>
+<span class="sd">        available, else raise the Empty exception (&#39;timeout&#39; is ignored</span>
+<span class="sd">        in that case).</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">timeout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">timeout</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;timeout&#39; must be a non-negative number&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_count</span><span class="o">.</span><span class="n">acquire</span><span class="p">(</span><span class="n">block</span><span class="p">,</span> <span class="n">timeout</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">Empty</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_queue</span><span class="o">.</span><span class="n">popleft</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">put_nowait</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Put an item into the queue without blocking.</span>
+
+<span class="sd">        This is exactly equivalent to `put(item, block=False)` and is only provided</span>
+<span class="sd">        for compatibility with the Queue class.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_nowait</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Remove and return an item from the queue without blocking.</span>
+
+<span class="sd">        Only get an item if one is immediately available. Otherwise</span>
+<span class="sd">        raise the Empty exception.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Return True if the queue is empty, False otherwise (not reliable!).&#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_queue</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">qsize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Return the approximate size of the queue (not reliable!).&#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_queue</span><span class="p">)</span>
+
+    <span class="n">__class_getitem__</span> <span class="o">=</span> <span class="nb">classmethod</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">GenericAlias</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="n">SimpleQueue</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">SimpleQueue</span> <span class="o">=</span> <span class="n">_PySimpleQueue</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

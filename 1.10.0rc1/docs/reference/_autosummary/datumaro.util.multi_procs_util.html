@@ -1,0 +1,1283 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>datumaro.util.multi_procs_util &#8212; Datumaro 1.10.0rc1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=8b7c274f" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../../../_static/documentation_options.js?v=0c3350b6"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/reference/_autosummary/datumaro.util.multi_procs_util';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="datumaro.util.os_util" href="datumaro.util.os_util.html" />
+    <link rel="prev" title="datumaro.util.meta_file_util" href="datumaro.util.meta_file_util.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.10.0rc1 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.10.0rc1 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../../index.html">
+                        Docs
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../../index.html">
+                        Docs
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Get Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/introduction.html">Introduction</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../get-started/quick-start-guide/index.html">Quick Start Guide</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../get-started/quick-start-guide/installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../get-started/quick-start-guide/usage.html">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../get-started/quick-start-guide/examples.html">Examples</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Level Up</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../level-up/basic_skills/index.html">Basic Skills</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/basic_skills/01_project_manipulation.html">Level 1: Project Manipulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/basic_skills/02_dataset_download.html">Level 2: Dataset download</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/basic_skills/03_dataset_import_export.html">Level 3: Data Import and Export</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/basic_skills/04_detect_data_format.html">Level 4: Detect Data Format from an Unknown Dataset</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../level-up/intermediate_skills/index.html">Intermediate Skills</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/05_data_aggregation.html">Level 5: Data Subset Aggregation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/06_data_comparison.html">Level 6: Data Comparison with Two Heterogeneous Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/07_data_merge.html">Level 7: Merge Two Heterogeneous Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/08_data_validate.html">Level 8: Dataset Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/09_data_filtering.html">Level 9: Dataset Filtering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/10_data_exploration.html">Level 10: Dataset Explorartion from a Query Image/Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/11_data_generation.html">Level 11: Data Generation</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../level-up/advanced_skills/index.html">Advanced Skills</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/advanced_skills/12_project_versioning.html">Level 12: Project Versioning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/advanced_skills/13_pseudo_label_generation.html">Level 13: Pseudo Label Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/advanced_skills/14_data_pruning.html">Level 14: Dataset Pruning</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Formats</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../data-formats/formats/index.html">Supported Data Formats</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/ade20k2017.html">ADE20k (v2017)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/ade20k2020.html">ADE20k (v2020)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/align_celeba.html">Align CelebA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/arrow.html">Arrow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/ava_action.html">AVA Action</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/brats.html">BraTS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/brats_numpy.html">BraTS Numpy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/celeba.html">CelebA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/cifar.html">CIFAR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/cityscapes.html">Cityscapes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/coco.html">COCO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/common_semantic_segmentation.html">Common Semantic Segmentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/common_super_resolution.html">Common Super Resolution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/cvat.html">CVAT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/datumaro_binary.html">DatumaroBinary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/datumaro.html">Datumaro</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/dota.html">DOTA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/icdar.html">ICDAR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/image_zip.html">Image zip</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/imagenet.html">ImageNet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/kaggle.html">Kaggle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/kinetics.html">Kinetics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/kitti.html">KITTI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/kitti_raw.html">Velodyne Points / KITTI Raw 3D</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/labelme.html">LabelMe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/lfw.html">LFW</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mapillary_vistas.html">Mapillary Vistas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/market1501.html">Market-1501</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mars.html">MARS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mmdet.html">MMDetection COCO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mnist.html">MNIST</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mot.html">Multiple Object Tracking (MOT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mots.html">Multiple Object Tracking and Segmentation (MOTS)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mpii_json.html">MPII Human Pose JSON</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mpii.html">MPII Human Pose</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mvtec.html">MVTec AD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/nyu_depth_v2.html">NYU Depth Dataset V2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/open_images.html">Open Images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/pascal_voc.html">Pascal VOC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/roboflow.html">Roboflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/segment_anything.html">Segment Anything</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/sly_pointcloud.html">Supervisely Point Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/synthia.html">SYNTHIA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/tabular.html">Tabular</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/vgg_face2.html">Vgg Face2 CSV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/video.html">Video</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/vott_csv.html">VoTT CSV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/vott_json.html">VoTT JSON</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/wider_face.html">WIDER Face</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/yolo.html">YOLO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/yolo_ultralytics.html">YOLO-Ultralytics</a></li>
+</ul>
+</li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../data-formats/media_formats.html">Supported Media Formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data-formats/datumaro_format.html">Datumaro Format</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Hands-on Examples</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../jupyter_notebook_examples/dataset_IO.html">Dataset I/O</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/14_import_export_det_data.html">Import and Export Public Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/15_import_export_seg_data.html">Import and Export Public Semantic Segmentation Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/09_encrypt_dataset.html">Encrypt Your Dataset</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../jupyter_notebook_examples/manipulate.html">Manipulate</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/01_merge_multiple_datasets_for_classification.html">Merge Multiple Datasets for Classification Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/02_merge_heterogeneous_datasets_for_detection.html">Merge Heterogeneous Datasets for Detection</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../jupyter_notebook_examples/explore.html">Explore</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/03_visualize.html">Visualize Your Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/07_data_explorer.html">Find Most Similar Data from Image or Text Queries</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../jupyter_notebook_examples/refine.html">Refine</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/11_validate.html">Validate Dataset To Detect Anomalies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/12_correct_dataset.html">Correct Dataset from Validation Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/04_filter.html">Filter Data through Your Query</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/17_data_pruning.html">Prune Dataset to extract representative subset</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../jupyter_notebook_examples/transform.html">Transform</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-10"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/05_transform.html">Transform Dataset: Re-id, Reindexing, Remapping, etc.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/06_tiling.html">Tile your Dataset to Cope with High-Resolution Images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/18_bbox_to_instance_mask_using_sam.html">Transform bounding box to instance mask annotations using Segment Anything Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/19_automatic_instance_mask_gen_using_sam.html">Automatic instance mask annotations generation using Segment Anything Model</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../jupyter_notebook_examples/e2e_example.html">From Datumaro to Model Training</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-11"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/08_e2e_example_yolo_ultralytics_trainer.html">Train Your OpenVINO™ Model Using YoloV8 Trainer For Any Dataset Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/10_noisy_label_detection_cls.html">Noisy label detection for classification tasks from training loss dynamics statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/13_noisy_label_detection_det.html">Noisy label detection for detection tasks from training loss dynamics statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/16_missing_annotation_detection.html">Missing Annotation Detection</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Command Line Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/overview.html">Overview</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../command-reference/context_free/index.html">Context-free Commands</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-12"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/compare.html">Compare</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/convert.html">Convert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/detect.html">Detect</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/dinfo.html">Info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/download.html">Download</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/explain.html">Explain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/explorer.html">Explore</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/filter.html">Filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/generate.html">Generate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/merge.html">Merge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/patch.html">Patch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/prune.html">Prune</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/stats.html">Stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/transform.html">Transform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/validate.html">Validate</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../command-reference/context/index.html">Context Commands</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-13"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context/checkout.html">Checkout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context/commit.html">Commit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context/create.html">Create</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context/export.html">Export</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context/log.html">Log</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context/models.html">Model (context)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context/projects.html">Project (context)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context/sources.html">Source (context)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context/status.html">Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context/util.html">Util</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../command-reference/helper/index.html">Helper Commands</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-14"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/helper/format.html">Format</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../datumaro_module.html">Datumaro Module</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-15"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="datumaro.html">datumaro</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-16"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l3 has-children"><a class="reference internal" href="datumaro.cli.html">datumaro.cli</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-17"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.cli.commands.html">datumaro.cli.commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.cli.contexts.html">datumaro.cli.contexts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.cli.helpers.html">datumaro.cli.helpers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.cli.util.html">datumaro.cli.util</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="datumaro.components.html">datumaro.components</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-18"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.abstracts.html">datumaro.components.abstracts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.algorithms.html">datumaro.components.algorithms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.annotation.html">datumaro.components.annotation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.annotations.html">datumaro.components.annotations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.cli_plugin.html">datumaro.components.cli_plugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.comparator.html">datumaro.components.comparator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.config.html">datumaro.components.config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.config_model.html">datumaro.components.config_model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.contexts.html">datumaro.components.contexts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.crypter.html">datumaro.components.crypter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.dataset.html">datumaro.components.dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.dataset_base.html">datumaro.components.dataset_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.dataset_item_storage.html">datumaro.components.dataset_item_storage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.dataset_storage.html">datumaro.components.dataset_storage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.environment.html">datumaro.components.environment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.errors.html">datumaro.components.errors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.exporter.html">datumaro.components.exporter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.extractor_tfds.html">datumaro.components.extractor_tfds</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.filter.html">datumaro.components.filter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.format_detection.html">datumaro.components.format_detection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.generator.html">datumaro.components.generator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.hl_ops.html">datumaro.components.hl_ops</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.importer.html">datumaro.components.importer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.launcher.html">datumaro.components.launcher</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.lazy_plugin.html">datumaro.components.lazy_plugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.media.html">datumaro.components.media</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.merge.html">datumaro.components.merge</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.operations.html">datumaro.components.operations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.progress_reporting.html">datumaro.components.progress_reporting</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.project.html">datumaro.components.project</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.registry.html">datumaro.components.registry</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.shift_analyzer.html">datumaro.components.shift_analyzer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.transformer.html">datumaro.components.transformer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.validator.html">datumaro.components.validator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.components.visualizer.html">datumaro.components.visualizer</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="datumaro.errors.html">datumaro.errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datumaro.ops.html">datumaro.ops</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="datumaro.plugins.html">datumaro.plugins</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-19"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.plugins.accuracy_checker_plugin.html">datumaro.plugins.accuracy_checker_plugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.plugins.anchor_generator.html">datumaro.plugins.anchor_generator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.plugins.configurable_validator.html">datumaro.plugins.configurable_validator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.plugins.data_formats.html">datumaro.plugins.data_formats</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.plugins.explorer.html">datumaro.plugins.explorer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.plugins.framework_converter.html">datumaro.plugins.framework_converter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.plugins.inference_server_plugin.html">datumaro.plugins.inference_server_plugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.plugins.missing_annotation_detection.html">datumaro.plugins.missing_annotation_detection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.plugins.ndr.html">datumaro.plugins.ndr</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.plugins.openvino_plugin.html">datumaro.plugins.openvino_plugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.plugins.sam_transforms.html">datumaro.plugins.sam_transforms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.plugins.sampler.html">datumaro.plugins.sampler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.plugins.specs.html">datumaro.plugins.specs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.plugins.splitter.html">datumaro.plugins.splitter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.plugins.synthetic_data.html">datumaro.plugins.synthetic_data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.plugins.tiling.html">datumaro.plugins.tiling</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.plugins.transforms.html">datumaro.plugins.transforms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.plugins.validators.html">datumaro.plugins.validators</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="datumaro.project.html">datumaro.project</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datumaro.rust_api.html">datumaro.rust_api</a></li>
+<li class="toctree-l3 current active has-children"><a class="reference internal" href="datumaro.util.html">datumaro.util</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-20"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="datumaro.util.annotation_util.html">datumaro.util.annotation_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.util.attrs_util.html">datumaro.util.attrs_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.util.definitions.html">datumaro.util.definitions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.util.file_utils.html">datumaro.util.file_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.util.image.html">datumaro.util.image</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.util.image_cache.html">datumaro.util.image_cache</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.util.import_util.html">datumaro.util.import_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.util.log_utils.html">datumaro.util.log_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.util.mask_tools.html">datumaro.util.mask_tools</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.util.meta_file_util.html">datumaro.util.meta_file_util</a></li>
+<li class="toctree-l4 current active"><a class="current reference internal" href="#">datumaro.util.multi_procs_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.util.os_util.html">datumaro.util.os_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.util.pickle_util.html">datumaro.util.pickle_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.util.samples.html">datumaro.util.samples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.util.scope.html">datumaro.util.scope</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.util.tabular_util.html">datumaro.util.tabular_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.util.telemetry_stub.html">datumaro.util.telemetry_stub</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.util.telemetry_utils.html">datumaro.util.telemetry_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="datumaro.util.tf_util.html">datumaro.util.tf_util</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="datumaro.version.html">datumaro.version</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../supported_plugins.html">Supported Plugins</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Explanation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../explanation/concept.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../explanation/architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../explanation/project.html">Command-Line Workflow</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../explanation/plugins/index.html">Plugins</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-21"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../explanation/plugins/openvino_plugin.html">OpenVINO™ Inference Interpreter</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Misc</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user-manual/how_to_use_datumaro.html">How to use Datumaro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user-manual/model_preparation.html">Model Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user-manual/extending.html">Extending</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user-manual/how_to_control_tm_data_collection.html">How to control telemetry data collection</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Release Notes</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../release_notes.html">Release Notes</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-22"><i class="fa-solid fa-chevron-down"></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Docs</a></li>
+    
+    
+    <li class="breadcrumb-item"><i class="fa-solid fa-ellipsis"></i></li>
+    
+    
+    <li class="breadcrumb-item"><a href="datumaro.util.html" class="nav-link">datumaro.util</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">datumaro.uti...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-datumaro.util.multi_procs_util">
+<span id="datumaro-util-multi-procs-util"></span><h1>datumaro.util.multi_procs_util<a class="headerlink" href="#module-datumaro.util.multi_procs_util" title="Link to this heading">#</a></h1>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.util.multi_procs_util.consumer_generator" title="datumaro.util.multi_procs_util.consumer_generator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">consumer_generator</span></code></a>(producer_generator[, ...])</p></td>
+<td><p>Context manager that creates a generator to consume items produced by another generator.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.util.multi_procs_util.ProducerMessage" title="datumaro.util.multi_procs_util.ProducerMessage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ProducerMessage</span></code></a>(value)</p></td>
+<td><p>An enumeration.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py function">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.consumer_generator">
+<span class="sig-prename descclassname"><span class="pre">datumaro.util.multi_procs_util.</span></span><span class="sig-name descname"><span class="pre">consumer_generator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">producer_generator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterator" title="(in Python v3.13)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Item</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">queue_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">enqueue_timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">join_timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generator" title="(in Python v3.13)"><span class="pre">Generator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterator" title="(in Python v3.13)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Item</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/datumaro/util/multi_procs_util.html#consumer_generator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.util.multi_procs_util.consumer_generator" title="Link to this definition">#</a></dt>
+<dd><p>Context manager that creates a generator to consume items produced by another generator.</p>
+<p>This context manager sets up a producer thread that generates items from the <cite>producer_generator</cite>
+and enqueues them to be consumed by the consumer generator, which is also created by this function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>producer_generator</strong> – A generator that produces items.</p></li>
+<li><p><strong>queue_size</strong> – The maximum size of the shared queue between the producer and consumer.</p></li>
+<li><p><strong>enqueue_timeout</strong> – The maximum time to wait for enqueuing an item to the queue if it’s full.</p></li>
+<li><p><strong>join_timeout</strong> – The maximum time to wait for the producer thread to finish when exiting the context.
+If None, wait until the producer thread terminates.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A context for iterating over the generated items.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Iterator</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.Condition">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datumaro.util.multi_procs_util.</span></span><span class="sig-name descname"><span class="pre">Condition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lock</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/threading.html#Condition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.util.multi_procs_util.Condition" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Class that implements a condition variable.</p>
+<p>A condition variable allows one or more threads to wait until they are
+notified by another thread.</p>
+<p>If the lock argument is given and not None, it must be a Lock or RLock
+object, and it is used as the underlying lock. Otherwise, a new RLock object
+is created and used as the underlying lock.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.Condition.wait">
+<span class="sig-name descname"><span class="pre">wait</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/threading.html#Condition.wait"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.util.multi_procs_util.Condition.wait" title="Link to this definition">#</a></dt>
+<dd><p>Wait until notified or until a timeout occurs.</p>
+<p>If the calling thread has not acquired the lock when this method is
+called, a RuntimeError is raised.</p>
+<p>This method releases the underlying lock, and then blocks until it is
+awakened by a notify() or notify_all() call for the same condition
+variable in another thread, or until the optional timeout occurs. Once
+awakened or timed out, it re-acquires the lock and returns.</p>
+<p>When the timeout argument is present and not None, it should be a
+floating point number specifying a timeout for the operation in seconds
+(or fractions thereof).</p>
+<p>When the underlying lock is an RLock, it is not released using its
+release() method, since this may not actually unlock the lock when it
+was acquired multiple times recursively. Instead, an internal interface
+of the RLock class is used, which really unlocks it even when it has
+been recursively acquired several times. Another internal interface is
+then used to restore the recursion level when the lock is reacquired.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.Condition.wait_for">
+<span class="sig-name descname"><span class="pre">wait_for</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">predicate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/threading.html#Condition.wait_for"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.util.multi_procs_util.Condition.wait_for" title="Link to this definition">#</a></dt>
+<dd><p>Wait until a condition evaluates to True.</p>
+<p>predicate should be a callable which result will be interpreted as a
+boolean value.  A timeout may be provided giving the maximum time to
+wait.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.Condition.notify">
+<span class="sig-name descname"><span class="pre">notify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/threading.html#Condition.notify"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.util.multi_procs_util.Condition.notify" title="Link to this definition">#</a></dt>
+<dd><p>Wake up one or more threads waiting on this condition, if any.</p>
+<p>If the calling thread has not acquired the lock when this method is
+called, a RuntimeError is raised.</p>
+<p>This method wakes up at most n of the threads waiting for the condition
+variable; it is a no-op if no threads are waiting.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.Condition.notify_all">
+<span class="sig-name descname"><span class="pre">notify_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/threading.html#Condition.notify_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.util.multi_procs_util.Condition.notify_all" title="Link to this definition">#</a></dt>
+<dd><p>Wake up all threads waiting on this condition.</p>
+<p>If the calling thread has not acquired the lock when this method
+is called, a RuntimeError is raised.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.Condition.notifyAll">
+<span class="sig-name descname"><span class="pre">notifyAll</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/threading.html#Condition.notifyAll"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.util.multi_procs_util.Condition.notifyAll" title="Link to this definition">#</a></dt>
+<dd><p>Wake up all threads waiting on this condition.</p>
+<p>This method is deprecated, use notify_all() instead.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.Full">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datumaro.util.multi_procs_util.</span></span><span class="sig-name descname"><span class="pre">Full</span></span><a class="reference internal" href="../../../_modules/queue.html#Full"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.util.multi_procs_util.Full" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#Exception" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></a></p>
+<p>Exception raised by Queue.put(block=0)/put_nowait().</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.IntEnum">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datumaro.util.multi_procs_util.</span></span><span class="sig-name descname"><span class="pre">IntEnum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/enum.html#IntEnum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.util.multi_procs_util.IntEnum" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference internal" href="datumaro.components.dataset_item_storage.html#datumaro.components.dataset_item_storage.Enum" title="enum.Enum"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
+<p>Enum where members are also (and must be) ints</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.ProducerMessage">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datumaro.util.multi_procs_util.</span></span><span class="sig-name descname"><span class="pre">ProducerMessage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/datumaro/util/multi_procs_util.html#ProducerMessage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.util.multi_procs_util.ProducerMessage" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#datumaro.util.multi_procs_util.IntEnum" title="enum.IntEnum"><code class="xref py py-class docutils literal notranslate"><span class="pre">IntEnum</span></code></a></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.ProducerMessage.START">
+<span class="sig-name descname"><span class="pre">START</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#datumaro.util.multi_procs_util.ProducerMessage.START" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.ProducerMessage.END">
+<span class="sig-name descname"><span class="pre">END</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#datumaro.util.multi_procs_util.ProducerMessage.END" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.Queue">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datumaro.util.multi_procs_util.</span></span><span class="sig-name descname"><span class="pre">Queue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">maxsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/queue.html#Queue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.util.multi_procs_util.Queue" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Create a queue object with a given maximum size.</p>
+<p>If maxsize is &lt;= 0, the queue size is infinite.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.Queue.task_done">
+<span class="sig-name descname"><span class="pre">task_done</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/queue.html#Queue.task_done"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.util.multi_procs_util.Queue.task_done" title="Link to this definition">#</a></dt>
+<dd><p>Indicate that a formerly enqueued task is complete.</p>
+<p>Used by Queue consumer threads.  For each get() used to fetch a task,
+a subsequent call to task_done() tells the queue that the processing
+on the task is complete.</p>
+<p>If a join() is currently blocking, it will resume when all items
+have been processed (meaning that a task_done() call was received
+for every item that had been put() into the queue).</p>
+<p>Raises a ValueError if called more times than there were items
+placed in the queue.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.Queue.join">
+<span class="sig-name descname"><span class="pre">join</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/queue.html#Queue.join"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.util.multi_procs_util.Queue.join" title="Link to this definition">#</a></dt>
+<dd><p>Blocks until all items in the Queue have been gotten and processed.</p>
+<p>The count of unfinished tasks goes up whenever an item is added to the
+queue. The count goes down whenever a consumer thread calls task_done()
+to indicate the item was retrieved and all work on it is complete.</p>
+<p>When the count of unfinished tasks drops to zero, join() unblocks.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.Queue.qsize">
+<span class="sig-name descname"><span class="pre">qsize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/queue.html#Queue.qsize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.util.multi_procs_util.Queue.qsize" title="Link to this definition">#</a></dt>
+<dd><p>Return the approximate size of the queue (not reliable!).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.Queue.empty">
+<span class="sig-name descname"><span class="pre">empty</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/queue.html#Queue.empty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.util.multi_procs_util.Queue.empty" title="Link to this definition">#</a></dt>
+<dd><p>Return True if the queue is empty, False otherwise (not reliable!).</p>
+<p>This method is likely to be removed at some point.  Use qsize() == 0
+as a direct substitute, but be aware that either approach risks a race
+condition where a queue can grow before the result of empty() or
+qsize() can be used.</p>
+<p>To create code that needs to wait for all queued tasks to be
+completed, the preferred technique is to use the join() method.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.Queue.full">
+<span class="sig-name descname"><span class="pre">full</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/queue.html#Queue.full"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.util.multi_procs_util.Queue.full" title="Link to this definition">#</a></dt>
+<dd><p>Return True if the queue is full, False otherwise (not reliable!).</p>
+<p>This method is likely to be removed at some point.  Use qsize() &gt;= n
+as a direct substitute, but be aware that either approach risks a race
+condition where a queue can shrink before the result of full() or
+qsize() can be used.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.Queue.put">
+<span class="sig-name descname"><span class="pre">put</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/queue.html#Queue.put"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.util.multi_procs_util.Queue.put" title="Link to this definition">#</a></dt>
+<dd><p>Put an item into the queue.</p>
+<p>If optional args ‘block’ is true and ‘timeout’ is None (the default),
+block if necessary until a free slot is available. If ‘timeout’ is
+a non-negative number, it blocks at most ‘timeout’ seconds and raises
+the Full exception if no free slot was available within that time.
+Otherwise (‘block’ is false), put an item on the queue if a free slot
+is immediately available, else raise the Full exception (‘timeout’
+is ignored in that case).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.Queue.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/queue.html#Queue.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.util.multi_procs_util.Queue.get" title="Link to this definition">#</a></dt>
+<dd><p>Remove and return an item from the queue.</p>
+<p>If optional args ‘block’ is true and ‘timeout’ is None (the default),
+block if necessary until an item is available. If ‘timeout’ is
+a non-negative number, it blocks at most ‘timeout’ seconds and raises
+the Empty exception if no item was available within that time.
+Otherwise (‘block’ is false), return an item if one is immediately
+available, else raise the Empty exception (‘timeout’ is ignored
+in that case).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.Queue.put_nowait">
+<span class="sig-name descname"><span class="pre">put_nowait</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/queue.html#Queue.put_nowait"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.util.multi_procs_util.Queue.put_nowait" title="Link to this definition">#</a></dt>
+<dd><p>Put an item into the queue without blocking.</p>
+<p>Only enqueue the item if a free slot is immediately available.
+Otherwise raise the Full exception.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.Queue.get_nowait">
+<span class="sig-name descname"><span class="pre">get_nowait</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/queue.html#Queue.get_nowait"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.util.multi_procs_util.Queue.get_nowait" title="Link to this definition">#</a></dt>
+<dd><p>Remove and return an item from the queue without blocking.</p>
+<p>Only get an item if one is immediately available. Otherwise
+raise the Empty exception.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.Thread">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datumaro.util.multi_procs_util.</span></span><span class="sig-name descname"><span class="pre">Thread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">group</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">daemon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/threading.html#Thread"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.util.multi_procs_util.Thread" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A class that represents a thread of control.</p>
+<p>This class can be safely subclassed in a limited fashion. There are two ways
+to specify the activity: by passing a callable object to the constructor, or
+by overriding the run() method in a subclass.</p>
+<p>This constructor should always be called with keyword arguments. Arguments are:</p>
+<p><em>group</em> should be None; reserved for future extension when a ThreadGroup
+class is implemented.</p>
+<p><em>target</em> is the callable object to be invoked by the run()
+method. Defaults to None, meaning nothing is called.</p>
+<p><em>name</em> is the thread name. By default, a unique name is constructed of
+the form “Thread-N” where N is a small decimal number.</p>
+<p><em>args</em> is the argument tuple for the target invocation. Defaults to ().</p>
+<p><em>kwargs</em> is a dictionary of keyword arguments for the target
+invocation. Defaults to {}.</p>
+<p>If a subclass overrides the constructor, it must make sure to invoke
+the base class constructor (Thread.__init__()) before doing anything
+else to the thread.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.Thread.start">
+<span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/threading.html#Thread.start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.util.multi_procs_util.Thread.start" title="Link to this definition">#</a></dt>
+<dd><p>Start the thread’s activity.</p>
+<p>It must be called at most once per thread object. It arranges for the
+object’s run() method to be invoked in a separate thread of control.</p>
+<p>This method will raise a RuntimeError if called more than once on the
+same thread object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.Thread.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/threading.html#Thread.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.util.multi_procs_util.Thread.run" title="Link to this definition">#</a></dt>
+<dd><p>Method representing the thread’s activity.</p>
+<p>You may override this method in a subclass. The standard run() method
+invokes the callable object passed to the object’s constructor as the
+target argument, if any, with sequential and keyword arguments taken
+from the args and kwargs arguments, respectively.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.Thread.join">
+<span class="sig-name descname"><span class="pre">join</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/threading.html#Thread.join"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.util.multi_procs_util.Thread.join" title="Link to this definition">#</a></dt>
+<dd><p>Wait until the thread terminates.</p>
+<p>This blocks the calling thread until the thread whose join() method is
+called terminates – either normally or through an unhandled exception
+or until the optional timeout occurs.</p>
+<p>When the timeout argument is present and not None, it should be a
+floating point number specifying a timeout for the operation in seconds
+(or fractions thereof). As join() always returns None, you must call
+is_alive() after join() to decide whether a timeout happened – if the
+thread is still alive, the join() call timed out.</p>
+<p>When the timeout argument is not present or None, the operation will
+block until the thread terminates.</p>
+<p>A thread can be join()ed many times.</p>
+<p>join() raises a RuntimeError if an attempt is made to join the current
+thread as that would cause a deadlock. It is also an error to join() a
+thread before it has been started and attempts to do so raises the same
+exception.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.Thread.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#datumaro.util.multi_procs_util.Thread.name" title="Link to this definition">#</a></dt>
+<dd><p>A string used for identification purposes only.</p>
+<p>It has no semantics. Multiple threads may be given the same name. The
+initial name is set by the constructor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.Thread.ident">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ident</span></span><a class="headerlink" href="#datumaro.util.multi_procs_util.Thread.ident" title="Link to this definition">#</a></dt>
+<dd><p>Thread identifier of this thread or None if it has not been started.</p>
+<p>This is a nonzero integer. See the get_ident() function. Thread
+identifiers may be recycled when a thread exits and another thread is
+created. The identifier is available even after the thread has exited.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.Thread.native_id">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">native_id</span></span><a class="headerlink" href="#datumaro.util.multi_procs_util.Thread.native_id" title="Link to this definition">#</a></dt>
+<dd><p>Native integral thread ID of this thread, or None if it has not been started.</p>
+<p>This is a non-negative integer. See the get_native_id() function.
+This represents the Thread ID as reported by the kernel.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.Thread.is_alive">
+<span class="sig-name descname"><span class="pre">is_alive</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/threading.html#Thread.is_alive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.util.multi_procs_util.Thread.is_alive" title="Link to this definition">#</a></dt>
+<dd><p>Return whether the thread is alive.</p>
+<p>This method returns True just before the run() method starts until just
+after the run() method terminates. See also the module function
+enumerate().</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.Thread.daemon">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">daemon</span></span><a class="headerlink" href="#datumaro.util.multi_procs_util.Thread.daemon" title="Link to this definition">#</a></dt>
+<dd><p>A boolean value indicating whether this thread is a daemon thread.</p>
+<p>This must be set before start() is called, otherwise RuntimeError is
+raised. Its initial value is inherited from the creating thread; the
+main thread is not a daemon thread and therefore all threads created in
+the main thread default to daemon = False.</p>
+<p>The entire Python program exits when only daemon threads are left.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.Thread.isDaemon">
+<span class="sig-name descname"><span class="pre">isDaemon</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/threading.html#Thread.isDaemon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.util.multi_procs_util.Thread.isDaemon" title="Link to this definition">#</a></dt>
+<dd><p>Return whether this thread is a daemon.</p>
+<p>This method is deprecated, use the daemon attribute instead.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.Thread.setDaemon">
+<span class="sig-name descname"><span class="pre">setDaemon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">daemonic</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/threading.html#Thread.setDaemon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.util.multi_procs_util.Thread.setDaemon" title="Link to this definition">#</a></dt>
+<dd><p>Set whether this thread is a daemon.</p>
+<p>This method is deprecated, use the .daemon property instead.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.Thread.getName">
+<span class="sig-name descname"><span class="pre">getName</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/threading.html#Thread.getName"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.util.multi_procs_util.Thread.getName" title="Link to this definition">#</a></dt>
+<dd><p>Return a string used for identification purposes only.</p>
+<p>This method is deprecated, use the name attribute instead.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.Thread.setName">
+<span class="sig-name descname"><span class="pre">setName</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/threading.html#Thread.setName"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.util.multi_procs_util.Thread.setName" title="Link to this definition">#</a></dt>
+<dd><p>Set the name string for this thread.</p>
+<p>This method is deprecated, use the name attribute instead.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.TypeVar">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datumaro.util.multi_procs_util.</span></span><span class="sig-name descname"><span class="pre">TypeVar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">constraints</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bound</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">covariant</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contravariant</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/typing.html#TypeVar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.util.multi_procs_util.TypeVar" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_Final</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_Immutable</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">_TypeVarLike</span></code></p>
+<p>Type variable.</p>
+<p>Usage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">)</span>  <span class="c1"># Can be anything</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)</span>  <span class="c1"># Must be str or bytes</span>
+</pre></div>
+</div>
+<p>Type variables exist primarily for the benefit of static type
+checkers.  They serve as the parameters for generic types as well
+as for generic function definitions.  See class Generic for more
+information on generic types.  Generic functions work as follows:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>def repeat(x: T, n: int) -&gt; List[T]:</dt><dd><p>‘’’Return a list containing n references to x.’’’
+return [x]*n</p>
+</dd>
+<dt>def longest(x: A, y: A) -&gt; A:</dt><dd><p>‘’’Return the longest of two strings.’’’
+return x if len(x) &gt;= len(y) else y</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>The latter example’s signature is essentially the overloading
+of (str, str) -&gt; str and (bytes, bytes) -&gt; bytes.  Also note
+that if the arguments are instances of some subclass of str,
+the return type is still plain str.</p>
+<p>At runtime, isinstance(x, T) and issubclass(C, T) will raise TypeError.</p>
+<p>Type variables defined with covariant=True or contravariant=True
+can be used to declare covariant or contravariant generic types.
+See PEP 484 for more details. By default generic types are invariant
+in all type variables.</p>
+<p>Type variables can be introspected. e.g.:</p>
+<blockquote>
+<div><p>T.__name__ == ‘T’
+T.__constraints__ == ()
+T.__covariant__ == False
+T.__contravariant__ = False
+A.__constraints__ == (str, bytes)</p>
+</div></blockquote>
+<p>Note that only type variables defined in global scope can be pickled.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="datumaro.util.multi_procs_util.contextmanager">
+<span class="sig-prename descclassname"><span class="pre">datumaro.util.multi_procs_util.</span></span><span class="sig-name descname"><span class="pre">contextmanager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/contextlib.html#contextmanager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.util.multi_procs_util.contextmanager" title="Link to this definition">#</a></dt>
+<dd><p>&#64;contextmanager decorator.</p>
+<p>Typical usage:</p>
+<blockquote>
+<div><p>&#64;contextmanager
+def some_generator(&lt;arguments&gt;):</p>
+<blockquote>
+<div><p>&lt;setup&gt;
+try:</p>
+<blockquote>
+<div><p>yield &lt;value&gt;</p>
+</div></blockquote>
+<dl class="simple">
+<dt>finally:</dt><dd><p>&lt;cleanup&gt;</p>
+</dd>
+</dl>
+</div></blockquote>
+</div></blockquote>
+<p>This makes this:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>with some_generator(&lt;arguments&gt;) as &lt;variable&gt;:</dt><dd><p>&lt;body&gt;</p>
+</dd>
+</dl>
+</div></blockquote>
+<p>equivalent to this:</p>
+<blockquote>
+<div><p>&lt;setup&gt;
+try:</p>
+<blockquote>
+<div><p>&lt;variable&gt; = &lt;value&gt;
+&lt;body&gt;</p>
+</div></blockquote>
+<dl class="simple">
+<dt>finally:</dt><dd><p>&lt;cleanup&gt;</p>
+</dd>
+</dl>
+</div></blockquote>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="datumaro.util.meta_file_util.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">datumaro.util.meta_file_util</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="datumaro.util.os_util.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">datumaro.util.os_util</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.consumer_generator"><code class="docutils literal notranslate"><span class="pre">consumer_generator()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.Condition"><code class="docutils literal notranslate"><span class="pre">Condition</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.Condition.wait"><code class="docutils literal notranslate"><span class="pre">Condition.wait()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.Condition.wait_for"><code class="docutils literal notranslate"><span class="pre">Condition.wait_for()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.Condition.notify"><code class="docutils literal notranslate"><span class="pre">Condition.notify()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.Condition.notify_all"><code class="docutils literal notranslate"><span class="pre">Condition.notify_all()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.Condition.notifyAll"><code class="docutils literal notranslate"><span class="pre">Condition.notifyAll()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.Full"><code class="docutils literal notranslate"><span class="pre">Full</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.IntEnum"><code class="docutils literal notranslate"><span class="pre">IntEnum</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.ProducerMessage"><code class="docutils literal notranslate"><span class="pre">ProducerMessage</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.ProducerMessage.START"><code class="docutils literal notranslate"><span class="pre">ProducerMessage.START</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.ProducerMessage.END"><code class="docutils literal notranslate"><span class="pre">ProducerMessage.END</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.Queue"><code class="docutils literal notranslate"><span class="pre">Queue</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.Queue.task_done"><code class="docutils literal notranslate"><span class="pre">Queue.task_done()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.Queue.join"><code class="docutils literal notranslate"><span class="pre">Queue.join()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.Queue.qsize"><code class="docutils literal notranslate"><span class="pre">Queue.qsize()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.Queue.empty"><code class="docutils literal notranslate"><span class="pre">Queue.empty()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.Queue.full"><code class="docutils literal notranslate"><span class="pre">Queue.full()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.Queue.put"><code class="docutils literal notranslate"><span class="pre">Queue.put()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.Queue.get"><code class="docutils literal notranslate"><span class="pre">Queue.get()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.Queue.put_nowait"><code class="docutils literal notranslate"><span class="pre">Queue.put_nowait()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.Queue.get_nowait"><code class="docutils literal notranslate"><span class="pre">Queue.get_nowait()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.Thread"><code class="docutils literal notranslate"><span class="pre">Thread</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.Thread.start"><code class="docutils literal notranslate"><span class="pre">Thread.start()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.Thread.run"><code class="docutils literal notranslate"><span class="pre">Thread.run()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.Thread.join"><code class="docutils literal notranslate"><span class="pre">Thread.join()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.Thread.name"><code class="docutils literal notranslate"><span class="pre">Thread.name</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.Thread.ident"><code class="docutils literal notranslate"><span class="pre">Thread.ident</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.Thread.native_id"><code class="docutils literal notranslate"><span class="pre">Thread.native_id</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.Thread.is_alive"><code class="docutils literal notranslate"><span class="pre">Thread.is_alive()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.Thread.daemon"><code class="docutils literal notranslate"><span class="pre">Thread.daemon</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.Thread.isDaemon"><code class="docutils literal notranslate"><span class="pre">Thread.isDaemon()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.Thread.setDaemon"><code class="docutils literal notranslate"><span class="pre">Thread.setDaemon()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.Thread.getName"><code class="docutils literal notranslate"><span class="pre">Thread.getName()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.Thread.setName"><code class="docutils literal notranslate"><span class="pre">Thread.setName()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.TypeVar"><code class="docutils literal notranslate"><span class="pre">TypeVar</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.util.multi_procs_util.contextmanager"><code class="docutils literal notranslate"><span class="pre">contextmanager()</span></code></a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../_sources/docs/reference/_autosummary/datumaro.util.multi_procs_util.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

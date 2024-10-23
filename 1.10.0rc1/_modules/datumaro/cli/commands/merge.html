@@ -1,0 +1,698 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>datumaro.cli.commands.merge &#8212; Datumaro 1.10.0rc1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=8b7c274f" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../../../../_static/documentation_options.js?v=0c3350b6"></script>
+    <script src="../../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/cli/commands/merge';</script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.10.0rc1 documentation - Home"/>
+    <script>document.write(`<img src="../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.10.0rc1 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../docs/index.html">
+                        Docs
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../docs/index.html">
+                        Docs
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../commands.html" class="nav-link">datumaro.cli.commands</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">datumaro.cli...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for datumaro.cli.commands.merge</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (C) 2020-2023 Intel Corporation</span>
+<span class="c1">#</span>
+<span class="c1"># SPDX-License-Identifier: MIT</span>
+
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
+
+<span class="kn">from</span> <span class="nn">datumaro.components.dataset</span> <span class="kn">import</span> <span class="n">DEFAULT_FORMAT</span>
+<span class="kn">from</span> <span class="nn">datumaro.components.environment</span> <span class="kn">import</span> <span class="n">DEFAULT_ENVIRONMENT</span>
+<span class="kn">from</span> <span class="nn">datumaro.components.errors</span> <span class="kn">import</span> <span class="n">ProjectNotFoundError</span>
+<span class="kn">from</span> <span class="nn">datumaro.components.hl_ops</span> <span class="kn">import</span> <span class="n">HLOps</span>
+<span class="kn">from</span> <span class="nn">datumaro.components.merge.intersect_merge</span> <span class="kn">import</span> <span class="n">IntersectMerge</span>
+<span class="kn">from</span> <span class="nn">datumaro.components.project</span> <span class="kn">import</span> <span class="n">ProjectBuildTargets</span>
+<span class="kn">from</span> <span class="nn">datumaro.util.scope</span> <span class="kn">import</span> <span class="n">scope_add</span><span class="p">,</span> <span class="n">scoped</span>
+
+<span class="kn">from</span> <span class="nn">..util</span> <span class="kn">import</span> <span class="n">MultilineFormatter</span><span class="p">,</span> <span class="n">join_cli_args</span>
+<span class="kn">from</span> <span class="nn">..util.errors</span> <span class="kn">import</span> <span class="n">CliException</span>
+<span class="kn">from</span> <span class="nn">..util.project</span> <span class="kn">import</span> <span class="n">generate_next_file_name</span><span class="p">,</span> <span class="n">load_project</span><span class="p">,</span> <span class="n">parse_full_revpath</span>
+
+
+<div class="viewcode-block" id="build_parser">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.commands.merge.html#datumaro.cli.commands.merge.build_parser">[docs]</a>
+<span class="k">def</span> <span class="nf">build_parser</span><span class="p">(</span><span class="n">parser_ctor</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">):</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">parser_ctor</span><span class="p">(</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Merge few datasets or projects&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        Merges multiple datasets into one and produces a new dataset.</span>
+<span class="s2">        The command can be useful if you want to merge several datasets</span>
+<span class="s2">        which have homogeneous or heterogeneous label categories.</span>
+<span class="s2">        We provide three merge policies: 1) &quot;exact&quot; for homogenous datasets;</span>
+<span class="s2">        2) &quot;union&quot;, or 3) &quot;intersect&quot; for heterogenous datasets. The default merge</span>
+<span class="s2">        policy is &quot;union&quot;.</span>
+<span class="s2">        |n</span>
+<span class="s2">        |n</span>
+<span class="s2">        In simple cases, when dataset images do not intersect and new</span>
+<span class="s2">        labels are not added, we can use the &quot;exact&quot; merge policy for this situation.</span>
+<span class="s2">        |n</span>
+<span class="s2">        |n</span>
+<span class="s2">        On the other hand, when two datasets have different label categories or</span>
+<span class="s2">        have the same (id, subset) pairs in their dataset items. you have to use</span>
+<span class="s2">        the &quot;union&quot; or &quot;intersect&quot; merge.</span>
+<span class="s2">        |n</span>
+<span class="s2">        The &quot;union&quot; merge is more simple way to merge them.</span>
+<span class="s2">        It tries to obtain a union set from their label categories and attempts to merge</span>
+<span class="s2">        their dataset items. However, if there exist the same (id, subset) pairs, it appends</span>
+<span class="s2">        a suffix to each item&#39;s id to prevent the same (id, subset) pair in the merged dataset.</span>
+<span class="s2">        |n</span>
+<span class="s2">        The &quot;intersect&quot; policy is a more complicated way to merge heterogeneous datasets. If you want to merge</span>
+<span class="s2">        the annotations in the same (id, subset) pairs which coming from the different datasets</span>
+<span class="s2">        each other you wish to merge. You have to taking into consideration potential overlaps</span>
+<span class="s2">        and conflicts between the annotations. &quot;intersect&quot; merge policy can try to find common</span>
+<span class="s2">        ground by voting or return a list of conflicts.</span>
+<span class="s2">        |n</span>
+<span class="s2">        |n</span>
+<span class="s2">        This command has multiple forms:|n</span>
+<span class="s2">        1) </span><span class="si">%(prog)s</span><span class="s2"> &lt;revpath&gt;|n</span>
+<span class="s2">        2) </span><span class="si">%(prog)s</span><span class="s2"> &lt;revpath&gt; &lt;revpath&gt; ...|n</span>
+<span class="s2">        |n</span>
+<span class="s2">        1 - Merges the current project&#39;s main target (&#39;project&#39;)</span>
+<span class="s2">        in the working tree with the specified dataset.|n</span>
+<span class="s2">        2 - Merges the specified datasets.</span>
+<span class="s2">        Note that the current project is not included in the list of merged</span>
+<span class="s2">        sources automatically.|n</span>
+<span class="s2">        |n</span>
+<span class="s2">        &lt;revpath&gt; - either a dataset path or a revision path. The full</span>
+<span class="s2">        syntax is:|n</span>
+<span class="s2">        - Dataset paths:|n</span>
+<span class="s2">        |s|s- &lt;dataset path&gt;[ :&lt;format&gt; ]|n</span>
+<span class="s2">        - Revision paths:|n</span>
+<span class="s2">        |s|s- &lt;project path&gt; [ @&lt;rev&gt; ] [ :&lt;target&gt; ]|n</span>
+<span class="s2">        |s|s- &lt;rev&gt; [ :&lt;target&gt; ]|n</span>
+<span class="s2">        |s|s- &lt;target&gt;|n</span>
+<span class="s2">        |n</span>
+<span class="s2">        The current project (-p/--project) is used as a context for plugins.</span>
+<span class="s2">        It can be useful for dataset paths in targets. When not specified,</span>
+<span class="s2">        the current project&#39;s working tree is used.|n</span>
+<span class="s2">        |n</span>
+<span class="s2">        The output format can be specified with the &#39;-f/--format&#39; option.</span>
+<span class="s2">        Each dataset format has its own export</span>
+<span class="s2">        options, which are passed after the &#39;--&#39; separator (see examples),</span>
+<span class="s2">        pass &#39;-- -h&#39; for more info. If not stated otherwise, by default</span>
+<span class="s2">        only annotations are exported; to include images pass</span>
+<span class="s2">        &#39;--save-media&#39; parameter.|n</span>
+<span class="s2">        |n</span>
+<span class="s2">        Examples:|n</span>
+<span class="s2">        - Merge annotations from 3 (or more) annotators:|n</span>
+<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> project1/ project2/ project3/|n</span>
+<span class="s2">        |n</span>
+<span class="s2">        - Merge datasets with varying merge policies:|n</span>
+<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> project1/ project2/ -m &lt;union|intersect|exact&gt;|n</span>
+<span class="s2">        |n</span>
+<span class="s2">        - Check groups of the merged dataset for consistency:|n</span>
+<span class="s2">        |s|s|slook for groups consising of &#39;person&#39;, &#39;hand&#39; &#39;head&#39;, &#39;foot&#39;|n</span>
+<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> project1/ project2/ -g &#39;person,hand?,head,foot?&#39;|n</span>
+<span class="s2">        |n</span>
+<span class="s2">        - Merge two datasets, specify formats:|n</span>
+<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> path/to/dataset1:voc path/to/dataset2:coco|n</span>
+<span class="s2">        |n</span>
+<span class="s2">        - Merge the current working tree and a dataset:|n</span>
+<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> path/to/dataset2:coco|n</span>
+<span class="s2">        |n</span>
+<span class="s2">        - Merge a source from a previous revision and a dataset:|n</span>
+<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> HEAD~2:source-2 path/to/dataset2:yolo</span>
+<span class="s2">        |n</span>
+<span class="s2">        - Merge datasets and save in different format:|n</span>
+<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> -f voc dataset1/:yolo path2/:coco -- --save-media</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span>
+        <span class="n">formatter_class</span><span class="o">=</span><span class="n">MultilineFormatter</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_group</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;_positionals&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">REMAINDER</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">SUPPRESS</span>
+    <span class="p">)</span>  <span class="c1"># workaround for -- eaten by positionals</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Target dataset revpaths (repeatable)&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-m&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--merge-policy&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;union&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Policy for how to merge datasets (default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-o&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--output-dir&quot;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;dst_dir&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Output directory (default: generate a new one)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--overwrite&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Overwrite existing files in the save directory&quot;</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-f&quot;</span><span class="p">,</span> <span class="s2">&quot;--format&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">DEFAULT_FORMAT</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Output format (default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-p&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--project&quot;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;project_dir&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Directory of the &#39;current&#39; project (default: current dir)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;extra_args&quot;</span><span class="p">,</span>
+        <span class="n">nargs</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">REMAINDER</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Additional arguments for exporter (pass &#39;-- -h&#39; for help). &quot;</span>
+        <span class="s2">&quot;Must be specified after the main command arguments and after &quot;</span>
+        <span class="s2">&quot;the &#39;--&#39; separator&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">intersect_args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_argument_group</span><span class="p">(</span>
+        <span class="n">title</span><span class="o">=</span><span class="s2">&quot;intersect policy arguments&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;These parameters are optional for the intersect policy only.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">intersect_args</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-iou&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--iou-thresh&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;IoU match threshold for segments (default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">intersect_args</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-oconf&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--output-conf-thresh&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Confidence threshold for output &quot;</span> <span class="s2">&quot;annotations (default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">intersect_args</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--quorum&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Minimum count for a label and attribute voting &quot;</span>
+        <span class="s2">&quot;results to be counted (default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">intersect_args</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-g&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;--groups&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;append&quot;</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="n">_group</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;A comma-separated list of labels in &quot;</span>
+        <span class="s2">&quot;annotation groups to check. &#39;?&#39; postfix can be added to a label to &quot;</span>
+        <span class="s2">&quot;make it optional in the group (repeatable)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="n">merge_command</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">parser</span></div>
+
+
+
+<div class="viewcode-block" id="get_sensitive_args">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.commands.merge.html#datumaro.cli.commands.merge.get_sensitive_args">[docs]</a>
+<span class="k">def</span> <span class="nf">get_sensitive_args</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="n">merge_command</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="s2">&quot;project_dir&quot;</span><span class="p">,</span> <span class="s2">&quot;dst_dir&quot;</span><span class="p">,</span> <span class="s2">&quot;groups&quot;</span><span class="p">],</span>
+    <span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="merge_command">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.commands.merge.html#datumaro.cli.commands.merge.merge_command">[docs]</a>
+<span class="nd">@scoped</span>
+<span class="k">def</span> <span class="nf">merge_command</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="c1"># Workaround. Required positionals consume positionals from the end</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">_positionals</span> <span class="o">+=</span> <span class="n">join_cli_args</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="s2">&quot;extra_args&quot;</span><span class="p">)</span>
+
+    <span class="n">has_sep</span> <span class="o">=</span> <span class="s2">&quot;--&quot;</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">_positionals</span>
+    <span class="k">if</span> <span class="n">has_sep</span><span class="p">:</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">_positionals</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">pos</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentError</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Expected at least 1 target argument&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">_positionals</span><span class="p">)</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">targets</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">_positionals</span><span class="p">[:</span><span class="n">pos</span><span class="p">]</span> <span class="ow">or</span> <span class="p">[</span><span class="n">ProjectBuildTargets</span><span class="o">.</span><span class="n">MAIN_TARGET</span><span class="p">]</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">extra_args</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">_positionals</span><span class="p">[</span><span class="n">pos</span> <span class="o">+</span> <span class="n">has_sep</span> <span class="p">:]</span>
+
+    <span class="n">show_plugin_help</span> <span class="o">=</span> <span class="s2">&quot;-h&quot;</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">extra_args</span> <span class="ow">or</span> <span class="s2">&quot;--help&quot;</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">extra_args</span>
+
+    <span class="n">dst_dir</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">dst_dir</span>
+    <span class="k">if</span> <span class="n">dst_dir</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">overwrite</span> <span class="ow">and</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">dst_dir</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">dst_dir</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">CliException</span><span class="p">(</span>
+                <span class="s2">&quot;Directory &#39;</span><span class="si">%s</span><span class="s2">&#39; already exists &quot;</span> <span class="s2">&quot;(pass --overwrite to overwrite)&quot;</span> <span class="o">%</span> <span class="n">dst_dir</span>
+            <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dst_dir</span> <span class="o">=</span> <span class="n">generate_next_file_name</span><span class="p">(</span><span class="s2">&quot;merged&quot;</span><span class="p">)</span>
+    <span class="n">dst_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">dst_dir</span><span class="p">)</span>
+
+    <span class="n">project</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">project</span> <span class="o">=</span> <span class="n">scope_add</span><span class="p">(</span><span class="n">load_project</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">project_dir</span><span class="p">))</span>
+    <span class="k">except</span> <span class="n">ProjectNotFoundError</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">show_plugin_help</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">targets</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">args</span><span class="o">.</span><span class="n">project_dir</span><span class="p">:</span>
+            <span class="k">raise</span>
+
+    <span class="k">if</span> <span class="n">project</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">env</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="n">DEFAULT_ENVIRONMENT</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">exporter</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">exporters</span><span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">format</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CliException</span><span class="p">(</span><span class="s2">&quot;Exporter for format &#39;</span><span class="si">%s</span><span class="s2">&#39; is not found&quot;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">format</span><span class="p">)</span>
+
+    <span class="n">export_args</span> <span class="o">=</span> <span class="n">exporter</span><span class="o">.</span><span class="n">parse_cmdline</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">extra_args</span><span class="p">)</span>
+
+    <span class="n">source_datasets</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">targets</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">source_datasets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">project</span><span class="o">.</span><span class="n">working_tree</span><span class="o">.</span><span class="n">make_dataset</span><span class="p">())</span>
+
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">targets</span><span class="p">:</span>
+            <span class="n">target_dataset</span><span class="p">,</span> <span class="n">target_project</span> <span class="o">=</span> <span class="n">parse_full_revpath</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">project</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">target_project</span><span class="p">:</span>
+                <span class="n">scope_add</span><span class="p">(</span><span class="n">target_project</span><span class="p">)</span>
+            <span class="n">source_datasets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">target_dataset</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CliException</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+    <span class="n">report_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dst_dir</span><span class="p">,</span> <span class="s2">&quot;merge_report.json&quot;</span><span class="p">)</span>
+    <span class="n">options</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;conf&quot;</span><span class="p">:</span> <span class="n">IntersectMerge</span><span class="o">.</span><span class="n">Conf</span><span class="p">(</span>
+                <span class="n">pairwise_dist</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">iou_thresh</span><span class="p">,</span>
+                <span class="n">groups</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">groups</span> <span class="ow">or</span> <span class="p">[],</span>
+                <span class="n">output_conf_thresh</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">output_conf_thresh</span><span class="p">,</span>
+                <span class="n">quorum</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">quorum</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">merge_policy</span> <span class="o">==</span> <span class="s2">&quot;intersect&quot;</span>
+        <span class="k">else</span> <span class="p">{}</span>
+    <span class="p">)</span>
+    <span class="n">merged_dataset</span> <span class="o">=</span> <span class="n">HLOps</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+        <span class="o">*</span><span class="n">source_datasets</span><span class="p">,</span> <span class="n">merge_policy</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">merge_policy</span><span class="p">,</span> <span class="n">report_path</span><span class="o">=</span><span class="n">report_path</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span>
+    <span class="p">)</span>
+
+    <span class="n">merged_dataset</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">save_dir</span><span class="o">=</span><span class="n">dst_dir</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="n">exporter</span><span class="p">,</span> <span class="o">**</span><span class="n">export_args</span><span class="p">)</span>
+
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Merge results have been saved to &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="n">dst_dir</span><span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Report has been saved to &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="n">report_path</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="mi">0</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
