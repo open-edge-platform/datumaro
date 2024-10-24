@@ -24,6 +24,7 @@ from typing import (
 )
 
 import attr
+import cv2
 import numpy as np
 import shapely.geometry as sg
 from attr import asdict, attrs, field
@@ -1372,19 +1373,19 @@ class Cuboid2D(Annotation):
     [(x1, y1), (x2, y2), (x3, y3), (x4, y4), (x5, y5), (x6, y6), (x7, y7), (x8, y8)].
 
 
-      6---7
+      2---3
      /|  /|
-    5-+-8 |
-    | 2 + 3
+    1-+-4 |
+    | 5 + 6
     |/  |/
-    1---4
+    8---7
 
     Attributes:
-        _type (AnnotationType): The type of annotation, set to `AnnotationType.bbox`.
+        _type (AnnotationType): The type of annotation, set to `AnnotationType.cuboid_2d`.
 
     Methods:
         __init__: Initializes the Cuboid2D with its coordinates.
-        wrap: Creates a new Bbox instance with updated attributes.
+        wrap: Creates a new Cuboid2D instance with updated attributes.
     """
 
     _type = AnnotationType.cuboid_2d
@@ -1393,10 +1394,193 @@ class Cuboid2D(Annotation):
         converter=attr.converters.optional(int), default=None, kw_only=True
     )
     z_order: int = field(default=0, validator=default_if_none(int), kw_only=True)
+    y_3d: float = field(default=None, validator=default_if_none(float), kw_only=True)
 
-    def __init__(self, _points: Iterable[Tuple[float, float]], *args, **kwargs):
+    def __init__(
+        self,
+        _points: Iterable[Tuple[float, float]],
+        *args,
+        **kwargs,
+    ):
         kwargs.pop("points", None)  # comes from wrap()
         self.__attrs_init__(points=_points, *args, **kwargs)
+
+    @staticmethod
+    def _get_plane_equation(points):
+        """Calculates coefficients of the plane equation from three points."""
+        x1, y1, z1 = points[0, 0], points[0, 1], points[0, 2]
+        x2, y2, z2 = points[1, 0], points[1, 1], points[1, 2]
+        x3, y3, z3 = points[2, 0], points[2, 1], points[2, 2]
+        a1 = x2 - x1
+        b1 = y2 - y1
+        c1 = z2 - z1
+        a2 = x3 - x1
+        b2 = y3 - y1
+        c2 = z3 - z1
+        a = b1 * c2 - b2 * c1
+        b = a2 * c1 - a1 * c2
+        c = a1 * b2 - b1 * a2
+        d = -a * x1 - b * y1 - c * z1
+        return np.array([a, b, c, d])
+
+    @staticmethod
+    def _get_denorm(Tr_velo_to_cam_homo):
+        """Calculates the denormalized vector perpendicular to the image plane.
+        Args:
+            Tr_velo_to_cam_homo (np.ndarray): Homogeneous (4x4) LiDAR-to-camera transformation matrix
+        Returns:
+            np.ndarray: vector"""
+        ground_points_lidar = np.array([[0.0, 0.0, 0.0], [0.0, 1.0, 0.0], [1.0, 1.0, 0.0]])
+        ground_points_lidar = np.concatenate(
+            (ground_points_lidar, np.ones((ground_points_lidar.shape[0], 1))), axis=1
+        )
+        ground_points_cam = np.matmul(Tr_velo_to_cam_homo, ground_points_lidar.T).T
+        denorm = -1 * Cuboid2D._get_plane_equation(ground_points_cam)
+        return denorm
+
+    @staticmethod
+    def _get_3d_points(dim, location, rotation_y, denorm):
+        """Get corner points according to the 3D bounding box parameters.
+
+        Args:
+            dim (List[float]): The dimensions of the 3D bounding box as [l, w, h].
+            location (List[float]): The location of the 3D bounding box as [x, y, z].
+            rotation_y (float): The rotation angle around the y-axis.
+
+        Returns:
+            np.ndarray: The corner points of the 3D bounding box.
+        """
+
+        c, s = np.cos(rotation_y), np.sin(rotation_y)
+        R = np.array([[c, 0, s], [0, 1, 0], [-s, 0, c]], dtype=np.float32)
+        l, w, h = dim[2], dim[1], dim[0]
+        x_corners = [l / 2, l / 2, -l / 2, -l / 2, l / 2, l / 2, -l / 2, -l / 2]
+        y_corners = [0, 0, 0, 0, -h, -h, -h, -h]
+        z_corners = [w / 2, -w / 2, -w / 2, w / 2, w / 2, -w / 2, -w / 2, w / 2]
+
+        corners = np.array([x_corners, y_corners, z_corners], dtype=np.float32)
+        corners_3d = np.dot(R, corners)
+
+        denorm = denorm[:3]
+        denorm_norm = denorm / np.sqrt(denorm[0] ** 2 + denorm[1] ** 2 + denorm[2] ** 2)
+        ori_denorm = np.array([0.0, -1.0, 0.0])
+        theta = -1 * math.acos(np.dot(denorm_norm, ori_denorm))
+        n_vector = np.cross(denorm, ori_denorm)
+        n_vector_norm = n_vector / np.sqrt(n_vector[0] ** 2 + n_vector[1] ** 2 + n_vector[2] ** 2)
+        rotation_matrix, j = cv2.Rodrigues(theta * n_vector_norm)
+        corners_3d = np.dot(rotation_matrix, corners_3d)
+        corners_3d = corners_3d + np.array(location, dtype=np.float32).reshape(3, 1)
+        return corners_3d.transpose(1, 0)
+
+    @staticmethod
+    def _project_to_2d(pts_3d, P):
+        """Project 3D points to 2D image plane.
+
+        Args:
+            pts_3d (np.ndarray): The 3D points to project.
+            P (np.ndarray): The projection matrix.
+
+        Returns:
+            np.ndarray: The 2D points projected to the image
+        """
+        # Convert to homogeneous coordinates
+        pts_3d = pts_3d.T
+        pts_3d_homo = np.vstack((pts_3d, np.ones(pts_3d.shape[1])))
+        pts_2d = P @ pts_3d_homo
+        pts_2d[0, :] = np.divide(pts_2d[0, :], pts_2d[2, :])
+        pts_2d[1, :] = np.divide(pts_2d[1, :], pts_2d[2, :])
+        pts_2d = pts_2d[:2, :].T
+
+        return pts_2d
+
+    @classmethod
+    def from_3d(
+        cls,
+        dim: np.ndarray,
+        location: np.ndarray,
+        rotation_y: float,
+        P: np.ndarray,
+        Tr_velo_to_cam: np.ndarray,
+    ) -> Cuboid2D:
+        """Creates an instance of Cuboid2D class from 3D bounding box parameters.
+
+        Args:
+            dim (np.ndarray): 3 scalars describing length, width and height of a 3D bounding box
+            location (np.ndarray): (x, y, z) coordinates of the middle of the top face.
+            rotation_y (np.ndarray): rotation along the Y-axis (from -pi to pi)
+            P (np.ndarray): Camera-to-Image transformation matrix (3x4)
+            Tr_velo_to_cam (np.ndarray): LiDAR-to-Camera transformation matrix (3x4)
+
+        Returns:
+            Cuboid2D: Projection points for the given bounding box
+        """
+        Tr_velo_to_cam_homo = np.eye(4)
+        Tr_velo_to_cam_homo[:3, :4] = Tr_velo_to_cam
+        denorm = cls._get_denorm(Tr_velo_to_cam_homo)
+        pts_3d = cls._get_3d_points(dim, location, rotation_y, denorm)
+        y_3d = np.mean(pts_3d[:4, 1])
+        pts_2d = cls._project_to_2d(pts_3d, P)
+
+        return cls(list(map(tuple, pts_2d)), y_3d=y_3d)
+
+    def to_3d(self, P_inv: np.ndarray) -> tuple[np.ndarray, np.ndarray, float]:
+        """Reconstructs 3D object Velodyne coordinates (dimensions, location and rotation along the Y-axis)
+        from the given Cuboid2D instance.
+
+        Args:
+            P_inv (np.ndarray): Pseudo-inverse of Camera-to-Image projection matrix
+        Returns:
+            tuple: dimensions, location and rotation along the Y-axis
+        """
+        recon_3d = []
+        for idx, coord_2d in enumerate(self.points):
+            coord_2d = np.append(coord_2d, 1)
+            coord_3d = P_inv @ coord_2d
+            if idx < 4:
+                coord_3d = coord_3d * self.y_3d / coord_3d[1]
+            else:
+                coord_3d = coord_3d * recon_3d[idx - 4][0] / coord_3d[0]
+            recon_3d.append(coord_3d[:3])
+        recon_3d = np.array(recon_3d)
+
+        x = np.mean(recon_3d[:, 0])
+        z = np.mean(recon_3d[:, 2])
+
+        yaws = []
+        pairs = [(0, 1), (3, 2), (4, 5), (7, 6)]
+        for p in pairs:
+            delta_x = recon_3d[p[0]][0] - recon_3d[p[1]][0]
+            delta_z = recon_3d[p[0]][2] - recon_3d[p[1]][2]
+            yaws.append(np.arctan2(delta_x, delta_z))
+        yaw = np.mean(yaws)
+
+        widths = []
+        pairs = [(0, 1), (2, 3), (4, 5), (6, 7)]
+        for p in pairs:
+            delta_x = np.sqrt(
+                (recon_3d[p[0]][0] - recon_3d[p[1]][0]) ** 2
+                + (recon_3d[p[0]][2] - recon_3d[p[1]][2]) ** 2
+            )
+            widths.append(delta_x)
+        w = np.mean(widths)
+
+        lengths = []
+        pairs = [(1, 2), (0, 3), (5, 6), (4, 7)]
+        for p in pairs:
+            delta_z = np.sqrt(
+                (recon_3d[p[0]][0] - recon_3d[p[1]][0]) ** 2
+                + (recon_3d[p[0]][2] - recon_3d[p[1]][2]) ** 2
+            )
+            lengths.append(delta_z)
+        l = np.mean(lengths)
+
+        heights = []
+        pairs = [(0, 4), (1, 5), (2, 6), (3, 7)]
+        for p in pairs:
+            delta_y = np.abs(recon_3d[p[0]][1] - recon_3d[p[1]][1])
+            heights.append(delta_y)
+        h = np.mean(heights)
+        return np.array([h, w, l]), np.array([x, self.y_3d, z]), yaw
 
 
 @attrs(slots=True, order=False)

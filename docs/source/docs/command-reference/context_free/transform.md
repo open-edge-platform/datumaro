@@ -176,15 +176,36 @@ Examples:
 
 #### `id_from_image_name`
 
-Renames items in the dataset using image file name (without extension).
+Renames items in the dataset based on the image file name, excluding the extension.
+When 'ensure_unique' is enabled, a random suffix is appened to ensure each identifier is unique
+in cases where the image name is not distinct. By default, the random suffix is three characters long,
+but this can be adjusted with the 'suffix_length' parameter.
 
 Usage:
 ```console
-id_from_image_name [-h]
+id_from_image_name [-h] [-u] [-l SUFFIX_LENGTH]
 ```
 
 Optional arguments:
-- `-h`, `--help` (flag) - Show this help message and exit
+- `-h`, `--help` (flag) - show this help message and exit
+- `-u`, `--ensure_unique` (flag) - Appends a random suffix to ensure each identifier is unique if the image name is duplicated
+- `-l`, `--suffix_length` (int) - Alters the length of the random suffix if the `ensure_unique` is enabled(default: 3)
+
+Examples:
+- Renames items without duplication check
+  ```console
+  datum transform -t id_from_image_name
+  ```
+
+- Renames items with duplication check
+  ```console
+  datum transform -t id_from_image_name -- --ensure_unique
+  ```
+
+- Renames items with duplication check and alters the suffix length(default: 3)
+  ```console
+  datum transform -t id_from_image_name -- --ensure_unique --suffix_length 2
+  ```
 
 #### `reindex`
 

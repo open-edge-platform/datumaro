@@ -9,6 +9,7 @@ import logging as log
 import os.path as osp
 import random
 import re
+import string
 from collections import Counter, defaultdict
 from copy import deepcopy
 from enum import Enum, auto
@@ -63,7 +64,7 @@ from datumaro.components.errors import (
     UndefinedAttribute,
     UndefinedLabel,
 )
-from datumaro.components.media import Image, TableRow
+from datumaro.components.media import Image, TableRow, VideoFrame
 from datumaro.components.transformer import ItemTransform, TabularTransform, Transform
 from datumaro.util import NOTSET, filter_dict, parse_json_file, parse_str_enum_value, take_by
 from datumaro.util.annotation_util import find_group_leader, find_instances
@@ -595,12 +596,94 @@ class RandomSplit(Transform, CliPlugin):
 
 class IdFromImageName(ItemTransform, CliPlugin):
     """
-    Renames items in the dataset using image file name (without extension).
+    Renames items in the dataset based on the image file name, excluding the extension.|n
+    When 'ensure_unique' is enabled, a random suffix is appened to ensure each identifier is unique
+    in cases where the image name is not distinct. By default, the random suffix is three characters long,
+    but this can be adjusted with the 'suffix_length' parameter.|n
+    |n
+    Examples:|n
+    |n
+    |s|s- Renames items without duplication check:|n
+
+      .. code-block::
+
+    |s|s|s|s%(prog)s|n
+    |n
+    |s|s- Renames items with duplication check:|n
+
+    .. code-block::
+
+    |s|s|s|s%(prog)s --ensure_unique|n
+    |n
+    |s|s- Renames items with duplication check and alters the suffix length(default: 3):|n
+
+    .. code-block::
+
+    |s|s|s|s%(prog)s --ensure_unique --suffix_length 2
     """
+
+    DEFAULT_RETRY = 1000
+    SUFFIX_LETTERS = string.ascii_lowercase + string.digits
+
+    @classmethod
+    def build_cmdline_parser(cls, **kwargs):
+        parser = super().build_cmdline_parser(**kwargs)
+        parser.add_argument(
+            "-u",
+            "--ensure_unique",
+            action="store_true",
+            help="Appends a random suffix to ensure each identifier is unique if the image name is duplicated.",
+        )
+        parser.add_argument(
+            "-l",
+            "--suffix_length",
+            type=int,
+            default=3,
+            help="Alters the length of the random suffix if the 'ensure_unique' is enabled.",
+        )
+
+        return parser
+
+    def __init__(self, extractor, ensure_unique: bool = False, suffix_length: int = 3):
+        super().__init__(extractor)
+        self._length = "parent"
+        self._ensure_unique = ensure_unique
+        self._names: set[str] = set()
+        self._suffix_length = suffix_length
+        if suffix_length <= 0:
+            raise ValueError(
+                f"The 'suffix_length' must be greater than 0. Received: {suffix_length}."
+            )
+        self._max_retry = min(
+            self.DEFAULT_RETRY, pow(len(self.SUFFIX_LETTERS), self._suffix_length)
+        )
+
+    def _add_unique_suffix(self, name):
+        count = 0
+        while name in self._names:
+            suffix = "".join(
+                random.choices(self.SUFFIX_LETTERS, k=self._suffix_length)
+            )  # nosec B311
+            new_name = f"{name}__{suffix}"
+            if new_name not in self._names:
+                name = new_name
+                break
+            count += 1
+            if count == self._max_retry:
+                raise Exception(
+                    f"Too many duplicate names. Failed to generate a unique suffix after {self._max_retry} attempts."
+                )
+
+        self._names.add(name)
+        return name
 
     def transform_item(self, item):
         if isinstance(item.media, Image) and hasattr(item.media, "path"):
             name = osp.splitext(osp.basename(item.media.path))[0]
+            if isinstance(item.media, VideoFrame):
+                name += f"_frame-{item.media.index}"
+            if self._ensure_unique:
+                name = self._add_unique_suffix(name)
             return self.wrap_item(item, id=name)
         else:
             log.debug("Can't change item id for item '%s': " "item has no path info" % item.id)

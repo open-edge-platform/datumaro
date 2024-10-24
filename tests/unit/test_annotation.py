@@ -13,6 +13,7 @@ import shapely.geometry as sg
 
 from datumaro.components.annotation import (
     Annotations,
+    Cuboid2D,
     Ellipse,
     ExtractedMask,
     HashKey,
@@ -62,7 +63,7 @@ class HashKeyTest:
     )
     def test_compare_hashkey(self, fxt_hashkeys, expected, request):
         hashkey1, hashkey2 = request.getfixturevalue(fxt_hashkeys)
-        assert (expected, hashkey1 == hashkey2)
+        assert (hashkey1 == hashkey2) == expected
 
 
 class RotatedBboxTest:
@@ -142,3 +143,66 @@ class AnnotationsTest:
         semantic_seg_mask = annotations.get_semantic_seg_mask(ignore_index=255, dtype=dtype)
 
         assert np.allclose(semantic_seg_mask, fxt_index_mask)
+
+
+class Cuboid2DTest:
+    @pytest.fixture
+    def fxt_cuboid_2d(self):
+        return Cuboid2D(
+            [
+                (684.172, 237.810),
+                (750.486, 237.673),
+                (803.791, 256.313),
+                (714.712, 256.542),
+                (684.035, 174.227),
+                (750.263, 174.203),
+                (803.399, 170.990),
+                (714.476, 171.015),
+            ],
+            y_3d=1.49,
+        )
+
+    @pytest.fixture
+    def fxt_kitti_data(self):
+        dimensions = np.array([1.49, 1.56, 4.34])
+        location = np.array([2.51, 1.49, 14.75])
+        rot_y = -1.59
+
+        return dimensions, location, rot_y
+
+    @pytest.fixture
+    def fxt_P2(self):
+        return np.array(
+            [
+                [7.215377000000e02, 0.000000000000e00, 6.095593000000e02, 4.485728000000e01],
+                [0.000000000000e00, 7.215377000000e02, 1.728540000000e02, 2.163791000000e-01],
+                [0.000000000000e00, 0.000000000000e00, 1.000000000000e00, 2.745884000000e-03],
+            ]
+        )
+
+    @pytest.fixture
+    def fxt_velo_to_cam(self):
+        return np.array(
+            [
+                [7.533745000000e-03, -9.999714000000e-01, -6.166020000000e-04, -4.069766000000e-03],
+                [1.480249000000e-02, 7.280733000000e-04, -9.998902000000e-01, -7.631618000000e-02],
+                [9.998621000000e-01, 7.523790000000e-03, 1.480755000000e-02, -2.717806000000e-01],
+            ]
+        )
+
+    def test_create_from_3d(self, fxt_kitti_data, fxt_cuboid_2d, fxt_P2, fxt_velo_to_cam):
+        actual = Cuboid2D.from_3d(
+            dim=fxt_kitti_data[0],
+            location=fxt_kitti_data[1],
+            rotation_y=fxt_kitti_data[2],
+            P=fxt_P2,
+            Tr_velo_to_cam=fxt_velo_to_cam,
+        )
+
+        assert np.allclose(actual.points, fxt_cuboid_2d.points, atol=1e-3)
+
+    def test_to_3d(self, fxt_kitti_data, fxt_cuboid_2d, fxt_P2):
+        P_inv = np.linalg.pinv(fxt_P2)
+        actual = fxt_cuboid_2d.to_3d(P_inv)
+        for act, exp in zip(actual, fxt_kitti_data):
+            assert np.allclose(act, exp, atol=2)

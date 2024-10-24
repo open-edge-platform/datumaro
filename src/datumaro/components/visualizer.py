@@ -679,8 +679,8 @@ class Visualizer:
         # Define the faces based on vertex indices
 
         faces = [
-            [points[i] for i in [0, 1, 2, 3]],  # Bottom face
-            [points[i] for i in [4, 5, 6, 7]],  # Top face
+            [points[i] for i in [0, 1, 2, 3]],  # Top face
+            [points[i] for i in [4, 5, 6, 7]],  # Bottom face
             [points[i] for i in [0, 1, 5, 4]],  # Front face
             [points[i] for i in [1, 2, 6, 5]],  # Right face
             [points[i] for i in [2, 3, 7, 6]],  # Back face
