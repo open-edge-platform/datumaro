@@ -662,8 +662,8 @@ class IdFromImageName(ItemTransform, CliPlugin):
         count = 0
         while name in self._names:
             suffix = "".join(
-                random.choices(self.SUFFIX_LETTERS, k=self._suffix_length)
-            )  # nosec B311
+                random.choices(self.SUFFIX_LETTERS, k=self._suffix_length)  # nosec B311
+            )
             new_name = f"{name}__{suffix}"
             if new_name not in self._names:
                 name = new_name
