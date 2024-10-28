@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Level 12: Project Versioning &#8212; Datumaro 1.10.0rc1 documentation</title>
+    <title>Level 15: Dataset Pruning &#8212; Datumaro 1.10.0rc1 documentation</title>
   
   
   
@@ -46,11 +46,11 @@
     <script src="../../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/level-up/advanced_skills/12_project_versioning';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/level-up/advanced_skills/15_data_pruning';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="Level 13: Pseudo Label Generation" href="13_pseudo_label_generation.html" />
-    <link rel="prev" title="Advanced Skills" href="index.html" />
+    <link rel="next" title="Supported Data Formats" href="../../data-formats/formats/index.html" />
+    <link rel="prev" title="Level 14: Pseudo Label Generation" href="14_pseudo_label_generation.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -324,12 +324,13 @@ document.write(`
 <li class="toctree-l2"><a class="reference internal" href="../intermediate_skills/09_data_filtering.html">Level 9: Dataset Filtering</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../intermediate_skills/10_data_exploration.html">Level 10: Dataset Explorartion from a Query Image/Text</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../intermediate_skills/11_data_generation.html">Level 11: Data Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../intermediate_skills/12_framework_conversion.html">Level 12: Framework Conversion</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Advanced Skills</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">Level 12: Project Versioning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="13_pseudo_label_generation.html">Level 13: Pseudo Label Generation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="14_data_pruning.html">Level 14: Dataset Pruning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="13_project_versioning.html">Level 13: Project Versioning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="14_pseudo_label_generation.html">Level 14: Pseudo Label Generation</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Level 15: Dataset Pruning</a></li>
 </ul>
 </li>
 </ul>
@@ -431,6 +432,7 @@ document.write(`
 <li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/10_noisy_label_detection_cls.html">Noisy label detection for classification tasks from training loss dynamics statistics</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/13_noisy_label_detection_det.html">Noisy label detection for detection tasks from training loss dynamics statistics</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/16_missing_annotation_detection.html">Missing Annotation Detection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/22_framework_converter.html">Data Framework Convert</a></li>
 </ul>
 </li>
 </ul>
@@ -641,7 +643,7 @@ document.write(`
     
     <li class="breadcrumb-item"><a href="index.html" class="nav-link">Advanced Skills</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page">Level 12:...</li>
+    <li class="breadcrumb-item active" aria-current="page">Level 15:...</li>
   </ul>
 </nav>
 </div>
@@ -658,157 +660,67 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="level-12-project-versioning">
-<h1>Level 12: Project Versioning<a class="headerlink" href="#level-12-project-versioning" title="Link to this heading">#</a></h1>
-<p>Project versioning is a concept unique to Datumaro. Datumaro project includes a data source and revision tree,
-where each revision represents the state of the data sources at a particular point in time.
-With Datumaro’s revision tree, you can control the versioning of datasets.
-This means that the Datumaro project records the state of a dataset after it has been changed by an operation,
-allowing you to go back to a previous state or create a new branch to have multiple versions of a dataset for different purposes from one source.
-For more details, please refer to <a class="reference internal" href="../../explanation/concept.html#project-versioning-concepts"><span class="std std-ref">Project versioning concepts</span></a> and <a class="reference internal" href="../../explanation/project.html#project-data-model"><span class="std std-ref">Project data model</span></a>.</p>
-<section id="prerequisite">
-<h2>Prerequisite<a class="headerlink" href="#prerequisite" title="Link to this heading">#</a></h2>
-<p>In this step, we create a project and import <a class="reference external" href="http://weegee.vision.ucmerced.edu/datasets/landuse.html">UCMerced</a> dataset to the project.</p>
+  <section id="level-15-dataset-pruning">
+<h1>Level 15: Dataset Pruning<a class="headerlink" href="#level-15-dataset-pruning" title="Link to this heading">#</a></h1>
+<p>Datumaro support prune feature to extract representative subset of dataset. The pruned dataset allows us to examine the trade-off between
+accuracy and convergence time when training on a reduced data sample. By selecting a subset of instances that captures the essential patterns
+and characteristics of the data, we aim to evaluate the impact of dataset size on model performance.</p>
+<p>More detailed descriptions about pruning are given by <a class="reference internal" href="../../command-reference/context_free/prune.html"><span class="doc">Prune</span></a>
+The Python example for the usage of pruning is described in <a class="reference internal" href="../../jupyter_notebook_examples/notebooks/17_data_pruning.html"><span class="doc">here</span></a>.</p>
 <div class="sd-tab-set docutils">
 <input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
 <label class="sd-tab-label" for="sd-tab-item-0">
-ProjectCLI</label><div class="sd-tab-content docutils">
-<p>At first, we create a project and import the dataset.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a workspace and download UCMerced dataset</span>
-mkdir<span class="w"> </span>-p<span class="w"> </span>~/ws_datum/project
-<span class="nb">cd</span><span class="w"> </span>~/ws_datum
-datum<span class="w"> </span>download<span class="w"> </span>get<span class="w"> </span>-i<span class="w"> </span>tfds:uc_merced<span class="w"> </span>-o<span class="w"> </span>./uc_merced<span class="w"> </span>--<span class="w"> </span>--save-media
+Python</label><div class="sd-tab-content docutils">
+<p>With Python API, we can prune dataset as below</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datumaro.components.dataset</span> <span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">from</span> <span class="nn">datumaro.components.environment</span> <span class="kn">import</span> <span class="n">Environment</span>
+<span class="kn">from</span> <span class="nn">datumaro.componenets.prune</span> <span class="kn">import</span> <span class="n">prune</span>
 
-<span class="c1"># Create a project and import the dataset</span>
-<span class="nb">cd</span><span class="w"> </span>project
-datum<span class="w"> </span>project<span class="w"> </span>create
-datum<span class="w"> </span>project<span class="w"> </span>import<span class="w"> </span>-n<span class="w"> </span>my-dataset<span class="w"> </span>-f<span class="w"> </span>imagenet_txt<span class="w"> </span>../uc_merced
+<span class="n">data_path</span> <span class="o">=</span> <span class="s1">&#39;/path/to/data&#39;</span>
 
-<span class="c1"># Commit change</span>
-datum<span class="w"> </span>project<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Add my-dataset&quot;</span>
-datum<span class="w"> </span>dinfo
+<span class="n">env</span> <span class="o">=</span> <span class="n">Environment</span><span class="p">()</span>
+<span class="n">detected_formats</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">detect_dataset</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="n">detected_formats</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="n">prune</span> <span class="o">=</span> <span class="n">Prune</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">cluster_method</span><span class="o">=</span><span class="s1">&#39;&lt;how/to/prune/dataset&gt;&#39;</span><span class="p">)</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">prune</span><span class="o">.</span><span class="n">get_pruned</span><span class="p">(</span><span class="n">ratio</span><span class="o">=</span><span class="s1">&#39;&lt;how/much/to/prune/dataset&gt;&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>You can see that the project successfully imports the dataset.</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">length: 2100</span>
-<span class="go">categories: label</span>
-<span class="go">label:</span>
-<span class="go">    count: 21</span>
-<span class="go">    labels: agricultural, airplane, baseballdiamond, beach, buildings, chaparral, denseresidential, forest, freeway, golfcourse (and 11 more)</span>
-<span class="go">subsets: train</span>
-<span class="go">&#39;default&#39;:</span>
-<span class="go">    length: 2100</span>
-<span class="go">    categories: label</span>
-<span class="go">    label:</span>
-<span class="go">        count: 21</span>
-<span class="go">        labels: agricultural, airplane, baseballdiamond, beach, buildings, chaparral, denseresidential, forest, freeway, golfcourse (and 11 more)</span>
-</pre></div>
+<p>We can choose the desired method as <code class="docutils literal notranslate"><span class="pre">&lt;how/to/prune/dataset&gt;</span></code> among the provided ones. The default value is <code class="docutils literal notranslate"><span class="pre">random</span></code>.
+Additionally, we can specify how much of the dataset we want to retain by providing a float value between 0 and 1 for the <code class="docutils literal notranslate"><span class="pre">&lt;how/much/to/prune/dataset&gt;</span></code> parameter. The default value is 0.5.</p>
 </div>
-<p>You can check the revision history in the project by using the following commands.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>datum<span class="w"> </span>project<span class="w"> </span>log
-</pre></div>
-</div>
-<p>It will shows the revision history as follows.</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">c02ec1959c48d65d9558bad15108fe546ed2e4de Add my-dataset</span>
-<span class="go">680d0437b86a99cc1e3b402bd47b87d3700b8387 Initial commit</span>
-</pre></div>
-</div>
-</div>
-</div>
-</section>
-<section id="commit-project-revisions-and-checkout-to-the-revision">
-<h2>Commit project revisions and checkout to the revision<a class="headerlink" href="#commit-project-revisions-and-checkout-to-the-revision" title="Link to this heading">#</a></h2>
-<p>In this step, we will apply <a class="reference internal" href="../../jupyter_notebook_examples/transform.html#transform"><span class="std std-ref">Transform</span></a> to the project, resulting in the creation of a new revision by the operation.
-We can then commit this revision to the revision tree, allowing us to checkout to the revision anytime we need.
-Additionally, if you require a new operation on the dataset for a new target, you can go back and create a new branch from the old revision.</p>
-<div class="sd-tab-set docutils">
-<input checked="checked" id="sd-tab-item-1" name="sd-tab-set-1" type="radio">
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
 <label class="sd-tab-label" for="sd-tab-item-1">
+CLI</label><div class="sd-tab-content docutils">
+<p>Without the project declaration, we can simply <code class="docutils literal notranslate"><span class="pre">prune</span></code> dataset by</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>datum<span class="w"> </span>prune<span class="w"> </span>&lt;target&gt;<span class="w"> </span>-m<span class="w"> </span>METHOD<span class="w"> </span>-r<span class="w"> </span>RATIO<span class="w"> </span>-h<span class="w"> </span>HASH_TYPE
+</pre></div>
+</div>
+<p>We could use <code class="docutils literal notranslate"><span class="pre">--overwrite</span></code> instead of setting <code class="docutils literal notranslate"><span class="pre">-o/--output-dir</span></code>.
+We can choose the desired method as <code class="docutils literal notranslate"><span class="pre">METHOD</span></code> among the provided ones. The default value is <code class="docutils literal notranslate"><span class="pre">random</span></code>.
+Additionally, we can specify how much of the dataset we want to retain by providing a float value between 0 and 1 for the <code class="docutils literal notranslate"><span class="pre">RATIO</span></code> parameter. The default value is 0.5.</p>
+</div>
+<input id="sd-tab-item-2" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-2">
 ProjectCLI</label><div class="sd-tab-content docutils">
-<p>At first, we split the dataset into “train” and “test” subsets and commit the change into the revision tree.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>datum<span class="w"> </span>project<span class="w"> </span>transform<span class="w"> </span>-t<span class="w"> </span>random_split
-datum<span class="w"> </span>project<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Split train-test&quot;</span>
-datum<span class="w"> </span>dinfo<span class="w"> </span>--all
+<p>With the project-based CLI, we first require to <code class="docutils literal notranslate"><span class="pre">create</span></code> a project by</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>datum<span class="w"> </span>project<span class="w"> </span>create<span class="w"> </span>--output-dir<span class="w"> </span>&lt;path/to/project&gt;
 </pre></div>
 </div>
-<p>You can see that your dataset is successfully splitted into “train” and “subset”.</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">length: 2100</span>
-<span class="go">categories: label</span>
-<span class="go">label:</span>
-<span class="go">    count: 21</span>
-<span class="go">    labels: agricultural, airplane, baseballdiamond, beach, buildings, chaparral, denseresidential, forest, freeway, golfcourse, harbor, intersection, mediumresidential, mobilehomepark, overpass, parkinglot, river, runway, sparseresidential, storagetanks, tenniscourt</span>
-<span class="go">subsets: test, train</span>
-<span class="go">&#39;test&#39;:</span>
-<span class="go">    length: 693</span>
-<span class="go">    categories: label</span>
-<span class="go">    label:</span>
-<span class="go">        count: 21</span>
-<span class="go">        labels: agricultural, airplane, baseballdiamond, beach, buildings, chaparral, denseresidential, forest, freeway, golfcourse, harbor, intersection, mediumresidential, mobilehomepark, overpass, parkinglot, river, runway, sparseresidential, storagetanks, tenniscourt</span>
-<span class="go">&#39;train&#39;:</span>
-<span class="go">    length: 1407</span>
-<span class="go">    categories: label</span>
-<span class="go">    label:</span>
-<span class="go">        count: 21</span>
-<span class="go">        labels: agricultural, airplane, baseballdiamond, beach, buildings, chaparral, denseresidential, forest, freeway, golfcourse, harbor, intersection, mediumresidential, mobilehomepark, overpass, parkinglot, river, runway, sparseresidential, storagetanks, tenniscourt</span>
+<p>We now <code class="docutils literal notranslate"><span class="pre">import</span></code> data into project through</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>datum<span class="w"> </span>project<span class="w"> </span>import<span class="w"> </span>--project<span class="w"> </span>&lt;path/to/project&gt;<span class="w"> </span>&lt;path/to/data&gt;
 </pre></div>
 </div>
-<p>The revision history is also changed by your commit.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>datum<span class="w"> </span>project<span class="w"> </span>log
+<p>We can <code class="docutils literal notranslate"><span class="pre">prune</span></code> dataset</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>datum<span class="w"> </span>prune<span class="w"> </span>-m<span class="w"> </span>METHOD<span class="w"> </span>-r<span class="w"> </span>RATIO<span class="w"> </span>-h<span class="w"> </span>HASH_TYPE<span class="w"> </span>-p<span class="w"> </span>&lt;path/to/project&gt;
 </pre></div>
 </div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">a0fdbbc6da25e5104ff927a321216affbb31fb75 Split train-test</span>
-<span class="go">c02ec1959c48d65d9558bad15108fe546ed2e4de Add my-dataset</span>
-<span class="go">680d0437b86a99cc1e3b402bd47b87d3700b8387 Initial commit</span>
-</pre></div>
-</div>
-<p>This time, we can go back to the old revision to create another branch in the dataset.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Checkout to the time when we added &quot;my-dataset&quot;</span>
-datum<span class="w"> </span>project<span class="w"> </span>checkout<span class="w"> </span>c02ec1959c48d65d9558bad15108fe546ed2e4de
-datum<span class="w"> </span>project<span class="w"> </span>transform<span class="w"> </span>-t<span class="w"> </span>remap_labels<span class="w"> </span>--<span class="w"> </span>-l<span class="w"> </span>airplane:airport<span class="w"> </span>-l<span class="w"> </span>runway:airport
-datum<span class="w"> </span>project<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Remap labels airplane,runway -&gt; airport&quot;</span>
-</pre></div>
-</div>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>datum<span class="w"> </span>dinfo<span class="w"> </span>--all
-</pre></div>
-</div>
-<p>Now, we have a different label categories (“airport” is added) but our dataset only has “train” subset since we go back to the old revision.</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">length: 2100</span>
-<span class="go">categories: label</span>
-<span class="go">label:</span>
-<span class="go">    count: 20</span>
-<span class="go">    labels: agricultural, airport, baseballdiamond, beach, buildings, chaparral, denseresidential, forest, freeway, golfcourse, harbor, intersection, mediumresidential, mobilehomepark, overpass, parkinglot, river, sparseresidential, storagetanks, tenniscourt</span>
-<span class="go">subsets: train</span>
-<span class="go">&#39;train&#39;:</span>
-<span class="go">    length: 2100</span>
-<span class="go">    categories: label</span>
-<span class="go">    label:</span>
-<span class="go">        count: 20</span>
-<span class="go">        labels: agricultural, airport, baseballdiamond, beach, buildings, chaparral, denseresidential, forest, freeway, golfcourse, harbor, intersection, mediumresidential, mobilehomepark, overpass, parkinglot, river, sparseresidential, storagetanks, tenniscourt</span>
-</pre></div>
-</div>
-<p>You can see that the revision history is also updated.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>datum<span class="w"> </span>project<span class="w"> </span>log
-</pre></div>
-</div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">e8e9c55b20992e48adf85f77753b52aba600abac Remap labels airplane,runway -&gt; airport</span>
-<span class="go">c02ec1959c48d65d9558bad15108fe546ed2e4de Add my-dataset</span>
-<span class="go">680d0437b86a99cc1e3b402bd47b87d3700b8387 Initial commit</span>
-</pre></div>
-</div>
-<p>Lastly, you can move to the other revision by the checkout command anytime you want.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Checkout to the train-test split revision</span>
-datum<span class="w"> </span>project<span class="w"> </span>checkout<span class="w"> </span>a0fdbbc6da25e5104ff927a321216affbb31fb75
-datum<span class="w"> </span>project<span class="w"> </span>log
-</pre></div>
-</div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">a0fdbbc6da25e5104ff927a321216affbb31fb75 Split train-test</span>
-<span class="go">c02ec1959c48d65d9558bad15108fe546ed2e4de Add my-dataset</span>
-<span class="go">680d0437b86a99cc1e3b402bd47b87d3700b8387 Initial commit</span>
-</pre></div>
+<p>We can choose the desired method as <code class="docutils literal notranslate"><span class="pre">METHOD</span></code> among the provided ones. The default value is <code class="docutils literal notranslate"><span class="pre">random</span></code>.
+Additionally, we can specify how much of the dataset we want to retain by providing a float value between 0 and 1 for the <code class="docutils literal notranslate"><span class="pre">RATIO</span></code> parameter. The default value is 0.5.</p>
 </div>
 </div>
-</div>
-</section>
 </section>
 
 
@@ -822,20 +734,20 @@ datum<span class="w"> </span>project<span class="w"> </span>log
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="index.html"
+       href="14_pseudo_label_generation.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Advanced Skills</p>
+        <p class="prev-next-title">Level 14: Pseudo Label Generation</p>
       </div>
     </a>
     <a class="right-next"
-       href="13_pseudo_label_generation.html"
+       href="../../data-formats/formats/index.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Level 13: Pseudo Label Generation</p>
+        <p class="prev-next-title">Supported Data Formats</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -850,22 +762,9 @@ datum<span class="w"> </span>project<span class="w"> </span>log
 
 
   <div class="sidebar-secondary-item">
-<div
-    id="pst-page-navigation-heading-2"
-    class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> On this page
-  </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#prerequisite">Prerequisite</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#commit-project-revisions-and-checkout-to-the-revision">Commit project revisions and checkout to the revision</a></li>
-</ul>
-  </nav></div>
-
-  <div class="sidebar-secondary-item">
 
   <div class="tocsection sourcelink">
-    <a href="../../../_sources/docs/level-up/advanced_skills/12_project_versioning.rst.txt">
+    <a href="../../../_sources/docs/level-up/advanced_skills/15_data_pruning.rst.txt">
       <i class="fa-solid fa-file-lines"></i> Show Source
     </a>
   </div>

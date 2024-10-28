@@ -5,16 +5,16 @@ Advanced Skills
    :maxdepth: 1
    :hidden:
 
-   12_project_versioning
-   13_pseudo_label_generation
-   14_data_pruning
+   13_project_versioning
+   14_pseudo_label_generation
+   15_data_pruning
 
 .. grid:: 1 2 2 2
    :gutter: 2
 
    .. grid-item-card::
 
-      .. button-ref:: 12_project_versioning
+      .. button-ref:: 13_project_versioning
          :color: primary
          :outline:
          :expand:
@@ -25,7 +25,7 @@ Advanced Skills
 
    .. grid-item-card::
 
-      .. button-ref:: 13_pseudo_label_generation
+      .. button-ref:: 14_pseudo_label_generation
          :color: primary
          :outline:
          :expand:
@@ -36,7 +36,7 @@ Advanced Skills
 
    .. grid-item-card::
 
-      .. button-ref:: 14_data_pruning
+      .. button-ref:: 15_data_pruning
          :color: primary
          :outline:
          :expand:
