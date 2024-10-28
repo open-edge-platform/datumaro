@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>datumaro.plugins.transforms &#8212; Datumaro 1.10.0.dev0 documentation</title>
+    <title>datumaro.plugins.transforms &#8212; Datumaro 1.10.0rc1 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../_static/documentation_options.js?v=9b3985ad"></script>
+    <script src="../../../_static/documentation_options.js?v=0c3350b6"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -127,8 +127,8 @@
       
     
     
-    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.10.0.dev0 documentation - Home"/>
-    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.10.0.dev0 documentation - Home"/>`);</script>
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.10.0rc1 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.10.0rc1 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -683,7 +683,7 @@ document.write(`
 <tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.plugins.transforms.BoxesToPolygons" title="datumaro.plugins.transforms.BoxesToPolygons"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BoxesToPolygons</span></code></a>(extractor)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.plugins.transforms.Clean" title="datumaro.plugins.transforms.Clean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Clean</span></code></a>(extractor)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.plugins.transforms.Clean" title="datumaro.plugins.transforms.Clean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Clean</span></code></a>(extractor[, batch_size, num_workers])</p></td>
 <td><p>A class used to refine the media items in a dataset.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.plugins.transforms.Correct" title="datumaro.plugins.transforms.Correct"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Correct</span></code></a>(extractor, reports)</p></td>
@@ -1509,8 +1509,8 @@ unexpected problems. Use wrap_item() or item.wrap() to simplify copying.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="datumaro.plugins.transforms.Clean">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datumaro.plugins.transforms.</span></span><span class="sig-name descname"><span class="pre">Clean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extractor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.components.dataset_base.html#datumaro.components.dataset_base.IDataset" title="datumaro.components.dataset_base.IDataset"><span class="pre">IDataset</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/datumaro/plugins/transforms.html#Clean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.plugins.transforms.Clean" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="datumaro.components.transformer.html#datumaro.components.transformer.ItemTransform" title="datumaro.components.transformer.ItemTransform"><code class="xref py py-class docutils literal notranslate"><span class="pre">ItemTransform</span></code></a></p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datumaro.plugins.transforms.</span></span><span class="sig-name descname"><span class="pre">Clean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extractor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.components.dataset_base.html#datumaro.components.dataset_base.IDataset" title="datumaro.components.dataset_base.IDataset"><span class="pre">IDataset</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/datumaro/plugins/transforms.html#Clean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.plugins.transforms.Clean" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="datumaro.components.transformer.html#datumaro.components.transformer.TabularTransform" title="datumaro.components.transformer.TabularTransform"><code class="xref py py-class docutils literal notranslate"><span class="pre">TabularTransform</span></code></a></p>
 <p>A class used to refine the media items in a dataset.</p>
 <p>This class provides methods to clean and preprocess media data within a dataset.
 The media data can be of various types such as strings, numeric values, or categorical values.

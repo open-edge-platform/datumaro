@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.framework_converter &#8212; Datumaro 1.10.0.dev0 documentation</title>
+    <title>datumaro.plugins.framework_converter &#8212; Datumaro 1.10.0rc1 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../_static/documentation_options.js?v=9b3985ad"></script>
+    <script src="../../../_static/documentation_options.js?v=0c3350b6"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.10.0.dev0 documentation - Home"/>
-    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.10.0.dev0 documentation - Home"/>`);</script>
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.10.0rc1 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.10.0rc1 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -491,7 +491,10 @@ document.write(`
             <span class="n">image</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gen_item</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">task</span> <span class="o">==</span> <span class="s2">&quot;tabular&quot;</span><span class="p">:</span>
-                <span class="n">text</span> <span class="o">=</span> <span class="n">image</span><span class="p">()[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_target</span><span class="p">]</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">text</span> <span class="o">=</span> <span class="n">image</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_target</span><span class="p">]</span>
+                <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+                    <span class="n">text</span> <span class="o">=</span> <span class="n">image</span><span class="p">()[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_target</span><span class="p">]</span>
 
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_target</span><span class="p">:</span>
                     <span class="n">src_tokenizer</span><span class="p">,</span> <span class="n">tgt_tokenizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span>

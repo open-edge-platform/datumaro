@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.components.algorithms.hash_key_inference.base &#8212; Datumaro 1.10.0.dev0 documentation</title>
+    <title>datumaro.components.algorithms.hash_key_inference.base &#8212; Datumaro 1.10.0rc1 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../../_static/documentation_options.js?v=9b3985ad"></script>
+    <script src="../../../../../_static/documentation_options.js?v=0c3350b6"></script>
     <script src="../../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.10.0.dev0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.10.0.dev0 documentation - Home"/>`);</script>
+    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.10.0rc1 documentation - Home"/>
+    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.10.0rc1 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -340,7 +340,7 @@ document.write(`
                 <article class="bd-article">
                   
   <h1>Source code for datumaro.components.algorithms.hash_key_inference.base</h1><div class="highlight"><pre>
-<span></span><span class="c1"># Copyright (C) 2023 Intel Corporation</span>
+<span></span><span class="c1"># Copyright (C) 2023-2024 Intel Corporation</span>
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
@@ -365,13 +365,13 @@ document.write(`
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">explorer</span><span class="o">.</span><span class="n">ExplorerLauncher</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;clip_visual_ViT-B_32&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">explorer</span><span class="o">.</span><span class="n">ExplorerLauncher</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;clip_visual_vit_l_14_336px_int8&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">text_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_text_model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_text_model</span> <span class="o">=</span> <span class="n">explorer</span><span class="o">.</span><span class="n">ExplorerLauncher</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;clip_text_ViT-B_32&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_text_model</span> <span class="o">=</span> <span class="n">explorer</span><span class="o">.</span><span class="n">ExplorerLauncher</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;clip_text_vit_l_14_336px_int8&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_text_model</span>
 
     <span class="k">def</span> <span class="nf">_compute_hash_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datasets</span><span class="p">,</span> <span class="n">datasets_to_infer</span><span class="p">):</span>

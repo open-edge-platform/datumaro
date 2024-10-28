@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.data_formats.kitti_3d.format &#8212; Datumaro 1.10.0.dev0 documentation</title>
+    <title>datumaro.plugins.data_formats.kitti_3d.format &#8212; Datumaro 1.10.0rc1 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../../../_static/documentation_options.js?v=9b3985ad"></script>
+    <script src="../../../../../_static/documentation_options.js?v=0c3350b6"></script>
     <script src="../../../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.10.0.dev0 documentation - Home"/>
-    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.10.0.dev0 documentation - Home"/>`);</script>
+    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.10.0rc1 documentation - Home"/>
+    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.10.0rc1 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -346,6 +346,8 @@ document.write(`
 
 <span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
 
+<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">LabelCategories</span>
+
 
 <div class="viewcode-block" id="Kitti3dPath">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.kitti_3d.format.html#datumaro.plugins.data_formats.kitti_3d.format.Kitti3dPath">[docs]</a>
@@ -354,6 +356,38 @@ document.write(`
     <span class="n">IMAGE_DIR</span> <span class="o">=</span> <span class="s2">&quot;image_2&quot;</span>
     <span class="n">LABEL_DIR</span> <span class="o">=</span> <span class="s2">&quot;label_2&quot;</span>
     <span class="n">CALIB_DIR</span> <span class="o">=</span> <span class="s2">&quot;calib&quot;</span></div>
+
+
+
+<span class="n">Kitti3DLabelMap</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;DontCare&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Car&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Pedestrian&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Van&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Truck&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Cyclist&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Sitter&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Train&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Motorcycle&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Bus&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Misc&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="make_kitti3d_categories">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.kitti_3d.format.html#datumaro.plugins.data_formats.kitti_3d.format.make_kitti3d_categories">[docs]</a>
+<span class="k">def</span> <span class="nf">make_kitti3d_categories</span><span class="p">(</span><span class="n">label_map</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">label_map</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">label_map</span> <span class="o">=</span> <span class="n">Kitti3DLabelMap</span>
+
+    <span class="n">categories</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">common_attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;truncated&quot;</span><span class="p">,</span> <span class="s2">&quot;occluded&quot;</span><span class="p">,</span> <span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="s2">&quot;dimensions&quot;</span><span class="p">,</span> <span class="s2">&quot;location&quot;</span><span class="p">,</span> <span class="s2">&quot;rotation_y&quot;</span><span class="p">}</span>
+    <span class="n">label_categories</span> <span class="o">=</span> <span class="n">LabelCategories</span><span class="p">(</span><span class="n">attributes</span><span class="o">=</span><span class="n">common_attrs</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">label_map</span><span class="p">:</span>
+        <span class="n">label_categories</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+    <span class="n">categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="n">label_categories</span>
+
+    <span class="k">return</span> <span class="n">categories</span></div>
 
 </pre></div>
 
