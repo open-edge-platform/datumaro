@@ -16,9 +16,9 @@ Supported annotation attributes:
 
 ## Import MOTS dataset
 
-You can download the PNG format of MOTS challange dataset [here](https://www.vision.rwth-aachen.de/page/mots).
+You can download the PNG format of MOTS challenge dataset [here](https://www.vision.rwth-aachen.de/page/mots).
 
-A Datumaro project with the MOTS challange source can be created in the following way:
+A Datumaro project with the MOTS challenge source can be created in the following way:
 
 ``` bash
 datum project create
@@ -28,7 +28,7 @@ datum project import --format mots <path/to/dataset>
 It is possible to specify project name and project directory. Run
 `datum project create --help` for more information.
 
-The MOTS challange dataset directory should have the following structure:
+The MOTS challenge dataset directory should have the following structure:
 
 <!--lint disable fenced-code-flag-->
 ```
@@ -55,7 +55,7 @@ run `datum project info`, which will display the project information.
 
 ## Export to other formats
 
-Datumaro can convert the MOTS challange dataset into any other format [Datumaro supports](/docs/data-formats/formats/index.rst).
+Datumaro can convert the MOTS challenge dataset into any other format [Datumaro supports](/docs/data-formats/formats/index.rst).
 
 Such conversion will only be successful if the output
 format can represent the type of dataset you want to convert,

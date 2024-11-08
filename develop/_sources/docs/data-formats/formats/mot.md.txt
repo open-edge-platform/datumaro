@@ -18,7 +18,7 @@ Supported annotation attributes:
 
 You can download the MOT challenge dataset [here](https://motchallenge.net).
 
-A Datumaro project with the MOT challange source can be created in the following way:
+A Datumaro project with the MOT challenge source can be created in the following way:
 
 ``` bash
 datum project create
@@ -43,7 +43,7 @@ The MOT challenge dataset directory should have the following structure:
   └── seqinfo.ini (optional)
 ```
 
-`seqinfo.ini` is provided by the MOT challange dataset but it is optional in Datumaro.
+`seqinfo.ini` is provided by the MOT challenge dataset but it is optional in Datumaro.
 It includes `imdir` field which is the name of directory having image files.
 If this file is given, Datumaro will find the image files from the directory written in the `imdir` field.
 
@@ -52,7 +52,7 @@ run `datum project info`, which will display the project information.
 
 ## Export to other formats
 
-Datumaro can convert the MOT challange dataset into any other format [Datumaro supports](/docs/data-formats/formats/index.rst).
+Datumaro can convert the MOT challenge dataset into any other format [Datumaro supports](/docs/data-formats/formats/index.rst).
 
 Such conversion will only be successful if the output
 format can represent the type of dataset you want to convert,

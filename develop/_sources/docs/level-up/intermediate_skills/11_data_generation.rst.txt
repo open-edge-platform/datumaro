@@ -10,7 +10,7 @@ since the manual annotations is quite expensive work.
 Base on the [FractalDB]_,
 Datumaro provides a fractal image dataset (FractalDB) generator that can be utilized to pre-train the vision models.
 Learning visual features of FractalDB is known to increase the performance of Vision Transformer (ViT) models.
-Note that a fractal patterns in FractalDB is calculated mathmatically using the interated function system (IFS) with random parameters.
+Note that a fractal patterns in FractalDB is calculated mathematically using the integrated function system (IFS) with random parameters.
 We thus don't need to concern about any privacy issues.
 
 

@@ -103,7 +103,7 @@ Basic dataset item manipulations:
 - [`remove_attributes`](#remove_attributes) - Removes attributes
 - [`astype_annotations`](#astype_annotations) - Transforms annotation types
 - [`pseudo_labeling`](#pseudo_labeling) - Generates pseudo labels for unlabeled data
-- [`correct`](#correct) - Corrects annotaiton types
+- [`correct`](#correct) - Corrects annotation types
 - [`clean`](#clean) - Removes noisy data for tabular dataset
 
 Subset manipulations:
@@ -177,7 +177,7 @@ Examples:
 #### `id_from_image_name`
 
 Renames items in the dataset based on the image file name, excluding the extension.
-When 'ensure_unique' is enabled, a random suffix is appened to ensure each identifier is unique
+When 'ensure_unique' is enabled, a random suffix is appended to ensure each identifier is unique
 in cases where the image name is not distinct. By default, the random suffix is three characters long,
 but this can be adjusted with the 'suffix_length' parameter.
 

@@ -58,7 +58,7 @@ Examples:
   datum validate -p <path/to/project/> -t classification -- -ir 40
   ```
 
-### List of validation items (annomaly types)
+### List of validation items (anomaly types)
 
 | Anomaly Type | Description | Task Type |
 | ------------ | ----------- | --------- |

@@ -137,7 +137,7 @@ Extra options for exporting to Cityscapes format:
 #...
 datum project export -f cityscapes -- --label-map mycolormap.txt
 ```
-or you can use original cityscapes colomap:
+or you can use original cityscapes colormap:
 ``` bash
 datum project export -f cityscapes -- --label-map cityscapes
 ```

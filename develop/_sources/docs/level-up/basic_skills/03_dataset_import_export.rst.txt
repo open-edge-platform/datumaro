@@ -19,7 +19,7 @@ Convert data format
 ===================
 
 Users sometimes need to compare, merge, or manage various kinds of public datasets in a unified
-system. To achieve this, Datumaro not only has ``import`` and ``export`` funcionalities, but also
+system. To achieve this, Datumaro not only has ``import`` and ``export`` functionalities, but also
 provides ``convert``, which shortens the import and export into a single command line.
 Let's convert the Cityscapes data into the MS-COCO format, which is described in :ref:`here <COCO>`.
 
