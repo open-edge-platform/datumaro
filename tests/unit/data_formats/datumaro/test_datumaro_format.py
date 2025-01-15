@@ -122,6 +122,18 @@ class DatumaroFormatTest:
                 True,
                 id="test_can_save_and_load_infos",
             ),
+            pytest.param(
+                "fxt_test_pointscategories_without_positions",
+                compare_datasets,
+                False,
+                id="test_pointscategories_without_positions",
+            ),
+            pytest.param(
+                "fxt_test_pointscategories_with_positions",
+                compare_datasets,
+                False,
+                id="test_pointscategories_with_positions",
+            ),
         ],
     )
     @pytest.mark.parametrize("stream", [True, False])

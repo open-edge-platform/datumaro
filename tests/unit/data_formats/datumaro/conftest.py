@@ -680,3 +680,59 @@ def fxt_legacy_dataset_pair(test_dir):
     )
 
     yield source_dataset, target_dataset
+
+
+@pytest.fixture
+def fxt_test_pointscategories_without_positions():
+
+    points_categories = PointsCategories()
+    for index in range(5):
+        points_categories.add(
+            index,
+            labels=["label1", "label2", "label3"],
+            joints=[[0, 1], [1, 2]]
+        )
+
+    return Dataset.from_iterable(
+        [
+            DatasetItem(
+                id=100,
+                subset="train",
+                media=Image.from_numpy(data=np.ones((10, 6, 3))),
+                annotations=[
+                    Points([1, 2, 0, 0, 1, 1]),
+                ],
+            ),
+        ],
+        categories={
+            AnnotationType.points: points_categories,
+        },
+    )
+
+@pytest.fixture
+def fxt_test_pointscategories_with_positions():
+
+    points_categories = PointsCategories()
+    for index in range(5):
+        points_categories.add(
+            index,
+            labels=["label1", "label2", "label3"],
+            joints=[[0, 1], [1, 2]],
+            positions=[[0, 1], [1, 2], [2, 3]]
+        )
+
+    return Dataset.from_iterable(
+        [
+            DatasetItem(
+                id=100,
+                subset="train",
+                media=Image.from_numpy(data=np.ones((10, 6, 3))),
+                annotations=[
+                    Points([1, 2, 0, 0, 1, 1]),
+                ],
+            ),
+        ],
+        categories={
+            AnnotationType.points: points_categories,
+        },
+    )
