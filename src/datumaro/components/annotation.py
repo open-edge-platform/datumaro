@@ -1430,7 +1430,7 @@ class PointsCategories(Categories):
             list of tuples: Normalized keypoints within the unit bounding box, preserving aspect ratio.
         """
         # Convert keypoints to a NumPy array for easier manipulation
-        positions = np.array(positions)
+        positions = np.array(positions, dtype=float)
 
         # Find the minimum and maximum values for x and y
         min = positions.min(axis=0)
