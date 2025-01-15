@@ -17,6 +17,7 @@ from datumaro.components.annotation import (
     ExtractedMask,
     HashKey,
     Mask,
+    PointsCategories,
     RotatedBbox,
 )
 from datumaro.util.image import lazy_image
@@ -142,3 +143,43 @@ class AnnotationsTest:
         semantic_seg_mask = annotations.get_semantic_seg_mask(ignore_index=255, dtype=dtype)
 
         assert np.allclose(semantic_seg_mask, fxt_index_mask)
+
+
+class PointsCategoriesTest:
+    @pytest.mark.parametrize(
+        "positions, expected",
+        [
+            (
+                [(2, 3), (4, 6), (3, 5)],
+                [(0.0, 0.0), (0.666667, 1.0), (0.333333, 0.666667)],
+            ),  # basic functionality
+            (
+                [(1, 1), (1, 1), (1, 1)],
+                [(0.0, 0.0), (0.0, 0.0), (0.0, 0.0)],
+            ),  # all points are the same
+            (
+                [(1, 1), (3, 1), (5, 1)],
+                [(0.0, 0.0), (0.5, 0.0), (1.0, 0.0)],
+            ),  # points form horizontal line
+            (
+                [(1, 1), (1, 3), (1, 5)],
+                [(0.0, 0.0), (0.0, 0.5), (0.0, 1.0)],
+            ),  # points form vertical line
+            (
+                [(-2, -3), (-4, -6), (-3, -5)],
+                [(0.666667, 1.0), (0.0, 0.0), (0.333333, 0.333333)],
+            ),  # negative coords
+            (
+                [(1000, 2000), (4000, 6000), (3000, 5000)],
+                [(0.0, 0.0), (0.75, 1.0), (0.50, 0.75)],
+            ),  # large range
+            (
+                [(0.001, 0.002), (0.004, 0.006), (0.003, 0.005)],
+                [(0.0, 0.0), (0.75, 1.0), (0.50, 0.75)],
+            ),  # small range
+            ([(2, 3)], [(0.0, 0.0)]),  # single point
+        ],
+    )
+    def test_normalize_positions(self, positions, expected):
+        result = PointsCategories.normalize_positions(positions)
+        assert np.allclose(result, expected), f"Expected {expected}, got {result}"
