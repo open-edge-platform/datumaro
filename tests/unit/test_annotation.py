@@ -20,7 +20,9 @@ from datumaro.components.annotation import (
     PointsCategories,
     RotatedBbox,
 )
+from datumaro.util.attrs_util import validate_points_positions
 from datumaro.util.image import lazy_image
+from datumaro.util.points_util import normalize_points
 
 
 class EllipseTest:
@@ -181,5 +183,55 @@ class PointsCategoriesTest:
         ],
     )
     def test_normalize_positions(self, positions, expected):
-        result = PointsCategories.normalize_positions(positions)
+        result = normalize_points(positions)
         assert np.allclose(result, expected), f"Expected {expected}, got {result}"
+
+    class PointsPositionsValidatorTest:
+        """Tests for the validator of the `positions` field in PointsCategories.Category."""
+
+        @staticmethod
+        def test_empty_positions():
+            """Test that an empty list of positions is allowed."""
+            obj = PointsCategories.Category(positions=[])
+            assert obj.positions == []  # Should allow empty list
+
+        @staticmethod
+        def test_none_positions():
+            """Test that None is allowed and converted to an empty list."""
+            obj = PointsCategories.Category(positions=None)
+            assert obj.positions == []  # Should allow None and convert to empty list
+
+        @staticmethod
+        def test_valid_positions():
+            """Test that valid positions are allowed."""
+            positions = [(1.0, 2.0), (3.0, 4.0)]
+            obj = PointsCategories.Category(positions=positions)
+            assert obj
+
+        @staticmethod
+        def test_type_not_list():
+            """Test that a non-list type for positions raises an error."""
+            with pytest.raises(ValueError, match="Cannot convert positions to list of tuples"):
+                PointsCategories.Category(positions=56)
+
+        @staticmethod
+        def test_type_not_tuple():
+            """Test that a non-tuple type for a position raises an error."""
+            with pytest.raises(ValueError, match="Cannot convert positions to list of tuples"):
+                PointsCategories.Category(positions=[[1.0, 2.0], 543])
+
+        @staticmethod
+        def test_tuple_wrong_length():
+            """Test that a tuple with the wrong number of elements raises an error."""
+            with pytest.raises(
+                ValueError, match="Each tuple in positions must have exactly 2 elements"
+            ):
+                PointsCategories.Category(positions=[(1.0, 2.0), (3.0,)])
+
+        @staticmethod
+        def test_non_numeric_elements():
+            """Test that a tuple with non-numeric elements raises an error."""
+            with pytest.raises(
+                ValueError, match="Each element in a tuple in positions must be an int or float"
+            ):
+                PointsCategories.Category(positions=[(1.0, 2.0), (3.0, "4.0")])
