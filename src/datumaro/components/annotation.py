@@ -1414,6 +1414,42 @@ class PointsCategories(Categories):
         # Pairs of connected point indices
         joints: Set[Tuple[int, int]] = field(factory=set, validator=default_if_none(set))
 
+        # Set of default x, y coordinates of the points
+        positions: List[Tuple[float, float]] = field(factory=list, validator=default_if_none(list))
+
+    @staticmethod
+    def normalize_positions(positions):
+        """
+        Normalize a set of keypoints to fit within a unit bounding box [0, 1] x [0, 1],
+        maintaining the aspect ratio.
+
+        Parameters:
+            keypoints (list of tuples): A list of (x, y) keypoints.
+
+        Returns:
+            list of tuples: Normalized keypoints within the unit bounding box, preserving aspect ratio.
+        """
+        # Convert keypoints to a NumPy array for easier manipulation
+        positions = np.array(positions)
+
+        # Find the minimum and maximum values for x and y
+        min = positions.min(axis=0)
+        max = positions.max(axis=0)
+
+        # Compute the width and height of the bounding box
+        size = max - min
+
+        # Handle edge case where all keypoints are the same (zero width or height)
+        size[np.where(size==0)] = 1e-6
+
+        # Determine the scaling factor to maintain aspect ratio
+        scale = size.max()
+
+        # Normalize the keypoints to fit within [0, 1] x [0, 1], preserving aspect ratio
+        normalized_positions = (positions - min) / scale
+
+        return list(map(tuple, normalized_positions))
+
     items: Dict[int, Category] = field(factory=dict, validator=default_if_none(dict))
 
     @classmethod
@@ -1447,11 +1483,16 @@ class PointsCategories(Categories):
         label_id: int,
         labels: Optional[Iterable[str]] = None,
         joints: Iterable[Tuple[int, int]] = None,
+        positions: Iterable[Tuple[float, float]] = None,
     ):
         if joints is None:
             joints = []
         joints = set(map(tuple, joints))
-        self.items[label_id] = self.Category(labels, joints)
+        if positions is None:
+            positions = []
+        if len(positions) > 0:
+            positions = self.normalize_positions(list(positions))
+        self.items[label_id] = self.Category(labels, joints, positions)
 
     def __contains__(self, idx: int) -> bool:
         return idx in self.items

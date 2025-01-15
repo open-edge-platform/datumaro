@@ -107,6 +107,7 @@ class JsonWriter:
                     "label_id": int(label_id),
                     "labels": [cast(label, str) for label in item.labels],
                     "joints": [list(map(int, j)) for j in item.joints],
+                    "positions": [list(map(float, p)) for p in item.positions],
                 }
             )
         return converted

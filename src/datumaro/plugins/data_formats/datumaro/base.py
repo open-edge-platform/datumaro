@@ -115,7 +115,12 @@ class JsonReader:
         if parsed_points_cat:
             point_categories = PointsCategories()
             for item in parsed_points_cat["items"]:
-                point_categories.add(int(item["label_id"]), item["labels"], joints=item["joints"])
+                point_categories.add(
+                    int(item["label_id"]),
+                    item["labels"],
+                    joints=item["joints"],
+                    positions=item.get("positions"),
+                )
 
             categories[AnnotationType.points] = point_categories
 
