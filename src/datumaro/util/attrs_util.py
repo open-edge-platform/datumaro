@@ -6,8 +6,6 @@ import inspect
 
 import attrs
 
-from .points_util import normalize_points
-
 
 def not_empty(inst, attribute, x):
     assert len(x) != 0, x
@@ -52,28 +50,3 @@ def ensure_cls(c):
             return c(**arg)
 
     return _converter
-
-
-def validate_points_positions(inst, attribute, positions) -> list[float]:
-    """
-    Validate a list of point positions in the format [x1, y1, x2, y2, ..., xn, yn].
-
-    To be used as an attrs validator in PointsCategories class.
-    """
-    if positions is None or positions == []:
-        value = []
-    else:
-        # convert to a list of tuples
-        try:
-            positions = list(map(float, positions))
-        except (TypeError, ValueError):
-            raise ValueError(
-                f"Cannot convert {attribute.name} to list of floats. Check your input data."
-            )
-        # validate the positions
-        if len(positions) % 2 != 0:
-            raise ValueError(f"{attribute.name} must have an even number of elements")
-        # normalize the positions
-        value = normalize_points(positions)
-
-    setattr(inst, attribute.name, value)

@@ -31,7 +31,8 @@ from attr import asdict, attrs, field
 from typing_extensions import Literal
 
 from datumaro.components.media import Image
-from datumaro.util.attrs_util import default_if_none, not_empty, validate_points_positions
+from datumaro.util.attrs_util import default_if_none, not_empty
+from datumaro.util.points_util import normalize_points
 
 
 class AnnotationType(IntEnum):
@@ -1416,7 +1417,7 @@ class PointsCategories(Categories):
         joints: Set[Tuple[int, int]] = field(factory=set, validator=default_if_none(set))
 
         # Set of default x, y coordinates of the points
-        positions: List[float] = field(factory=list, validator=validate_points_positions)
+        positions: List[float] = field(factory=list)
 
         def __attrs_post_init__(self):
             """
@@ -1425,6 +1426,29 @@ class PointsCategories(Categories):
             if len(self.positions) > 0 and len(self.positions) != len(self.labels) * 2:
                 msg = "The number of positions should be equal to the number of labels"
                 raise ValueError(msg)
+
+        @positions.validator
+        def positions_validator(self, attribute, positions) -> list[float]:
+            """
+            Validate a list of point positions in the format [x1, y1, x2, y2, ..., xn, yn].
+
+            To be used as an attrs validator in PointsCategories class.
+            """
+            if positions is None or positions == []:
+                self.positions = []
+            else:
+                # convert to a list of tuples
+                try:
+                    positions = list(map(float, positions))
+                except (TypeError, ValueError):
+                    raise ValueError(
+                        f"Cannot convert {attribute.name} to list of floats. Check your input data."
+                    )
+                # validate the positions
+                if len(positions) % 2 != 0:
+                    raise ValueError(f"{attribute.name} must have an even number of elements")
+                # normalize the positions
+                self.positions = normalize_points(positions)
 
     items: Dict[int, Category] = field(factory=dict, validator=default_if_none(dict))
 
