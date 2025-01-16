@@ -204,8 +204,9 @@ class PointsCategoriesTest:
         @staticmethod
         def test_valid_positions():
             """Test that valid positions are allowed."""
+            labels = ["p1", "p2"]
             positions = [1.0, 2.0, 3.0, 4.0]
-            obj = PointsCategories.Category(positions=positions)
+            obj = PointsCategories.Category(labels=labels, positions=positions)
             assert obj
 
         @staticmethod
@@ -217,17 +218,29 @@ class PointsCategoriesTest:
         @staticmethod
         def test_coordinates_as_string():
             """Test that the coordinates may be represented as a string."""
-            obj = PointsCategories.Category(positions=["1", "2", "3", "4"])
+            labels = ["p1", "p2"]
+            positions = ["1", "2", "3", "4"]
+            obj = PointsCategories.Category(labels=labels, positions=positions)
             assert obj
 
         @staticmethod
         def test_non_numeric_elements():
             """Test that passing non-numeric elements raises an error."""
+            labels = ["p1", "p2"]
+            positions = [1.0, 2.0, 3.0, "not_a_number"]
             with pytest.raises(ValueError, match="Cannot convert positions to list of floats"):
-                PointsCategories.Category(positions=["1", "2", "3", "not_a_number"])
+                PointsCategories.Category(labels=labels, positions=positions)
 
         @staticmethod
         def test_uneven_number_of_elements():
             """Test that an uneven number of elements raises an error."""
             with pytest.raises(ValueError, match="positions must have an even number of elements"):
                 PointsCategories.Category(positions=[1.0, 2.0, 3.0])
+
+        @staticmethod
+        def test_num_positions_not_same_as_num_labels():
+            """Test that the number of positions must match the number of labels."""
+            labels = ["p1", "p2", "p3"]  # 3 labels
+            positions = [1.0, 2.0, 3.0, 4.0]  # 2 positions
+            with pytest.raises(ValueError, match="number of positions should be equal to the number of labels"):
+                PointsCategories.Category(labels=labels, positions=positions)

@@ -1418,6 +1418,14 @@ class PointsCategories(Categories):
         # Set of default x, y coordinates of the points
         positions: List[float] = field(factory=list, validator=validate_points_positions)
 
+        def __attrs_post_init__(self):
+            """
+            Validates that the number of positions is equal to the number of labels.
+            """
+            if len(self.positions) > 0 and len(self.positions) != len(self.labels) * 2:
+                msg = "The number of positions should be equal to the number of labels"
+                raise ValueError(msg)
+
     items: Dict[int, Category] = field(factory=dict, validator=default_if_none(dict))
 
     @classmethod
@@ -1426,7 +1434,7 @@ class PointsCategories(Categories):
         iterable: Union[
             Iterable[Sequence[int, List[str]]],
             Iterable[Sequence[int, List[str], Set[Tuple[int, int]]]],
-            Iterable[Sequence[int, List[str], Set[Tuple[int, int]], List[Tuple[float, float]]]],
+            Iterable[Sequence[int, List[str], Set[Tuple[int, int]], List[float]]],
         ],
     ) -> PointsCategories:
         """
