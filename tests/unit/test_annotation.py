@@ -204,34 +204,30 @@ class PointsCategoriesTest:
         @staticmethod
         def test_valid_positions():
             """Test that valid positions are allowed."""
-            positions = [(1.0, 2.0), (3.0, 4.0)]
+            positions = [1.0, 2.0, 3.0, 4.0]
             obj = PointsCategories.Category(positions=positions)
             assert obj
 
         @staticmethod
         def test_type_not_list():
             """Test that a non-list type for positions raises an error."""
-            with pytest.raises(ValueError, match="Cannot convert positions to list of tuples"):
+            with pytest.raises(ValueError, match="Cannot convert positions to list of floats"):
                 PointsCategories.Category(positions=56)
 
         @staticmethod
-        def test_type_not_tuple():
-            """Test that a non-tuple type for a position raises an error."""
-            with pytest.raises(ValueError, match="Cannot convert positions to list of tuples"):
-                PointsCategories.Category(positions=[[1.0, 2.0], 543])
-
-        @staticmethod
-        def test_tuple_wrong_length():
-            """Test that a tuple with the wrong number of elements raises an error."""
-            with pytest.raises(
-                ValueError, match="Each tuple in positions must have exactly 2 elements"
-            ):
-                PointsCategories.Category(positions=[(1.0, 2.0), (3.0,)])
+        def test_coordinates_as_string():
+            """Test that the coordinates may be represented as a string."""
+            obj = PointsCategories.Category(positions=["1", "2", "3", "4"])
+            assert obj
 
         @staticmethod
         def test_non_numeric_elements():
-            """Test that a tuple with non-numeric elements raises an error."""
-            with pytest.raises(
-                ValueError, match="Each element in a tuple in positions must be an int or float"
-            ):
-                PointsCategories.Category(positions=[(1.0, 2.0), (3.0, "4.0")])
+            """Test that passing non-numeric elements raises an error."""
+            with pytest.raises(ValueError, match="Cannot convert positions to list of floats"):
+                PointsCategories.Category(positions=["1", "2", "3", "not_a_number"])
+
+        @staticmethod
+        def test_uneven_number_of_elements():
+            """Test that an uneven number of elements raises an error."""
+            with pytest.raises(ValueError, match="positions must have an even number of elements"):
+                PointsCategories.Category(positions=[1.0, 2.0, 3.0])

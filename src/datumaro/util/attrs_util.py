@@ -54,9 +54,9 @@ def ensure_cls(c):
     return _converter
 
 
-def validate_points_positions(inst, attribute, positions) -> list[tuple[float, float]]:
+def validate_points_positions(inst, attribute, positions) -> list[float]:
     """
-    Validate a list of point positions, ensuring that each position is a tuple of two floats.
+    Validate a list of point positions in the format [x1, y1, x2, y2, ..., xn, yn].
 
     To be used as an attrs validator in PointsCategories class.
     """
@@ -65,19 +65,14 @@ def validate_points_positions(inst, attribute, positions) -> list[tuple[float, f
     else:
         # convert to a list of tuples
         try:
-            positions = list(map(tuple, positions))
-        except TypeError:
+            positions = list(map(float, positions))
+        except (TypeError, ValueError):
             raise ValueError(
-                f"Cannot convert {attribute.name} to list of tuples. Check your input data."
+                f"Cannot convert {attribute.name} to list of floats. Check your input data."
             )
         # validate the positions
-        for position in positions:
-            if not len(position) == 2:
-                raise ValueError(f"Each tuple in {attribute.name} must have exactly 2 elements")
-            if not all(isinstance(coord, (int, float)) for coord in position):
-                raise ValueError(
-                    f"Each element in a tuple in {attribute.name} must be an int or float"
-                )
+        if len(positions) % 2 != 0:
+            raise ValueError(f"{attribute.name} must have an even number of elements")
         # normalize the positions
         value = normalize_points(positions)
 

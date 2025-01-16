@@ -1416,9 +1416,7 @@ class PointsCategories(Categories):
         joints: Set[Tuple[int, int]] = field(factory=set, validator=default_if_none(set))
 
         # Set of default x, y coordinates of the points
-        positions: List[Tuple[float, float]] = field(
-            factory=list, validator=validate_points_positions
-        )
+        positions: List[float] = field(factory=list, validator=validate_points_positions)
 
     items: Dict[int, Category] = field(factory=dict, validator=default_if_none(dict))
 
@@ -1454,7 +1452,7 @@ class PointsCategories(Categories):
         label_id: int,
         labels: Optional[Iterable[str]] = None,
         joints: Iterable[Tuple[int, int]] = None,
-        positions: Iterable[Tuple[float, float]] = None,
+        positions: Iterable[float] = None,
     ):
         if joints is None:
             joints = []

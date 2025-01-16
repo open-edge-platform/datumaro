@@ -684,14 +684,9 @@ def fxt_legacy_dataset_pair(test_dir):
 
 @pytest.fixture
 def fxt_test_pointscategories_without_positions():
-
     points_categories = PointsCategories()
     for index in range(5):
-        points_categories.add(
-            index,
-            labels=["label1", "label2", "label3"],
-            joints=[[0, 1], [1, 2]]
-        )
+        points_categories.add(index, labels=["label1", "label2", "label3"], joints=[[0, 1], [1, 2]])
 
     return Dataset.from_iterable(
         [
@@ -709,16 +704,16 @@ def fxt_test_pointscategories_without_positions():
         },
     )
 
+
 @pytest.fixture
 def fxt_test_pointscategories_with_positions():
-
     points_categories = PointsCategories()
     for index in range(5):
         points_categories.add(
             index,
             labels=["label1", "label2", "label3"],
             joints=[[0, 1], [1, 2]],
-            positions=[[0, 1], [1, 2], [2, 3]]
+            positions=[0, 1, 1, 2, 2, 3],
         )
 
     return Dataset.from_iterable(
