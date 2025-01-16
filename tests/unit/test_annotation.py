@@ -152,34 +152,25 @@ class PointsCategoriesTest:
         "positions, expected",
         [
             (
-                [(2, 3), (4, 6), (3, 5)],
-                [(0.0, 0.0), (0.666667, 1.0), (0.333333, 0.666667)],
+                [2, 3, 4, 6, 3, 5],
+                [0.0, 0.0, 0.666667, 1.0, 0.333333, 0.666667],
             ),  # basic functionality
+            ([1, 1, 1, 1, 1, 1], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]),  # all points are the same
+            ([1, 1, 3, 1, 5, 1], [0.0, 0.0, 0.5, 0.0, 1.0, 0.0]),  # points form horizontal line
+            ([1, 1, 1, 3, 1, 5], [0.0, 0.0, 0.0, 0.5, 0.0, 1.0]),  # points form vertical line
             (
-                [(1, 1), (1, 1), (1, 1)],
-                [(0.0, 0.0), (0.0, 0.0), (0.0, 0.0)],
-            ),  # all points are the same
-            (
-                [(1, 1), (3, 1), (5, 1)],
-                [(0.0, 0.0), (0.5, 0.0), (1.0, 0.0)],
-            ),  # points form horizontal line
-            (
-                [(1, 1), (1, 3), (1, 5)],
-                [(0.0, 0.0), (0.0, 0.5), (0.0, 1.0)],
-            ),  # points form vertical line
-            (
-                [(-2, -3), (-4, -6), (-3, -5)],
-                [(0.666667, 1.0), (0.0, 0.0), (0.333333, 0.333333)],
+                [-2, -3, -4, -6, -3, -5],
+                [0.666667, 1.0, 0.0, 0.0, 0.333333, 0.333333],
             ),  # negative coords
             (
-                [(1000, 2000), (4000, 6000), (3000, 5000)],
-                [(0.0, 0.0), (0.75, 1.0), (0.50, 0.75)],
+                [1000, 2000, 4000, 6000, 3000, 5000],
+                [0.0, 0.0, 0.75, 1.0, 0.50, 0.75],
             ),  # large range
             (
-                [(0.001, 0.002), (0.004, 0.006), (0.003, 0.005)],
-                [(0.0, 0.0), (0.75, 1.0), (0.50, 0.75)],
+                [0.001, 0.002, 0.004, 0.006, 0.003, 0.005],
+                [0.0, 0.0, 0.75, 1.0, 0.50, 0.75],
             ),  # small range
-            ([(2, 3)], [(0.0, 0.0)]),  # single point
+            ([2, 3], [0.0, 0.0]),  # single point
         ],
     )
     def test_normalize_positions(self, positions, expected):
@@ -242,5 +233,7 @@ class PointsCategoriesTest:
             """Test that the number of positions must match the number of labels."""
             labels = ["p1", "p2", "p3"]  # 3 labels
             positions = [1.0, 2.0, 3.0, 4.0]  # 2 positions
-            with pytest.raises(ValueError, match="number of positions should be equal to the number of labels"):
+            with pytest.raises(
+                ValueError, match="number of positions should be equal to the number of labels"
+            ):
                 PointsCategories.Category(labels=labels, positions=positions)
