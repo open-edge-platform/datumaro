@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -344,22 +344,22 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequence</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.contexts.importer</span> <span class="kn">import</span> <span class="n">_ImportFail</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">SubsetBase</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.merge</span> <span class="kn">import</span> <span class="n">ExactMerge</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.merge.extractor_merger</span> <span class="kn">import</span> <span class="n">ExtractorMerger</span><span class="p">,</span> <span class="n">check_identicalness</span>
-<span class="kn">from</span> <span class="nn">datumaro.plugins.data_formats.coco.base</span> <span class="kn">import</span> <span class="n">_CocoBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.contexts.importer</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ImportFail</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">SubsetBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.merge</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExactMerge</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.merge.extractor_merger</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExtractorMerger</span><span class="p">,</span> <span class="n">check_identicalness</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.data_formats.coco.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">_CocoBase</span>
 
 
 <div class="viewcode-block" id="COCOTaskMergedBase">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.coco.extractor_merger.html#datumaro.plugins.data_formats.coco.extractor_merger.COCOTaskMergedBase">[docs]</a>
-<span class="k">class</span> <span class="nc">COCOTaskMergedBase</span><span class="p">(</span><span class="n">SubsetBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">COCOTaskMergedBase</span><span class="p">(</span><span class="n">SubsetBase</span><span class="p">):</span>
     <span class="n">__not_plugin__</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">sources</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">_CocoBase</span><span class="p">],</span>
         <span class="n">subset</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -373,7 +373,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_sources</span> <span class="o">=</span> <span class="n">sources</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_item_keys</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sources</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sources</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
@@ -391,14 +391,14 @@ document.write(`
                     <span class="n">item</span> <span class="o">=</span> <span class="n">ExactMerge</span><span class="o">.</span><span class="n">merge_items</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">remainder</span><span class="p">)</span>
                 <span class="k">yield</span> <span class="n">item</span>
 
-    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sources</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sources</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item_keys</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">item_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">item_keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item_keys</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_item_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sources</span><span class="p">:</span>
@@ -407,17 +407,17 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item_keys</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">is_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_stream</span></div>
 
 
 
 <div class="viewcode-block" id="COCOExtractorMerger">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.coco.extractor_merger.html#datumaro.plugins.data_formats.coco.extractor_merger.COCOExtractorMerger">[docs]</a>
-<span class="k">class</span> <span class="nc">COCOExtractorMerger</span><span class="p">(</span><span class="n">ExtractorMerger</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">COCOExtractorMerger</span><span class="p">(</span><span class="n">ExtractorMerger</span><span class="p">):</span>
     <span class="n">__not_plugin__</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">_CocoBase</span><span class="p">]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">_CocoBase</span><span class="p">]):</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">_ImportFail</span><span class="p">(</span><span class="s2">&quot;It should not be empty.&quot;</span><span class="p">)</span>
 

@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -345,30 +345,30 @@ document.write(`
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 <span class="sd">&quot;&quot;&quot;Automatic mask generation using Segment Anything Model&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">import</span> <span class="nn">datumaro.plugins.sam_transforms.interpreters.sam_decoder_for_amg</span> <span class="k">as</span> <span class="nn">sam_decoder_for_amg</span>
-<span class="kn">import</span> <span class="nn">datumaro.plugins.sam_transforms.interpreters.sam_encoder</span> <span class="k">as</span> <span class="nn">sam_encoder_interp</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.cli_plugin</span> <span class="kn">import</span> <span class="n">CliPlugin</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">IDataset</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.transformer</span> <span class="kn">import</span> <span class="n">ModelTransform</span>
-<span class="kn">from</span> <span class="nn">datumaro.plugins.inference_server_plugin</span> <span class="kn">import</span> <span class="n">OVMSLauncher</span><span class="p">,</span> <span class="n">TritonLauncher</span>
-<span class="kn">from</span> <span class="nn">datumaro.plugins.inference_server_plugin.base</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datumaro.plugins.sam_transforms.interpreters.sam_decoder_for_amg</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sam_decoder_for_amg</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datumaro.plugins.sam_transforms.interpreters.sam_encoder</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sam_encoder_interp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.cli_plugin</span><span class="w"> </span><span class="kn">import</span> <span class="n">CliPlugin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">IDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelTransform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.inference_server_plugin</span><span class="w"> </span><span class="kn">import</span> <span class="n">OVMSLauncher</span><span class="p">,</span> <span class="n">TritonLauncher</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.inference_server_plugin.base</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">InferenceServerType</span><span class="p">,</span>
     <span class="n">ProtocolType</span><span class="p">,</span>
     <span class="n">TLSConfig</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">datumaro.plugins.sam_transforms.interpreters.sam_decoder_for_amg</span> <span class="kn">import</span> <span class="n">AMGMasks</span><span class="p">,</span> <span class="n">AMGPoints</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.sam_transforms.interpreters.sam_decoder_for_amg</span><span class="w"> </span><span class="kn">import</span> <span class="n">AMGMasks</span><span class="p">,</span> <span class="n">AMGPoints</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;SAMAutomaticMaskGeneration&quot;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="SAMAutomaticMaskGeneration">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.automatic_mask_gen.html#datumaro.plugins.sam_transforms.SAMAutomaticMaskGeneration">[docs]</a>
-<span class="k">class</span> <span class="nc">SAMAutomaticMaskGeneration</span><span class="p">(</span><span class="n">ModelTransform</span><span class="p">,</span> <span class="n">CliPlugin</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SAMAutomaticMaskGeneration</span><span class="p">(</span><span class="n">ModelTransform</span><span class="p">,</span> <span class="n">CliPlugin</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Produce instance segmentation masks automatically using Segment Anything Model (SAM).</span>
 
 <span class="sd">    This transform can produce instance segmentation mask annotations for each given image.</span>
@@ -410,7 +410,7 @@ document.write(`
 <span class="sd">            to remove the binary mask which has the number of 1s less than min_mask_region_area.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">extractor</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">,</span>
         <span class="n">inference_server_type</span><span class="p">:</span> <span class="n">InferenceServerType</span> <span class="o">=</span> <span class="n">InferenceServerType</span><span class="o">.</span><span class="n">ovms</span><span class="p">,</span>
@@ -475,11 +475,11 @@ document.write(`
         <span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">points_per_side</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">points_per_side</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_points_per_side</span>
 
     <span class="nd">@points_per_side</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">points_per_side</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points_per_side</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">points_per_side</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points_per_side</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">points_y</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">points_per_side</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="n">points_per_side</span>
         <span class="n">points_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">points_per_side</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="n">points_per_side</span>
 
@@ -488,7 +488,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_points_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">points_x</span><span class="p">,</span> <span class="n">points_y</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_points_per_side</span> <span class="o">=</span> <span class="n">points_per_side</span>
 
-    <span class="k">def</span> <span class="nf">_process_batch</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_batch</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">batch</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>

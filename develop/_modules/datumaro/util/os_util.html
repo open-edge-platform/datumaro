@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -347,18 +347,18 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">glob</span>
-<span class="kn">import</span> <span class="nn">importlib</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">import</span> <span class="nn">subprocess</span>  <span class="c1"># nosec B404</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">unicodedata</span>
-<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">ExitStack</span><span class="p">,</span> <span class="n">contextmanager</span><span class="p">,</span> <span class="n">redirect_stderr</span><span class="p">,</span> <span class="n">redirect_stdout</span>
-<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">glob</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>  <span class="c1"># nosec B404</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">unicodedata</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExitStack</span><span class="p">,</span> <span class="n">contextmanager</span><span class="p">,</span> <span class="n">redirect_stderr</span><span class="p">,</span> <span class="n">redirect_stdout</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">StringIO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="c1"># Declare functions to remove files and directories.</span>
@@ -366,13 +366,13 @@ document.write(`
     <span class="c1"># Use rmtree from GitPython to avoid the problem with removal of</span>
     <span class="c1"># readonly files on Windows, which Git uses extensively</span>
     <span class="c1"># It double checks if a file cannot be removed because of readonly flag</span>
-    <span class="kn">from</span> <span class="nn">git.util</span> <span class="kn">import</span> <span class="n">rmfile</span><span class="p">,</span> <span class="n">rmtree</span>  <span class="c1"># noqa: F401</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">git.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">rmfile</span><span class="p">,</span> <span class="n">rmtree</span>  <span class="c1"># noqa: F401</span>
 <span class="k">except</span> <span class="p">(</span><span class="ne">ModuleNotFoundError</span><span class="p">,</span> <span class="ne">ImportError</span><span class="p">):</span>
-    <span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">remove</span> <span class="k">as</span> <span class="n">rmfile</span>  <span class="c1"># noqa: F401</span>
-    <span class="kn">from</span> <span class="nn">shutil</span> <span class="kn">import</span> <span class="n">rmtree</span> <span class="k">as</span> <span class="n">rmtree</span>  <span class="c1"># noqa: F401</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">remove</span> <span class="k">as</span> <span class="n">rmfile</span>  <span class="c1"># noqa: F401</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">shutil</span><span class="w"> </span><span class="kn">import</span> <span class="n">rmtree</span> <span class="k">as</span> <span class="n">rmtree</span>  <span class="c1"># noqa: F401</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">cast</span>
-<span class="kn">from</span> <span class="nn">.definitions</span> <span class="kn">import</span> <span class="n">DEFAULT_SUBSET_NAME</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">cast</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.definitions</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_SUBSET_NAME</span>
 
 <span class="n">DEFAULT_MAX_DEPTH</span> <span class="o">=</span> <span class="mi">10</span>
 <span class="n">DEFAULT_MIN_DEPTH</span> <span class="o">=</span> <span class="mi">0</span>
@@ -380,7 +380,7 @@ document.write(`
 
 <div class="viewcode-block" id="check_instruction_set">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.os_util.html#datumaro.cli.commands.require_project.modification.export.check_instruction_set">[docs]</a>
-<span class="k">def</span> <span class="nf">check_instruction_set</span><span class="p">(</span><span class="n">instruction</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_instruction_set</span><span class="p">(</span><span class="n">instruction</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">instruction</span> <span class="o">==</span> <span class="nb">str</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span>
         <span class="c1"># Let&#39;s ignore a warning from bandit about using shell=True.</span>
         <span class="c1"># In this case it isn&#39;t a security issue and we use some</span>
@@ -396,7 +396,7 @@ document.write(`
 
 <div class="viewcode-block" id="import_foreign_module">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.os_util.html#datumaro.cli.commands.require_project.modification.export.import_foreign_module">[docs]</a>
-<span class="k">def</span> <span class="nf">import_foreign_module</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">import_foreign_module</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
     <span class="n">module</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">default_path</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="k">try</span><span class="p">:</span>
@@ -414,7 +414,7 @@ document.write(`
 
 <div class="viewcode-block" id="walk">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.os_util.html#datumaro.cli.commands.require_project.modification.export.walk">[docs]</a>
-<span class="k">def</span> <span class="nf">walk</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">max_depth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">min_depth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">walk</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">max_depth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">min_depth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">max_depth</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">max_depth</span> <span class="o">=</span> <span class="n">DEFAULT_MAX_DEPTH</span>
     <span class="k">if</span> <span class="n">min_depth</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -435,7 +435,7 @@ document.write(`
 
 <div class="viewcode-block" id="find_files">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.os_util.html#datumaro.cli.commands.require_project.modification.export.find_files">[docs]</a>
-<span class="k">def</span> <span class="nf">find_files</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_files</span><span class="p">(</span>
     <span class="n">dirpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">exts</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
     <span class="n">recursive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -447,7 +447,7 @@ document.write(`
     <span class="k">else</span><span class="p">:</span>
         <span class="n">exts</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;.&quot;</span> <span class="o">+</span> <span class="n">e</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">exts</span><span class="p">}</span>
 
-    <span class="k">def</span> <span class="nf">_check_ext</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_ext</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">dotpos</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">dotpos</span><span class="p">:</span>  <span class="c1"># exclude &#39;.ext&#39; cases too</span>
             <span class="n">ext</span> <span class="o">=</span> <span class="n">filename</span><span class="p">[</span><span class="n">dotpos</span><span class="p">:]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
@@ -468,7 +468,7 @@ document.write(`
 
 <div class="viewcode-block" id="copytree">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.os_util.html#datumaro.cli.commands.require_project.modification.export.copytree">[docs]</a>
-<span class="k">def</span> <span class="nf">copytree</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">copytree</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">):</span>
     <span class="c1"># Serves as a replacement for shutil.copytree().</span>
     <span class="c1">#</span>
     <span class="c1"># Shutil works very slow pre 3.8</span>
@@ -518,14 +518,14 @@ document.write(`
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
             <span class="s2">&quot;Failed to copy data. The command &#39;</span><span class="si">%s</span><span class="s2">&#39; &quot;</span>
             <span class="s2">&quot;has failed with the following output: &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">cmd</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
-        <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span></div>
+        <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span></div>
 
 
 
 <div class="viewcode-block" id="suppress_output">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.os_util.html#datumaro.cli.commands.require_project.modification.export.suppress_output">[docs]</a>
 <span class="nd">@contextmanager</span>
-<span class="k">def</span> <span class="nf">suppress_output</span><span class="p">(</span><span class="n">stdout</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">stderr</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">suppress_output</span><span class="p">(</span><span class="n">stdout</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">stderr</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">devnull</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">devnull</span><span class="p">,</span> <span class="n">ExitStack</span><span class="p">()</span> <span class="k">as</span> <span class="n">es</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">stdout</span><span class="p">:</span>
             <span class="n">es</span><span class="o">.</span><span class="n">enter_context</span><span class="p">(</span><span class="n">redirect_stdout</span><span class="p">(</span><span class="n">devnull</span><span class="p">))</span>
@@ -539,7 +539,7 @@ document.write(`
 <div class="viewcode-block" id="catch_output">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.os_util.html#datumaro.cli.commands.require_project.modification.export.catch_output">[docs]</a>
 <span class="nd">@contextmanager</span>
-<span class="k">def</span> <span class="nf">catch_output</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">catch_output</span><span class="p">():</span>
     <span class="n">stdout</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
     <span class="n">stderr</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">()</span>
 
@@ -550,7 +550,7 @@ document.write(`
 
 <div class="viewcode-block" id="dir_items">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.os_util.html#datumaro.cli.commands.require_project.modification.export.dir_items">[docs]</a>
-<span class="k">def</span> <span class="nf">dir_items</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">ext</span><span class="p">,</span> <span class="n">truncate_ext</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">dir_items</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">ext</span><span class="p">,</span> <span class="n">truncate_ext</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="n">items</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
         <span class="n">ext_pos</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="n">ext</span><span class="p">)</span>
@@ -564,7 +564,7 @@ document.write(`
 
 <div class="viewcode-block" id="split_path">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.os_util.html#datumaro.cli.commands.require_project.modification.export.split_path">[docs]</a>
-<span class="k">def</span> <span class="nf">split_path</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">split_path</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="n">parts</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -584,7 +584,7 @@ document.write(`
 
 <div class="viewcode-block" id="is_subpath">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.os_util.html#datumaro.cli.commands.require_project.modification.export.is_subpath">[docs]</a>
-<span class="k">def</span> <span class="nf">is_subpath</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_subpath</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Tests if a path is subpath of another path or the paths are equal.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -597,7 +597,7 @@ document.write(`
 
 <div class="viewcode-block" id="make_file_name">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.os_util.html#datumaro.cli.commands.require_project.modification.export.make_file_name">[docs]</a>
-<span class="k">def</span> <span class="nf">make_file_name</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_file_name</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="c1"># adapted from</span>
     <span class="c1"># https://docs.djangoproject.com/en/2.1/_modules/django/utils/text/#slugify</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -614,7 +614,7 @@ document.write(`
 
 <div class="viewcode-block" id="generate_next_name">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.os_util.html#datumaro.cli.commands.require_project.modification.export.generate_next_name">[docs]</a>
-<span class="k">def</span> <span class="nf">generate_next_name</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_next_name</span><span class="p">(</span>
     <span class="n">names</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">basename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">sep</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span>
@@ -660,7 +660,7 @@ document.write(`
 
 <div class="viewcode-block" id="extract_subset_name_from_parent">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.os_util.html#datumaro.cli.commands.require_project.modification.export.extract_subset_name_from_parent">[docs]</a>
-<span class="k">def</span> <span class="nf">extract_subset_name_from_parent</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_subset_name_from_parent</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract subset name from the given url.</span>
 
 <span class="sd">    For example, if url = &quot;/a/b/images/train/img.jpg&quot; and start = &quot;/a/b&quot;,</span>
@@ -692,7 +692,7 @@ document.write(`
 
 <div class="viewcode-block" id="get_all_file_extensions">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.os_util.html#datumaro.cli.commands.require_project.modification.export.get_all_file_extensions">[docs]</a>
-<span class="k">def</span> <span class="nf">get_all_file_extensions</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ignore_dirs</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_all_file_extensions</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ignore_dirs</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
     <span class="n">extensions</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">glob</span><span class="o">.</span><span class="n">iglob</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;**&quot;</span><span class="p">,</span> <span class="s2">&quot;*.*&quot;</span><span class="p">),</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">ignore_dirs</span><span class="o">.</span><span class="n">isdisjoint</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">)):</span>

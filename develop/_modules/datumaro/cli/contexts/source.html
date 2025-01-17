@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -344,18 +344,18 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.util.scope</span> <span class="kn">import</span> <span class="n">scope_add</span><span class="p">,</span> <span class="n">scoped</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.scope</span><span class="w"> </span><span class="kn">import</span> <span class="n">scope_add</span><span class="p">,</span> <span class="n">scoped</span>
 
-<span class="kn">from</span> <span class="nn">..commands.require_project.modification</span> <span class="kn">import</span> <span class="n">add</span><span class="p">,</span> <span class="n">import_</span><span class="p">,</span> <span class="n">remove</span>
-<span class="kn">from</span> <span class="nn">..util</span> <span class="kn">import</span> <span class="n">MultilineFormatter</span><span class="p">,</span> <span class="n">add_subparser</span>
-<span class="kn">from</span> <span class="nn">..util.project</span> <span class="kn">import</span> <span class="n">load_project</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..commands.require_project.modification</span><span class="w"> </span><span class="kn">import</span> <span class="n">add</span><span class="p">,</span> <span class="n">import_</span><span class="p">,</span> <span class="n">remove</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..util</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultilineFormatter</span><span class="p">,</span> <span class="n">add_subparser</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..util.project</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_project</span>
 
 
 <div class="viewcode-block" id="build_info_parser">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.contexts.source.html#datumaro.cli.contexts.source.build_info_parser">[docs]</a>
-<span class="k">def</span> <span class="nf">build_info_parser</span><span class="p">(</span><span class="n">parser_ctor</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_info_parser</span><span class="p">(</span><span class="n">parser_ctor</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">):</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">parser_ctor</span><span class="p">()</span>
 
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;?&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Source name&quot;</span><span class="p">)</span>
@@ -374,7 +374,7 @@ document.write(`
 
 <div class="viewcode-block" id="get_info_sensitive_args">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.contexts.source.html#datumaro.cli.contexts.source.get_info_sensitive_args">[docs]</a>
-<span class="k">def</span> <span class="nf">get_info_sensitive_args</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_info_sensitive_args</span><span class="p">():</span>
     <span class="k">return</span> <span class="p">{</span>
         <span class="n">info_command</span><span class="p">:</span> <span class="p">[</span>
             <span class="s2">&quot;name&quot;</span><span class="p">,</span>
@@ -387,7 +387,7 @@ document.write(`
 <div class="viewcode-block" id="info_command">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.contexts.source.html#datumaro.cli.contexts.source.info_command">[docs]</a>
 <span class="nd">@scoped</span>
-<span class="k">def</span> <span class="nf">info_command</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">info_command</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
     <span class="n">project</span> <span class="o">=</span> <span class="n">scope_add</span><span class="p">(</span><span class="n">load_project</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">project_dir</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
@@ -403,7 +403,7 @@ document.write(`
 
 <div class="viewcode-block" id="build_parser">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.contexts.source.html#datumaro.cli.contexts.source.build_parser">[docs]</a>
-<span class="k">def</span> <span class="nf">build_parser</span><span class="p">(</span><span class="n">parser_ctor</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_parser</span><span class="p">(</span><span class="n">parser_ctor</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">):</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">parser_ctor</span><span class="p">(</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">            Manipulate data sources inside of a project.|n</span>
@@ -433,7 +433,7 @@ document.write(`
 
 <div class="viewcode-block" id="get_sensitive_args">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.contexts.source.html#datumaro.cli.contexts.source.get_sensitive_args">[docs]</a>
-<span class="k">def</span> <span class="nf">get_sensitive_args</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_sensitive_args</span><span class="p">():</span>
     <span class="k">return</span> <span class="p">{</span>
         <span class="o">**</span><span class="n">add</span><span class="o">.</span><span class="n">get_sensitive_args</span><span class="p">(),</span>
         <span class="o">**</span><span class="n">import_</span><span class="o">.</span><span class="n">get_sensitive_args</span><span class="p">(),</span>

@@ -28,7 +28,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -695,7 +695,7 @@ merged into a <a class="reference internal" href="../reference/_autosummary/datu
 <li><p>comparison and merging of datasets</p></li>
 <li><p>various annotation operations</p></li>
 </ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datumaro</span> <span class="kn">import</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">DatasetItem</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">DatasetItem</span>
 
 <span class="c1"># Import and export a dataset</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="s1">&#39;src/dir&#39;</span><span class="p">,</span> <span class="s1">&#39;voc&#39;</span><span class="p">)</span>
@@ -770,7 +770,7 @@ record information about changes done, which can be obtained by <a class="refere
 The patch information is used automatically on saving and exporting to
 reduce the amount of disk writes. Changes can be flushed with
 <a class="reference internal" href="../reference/_autosummary/datumaro.components.dataset.html#datumaro.components.dataset.Dataset.flush_changes" title="datumaro.components.dataset.Dataset.flush_changes"><code class="xref py py-mod docutils literal notranslate"><span class="pre">flush_changes()</span></code></a>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datumaro</span> <span class="kn">import</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">Label</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">DatasetItem</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">Label</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">DatasetItem</span>
 
 <span class="c1"># create a dataset directly from items</span>
 <span class="n">dataset1</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">([</span>
@@ -925,8 +925,8 @@ In Datumaro there are several types of plugins, which include:</p>
 </ul>
 <p>A plugin can be used either via the <a class="reference internal" href="../reference/_autosummary/datumaro.components.environment.html#module-datumaro.components.environment" title="datumaro.components.environment"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Environment</span></code></a> class instance,
 or by regular module importing:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datumaro</span> <span class="k">as</span> <span class="nn">dm</span>
-<span class="kn">from</span> <span class="nn">datumaro.plugins.yolo_format.converter</span> <span class="kn">import</span> <span class="n">YoloConverter</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.yolo_format.converter</span><span class="w"> </span><span class="kn">import</span> <span class="n">YoloConverter</span>
 
 <span class="c1"># Import a dataset</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="n">src_dir</span><span class="p">,</span> <span class="s1">&#39;voc&#39;</span><span class="p">)</span>
@@ -946,26 +946,26 @@ or by regular module importing:</p>
 <p>A plugin is a Python module with any name, which exports some symbols. Symbols,
 starting with <code class="docutils literal notranslate"><span class="pre">_</span></code> are not exported by default. To export a symbol,
 inherit it from one of the special classes:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datumaro</span> <span class="kn">import</span> <span class="n">Importer</span><span class="p">,</span> <span class="n">Extractor</span><span class="p">,</span> <span class="n">Transform</span><span class="p">,</span> <span class="n">Launcher</span><span class="p">,</span> <span class="n">Converter</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="kn">import</span> <span class="n">Importer</span><span class="p">,</span> <span class="n">Extractor</span><span class="p">,</span> <span class="n">Transform</span><span class="p">,</span> <span class="n">Launcher</span><span class="p">,</span> <span class="n">Converter</span>
 </pre></div>
 </div>
 <p>The <cite>exports</cite> list of the module can be used to override default behavior:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyComponent1</span><span class="p">:</span> <span class="o">...</span>
-<span class="k">class</span> <span class="nc">MyComponent2</span><span class="p">:</span> <span class="o">...</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MyComponent1</span><span class="p">:</span> <span class="o">...</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyComponent2</span><span class="p">:</span> <span class="o">...</span>
 <span class="n">exports</span> <span class="o">=</span> <span class="p">[</span><span class="n">MyComponent2</span><span class="p">]</span> <span class="c1"># exports only MyComponent2</span>
 </pre></div>
 </div>
 <p>There is also an additional class to modify plugin appearance in command line:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datumaro</span> <span class="kn">import</span> <span class="n">Converter</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="kn">import</span> <span class="n">Converter</span>
 
-<span class="k">class</span> <span class="nc">MyPlugin</span><span class="p">(</span><span class="n">Converter</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyPlugin</span><span class="p">(</span><span class="n">Converter</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Optional documentation text, which will appear in command-line help</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">NAME</span> <span class="o">=</span> <span class="s1">&#39;optional_custom_plugin_name&#39;</span>
 
-    <span class="k">def</span> <span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="c1"># set up argparse.ArgumentParser instance</span>
         <span class="c1"># the parsed args are supposed to be used as invocation options</span>
@@ -981,10 +981,10 @@ inherit it from one of the special classes:</p>
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">my_plugin1/file2.py</span></code> contents:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datumaro</span> <span class="kn">import</span> <span class="n">Transform</span>
-<span class="kn">from</span> <span class="nn">.file1</span> <span class="kn">import</span> <span class="n">something</span><span class="p">,</span> <span class="n">useful</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.file1</span><span class="w"> </span><span class="kn">import</span> <span class="n">something</span><span class="p">,</span> <span class="n">useful</span>
 
-<span class="k">class</span> <span class="nc">MyTransform</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyTransform</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
     <span class="n">NAME</span> <span class="o">=</span> <span class="s2">&quot;custom_name&quot;</span> <span class="c1"># could be generated automatically</span>
 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -992,25 +992,25 @@ inherit it from one of the special classes:</p>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-q&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Very useful parameter&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">parser</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extractor</span><span class="p">,</span> <span class="n">q</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extractor</span><span class="p">,</span> <span class="n">q</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">extractor</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">q</span> <span class="o">=</span> <span class="n">q</span>
 
-    <span class="k">def</span> <span class="nf">transform_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transform_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">item</span>
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">my_plugin2.py</span></code> contents:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datumaro</span> <span class="kn">import</span> <span class="n">Converter</span><span class="p">,</span> <span class="n">Extractor</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="kn">import</span> <span class="n">Converter</span><span class="p">,</span> <span class="n">Extractor</span>
 
-<span class="k">class</span> <span class="nc">MyFormat</span><span class="p">:</span> <span class="o">...</span>
-<span class="k">class</span> <span class="nc">_MyFormatConverter</span><span class="p">(</span><span class="n">Converter</span><span class="p">):</span> <span class="o">...</span>
-<span class="k">class</span> <span class="nc">MyFormatExtractor</span><span class="p">(</span><span class="n">Extractor</span><span class="p">):</span> <span class="o">...</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyFormat</span><span class="p">:</span> <span class="o">...</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_MyFormatConverter</span><span class="p">(</span><span class="n">Converter</span><span class="p">):</span> <span class="o">...</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MyFormatExtractor</span><span class="p">(</span><span class="n">Extractor</span><span class="p">):</span> <span class="o">...</span>
 
 <span class="n">exports</span> <span class="o">=</span> <span class="p">[</span><span class="n">MyFormat</span><span class="p">]</span> <span class="c1"># explicit exports declaration</span>
 <span class="c1"># MyFormatExtractor and _MyFormatConverter won&#39;t be exported</span>

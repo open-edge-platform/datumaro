@@ -28,7 +28,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -752,10 +752,10 @@ You can find examples of the expected model outputs in <a class="reference exter
 </div></blockquote>
 <p>For OpenVINO models the output processing script would look like this:</p>
 <p>Classification scenario:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datumaro</span> <span class="k">as</span> <span class="nn">dm</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.annotation_util</span> <span class="kn">import</span> <span class="n">softmax</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.annotation_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">softmax</span>
 
-<span class="k">def</span> <span class="nf">process_outputs</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_outputs</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="p">):</span>
     <span class="c1"># inputs = model input, array or images, shape = (N, C, H, W)</span>
     <span class="c1"># outputs = model output, logits, shape = (N, n_classes)</span>
     <span class="c1"># results = conversion result, [ [ Annotation, ... ], ... ]</span>
@@ -769,13 +769,13 @@ You can find examples of the expected model outputs in <a class="reference exter
 </pre></div>
 </div>
 <p>Object Detection scenario:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datumaro</span> <span class="k">as</span> <span class="nn">dm</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dm</span>
 
 <span class="c1"># return a significant number of output boxes to make multiple runs</span>
 <span class="c1"># statistically correct and meaningful</span>
 <span class="n">max_det</span> <span class="o">=</span> <span class="mi">1000</span>
 
-<span class="k">def</span> <span class="nf">process_outputs</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_outputs</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="p">):</span>
     <span class="c1"># inputs = model input, array or images, shape = (N, C, H, W)</span>
     <span class="c1"># outputs = model output, shape = (N, 1, K, 7)</span>
     <span class="c1"># results = conversion result, [ [ Annotation, ... ], ... ]</span>

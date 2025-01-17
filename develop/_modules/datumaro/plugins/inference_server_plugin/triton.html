@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -344,16 +344,16 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">tritonclient.grpc</span> <span class="k">as</span> <span class="nn">grpcclient</span>
-<span class="kn">import</span> <span class="nn">tritonclient.http</span> <span class="k">as</span> <span class="nn">httpclient</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tritonclient.grpc</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">grpcclient</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tritonclient.http</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">httpclient</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.abstracts.model_interpreter</span> <span class="kn">import</span> <span class="n">LauncherInputType</span><span class="p">,</span> <span class="n">ModelPred</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.errors</span> <span class="kn">import</span> <span class="n">DatumaroError</span>
-<span class="kn">from</span> <span class="nn">datumaro.plugins.inference_server_plugin.base</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.abstracts.model_interpreter</span><span class="w"> </span><span class="kn">import</span> <span class="n">LauncherInputType</span><span class="p">,</span> <span class="n">ModelPred</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatumaroError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.inference_server_plugin.base</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">LauncherForDedicatedInferenceServer</span><span class="p">,</span>
     <span class="n">ProtocolType</span><span class="p">,</span>
 <span class="p">)</span>
@@ -367,7 +367,7 @@ document.write(`
 
 <div class="viewcode-block" id="TritonLauncher">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.plugins.inference_server_plugin.TritonLauncher">[docs]</a>
-<span class="k">class</span> <span class="nc">TritonLauncher</span><span class="p">(</span><span class="n">LauncherForDedicatedInferenceServer</span><span class="p">[</span><span class="n">TClient</span><span class="p">]):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TritonLauncher</span><span class="p">(</span><span class="n">LauncherForDedicatedInferenceServer</span><span class="p">[</span><span class="n">TClient</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Inference launcher for Triton Inference Server (https://github.com/triton-inference-server)</span>
 
 <span class="sd">    Parameters:</span>
@@ -382,7 +382,7 @@ document.write(`
 <span class="sd">        protocol_type: Communication protocol type with the server instance</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">_init_client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TClient</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TClient</span><span class="p">:</span>
         <span class="n">creds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tls_config</span><span class="o">.</span><span class="n">as_grpc_creds</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tls_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">protocol_type</span> <span class="o">==</span> <span class="n">ProtocolType</span><span class="o">.</span><span class="n">grpc</span><span class="p">:</span>
@@ -392,7 +392,7 @@ document.write(`
 
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">protocol_type</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_check_server_health</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_server_health</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">is_model_ready</span><span class="p">(</span>
             <span class="n">model_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
             <span class="n">model_version</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_version</span><span class="p">),</span>
@@ -401,15 +401,15 @@ document.write(`
             <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="s2">&quot;Model is not ready.&quot;</span><span class="p">)</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Health check succeeded: </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_init_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">get_model_metadata</span><span class="p">(</span>
             <span class="n">model_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
             <span class="n">model_version</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_version</span><span class="p">),</span>
         <span class="p">)</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Received metadata: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_get_infer_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">LauncherInputType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TInferInput</span><span class="p">:</span>
-        <span class="k">def</span> <span class="nf">_fill_dynamic_axes_dim</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_infer_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">LauncherInputType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TInferInput</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_fill_dynamic_axes_dim</span><span class="p">(</span>
             <span class="n">metadata_shape</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">np_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Triton requires to fill the dynamic axes (dim = -1) with the actual dim value of data (&gt;= 0)&quot;&quot;&quot;</span>
@@ -426,7 +426,7 @@ document.write(`
 
             <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">new_shape</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">_get_np_data</span><span class="p">(</span><span class="n">input_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_get_np_data</span><span class="p">(</span><span class="n">input_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
                 <span class="k">return</span> <span class="n">inputs</span>
 
@@ -438,7 +438,7 @@ document.write(`
 
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">_create</span><span class="p">(</span><span class="n">infer_input_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">TInferInput</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TInferInput</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_create</span><span class="p">(</span><span class="n">infer_input_cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">TInferInput</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TInferInput</span><span class="p">:</span>
             <span class="n">infer_inputs</span> <span class="o">=</span> <span class="p">[</span>
                 <span class="n">infer_input_cls</span><span class="p">(</span>
                     <span class="n">name</span><span class="o">=</span><span class="n">inp</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
@@ -460,7 +460,7 @@ document.write(`
 
 <div class="viewcode-block" id="TritonLauncher.infer">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.plugins.inference_server_plugin.TritonLauncher.infer">[docs]</a>
-    <span class="k">def</span> <span class="nf">infer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">LauncherInputType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ModelPred</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">infer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">LauncherInputType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ModelPred</span><span class="p">]:</span>
         <span class="n">infer_outputs</span><span class="p">:</span> <span class="n">TInferOutput</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">infer</span><span class="p">(</span>
             <span class="n">inputs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_infer_input</span><span class="p">(</span><span class="n">inputs</span><span class="p">),</span>
             <span class="n">model_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>

@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -347,20 +347,20 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">LabelCategories</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">IDataset</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_item_storage</span> <span class="kn">import</span> <span class="n">DatasetItemStorage</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.merge</span> <span class="kn">import</span> <span class="n">Merger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">LabelCategories</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">IDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_item_storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItemStorage</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.merge</span><span class="w"> </span><span class="kn">import</span> <span class="n">Merger</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;UnionMerge&quot;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="UnionMerge">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.union_merge.html#datumaro.components.merge.union_merge.UnionMerge">[docs]</a>
-<span class="k">class</span> <span class="nc">UnionMerge</span><span class="p">(</span><span class="n">Merger</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnionMerge</span><span class="p">(</span><span class="n">Merger</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Merge several datasets with &quot;union&quot; policy:</span>
 
@@ -377,13 +377,13 @@ document.write(`
 <span class="sd">    DatasetItem(id=&quot;magic-0&quot;, subset=&quot;train&quot;) and DatasetItem(id=&quot;magic-1&quot;, subset=&quot;train&quot;).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">options</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_matching_table</span> <span class="o">=</span> <span class="p">{}</span>
 
 <div class="viewcode-block" id="UnionMerge.merge">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.union_merge.html#datumaro.components.merge.union_merge.UnionMerge.merge">[docs]</a>
-    <span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">IDataset</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">DatasetItemStorage</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">IDataset</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">DatasetItemStorage</span><span class="p">:</span>
         <span class="n">dict_items</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">source_idx</span><span class="p">,</span> <span class="n">source</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sources</span><span class="p">):</span>
@@ -408,7 +408,7 @@ document.write(`
 
 <div class="viewcode-block" id="UnionMerge.merge_categories">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.union_merge.html#datumaro.components.merge.union_merge.UnionMerge.merge_categories">[docs]</a>
-    <span class="k">def</span> <span class="nf">merge_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">IDataset</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">IDataset</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
         <span class="n">dst_categories</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="n">label_cat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_label_categories</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span>
@@ -419,7 +419,7 @@ document.write(`
         <span class="k">return</span> <span class="n">dst_categories</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_merge_label_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">IDataset</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">LabelCategories</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_merge_label_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">IDataset</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">LabelCategories</span><span class="p">:</span>
         <span class="n">dst_cat</span> <span class="o">=</span> <span class="n">LabelCategories</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">src_id</span><span class="p">,</span> <span class="n">src_categories</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sources</span><span class="p">):</span>
             <span class="n">src_cat</span> <span class="o">=</span> <span class="n">src_categories</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>

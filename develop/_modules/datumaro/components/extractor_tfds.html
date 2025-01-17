@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -344,14 +344,14 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span> <span class="nn">itertools</span>
-<span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">from</span> <span class="nn">importlib.util</span> <span class="kn">import</span> <span class="n">find_spec</span>
-<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">SimpleNamespace</span> <span class="k">as</span> <span class="n">namespace</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">importlib.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_spec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleNamespace</span> <span class="k">as</span> <span class="n">namespace</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">TYPE_CHECKING</span><span class="p">,</span>
     <span class="n">Any</span><span class="p">,</span>
     <span class="n">Callable</span><span class="p">,</span>
@@ -366,15 +366,15 @@ document.write(`
     <span class="n">Union</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="kn">import</span> <span class="nn">attrs</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">attrs</span> <span class="kn">import</span> <span class="n">field</span><span class="p">,</span> <span class="n">frozen</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">attrs</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">attrs</span><span class="w"> </span><span class="kn">import</span> <span class="n">field</span><span class="p">,</span> <span class="n">frozen</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">Label</span><span class="p">,</span> <span class="n">LabelCategories</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">CategoriesInfo</span><span class="p">,</span> <span class="n">DatasetInfo</span><span class="p">,</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">IDataset</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.media</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">MediaElement</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.import_util</span> <span class="kn">import</span> <span class="n">lazy_import</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.tf_util</span> <span class="kn">import</span> <span class="n">import_tf</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">Label</span><span class="p">,</span> <span class="n">LabelCategories</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">CategoriesInfo</span><span class="p">,</span> <span class="n">DatasetInfo</span><span class="p">,</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">IDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">MediaElement</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.import_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">lazy_import</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.tf_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">import_tf</span>
 
 <span class="n">TFDS_EXTRACTOR_AVAILABLE</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">find_spec</span><span class="p">(</span><span class="s2">&quot;tensorflow_datasets&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">False</span>
 
@@ -382,7 +382,7 @@ document.write(`
     <span class="k">try</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
             <span class="n">tf</span> <span class="o">=</span> <span class="n">import_tf</span><span class="p">()</span>
-            <span class="kn">import</span> <span class="nn">tensorflow_datasets</span> <span class="k">as</span> <span class="nn">tfds</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow_datasets</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tfds</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">tfds</span> <span class="o">=</span> <span class="n">lazy_import</span><span class="p">(</span><span class="s2">&quot;tensorflow_datasets&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
@@ -395,7 +395,7 @@ document.write(`
 <div class="viewcode-block" id="TfdsDatasetMetadata">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.extractor_tfds.html#datumaro.components.extractor_tfds.TfdsDatasetMetadata">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">TfdsDatasetMetadata</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TfdsDatasetMetadata</span><span class="p">:</span>
     <span class="c1"># If you add attributes to this class, make sure to update the reporting logic</span>
     <span class="c1"># in the `describe-downloads` command to include them.</span>
 
@@ -415,7 +415,7 @@ document.write(`
 
 
 <span class="nd">@frozen</span>
-<span class="k">class</span> <span class="nc">_TfdsAdapter</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_TfdsAdapter</span><span class="p">:</span>
     <span class="n">category_transformers</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span>
         <span class="n">Callable</span><span class="p">[[</span><span class="n">tfds</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">DatasetBuilder</span><span class="p">,</span> <span class="n">CategoriesInfo</span><span class="p">,</span> <span class="n">namespace</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span>
     <span class="p">]</span>
@@ -424,7 +424,7 @@ document.write(`
 
     <span class="n">metadata</span><span class="p">:</span> <span class="n">TfdsDatasetMetadata</span>
 
-    <span class="k">def</span> <span class="nf">transform_categories</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transform_categories</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">tfds_builder</span><span class="p">:</span> <span class="n">tfds</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">DatasetBuilder</span><span class="p">,</span>
         <span class="n">categories</span><span class="p">:</span> <span class="n">CategoriesInfo</span><span class="p">,</span>
@@ -433,7 +433,7 @@ document.write(`
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">category_transformers</span><span class="p">:</span>
             <span class="n">t</span><span class="p">(</span><span class="n">tfds_builder</span><span class="p">,</span> <span class="n">categories</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">transform_data</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transform_data</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">tfds_example</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
         <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">,</span>
@@ -446,7 +446,7 @@ document.write(`
 <span class="n">_FeaturePath</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]</span>
 
 
-<span class="k">def</span> <span class="nf">_resolve_feature_path</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_resolve_feature_path</span><span class="p">(</span>
     <span class="n">feature_path</span><span class="p">:</span> <span class="n">_FeaturePath</span><span class="p">,</span>
     <span class="n">root</span><span class="p">:</span> <span class="n">tfds</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">FeaturesDict</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">tfds</span><span class="o">.</span><span class="n">features</span><span class="o">.</span><span class="n">FeatureConnector</span><span class="p">:</span>
@@ -474,10 +474,10 @@ document.write(`
 
 
 <span class="nd">@frozen</span>
-<span class="k">class</span> <span class="nc">_SetLabelCategoriesFromClassLabelFeature</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_SetLabelCategoriesFromClassLabelFeature</span><span class="p">:</span>
     <span class="n">feature_path</span><span class="p">:</span> <span class="n">_FeaturePath</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">tfds_builder</span><span class="p">:</span> <span class="n">tfds</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">DatasetBuilder</span><span class="p">,</span>
         <span class="n">categories</span><span class="p">:</span> <span class="n">CategoriesInfo</span><span class="p">,</span>
@@ -492,11 +492,11 @@ document.write(`
 
 
 <span class="nd">@frozen</span>
-<span class="k">class</span> <span class="nc">_SetImageFromImageFeature</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_SetImageFromImageFeature</span><span class="p">:</span>
     <span class="n">feature_name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">filename_feature_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">tfds_example</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
         <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">,</span>
@@ -515,10 +515,10 @@ document.write(`
 
 
 <span class="nd">@frozen</span>
-<span class="k">class</span> <span class="nc">_AddLabelFromClassLabelFeature</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_AddLabelFromClassLabelFeature</span><span class="p">:</span>
     <span class="n">feature_name</span><span class="p">:</span> <span class="nb">str</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">tfds_example</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
         <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">,</span>
@@ -530,18 +530,18 @@ document.write(`
 
 
 <span class="nd">@frozen</span>
-<span class="k">class</span> <span class="nc">_AttributeMemberMapping</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_AttributeMemberMapping</span><span class="p">:</span>
     <span class="n">member_name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">attribute_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">value_converter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">,</span> <span class="n">namespace</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@attribute_name</span><span class="o">.</span><span class="n">default</span>
-    <span class="k">def</span> <span class="nf">_attribute_name_default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_attribute_name_default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">member_name</span>
 
 
 <span class="nd">@frozen</span>
-<span class="k">class</span> <span class="nc">_AddObjectsFromFeature</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_AddObjectsFromFeature</span><span class="p">:</span>
     <span class="n">feature_name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">bbox_member</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">label_member</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -554,7 +554,7 @@ document.write(`
         <span class="p">),</span>
     <span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">tfds_example</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
         <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">,</span>
@@ -597,11 +597,11 @@ document.write(`
 
 
 <span class="nd">@frozen</span>
-<span class="k">class</span> <span class="nc">_SetAttributeFromFeature</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_SetAttributeFromFeature</span><span class="p">:</span>
     <span class="n">feature_name</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">attribute_name</span><span class="p">:</span> <span class="nb">str</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">tfds_example</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
         <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">,</span>
@@ -611,18 +611,18 @@ document.write(`
 
 
 <span class="nd">@frozen</span>
-<span class="k">class</span> <span class="nc">_GenerateIdFromTextFeature</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_GenerateIdFromTextFeature</span><span class="p">:</span>
     <span class="n">feature_name</span><span class="p">:</span> <span class="nb">str</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tfds_example</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tfds_example</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">tfds_example</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_name</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">)</span>
 
 
 <span class="nd">@frozen</span>
-<span class="k">class</span> <span class="nc">_GenerateIdFromFilenameFeature</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_GenerateIdFromFilenameFeature</span><span class="p">:</span>
     <span class="n">feature_name</span><span class="p">:</span> <span class="nb">str</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tfds_example</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tfds_example</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">file_name</span> <span class="o">=</span> <span class="n">tfds_example</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">feature_name</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">file_name</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
@@ -707,7 +707,7 @@ document.write(`
 <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_voc_save_pose_names</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_voc_save_pose_names</span><span class="p">(</span>
     <span class="n">tfds_builder</span><span class="p">:</span> <span class="n">tfds</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">DatasetBuilder</span><span class="p">,</span>
     <span class="n">categories</span><span class="p">:</span> <span class="n">CategoriesInfo</span><span class="p">,</span>
     <span class="n">state</span><span class="p">:</span> <span class="n">namespace</span><span class="p">,</span>
@@ -751,7 +751,7 @@ document.write(`
 <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_evolve_adapter_meta</span><span class="p">(</span><span class="n">adapter</span><span class="p">:</span> <span class="n">_TfdsAdapter</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_evolve_adapter_meta</span><span class="p">(</span><span class="n">adapter</span><span class="p">:</span> <span class="n">_TfdsAdapter</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">attrs</span><span class="o">.</span><span class="n">evolve</span><span class="p">(</span><span class="n">adapter</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">attrs</span><span class="o">.</span><span class="n">evolve</span><span class="p">(</span><span class="n">adapter</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
 
 
@@ -776,8 +776,8 @@ document.write(`
 <span class="p">}</span>
 
 
-<span class="k">class</span> <span class="nc">_TfdsSplitExtractor</span><span class="p">(</span><span class="n">IDataset</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_TfdsSplitExtractor</span><span class="p">(</span><span class="n">IDataset</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">parent</span><span class="p">:</span> <span class="n">_TfdsExtractor</span><span class="p">,</span>
         <span class="n">tfds_split</span><span class="p">:</span> <span class="n">tf</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">,</span>
@@ -787,10 +787,10 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_tfds_split</span> <span class="o">=</span> <span class="n">tfds_split</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tfds_split_info</span> <span class="o">=</span> <span class="n">tfds_split_info</span>
 
-    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tfds_split_info</span><span class="o">.</span><span class="n">num_examples</span>
 
-    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
         <span class="k">for</span> <span class="n">example_index</span><span class="p">,</span> <span class="n">tfds_example</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tfds_split</span><span class="p">):</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="o">.</span><span class="n">_adapter</span><span class="o">.</span><span class="n">id_generator</span><span class="p">:</span>
                 <span class="n">item_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="o">.</span><span class="n">_adapter</span><span class="o">.</span><span class="n">id_generator</span><span class="p">(</span><span class="n">tfds_example</span><span class="p">)</span>
@@ -802,20 +802,20 @@ document.write(`
 
             <span class="k">yield</span> <span class="n">dm_item</span>
 
-    <span class="k">def</span> <span class="nf">infos</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DatasetInfo</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">infos</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DatasetInfo</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="o">.</span><span class="n">infos</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CategoriesInfo</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CategoriesInfo</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">subsets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">IDataset</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">subsets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">IDataset</span><span class="p">]:</span>
         <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_tfds_split_info</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="bp">self</span><span class="p">}</span>
 
-    <span class="k">def</span> <span class="nf">get_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IDataset</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IDataset</span><span class="p">:</span>
         <span class="k">assert</span> <span class="n">name</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tfds_split_info</span><span class="o">.</span><span class="n">name</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
         <span class="k">if</span> <span class="n">subset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">subset</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tfds_split_info</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
@@ -825,18 +825,18 @@ document.write(`
 
         <span class="k">return</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">media_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">MediaElement</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">media_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">MediaElement</span><span class="p">]:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="o">.</span><span class="n">_media_type</span>
 
-    <span class="k">def</span> <span class="nf">ann_types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">AnnotationType</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ann_types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">AnnotationType</span><span class="p">]:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="o">.</span><span class="n">ann_types</span><span class="p">()</span>
 
 
-<span class="k">class</span> <span class="nc">_TfdsExtractor</span><span class="p">(</span><span class="n">IDataset</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_TfdsExtractor</span><span class="p">(</span><span class="n">IDataset</span><span class="p">):</span>
     <span class="n">_categories</span><span class="p">:</span> <span class="n">CategoriesInfo</span>
     <span class="n">_infos</span><span class="p">:</span> <span class="n">DatasetInfo</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tfds_ds_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tfds_ds_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_adapter</span> <span class="o">=</span> <span class="n">_TFDS_ADAPTERS</span><span class="p">[</span><span class="n">tfds_ds_name</span><span class="p">]</span>
         <span class="n">tfds_builder</span> <span class="o">=</span> <span class="n">tfds</span><span class="o">.</span><span class="n">builder</span><span class="p">(</span><span class="n">tfds_ds_name</span><span class="p">)</span>
         <span class="n">tfds_ds_info</span> <span class="o">=</span> <span class="n">tfds_builder</span><span class="o">.</span><span class="n">info</span>
@@ -863,25 +863,25 @@ document.write(`
             <span class="k">for</span> <span class="n">split_name</span><span class="p">,</span> <span class="n">split</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tfds_ds</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
         <span class="p">}</span>
 
-    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ex</span><span class="p">)</span> <span class="k">for</span> <span class="n">ex</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_split_extractors</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 
-    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
         <span class="k">return</span> <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_split_extractors</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 
-    <span class="k">def</span> <span class="nf">infos</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DatasetInfo</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">infos</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DatasetInfo</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span>
 
-    <span class="k">def</span> <span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CategoriesInfo</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CategoriesInfo</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span>
 
-    <span class="k">def</span> <span class="nf">subsets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">IDataset</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">subsets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">IDataset</span><span class="p">]:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_split_extractors</span>
 
-    <span class="k">def</span> <span class="nf">get_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IDataset</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IDataset</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_split_extractors</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
         <span class="k">if</span> <span class="n">subset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">ex</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_split_extractors</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
                 <span class="n">item</span> <span class="o">=</span> <span class="n">ex</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
@@ -893,10 +893,10 @@ document.write(`
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_split_extractors</span><span class="p">[</span><span class="n">subset</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">media_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">MediaElement</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">media_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">MediaElement</span><span class="p">]:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_media_type</span>
 
-    <span class="k">def</span> <span class="nf">ann_types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">AnnotationType</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ann_types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">AnnotationType</span><span class="p">]:</span>
         <span class="n">ann_types</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">items</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_split_extractors</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
@@ -919,7 +919,7 @@ document.write(`
 <div class="viewcode-block" id="TfdsSubsetRemoteMetadata">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.extractor_tfds.html#datumaro.components.extractor_tfds.TfdsSubsetRemoteMetadata">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">TfdsSubsetRemoteMetadata</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TfdsSubsetRemoteMetadata</span><span class="p">:</span>
     <span class="n">num_items</span><span class="p">:</span> <span class="nb">int</span></div>
 
 
@@ -927,7 +927,7 @@ document.write(`
 <div class="viewcode-block" id="TfdsDatasetRemoteMetadata">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.extractor_tfds.html#datumaro.components.extractor_tfds.TfdsDatasetRemoteMetadata">[docs]</a>
 <span class="nd">@frozen</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">TfdsDatasetRemoteMetadata</span><span class="p">(</span><span class="n">TfdsDatasetMetadata</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TfdsDatasetRemoteMetadata</span><span class="p">(</span><span class="n">TfdsDatasetMetadata</span><span class="p">):</span>
     <span class="c1"># For convenience, the remote metadata also includes the local metadata.</span>
     <span class="n">description</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">download_size</span><span class="p">:</span> <span class="nb">int</span>
@@ -942,24 +942,24 @@ document.write(`
 
 <div class="viewcode-block" id="TfdsDataset">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.extractor_tfds.html#datumaro.components.extractor_tfds.TfdsDataset">[docs]</a>
-<span class="k">class</span> <span class="nc">TfdsDataset</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tfds_ds_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TfdsDataset</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tfds_ds_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tfds_ds_name</span> <span class="o">=</span> <span class="n">tfds_ds_name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_adapter</span> <span class="o">=</span> <span class="n">_TFDS_ADAPTERS</span><span class="p">[</span><span class="n">tfds_ds_name</span><span class="p">]</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfdsDatasetMetadata</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfdsDatasetMetadata</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_adapter</span><span class="o">.</span><span class="n">metadata</span>
 
 <div class="viewcode-block" id="TfdsDataset.make_extractor">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.extractor_tfds.html#datumaro.components.extractor_tfds.TfdsDataset.make_extractor">[docs]</a>
-    <span class="k">def</span> <span class="nf">make_extractor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IDataset</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_extractor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IDataset</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">_TfdsExtractor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tfds_ds_name</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="TfdsDataset.query_remote_metadata">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.extractor_tfds.html#datumaro.components.extractor_tfds.TfdsDataset.query_remote_metadata">[docs]</a>
-    <span class="k">def</span> <span class="nf">query_remote_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfdsDatasetRemoteMetadata</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">query_remote_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TfdsDatasetRemoteMetadata</span><span class="p">:</span>
         <span class="n">tfds_builder</span> <span class="o">=</span> <span class="n">tfds</span><span class="o">.</span><span class="n">builder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tfds_ds_name</span><span class="p">)</span>
 
         <span class="n">categories</span> <span class="o">=</span> <span class="p">{}</span>

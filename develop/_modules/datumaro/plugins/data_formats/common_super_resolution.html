@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -344,21 +344,21 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">errno</span>
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">errno</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">SuperResolutionAnnotation</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">SubsetBase</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.format_detection</span> <span class="kn">import</span> <span class="n">FormatDetectionContext</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.importer</span> <span class="kn">import</span> <span class="n">ImportContext</span><span class="p">,</span> <span class="n">Importer</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.media</span> <span class="kn">import</span> <span class="n">Image</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.image</span> <span class="kn">import</span> <span class="n">find_images</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">SuperResolutionAnnotation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">SubsetBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.format_detection</span><span class="w"> </span><span class="kn">import</span> <span class="n">FormatDetectionContext</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.importer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImportContext</span><span class="p">,</span> <span class="n">Importer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.image</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_images</span>
 
 
 <div class="viewcode-block" id="CommonSuperResolutionPath">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.common_super_resolution.html#datumaro.plugins.data_formats.common_super_resolution.CommonSuperResolutionPath">[docs]</a>
-<span class="k">class</span> <span class="nc">CommonSuperResolutionPath</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CommonSuperResolutionPath</span><span class="p">:</span>
     <span class="n">HR_IMAGES_DIR</span> <span class="o">=</span> <span class="s2">&quot;HR&quot;</span>
     <span class="n">LR_IMAGES_DIR</span> <span class="o">=</span> <span class="s2">&quot;LR&quot;</span>
     <span class="n">UPSAMPLED_IMAGES_DIR</span> <span class="o">=</span> <span class="s2">&quot;upsampled&quot;</span></div>
@@ -367,8 +367,8 @@ document.write(`
 
 <div class="viewcode-block" id="CommonSuperResolutionBase">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.common_super_resolution.html#datumaro.plugins.data_formats.common_super_resolution.CommonSuperResolutionBase">[docs]</a>
-<span class="k">class</span> <span class="nc">CommonSuperResolutionBase</span><span class="p">(</span><span class="n">SubsetBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CommonSuperResolutionBase</span><span class="p">(</span><span class="n">SubsetBase</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -382,7 +382,7 @@ document.write(`
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_items</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_load_items</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 
-    <span class="k">def</span> <span class="nf">_load_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="n">items</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="n">upsampled_image_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">CommonSuperResolutionPath</span><span class="o">.</span><span class="n">UPSAMPLED_IMAGES_DIR</span><span class="p">)</span>
@@ -430,13 +430,13 @@ document.write(`
 
 <div class="viewcode-block" id="CommonSuperResolutionImporter">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.common_super_resolution.html#datumaro.plugins.data_formats.common_super_resolution.CommonSuperResolutionImporter">[docs]</a>
-<span class="k">class</span> <span class="nc">CommonSuperResolutionImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CommonSuperResolutionImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
     <span class="n">_FORMAT_EXT</span> <span class="o">=</span> <span class="s2">&quot;.jpg&quot;</span>
 
 <div class="viewcode-block" id="CommonSuperResolutionImporter.detect">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.common_super_resolution.html#datumaro.plugins.data_formats.common_super_resolution.CommonSuperResolutionImporter.detect">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">detect</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">detect</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span>
             <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">CommonSuperResolutionPath</span><span class="o">.</span><span class="n">HR_IMAGES_DIR</span><span class="p">,</span> <span class="s2">&quot;**&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;*</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_FORMAT_EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="p">)</span>
@@ -448,14 +448,14 @@ document.write(`
 <div class="viewcode-block" id="CommonSuperResolutionImporter.find_sources">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.common_super_resolution.html#datumaro.plugins.data_formats.common_super_resolution.CommonSuperResolutionImporter.find_sources">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[{</span><span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span> <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;common_super_resolution&quot;</span><span class="p">}]</span></div>
 
 
 <div class="viewcode-block" id="CommonSuperResolutionImporter.get_file_extensions">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.common_super_resolution.html#datumaro.plugins.data_formats.common_super_resolution.CommonSuperResolutionImporter.get_file_extensions">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_file_extensions</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_file_extensions</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="k">return</span> <span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">_FORMAT_EXT</span><span class="p">]</span></div>
 </div>
 

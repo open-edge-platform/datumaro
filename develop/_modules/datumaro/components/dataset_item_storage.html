@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -344,21 +344,21 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
-<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">auto</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">copy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">auto</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="n">AnnotationType</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">CategoriesInfo</span><span class="p">,</span> <span class="n">DatasetInfo</span><span class="p">,</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">IDataset</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.media</span> <span class="kn">import</span> <span class="n">MediaElement</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.definitions</span> <span class="kn">import</span> <span class="n">DEFAULT_SUBSET_NAME</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">CategoriesInfo</span><span class="p">,</span> <span class="n">DatasetInfo</span><span class="p">,</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">IDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">MediaElement</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.definitions</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_SUBSET_NAME</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ItemStatus&quot;</span><span class="p">,</span> <span class="s2">&quot;DatasetItemStorage&quot;</span><span class="p">,</span> <span class="s2">&quot;DatasetItemStorageDatasetView&quot;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="ItemStatus">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.dataset_storage.html#datumaro.components.abstracts.merger.ItemStatus">[docs]</a>
-<span class="k">class</span> <span class="nc">ItemStatus</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ItemStatus</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="n">added</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
     <span class="n">modified</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
     <span class="n">removed</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span></div>
@@ -367,29 +367,29 @@ document.write(`
 
 <div class="viewcode-block" id="DatasetItemStorage">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.union_merge.html#datumaro.components.abstracts.merger.DatasetItemStorage">[docs]</a>
-<span class="k">class</span> <span class="nc">DatasetItemStorage</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DatasetItemStorage</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># { subset_name: { id: DatasetItem } }</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_traversal_order</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># maintain the order of elements</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_order</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># allow indexing</span>
 
-    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traversal_order</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="k">yield</span> <span class="n">item</span>
 
-    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_traversal_order</span><span class="p">)</span>
 
 <div class="viewcode-block" id="DatasetItemStorage.is_empty">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.union_merge.html#datumaro.components.abstracts.merger.DatasetItemStorage.is_empty">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="c1"># Subsets might contain removed items, so this may differ from __len__</span>
         <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div>
 
 
 <div class="viewcode-block" id="DatasetItemStorage.put">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.union_merge.html#datumaro.components.abstracts.merger.DatasetItemStorage.put">[docs]</a>
-    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="n">subset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="p">,</span> <span class="p">{})</span>
         <span class="n">is_new</span> <span class="o">=</span> <span class="n">subset</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_traversal_order</span><span class="p">[(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="p">)]</span> <span class="o">=</span> <span class="n">item</span>
@@ -401,7 +401,7 @@ document.write(`
 
 <div class="viewcode-block" id="DatasetItemStorage.get">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.union_merge.html#datumaro.components.abstracts.merger.DatasetItemStorage.get">[docs]</a>
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">DatasetItem</span><span class="p">],</span> <span class="n">subset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dummy</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">DatasetItem</span><span class="p">):</span>
@@ -415,7 +415,7 @@ document.write(`
 
 <div class="viewcode-block" id="DatasetItemStorage.remove">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.union_merge.html#datumaro.components.abstracts.merger.DatasetItemStorage.remove">[docs]</a>
-    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">DatasetItem</span><span class="p">],</span> <span class="n">subset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">DatasetItem</span><span class="p">],</span> <span class="n">subset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">DatasetItem</span><span class="p">):</span>
             <span class="nb">id</span><span class="p">,</span> <span class="n">subset</span> <span class="o">=</span> <span class="nb">id</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="nb">id</span><span class="o">.</span><span class="n">subset</span>
         <span class="k">else</span><span class="p">:</span>
@@ -432,7 +432,7 @@ document.write(`
         <span class="k">return</span> <span class="n">is_removed</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
             <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
         <span class="n">dummy</span> <span class="o">=</span> <span class="mi">0</span>
@@ -440,25 +440,25 @@ document.write(`
 
 <div class="viewcode-block" id="DatasetItemStorage.get_subset">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.union_merge.html#datumaro.components.abstracts.merger.DatasetItemStorage.get_subset">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">{})</span></div>
 
 
 <div class="viewcode-block" id="DatasetItemStorage.subsets">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.union_merge.html#datumaro.components.abstracts.merger.DatasetItemStorage.subsets">[docs]</a>
-    <span class="k">def</span> <span class="nf">subsets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">subsets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span></div>
 
 
 <div class="viewcode-block" id="DatasetItemStorage.get_annotated_items">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.union_merge.html#datumaro.components.abstracts.merger.DatasetItemStorage.get_annotated_items">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_annotated_items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_annotated_items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traversal_order</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div>
 
 
 <div class="viewcode-block" id="DatasetItemStorage.get_datasetitem_by_path">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.union_merge.html#datumaro.components.abstracts.merger.DatasetItemStorage.get_datasetitem_by_path">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_datasetitem_by_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_datasetitem_by_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traversal_order</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="s2">&quot;path&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="n">path</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">s</span></div>
@@ -466,7 +466,7 @@ document.write(`
 
 <div class="viewcode-block" id="DatasetItemStorage.get_annotations">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.union_merge.html#datumaro.components.abstracts.merger.DatasetItemStorage.get_annotations">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">annotations_by_type</span> <span class="o">=</span> <span class="p">{</span><span class="n">t</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">AnnotationType</span><span class="p">}</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_traversal_order</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
@@ -474,14 +474,14 @@ document.write(`
         <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">annotations_by_type</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div>
 
 
-    <span class="k">def</span> <span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">copied</span> <span class="o">=</span> <span class="n">DatasetItemStorage</span><span class="p">()</span>
         <span class="n">copied</span><span class="o">.</span><span class="n">_traversal_order</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_traversal_order</span><span class="p">)</span>
         <span class="n">copied</span><span class="o">.</span><span class="n">_order</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_order</span><span class="p">)</span>
         <span class="n">copied</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">copied</span>
 
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DatasetItem</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DatasetItem</span><span class="p">:</span>
         <span class="n">_id</span><span class="p">,</span> <span class="n">subset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_order</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
         <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">subset</span><span class="p">][</span><span class="n">_id</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">item</span></div>
@@ -490,26 +490,26 @@ document.write(`
 
 <div class="viewcode-block" id="DatasetItemStorageDatasetView">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.abstracts.merger.DatasetItemStorageDatasetView">[docs]</a>
-<span class="k">class</span> <span class="nc">DatasetItemStorageDatasetView</span><span class="p">(</span><span class="n">IDataset</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DatasetItemStorageDatasetView</span><span class="p">(</span><span class="n">IDataset</span><span class="p">):</span>
 <div class="viewcode-block" id="DatasetItemStorageDatasetView.Subset">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.abstracts.merger.DatasetItemStorageDatasetView.Subset">[docs]</a>
-    <span class="k">class</span> <span class="nc">Subset</span><span class="p">(</span><span class="n">IDataset</span><span class="p">):</span>
-        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="s2">&quot;DatasetItemStorageDatasetView&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Subset</span><span class="p">(</span><span class="n">IDataset</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">:</span> <span class="s2">&quot;DatasetItemStorageDatasetView&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_length</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="nd">@property</span>
-        <span class="k">def</span> <span class="nf">_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">_get_subset_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
                 <span class="k">if</span> <span class="n">item</span><span class="p">:</span>
                     <span class="k">yield</span> <span class="n">item</span>
 
-        <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_length</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_length</span>
 
@@ -521,21 +521,21 @@ document.write(`
 
 <div class="viewcode-block" id="DatasetItemStorageDatasetView.Subset.put">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.abstracts.merger.DatasetItemStorageDatasetView.Subset.put">[docs]</a>
-        <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_length</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">item</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="DatasetItemStorageDatasetView.Subset.get">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.abstracts.merger.DatasetItemStorageDatasetView.Subset.get">[docs]</a>
-        <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
             <span class="k">assert</span> <span class="p">(</span><span class="n">subset</span> <span class="ow">or</span> <span class="n">DEFAULT_SUBSET_NAME</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="n">DEFAULT_SUBSET_NAME</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">subset</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="DatasetItemStorageDatasetView.Subset.remove">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.abstracts.merger.DatasetItemStorageDatasetView.Subset.remove">[docs]</a>
-        <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
             <span class="k">assert</span> <span class="p">(</span><span class="n">subset</span> <span class="ow">or</span> <span class="n">DEFAULT_SUBSET_NAME</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="n">DEFAULT_SUBSET_NAME</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_length</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">subset</span><span class="p">)</span></div>
@@ -543,43 +543,43 @@ document.write(`
 
 <div class="viewcode-block" id="DatasetItemStorageDatasetView.Subset.get_subset">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.abstracts.merger.DatasetItemStorageDatasetView.Subset.get_subset">[docs]</a>
-        <span class="k">def</span> <span class="nf">get_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">get_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
             <span class="k">assert</span> <span class="p">(</span><span class="n">name</span> <span class="ow">or</span> <span class="n">DEFAULT_SUBSET_NAME</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="n">DEFAULT_SUBSET_NAME</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span></div>
 
 
 <div class="viewcode-block" id="DatasetItemStorageDatasetView.Subset.subsets">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.abstracts.merger.DatasetItemStorageDatasetView.Subset.subsets">[docs]</a>
-        <span class="k">def</span> <span class="nf">subsets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">subsets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="n">DEFAULT_SUBSET_NAME</span><span class="p">:</span> <span class="bp">self</span><span class="p">}</span></div>
 
 
 <div class="viewcode-block" id="DatasetItemStorageDatasetView.Subset.infos">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.abstracts.merger.DatasetItemStorageDatasetView.Subset.infos">[docs]</a>
-        <span class="k">def</span> <span class="nf">infos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">infos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">infos</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="DatasetItemStorageDatasetView.Subset.categories">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.abstracts.merger.DatasetItemStorageDatasetView.Subset.categories">[docs]</a>
-        <span class="k">def</span> <span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="DatasetItemStorageDatasetView.Subset.media_type">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.abstracts.merger.DatasetItemStorageDatasetView.Subset.media_type">[docs]</a>
-        <span class="k">def</span> <span class="nf">media_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">media_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="DatasetItemStorageDatasetView.Subset.ann_types">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.abstracts.merger.DatasetItemStorageDatasetView.Subset.ann_types">[docs]</a>
-        <span class="k">def</span> <span class="nf">ann_types</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">ann_types</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">ann_types</span><span class="p">()</span></div>
 </div>
 
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">parent</span><span class="p">:</span> <span class="n">DatasetItemStorage</span><span class="p">,</span>
         <span class="n">infos</span><span class="p">:</span> <span class="n">DatasetInfo</span><span class="p">,</span>
@@ -593,54 +593,54 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_media_type</span> <span class="o">=</span> <span class="n">media_type</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ann_types</span> <span class="o">=</span> <span class="n">ann_types</span>
 
-    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span>
 
-    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="p">)</span>
 
 <div class="viewcode-block" id="DatasetItemStorageDatasetView.infos">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.abstracts.merger.DatasetItemStorageDatasetView.infos">[docs]</a>
-    <span class="k">def</span> <span class="nf">infos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">infos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span></div>
 
 
 <div class="viewcode-block" id="DatasetItemStorageDatasetView.categories">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.abstracts.merger.DatasetItemStorageDatasetView.categories">[docs]</a>
-    <span class="k">def</span> <span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span></div>
 
 
 <div class="viewcode-block" id="DatasetItemStorageDatasetView.get_subset">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.abstracts.merger.DatasetItemStorageDatasetView.get_subset">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_get_subset_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_subset_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="o">.</span><span class="n">get_subset</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
 <div class="viewcode-block" id="DatasetItemStorageDatasetView.subsets">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.abstracts.merger.DatasetItemStorageDatasetView.subsets">[docs]</a>
-    <span class="k">def</span> <span class="nf">subsets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">subsets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_subset</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="o">.</span><span class="n">subsets</span><span class="p">()}</span></div>
 
 
 <div class="viewcode-block" id="DatasetItemStorageDatasetView.get">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.abstracts.merger.DatasetItemStorageDatasetView.get">[docs]</a>
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="DatasetItemStorageDatasetView.media_type">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.abstracts.merger.DatasetItemStorageDatasetView.media_type">[docs]</a>
-    <span class="k">def</span> <span class="nf">media_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">media_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_media_type</span></div>
 
 
 <div class="viewcode-block" id="DatasetItemStorageDatasetView.ann_types">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.abstracts.merger.DatasetItemStorageDatasetView.ann_types">[docs]</a>
-    <span class="k">def</span> <span class="nf">ann_types</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ann_types</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ann_types</span></div>
 </div>
 

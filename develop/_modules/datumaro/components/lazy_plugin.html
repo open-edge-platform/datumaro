@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -344,20 +344,20 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
-<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractclassmethod</span>
-<span class="kn">from</span> <span class="nn">importlib</span> <span class="kn">import</span> <span class="n">import_module</span>
-<span class="kn">from</span> <span class="nn">importlib.util</span> <span class="kn">import</span> <span class="n">find_spec</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractclassmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">importlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">import_module</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">importlib.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_spec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetBase</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.errors</span> <span class="kn">import</span> <span class="n">DatumaroError</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.exporter</span> <span class="kn">import</span> <span class="n">Exporter</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.generator</span> <span class="kn">import</span> <span class="n">DatasetGenerator</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.importer</span> <span class="kn">import</span> <span class="n">Importer</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.launcher</span> <span class="kn">import</span> <span class="n">Launcher</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.transformer</span> <span class="kn">import</span> <span class="n">Transform</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.validator</span> <span class="kn">import</span> <span class="n">Validator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatumaroError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.exporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Exporter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.generator</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetGenerator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.importer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Importer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.launcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">Launcher</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.validator</span><span class="w"> </span><span class="kn">import</span> <span class="n">Validator</span>
 
 <span class="c1"># Transform should be in front of DatasetBase,</span>
 <span class="c1"># since Transform inherits DatasetBase.</span>
@@ -388,13 +388,13 @@ document.write(`
 
 <div class="viewcode-block" id="LazyPlugin">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.lazy_plugin.html#datumaro.components.lazy_plugin.LazyPlugin">[docs]</a>
-<span class="k">class</span> <span class="nc">LazyPlugin</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LazyPlugin</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
     <span class="n">NAME</span><span class="p">:</span> <span class="nb">str</span>
 
 <div class="viewcode-block" id="LazyPlugin.get_plugin_cls">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.lazy_plugin.html#datumaro.components.lazy_plugin.LazyPlugin.get_plugin_cls">[docs]</a>
     <span class="nd">@abstractclassmethod</span>
-    <span class="k">def</span> <span class="nf">get_plugin_cls</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PLUGIN_TYPES</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_plugin_cls</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PLUGIN_TYPES</span><span class="p">:</span>
         <span class="k">pass</span></div>
 </div>
 
@@ -402,7 +402,7 @@ document.write(`
 
 <div class="viewcode-block" id="get_lazy_plugin">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.lazy_plugin.html#datumaro.components.lazy_plugin.get_lazy_plugin">[docs]</a>
-<span class="k">def</span> <span class="nf">get_lazy_plugin</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_lazy_plugin</span><span class="p">(</span>
     <span class="n">import_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">plugin_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">plugin_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -417,12 +417,12 @@ document.write(`
 
     <span class="n">plugin_type_cls</span> <span class="o">=</span> <span class="n">STR_TO_PLUGIN_TYPES</span><span class="p">[</span><span class="n">plugin_type</span><span class="p">]</span>
 
-    <span class="k">class</span> <span class="nc">LazyPluginImpl</span><span class="p">(</span><span class="n">LazyPlugin</span><span class="p">,</span> <span class="n">plugin_type_cls</span><span class="p">):</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">LazyPluginImpl</span><span class="p">(</span><span class="n">LazyPlugin</span><span class="p">,</span> <span class="n">plugin_type_cls</span><span class="p">):</span>
         <span class="n">NAME</span> <span class="o">=</span> <span class="n">plugin_name</span>
         <span class="n">METADATA</span> <span class="o">=</span> <span class="n">metadata</span>
 
         <span class="nd">@classmethod</span>
-        <span class="k">def</span> <span class="nf">get_plugin_cls</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PLUGIN_TYPES</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">get_plugin_cls</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PLUGIN_TYPES</span><span class="p">:</span>
             <span class="n">splits</span> <span class="o">=</span> <span class="n">import_path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
             <span class="n">module_name</span> <span class="o">=</span> <span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">splits</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
             <span class="n">class_name</span> <span class="o">=</span> <span class="n">splits</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -436,7 +436,7 @@ document.write(`
 
 <div class="viewcode-block" id="extra_deps">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.lazy_plugin.html#datumaro.components.lazy_plugin.extra_deps">[docs]</a>
-<span class="k">def</span> <span class="nf">extra_deps</span><span class="p">(</span><span class="o">*</span><span class="n">extra_dep_names</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">extra_deps</span><span class="p">(</span><span class="o">*</span><span class="n">extra_dep_names</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorator to assign extra deps for the plugin class.</span>
 
 <span class="sd">    There exist some plugins that cannot be executable with the default installation setup.</span>
@@ -448,7 +448,7 @@ document.write(`
 <span class="sd">    ...</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">inner</span><span class="p">(</span><span class="n">plugin_cls</span><span class="p">:</span> <span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">inner</span><span class="p">(</span><span class="n">plugin_cls</span><span class="p">:</span> <span class="nb">object</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">plugin_cls</span><span class="p">,</span> <span class="n">_EXTRA_DEPS_ATTR_NAME</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;It already has </span><span class="si">{</span><span class="n">_EXTRA_DEPS_ATTR_NAME</span><span class="si">}</span><span class="s2"> attribute!&quot;</span><span class="p">)</span>
 
@@ -461,7 +461,7 @@ document.write(`
 
 <div class="viewcode-block" id="get_extra_deps">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.lazy_plugin.html#datumaro.components.lazy_plugin.get_extra_deps">[docs]</a>
-<span class="k">def</span> <span class="nf">get_extra_deps</span><span class="p">(</span><span class="n">plugin_cls</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_extra_deps</span><span class="p">(</span><span class="n">plugin_cls</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get extra deps of the given plugin class. If not exists, return an empty list.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">plugin_cls</span><span class="p">,</span> <span class="n">_EXTRA_DEPS_ATTR_NAME</span><span class="p">,</span> <span class="p">[])</span></div>
 

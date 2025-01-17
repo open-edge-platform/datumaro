@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -344,21 +344,21 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.format_detection</span> <span class="kn">import</span> <span class="n">FormatDetectionConfidence</span><span class="p">,</span> <span class="n">FormatDetectionContext</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.importer</span> <span class="kn">import</span> <span class="n">Importer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.format_detection</span><span class="w"> </span><span class="kn">import</span> <span class="n">FormatDetectionConfidence</span><span class="p">,</span> <span class="n">FormatDetectionContext</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.importer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Importer</span>
 
-<span class="kn">from</span> <span class="nn">.format</span> <span class="kn">import</span> <span class="n">SynthiaAlPath</span><span class="p">,</span> <span class="n">SynthiaFormatType</span><span class="p">,</span> <span class="n">SynthiaRandPath</span><span class="p">,</span> <span class="n">SynthiaSfPath</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.format</span><span class="w"> </span><span class="kn">import</span> <span class="n">SynthiaAlPath</span><span class="p">,</span> <span class="n">SynthiaFormatType</span><span class="p">,</span> <span class="n">SynthiaRandPath</span><span class="p">,</span> <span class="n">SynthiaSfPath</span>
 
 
-<span class="k">class</span> <span class="nc">_SynthiaImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_SynthiaImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
     <span class="n">FORMAT</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">META_FOLDERS</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">detect</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FormatDetectionConfidence</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">detect</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FormatDetectionConfidence</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">META_FOLDERS</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">root_path</span><span class="p">,</span> <span class="n">folder</span><span class="p">)):</span>
                 <span class="n">context</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="s2">&quot;Any Synthia format is not detected.&quot;</span><span class="p">)</span>
@@ -366,17 +366,17 @@ document.write(`
         <span class="k">return</span> <span class="n">FormatDetectionConfidence</span><span class="o">.</span><span class="n">MEDIUM</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[{</span><span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span> <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">FORMAT</span><span class="p">}]</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_file_extensions</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_file_extensions</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;.png&quot;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="SynthiaRandImporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.synthia.importer.html#datumaro.plugins.data_formats.synthia.importer.SynthiaRandImporter">[docs]</a>
-<span class="k">class</span> <span class="nc">SynthiaRandImporter</span><span class="p">(</span><span class="n">_SynthiaImporter</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SynthiaRandImporter</span><span class="p">(</span><span class="n">_SynthiaImporter</span><span class="p">):</span>
     <span class="n">FORMAT</span> <span class="o">=</span> <span class="n">SynthiaFormatType</span><span class="o">.</span><span class="n">synthia_rand</span><span class="o">.</span><span class="n">name</span>
     <span class="n">META_FOLDERS</span> <span class="o">=</span> <span class="n">SynthiaRandPath</span><span class="o">.</span><span class="n">meta_folders</span><span class="p">()</span></div>
 
@@ -384,7 +384,7 @@ document.write(`
 
 <div class="viewcode-block" id="SynthiaSfImporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.synthia.importer.html#datumaro.plugins.data_formats.synthia.importer.SynthiaSfImporter">[docs]</a>
-<span class="k">class</span> <span class="nc">SynthiaSfImporter</span><span class="p">(</span><span class="n">_SynthiaImporter</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SynthiaSfImporter</span><span class="p">(</span><span class="n">_SynthiaImporter</span><span class="p">):</span>
     <span class="n">FORMAT</span> <span class="o">=</span> <span class="n">SynthiaFormatType</span><span class="o">.</span><span class="n">synthia_sf</span><span class="o">.</span><span class="n">name</span>
     <span class="n">META_FOLDERS</span> <span class="o">=</span> <span class="n">SynthiaSfPath</span><span class="o">.</span><span class="n">meta_folders</span><span class="p">()</span></div>
 
@@ -392,7 +392,7 @@ document.write(`
 
 <div class="viewcode-block" id="SynthiaAlImporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.synthia.importer.html#datumaro.plugins.data_formats.synthia.importer.SynthiaAlImporter">[docs]</a>
-<span class="k">class</span> <span class="nc">SynthiaAlImporter</span><span class="p">(</span><span class="n">_SynthiaImporter</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SynthiaAlImporter</span><span class="p">(</span><span class="n">_SynthiaImporter</span><span class="p">):</span>
     <span class="n">FORMAT</span> <span class="o">=</span> <span class="n">SynthiaFormatType</span><span class="o">.</span><span class="n">synthia_al</span><span class="o">.</span><span class="n">name</span>
     <span class="n">META_FOLDERS</span> <span class="o">=</span> <span class="n">SynthiaAlPath</span><span class="o">.</span><span class="n">meta_folders</span><span class="p">()</span></div>
 

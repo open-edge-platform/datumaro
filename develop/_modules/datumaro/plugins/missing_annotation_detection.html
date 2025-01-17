@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -344,19 +344,19 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.abstracts.merger</span> <span class="kn">import</span> <span class="n">IMatcherContext</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="n">Annotation</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">LabelCategories</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.annotations.matcher</span> <span class="kn">import</span> <span class="n">BboxMatcher</span><span class="p">,</span> <span class="n">match_segments_more_than_pair</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">IDataset</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.launcher</span> <span class="kn">import</span> <span class="n">Launcher</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.transformer</span> <span class="kn">import</span> <span class="n">ModelTransform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.abstracts.merger</span><span class="w"> </span><span class="kn">import</span> <span class="n">IMatcherContext</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotation</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">LabelCategories</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotations.matcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">BboxMatcher</span><span class="p">,</span> <span class="n">match_segments_more_than_pair</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">IDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.launcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">Launcher</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelTransform</span>
 
 
 <div class="viewcode-block" id="MissingAnnotationDetection">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.missing_annotation_detection.html#datumaro.plugins.missing_annotation_detection.MissingAnnotationDetection">[docs]</a>
-<span class="k">class</span> <span class="nc">MissingAnnotationDetection</span><span class="p">(</span><span class="n">ModelTransform</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MissingAnnotationDetection</span><span class="p">(</span><span class="n">ModelTransform</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This class is used to find annotations that are missing from the ground truth annotations.</span>
 
 <span class="sd">    To accomplish this, it generates model predictions for the dataset using the given launcher.</span>
@@ -395,7 +395,7 @@ document.write(`
 <span class="sd">            has different label with ``Bbox(0, 0, 1, 1, label=0)``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">extractor</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">,</span>
         <span class="n">launcher</span><span class="p">:</span> <span class="n">Launcher</span><span class="p">,</span>
@@ -407,14 +407,14 @@ document.write(`
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">extractor</span><span class="p">,</span> <span class="n">launcher</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">append_annotation</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_score_threshold</span> <span class="o">=</span> <span class="n">score_threshold</span>
 
-        <span class="k">class</span> <span class="nc">LabelAgnosticMatcherContext</span><span class="p">(</span><span class="n">IMatcherContext</span><span class="p">):</span>
-            <span class="k">def</span> <span class="nf">get_any_label_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ann</span><span class="p">:</span> <span class="n">Annotation</span><span class="p">,</span> <span class="n">label_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">class</span><span class="w"> </span><span class="nc">LabelAgnosticMatcherContext</span><span class="p">(</span><span class="n">IMatcherContext</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">get_any_label_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ann</span><span class="p">:</span> <span class="n">Annotation</span><span class="p">,</span> <span class="n">label_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
                 <span class="k">return</span> <span class="s2">&quot;&quot;</span>
 
         <span class="n">label_categories</span><span class="p">:</span> <span class="n">LabelCategories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">categories</span><span class="p">()[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span>
 
-        <span class="k">class</span> <span class="nc">LabelSpecificMatcherContext</span><span class="p">(</span><span class="n">IMatcherContext</span><span class="p">):</span>
-            <span class="k">def</span> <span class="nf">get_any_label_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ann</span><span class="p">:</span> <span class="n">Annotation</span><span class="p">,</span> <span class="n">label_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">class</span><span class="w"> </span><span class="nc">LabelSpecificMatcherContext</span><span class="p">(</span><span class="n">IMatcherContext</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">get_any_label_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ann</span><span class="p">:</span> <span class="n">Annotation</span><span class="p">,</span> <span class="n">label_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">label_categories</span><span class="p">[</span><span class="n">label_id</span><span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_support_matchers</span> <span class="o">=</span> <span class="p">{</span>
@@ -427,7 +427,7 @@ document.write(`
             <span class="p">),</span>
         <span class="p">}</span>
 
-    <span class="k">def</span> <span class="nf">_process_batch</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_batch</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">batch</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
@@ -449,7 +449,7 @@ document.write(`
             <span class="k">for</span> <span class="n">item</span><span class="p">,</span> <span class="n">annotations</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">inference</span><span class="p">)</span>
         <span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_apply_score_threshold</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_score_threshold</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_score_threshold</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">annotations</span>
 
@@ -457,7 +457,7 @@ document.write(`
             <span class="n">ann</span> <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">annotations</span> <span class="k">if</span> <span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;score&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_score_threshold</span>
         <span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_find_missing_anns</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_find_missing_anns</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">gt_anns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">],</span> <span class="n">pseudo_anns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]:</span>
         <span class="n">ids_of_pseudo_anns</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">ann</span><span class="p">)</span> <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">pseudo_anns</span><span class="p">)</span>
@@ -478,7 +478,7 @@ document.write(`
         <span class="k">return</span> <span class="n">missing_labeled_anns</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_pick_missing_ann_from_cluster</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_pick_missing_ann_from_cluster</span><span class="p">(</span>
         <span class="n">cluster</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">],</span> <span class="n">ids_of_pseudo_anns</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]:</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;cluster should not be empty.&quot;</span>

@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -346,19 +346,19 @@ document.write(`
 
 <span class="c1"># pylint: disable=no-self-use</span>
 
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
-<span class="kn">from</span> <span class="nn">multiprocessing.pool</span> <span class="kn">import</span> <span class="n">Pool</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">contextmanager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing.pool</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pool</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pycocotools.mask</span> <span class="k">as</span> <span class="nn">mask_utils</span>
-<span class="kn">from</span> <span class="nn">json_stream.writer</span> <span class="kn">import</span> <span class="n">streamable_dict</span><span class="p">,</span> <span class="n">streamable_list</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pycocotools.mask</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mask_utils</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">json_stream.writer</span><span class="w"> </span><span class="kn">import</span> <span class="n">streamable_dict</span><span class="p">,</span> <span class="n">streamable_list</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Annotation</span><span class="p">,</span>
     <span class="n">Bbox</span><span class="p">,</span>
     <span class="n">Caption</span><span class="p">,</span>
@@ -377,30 +377,30 @@ document.write(`
     <span class="n">RleMask</span><span class="p">,</span>
     <span class="n">Shape</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.crypter</span> <span class="kn">import</span> <span class="n">NULL_CRYPTER</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetItem</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_item_storage</span> <span class="kn">import</span> <span class="n">ItemStatus</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.errors</span> <span class="kn">import</span> <span class="n">PathSeparatorInSubsetNameError</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.exporter</span> <span class="kn">import</span> <span class="n">ExportContextComponent</span><span class="p">,</span> <span class="n">Exporter</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.media</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">MediaElement</span><span class="p">,</span> <span class="n">PointCloud</span><span class="p">,</span> <span class="n">Video</span><span class="p">,</span> <span class="n">VideoFrame</span>
-<span class="kn">from</span> <span class="nn">datumaro.util</span> <span class="kn">import</span> <span class="n">cast</span><span class="p">,</span> <span class="n">dump_json_file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.crypter</span><span class="w"> </span><span class="kn">import</span> <span class="n">NULL_CRYPTER</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_item_storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">ItemStatus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">PathSeparatorInSubsetNameError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.exporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExportContextComponent</span><span class="p">,</span> <span class="n">Exporter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">MediaElement</span><span class="p">,</span> <span class="n">PointCloud</span><span class="p">,</span> <span class="n">Video</span><span class="p">,</span> <span class="n">VideoFrame</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">cast</span><span class="p">,</span> <span class="n">dump_json_file</span>
 
-<span class="kn">from</span> <span class="nn">.format</span> <span class="kn">import</span> <span class="n">DATUMARO_FORMAT_VERSION</span><span class="p">,</span> <span class="n">DatumaroPath</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.format</span><span class="w"> </span><span class="kn">import</span> <span class="n">DATUMARO_FORMAT_VERSION</span><span class="p">,</span> <span class="n">DatumaroPath</span>
 
 
 <div class="viewcode-block" id="JsonWriter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro.exporter.html#datumaro.plugins.data_formats.datumaro.exporter.JsonWriter">[docs]</a>
-<span class="k">class</span> <span class="nc">JsonWriter</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">JsonWriter</span><span class="p">:</span>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_convert_attribute_categories</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attributes</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_attribute_categories</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attributes</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_convert_labels_label_groups</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_labels_label_groups</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_convert_label_categories</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_label_categories</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="n">converted</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;labels&quot;</span><span class="p">:</span> <span class="p">[],</span>
             <span class="s2">&quot;label_groups&quot;</span><span class="p">:</span> <span class="p">[],</span>
@@ -425,7 +425,7 @@ document.write(`
         <span class="k">return</span> <span class="n">converted</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_convert_mask_categories</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_mask_categories</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="n">converted</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;colormap&quot;</span><span class="p">:</span> <span class="p">[],</span>
         <span class="p">}</span>
@@ -441,7 +441,7 @@ document.write(`
         <span class="k">return</span> <span class="n">converted</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_convert_points_categories</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_points_categories</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="n">converted</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;items&quot;</span><span class="p">:</span> <span class="p">[],</span>
         <span class="p">}</span>
@@ -458,7 +458,7 @@ document.write(`
 <div class="viewcode-block" id="JsonWriter.write_categories">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro.exporter.html#datumaro.plugins.data_formats.datumaro.exporter.JsonWriter.write_categories">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">write_categories</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">categories</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write_categories</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">categories</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]:</span>
         <span class="n">dict_cat</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">ann_type</span><span class="p">,</span> <span class="n">desc</span> <span class="ow">in</span> <span class="n">categories</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">desc</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">):</span>
@@ -476,8 +476,8 @@ document.write(`
 
 
 
-<span class="k">class</span> <span class="nc">_SubsetWriter</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_SubsetWriter</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="n">Exporter</span><span class="p">,</span>
         <span class="n">subset</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -499,23 +499,23 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">export_context</span> <span class="o">=</span> <span class="n">export_context</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">infos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">infos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="s2">&quot;infos&quot;</span><span class="p">]</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="s2">&quot;categories&quot;</span><span class="p">]</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span>
 
     <span class="nd">@staticmethod</span>
     <span class="nd">@contextmanager</span>
-    <span class="k">def</span> <span class="nf">context_save_media</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">context_save_media</span><span class="p">(</span>
         <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">ExportContextComponent</span><span class="p">,</span> <span class="n">encryption</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Implicitly change the media path and save it if save_media=True.</span>
@@ -595,10 +595,10 @@ document.write(`
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-    <span class="k">def</span> <span class="nf">add_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_gen_item_desc</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">_gen_item_desc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_gen_item_desc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
         <span class="n">annotations</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">item_desc</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
@@ -676,16 +676,16 @@ document.write(`
 
         <span class="k">return</span> <span class="n">item_desc</span>
 
-    <span class="k">def</span> <span class="nf">add_infos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infos</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_infos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">infos</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="s2">&quot;infos&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">infos</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">add_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">categories</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">categories</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="s2">&quot;categories&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">JsonWriter</span><span class="o">.</span><span class="n">write_categories</span><span class="p">(</span><span class="n">categories</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">dump_json_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ann_file</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_convert_annotation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_annotation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">Annotation</span><span class="p">)</span>
 
         <span class="n">ann_json</span> <span class="o">=</span> <span class="p">{</span>
@@ -698,7 +698,7 @@ document.write(`
             <span class="n">ann_json</span><span class="p">[</span><span class="s2">&quot;object_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">object_id</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ann_json</span>
 
-    <span class="k">def</span> <span class="nf">_convert_label_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_label_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="n">converted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_annotation</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 
         <span class="n">converted</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
@@ -708,7 +708,7 @@ document.write(`
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">converted</span>
 
-    <span class="k">def</span> <span class="nf">_convert_mask_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_mask_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="n">converted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_annotation</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">RleMask</span><span class="p">):</span>
@@ -734,7 +734,7 @@ document.write(`
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">converted</span>
 
-    <span class="k">def</span> <span class="nf">_convert_shape_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_shape_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">Shape</span><span class="p">)</span>
         <span class="n">converted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_annotation</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 
@@ -747,19 +747,19 @@ document.write(`
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">converted</span>
 
-    <span class="k">def</span> <span class="nf">_convert_polyline_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_polyline_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_shape_object</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_convert_polygon_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_polygon_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_shape_object</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_convert_bbox_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_bbox_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="n">converted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_shape_object</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
         <span class="n">converted</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;points&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">converted</span><span class="p">[</span><span class="s2">&quot;bbox&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">get_bbox</span><span class="p">()]</span>
         <span class="k">return</span> <span class="n">converted</span>
 
-    <span class="k">def</span> <span class="nf">_convert_points_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_points_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="n">converted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_shape_object</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 
         <span class="n">converted</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
@@ -769,7 +769,7 @@ document.write(`
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">converted</span>
 
-    <span class="k">def</span> <span class="nf">_convert_caption_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_caption_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="n">converted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_annotation</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 
         <span class="n">converted</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
@@ -779,7 +779,7 @@ document.write(`
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">converted</span>
 
-    <span class="k">def</span> <span class="nf">_convert_cuboid_3d_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_cuboid_3d_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="n">converted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_annotation</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
         <span class="n">converted</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
             <span class="p">{</span>
@@ -791,10 +791,10 @@ document.write(`
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">converted</span>
 
-    <span class="k">def</span> <span class="nf">_convert_ellipse_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Ellipse</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_ellipse_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Ellipse</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_shape_object</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_convert_cuboid_2d_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Cuboid2D</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_cuboid_2d_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Cuboid2D</span><span class="p">):</span>
         <span class="n">converted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_annotation</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 
         <span class="n">converted</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
@@ -807,8 +807,8 @@ document.write(`
         <span class="k">return</span> <span class="n">converted</span>
 
 
-<span class="k">class</span> <span class="nc">_StreamSubsetWriter</span><span class="p">(</span><span class="n">_SubsetWriter</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_StreamSubsetWriter</span><span class="p">(</span><span class="n">_SubsetWriter</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="n">Exporter</span><span class="p">,</span>
         <span class="n">subset</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -817,16 +817,16 @@ document.write(`
     <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">subset</span><span class="p">,</span> <span class="n">ann_file</span><span class="p">,</span> <span class="n">export_context</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nd">@streamable_list</span>
-        <span class="k">def</span> <span class="nf">_item_list</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_item_list</span><span class="p">():</span>
             <span class="n">subset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">get_subset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">)</span>
             <span class="n">pbar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">_ctx</span><span class="o">.</span><span class="n">progress_reporter</span>
             <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">pbar</span><span class="o">.</span><span class="n">iter</span><span class="p">(</span><span class="n">subset</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Exporting &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">):</span>
                 <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gen_item_desc</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 
         <span class="nd">@streamable_dict</span>
-        <span class="k">def</span> <span class="nf">_data</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_data</span><span class="p">():</span>
             <span class="k">yield</span> <span class="s2">&quot;dm_format_version&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="s2">&quot;dm_format_version&quot;</span><span class="p">]</span>
             <span class="k">yield</span> <span class="s2">&quot;media_type&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="s2">&quot;media_type&quot;</span><span class="p">]</span>
             <span class="k">yield</span> <span class="s2">&quot;infos&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="s2">&quot;infos&quot;</span><span class="p">]</span>
@@ -836,20 +836,20 @@ document.write(`
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ann_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">_data</span><span class="p">(),</span> <span class="n">fp</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># TODO: Force empty to be False, but it should be fixed with refactoring `_SubsetWriter`.`</span>
         <span class="k">return</span> <span class="kc">False</span>
 
 
 <div class="viewcode-block" id="DatumaroExporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro.exporter.html#datumaro.plugins.data_formats.datumaro.exporter.DatumaroExporter">[docs]</a>
-<span class="k">class</span> <span class="nc">DatumaroExporter</span><span class="p">(</span><span class="n">Exporter</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DatumaroExporter</span><span class="p">(</span><span class="n">Exporter</span><span class="p">):</span>
     <span class="n">DEFAULT_IMAGE_EXT</span> <span class="o">=</span> <span class="n">DatumaroPath</span><span class="o">.</span><span class="n">IMAGE_EXT</span>
     <span class="n">PATH_CLS</span> <span class="o">=</span> <span class="n">DatumaroPath</span>
 
 <div class="viewcode-block" id="DatumaroExporter.create_writer">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro.exporter.html#datumaro.plugins.data_formats.datumaro.exporter.DatumaroExporter.create_writer">[docs]</a>
-    <span class="k">def</span> <span class="nf">create_writer</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_writer</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">subset</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">images_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -893,7 +893,7 @@ document.write(`
         <span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_apply_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Pool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Pool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="n">images_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PATH_CLS</span><span class="o">.</span><span class="n">IMAGES_DIR</span><span class="p">)</span>
@@ -942,7 +942,7 @@ document.write(`
 <div class="viewcode-block" id="DatumaroExporter.patch">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro.exporter.html#datumaro.plugins.data_formats.datumaro.exporter.DatumaroExporter.patch">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">patch</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">patch</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">patch</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">patch</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">subset</span> <span class="ow">in</span> <span class="n">patch</span><span class="o">.</span><span class="n">updated_subsets</span><span class="p">:</span>
             <span class="n">conv</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">get_subset</span><span class="p">(</span><span class="n">subset</span><span class="p">),</span> <span class="n">save_dir</span><span class="o">=</span><span class="n">save_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="n">conv</span><span class="o">.</span><span class="n">_patch</span> <span class="o">=</span> <span class="n">patch</span>
@@ -976,7 +976,7 @@ document.write(`
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">can_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">can_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
 </pre></div>

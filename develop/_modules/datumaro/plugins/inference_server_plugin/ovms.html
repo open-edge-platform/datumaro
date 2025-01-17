@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -344,17 +344,17 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">ovmsclient</span> <span class="kn">import</span> <span class="n">make_grpc_client</span><span class="p">,</span> <span class="n">make_http_client</span>
-<span class="kn">from</span> <span class="nn">ovmsclient.tfs_compat.grpc.serving_client</span> <span class="kn">import</span> <span class="n">GrpcClient</span>
-<span class="kn">from</span> <span class="nn">ovmsclient.tfs_compat.http.serving_client</span> <span class="kn">import</span> <span class="n">HttpClient</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ovmsclient</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_grpc_client</span><span class="p">,</span> <span class="n">make_http_client</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ovmsclient.tfs_compat.grpc.serving_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">GrpcClient</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ovmsclient.tfs_compat.http.serving_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">HttpClient</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.abstracts.model_interpreter</span> <span class="kn">import</span> <span class="n">LauncherInputType</span><span class="p">,</span> <span class="n">ModelPred</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.errors</span> <span class="kn">import</span> <span class="n">DatumaroError</span>
-<span class="kn">from</span> <span class="nn">datumaro.plugins.inference_server_plugin.base</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.abstracts.model_interpreter</span><span class="w"> </span><span class="kn">import</span> <span class="n">LauncherInputType</span><span class="p">,</span> <span class="n">ModelPred</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatumaroError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.inference_server_plugin.base</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">LauncherForDedicatedInferenceServer</span><span class="p">,</span>
     <span class="n">ProtocolType</span><span class="p">,</span>
 <span class="p">)</span>
@@ -366,7 +366,7 @@ document.write(`
 
 <div class="viewcode-block" id="OVMSLauncher">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.plugins.inference_server_plugin.OVMSLauncher">[docs]</a>
-<span class="k">class</span> <span class="nc">OVMSLauncher</span><span class="p">(</span><span class="n">LauncherForDedicatedInferenceServer</span><span class="p">[</span><span class="n">TClient</span><span class="p">]):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OVMSLauncher</span><span class="p">(</span><span class="n">LauncherForDedicatedInferenceServer</span><span class="p">[</span><span class="n">TClient</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Inference launcher for OVMS (OpenVINO™ Model Server) (https://github.com/openvinotoolkit/model_server)</span>
 
 <span class="sd">    Parameters:</span>
@@ -381,7 +381,7 @@ document.write(`
 <span class="sd">        protocol_type: Communication protocol type with the server instance</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">_init_client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TClient</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_client</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TClient</span><span class="p">:</span>
         <span class="n">tls_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tls_config</span><span class="o">.</span><span class="n">as_dict</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tls_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">protocol_type</span> <span class="o">==</span> <span class="n">ProtocolType</span><span class="o">.</span><span class="n">grpc</span><span class="p">:</span>
@@ -391,7 +391,7 @@ document.write(`
 
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">protocol_type</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_check_server_health</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_server_health</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">get_model_status</span><span class="p">(</span>
             <span class="n">model_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
             <span class="n">model_version</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_version</span><span class="p">,</span>
@@ -399,7 +399,7 @@ document.write(`
         <span class="p">)</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Health check succeeded: </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_init_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_client</span><span class="o">.</span><span class="n">get_model_metadata</span><span class="p">(</span>
             <span class="n">model_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_name</span><span class="p">,</span>
             <span class="n">model_version</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model_version</span><span class="p">,</span>
@@ -409,7 +409,7 @@ document.write(`
 
 <div class="viewcode-block" id="OVMSLauncher.infer">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.plugins.inference_server_plugin.OVMSLauncher.infer">[docs]</a>
-    <span class="k">def</span> <span class="nf">infer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">LauncherInputType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ModelPred</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">infer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">LauncherInputType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ModelPred</span><span class="p">]:</span>
         <span class="c1"># Please see the following link for the input and output type of self._client.predict()</span>
         <span class="c1"># https://github.com/openvinotoolkit/model_server/blob/releases/2022/3/client/python/ovmsclient/lib/docs/grpc_client.md#method-predict</span>
         <span class="c1"># The input is Dict[str, np.ndarray].</span>
@@ -438,7 +438,7 @@ document.write(`
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">_input_key</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_input_key</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;__input_key&quot;</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__input_key</span>
 
@@ -456,7 +456,7 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__input_key</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">_output_key</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_output_key</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;__output_key&quot;</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__output_key</span>
 

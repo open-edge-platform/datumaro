@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -346,23 +346,23 @@ document.write(`
 
 <span class="c1"># ruff: noqa: E501</span>
 
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="n">FeatureVector</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset</span> <span class="kn">import</span> <span class="n">IDataset</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.launcher</span> <span class="kn">import</span> <span class="n">LauncherWithModelInterpreter</span>
-<span class="kn">from</span> <span class="nn">datumaro.util</span> <span class="kn">import</span> <span class="n">take_by</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">FeatureVector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">IDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.launcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">LauncherWithModelInterpreter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">take_by</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">pyemd</span>
-    <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">linalg</span><span class="p">,</span> <span class="n">stats</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">pyemd</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">linalg</span><span class="p">,</span> <span class="n">stats</span>
 
-    <span class="kn">from</span> <span class="nn">datumaro.plugins.openvino_plugin</span> <span class="kn">import</span> <span class="n">shift_launcher</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.openvino_plugin</span><span class="w"> </span><span class="kn">import</span> <span class="n">shift_launcher</span>
 <span class="k">else</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">datumaro.util.import_util</span> <span class="kn">import</span> <span class="n">lazy_import</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.import_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">lazy_import</span>
 
     <span class="n">pyemd</span> <span class="o">=</span> <span class="n">lazy_import</span><span class="p">(</span><span class="s2">&quot;pyemd&quot;</span><span class="p">)</span>
     <span class="n">linalg</span> <span class="o">=</span> <span class="n">lazy_import</span><span class="p">(</span><span class="s2">&quot;scipy.linalg&quot;</span><span class="p">)</span>
@@ -372,15 +372,15 @@ document.write(`
 
 <div class="viewcode-block" id="RunningStats1D">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.shift_analyzer.html#datumaro.components.shift_analyzer.RunningStats1D">[docs]</a>
-<span class="k">class</span> <span class="nc">RunningStats1D</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RunningStats1D</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">running_mean</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">running_sq_mean</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 
 <div class="viewcode-block" id="RunningStats1D.add">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.shift_analyzer.html#datumaro.components.shift_analyzer.RunningStats1D.add">[docs]</a>
-    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feats</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">FeatureVector</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">feats</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">FeatureVector</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">feat</span><span class="o">.</span><span class="n">vector</span> <span class="k">for</span> <span class="n">feat</span> <span class="ow">in</span> <span class="n">feats</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">arr</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span>
 
@@ -407,11 +407,11 @@ document.write(`
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">running_mean</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">cov</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cov</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="n">mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">running_mean</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># D x 1</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">running_sq_mean</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">mean</span><span class="o">.</span><span class="n">transpose</span><span class="p">())</span></div>
 
@@ -419,14 +419,14 @@ document.write(`
 
 <div class="viewcode-block" id="FeatureAccumulator">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.shift_analyzer.html#datumaro.components.shift_analyzer.FeatureAccumulator">[docs]</a>
-<span class="k">class</span> <span class="nc">FeatureAccumulator</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">LauncherWithModelInterpreter</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FeatureAccumulator</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">LauncherWithModelInterpreter</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span> <span class="o">=</span> <span class="mi">1</span>
 
 <div class="viewcode-block" id="FeatureAccumulator.get_activation_stats">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.shift_analyzer.html#datumaro.components.shift_analyzer.FeatureAccumulator.get_activation_stats">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_activation_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RunningStats1D</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_activation_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RunningStats1D</span><span class="p">:</span>
         <span class="n">running_stats</span> <span class="o">=</span> <span class="n">RunningStats1D</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">take_by</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span><span class="p">):</span>
@@ -441,13 +441,13 @@ document.write(`
 
 <div class="viewcode-block" id="FeatureAccumulatorByLabel">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.shift_analyzer.html#datumaro.components.shift_analyzer.FeatureAccumulatorByLabel">[docs]</a>
-<span class="k">class</span> <span class="nc">FeatureAccumulatorByLabel</span><span class="p">(</span><span class="n">FeatureAccumulator</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FeatureAccumulatorByLabel</span><span class="p">(</span><span class="n">FeatureAccumulator</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 
 <div class="viewcode-block" id="FeatureAccumulatorByLabel.get_activation_stats">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.shift_analyzer.html#datumaro.components.shift_analyzer.FeatureAccumulatorByLabel.get_activation_stats">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_activation_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">RunningStats1D</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_activation_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">RunningStats1D</span><span class="p">]:</span>
         <span class="n">running_stats</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="n">RunningStats1D</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">take_by</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span><span class="p">):</span>
@@ -470,8 +470,8 @@ document.write(`
 
 <div class="viewcode-block" id="ShiftAnalyzer">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.shift_analyzer.html#datumaro.components.shift_analyzer.ShiftAnalyzer">[docs]</a>
-<span class="k">class</span> <span class="nc">ShiftAnalyzer</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ShiftAnalyzer</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Searcher for Datumaro dataitems</span>
 
@@ -489,7 +489,7 @@ document.write(`
 
 <div class="viewcode-block" id="ShiftAnalyzer.compute_covariate_shift">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.shift_analyzer.html#datumaro.components.shift_analyzer.ShiftAnalyzer.compute_covariate_shift">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_covariate_shift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">IDataset</span><span class="p">],</span> <span class="n">method</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;fid&quot;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_covariate_shift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">IDataset</span><span class="p">],</span> <span class="n">method</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;fid&quot;</span><span class="p">):</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="nb">len</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
         <span class="p">),</span> <span class="s2">&quot;Shift analyzer should get two datasets to compute shifts between them.&quot;</span>
@@ -524,7 +524,7 @@ document.write(`
 
 <div class="viewcode-block" id="ShiftAnalyzer.compute_label_shift">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.shift_analyzer.html#datumaro.components.shift_analyzer.ShiftAnalyzer.compute_label_shift">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_label_shift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">IDataset</span><span class="p">]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_label_shift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">IDataset</span><span class="p">]):</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="nb">len</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
         <span class="p">),</span> <span class="s2">&quot;Shift analyzer should get two datasets to compute shifts between them.&quot;</span>
@@ -540,7 +540,7 @@ document.write(`
         <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">pv</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_frechet_distance</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_frechet_distance</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">mu1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">sigma1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -617,7 +617,7 @@ document.write(`
         <span class="n">tr_covmean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">covmean</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">diff</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">sigma1</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">sigma2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">tr_covmean</span>
 
-    <span class="k">def</span> <span class="nf">_earth_mover_distance</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_earth_mover_distance</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">w_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">f_s</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>

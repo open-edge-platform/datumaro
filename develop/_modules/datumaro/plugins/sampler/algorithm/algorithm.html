@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -344,12 +344,12 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">auto</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">auto</span>
 
 
 <div class="viewcode-block" id="SamplingMethod">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.sampler.algorithm.algorithm.html#datumaro.plugins.sampler.algorithm.algorithm.SamplingMethod">[docs]</a>
-<span class="k">class</span> <span class="nc">SamplingMethod</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SamplingMethod</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="n">topk</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
     <span class="n">lowk</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
     <span class="n">randk</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
@@ -360,26 +360,26 @@ document.write(`
 
 <div class="viewcode-block" id="Algorithm">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.sampler.algorithm.algorithm.html#datumaro.plugins.sampler.algorithm.algorithm.Algorithm">[docs]</a>
-<span class="k">class</span> <span class="nc">Algorithm</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Algorithm</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="n">entropy</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span></div>
 
 
 
 <div class="viewcode-block" id="InferenceResultAnalyzer">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.sampler.algorithm.algorithm.html#datumaro.plugins.sampler.algorithm.algorithm.InferenceResultAnalyzer">[docs]</a>
-<span class="k">class</span> <span class="nc">InferenceResultAnalyzer</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">InferenceResultAnalyzer</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Basic interface for IRA (Inference Result Analyzer)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">inference</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">inference</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">dataset</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">inference</span> <span class="o">=</span> <span class="n">inference</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sampling_method</span> <span class="o">=</span> <span class="n">SamplingMethod</span>
 
 <div class="viewcode-block" id="InferenceResultAnalyzer.get_sample">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.sampler.algorithm.algorithm.html#datumaro.plugins.sampler.algorithm.algorithm.InferenceResultAnalyzer.get_sample">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
 </div>
 

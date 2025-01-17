@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -344,31 +344,31 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
 
-<span class="kn">import</span> <span class="nn">cv2</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.abstracts</span> <span class="kn">import</span> <span class="n">IModelInterpreter</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.abstracts.model_interpreter</span> <span class="kn">import</span> <span class="n">LauncherInputType</span><span class="p">,</span> <span class="n">ModelPred</span><span class="p">,</span> <span class="n">PrepInfo</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="n">Annotation</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">LabelCategories</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetItem</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.errors</span> <span class="kn">import</span> <span class="n">DatumaroError</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.media</span> <span class="kn">import</span> <span class="n">Image</span>
-<span class="kn">from</span> <span class="nn">datumaro.plugins.openvino_plugin.samples.utils</span> <span class="kn">import</span> <span class="n">gen_hash_key</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.samples</span> <span class="kn">import</span> <span class="n">get_samples_path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.abstracts</span><span class="w"> </span><span class="kn">import</span> <span class="n">IModelInterpreter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.abstracts.model_interpreter</span><span class="w"> </span><span class="kn">import</span> <span class="n">LauncherInputType</span><span class="p">,</span> <span class="n">ModelPred</span><span class="p">,</span> <span class="n">PrepInfo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotation</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">LabelCategories</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatumaroError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.openvino_plugin.samples.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">gen_hash_key</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.samples</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_samples_path</span>
 
 
 <div class="viewcode-block" id="ClipViTL14ModelInterpreter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.openvino_plugin.samples.clip_visual_vit_l_14_336px_int8_interp.html#datumaro.plugins.openvino_plugin.samples.clip_visual_vit_l_14_336px_int8_interp.ClipViTL14ModelInterpreter">[docs]</a>
-<span class="k">class</span> <span class="nc">ClipViTL14ModelInterpreter</span><span class="p">(</span><span class="n">IModelInterpreter</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ClipViTL14ModelInterpreter</span><span class="p">(</span><span class="n">IModelInterpreter</span><span class="p">):</span>
     <span class="n">mean</span> <span class="o">=</span> <span class="p">(</span><span class="mi">255</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.485</span><span class="p">,</span> <span class="mf">0.456</span><span class="p">,</span> <span class="mf">0.406</span><span class="p">]))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
     <span class="n">std</span> <span class="o">=</span> <span class="p">(</span><span class="mi">255</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.229</span><span class="p">,</span> <span class="mf">0.224</span><span class="p">,</span> <span class="mf">0.225</span><span class="p">]))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ClipViTL14ModelInterpreter.preprocess">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.openvino_plugin.samples.clip_visual_vit_l_14_336px_int8_interp.html#datumaro.plugins.openvino_plugin.samples.clip_visual_vit_l_14_336px_int8_interp.ClipViTL14ModelInterpreter.preprocess">[docs]</a>
-    <span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">LauncherInputType</span><span class="p">,</span> <span class="n">PrepInfo</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">LauncherInputType</span><span class="p">,</span> <span class="n">PrepInfo</span><span class="p">]:</span>
         <span class="n">img</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">media_as</span><span class="p">(</span><span class="n">Image</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
         <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="mi">336</span><span class="p">,</span> <span class="mi">336</span><span class="p">))</span>
         <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span><span class="p">)</span>
@@ -381,7 +381,7 @@ document.write(`
 
 <div class="viewcode-block" id="ClipViTL14ModelInterpreter.postprocess">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.openvino_plugin.samples.clip_visual_vit_l_14_336px_int8_interp.html#datumaro.plugins.openvino_plugin.samples.clip_visual_vit_l_14_336px_int8_interp.ClipViTL14ModelInterpreter.postprocess">[docs]</a>
-    <span class="k">def</span> <span class="nf">postprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred</span><span class="p">:</span> <span class="n">ModelPred</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="n">PrepInfo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">postprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred</span><span class="p">:</span> <span class="n">ModelPred</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="n">PrepInfo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]:</span>
         <span class="n">feature_vector</span> <span class="o">=</span> <span class="n">pred</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;output&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">feature_vector</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="s1">&#39;&quot;output&quot; key should exist in the model prediction.&#39;</span><span class="p">)</span>
@@ -391,7 +391,7 @@ document.write(`
 
 <div class="viewcode-block" id="ClipViTL14ModelInterpreter.get_categories">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.openvino_plugin.samples.clip_visual_vit_l_14_336px_int8_interp.html#datumaro.plugins.openvino_plugin.samples.clip_visual_vit_l_14_336px_int8_interp.ClipViTL14ModelInterpreter.get_categories">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">label_categories</span> <span class="o">=</span> <span class="n">LabelCategories</span><span class="p">()</span>
         <span class="n">openvino_plugin_samples_dir</span> <span class="o">=</span> <span class="n">get_samples_path</span><span class="p">()</span>
         <span class="n">imagenet_class_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">openvino_plugin_samples_dir</span><span class="p">,</span> <span class="s2">&quot;imagenet.class&quot;</span><span class="p">)</span>

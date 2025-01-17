@@ -28,7 +28,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -684,9 +684,9 @@ directory where is this image stored.</p>
 <p>A Datumaro project with a ImageNet dataset can be created
 in the following way:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">datum</span> <span class="n">project</span> <span class="n">create</span>
-<span class="n">datum</span> <span class="n">project</span> <span class="kn">import</span> <span class="o">-</span><span class="n">f</span> <span class="n">imagenet</span> <span class="o">&lt;</span><span class="n">path_to_dataset</span><span class="o">&gt;</span>
+<span class="n">datum</span> <span class="n">project</span> <span class="kn">import</span><span class="w"> </span><span class="o">-</span><span class="n">f</span> <span class="n">imagenet</span> <span class="o">&lt;</span><span class="n">path_to_dataset</span><span class="o">&gt;</span>
 <span class="c1"># or</span>
-<span class="n">datum</span> <span class="n">project</span> <span class="kn">import</span> <span class="o">-</span><span class="n">f</span> <span class="n">imagenet_txt</span> <span class="o">&lt;</span><span class="n">path_to_dataset</span><span class="o">&gt;</span>
+<span class="n">datum</span> <span class="n">project</span> <span class="kn">import</span><span class="w"> </span><span class="o">-</span><span class="n">f</span> <span class="n">imagenet_txt</span> <span class="o">&lt;</span><span class="n">path_to_dataset</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 <blockquote>
@@ -695,7 +695,7 @@ subdirectory of directory with Datumaro project, see more information about
 it in the <a class="reference internal" href="../../command-reference/context/sources.html#add-dataset"><span class="std std-ref">docs</span></a>.</p>
 </div></blockquote>
 <p>Load ImageNet dataset through the Python API:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datumaro</span> <span class="k">as</span> <span class="nn">dm</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dm</span>
 
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="s1">&#39;&lt;path_to_dataset&gt;&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;imagenet_txt&#39;</span><span class="p">)</span>
 <span class="c1"># or</span>
@@ -763,12 +763,12 @@ that supports <code class="docutils literal notranslate"><span class="pre">Label
 
 <span class="c1"># Using Datumaro project</span>
 <span class="n">datum</span> <span class="n">project</span> <span class="n">create</span>
-<span class="n">datum</span> <span class="n">project</span> <span class="kn">import</span> <span class="o">-</span><span class="n">f</span> <span class="n">imagenet_txt</span> <span class="o">&lt;</span><span class="n">path_to_imagenet</span><span class="o">&gt;</span> <span class="o">--</span> <span class="o">--</span><span class="n">labels</span> <span class="n">generate</span>
+<span class="n">datum</span> <span class="n">project</span> <span class="kn">import</span><span class="w"> </span><span class="o">-</span><span class="n">f</span> <span class="n">imagenet_txt</span> <span class="o">&lt;</span><span class="n">path_to_imagenet</span><span class="o">&gt;</span> <span class="o">--</span> <span class="o">--</span><span class="n">labels</span> <span class="n">generate</span>
 <span class="n">datum</span> <span class="n">project</span> <span class="n">export</span> <span class="o">-</span><span class="n">f</span> <span class="n">open_images</span> <span class="o">-</span><span class="n">o</span> <span class="o">&lt;</span><span class="n">output_dir</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 <p>And also you can convert your ImageNet dataset using Python API</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datumaro</span> <span class="k">as</span> <span class="nn">dm</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dm</span>
 
 <span class="n">imagenet_dataset</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="s1">&#39;&lt;path_to_dataset&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;imagenet&#39;</span><span class="p">)</span>
 
@@ -790,7 +790,7 @@ dataset into the ImagetNet format, you can use Datumaro for it:</p>
 
 <span class="c1"># Using Datumaro project</span>
 <span class="n">datum</span> <span class="n">project</span> <span class="n">create</span>
-<span class="n">datum</span> <span class="n">project</span> <span class="kn">import</span> <span class="o">-</span><span class="n">f</span> <span class="n">open_images</span> <span class="o">&lt;</span><span class="n">path_to_oid</span><span class="o">&gt;</span>
+<span class="n">datum</span> <span class="n">project</span> <span class="kn">import</span><span class="w"> </span><span class="o">-</span><span class="n">f</span> <span class="n">open_images</span> <span class="o">&lt;</span><span class="n">path_to_oid</span><span class="o">&gt;</span>
 <span class="n">datum</span> <span class="n">project</span> <span class="n">export</span> <span class="o">-</span><span class="n">f</span> <span class="n">imagenet</span> <span class="o">-</span><span class="n">o</span> <span class="o">&lt;</span><span class="n">output_dir</span><span class="o">&gt;</span>
 </pre></div>
 </div>

@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -344,18 +344,18 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">defusedxml</span> <span class="kn">import</span> <span class="n">ElementTree</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">defusedxml</span><span class="w"> </span><span class="kn">import</span> <span class="n">ElementTree</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">AnnotationType</span><span class="p">,</span>
     <span class="n">Bbox</span><span class="p">,</span>
     <span class="n">ExtractedMask</span><span class="p">,</span>
@@ -363,24 +363,24 @@ document.write(`
     <span class="n">LabelCategories</span><span class="p">,</span>
     <span class="n">MaskCategories</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset</span> <span class="kn">import</span> <span class="n">DatasetItem</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DEFAULT_SUBSET_NAME</span><span class="p">,</span> <span class="n">DatasetBase</span><span class="p">,</span> <span class="n">SubsetBase</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.errors</span> <span class="kn">import</span> <span class="n">InvalidAnnotationError</span><span class="p">,</span> <span class="n">InvalidFieldError</span><span class="p">,</span> <span class="n">MissingFieldError</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.importer</span> <span class="kn">import</span> <span class="n">ImportContext</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.media</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">ImageFromFile</span>
-<span class="kn">from</span> <span class="nn">datumaro.plugins.data_formats.coco.base</span> <span class="kn">import</span> <span class="n">CocoInstancesBase</span>
-<span class="kn">from</span> <span class="nn">datumaro.plugins.data_formats.coco.format</span> <span class="kn">import</span> <span class="n">CocoTask</span>
-<span class="kn">from</span> <span class="nn">datumaro.plugins.data_formats.coco.page_mapper</span> <span class="kn">import</span> <span class="n">COCOPageMapper</span>
-<span class="kn">from</span> <span class="nn">datumaro.util</span> <span class="kn">import</span> <span class="n">parse_json_file</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.image</span> <span class="kn">import</span> <span class="n">IMAGE_EXTENSIONS</span><span class="p">,</span> <span class="n">lazy_image</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_SUBSET_NAME</span><span class="p">,</span> <span class="n">DatasetBase</span><span class="p">,</span> <span class="n">SubsetBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">InvalidAnnotationError</span><span class="p">,</span> <span class="n">InvalidFieldError</span><span class="p">,</span> <span class="n">MissingFieldError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.importer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImportContext</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">ImageFromFile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.data_formats.coco.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">CocoInstancesBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.data_formats.coco.format</span><span class="w"> </span><span class="kn">import</span> <span class="n">CocoTask</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.data_formats.coco.page_mapper</span><span class="w"> </span><span class="kn">import</span> <span class="n">COCOPageMapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_json_file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.image</span><span class="w"> </span><span class="kn">import</span> <span class="n">IMAGE_EXTENSIONS</span><span class="p">,</span> <span class="n">lazy_image</span>
 
 <span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="KaggleImageCsvBase">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.kaggle.base.html#datumaro.plugins.data_formats.kaggle.base.KaggleImageCsvBase">[docs]</a>
-<span class="k">class</span> <span class="nc">KaggleImageCsvBase</span><span class="p">(</span><span class="n">DatasetBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">KaggleImageCsvBase</span><span class="p">(</span><span class="n">DatasetBase</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">ann_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -401,7 +401,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_items</span><span class="p">(</span><span class="n">ann_file</span><span class="p">,</span> <span class="n">columns</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span> <span class="o">=</span> <span class="p">{</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_cat</span><span class="p">}</span>
 
-    <span class="k">def</span> <span class="nf">_get_media_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">media_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_media_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">media_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">media_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="n">media_name</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">media_path</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">media_path</span>
@@ -413,7 +413,7 @@ document.write(`
 
         <span class="k">return</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">_parse_bbox_coords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bbox_str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_bbox_coords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bbox_str</span><span class="p">):</span>
         <span class="n">coords</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[-+]?\d*\.\d+|\d+&quot;</span><span class="p">,</span> <span class="n">bbox_str</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">coords</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Bounding box coordinates must have exactly 4 values.&quot;</span><span class="p">)</span>
@@ -421,7 +421,7 @@ document.write(`
         <span class="c1"># expected to output [x1, y1, x2, y2]</span>
         <span class="k">return</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">coord</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="k">for</span> <span class="n">coord</span> <span class="ow">in</span> <span class="n">coords</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_load_annotations</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_annotations</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">datas</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">indices</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]],</span> <span class="n">bbox_flag</span><span class="p">:</span> <span class="nb">bool</span>
     <span class="p">):</span>
         <span class="k">if</span> <span class="s2">&quot;label&quot;</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
@@ -485,7 +485,7 @@ document.write(`
                     <span class="n">h</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">datas</span><span class="p">[</span><span class="n">indices</span><span class="p">[</span><span class="s2">&quot;y2&quot;</span><span class="p">]])</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">datas</span><span class="p">[</span><span class="n">indices</span><span class="p">[</span><span class="s2">&quot;y1&quot;</span><span class="p">]]),</span>
                 <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_load_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ann_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">columns</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ann_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">columns</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">]]):</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">ann_file</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">on_bad_lines</span><span class="o">=</span><span class="s2">&quot;skip&quot;</span><span class="p">)</span>
         <span class="n">df_fields</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
@@ -566,17 +566,17 @@ document.write(`
 
 <div class="viewcode-block" id="KaggleImageCsvBase.categories">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.kaggle.base.html#datumaro.plugins.data_formats.kaggle.base.KaggleImageCsvBase.categories">[docs]</a>
-    <span class="k">def</span> <span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span>
 
 <div class="viewcode-block" id="KaggleImageCsvBase.build_cmdline_parser">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.kaggle.base.html#datumaro.plugins.data_formats.kaggle.base.KaggleImageCsvBase.build_cmdline_parser">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--path&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--ann_file&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -589,8 +589,8 @@ document.write(`
 
 <div class="viewcode-block" id="KaggleImageTxtBase">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.kaggle.base.html#datumaro.plugins.data_formats.kaggle.base.KaggleImageTxtBase">[docs]</a>
-<span class="k">class</span> <span class="nc">KaggleImageTxtBase</span><span class="p">(</span><span class="n">KaggleImageCsvBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">KaggleImageTxtBase</span><span class="p">(</span><span class="n">KaggleImageCsvBase</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">ann_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -601,7 +601,7 @@ document.write(`
     <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">ann_file</span><span class="o">=</span><span class="n">ann_file</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_load_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ann_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">columns</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ann_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">columns</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]]):</span>
         <span class="n">bbox_flag</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="s2">&quot;bbox&quot;</span> <span class="ow">in</span> <span class="n">columns</span><span class="p">:</span>
             <span class="n">bbox_flag</span> <span class="o">=</span> <span class="kc">True</span>
@@ -651,8 +651,8 @@ document.write(`
 
 <div class="viewcode-block" id="KaggleImageMaskBase">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.kaggle.base.html#datumaro.plugins.data_formats.kaggle.base.KaggleImageMaskBase">[docs]</a>
-<span class="k">class</span> <span class="nc">KaggleImageMaskBase</span><span class="p">(</span><span class="n">DatasetBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">KaggleImageMaskBase</span><span class="p">(</span><span class="n">DatasetBase</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">mask_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -672,7 +672,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_categories</span><span class="p">(</span><span class="n">labelmap_file</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_items</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_load_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_map_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_map_file</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
         <span class="n">label_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">label_map_file</span><span class="p">:</span>
             <span class="n">label_map</span><span class="p">[</span><span class="s2">&quot;background&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
@@ -701,7 +701,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">categories</span>
 
-    <span class="k">def</span> <span class="nf">_load_items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">items</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">media_name</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)):</span>
             <span class="nb">id</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">media_name</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -735,17 +735,17 @@ document.write(`
 
 <div class="viewcode-block" id="KaggleImageMaskBase.categories">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.kaggle.base.html#datumaro.plugins.data_formats.kaggle.base.KaggleImageMaskBase.categories">[docs]</a>
-    <span class="k">def</span> <span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span>
 
 <div class="viewcode-block" id="KaggleImageMaskBase.build_cmdline_parser">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.kaggle.base.html#datumaro.plugins.data_formats.kaggle.base.KaggleImageMaskBase.build_cmdline_parser">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--path&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--mask_path&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -758,10 +758,10 @@ document.write(`
 
 <div class="viewcode-block" id="KaggleVocBase">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.kaggle.base.html#datumaro.plugins.data_formats.kaggle.base.KaggleVocBase">[docs]</a>
-<span class="k">class</span> <span class="nc">KaggleVocBase</span><span class="p">(</span><span class="n">SubsetBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">KaggleVocBase</span><span class="p">(</span><span class="n">SubsetBase</span><span class="p">):</span>
     <span class="n">ann_extensions</span> <span class="o">=</span> <span class="s2">&quot;.xml&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">ann_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -801,7 +801,7 @@ document.write(`
             <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span> <span class="o">=</span> <span class="p">{</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_cat</span><span class="p">}</span>
 
-    <span class="k">def</span> <span class="nf">_parse_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ann_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ann_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">root_elem</span> <span class="o">=</span> <span class="n">ElementTree</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">ann_file</span><span class="p">)</span><span class="o">.</span><span class="n">getroot</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">root_elem</span><span class="o">.</span><span class="n">tag</span> <span class="o">!=</span> <span class="s2">&quot;annotation&quot;</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">MissingFieldError</span><span class="p">(</span><span class="s2">&quot;annotation&quot;</span><span class="p">)</span>
@@ -836,7 +836,7 @@ document.write(`
         <span class="k">return</span> <span class="n">annotations</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_parse_field</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">xpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">,</span> <span class="n">required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_field</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">xpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">,</span> <span class="n">required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
         <span class="n">elem</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">xpath</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">elem</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">required</span><span class="p">:</span>
@@ -850,12 +850,12 @@ document.write(`
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">elem</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">InvalidFieldError</span><span class="p">(</span><span class="n">xpath</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+            <span class="k">raise</span> <span class="n">InvalidFieldError</span><span class="p">(</span><span class="n">xpath</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
 <div class="viewcode-block" id="KaggleVocBase.build_cmdline_parser">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.kaggle.base.html#datumaro.plugins.data_formats.kaggle.base.KaggleVocBase.build_cmdline_parser">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--path&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--ann_path&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -868,10 +868,10 @@ document.write(`
 
 <div class="viewcode-block" id="KaggleYoloBase">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.kaggle.base.html#datumaro.plugins.data_formats.kaggle.base.KaggleYoloBase">[docs]</a>
-<span class="k">class</span> <span class="nc">KaggleYoloBase</span><span class="p">(</span><span class="n">KaggleVocBase</span><span class="p">,</span> <span class="n">SubsetBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">KaggleYoloBase</span><span class="p">(</span><span class="n">KaggleVocBase</span><span class="p">,</span> <span class="n">SubsetBase</span><span class="p">):</span>
     <span class="n">ann_extensions</span> <span class="o">=</span> <span class="s2">&quot;.txt&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">ann_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -881,7 +881,7 @@ document.write(`
     <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">ann_path</span><span class="o">=</span><span class="n">ann_path</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_parse_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ann_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ann_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">image</span> <span class="o">=</span> <span class="n">ImageFromFile</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">img_file</span><span class="p">)</span>
         <span class="n">image_height</span><span class="p">,</span> <span class="n">image_width</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">size</span>
 
@@ -924,8 +924,8 @@ document.write(`
 
 <div class="viewcode-block" id="KaggleCocoBase">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.kaggle.base.html#datumaro.plugins.data_formats.kaggle.base.KaggleCocoBase">[docs]</a>
-<span class="k">class</span> <span class="nc">KaggleCocoBase</span><span class="p">(</span><span class="n">CocoInstancesBase</span><span class="p">,</span> <span class="n">SubsetBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">KaggleCocoBase</span><span class="p">(</span><span class="n">CocoInstancesBase</span><span class="p">,</span> <span class="n">SubsetBase</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">ann_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -973,7 +973,7 @@ document.write(`
 <div class="viewcode-block" id="KaggleCocoBase.build_cmdline_parser">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.kaggle.base.html#datumaro.plugins.data_formats.kaggle.base.KaggleCocoBase.build_cmdline_parser">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--path&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--ann_file&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>

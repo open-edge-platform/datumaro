@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -343,15 +343,15 @@ document.write(`
 <span></span><span class="c1"># Copyright (C) 2019-2024 Intel Corporation</span>
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="c1"># Disable B410: import_lxml - the library is used for writing</span>
-<span class="kn">from</span> <span class="nn">lxml</span> <span class="kn">import</span> <span class="n">etree</span> <span class="k">as</span> <span class="n">ET</span>  <span class="c1"># nosec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">lxml</span><span class="w"> </span><span class="kn">import</span> <span class="n">etree</span> <span class="k">as</span> <span class="n">ET</span>  <span class="c1"># nosec</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Annotation</span><span class="p">,</span>
     <span class="n">AnnotationType</span><span class="p">,</span>
     <span class="n">Bbox</span><span class="p">,</span>
@@ -364,11 +364,11 @@ document.write(`
     <span class="n">Polygon</span><span class="p">,</span>
     <span class="n">PolyLine</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.media</span> <span class="kn">import</span> <span class="n">Image</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.transformer</span> <span class="kn">import</span> <span class="n">ItemTransform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ItemTransform</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">CategoriesInfo</span><span class="p">,</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">IDataset</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">CategoriesInfo</span><span class="p">,</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">IDataset</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;XPathDatasetFilter&quot;</span><span class="p">,</span>
@@ -380,11 +380,11 @@ document.write(`
 
 <div class="viewcode-block" id="DatasetItemEncoder">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.filter.html#datumaro.components.dataset.DatasetItemEncoder">[docs]</a>
-<span class="k">class</span> <span class="nc">DatasetItemEncoder</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DatasetItemEncoder</span><span class="p">:</span>
 <div class="viewcode-block" id="DatasetItemEncoder.encode">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.filter.html#datumaro.components.dataset.DatasetItemEncoder.encode">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">encode</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">encode</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">categories</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CategoriesInfo</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">ElementBase</span><span class="p">:</span>
         <span class="n">item_elem</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;item&quot;</span><span class="p">)</span>
@@ -404,7 +404,7 @@ document.write(`
 <div class="viewcode-block" id="DatasetItemEncoder.encode_image">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.filter.html#datumaro.components.dataset.DatasetItemEncoder.encode_image">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">encode_image</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="n">Image</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">ElementBase</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">encode_image</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">image</span><span class="p">:</span> <span class="n">Image</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">ElementBase</span><span class="p">:</span>
         <span class="n">image_elem</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;image&quot;</span><span class="p">)</span>
 
         <span class="n">size</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">size</span>
@@ -426,7 +426,7 @@ document.write(`
 <div class="viewcode-block" id="DatasetItemEncoder.encode_annotation_base">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.filter.html#datumaro.components.dataset.DatasetItemEncoder.encode_annotation_base">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">encode_annotation_base</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">annotation</span><span class="p">:</span> <span class="n">Annotation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">ElementBase</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">encode_annotation_base</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">annotation</span><span class="p">:</span> <span class="n">Annotation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">ElementBase</span><span class="p">:</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">annotation</span><span class="p">,</span> <span class="n">Annotation</span><span class="p">)</span>
         <span class="n">ann_elem</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="s2">&quot;annotation&quot;</span><span class="p">)</span>
         <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">ann_elem</span><span class="p">,</span> <span class="s2">&quot;id&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">annotation</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
@@ -443,7 +443,7 @@ document.write(`
 
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_get_label</span><span class="p">(</span><span class="n">label_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">categories</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CategoriesInfo</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_label</span><span class="p">(</span><span class="n">label_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">categories</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CategoriesInfo</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">if</span> <span class="n">label_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="s2">&quot;&quot;</span>
@@ -456,7 +456,7 @@ document.write(`
 <div class="viewcode-block" id="DatasetItemEncoder.encode_label_object">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.filter.html#datumaro.components.dataset.DatasetItemEncoder.encode_label_object">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">encode_label_object</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">encode_label_object</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Label</span><span class="p">,</span> <span class="n">categories</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CategoriesInfo</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">ElementBase</span><span class="p">:</span>
         <span class="n">ann_elem</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">encode_annotation_base</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
@@ -470,7 +470,7 @@ document.write(`
 <div class="viewcode-block" id="DatasetItemEncoder.encode_mask_object">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.filter.html#datumaro.components.dataset.DatasetItemEncoder.encode_mask_object">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">encode_mask_object</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Mask</span><span class="p">,</span> <span class="n">categories</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CategoriesInfo</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">ElementBase</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">encode_mask_object</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Mask</span><span class="p">,</span> <span class="n">categories</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CategoriesInfo</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">ElementBase</span><span class="p">:</span>
         <span class="n">ann_elem</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">encode_annotation_base</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 
         <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">ann_elem</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_get_label</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">categories</span><span class="p">))</span>
@@ -482,7 +482,7 @@ document.write(`
 <div class="viewcode-block" id="DatasetItemEncoder.encode_bbox_object">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.filter.html#datumaro.components.dataset.DatasetItemEncoder.encode_bbox_object">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">encode_bbox_object</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">categories</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CategoriesInfo</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">ElementBase</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">encode_bbox_object</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">categories</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CategoriesInfo</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">ElementBase</span><span class="p">:</span>
         <span class="n">ann_elem</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">encode_annotation_base</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 
         <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">ann_elem</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_get_label</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">categories</span><span class="p">))</span>
@@ -499,7 +499,7 @@ document.write(`
 <div class="viewcode-block" id="DatasetItemEncoder.encode_points_object">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.filter.html#datumaro.components.dataset.DatasetItemEncoder.encode_points_object">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">encode_points_object</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">encode_points_object</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Points</span><span class="p">,</span> <span class="n">categories</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CategoriesInfo</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">ElementBase</span><span class="p">:</span>
         <span class="n">ann_elem</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">encode_annotation_base</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
@@ -529,7 +529,7 @@ document.write(`
 <div class="viewcode-block" id="DatasetItemEncoder.encode_polygon_object">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.filter.html#datumaro.components.dataset.DatasetItemEncoder.encode_polygon_object">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">encode_polygon_object</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">encode_polygon_object</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Polygon</span><span class="p">,</span> <span class="n">categories</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CategoriesInfo</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">ElementBase</span><span class="p">:</span>
         <span class="n">ann_elem</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">encode_annotation_base</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
@@ -558,7 +558,7 @@ document.write(`
 <div class="viewcode-block" id="DatasetItemEncoder.encode_polyline_object">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.filter.html#datumaro.components.dataset.DatasetItemEncoder.encode_polyline_object">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">encode_polyline_object</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">encode_polyline_object</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">PolyLine</span><span class="p">,</span> <span class="n">categories</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CategoriesInfo</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">ElementBase</span><span class="p">:</span>
         <span class="n">ann_elem</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">encode_annotation_base</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
@@ -587,7 +587,7 @@ document.write(`
 <div class="viewcode-block" id="DatasetItemEncoder.encode_caption_object">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.filter.html#datumaro.components.dataset.DatasetItemEncoder.encode_caption_object">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">encode_caption_object</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Caption</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">ElementBase</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">encode_caption_object</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Caption</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">ElementBase</span><span class="p">:</span>
         <span class="n">ann_elem</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">encode_annotation_base</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 
         <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">ann_elem</span><span class="p">,</span> <span class="s2">&quot;caption&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">caption</span><span class="p">)</span>
@@ -598,7 +598,7 @@ document.write(`
 <div class="viewcode-block" id="DatasetItemEncoder.encode_ellipse_object">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.filter.html#datumaro.components.dataset.DatasetItemEncoder.encode_ellipse_object">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">encode_ellipse_object</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">encode_ellipse_object</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Ellipse</span><span class="p">,</span> <span class="n">categories</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CategoriesInfo</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">ElementBase</span><span class="p">:</span>
         <span class="n">ann_elem</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">encode_annotation_base</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
@@ -618,7 +618,7 @@ document.write(`
 <div class="viewcode-block" id="DatasetItemEncoder.encode_annotation">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.filter.html#datumaro.components.dataset.DatasetItemEncoder.encode_annotation">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">encode_annotation</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">encode_annotation</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span> <span class="n">o</span><span class="p">:</span> <span class="n">Annotation</span><span class="p">,</span> <span class="n">categories</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">CategoriesInfo</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ET</span><span class="o">.</span><span class="n">ElementBase</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="n">Label</span><span class="p">):</span>
@@ -646,7 +646,7 @@ document.write(`
 <div class="viewcode-block" id="DatasetItemEncoder.to_string">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.filter.html#datumaro.components.dataset.DatasetItemEncoder.to_string">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="n">encoded_item</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">ElementBase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_string</span><span class="p">(</span><span class="n">encoded_item</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">ElementBase</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">ET</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="n">encoded_item</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;unicode&quot;</span><span class="p">,</span> <span class="n">pretty_print</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 </div>
 
@@ -654,8 +654,8 @@ document.write(`
 
 <div class="viewcode-block" id="XPathDatasetFilter">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.dataset.XPathDatasetFilter">[docs]</a>
-<span class="k">class</span> <span class="nc">XPathDatasetFilter</span><span class="p">(</span><span class="n">ItemTransform</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extractor</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">,</span> <span class="n">xpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">XPathDatasetFilter</span><span class="p">(</span><span class="n">ItemTransform</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extractor</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">,</span> <span class="n">xpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">extractor</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
@@ -671,7 +671,7 @@ document.write(`
 
 <div class="viewcode-block" id="XPathDatasetFilter.transform_item">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.dataset.XPathDatasetFilter.transform_item">[docs]</a>
-    <span class="k">def</span> <span class="nf">transform_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transform_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">(</span><span class="n">item</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="n">item</span></div>
@@ -681,8 +681,8 @@ document.write(`
 
 <div class="viewcode-block" id="XPathAnnotationsFilter">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.dataset.XPathAnnotationsFilter">[docs]</a>
-<span class="k">class</span> <span class="nc">XPathAnnotationsFilter</span><span class="p">(</span><span class="n">ItemTransform</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extractor</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">,</span> <span class="n">xpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">remove_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">XPathAnnotationsFilter</span><span class="p">(</span><span class="n">ItemTransform</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extractor</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">,</span> <span class="n">xpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">remove_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">extractor</span><span class="p">)</span>
 
         <span class="k">try</span><span class="p">:</span>
@@ -697,7 +697,7 @@ document.write(`
 
 <div class="viewcode-block" id="XPathAnnotationsFilter.transform_item">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.dataset.XPathAnnotationsFilter.transform_item">[docs]</a>
-    <span class="k">def</span> <span class="nf">transform_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transform_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">item</span>
 
@@ -717,7 +717,7 @@ document.write(`
 
 <div class="viewcode-block" id="UserFunctionDatasetFilter">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.dataset.UserFunctionDatasetFilter">[docs]</a>
-<span class="k">class</span> <span class="nc">UserFunctionDatasetFilter</span><span class="p">(</span><span class="n">ItemTransform</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UserFunctionDatasetFilter</span><span class="p">(</span><span class="n">ItemTransform</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter dataset items using a user-provided Python function.</span>
 
 <span class="sd">    Parameters:</span>
@@ -741,14 +741,14 @@ document.write(`
 <span class="sd">        filtered_items = [item for item in filtered]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extractor</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">,</span> <span class="n">filter_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">DatasetItem</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extractor</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">,</span> <span class="n">filter_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">DatasetItem</span><span class="p">],</span> <span class="nb">bool</span><span class="p">]):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">extractor</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_filter_func</span> <span class="o">=</span> <span class="n">filter_func</span>
 
 <div class="viewcode-block" id="UserFunctionDatasetFilter.transform_item">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.dataset.UserFunctionDatasetFilter.transform_item">[docs]</a>
-    <span class="k">def</span> <span class="nf">transform_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transform_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
         <span class="k">return</span> <span class="n">item</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_func</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span></div>
 </div>
 
@@ -756,7 +756,7 @@ document.write(`
 
 <div class="viewcode-block" id="UserFunctionAnnotationsFilter">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.dataset.UserFunctionAnnotationsFilter">[docs]</a>
-<span class="k">class</span> <span class="nc">UserFunctionAnnotationsFilter</span><span class="p">(</span><span class="n">ItemTransform</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UserFunctionAnnotationsFilter</span><span class="p">(</span><span class="n">ItemTransform</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter annotations using a user-provided Python function.</span>
 
 <span class="sd">    Parameters:</span>
@@ -791,7 +791,7 @@ document.write(`
 <span class="sd">        filtered_items = [item for item in filtered]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">extractor</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">,</span>
         <span class="n">filter_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">DatasetItem</span><span class="p">,</span> <span class="n">Annotation</span><span class="p">],</span> <span class="nb">bool</span><span class="p">],</span>
@@ -804,7 +804,7 @@ document.write(`
 
 <div class="viewcode-block" id="UserFunctionAnnotationsFilter.transform_item">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.dataset.UserFunctionAnnotationsFilter.transform_item">[docs]</a>
-    <span class="k">def</span> <span class="nf">transform_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transform_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
         <span class="n">filtered_anns</span> <span class="o">=</span> <span class="p">[</span><span class="n">ann</span> <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_func</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">ann</span><span class="p">)]</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_remove_empty</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">filtered_anns</span><span class="p">:</span>

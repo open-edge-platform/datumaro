@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -345,25 +345,25 @@ document.write(`
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">NoReturn</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">NoReturn</span><span class="p">,</span> <span class="n">Tuple</span>
 
-<span class="kn">import</span> <span class="nn">attr</span>
-<span class="kn">from</span> <span class="nn">attr</span> <span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">attr</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">attr</span><span class="w"> </span><span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">field</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.errors</span> <span class="kn">import</span> <span class="n">AnnotationImportError</span><span class="p">,</span> <span class="n">DatumaroError</span><span class="p">,</span> <span class="n">ItemImportError</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.progress_reporting</span> <span class="kn">import</span> <span class="n">NullProgressReporter</span><span class="p">,</span> <span class="n">ProgressReporter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationImportError</span><span class="p">,</span> <span class="n">DatumaroError</span><span class="p">,</span> <span class="n">ItemImportError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.progress_reporting</span><span class="w"> </span><span class="kn">import</span> <span class="n">NullProgressReporter</span><span class="p">,</span> <span class="n">ProgressReporter</span>
 
 
-<span class="k">class</span> <span class="nc">_ImportFail</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_ImportFail</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
     <span class="k">pass</span>
 
 
 <div class="viewcode-block" id="ImportErrorPolicy">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.importer.html#datumaro.components.contexts.importer.ImportErrorPolicy">[docs]</a>
-<span class="k">class</span> <span class="nc">ImportErrorPolicy</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImportErrorPolicy</span><span class="p">:</span>
 <div class="viewcode-block" id="ImportErrorPolicy.report_item_error">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.importer.html#datumaro.components.contexts.importer.ImportErrorPolicy.report_item_error">[docs]</a>
-    <span class="k">def</span> <span class="nf">report_item_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">item_id</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">report_item_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">item_id</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Allows to report a problem with a dataset item.</span>
 <span class="sd">        If this function returns, the extractor must skip the item.</span>
@@ -379,7 +379,7 @@ document.write(`
 
 <div class="viewcode-block" id="ImportErrorPolicy.report_annotation_error">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.importer.html#datumaro.components.contexts.importer.ImportErrorPolicy.report_annotation_error">[docs]</a>
-    <span class="k">def</span> <span class="nf">report_annotation_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">item_id</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">report_annotation_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">item_id</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Allows to report a problem with a dataset item annotation.</span>
 <span class="sd">        If this function returns, the extractor must skip the annotation.</span>
@@ -393,25 +393,25 @@ document.write(`
             <span class="k">raise</span> <span class="n">error</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_handle_item_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">:</span> <span class="n">ItemImportError</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_handle_item_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">:</span> <span class="n">ItemImportError</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;This function must either call fail() or return.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_handle_annotation_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">:</span> <span class="n">AnnotationImportError</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_handle_annotation_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">:</span> <span class="n">AnnotationImportError</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;This function must either call fail() or return.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ImportErrorPolicy.fail">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.importer.html#datumaro.components.contexts.importer.ImportErrorPolicy.fail">[docs]</a>
-    <span class="k">def</span> <span class="nf">fail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NoReturn</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">_ImportFail</span> <span class="kn">from</span> <span class="nn">error</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">:</span> <span class="ne">Exception</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NoReturn</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">_ImportFail</span> <span class="kn">from</span><span class="w"> </span><span class="nn">error</span></div>
 </div>
 
 
 
 <div class="viewcode-block" id="FailingImportErrorPolicy">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.importer.html#datumaro.components.contexts.importer.FailingImportErrorPolicy">[docs]</a>
-<span class="k">class</span> <span class="nc">FailingImportErrorPolicy</span><span class="p">(</span><span class="n">ImportErrorPolicy</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FailingImportErrorPolicy</span><span class="p">(</span><span class="n">ImportErrorPolicy</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
@@ -419,7 +419,7 @@ document.write(`
 <div class="viewcode-block" id="ImportContext">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.components.contexts.importer.ImportContext">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">ImportContext</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImportContext</span><span class="p">:</span>
     <span class="n">progress_reporter</span><span class="p">:</span> <span class="n">ProgressReporter</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">converter</span><span class="o">=</span><span class="n">attr</span><span class="o">.</span><span class="n">converters</span><span class="o">.</span><span class="n">default_if_none</span><span class="p">(</span><span class="n">factory</span><span class="o">=</span><span class="n">NullProgressReporter</span><span class="p">)</span>
     <span class="p">)</span>
@@ -431,7 +431,7 @@ document.write(`
 
 <div class="viewcode-block" id="NullImportContext">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.importer.html#datumaro.components.contexts.importer.NullImportContext">[docs]</a>
-<span class="k">class</span> <span class="nc">NullImportContext</span><span class="p">(</span><span class="n">ImportContext</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NullImportContext</span><span class="p">(</span><span class="n">ImportContext</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 </pre></div>

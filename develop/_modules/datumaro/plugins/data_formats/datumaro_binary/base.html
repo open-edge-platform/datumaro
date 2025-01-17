@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -344,31 +344,31 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">import</span> <span class="nn">struct</span>
-<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BufferedReader</span>
-<span class="kn">from</span> <span class="nn">multiprocessing.pool</span> <span class="kn">import</span> <span class="n">AsyncResult</span><span class="p">,</span> <span class="n">Pool</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">struct</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">BufferedReader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing.pool</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncResult</span><span class="p">,</span> <span class="n">Pool</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.crypter</span> <span class="kn">import</span> <span class="n">NULL_CRYPTER</span><span class="p">,</span> <span class="n">Crypter</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetItem</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.errors</span> <span class="kn">import</span> <span class="n">DatasetImportError</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.importer</span> <span class="kn">import</span> <span class="n">ImportContext</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.media</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">MediaElement</span><span class="p">,</span> <span class="n">MediaType</span><span class="p">,</span> <span class="n">PointCloud</span><span class="p">,</span> <span class="n">Video</span><span class="p">,</span> <span class="n">VideoFrame</span>
-<span class="kn">from</span> <span class="nn">datumaro.plugins.data_formats.datumaro_binary.format</span> <span class="kn">import</span> <span class="n">DatumaroBinaryPath</span>
-<span class="kn">from</span> <span class="nn">datumaro.plugins.data_formats.datumaro_binary.mapper</span> <span class="kn">import</span> <span class="n">DictMapper</span>
-<span class="kn">from</span> <span class="nn">datumaro.plugins.data_formats.datumaro_binary.mapper.common</span> <span class="kn">import</span> <span class="n">IntListMapper</span>
-<span class="kn">from</span> <span class="nn">datumaro.plugins.data_formats.datumaro_binary.mapper.dataset_item</span> <span class="kn">import</span> <span class="n">DatasetItemMapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.crypter</span><span class="w"> </span><span class="kn">import</span> <span class="n">NULL_CRYPTER</span><span class="p">,</span> <span class="n">Crypter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetImportError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.importer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImportContext</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">MediaElement</span><span class="p">,</span> <span class="n">MediaType</span><span class="p">,</span> <span class="n">PointCloud</span><span class="p">,</span> <span class="n">Video</span><span class="p">,</span> <span class="n">VideoFrame</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.data_formats.datumaro_binary.format</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatumaroBinaryPath</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.data_formats.datumaro_binary.mapper</span><span class="w"> </span><span class="kn">import</span> <span class="n">DictMapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.data_formats.datumaro_binary.mapper.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntListMapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.data_formats.datumaro_binary.mapper.dataset_item</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItemMapper</span>
 
-<span class="kn">from</span> <span class="nn">..datumaro.base</span> <span class="kn">import</span> <span class="n">DatumaroBase</span><span class="p">,</span> <span class="n">JsonReader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..datumaro.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatumaroBase</span><span class="p">,</span> <span class="n">JsonReader</span>
 
 
 <div class="viewcode-block" id="DatumaroBinaryBase">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.base.html#datumaro.plugins.data_formats.datumaro_binary.DatumaroBinaryBase">[docs]</a>
-<span class="k">class</span> <span class="nc">DatumaroBinaryBase</span><span class="p">(</span><span class="n">DatumaroBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DatumaroBinaryBase</span><span class="p">(</span><span class="n">DatumaroBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -393,14 +393,14 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span> <span class="o">=</span> <span class="n">num_workers</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_get_dm_format_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_dm_format_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span> <span class="o">=</span> <span class="n">fp</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_check_signature</span><span class="p">()</span>
             <span class="n">dm_format_version</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_version</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">dm_format_version</span>
 
-    <span class="k">def</span> <span class="nf">_load_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Actual implementation of loading Datumaro binary format.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
@@ -415,18 +415,18 @@ document.write(`
         <span class="k">finally</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">_check_signature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_signature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">signature</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">DatumaroBinaryPath</span><span class="o">.</span><span class="n">SIGNATURE_LEN</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
         <span class="n">DatumaroBinaryPath</span><span class="o">.</span><span class="n">check_signature</span><span class="p">(</span><span class="n">signature</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_check_encryption_field</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_encryption_field</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">len_byte</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
         <span class="n">_bytes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="n">len_byte</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_crypter</span><span class="o">.</span><span class="n">handshake</span><span class="p">(</span><span class="n">_bytes</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="s2">&quot;Encryption key handshake fails. You give a wrong key.&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_read_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_crypter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_read_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_crypter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
         <span class="n">len_byte</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
         <span class="n">_bytes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="n">len_byte</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">if</span> <span class="n">use_crypter</span><span class="p">:</span>
@@ -434,19 +434,19 @@ document.write(`
         <span class="n">header</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">DictMapper</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">_bytes</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">header</span>
 
-    <span class="k">def</span> <span class="nf">_read_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_read_version</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="n">version_header</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_header</span><span class="p">(</span><span class="n">use_crypter</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_media_encryption</span> <span class="o">=</span> <span class="n">version_header</span><span class="p">[</span><span class="s2">&quot;media_encryption&quot;</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">version_header</span><span class="p">[</span><span class="s2">&quot;dm_format_version&quot;</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_read_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_read_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_header</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_read_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_read_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">categories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_header</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span> <span class="o">=</span> <span class="n">JsonReader</span><span class="o">.</span><span class="n">_load_categories</span><span class="p">({</span><span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="n">categories</span><span class="p">})</span>
 
-    <span class="k">def</span> <span class="nf">_read_media_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_read_media_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">media_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_header</span><span class="p">()[</span><span class="s2">&quot;media_type&quot;</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">media_type</span> <span class="o">==</span> <span class="n">MediaType</span><span class="o">.</span><span class="n">IMAGE</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_media_type</span> <span class="o">=</span> <span class="n">Image</span>
@@ -461,7 +461,7 @@ document.write(`
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;media_type=</span><span class="si">{</span><span class="n">media_type</span><span class="si">}</span><span class="s2"> is currently not supported.&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_read_items</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_read_items</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="p">(</span><span class="n">n_blob_sizes_bytes</span><span class="p">,)</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;&lt;I&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span>
         <span class="n">blob_sizes_bytes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_crypter</span><span class="o">.</span><span class="n">decrypt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fp</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">n_blob_sizes_bytes</span><span class="p">))</span>
         <span class="n">blob_sizes</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">IntListMapper</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">blob_sizes_bytes</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
@@ -485,7 +485,7 @@ document.write(`
             <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_ann_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_read_items_mp</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_read_items_mp</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">blob_sizes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">media_path_prefix</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">MediaType</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
         <span class="n">async_results</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">AsyncResult</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -510,7 +510,7 @@ document.write(`
                 <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">async_result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="n">DatumaroBinaryPath</span><span class="o">.</span><span class="n">MP_TIMEOUT</span><span class="p">)</span>
             <span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_read_items_sp</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_read_items_sp</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">blob_sizes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">media_path_prefix</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">MediaType</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
         <span class="n">items_list</span> <span class="o">=</span> <span class="p">[</span>
@@ -521,7 +521,7 @@ document.write(`
         <span class="k">return</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">items</span> <span class="ow">in</span> <span class="n">items_list</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="p">]</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_read_blob</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_read_blob</span><span class="p">(</span>
         <span class="n">blob_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">crypter</span><span class="p">:</span> <span class="n">Crypter</span><span class="p">,</span> <span class="n">media_path_prefix</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">MediaType</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
         <span class="n">items</span> <span class="o">=</span> <span class="p">[]</span>
@@ -540,37 +540,37 @@ document.write(`
         <span class="k">return</span> <span class="n">items</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">is_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span>
 
 <div class="viewcode-block" id="DatumaroBinaryBase.infos">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.base.html#datumaro.plugins.data_formats.datumaro_binary.DatumaroBinaryBase.infos">[docs]</a>
-    <span class="k">def</span> <span class="nf">infos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">infos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span></div>
 
 
 <div class="viewcode-block" id="DatumaroBinaryBase.categories">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.base.html#datumaro.plugins.data_formats.datumaro_binary.DatumaroBinaryBase.categories">[docs]</a>
-    <span class="k">def</span> <span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span></div>
 
 
 <div class="viewcode-block" id="DatumaroBinaryBase.media_type">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.base.html#datumaro.plugins.data_formats.datumaro_binary.DatumaroBinaryBase.media_type">[docs]</a>
-    <span class="k">def</span> <span class="nf">media_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">media_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_media_type</span></div>
 
 
 <div class="viewcode-block" id="DatumaroBinaryBase.ann_types">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.base.html#datumaro.plugins.data_formats.datumaro_binary.DatumaroBinaryBase.ann_types">[docs]</a>
-    <span class="k">def</span> <span class="nf">ann_types</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ann_types</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ann_types</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DatasetItem</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DatasetItem</span><span class="p">:</span>
         <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span></div>
 
 </pre></div>

@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -344,20 +344,20 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">defaultdict</span>
-<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">auto</span>
-<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">auto</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">chain</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span>
 
-<span class="kn">from</span> <span class="nn">attrs</span> <span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">attrs</span><span class="w"> </span><span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">field</span>
 
 <span class="c1"># Disable B410: import_lxml - the library is used for writing</span>
-<span class="kn">from</span> <span class="nn">lxml</span> <span class="kn">import</span> <span class="n">etree</span> <span class="k">as</span> <span class="n">ET</span>  <span class="c1"># nosec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">lxml</span><span class="w"> </span><span class="kn">import</span> <span class="n">etree</span> <span class="k">as</span> <span class="n">ET</span>  <span class="c1"># nosec</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">AnnotationType</span><span class="p">,</span>
     <span class="n">Bbox</span><span class="p">,</span>
     <span class="n">CompiledMask</span><span class="p">,</span>
@@ -365,18 +365,18 @@ document.write(`
     <span class="n">LabelCategories</span><span class="p">,</span>
     <span class="n">Mask</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetItem</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_item_storage</span> <span class="kn">import</span> <span class="n">ItemStatus</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.errors</span> <span class="kn">import</span> <span class="n">DatasetExportError</span><span class="p">,</span> <span class="n">InvalidAnnotationError</span><span class="p">,</span> <span class="n">MediaTypeError</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.exporter</span> <span class="kn">import</span> <span class="n">Exporter</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.media</span> <span class="kn">import</span> <span class="n">Image</span>
-<span class="kn">from</span> <span class="nn">datumaro.util</span> <span class="kn">import</span> <span class="n">find</span><span class="p">,</span> <span class="n">str_to_bool</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.annotation_util</span> <span class="kn">import</span> <span class="n">make_label_id_mapping</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.image</span> <span class="kn">import</span> <span class="n">save_image</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.mask_tools</span> <span class="kn">import</span> <span class="n">paint_mask</span><span class="p">,</span> <span class="n">remap_mask</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.meta_file_util</span> <span class="kn">import</span> <span class="n">has_meta_file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_item_storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">ItemStatus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetExportError</span><span class="p">,</span> <span class="n">InvalidAnnotationError</span><span class="p">,</span> <span class="n">MediaTypeError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.exporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Exporter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">find</span><span class="p">,</span> <span class="n">str_to_bool</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.annotation_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_label_id_mapping</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.image</span><span class="w"> </span><span class="kn">import</span> <span class="n">save_image</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.mask_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">paint_mask</span><span class="p">,</span> <span class="n">remap_mask</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.meta_file_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">has_meta_file</span>
 
-<span class="kn">from</span> <span class="nn">.format</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.format</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">VocInstColormap</span><span class="p">,</span>
     <span class="n">VocPath</span><span class="p">,</span>
     <span class="n">VocTask</span><span class="p">,</span>
@@ -389,7 +389,7 @@ document.write(`
 <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_convert_attr</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">attributes</span><span class="p">,</span> <span class="n">type_conv</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_convert_attr</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">attributes</span><span class="p">,</span> <span class="n">type_conv</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="n">d</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
     <span class="n">value</span> <span class="o">=</span> <span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="n">d</span><span class="p">:</span>
@@ -402,7 +402,7 @@ document.write(`
         <span class="k">return</span> <span class="n">default</span>
 
 
-<span class="k">def</span> <span class="nf">_write_xml_bbox</span><span class="p">(</span><span class="n">bbox</span><span class="p">,</span> <span class="n">parent_elem</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_write_xml_bbox</span><span class="p">(</span><span class="n">bbox</span><span class="p">,</span> <span class="n">parent_elem</span><span class="p">):</span>
     <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">bbox</span>
     <span class="n">bbox_elem</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">parent_elem</span><span class="p">,</span> <span class="s2">&quot;bndbox&quot;</span><span class="p">)</span>
     <span class="n">ET</span><span class="o">.</span><span class="n">SubElement</span><span class="p">(</span><span class="n">bbox_elem</span><span class="p">,</span> <span class="s2">&quot;xmin&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -414,7 +414,7 @@ document.write(`
 
 <div class="viewcode-block" id="LabelmapType">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.voc.exporter.html#datumaro.plugins.data_formats.voc.exporter.LabelmapType">[docs]</a>
-<span class="k">class</span> <span class="nc">LabelmapType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LabelmapType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="n">voc</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
     <span class="n">voc_classification</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
     <span class="n">voc_detection</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
@@ -427,7 +427,7 @@ document.write(`
 
 
 <span class="nd">@define</span>
-<span class="k">class</span> <span class="nc">_SubsetLists</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_SubsetLists</span><span class="p">:</span>
     <span class="n">class_lists</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
     <span class="n">clsdet_list</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
     <span class="n">action_list</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
@@ -437,29 +437,29 @@ document.write(`
 
 <div class="viewcode-block" id="VocExporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.voc.exporter.html#datumaro.plugins.data_formats.voc.exporter.VocExporter">[docs]</a>
-<span class="k">class</span> <span class="nc">VocExporter</span><span class="p">(</span><span class="n">Exporter</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VocExporter</span><span class="p">(</span><span class="n">Exporter</span><span class="p">):</span>
     <span class="n">DEFAULT_IMAGE_EXT</span> <span class="o">=</span> <span class="n">VocPath</span><span class="o">.</span><span class="n">IMAGE_EXT</span>
     <span class="n">BUILTIN_ATTRS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;difficult&quot;</span><span class="p">,</span> <span class="s2">&quot;pose&quot;</span><span class="p">,</span> <span class="s2">&quot;truncated&quot;</span><span class="p">,</span> <span class="s2">&quot;occluded&quot;</span><span class="p">}</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_split_task_string</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_split_task_string</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">VocTask</span><span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)]</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_get_labelmap</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_labelmap</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">s</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">LabelmapType</span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">argparse</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
 
             <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentTypeError</span><span class="p">()</span>
 
 <div class="viewcode-block" id="VocExporter.build_cmdline_parser">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.voc.exporter.html#datumaro.plugins.data_formats.voc.exporter.VocExporter.build_cmdline_parser">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
@@ -497,7 +497,7 @@ document.write(`
         <span class="k">return</span> <span class="n">parser</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">extractor</span><span class="p">,</span>
         <span class="n">save_dir</span><span class="p">,</span>
@@ -529,7 +529,7 @@ document.write(`
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_patch</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">_apply_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">(),</span> <span class="n">Image</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">MediaTypeError</span><span class="p">(</span><span class="s2">&quot;Media type is not an image&quot;</span><span class="p">)</span>
 
@@ -539,7 +539,7 @@ document.write(`
 
 <div class="viewcode-block" id="VocExporter.make_dirs">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.voc.exporter.html#datumaro.plugins.data_formats.voc.exporter.VocExporter.make_dirs">[docs]</a>
-    <span class="k">def</span> <span class="nf">make_dirs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_dirs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">save_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span>
         <span class="n">subsets_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">VocPath</span><span class="o">.</span><span class="n">SUBSETS_DIR</span><span class="p">)</span>
         <span class="n">cls_subsets_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">subsets_dir</span><span class="p">,</span> <span class="n">VocPath</span><span class="o">.</span><span class="n">TASK_DIR</span><span class="p">[</span><span class="n">VocTask</span><span class="o">.</span><span class="n">voc_classification</span><span class="p">])</span>
@@ -573,13 +573,13 @@ document.write(`
 
 <div class="viewcode-block" id="VocExporter.get_label">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.voc.exporter.html#datumaro.plugins.data_formats.voc.exporter.VocExporter.get_label">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_id</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_id</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="n">label_id</span><span class="p">]</span><span class="o">.</span><span class="n">name</span></div>
 
 
 <div class="viewcode-block" id="VocExporter.save_subsets">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.voc.exporter.html#datumaro.plugins.data_formats.voc.exporter.VocExporter.save_subsets">[docs]</a>
-    <span class="k">def</span> <span class="nf">save_subsets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_subsets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">subsets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">subsets</span><span class="p">()</span>
         <span class="n">pbars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span><span class="o">.</span><span class="n">progress_reporter</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">subsets</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">pbar</span><span class="p">,</span> <span class="p">(</span><span class="n">subset_name</span><span class="p">,</span> <span class="n">subset</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">pbars</span><span class="p">,</span> <span class="n">subsets</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
@@ -623,7 +623,7 @@ document.write(`
                 <span class="bp">self</span><span class="o">.</span><span class="n">save_segm_lists</span><span class="p">(</span><span class="n">subset_name</span><span class="p">,</span> <span class="n">lists</span><span class="o">.</span><span class="n">segm_list</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_export_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">image_filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">lists</span><span class="p">:</span> <span class="n">_SubsetLists</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_export_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">image_filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">lists</span><span class="p">:</span> <span class="n">_SubsetLists</span><span class="p">):</span>
         <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">bboxes</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">masks</span> <span class="o">=</span> <span class="p">[]</span>
@@ -803,7 +803,7 @@ document.write(`
             <span class="n">lists</span><span class="o">.</span><span class="n">segm_list</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_get_filtered_lines</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">patch</span><span class="p">,</span> <span class="n">subset</span><span class="p">,</span> <span class="n">items</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_filtered_lines</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">patch</span><span class="p">,</span> <span class="n">subset</span><span class="p">,</span> <span class="n">items</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">lines</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
@@ -822,7 +822,7 @@ document.write(`
 
 <div class="viewcode-block" id="VocExporter.save_action_lists">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.voc.exporter.html#datumaro.plugins.data_formats.voc.exporter.VocExporter.save_action_lists">[docs]</a>
-    <span class="k">def</span> <span class="nf">save_action_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_name</span><span class="p">,</span> <span class="n">action_list</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_action_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_name</span><span class="p">,</span> <span class="n">action_list</span><span class="p">):</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_action_subsets_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="n">ann_file</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_action_subsets_dir</span><span class="p">,</span> <span class="n">subset_name</span> <span class="o">+</span> <span class="s2">&quot;.txt&quot;</span><span class="p">)</span>
@@ -840,7 +840,7 @@ document.write(`
         <span class="k">if</span> <span class="ow">not</span> <span class="n">items</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_patch</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keep_empty</span><span class="p">:</span>
             <span class="k">return</span>
 
-        <span class="k">def</span> <span class="nf">_write_item</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">objs</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_write_item</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">objs</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">objs</span><span class="p">:</span>
                 <span class="k">return</span>
             <span class="k">for</span> <span class="n">obj_id</span><span class="p">,</span> <span class="n">obj_actions</span> <span class="ow">in</span> <span class="n">objs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -871,8 +871,8 @@ document.write(`
 
 <div class="viewcode-block" id="VocExporter.save_class_lists">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.voc.exporter.html#datumaro.plugins.data_formats.voc.exporter.VocExporter.save_class_lists">[docs]</a>
-    <span class="k">def</span> <span class="nf">save_class_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_name</span><span class="p">,</span> <span class="n">class_lists</span><span class="p">):</span>
-        <span class="k">def</span> <span class="nf">_write_item</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">item_labels</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_class_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_name</span><span class="p">,</span> <span class="n">class_lists</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_write_item</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">item_labels</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">item_labels</span><span class="p">:</span>
                 <span class="k">return</span>
             <span class="n">item_labels</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">get_label</span><span class="p">(</span><span class="n">l</span><span class="p">)</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">item_labels</span><span class="p">]</span>
@@ -903,7 +903,7 @@ document.write(`
 
 <div class="viewcode-block" id="VocExporter.save_clsdet_lists">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.voc.exporter.html#datumaro.plugins.data_formats.voc.exporter.VocExporter.save_clsdet_lists">[docs]</a>
-    <span class="k">def</span> <span class="nf">save_clsdet_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_name</span><span class="p">,</span> <span class="n">clsdet_list</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_clsdet_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_name</span><span class="p">,</span> <span class="n">clsdet_list</span><span class="p">):</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cls_subsets_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="n">ann_file</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cls_subsets_dir</span><span class="p">,</span> <span class="n">subset_name</span> <span class="o">+</span> <span class="s2">&quot;.txt&quot;</span><span class="p">)</span>
@@ -922,7 +922,7 @@ document.write(`
 
 <div class="viewcode-block" id="VocExporter.save_segm_lists">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.voc.exporter.html#datumaro.plugins.data_formats.voc.exporter.VocExporter.save_segm_lists">[docs]</a>
-    <span class="k">def</span> <span class="nf">save_segm_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_name</span><span class="p">,</span> <span class="n">segm_list</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_segm_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_name</span><span class="p">,</span> <span class="n">segm_list</span><span class="p">):</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_segm_subsets_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="n">ann_file</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_segm_subsets_dir</span><span class="p">,</span> <span class="n">subset_name</span> <span class="o">+</span> <span class="s2">&quot;.txt&quot;</span><span class="p">)</span>
@@ -940,8 +940,8 @@ document.write(`
 
 <div class="viewcode-block" id="VocExporter.save_layout_lists">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.voc.exporter.html#datumaro.plugins.data_formats.voc.exporter.VocExporter.save_layout_lists">[docs]</a>
-    <span class="k">def</span> <span class="nf">save_layout_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_name</span><span class="p">,</span> <span class="n">layout_list</span><span class="p">):</span>
-        <span class="k">def</span> <span class="nf">_write_item</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">item_layouts</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_layout_lists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_name</span><span class="p">,</span> <span class="n">layout_list</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_write_item</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">item_layouts</span><span class="p">):</span>
             <span class="k">if</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">split</span><span class="p">()):</span>
                 <span class="n">item</span> <span class="o">=</span> <span class="s1">&#39;&quot;&#39;</span> <span class="o">+</span> <span class="n">item</span> <span class="o">+</span> <span class="s1">&#39;&quot;&#39;</span>
             <span class="k">if</span> <span class="n">item_layouts</span><span class="p">:</span>
@@ -973,7 +973,7 @@ document.write(`
 
 <div class="viewcode-block" id="VocExporter.save_segm">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.voc.exporter.html#datumaro.plugins.data_formats.voc.exporter.VocExporter.save_segm">[docs]</a>
-    <span class="k">def</span> <span class="nf">save_segm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">colormap</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_segm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">colormap</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_colormap</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">colormap</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">colormap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">colormap</span>
@@ -983,7 +983,7 @@ document.write(`
 
 <div class="viewcode-block" id="VocExporter.save_label_map">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.voc.exporter.html#datumaro.plugins.data_formats.voc.exporter.VocExporter.save_label_map">[docs]</a>
-    <span class="k">def</span> <span class="nf">save_label_map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_label_map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dataset_meta</span><span class="p">:</span>
             <span class="n">write_meta_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_map</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -991,7 +991,7 @@ document.write(`
             <span class="n">write_label_map</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_map</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_load_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_map_source</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_map_source</span><span class="p">):</span>
         <span class="k">if</span> <span class="p">(</span>
             <span class="n">label_map_source</span> <span class="ow">in</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">LabelmapType</span><span class="p">]</span>
             <span class="ow">and</span> <span class="n">label_map_source</span> <span class="o">!=</span> <span class="n">LabelmapType</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">name</span>
@@ -1063,25 +1063,25 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_label_map</span> <span class="o">=</span> <span class="n">label_map</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_label_id_mapping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_label_id_map</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_is_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">_is_part</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_part</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">label_desc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_map</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">label_desc</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
                 <span class="k">return</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="kc">False</span>
 
-    <span class="k">def</span> <span class="nf">_is_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_actions</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_get_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
         <span class="n">label_desc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">label_desc</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
         <span class="k">return</span> <span class="n">label_desc</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_make_label_id_map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_make_label_id_map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">map_id</span><span class="p">,</span> <span class="n">id_mapping</span><span class="p">,</span> <span class="n">src_labels</span><span class="p">,</span> <span class="n">dst_labels</span> <span class="o">=</span> <span class="n">make_label_id_mapping</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">),</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">],</span>
@@ -1112,13 +1112,13 @@ document.write(`
 
         <span class="k">return</span> <span class="n">map_id</span>
 
-    <span class="k">def</span> <span class="nf">_remap_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_remap_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">remap_mask</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_id_mapping</span><span class="p">)</span>
 
 <div class="viewcode-block" id="VocExporter.patch">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.voc.exporter.html#datumaro.plugins.data_formats.voc.exporter.VocExporter.patch">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">patch</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">patch</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">patch</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">patch</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">conv</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">patch</span><span class="o">.</span><span class="n">as_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="p">),</span> <span class="n">save_dir</span><span class="o">=</span><span class="n">save_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">conv</span><span class="o">.</span><span class="n">_patch</span> <span class="o">=</span> <span class="n">patch</span>
         <span class="n">conv</span><span class="o">.</span><span class="n">apply</span><span class="p">()</span>
@@ -1179,15 +1179,15 @@ document.write(`
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">can_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">can_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
 
 
 <div class="viewcode-block" id="VocClassificationExporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.voc.exporter.html#datumaro.plugins.data_formats.voc.exporter.VocClassificationExporter">[docs]</a>
-<span class="k">class</span> <span class="nc">VocClassificationExporter</span><span class="p">(</span><span class="n">VocExporter</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VocClassificationExporter</span><span class="p">(</span><span class="n">VocExporter</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;task&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">VocTask</span><span class="o">.</span><span class="n">voc_classification</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
@@ -1195,8 +1195,8 @@ document.write(`
 
 <div class="viewcode-block" id="VocDetectionExporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.voc.exporter.html#datumaro.plugins.data_formats.voc.exporter.VocDetectionExporter">[docs]</a>
-<span class="k">class</span> <span class="nc">VocDetectionExporter</span><span class="p">(</span><span class="n">VocExporter</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VocDetectionExporter</span><span class="p">(</span><span class="n">VocExporter</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;task&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">VocTask</span><span class="o">.</span><span class="n">voc_detection</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
@@ -1204,8 +1204,8 @@ document.write(`
 
 <div class="viewcode-block" id="VocSegmentationExporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.voc.exporter.html#datumaro.plugins.data_formats.voc.exporter.VocSegmentationExporter">[docs]</a>
-<span class="k">class</span> <span class="nc">VocSegmentationExporter</span><span class="p">(</span><span class="n">VocExporter</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VocSegmentationExporter</span><span class="p">(</span><span class="n">VocExporter</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;task&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">VocTask</span><span class="o">.</span><span class="n">voc_segmentation</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
@@ -1213,8 +1213,8 @@ document.write(`
 
 <div class="viewcode-block" id="VocInstanceSegmentationExporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.voc.exporter.html#datumaro.plugins.data_formats.voc.exporter.VocInstanceSegmentationExporter">[docs]</a>
-<span class="k">class</span> <span class="nc">VocInstanceSegmentationExporter</span><span class="p">(</span><span class="n">VocExporter</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VocInstanceSegmentationExporter</span><span class="p">(</span><span class="n">VocExporter</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;task&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">VocTask</span><span class="o">.</span><span class="n">voc_instance_segmentation</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
@@ -1222,8 +1222,8 @@ document.write(`
 
 <div class="viewcode-block" id="VocLayoutExporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.voc.exporter.html#datumaro.plugins.data_formats.voc.exporter.VocLayoutExporter">[docs]</a>
-<span class="k">class</span> <span class="nc">VocLayoutExporter</span><span class="p">(</span><span class="n">VocExporter</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VocLayoutExporter</span><span class="p">(</span><span class="n">VocExporter</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;task&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">VocTask</span><span class="o">.</span><span class="n">voc_layout</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
@@ -1231,8 +1231,8 @@ document.write(`
 
 <div class="viewcode-block" id="VocActionExporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.voc.exporter.html#datumaro.plugins.data_formats.voc.exporter.VocActionExporter">[docs]</a>
-<span class="k">class</span> <span class="nc">VocActionExporter</span><span class="p">(</span><span class="n">VocExporter</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VocActionExporter</span><span class="p">(</span><span class="n">VocExporter</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;task&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">VocTask</span><span class="o">.</span><span class="n">voc_action</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 

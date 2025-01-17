@@ -28,7 +28,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -717,7 +717,7 @@ that available for download <a class="reference external" href="http://shuoyang1
 <h2>Import WIDER Face dataset<a class="headerlink" href="#import-wider-face-dataset" title="Link to this heading">#</a></h2>
 <p>Importing of WIDER Face dataset into the Datumaro project:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">datum</span> <span class="n">project</span> <span class="n">create</span>
-<span class="n">datum</span> <span class="n">project</span> <span class="kn">import</span> <span class="o">-</span><span class="n">f</span> <span class="n">wider_face</span> <span class="o">&lt;</span><span class="n">path_to_wider_face</span><span class="o">&gt;</span>
+<span class="n">datum</span> <span class="n">project</span> <span class="kn">import</span><span class="w"> </span><span class="o">-</span><span class="n">f</span> <span class="n">wider_face</span> <span class="o">&lt;</span><span class="n">path_to_wider_face</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 <p>Directory with WIDER Face dataset should has the following structure:</p>
@@ -763,12 +763,12 @@ annotation types.</p>
 
 <span class="c1"># Through the Datumaro project</span>
 <span class="n">datum</span> <span class="n">project</span> <span class="n">create</span>
-<span class="n">datum</span> <span class="n">project</span> <span class="kn">import</span> <span class="o">-</span><span class="n">f</span> <span class="n">wider_face</span> <span class="o">&lt;</span><span class="n">path_to_wider_face</span><span class="o">&gt;</span>
+<span class="n">datum</span> <span class="n">project</span> <span class="kn">import</span><span class="w"> </span><span class="o">-</span><span class="n">f</span> <span class="n">wider_face</span> <span class="o">&lt;</span><span class="n">path_to_wider_face</span><span class="o">&gt;</span>
 <span class="n">datum</span> <span class="n">project</span> <span class="n">export</span> <span class="o">-</span><span class="n">f</span> <span class="n">voc</span> <span class="o">-</span><span class="n">o</span> <span class="o">&lt;</span><span class="n">output_dir</span><span class="o">&gt;</span> <span class="o">--</span> <span class="o">-</span><span class="n">save</span><span class="o">-</span><span class="n">media</span>
 </pre></div>
 </div>
 <p>Export WIDER Face dataset using Python API:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datumaro</span> <span class="k">as</span> <span class="nn">dm</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dm</span>
 
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="s1">&#39;&lt;path_to_wider_face&#39;</span><span class="p">,</span> <span class="s1">&#39;wider_face&#39;</span><span class="p">)</span>
 
@@ -790,7 +790,7 @@ but for succseful exporting your dataset should contain <code class="docutils li
 <p>Here example of exporting VOC dataset (object detection task)
 into the WIDER Face format:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">datum</span> <span class="n">project</span> <span class="n">create</span>
-<span class="n">datum</span> <span class="n">project</span> <span class="kn">import</span> <span class="o">-</span><span class="n">f</span> <span class="n">voc_detection</span> <span class="o">&lt;</span><span class="n">path_to_voc</span><span class="o">&gt;</span>
+<span class="n">datum</span> <span class="n">project</span> <span class="kn">import</span><span class="w"> </span><span class="o">-</span><span class="n">f</span> <span class="n">voc_detection</span> <span class="o">&lt;</span><span class="n">path_to_voc</span><span class="o">&gt;</span>
 <span class="n">datum</span> <span class="n">project</span> <span class="n">export</span> <span class="o">-</span><span class="n">f</span> <span class="n">wider_face</span> <span class="o">-</span><span class="n">o</span> <span class="o">&lt;</span><span class="n">output_dir</span><span class="o">&gt;</span> <span class="o">--</span> <span class="o">--</span><span class="n">save</span><span class="o">-</span><span class="n">media</span> <span class="o">--</span><span class="n">image</span><span class="o">-</span><span class="n">ext</span><span class="o">=</span><span class="s1">&#39;.png&#39;</span>
 </pre></div>
 </div>

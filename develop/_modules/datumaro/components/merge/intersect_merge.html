@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -347,20 +347,20 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Sequence</span>
 
-<span class="kn">import</span> <span class="nn">attr</span>
-<span class="kn">from</span> <span class="nn">attr</span> <span class="kn">import</span> <span class="n">attrib</span><span class="p">,</span> <span class="n">attrs</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">attr</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">attr</span><span class="w"> </span><span class="kn">import</span> <span class="n">attrib</span><span class="p">,</span> <span class="n">attrs</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">AnnotationType</span><span class="p">,</span>
     <span class="n">LabelCategories</span><span class="p">,</span>
     <span class="n">MaskCategories</span><span class="p">,</span>
     <span class="n">PointsCategories</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.annotations.merger</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotations.merger</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">AnnotationMerger</span><span class="p">,</span>
     <span class="n">BboxMerger</span><span class="p">,</span>
     <span class="n">CaptionsMerger</span><span class="p">,</span>
@@ -378,12 +378,12 @@ document.write(`
     <span class="n">RotatedBboxMerger</span><span class="p">,</span>
     <span class="n">TabularMerger</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">IDataset</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_item_storage</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">IDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_item_storage</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">DatasetItemStorage</span><span class="p">,</span>
     <span class="n">DatasetItemStorageDatasetView</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.errors</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">AnnotationsTooCloseError</span><span class="p">,</span>
     <span class="n">ConflictingCategoriesError</span><span class="p">,</span>
     <span class="n">FailedAttrVotingError</span><span class="p">,</span>
@@ -391,10 +391,10 @@ document.write(`
     <span class="n">NoMatchingItemError</span><span class="p">,</span>
     <span class="n">WrongGroupError</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.merge</span> <span class="kn">import</span> <span class="n">Merger</span>
-<span class="kn">from</span> <span class="nn">datumaro.util</span> <span class="kn">import</span> <span class="n">find</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.annotation_util</span> <span class="kn">import</span> <span class="n">find_instances</span><span class="p">,</span> <span class="n">max_bbox</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.attrs_util</span> <span class="kn">import</span> <span class="n">ensure_cls</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.merge</span><span class="w"> </span><span class="kn">import</span> <span class="n">Merger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">find</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.annotation_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_instances</span><span class="p">,</span> <span class="n">max_bbox</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.attrs_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure_cls</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;IntersectMerge&quot;</span><span class="p">]</span>
 
@@ -402,7 +402,7 @@ document.write(`
 <div class="viewcode-block" id="IntersectMerge">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.merge.intersect_merge.IntersectMerge">[docs]</a>
 <span class="nd">@attrs</span>
-<span class="k">class</span> <span class="nc">IntersectMerge</span><span class="p">(</span><span class="n">Merger</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">IntersectMerge</span><span class="p">(</span><span class="n">Merger</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Merge several datasets with &quot;intersect&quot; policy:</span>
 
@@ -438,13 +438,13 @@ document.write(`
 <span class="sd">    For more details for the parameters, please refer to :class:`IntersectMerge.Conf`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">options</span><span class="p">)</span>
 
 <div class="viewcode-block" id="IntersectMerge.Conf">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.merge.intersect_merge.IntersectMerge.Conf">[docs]</a>
     <span class="nd">@attrs</span><span class="p">(</span><span class="n">repr_ns</span><span class="o">=</span><span class="s2">&quot;IntersectMerge&quot;</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">class</span> <span class="nc">Conf</span><span class="p">:</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Conf</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -474,7 +474,7 @@ document.write(`
         <span class="n">quorum</span> <span class="o">=</span> <span class="n">attrib</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">ignored_attributes</span> <span class="o">=</span> <span class="n">attrib</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">set</span><span class="p">,</span> <span class="n">factory</span><span class="o">=</span><span class="nb">set</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">_groups_converter</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_groups_converter</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
             <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
                 <span class="n">rg</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
@@ -496,7 +496,7 @@ document.write(`
 
 <div class="viewcode-block" id="IntersectMerge.add_item_error">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.merge.intersect_merge.IntersectMerge.add_item_error">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_item_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_item_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">error</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_item_id</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span></div>
 
 
@@ -513,7 +513,7 @@ document.write(`
 
 <div class="viewcode-block" id="IntersectMerge.merge">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.merge.intersect_merge.IntersectMerge.merge">[docs]</a>
-    <span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">IDataset</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">DatasetItemStorage</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">IDataset</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">DatasetItemStorage</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">merge_infos</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">infos</span><span class="p">()</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">merge_categories</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">])</span>
         <span class="n">merged</span> <span class="o">=</span> <span class="n">DatasetItemStorage</span><span class="p">()</span>
@@ -537,11 +537,11 @@ document.write(`
 
 <div class="viewcode-block" id="IntersectMerge.get_ann_source">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.merge.intersect_merge.IntersectMerge.get_ann_source">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_ann_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ann_id</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_ann_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ann_id</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item_map</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_ann_map</span><span class="p">[</span><span class="n">ann_id</span><span class="p">][</span><span class="mi">1</span><span class="p">]][</span><span class="mi">1</span><span class="p">]</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">datasets</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DatasetItemStorageDatasetView</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">datasets</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DatasetItemStorageDatasetView</span><span class="p">:</span>
         <span class="c1"># TODO: self.merge() should be the first since this order matters for</span>
         <span class="c1"># IntersectMerge.</span>
         <span class="n">merged</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">datasets</span><span class="p">)</span>
@@ -559,7 +559,7 @@ document.write(`
 
 <div class="viewcode-block" id="IntersectMerge.merge_categories">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.merge.intersect_merge.IntersectMerge.merge_categories">[docs]</a>
-    <span class="k">def</span> <span class="nf">merge_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">IDataset</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">IDataset</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
         <span class="c1"># TODO: This is a temporary workaround to minimize code changes.</span>
         <span class="c1"># We have to revisit it to make this class stateless.</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_categories&quot;</span><span class="p">):</span>
@@ -585,7 +585,7 @@ document.write(`
 
 <div class="viewcode-block" id="IntersectMerge.merge_items">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.merge.intersect_merge.IntersectMerge.merge_items">[docs]</a>
-    <span class="k">def</span> <span class="nf">merge_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">DatasetItem</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">DatasetItem</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">DatasetItem</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">DatasetItem</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_item</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">items</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_ann_map</span> <span class="o">=</span> <span class="p">{}</span>
@@ -608,7 +608,7 @@ document.write(`
 
 <div class="viewcode-block" id="IntersectMerge.merge_annotations">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.merge.intersect_merge.IntersectMerge.merge_annotations">[docs]</a>
-    <span class="k">def</span> <span class="nf">merge_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_make_mergers</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span>
 
         <span class="n">clusters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_match_annotations</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span>
@@ -651,7 +651,7 @@ document.write(`
 
 <div class="viewcode-block" id="IntersectMerge.match_items">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.merge.intersect_merge.IntersectMerge.match_items">[docs]</a>
-    <span class="k">def</span> <span class="nf">match_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datasets</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">match_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datasets</span><span class="p">):</span>
         <span class="n">item_ids</span> <span class="o">=</span> <span class="nb">set</span><span class="p">((</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">datasets</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">d</span><span class="p">)</span>
 
         <span class="n">item_map</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># id(item) -&gt; (item, id(dataset))</span>
@@ -669,7 +669,7 @@ document.write(`
         <span class="k">return</span> <span class="n">matches</span><span class="p">,</span> <span class="n">item_map</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_merge_label_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_merge_label_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">):</span>
         <span class="n">same</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">common</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="n">src_categories</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
@@ -713,7 +713,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">dst_cat</span>
 
-    <span class="k">def</span> <span class="nf">_merge_point_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">,</span> <span class="n">label_cat</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_merge_point_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">,</span> <span class="n">label_cat</span><span class="p">):</span>
         <span class="n">dst_point_cat</span> <span class="o">=</span> <span class="n">PointsCategories</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">src_id</span><span class="p">,</span> <span class="n">src_categories</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sources</span><span class="p">):</span>
@@ -743,7 +743,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">dst_point_cat</span>
 
-    <span class="k">def</span> <span class="nf">_merge_mask_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">,</span> <span class="n">label_cat</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_merge_mask_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">,</span> <span class="n">label_cat</span><span class="p">):</span>
         <span class="n">dst_mask_cat</span> <span class="o">=</span> <span class="n">MaskCategories</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">src_id</span><span class="p">,</span> <span class="n">src_categories</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sources</span><span class="p">):</span>
@@ -773,7 +773,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">dst_mask_cat</span>
 
-    <span class="k">def</span> <span class="nf">_match_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_match_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">):</span>
         <span class="n">all_by_type</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
             <span class="n">src_by_type</span> <span class="o">=</span> <span class="p">{}</span>
@@ -788,13 +788,13 @@ document.write(`
 
         <span class="k">return</span> <span class="n">clusters</span>
 
-    <span class="k">def</span> <span class="nf">_make_mergers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">):</span>
-        <span class="k">def</span> <span class="nf">_make</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_make_mergers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_make</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">attr</span><span class="o">.</span><span class="n">asdict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="p">))</span>
             <span class="n">fields</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">fields_dict</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">c</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">},</span> <span class="n">context</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">_for_type</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_for_type</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">t</span> <span class="ow">is</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">unknown</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">_make</span><span class="p">(</span><span class="n">AnnotationMerger</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">t</span> <span class="ow">is</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">:</span>
@@ -849,13 +849,13 @@ document.write(`
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_mergers</span> <span class="o">=</span> <span class="p">{</span><span class="n">t</span><span class="p">:</span> <span class="n">_for_type</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">instance_map</span><span class="o">=</span><span class="n">instance_map</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">AnnotationType</span><span class="p">}</span>
 
-    <span class="k">def</span> <span class="nf">_match_ann_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">sources</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_match_ann_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">sources</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mergers</span><span class="p">[</span><span class="n">t</span><span class="p">]</span><span class="o">.</span><span class="n">match_annotations</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_merge_clusters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">clusters</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_merge_clusters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">clusters</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mergers</span><span class="p">[</span><span class="n">t</span><span class="p">]</span><span class="o">.</span><span class="n">merge_clusters</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_find_cluster_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clusters</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_find_cluster_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clusters</span><span class="p">):</span>
         <span class="n">cluster_groups</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">visited</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">a_idx</span><span class="p">,</span> <span class="n">cluster_a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">clusters</span><span class="p">):</span>
@@ -886,7 +886,7 @@ document.write(`
             <span class="n">cluster_groups</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">cluster_group</span><span class="p">,</span> <span class="n">a_groups</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">cluster_groups</span>
 
-    <span class="k">def</span> <span class="nf">_find_cluster_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster</span><span class="p">,</span> <span class="n">ann</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_find_cluster_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster</span><span class="p">,</span> <span class="n">ann</span><span class="p">):</span>
         <span class="n">quorum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">quorum</span> <span class="ow">or</span> <span class="mi">0</span>
 
         <span class="c1"># TODO: when attribute types are implemented, add linear</span>
@@ -926,11 +926,11 @@ document.write(`
 
         <span class="k">return</span> <span class="n">attributes</span>
 
-    <span class="k">def</span> <span class="nf">_check_cluster_sources</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_cluster_sources</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset_map</span><span class="p">):</span>
             <span class="k">return</span>
 
-        <span class="k">def</span> <span class="nf">_has_item</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_has_item</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
             <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataset_map</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_item_id</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">False</span>
@@ -943,21 +943,21 @@ document.write(`
         <span class="k">if</span> <span class="n">missing_sources</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">add_item_error</span><span class="p">(</span><span class="n">NoMatchingAnnError</span><span class="p">,</span> <span class="n">cluster</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">sources</span><span class="o">=</span><span class="n">missing_sources</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_check_annotation_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">annotations</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_annotation_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">annotations</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">a_idx</span><span class="p">,</span> <span class="n">a_ann</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">annotations</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">b_ann</span> <span class="ow">in</span> <span class="n">annotations</span><span class="p">[</span><span class="n">a_idx</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]:</span>
                 <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mergers</span><span class="p">[</span><span class="n">t</span><span class="p">]</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="n">a_ann</span><span class="p">,</span> <span class="n">b_ann</span><span class="p">)</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">close_distance</span> <span class="o">&lt;</span> <span class="n">d</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">add_item_error</span><span class="p">(</span><span class="n">AnnotationsTooCloseError</span><span class="p">,</span> <span class="n">a_ann</span><span class="p">,</span> <span class="n">b_ann</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_check_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotations</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotations</span><span class="p">):</span>
         <span class="n">check_groups</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">check_group_raw</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
             <span class="n">check_group</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">check_group_raw</span><span class="p">)</span>
             <span class="n">optional</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">check_group_raw</span> <span class="k">if</span> <span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
             <span class="n">check_groups</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">check_group</span><span class="p">,</span> <span class="n">optional</span><span class="p">))</span>
 
-        <span class="k">def</span> <span class="nf">_check_group</span><span class="p">(</span><span class="n">group_labels</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_check_group</span><span class="p">(</span><span class="n">group_labels</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">check_group</span><span class="p">,</span> <span class="n">optional</span> <span class="ow">in</span> <span class="n">check_groups</span><span class="p">:</span>
                 <span class="n">common</span> <span class="o">=</span> <span class="n">check_group</span> <span class="o">&amp;</span> <span class="n">group_labels</span>
                 <span class="n">real_miss</span> <span class="o">=</span> <span class="n">check_group</span> <span class="o">-</span> <span class="n">common</span> <span class="o">-</span> <span class="n">optional</span>
@@ -983,15 +983,15 @@ document.write(`
                 <span class="k">continue</span>
             <span class="n">_check_group</span><span class="p">(</span><span class="n">group_labels</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_get_label_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_id</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_label_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_id</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">label_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="n">label_id</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
 
-    <span class="k">def</span> <span class="nf">_get_label_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_label_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">label</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_get_src_label_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ann</span><span class="p">,</span> <span class="n">label_id</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_src_label_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ann</span><span class="p">,</span> <span class="n">label_id</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">label_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="n">item_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ann_map</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">ann</span><span class="p">)][</span><span class="mi">1</span><span class="p">]</span>
@@ -1002,7 +1002,7 @@ document.write(`
 
 <div class="viewcode-block" id="IntersectMerge.get_any_label_name">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.merge.intersect_merge.IntersectMerge.get_any_label_name">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_any_label_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ann</span><span class="p">,</span> <span class="n">label_id</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_any_label_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ann</span><span class="p">,</span> <span class="n">label_id</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">label_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="k">try</span><span class="p">:</span>
@@ -1011,7 +1011,7 @@ document.write(`
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_label_name</span><span class="p">(</span><span class="n">label_id</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_check_groups_definition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_groups_definition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">group</span><span class="p">:</span>
                 <span class="n">_</span><span class="p">,</span> <span class="n">entry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>

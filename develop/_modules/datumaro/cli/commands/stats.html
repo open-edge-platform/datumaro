@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -347,17 +347,17 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">argparse</span>
-<span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.cli.util.errors</span> <span class="kn">import</span> <span class="n">CliException</span><span class="p">,</span> <span class="n">WrongRevpathError</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.errors</span> <span class="kn">import</span> <span class="n">ConflictingCategoriesError</span><span class="p">,</span> <span class="n">ProjectNotFoundError</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.operations</span> <span class="kn">import</span> <span class="n">compute_ann_statistics</span><span class="p">,</span> <span class="n">compute_image_statistics</span>
-<span class="kn">from</span> <span class="nn">datumaro.util</span> <span class="kn">import</span> <span class="n">dump_json_file</span><span class="p">,</span> <span class="n">str_to_bool</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.scope</span> <span class="kn">import</span> <span class="n">scope_add</span><span class="p">,</span> <span class="n">scoped</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.cli.util.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">CliException</span><span class="p">,</span> <span class="n">WrongRevpathError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConflictingCategoriesError</span><span class="p">,</span> <span class="n">ProjectNotFoundError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.operations</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_ann_statistics</span><span class="p">,</span> <span class="n">compute_image_statistics</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">dump_json_file</span><span class="p">,</span> <span class="n">str_to_bool</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.scope</span><span class="w"> </span><span class="kn">import</span> <span class="n">scope_add</span><span class="p">,</span> <span class="n">scoped</span>
 
-<span class="kn">from</span> <span class="nn">..util</span> <span class="kn">import</span> <span class="n">MultilineFormatter</span>
-<span class="kn">from</span> <span class="nn">..util.project</span> <span class="kn">import</span> <span class="n">generate_next_file_name</span><span class="p">,</span> <span class="n">load_project</span><span class="p">,</span> <span class="n">parse_full_revpath</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..util</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultilineFormatter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..util.project</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_next_file_name</span><span class="p">,</span> <span class="n">load_project</span><span class="p">,</span> <span class="n">parse_full_revpath</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;build_parser&quot;</span><span class="p">,</span>
@@ -367,7 +367,7 @@ document.write(`
 
 <div class="viewcode-block" id="build_parser">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.commands.stats.html#datumaro.cli.commands.stats.build_parser">[docs]</a>
-<span class="k">def</span> <span class="nf">build_parser</span><span class="p">(</span><span class="n">parser_ctor</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_parser</span><span class="p">(</span><span class="n">parser_ctor</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">):</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">parser_ctor</span><span class="p">(</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Get project statistics&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
@@ -423,7 +423,7 @@ document.write(`
 
 <div class="viewcode-block" id="get_sensitive_args">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.commands.stats.html#datumaro.cli.commands.stats.get_sensitive_args">[docs]</a>
-<span class="k">def</span> <span class="nf">get_sensitive_args</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_sensitive_args</span><span class="p">():</span>
     <span class="k">return</span> <span class="p">{</span>
         <span class="n">stats_command</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;project_dir&quot;</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">],</span>
     <span class="p">}</span></div>
@@ -433,7 +433,7 @@ document.write(`
 <div class="viewcode-block" id="stats_command">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.commands.stats.html#datumaro.cli.commands.stats.stats_command">[docs]</a>
 <span class="nd">@scoped</span>
-<span class="k">def</span> <span class="nf">stats_command</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">stats_command</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
     <span class="n">project</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">project</span> <span class="o">=</span> <span class="n">scope_add</span><span class="p">(</span><span class="n">load_project</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">project_dir</span><span class="p">))</span>
@@ -452,7 +452,7 @@ document.write(`
                     <span class="s2">&quot;This prevents computing the statistics of the merged one. &quot;</span>
                     <span class="sa">f</span><span class="s2">&quot;Please specify one of the sources in the project (</span><span class="si">{</span><span class="n">src_names</span><span class="si">}</span><span class="s2">), &quot;</span>
                     <span class="sa">f</span><span class="s2">&quot;such as `datum stats </span><span class="si">{</span><span class="n">src_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">`&quot;</span>
-                <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+                <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
         <span class="k">raise</span> <span class="n">e</span>
 

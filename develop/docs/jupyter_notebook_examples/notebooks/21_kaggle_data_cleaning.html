@@ -28,7 +28,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -365,8 +365,8 @@ document.write(`
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datumaro</span> <span class="k">as</span> <span class="nn">dm</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.environment</span> <span class="kn">import</span> <span class="n">DEFAULT_ENVIRONMENT</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.environment</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_ENVIRONMENT</span>
 
 <span class="n">data_path</span> <span class="o">=</span> <span class="s2">&quot;~/data&quot;</span>
 <span class="n">detected_formats</span> <span class="o">=</span> <span class="n">DEFAULT_ENVIRONMENT</span><span class="o">.</span><span class="n">detect_dataset</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span>
@@ -424,14 +424,29 @@ infos
         14: []
 </pre></div></div>
 </div>
-<p>Based on the information provided, - The total size of the dataset is 44955 items. - The dataset is divided into two subsets: - The ‘Corona_NLP_test’ subset contains 3798 items. - The ‘Corona_NLP_train’ subset contains 41157 items.</p>
+<p>Based on the information provided,</p>
+<ul class="simple">
+<li><p>The total size of the dataset is 44955 items.</p></li>
+<li><p>The dataset is divided into two subsets:</p>
+<ul>
+<li><p>The ‘Corona_NLP_test’ subset contains 3798 items.</p></li>
+<li><p>The ‘Corona_NLP_train’ subset contains 41157 items.</p></li>
+</ul>
+</li>
+</ul>
 <p>This breakdown gives us insight into the scale of our dataset and the distribution of items across its subsets.</p>
 <section id="Setting-Input-and-Output-Targets-for-Sentiment-Analysis">
 <h3>Setting Input and Output Targets for Sentiment Analysis<a class="headerlink" href="#Setting-Input-and-Output-Targets-for-Sentiment-Analysis" title="Link to this heading">#</a></h3>
 <p>Moreover, we tried to take sentiment analysis for this dataset, so we have to set input and output targets for the dataset.</p>
-<p><strong>For Input (Features)</strong>: - <strong>Original Tweet</strong>: This field contains the content of each tweet. When performing sentiment analysis, text data is used as the input for the model. Each tweet’s content is tokenized, preprocessed, and then provided to the model. - <strong>Location (Optional)</strong>: This field represents the location of the user who posted the tweet. Some models can utilize location information as additional features to enhance performance. However, the use of this field is optional and depends
-on the model.</p>
-<p><strong>For Output (Target)</strong>: - <strong>Sentiment</strong>: This field indicates the sentiment of each tweet. The goal of sentiment analysis is to classify the sentiment of text, making this field the output target for the model. Sentiments are typically classified as positive, negative, or neutral, and the model aims to predict them.</p>
+<p><strong>For Input (Features)</strong>:</p>
+<ul class="simple">
+<li><p><strong>Original Tweet</strong>: This field contains the content of each tweet. When performing sentiment analysis, text data is used as the input for the model. Each tweet’s content is tokenized, preprocessed, and then provided to the model.</p></li>
+<li><p><strong>Location (Optional)</strong>: This field represents the location of the user who posted the tweet. Some models can utilize location information as additional features to enhance performance. However, the use of this field is optional and depends on the model.</p></li>
+</ul>
+<p><strong>For Output (Target)</strong>:</p>
+<ul class="simple">
+<li><p><strong>Sentiment</strong>: This field indicates the sentiment of each tweet. The goal of sentiment analysis is to classify the sentiment of text, making this field the output target for the model. Sentiments are typically classified as positive, negative, or neutral, and the model aims to predict them.</p></li>
+</ul>
 <p>Therefore, for the input of the sentiment analysis model, we will use the ‘OriginalTweet’ field to represent the content of each tweet. For the output, we will use the ‘Sentiment’ field to represent the sentiment of each tweet. The ‘Location’ field is optional and may or may not be used, depending on the model.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
@@ -564,14 +579,20 @@ annotations :  [Label(id=0, attributes={}, group=0, object_id=-1, label=0)]
 <section id="Exploring-Dataset-Characteristics">
 <h3>Exploring Dataset Characteristics<a class="headerlink" href="#Exploring-Dataset-Characteristics" title="Link to this heading">#</a></h3>
 <p>Having transformed the data as described above, we’ll now explore the characteristics of the dataset. To begin, we’ll use Datumaro’s Validator to understand various features and attributes of the dataset.</p>
-<p>Using the Validator, we can: - Determine the number of columns included in the dataset and identify the type of each feature. - Check for missing values or outliers, thereby understanding the dataset’s structure. - Analyze the distribution of the target variable to identify any class imbalance issues. - Calculate basic statistical measures to understand the central tendency and dispersion of the data.</p>
+<p>Using the Validator, we can:</p>
+<ul class="simple">
+<li><p>Determine the number of columns included in the dataset and identify the type of each feature.</p></li>
+<li><p>Check for missing values or outliers, thereby understanding the dataset’s structure.</p></li>
+<li><p>Analyze the distribution of the target variable to identify any class imbalance issues.</p></li>
+<li><p>Calculate basic statistical measures to understand the central tendency and dispersion of the data.</p></li>
+</ul>
 <p>If you want to learn more about the conditions set in the Validator, please check <a class="reference external" href="https://openvinotoolkit.github.io/datumaro/latest/docs/level-up/intermediate_skills/08_data_validate.html">this link</a>.</p>
 <p>This step will help us gain insights into the structure and properties of our data, setting the stage for effective analysis and modeling.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datumaro.plugins.validators</span> <span class="kn">import</span> <span class="n">TabularValidator</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.validators</span><span class="w"> </span><span class="kn">import</span> <span class="n">TabularValidator</span>
 
 <span class="n">validator</span> <span class="o">=</span> <span class="n">TabularValidator</span><span class="p">(</span>
     <span class="n">few_samples_thr</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
@@ -598,11 +619,11 @@ annotations :  [Label(id=0, attributes={}, group=0, object_id=-1, label=0)]
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
 
-<span class="k">def</span> <span class="nf">show_stats</span><span class="p">(</span><span class="n">stats</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">show_stats</span><span class="p">(</span><span class="n">stats</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Statistics summary&quot;</span><span class="p">)</span>
 
     <span class="n">total_ann_count</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;total_ann_count&quot;</span><span class="p">]</span>
@@ -795,14 +816,14 @@ After Clean :  nileshshah summarized important points paper thread
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datumaro.plugins.framework_converter</span> <span class="kn">import</span> <span class="n">FrameworkConverter</span>
-<span class="kn">from</span> <span class="nn">torchtext.data.utils</span> <span class="kn">import</span> <span class="n">get_tokenizer</span>
-<span class="kn">from</span> <span class="nn">torchtext.vocab</span> <span class="kn">import</span> <span class="n">build_vocab_from_iterator</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.framework_converter</span><span class="w"> </span><span class="kn">import</span> <span class="n">FrameworkConverter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchtext.data.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_tokenizer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchtext.vocab</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_vocab_from_iterator</span>
 
 <span class="n">tokenizer</span> <span class="o">=</span> <span class="n">get_tokenizer</span><span class="p">(</span><span class="s2">&quot;basic_english&quot;</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">yield_tokens</span><span class="p">(</span><span class="n">data_iter</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">yield_tokens</span><span class="p">(</span><span class="n">data_iter</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">data_iter</span><span class="p">:</span>
         <span class="k">yield</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
 
@@ -846,21 +867,21 @@ To enable the following instructions: AVX2 FMA, in other operations, rebuild Ten
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
-<span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="nn">optim</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.optim</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">optim</span>
 
 <span class="c1"># Define a simple RNN-based model for text classification</span>
 
 
-<span class="k">class</span> <span class="nc">SentimentRNN</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocab_size</span><span class="p">,</span> <span class="n">embed_size</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">,</span> <span class="n">output_size</span><span class="p">,</span> <span class="n">num_layers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SentimentRNN</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocab_size</span><span class="p">,</span> <span class="n">embed_size</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">,</span> <span class="n">output_size</span><span class="p">,</span> <span class="n">num_layers</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SentimentRNN</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">embedding</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="n">vocab_size</span><span class="p">,</span> <span class="n">embed_size</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rnn</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LSTM</span><span class="p">(</span><span class="n">embed_size</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">,</span> <span class="n">num_layers</span><span class="p">,</span> <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="n">dropout</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fc</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">output_size</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="n">_</span><span class="p">,</span> <span class="p">(</span><span class="n">hidden</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rnn</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fc</span><span class="p">(</span><span class="n">hidden</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
@@ -890,15 +911,15 @@ To enable the following instructions: AVX2 FMA, in other operations, rebuild Ten
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLoader</span>
 
 <span class="c1"># Define Loss and Optimizer</span>
 <span class="n">criterion</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
 <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">custom_collate_fn</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">custom_collate_fn</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
     <span class="c1"># Separate inputs and outputs</span>
     <span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">batch</span><span class="p">)</span>
 
@@ -930,7 +951,7 @@ To enable the following instructions: AVX2 FMA, in other operations, rebuild Ten
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Training Loop</span>
-<span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">train_loader</span><span class="p">,</span> <span class="n">val_loader</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">num_epochs</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">train</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">train_loader</span><span class="p">,</span> <span class="n">val_loader</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">num_epochs</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
     <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
     <span class="n">train_losses</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">val_losses</span> <span class="o">=</span> <span class="p">[]</span>
@@ -997,7 +1018,7 @@ Epoch 5, Loss: 1.5830248109996319 | Validation Loss: 1.5709160640835762
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">plot_loss</span><span class="p">(</span><span class="n">train_losses</span><span class="p">,</span> <span class="n">val_losses</span><span class="p">):</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">plot_loss</span><span class="p">(</span><span class="n">train_losses</span><span class="p">,</span> <span class="n">val_losses</span><span class="p">):</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">train_losses</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Training Loss&quot;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">val_losses</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Validation Loss&quot;</span><span class="p">)</span>
@@ -1054,11 +1075,11 @@ Requirement already satisfied: six&gt;=1.5 in /home/sooah/.pyenv/versions/3.11.9
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">confusion_matrix</span>
-<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">confusion_matrix</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
 
 
-<span class="k">def</span> <span class="nf">plot_confusion_matrix</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">val_loader</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_confusion_matrix</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">val_loader</span><span class="p">):</span>
     <span class="n">all_preds</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">all_labels</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -1096,7 +1117,7 @@ Requirement already satisfied: six&gt;=1.5 in /home/sooah/.pyenv/versions/3.11.9
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">per_class_accuracy</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">val_loader</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">):</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">per_class_accuracy</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">val_loader</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">):</span>
     <span class="n">class_correct</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_classes</span>
     <span class="n">class_total</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_classes</span>
 

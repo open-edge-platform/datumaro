@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -356,35 +356,35 @@ document.write(`
 <span class="c1"># limitations under the License.</span>
 <span class="c1">#</span>
 
-<span class="kn">from</span> <span class="nn">grpc</span> <span class="kn">import</span> <span class="n">RpcError</span><span class="p">,</span> <span class="n">ssl_channel_credentials</span><span class="p">,</span> <span class="n">secure_channel</span><span class="p">,</span> <span class="n">insecure_channel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">grpc</span><span class="w"> </span><span class="kn">import</span> <span class="n">RpcError</span><span class="p">,</span> <span class="n">ssl_channel_credentials</span><span class="p">,</span> <span class="n">secure_channel</span><span class="p">,</span> <span class="n">insecure_channel</span>
 
-<span class="kn">from</span> <span class="nn">ovmsclient.tfs_compat.protos.tensorflow_serving.apis</span> <span class="kn">import</span> <span class="n">prediction_service_pb2_grpc</span>
-<span class="kn">from</span> <span class="nn">ovmsclient.tfs_compat.protos.tensorflow_serving.apis</span> <span class="kn">import</span> <span class="n">model_service_pb2_grpc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ovmsclient.tfs_compat.protos.tensorflow_serving.apis</span><span class="w"> </span><span class="kn">import</span> <span class="n">prediction_service_pb2_grpc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ovmsclient.tfs_compat.protos.tensorflow_serving.apis</span><span class="w"> </span><span class="kn">import</span> <span class="n">model_service_pb2_grpc</span>
 
-<span class="kn">from</span> <span class="nn">ovmsclient.tfs_compat.base.serving_client</span> <span class="kn">import</span> <span class="n">ServingClient</span>
-<span class="kn">from</span> <span class="nn">ovmsclient.tfs_compat.grpc.requests</span> <span class="kn">import</span> <span class="p">(</span><span class="n">make_status_request</span><span class="p">,</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ovmsclient.tfs_compat.base.serving_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">ServingClient</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ovmsclient.tfs_compat.grpc.requests</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">make_status_request</span><span class="p">,</span>
                                                  <span class="n">make_metadata_request</span><span class="p">,</span>
                                                  <span class="n">make_predict_request</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">ovmsclient.tfs_compat.grpc.responses</span> <span class="kn">import</span> <span class="p">(</span><span class="n">GrpcModelStatusResponse</span><span class="p">,</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ovmsclient.tfs_compat.grpc.responses</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">GrpcModelStatusResponse</span><span class="p">,</span>
                                                   <span class="n">GrpcModelMetadataResponse</span><span class="p">,</span>
                                                   <span class="n">GrpcPredictResponse</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">ovmsclient.tfs_compat.base.errors</span> <span class="kn">import</span> <span class="n">BadResponseError</span><span class="p">,</span> <span class="n">raise_from_grpc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ovmsclient.tfs_compat.base.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">BadResponseError</span><span class="p">,</span> <span class="n">raise_from_grpc</span>
 
-<span class="kn">from</span> <span class="nn">ovmsclient.util.ovmsclient_export</span> <span class="kn">import</span> <span class="n">ovmsclient_export</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ovmsclient.util.ovmsclient_export</span><span class="w"> </span><span class="kn">import</span> <span class="n">ovmsclient_export</span>
 
 
 <div class="viewcode-block" id="GrpcClient">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.inference_server_plugin.ovms.html#datumaro.plugins.inference_server_plugin.ovms.GrpcClient">[docs]</a>
-<span class="k">class</span> <span class="nc">GrpcClient</span><span class="p">(</span><span class="n">ServingClient</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GrpcClient</span><span class="p">(</span><span class="n">ServingClient</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="n">prediction_service_stub</span><span class="p">,</span> <span class="n">model_service_stub</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">channel</span><span class="p">,</span> <span class="n">prediction_service_stub</span><span class="p">,</span> <span class="n">model_service_stub</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">channel</span> <span class="o">=</span> <span class="n">channel</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prediction_service_stub</span> <span class="o">=</span> <span class="n">prediction_service_stub</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model_service_stub</span> <span class="o">=</span> <span class="n">model_service_stub</span>
 
 <div class="viewcode-block" id="GrpcClient.predict">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.inference_server_plugin.ovms.html#datumaro.plugins.inference_server_plugin.ovms.GrpcClient.predict">[docs]</a>
-    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">model_version</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">10.0</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">model_version</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">10.0</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_validate_timeout</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
         <span class="n">request</span> <span class="o">=</span> <span class="n">make_predict_request</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">model_version</span><span class="p">)</span>
         <span class="n">raw_response</span> <span class="o">=</span> <span class="kc">None</span>
@@ -404,7 +404,7 @@ document.write(`
 
 <div class="viewcode-block" id="GrpcClient.get_model_metadata">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.inference_server_plugin.ovms.html#datumaro.plugins.inference_server_plugin.ovms.GrpcClient.get_model_metadata">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_model_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">model_version</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">10.0</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_model_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">model_version</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">10.0</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_validate_timeout</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
         <span class="n">request</span> <span class="o">=</span> <span class="n">make_metadata_request</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">model_version</span><span class="p">)</span>
         <span class="n">raw_response</span> <span class="o">=</span> <span class="kc">None</span>
@@ -424,7 +424,7 @@ document.write(`
 
 <div class="viewcode-block" id="GrpcClient.get_model_status">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.inference_server_plugin.ovms.html#datumaro.plugins.inference_server_plugin.ovms.GrpcClient.get_model_status">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_model_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">model_version</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">10.0</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_model_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">model_version</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mf">10.0</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_validate_timeout</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
         <span class="n">request</span> <span class="o">=</span> <span class="n">make_status_request</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">model_version</span><span class="p">)</span>
         <span class="n">raw_response</span> <span class="o">=</span> <span class="kc">None</span>
@@ -443,7 +443,7 @@ document.write(`
 
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_build</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">tls_config</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">tls_config</span><span class="p">):</span>
         <span class="n">ServingClient</span><span class="o">.</span><span class="n">_check_url</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
 
         <span class="c1"># Setting 1 GB max message size.</span>
@@ -476,7 +476,7 @@ document.write(`
 <div class="viewcode-block" id="make_grpc_client">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.inference_server_plugin.ovms.html#datumaro.plugins.inference_server_plugin.ovms.make_grpc_client">[docs]</a>
 <span class="nd">@ovmsclient_export</span><span class="p">(</span><span class="s2">&quot;make_grpc_client&quot;</span><span class="p">,</span> <span class="n">grpcclient</span><span class="o">=</span><span class="s2">&quot;make_client&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">make_grpc_client</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">tls_config</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_grpc_client</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">tls_config</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Create GrpcClient object.</span>
 

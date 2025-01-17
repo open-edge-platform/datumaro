@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -344,37 +344,37 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">inspect</span>
-<span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">from</span> <span class="nn">importlib.util</span> <span class="kn">import</span> <span class="n">module_from_spec</span><span class="p">,</span> <span class="n">spec_from_file_location</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">overload</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">importlib.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">module_from_spec</span><span class="p">,</span> <span class="n">spec_from_file_location</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">overload</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.abstracts.model_interpreter</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.abstracts.model_interpreter</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">IModelInterpreter</span><span class="p">,</span>
     <span class="n">LauncherInputType</span><span class="p">,</span>
     <span class="n">ModelPred</span><span class="p">,</span>
     <span class="n">PrepInfo</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="n">Annotation</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.cli_plugin</span> <span class="kn">import</span> <span class="n">CliPlugin</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetItem</span>
-<span class="kn">from</span> <span class="nn">datumaro.errors</span> <span class="kn">import</span> <span class="n">DatumaroError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.cli_plugin</span><span class="w"> </span><span class="kn">import</span> <span class="n">CliPlugin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatumaroError</span>
 
 
 <span class="c1"># pylint: disable=no-self-use</span>
 <div class="viewcode-block" id="Launcher">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.launcher.html#datumaro.components.dataset.Launcher">[docs]</a>
-<span class="k">class</span> <span class="nc">Launcher</span><span class="p">(</span><span class="n">CliPlugin</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Launcher</span><span class="p">(</span><span class="n">CliPlugin</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="k">pass</span>
 
 <div class="viewcode-block" id="Launcher.preprocess">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.launcher.html#datumaro.components.dataset.Launcher.preprocess">[docs]</a>
-    <span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">LauncherInputType</span><span class="p">,</span> <span class="n">PrepInfo</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">LauncherInputType</span><span class="p">,</span> <span class="n">PrepInfo</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Preprocess single dataset item before launch()</span>
 
 <span class="sd">        There are two output types:</span>
@@ -390,7 +390,7 @@ document.write(`
 
 
     <span class="nd">@overload</span>
-    <span class="k">def</span> <span class="nf">infer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ModelPred</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">infer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ModelPred</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        It executes the actual model inference for the inputs.</span>
 
@@ -402,7 +402,7 @@ document.write(`
         <span class="o">...</span>
 
     <span class="nd">@overload</span>
-    <span class="k">def</span> <span class="nf">infer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ModelPred</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">infer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ModelPred</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        It executes the actual model inference for the inputs.</span>
 
@@ -415,19 +415,19 @@ document.write(`
 
 <div class="viewcode-block" id="Launcher.infer">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.launcher.html#datumaro.components.dataset.Launcher.infer">[docs]</a>
-    <span class="k">def</span> <span class="nf">infer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">LauncherInputType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ModelPred</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">infer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">LauncherInputType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ModelPred</span><span class="p">]:</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
 <div class="viewcode-block" id="Launcher.postprocess">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.launcher.html#datumaro.components.dataset.Launcher.postprocess">[docs]</a>
-    <span class="k">def</span> <span class="nf">postprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred</span><span class="p">:</span> <span class="n">ModelPred</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="n">PrepInfo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">postprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred</span><span class="p">:</span> <span class="n">ModelPred</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="n">PrepInfo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]:</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="Launcher.launch">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.launcher.html#datumaro.components.dataset.Launcher.launch">[docs]</a>
-    <span class="k">def</span> <span class="nf">launch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">],</span> <span class="n">stack</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">launch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">],</span> <span class="n">stack</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Launch to obtain the inference outputs of items.</span>
 
 <span class="sd">        Parameters:</span>
@@ -473,19 +473,19 @@ document.write(`
 
 <div class="viewcode-block" id="Launcher.infos">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.launcher.html#datumaro.components.dataset.Launcher.infos">[docs]</a>
-    <span class="k">def</span> <span class="nf">infos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">infos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="Launcher.categories">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.launcher.html#datumaro.components.dataset.Launcher.categories">[docs]</a>
-    <span class="k">def</span> <span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="Launcher.type_check">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.launcher.html#datumaro.components.dataset.Launcher.type_check">[docs]</a>
-    <span class="k">def</span> <span class="nf">type_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">type_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check the media type of dataset item.</span>
 
 <span class="sd">        If False, the item is excluded from the input batch.</span>
@@ -497,13 +497,13 @@ document.write(`
 
 <div class="viewcode-block" id="LauncherWithModelInterpreter">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.launcher.html#datumaro.components.dataset.LauncherWithModelInterpreter">[docs]</a>
-<span class="k">class</span> <span class="nc">LauncherWithModelInterpreter</span><span class="p">(</span><span class="n">Launcher</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_interpreter_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LauncherWithModelInterpreter</span><span class="p">(</span><span class="n">Launcher</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_interpreter_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_interpreter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_interpreter</span><span class="p">(</span><span class="n">file_path</span><span class="o">=</span><span class="n">model_interpreter_path</span><span class="p">)</span>
 
 <div class="viewcode-block" id="LauncherWithModelInterpreter.preprocess">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.launcher.html#datumaro.components.dataset.LauncherWithModelInterpreter.preprocess">[docs]</a>
-    <span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">LauncherInputType</span><span class="p">,</span> <span class="n">PrepInfo</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">LauncherInputType</span><span class="p">,</span> <span class="n">PrepInfo</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Preprocessing an input DatasetItem.</span>
 
 <span class="sd">        Parameters:</span>
@@ -522,7 +522,7 @@ document.write(`
 
 <div class="viewcode-block" id="LauncherWithModelInterpreter.postprocess">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.launcher.html#datumaro.components.dataset.LauncherWithModelInterpreter.postprocess">[docs]</a>
-    <span class="k">def</span> <span class="nf">postprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred</span><span class="p">:</span> <span class="n">ModelPred</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="n">PrepInfo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">postprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred</span><span class="p">:</span> <span class="n">ModelPred</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="n">PrepInfo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Postprocess a model prediction.</span>
 
 <span class="sd">        Parameters:</span>
@@ -535,7 +535,7 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interpreter</span><span class="o">.</span><span class="n">postprocess</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">info</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_load_interpreter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IModelInterpreter</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_interpreter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IModelInterpreter</span><span class="p">:</span>
         <span class="n">fname</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file_path</span><span class="p">))</span>
         <span class="n">spec</span> <span class="o">=</span> <span class="n">spec_from_file_location</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">file_path</span><span class="p">)</span>
         <span class="n">module</span> <span class="o">=</span> <span class="n">module_from_spec</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
@@ -563,7 +563,7 @@ document.write(`
 
 <div class="viewcode-block" id="LauncherWithModelInterpreter.categories">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.launcher.html#datumaro.components.dataset.LauncherWithModelInterpreter.categories">[docs]</a>
-    <span class="k">def</span> <span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interpreter</span><span class="o">.</span><span class="n">get_categories</span><span class="p">()</span></div>
 </div>
 

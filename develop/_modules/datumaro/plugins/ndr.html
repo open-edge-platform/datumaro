@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -344,22 +344,22 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
-<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">auto</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">auto</span>
 
-<span class="kn">import</span> <span class="nn">cv2</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="kn">import</span> <span class="n">orth</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.linalg</span><span class="w"> </span><span class="kn">import</span> <span class="n">orth</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.cli_plugin</span> <span class="kn">import</span> <span class="n">CliPlugin</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DEFAULT_SUBSET_NAME</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.transformer</span> <span class="kn">import</span> <span class="n">Transform</span>
-<span class="kn">from</span> <span class="nn">datumaro.util</span> <span class="kn">import</span> <span class="n">parse_str_enum_value</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.cli_plugin</span><span class="w"> </span><span class="kn">import</span> <span class="n">CliPlugin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_SUBSET_NAME</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_str_enum_value</span>
 
 
 <div class="viewcode-block" id="Algorithm">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.ndr.html#datumaro.plugins.ndr.Algorithm">[docs]</a>
-<span class="k">class</span> <span class="nc">Algorithm</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Algorithm</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="n">gradient</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span></div>
 
     <span class="c1"># other algorithms will be added</span>
@@ -367,7 +367,7 @@ document.write(`
 
 <div class="viewcode-block" id="OverSamplingMethod">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.ndr.html#datumaro.plugins.ndr.OverSamplingMethod">[docs]</a>
-<span class="k">class</span> <span class="nc">OverSamplingMethod</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OverSamplingMethod</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="n">random</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
     <span class="n">similarity</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span></div>
 
@@ -375,7 +375,7 @@ document.write(`
 
 <div class="viewcode-block" id="UnderSamplingMethod">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.ndr.html#datumaro.plugins.ndr.UnderSamplingMethod">[docs]</a>
-<span class="k">class</span> <span class="nc">UnderSamplingMethod</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnderSamplingMethod</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="n">uniform</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
     <span class="n">inverse</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span></div>
 
@@ -383,7 +383,7 @@ document.write(`
 
 <div class="viewcode-block" id="NDR">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.ndr.html#datumaro.plugins.ndr.NDR">[docs]</a>
-<span class="k">class</span> <span class="nc">NDR</span><span class="p">(</span><span class="n">Transform</span><span class="p">,</span> <span class="n">CliPlugin</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NDR</span><span class="p">(</span><span class="n">Transform</span><span class="p">,</span> <span class="n">CliPlugin</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Removes near-duplicated images in subset|n</span>
 <span class="sd">    |n</span>
@@ -414,7 +414,7 @@ document.write(`
 <div class="viewcode-block" id="NDR.build_cmdline_parser">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.ndr.html#datumaro.plugins.ndr.NDR.build_cmdline_parser">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
             <span class="s2">&quot;-w&quot;</span><span class="p">,</span>
@@ -458,7 +458,7 @@ document.write(`
         <span class="k">return</span> <span class="n">parser</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">extractor</span><span class="p">,</span>
         <span class="n">working_subset</span><span class="p">,</span>
@@ -557,7 +557,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">algorithm_specific</span> <span class="o">=</span> <span class="n">kwargs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_initialized</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="k">def</span> <span class="nf">_remove</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_remove</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">:</span>
             <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">)</span>
 
@@ -620,7 +620,7 @@ document.write(`
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kept_item_id</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">having_image</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="n">kept_index</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_gradient_based</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">all_imgs</span><span class="p">,</span> <span class="n">block_shape</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">hash_dim</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">sim_threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_gradient_based</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">all_imgs</span><span class="p">,</span> <span class="n">block_shape</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">hash_dim</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">sim_threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">block_shape</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid block_shape&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">block_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">block_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
@@ -667,7 +667,7 @@ document.write(`
                 <span class="n">removed_index_with_similarity</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_sim</span>
         <span class="k">return</span> <span class="n">all_key</span><span class="p">,</span> <span class="n">fidx</span><span class="p">,</span> <span class="n">kept_index</span><span class="p">,</span> <span class="n">key_counter</span><span class="p">,</span> <span class="n">removed_index_with_similarity</span>
 
-    <span class="k">def</span> <span class="nf">_keep_cut</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_keep_cut</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">num_cut</span><span class="p">,</span>
         <span class="n">all_key</span><span class="p">,</span>
@@ -720,7 +720,7 @@ document.write(`
         <span class="k">return</span> <span class="n">kept_index</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_cgrad_feature</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">out_wh</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">)):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_cgrad_feature</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">out_wh</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">)):</span>
         <span class="k">if</span> <span class="n">img</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="s2">&quot;uint8&quot;</span><span class="p">:</span>
             <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span> <span class="o">/</span> <span class="mf">255.0</span>
         <span class="k">else</span><span class="p">:</span>
@@ -745,7 +745,7 @@ document.write(`
         <span class="k">return</span> <span class="n">res</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_project</span><span class="p">(</span><span class="n">feat</span><span class="p">,</span> <span class="n">hash_dim</span><span class="o">=</span><span class="mi">32</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_project</span><span class="p">(</span><span class="n">feat</span><span class="p">,</span> <span class="n">hash_dim</span><span class="o">=</span><span class="mi">32</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Project feat to hash_dim space and create hexadecimal string key</span>
 
@@ -790,7 +790,7 @@ document.write(`
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">_all_key</span>
 
-    <span class="k">def</span> <span class="nf">_check_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">subset</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">working_subset</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kept_item_id</span><span class="p">:</span>
@@ -802,7 +802,7 @@ document.write(`
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">DEFAULT_SUBSET_NAME</span>
 
-    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initialized</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_remove</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_initialized</span> <span class="o">=</span> <span class="kc">True</span>

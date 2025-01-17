@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -344,27 +344,27 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset</span> <span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
 
 <span class="n">log</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">log</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
 
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">torch</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 
 <div class="viewcode-block" id="BboxOverlaps2D">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.anchor_generator.html#datumaro.plugins.anchor_generator.BboxOverlaps2D">[docs]</a>
-    <span class="k">class</span> <span class="nc">BboxOverlaps2D</span><span class="p">:</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">BboxOverlaps2D</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;2D Overlaps (e.g. IoUs, GIoUs) Calculator.&quot;&quot;&quot;</span>
 
-        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="n">scale</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">dtype</span>
 
-        <span class="k">def</span> <span class="nf">_bbox_overlaps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bboxes1</span><span class="p">,</span> <span class="n">bboxes2</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_bbox_overlaps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bboxes1</span><span class="p">,</span> <span class="n">bboxes2</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Calculate overlap between two set of bboxes.&quot;&quot;&quot;</span>
             <span class="c1"># Either the boxes are empty or the length of boxes&#39; last dimension is 4</span>
             <span class="k">assert</span> <span class="n">bboxes1</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span> <span class="ow">or</span> <span class="n">bboxes1</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
@@ -402,7 +402,7 @@ document.write(`
 
             <span class="k">return</span> <span class="n">ious</span>
 
-        <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bboxes1</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">bboxes2</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bboxes1</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">bboxes2</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Calculate IoU between 2D bboxes.</span>
 
 <span class="sd">            Args:</span>
@@ -432,8 +432,8 @@ document.write(`
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bbox_overlaps</span><span class="p">(</span><span class="n">bboxes1</span><span class="p">,</span> <span class="n">bboxes2</span><span class="p">)</span></div>
 
 
-    <span class="k">class</span> <span class="nc">DataAwareAnchorGenerator</span><span class="p">:</span>
-        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">DataAwareAnchorGenerator</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">img_size</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
             <span class="n">strides</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
@@ -474,7 +474,7 @@ document.write(`
 
 <div class="viewcode-block" id="DataAwareAnchorGenerator.get_shifts">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.anchor_generator.html#datumaro.plugins.anchor_generator.DataAwareAnchorGenerator.get_shifts">[docs]</a>
-        <span class="k">def</span> <span class="nf">get_shifts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stride</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">get_shifts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stride</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Bounding box proposals from anchor generator is composed of shifts and base anchors,</span>
 <span class="sd">            where shifts is generated in mesh-grid manner and base anchors is combinations of ratios and</span>
 <span class="sd">            scales. This function is to create mesh-grid shifts in the original image space.</span>
@@ -486,7 +486,7 @@ document.write(`
 <span class="sd">                Tensor: Shift point coordinates.</span>
 <span class="sd">            &quot;&quot;&quot;</span>
 
-            <span class="k">def</span> <span class="nf">_meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">_meshgrid</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
                 <span class="c1"># use shape instead of len to keep tracing while exporting to onnx</span>
                 <span class="n">xx</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
                 <span class="n">yy</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
@@ -504,7 +504,7 @@ document.write(`
 
 <div class="viewcode-block" id="DataAwareAnchorGenerator.get_anchors">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.anchor_generator.html#datumaro.plugins.anchor_generator.DataAwareAnchorGenerator.get_anchors">[docs]</a>
-        <span class="k">def</span> <span class="nf">get_anchors</span><span class="p">(</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">get_anchors</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">base_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">shifts</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">scales</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">ratios</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;This function is to create base anchors, which combinates ratios and scales.</span>
@@ -543,7 +543,7 @@ document.write(`
 
 <div class="viewcode-block" id="DataAwareAnchorGenerator.initialize">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.anchor_generator.html#datumaro.plugins.anchor_generator.DataAwareAnchorGenerator.initialize">[docs]</a>
-        <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">scales</span><span class="p">,</span> <span class="n">ratios</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">scales</span><span class="p">,</span> <span class="n">ratios</span><span class="p">):</span>
             <span class="n">init_ratios</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">init_scales</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">level</span><span class="p">,</span> <span class="n">base_size</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">strides</span><span class="p">):</span>
@@ -603,7 +603,7 @@ document.write(`
 
 <div class="viewcode-block" id="DataAwareAnchorGenerator.get_loss">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.anchor_generator.html#datumaro.plugins.anchor_generator.DataAwareAnchorGenerator.get_loss">[docs]</a>
-        <span class="k">def</span> <span class="nf">get_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">scales</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">ratios</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">get_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">scales</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">ratios</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;This function is to create base anchors, which combinates ratios and scales.</span>
 
 <span class="sd">            Args:</span>
@@ -662,7 +662,7 @@ document.write(`
 
 <div class="viewcode-block" id="DataAwareAnchorGenerator.optimize">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.anchor_generator.html#datumaro.plugins.anchor_generator.DataAwareAnchorGenerator.optimize">[docs]</a>
-        <span class="k">def</span> <span class="nf">optimize</span><span class="p">(</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">optimize</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span>
             <span class="n">subset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -740,8 +740,8 @@ document.write(`
 
 <div class="viewcode-block" id="DataAwareAnchorGenerator">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.anchor_generator.html#datumaro.plugins.anchor_generator.DataAwareAnchorGenerator">[docs]</a>
-    <span class="k">class</span> <span class="nc">DataAwareAnchorGenerator</span><span class="p">:</span>
-        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">DataAwareAnchorGenerator</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s2">&quot;Torch package not found. Cannot optimize anchor generator.&quot;</span><span class="p">)</span></div>
 
 </pre></div>

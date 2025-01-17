@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -343,13 +343,13 @@ document.write(`
 <span></span><span class="c1"># Copyright (C) 2023 Intel Corporation</span>
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
-<span class="kn">import</span> <span class="nn">struct</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">struct</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pycocotools.mask</span> <span class="k">as</span> <span class="nn">mask_utils</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pycocotools.mask</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mask_utils</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Annotation</span><span class="p">,</span>
     <span class="n">AnnotationType</span><span class="p">,</span>
     <span class="n">Bbox</span><span class="p">,</span>
@@ -366,20 +366,20 @@ document.write(`
     <span class="n">Shape</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">.common</span> <span class="kn">import</span> <span class="n">DictMapper</span><span class="p">,</span> <span class="n">FloatListMapper</span><span class="p">,</span> <span class="n">IntListMapper</span><span class="p">,</span> <span class="n">Mapper</span><span class="p">,</span> <span class="n">StringMapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">DictMapper</span><span class="p">,</span> <span class="n">FloatListMapper</span><span class="p">,</span> <span class="n">IntListMapper</span><span class="p">,</span> <span class="n">Mapper</span><span class="p">,</span> <span class="n">StringMapper</span>
 
 <span class="n">MAGIC_NUM_FOR_NONE</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="mi">31</span> <span class="o">-</span> <span class="mi">1</span>
 
 
 <div class="viewcode-block" id="AnnotationMapper">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.AnnotationMapper">[docs]</a>
-<span class="k">class</span> <span class="nc">AnnotationMapper</span><span class="p">(</span><span class="n">Mapper</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AnnotationMapper</span><span class="p">(</span><span class="n">Mapper</span><span class="p">):</span>
     <span class="n">ann_type</span> <span class="o">=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">unknown</span>
 
 <div class="viewcode-block" id="AnnotationMapper.forward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.AnnotationMapper.forward">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ann</span><span class="p">:</span> <span class="n">Annotation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ann</span><span class="p">:</span> <span class="n">Annotation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="n">_bytearray</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
         <span class="n">_bytearray</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&lt;Bqqi&quot;</span><span class="p">,</span> <span class="n">ann</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">ann</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">ann</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="n">ann</span><span class="o">.</span><span class="n">object_id</span><span class="p">))</span>
         <span class="n">_bytearray</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">DictMapper</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="p">))</span>
@@ -389,7 +389,7 @@ document.write(`
 <div class="viewcode-block" id="AnnotationMapper.backward_dict">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.AnnotationMapper.backward_dict">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">backward_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">backward_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
         <span class="n">_</span><span class="p">,</span> <span class="nb">id</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">object_id</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="s2">&quot;&lt;Bqqi&quot;</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
         <span class="n">offset</span> <span class="o">+=</span> <span class="mi">21</span>  <span class="c1"># struct.calcsize(&quot;&lt;Bqqi&quot;) = 21</span>
         <span class="n">attributes</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">DictMapper</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
@@ -399,7 +399,7 @@ document.write(`
 <div class="viewcode-block" id="AnnotationMapper.backward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.AnnotationMapper.backward">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Annotation</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">backward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Annotation</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
         <span class="n">ann_dict</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">backward_dict</span><span class="p">(</span><span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Annotation</span><span class="p">(</span><span class="o">**</span><span class="n">ann_dict</span><span class="p">),</span> <span class="n">offset</span></div>
 
@@ -407,21 +407,21 @@ document.write(`
 <div class="viewcode-block" id="AnnotationMapper.forward_optional_label">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.AnnotationMapper.forward_optional_label">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">forward_optional_label</span><span class="p">(</span><span class="n">label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward_optional_label</span><span class="p">(</span><span class="n">label</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">label</span> <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">MAGIC_NUM_FOR_NONE</span></div>
 
 
 <div class="viewcode-block" id="AnnotationMapper.backward_optional_label">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.AnnotationMapper.backward_optional_label">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">backward_optional_label</span><span class="p">(</span><span class="n">label</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">backward_optional_label</span><span class="p">(</span><span class="n">label</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
         <span class="k">return</span> <span class="n">label</span> <span class="k">if</span> <span class="n">label</span> <span class="o">!=</span> <span class="n">MAGIC_NUM_FOR_NONE</span> <span class="k">else</span> <span class="kc">None</span></div>
 
 
 <div class="viewcode-block" id="AnnotationMapper.parse_ann_type">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.AnnotationMapper.parse_ann_type">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">parse_ann_type</span><span class="p">(</span><span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AnnotationType</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_ann_type</span><span class="p">(</span><span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AnnotationType</span><span class="p">:</span>
         <span class="p">(</span><span class="n">ann_type</span><span class="p">,)</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="s2">&quot;&lt;B&quot;</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">AnnotationType</span><span class="p">(</span><span class="n">ann_type</span><span class="p">)</span></div>
 </div>
@@ -430,13 +430,13 @@ document.write(`
 
 <div class="viewcode-block" id="LabelMapper">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.LabelMapper">[docs]</a>
-<span class="k">class</span> <span class="nc">LabelMapper</span><span class="p">(</span><span class="n">AnnotationMapper</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LabelMapper</span><span class="p">(</span><span class="n">AnnotationMapper</span><span class="p">):</span>
     <span class="n">ann_type</span> <span class="o">=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span>
 
 <div class="viewcode-block" id="LabelMapper.forward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.LabelMapper.forward">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ann</span><span class="p">:</span> <span class="n">Label</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ann</span><span class="p">:</span> <span class="n">Label</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="n">_bytearray</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
         <span class="n">_bytearray</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">ann</span><span class="p">))</span>
         <span class="n">_bytearray</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&lt;i&quot;</span><span class="p">,</span> <span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="p">))</span>
@@ -446,7 +446,7 @@ document.write(`
 <div class="viewcode-block" id="LabelMapper.backward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.LabelMapper.backward">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Label</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">backward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Label</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
         <span class="n">ann_dict</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">backward_dict</span><span class="p">(</span><span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
         <span class="p">(</span><span class="n">label</span><span class="p">,)</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="s2">&quot;&lt;i&quot;</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
         <span class="n">offset</span> <span class="o">+=</span> <span class="mi">4</span>
@@ -457,13 +457,13 @@ document.write(`
 
 <div class="viewcode-block" id="MaskMapper">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.MaskMapper">[docs]</a>
-<span class="k">class</span> <span class="nc">MaskMapper</span><span class="p">(</span><span class="n">AnnotationMapper</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MaskMapper</span><span class="p">(</span><span class="n">AnnotationMapper</span><span class="p">):</span>
     <span class="n">ann_type</span> <span class="o">=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span>
 
 <div class="viewcode-block" id="MaskMapper.forward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.MaskMapper.forward">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ann</span><span class="p">:</span> <span class="n">Mask</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ann</span><span class="p">:</span> <span class="n">Mask</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="n">RleMask</span><span class="p">):</span>
             <span class="n">rle</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">rle</span>
         <span class="k">else</span><span class="p">:</span>
@@ -483,7 +483,7 @@ document.write(`
 <div class="viewcode-block" id="MaskMapper.backward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.MaskMapper.backward">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Mask</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">backward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Mask</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
         <span class="n">ann_dict</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">backward_dict</span><span class="p">(</span><span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
         <span class="n">label</span><span class="p">,</span> <span class="n">z_order</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="s2">&quot;&lt;ii&quot;</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
         <span class="n">label</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">backward_optional_label</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
@@ -505,14 +505,14 @@ document.write(`
 
 <div class="viewcode-block" id="RleMaskMapper">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.RleMaskMapper">[docs]</a>
-<span class="k">class</span> <span class="nc">RleMaskMapper</span><span class="p">(</span><span class="n">MaskMapper</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RleMaskMapper</span><span class="p">(</span><span class="n">MaskMapper</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Just clone MaskMapper.&quot;&quot;&quot;</span></div>
 
 
 
-<span class="k">class</span> <span class="nc">_ShapeMapper</span><span class="p">(</span><span class="n">AnnotationMapper</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_ShapeMapper</span><span class="p">(</span><span class="n">AnnotationMapper</span><span class="p">):</span>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ann</span><span class="p">:</span> <span class="n">Shape</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ann</span><span class="p">:</span> <span class="n">Shape</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="n">_bytearray</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
         <span class="n">_bytearray</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">ann</span><span class="p">))</span>
         <span class="n">_bytearray</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&lt;ii&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">forward_optional_label</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="p">),</span> <span class="n">ann</span><span class="o">.</span><span class="n">z_order</span><span class="p">))</span>
@@ -520,7 +520,7 @@ document.write(`
         <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">_bytearray</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">backward_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">backward_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
         <span class="n">ann_dict</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">backward_dict</span><span class="p">(</span><span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
         <span class="n">label</span><span class="p">,</span> <span class="n">z_order</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="s2">&quot;&lt;ii&quot;</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
         <span class="n">offset</span> <span class="o">+=</span> <span class="mi">8</span>
@@ -533,20 +533,20 @@ document.write(`
         <span class="p">},</span> <span class="n">offset</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Shape</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">backward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Shape</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
         <span class="n">ann_dict</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">backward_dict</span><span class="p">(</span><span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Shape</span><span class="p">(</span><span class="o">**</span><span class="n">ann_dict</span><span class="p">),</span> <span class="n">offset</span>
 
 
 <div class="viewcode-block" id="PointsMapper">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.PointsMapper">[docs]</a>
-<span class="k">class</span> <span class="nc">PointsMapper</span><span class="p">(</span><span class="n">_ShapeMapper</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PointsMapper</span><span class="p">(</span><span class="n">_ShapeMapper</span><span class="p">):</span>
     <span class="n">ann_type</span> <span class="o">=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">points</span>
 
 <div class="viewcode-block" id="PointsMapper.forward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.PointsMapper.forward">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ann</span><span class="p">:</span> <span class="n">Points</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ann</span><span class="p">:</span> <span class="n">Points</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="n">_bytearray</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
         <span class="n">_bytearray</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">ann</span><span class="p">))</span>
         <span class="n">_bytearray</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">IntListMapper</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">visibility</span><span class="p">))</span>
@@ -556,7 +556,7 @@ document.write(`
 <div class="viewcode-block" id="PointsMapper.backward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.PointsMapper.backward">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Points</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">backward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Points</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
         <span class="n">shape_dict</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">backward_dict</span><span class="p">(</span><span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
         <span class="n">visibility</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">IntListMapper</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Points</span><span class="p">(</span><span class="n">visibility</span><span class="o">=</span><span class="p">[</span><span class="n">Points</span><span class="o">.</span><span class="n">Visibility</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">visibility</span><span class="p">],</span> <span class="o">**</span><span class="n">shape_dict</span><span class="p">),</span> <span class="n">offset</span></div>
@@ -566,20 +566,20 @@ document.write(`
 
 <div class="viewcode-block" id="PolyLineMapper">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.PolyLineMapper">[docs]</a>
-<span class="k">class</span> <span class="nc">PolyLineMapper</span><span class="p">(</span><span class="n">_ShapeMapper</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PolyLineMapper</span><span class="p">(</span><span class="n">_ShapeMapper</span><span class="p">):</span>
     <span class="n">ann_type</span> <span class="o">=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">polyline</span>
 
 <div class="viewcode-block" id="PolyLineMapper.forward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.PolyLineMapper.forward">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ann</span><span class="p">:</span> <span class="n">PolyLine</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ann</span><span class="p">:</span> <span class="n">PolyLine</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">ann</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="PolyLineMapper.backward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.PolyLineMapper.backward">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">PolyLine</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">backward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">PolyLine</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
         <span class="n">shape_dict</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">backward_dict</span><span class="p">(</span><span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">PolyLine</span><span class="p">(</span><span class="o">**</span><span class="n">shape_dict</span><span class="p">),</span> <span class="n">offset</span></div>
 </div>
@@ -588,20 +588,20 @@ document.write(`
 
 <div class="viewcode-block" id="PolygonMapper">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.PolygonMapper">[docs]</a>
-<span class="k">class</span> <span class="nc">PolygonMapper</span><span class="p">(</span><span class="n">_ShapeMapper</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PolygonMapper</span><span class="p">(</span><span class="n">_ShapeMapper</span><span class="p">):</span>
     <span class="n">ann_type</span> <span class="o">=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">polygon</span>
 
 <div class="viewcode-block" id="PolygonMapper.forward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.PolygonMapper.forward">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ann</span><span class="p">:</span> <span class="n">Polygon</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ann</span><span class="p">:</span> <span class="n">Polygon</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">ann</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="PolygonMapper.backward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.PolygonMapper.backward">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Polygon</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">backward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Polygon</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
         <span class="n">shape_dict</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">backward_dict</span><span class="p">(</span><span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Polygon</span><span class="p">(</span><span class="o">**</span><span class="n">shape_dict</span><span class="p">),</span> <span class="n">offset</span></div>
 </div>
@@ -610,20 +610,20 @@ document.write(`
 
 <div class="viewcode-block" id="BboxMapper">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.BboxMapper">[docs]</a>
-<span class="k">class</span> <span class="nc">BboxMapper</span><span class="p">(</span><span class="n">_ShapeMapper</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BboxMapper</span><span class="p">(</span><span class="n">_ShapeMapper</span><span class="p">):</span>
     <span class="n">ann_type</span> <span class="o">=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span>
 
 <div class="viewcode-block" id="BboxMapper.forward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.BboxMapper.forward">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ann</span><span class="p">:</span> <span class="n">Bbox</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ann</span><span class="p">:</span> <span class="n">Bbox</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">ann</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="BboxMapper.backward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.BboxMapper.backward">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Bbox</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">backward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Bbox</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
         <span class="n">shape_dict</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">backward_dict</span><span class="p">(</span><span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
         <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="n">shape_dict</span><span class="p">[</span><span class="s2">&quot;points&quot;</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">Bbox</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x2</span> <span class="o">-</span> <span class="n">x</span><span class="p">,</span> <span class="n">y2</span> <span class="o">-</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">shape_dict</span><span class="p">),</span> <span class="n">offset</span></div>
@@ -633,13 +633,13 @@ document.write(`
 
 <div class="viewcode-block" id="CaptionMapper">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.CaptionMapper">[docs]</a>
-<span class="k">class</span> <span class="nc">CaptionMapper</span><span class="p">(</span><span class="n">AnnotationMapper</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CaptionMapper</span><span class="p">(</span><span class="n">AnnotationMapper</span><span class="p">):</span>
     <span class="n">ann_type</span> <span class="o">=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">caption</span>
 
 <div class="viewcode-block" id="CaptionMapper.forward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.CaptionMapper.forward">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ann</span><span class="p">:</span> <span class="n">Caption</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ann</span><span class="p">:</span> <span class="n">Caption</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="n">_bytearray</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
         <span class="n">_bytearray</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">ann</span><span class="p">))</span>
         <span class="n">_bytearray</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">StringMapper</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">caption</span><span class="p">))</span>
@@ -649,7 +649,7 @@ document.write(`
 <div class="viewcode-block" id="CaptionMapper.backward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.CaptionMapper.backward">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Caption</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">backward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Caption</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
         <span class="n">ann_dict</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">backward_dict</span><span class="p">(</span><span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
         <span class="n">caption</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">StringMapper</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Caption</span><span class="p">(</span><span class="n">caption</span><span class="o">=</span><span class="n">caption</span><span class="p">,</span> <span class="o">**</span><span class="n">ann_dict</span><span class="p">),</span> <span class="n">offset</span></div>
@@ -659,13 +659,13 @@ document.write(`
 
 <div class="viewcode-block" id="Cuboid3dMapper">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.Cuboid3dMapper">[docs]</a>
-<span class="k">class</span> <span class="nc">Cuboid3dMapper</span><span class="p">(</span><span class="n">AnnotationMapper</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Cuboid3dMapper</span><span class="p">(</span><span class="n">AnnotationMapper</span><span class="p">):</span>
     <span class="n">ann_type</span> <span class="o">=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">cuboid_3d</span>
 
 <div class="viewcode-block" id="Cuboid3dMapper.forward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.Cuboid3dMapper.forward">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ann</span><span class="p">:</span> <span class="n">Cuboid3d</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ann</span><span class="p">:</span> <span class="n">Cuboid3d</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="n">_bytearray</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
         <span class="n">_bytearray</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">ann</span><span class="p">))</span>
         <span class="n">_bytearray</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&lt;i&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">forward_optional_label</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="p">)))</span>
@@ -676,7 +676,7 @@ document.write(`
 <div class="viewcode-block" id="Cuboid3dMapper.backward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.Cuboid3dMapper.backward">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Cuboid3d</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">backward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Cuboid3d</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
         <span class="n">ann_dict</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">backward_dict</span><span class="p">(</span><span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
         <span class="p">(</span><span class="n">label</span><span class="p">,)</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="s2">&quot;&lt;i&quot;</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
         <span class="n">offset</span> <span class="o">+=</span> <span class="mi">4</span>
@@ -697,20 +697,20 @@ document.write(`
 
 <div class="viewcode-block" id="EllipseMapper">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.EllipseMapper">[docs]</a>
-<span class="k">class</span> <span class="nc">EllipseMapper</span><span class="p">(</span><span class="n">_ShapeMapper</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EllipseMapper</span><span class="p">(</span><span class="n">_ShapeMapper</span><span class="p">):</span>
     <span class="n">ann_type</span> <span class="o">=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">ellipse</span>
 
 <div class="viewcode-block" id="EllipseMapper.forward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.EllipseMapper.forward">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ann</span><span class="p">:</span> <span class="n">Ellipse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ann</span><span class="p">:</span> <span class="n">Ellipse</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">ann</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="EllipseMapper.backward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.EllipseMapper.backward">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Ellipse</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">backward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Ellipse</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
         <span class="n">shape_dict</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">backward_dict</span><span class="p">(</span><span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
         <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="n">shape_dict</span><span class="p">[</span><span class="s2">&quot;points&quot;</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">Ellipse</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="o">**</span><span class="n">shape_dict</span><span class="p">),</span> <span class="n">offset</span></div>
@@ -720,13 +720,13 @@ document.write(`
 
 <div class="viewcode-block" id="Cuboid2DMapper">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.Cuboid2DMapper">[docs]</a>
-<span class="k">class</span> <span class="nc">Cuboid2DMapper</span><span class="p">(</span><span class="n">AnnotationMapper</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Cuboid2DMapper</span><span class="p">(</span><span class="n">AnnotationMapper</span><span class="p">):</span>
     <span class="n">ann_type</span> <span class="o">=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">cuboid_2d</span>
 
 <div class="viewcode-block" id="Cuboid2DMapper.forward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.Cuboid2DMapper.forward">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ann</span><span class="p">:</span> <span class="n">Shape</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ann</span><span class="p">:</span> <span class="n">Shape</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="n">_bytearray</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
         <span class="n">_bytearray</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&lt;Bqqi&quot;</span><span class="p">,</span> <span class="n">ann</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">ann</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">ann</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="n">ann</span><span class="o">.</span><span class="n">object_id</span><span class="p">))</span>
         <span class="n">_bytearray</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">DictMapper</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="p">))</span>
@@ -742,7 +742,7 @@ document.write(`
 <div class="viewcode-block" id="Cuboid2DMapper.backward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.Cuboid2DMapper.backward">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Ellipse</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">backward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Ellipse</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
         <span class="n">ann_dict</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">backward_dict</span><span class="p">(</span><span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
         <span class="n">label</span><span class="p">,</span> <span class="n">z_order</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="s2">&quot;&lt;ii&quot;</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
         <span class="n">offset</span> <span class="o">+=</span> <span class="mi">8</span>
@@ -756,7 +756,7 @@ document.write(`
 
 <div class="viewcode-block" id="AnnotationListMapper">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.AnnotationListMapper">[docs]</a>
-<span class="k">class</span> <span class="nc">AnnotationListMapper</span><span class="p">(</span><span class="n">Mapper</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AnnotationListMapper</span><span class="p">(</span><span class="n">Mapper</span><span class="p">):</span>
     <span class="n">backward_map</span> <span class="o">=</span> <span class="p">{</span>
         <span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">:</span> <span class="n">LabelMapper</span><span class="o">.</span><span class="n">backward</span><span class="p">,</span>
         <span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span><span class="p">:</span> <span class="n">MaskMapper</span><span class="o">.</span><span class="n">backward</span><span class="p">,</span>
@@ -773,7 +773,7 @@ document.write(`
 <div class="viewcode-block" id="AnnotationListMapper.forward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.AnnotationListMapper.forward">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">anns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">anns</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
         <span class="n">_bytearray</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
         <span class="n">_bytearray</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;&lt;I&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">anns</span><span class="p">)))</span>
 
@@ -807,7 +807,7 @@ document.write(`
 <div class="viewcode-block" id="AnnotationListMapper.backward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.annotation.html#datumaro.plugins.data_formats.arrow.mapper.AnnotationListMapper.backward">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">],</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">backward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">],</span> <span class="nb">int</span><span class="p">]:</span>
         <span class="p">(</span><span class="n">n_anns</span><span class="p">,)</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="s2">&quot;&lt;I&quot;</span><span class="p">,</span> <span class="n">_bytes</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
         <span class="n">offset</span> <span class="o">+=</span> <span class="mi">4</span>
         <span class="n">anns</span> <span class="o">=</span> <span class="p">[]</span>

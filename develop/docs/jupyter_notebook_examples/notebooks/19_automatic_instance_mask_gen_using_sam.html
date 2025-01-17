@@ -28,7 +28,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -703,7 +703,7 @@ will use the <code class="docutils literal notranslate"><span class="pre">vit_b<
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">datumaro</span> <span class="k">as</span> <span class="nn">dm</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dm</span>
 
 <span class="n">item_id</span> <span class="o">=</span> <span class="s2">&quot;img&quot;</span>
 <span class="n">items</span> <span class="o">=</span> <span class="p">[</span>
@@ -761,15 +761,20 @@ infos
 </div>
 <p>Now, we apply <code class="docutils literal notranslate"><span class="pre">SAMAutomaticMaskGeneration</span></code> to the dataset. This transform requires several arguments to execute properly.</p>
 <p><code class="docutils literal notranslate"><span class="pre">inference_server_type</span></code> represents the type of inference server on which SAM encoder and decoder are deployed. In this example, we launched the OpenVINO™ Model Server instance. Therefore, please select <code class="docutils literal notranslate"><span class="pre">InferenceServerType.ovms</span></code>.</p>
-<p>The gRPC endpoint address was <code class="docutils literal notranslate"><span class="pre">localhost:8001</span></code>. To configure this, provide the following parameters: - <code class="docutils literal notranslate"><span class="pre">host=&quot;localhost&quot;</span></code> - <code class="docutils literal notranslate"><span class="pre">port=8001</span></code> - <code class="docutils literal notranslate"><span class="pre">protocol_type=ProtocolType.grpc</span></code></p>
+<p>The gRPC endpoint address was <code class="docutils literal notranslate"><span class="pre">localhost:8001</span></code>. To configure this, provide the following parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">host=&quot;localhost&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">port=8001</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">protocol_type=ProtocolType.grpc</span></code></p></li>
+</ul>
 <p>You can also specify a <code class="docutils literal notranslate"><span class="pre">timeout=60.0</span></code> value, which represents the maximum seconds to wait for a response from the server instance.</p>
 <p>Lastly, we’ve set <code class="docutils literal notranslate"><span class="pre">num_workers=0</span></code>. This means we will use synchronous iteration to send a model inference request to the server instance and wait for the inference results. If you need to handle multiple inference requests concurrently, you can increase this value to utilize a thread pool. This is particularly useful when dealing with server instances that have high throughput.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datumaro.plugins.sam_transforms</span> <span class="kn">import</span> <span class="n">SAMAutomaticMaskGeneration</span>
-<span class="kn">from</span> <span class="nn">datumaro.plugins.inference_server_plugin</span> <span class="kn">import</span> <span class="n">InferenceServerType</span><span class="p">,</span> <span class="n">ProtocolType</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.sam_transforms</span><span class="w"> </span><span class="kn">import</span> <span class="n">SAMAutomaticMaskGeneration</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.inference_server_plugin</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferenceServerType</span><span class="p">,</span> <span class="n">ProtocolType</span>
 
 <span class="k">with</span> <span class="n">dm</span><span class="o">.</span><span class="n">eager_mode</span><span class="p">():</span>
     <span class="n">dataset</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span>

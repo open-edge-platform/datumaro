@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -343,22 +343,22 @@ document.write(`
 <span></span><span class="c1"># Copyright (C) 2019-2022 Intel Corporation</span>
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
-<span class="kn">from</span> <span class="nn">multiprocessing.pool</span> <span class="kn">import</span> <span class="n">ThreadPool</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing.pool</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThreadPool</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="n">Annotation</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">LabelCategories</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.cli_plugin</span> <span class="kn">import</span> <span class="n">CliPlugin</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetBase</span><span class="p">,</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">IDataset</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.launcher</span> <span class="kn">import</span> <span class="n">Launcher</span>
-<span class="kn">from</span> <span class="nn">datumaro.util</span> <span class="kn">import</span> <span class="n">is_method_redefined</span><span class="p">,</span> <span class="n">take_by</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.multi_procs_util</span> <span class="kn">import</span> <span class="n">consumer_generator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotation</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">LabelCategories</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.cli_plugin</span><span class="w"> </span><span class="kn">import</span> <span class="n">CliPlugin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetBase</span><span class="p">,</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">IDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.launcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">Launcher</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_method_redefined</span><span class="p">,</span> <span class="n">take_by</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.multi_procs_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">consumer_generator</span>
 
 
 <div class="viewcode-block" id="Transform">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.transformer.html#datumaro.components.dataset.Transform">[docs]</a>
-<span class="k">class</span> <span class="nc">Transform</span><span class="p">(</span><span class="n">DatasetBase</span><span class="p">,</span> <span class="n">CliPlugin</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Transform</span><span class="p">(</span><span class="n">DatasetBase</span><span class="p">,</span> <span class="n">CliPlugin</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A base class for dataset transformations that change dataset items</span>
 <span class="sd">    or their annotations.</span>
@@ -367,30 +367,30 @@ document.write(`
 <div class="viewcode-block" id="Transform.wrap_item">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.transformer.html#datumaro.components.dataset.Transform.wrap_item">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">wrap_item</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrap_item</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">item</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extractor</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extractor</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span> <span class="o">=</span> <span class="n">extractor</span>
 
 <div class="viewcode-block" id="Transform.categories">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.transformer.html#datumaro.components.dataset.Transform.categories">[docs]</a>
-    <span class="k">def</span> <span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="Transform.subsets">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.transformer.html#datumaro.components.dataset.Transform.subsets">[docs]</a>
-    <span class="k">def</span> <span class="nf">subsets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">subsets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subsets</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_subsets</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">subsets</span><span class="p">())</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">subsets</span><span class="p">()</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_length</span> <span class="ow">in</span> <span class="p">{</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;parent&quot;</span><span class="p">}</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_length</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_length</span> <span class="ow">is</span> <span class="kc">None</span>
@@ -402,13 +402,13 @@ document.write(`
 
 <div class="viewcode-block" id="Transform.media_type">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.transformer.html#datumaro.components.dataset.Transform.media_type">[docs]</a>
-    <span class="k">def</span> <span class="nf">media_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">media_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="Transform.infos">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.transformer.html#datumaro.components.dataset.Transform.infos">[docs]</a>
-    <span class="k">def</span> <span class="nf">infos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">infos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">infos</span><span class="p">()</span></div>
 </div>
 
@@ -416,10 +416,10 @@ document.write(`
 
 <div class="viewcode-block" id="ItemTransform">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.transformer.html#datumaro.components.dataset.ItemTransform">[docs]</a>
-<span class="k">class</span> <span class="nc">ItemTransform</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ItemTransform</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
 <div class="viewcode-block" id="ItemTransform.transform_item">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.transformer.html#datumaro.components.dataset.ItemTransform.transform_item">[docs]</a>
-    <span class="k">def</span> <span class="nf">transform_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transform_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a modified copy of the input item.</span>
 
@@ -430,7 +430,7 @@ document.write(`
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="p">:</span>
             <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -440,7 +440,7 @@ document.write(`
 
 <div class="viewcode-block" id="TabularTransform">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.transformer.html#datumaro.components.dataset.TabularTransform">[docs]</a>
-<span class="k">class</span> <span class="nc">TabularTransform</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TabularTransform</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A transformation class for processing dataset items in batches with optional parallelism.</span>
 
 <span class="sd">    This class takes a dataset extractor, batch size, and number of worker threads to process</span>
@@ -455,7 +455,7 @@ document.write(`
 <span class="sd">            Set to 0 for single-process mode. Default is 0.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">extractor</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">,</span>
         <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
@@ -469,15 +469,15 @@ document.write(`
             <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span> <span class="o">=</span> <span class="n">num_workers</span>
 
-    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter_single_proc</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter_multi_procs</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_iter_multi_procs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_iter_multi_procs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">with</span> <span class="n">ThreadPool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
 
-            <span class="k">def</span> <span class="nf">_producer_gen</span><span class="p">():</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">_producer_gen</span><span class="p">():</span>
                 <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">take_by</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span><span class="p">):</span>
                     <span class="n">future</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">apply_async</span><span class="p">(</span>
                         <span class="n">func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_process_batch</span><span class="p">,</span>
@@ -490,14 +490,14 @@ document.write(`
                     <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">future</span><span class="o">.</span><span class="n">get</span><span class="p">():</span>
                         <span class="k">yield</span> <span class="n">item</span>
 
-    <span class="k">def</span> <span class="nf">_iter_single_proc</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_iter_single_proc</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
         <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">take_by</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_batch</span><span class="p">(</span><span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">):</span>
                 <span class="k">yield</span> <span class="n">item</span>
 
 <div class="viewcode-block" id="TabularTransform.transform_item">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.transformer.html#datumaro.components.dataset.TabularTransform.transform_item">[docs]</a>
-    <span class="k">def</span> <span class="nf">transform_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transform_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a modified copy of the input item.</span>
 
@@ -508,7 +508,7 @@ document.write(`
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_process_batch</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_batch</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">batch</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
@@ -520,7 +520,7 @@ document.write(`
 
 <div class="viewcode-block" id="ModelTransform">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.dataset.ModelTransform">[docs]</a>
-<span class="k">class</span> <span class="nc">ModelTransform</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ModelTransform</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A transformation class for applying a model&#39;s inference to dataset items.</span>
 
 <span class="sd">    This class takes an dataset, a launcher, and other optional parameters</span>
@@ -538,7 +538,7 @@ document.write(`
 <span class="sd">            Set to 0 for single-process mode. Default is 0.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">extractor</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">,</span>
         <span class="n">launcher</span><span class="p">:</span> <span class="n">Launcher</span><span class="p">,</span>
@@ -556,15 +556,15 @@ document.write(`
             <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span> <span class="o">=</span> <span class="n">num_workers</span>
 
-    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter_single_proc</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter_multi_procs</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_iter_multi_procs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_iter_multi_procs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">with</span> <span class="n">ThreadPool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
 
-            <span class="k">def</span> <span class="nf">_producer_gen</span><span class="p">():</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">_producer_gen</span><span class="p">():</span>
                 <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">take_by</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span><span class="p">):</span>
                     <span class="n">future</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">apply_async</span><span class="p">(</span>
                         <span class="n">func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_process_batch</span><span class="p">,</span>
@@ -577,12 +577,12 @@ document.write(`
                     <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">future</span><span class="o">.</span><span class="n">get</span><span class="p">():</span>
                         <span class="k">yield</span> <span class="n">item</span>
 
-    <span class="k">def</span> <span class="nf">_iter_single_proc</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_iter_single_proc</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
         <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">take_by</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_batch</span><span class="p">(</span><span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">):</span>
                 <span class="k">yield</span> <span class="n">item</span>
 
-    <span class="k">def</span> <span class="nf">_process_batch</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_batch</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">batch</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
@@ -605,14 +605,14 @@ document.write(`
 
 <div class="viewcode-block" id="ModelTransform.get_subset">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.dataset.ModelTransform.get_subset">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="n">subset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">get_subset</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="k">return</span> <span class="vm">__class__</span><span class="p">(</span><span class="n">subset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_launcher</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ModelTransform.infos">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.dataset.ModelTransform.infos">[docs]</a>
-    <span class="k">def</span> <span class="nf">infos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">infos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">launcher_override</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_launcher</span><span class="o">.</span><span class="n">infos</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">launcher_override</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">launcher_override</span>
@@ -621,7 +621,7 @@ document.write(`
 
 <div class="viewcode-block" id="ModelTransform.categories">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.dataset.ModelTransform.categories">[docs]</a>
-    <span class="k">def</span> <span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">launcher_override</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_launcher</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">launcher_override</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">launcher_override</span>
@@ -630,13 +630,13 @@ document.write(`
 
 <div class="viewcode-block" id="ModelTransform.transform_item">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.dataset.ModelTransform.transform_item">[docs]</a>
-    <span class="k">def</span> <span class="nf">transform_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transform_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="n">inputs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">annotations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_launcher</span><span class="o">.</span><span class="n">launch</span><span class="p">(</span><span class="n">inputs</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrap_item</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="n">annotations</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_check_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]):</span>
         <span class="n">labels_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">())</span><span class="o">.</span><span class="n">items</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">annotations</span><span class="p">:</span>

@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -344,17 +344,17 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
-<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">auto</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">auto</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">,</span> <span class="n">MaskCategories</span>
-<span class="kn">from</span> <span class="nn">datumaro.util</span> <span class="kn">import</span> <span class="n">parse_json_file</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.mask_tools</span> <span class="kn">import</span> <span class="n">generate_colormap</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">,</span> <span class="n">MaskCategories</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_json_file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.mask_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_colormap</span>
 
 
 <div class="viewcode-block" id="parse_config_file">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.mapillary_vistas.format.html#datumaro.plugins.data_formats.mapillary_vistas.format.parse_config_file">[docs]</a>
-<span class="k">def</span> <span class="nf">parse_config_file</span><span class="p">(</span><span class="n">config_path</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_config_file</span><span class="p">(</span><span class="n">config_path</span><span class="p">):</span>
     <span class="n">label_map</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
     <span class="n">config</span> <span class="o">=</span> <span class="n">parse_json_file</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]:</span>
@@ -365,7 +365,7 @@ document.write(`
 
 <div class="viewcode-block" id="make_mapillary_instance_categories">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.mapillary_vistas.format.html#datumaro.plugins.data_formats.mapillary_vistas.format.make_mapillary_instance_categories">[docs]</a>
-<span class="k">def</span> <span class="nf">make_mapillary_instance_categories</span><span class="p">(</span><span class="n">label_map</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_mapillary_instance_categories</span><span class="p">(</span><span class="n">label_map</span><span class="p">):</span>
     <span class="n">label_cat</span> <span class="o">=</span> <span class="n">LabelCategories</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">label_map</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">label_cat</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
@@ -385,7 +385,7 @@ document.write(`
 
 <div class="viewcode-block" id="MapillaryVistasTask">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.mapillary_vistas.format.html#datumaro.plugins.data_formats.mapillary_vistas.format.MapillaryVistasTask">[docs]</a>
-<span class="k">class</span> <span class="nc">MapillaryVistasTask</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MapillaryVistasTask</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="n">instances</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
     <span class="n">panoptic</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span></div>
 
@@ -393,7 +393,7 @@ document.write(`
 
 <div class="viewcode-block" id="MapillaryVistasPath">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.mapillary_vistas.format.html#datumaro.plugins.data_formats.mapillary_vistas.format.MapillaryVistasPath">[docs]</a>
-<span class="k">class</span> <span class="nc">MapillaryVistasPath</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MapillaryVistasPath</span><span class="p">:</span>
     <span class="n">IMAGES_DIR</span> <span class="o">=</span> <span class="s2">&quot;images&quot;</span>
     <span class="n">INSTANCES_DIR</span> <span class="o">=</span> <span class="s2">&quot;instances&quot;</span>
     <span class="n">PANOPTIC_DIR</span> <span class="o">=</span> <span class="s2">&quot;panoptic&quot;</span>

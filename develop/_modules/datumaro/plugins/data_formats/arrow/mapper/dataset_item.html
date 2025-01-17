@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -344,24 +344,24 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span>
 
-<span class="kn">import</span> <span class="nn">pyarrow</span> <span class="k">as</span> <span class="nn">pa</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pyarrow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pa</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetItem</span>
-<span class="kn">from</span> <span class="nn">datumaro.plugins.data_formats.datumaro_binary.mapper.annotation</span> <span class="kn">import</span> <span class="n">AnnotationListMapper</span>
-<span class="kn">from</span> <span class="nn">datumaro.plugins.data_formats.datumaro_binary.mapper.common</span> <span class="kn">import</span> <span class="n">DictMapper</span><span class="p">,</span> <span class="n">Mapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.data_formats.datumaro_binary.mapper.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationListMapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.data_formats.datumaro_binary.mapper.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">DictMapper</span><span class="p">,</span> <span class="n">Mapper</span>
 
-<span class="kn">from</span> <span class="nn">.media</span> <span class="kn">import</span> <span class="n">MediaMapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">MediaMapper</span>
 
 
 <div class="viewcode-block" id="DatasetItemMapper">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.mapper.dataset_item.html#datumaro.plugins.data_formats.arrow.mapper.DatasetItemMapper">[docs]</a>
-<span class="k">class</span> <span class="nc">DatasetItemMapper</span><span class="p">(</span><span class="n">Mapper</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DatasetItemMapper</span><span class="p">(</span><span class="n">Mapper</span><span class="p">):</span>
 <div class="viewcode-block" id="DatasetItemMapper.forward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.mapper.dataset_item.html#datumaro.plugins.data_formats.arrow.mapper.DatasetItemMapper.forward">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">obj</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
             <span class="s2">&quot;subset&quot;</span><span class="p">:</span> <span class="n">obj</span><span class="o">.</span><span class="n">subset</span><span class="p">,</span>
@@ -374,7 +374,7 @@ document.write(`
 <div class="viewcode-block" id="DatasetItemMapper.backward">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.mapper.dataset_item.html#datumaro.plugins.data_formats.arrow.mapper.DatasetItemMapper.backward">[docs]</a>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">pa</span><span class="o">.</span><span class="n">Table</span><span class="p">,</span> <span class="n">table_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DatasetItem</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">backward</span><span class="p">(</span><span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">pa</span><span class="o">.</span><span class="n">Table</span><span class="p">,</span> <span class="n">table_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DatasetItem</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">DatasetItem</span><span class="p">(</span>
             <span class="nb">id</span><span class="o">=</span><span class="n">table</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">)[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">as_py</span><span class="p">(),</span>
             <span class="n">subset</span><span class="o">=</span><span class="n">table</span><span class="o">.</span><span class="n">column</span><span class="p">(</span><span class="s2">&quot;subset&quot;</span><span class="p">)[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">as_py</span><span class="p">(),</span>

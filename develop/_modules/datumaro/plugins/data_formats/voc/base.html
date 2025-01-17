@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -344,14 +344,14 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">TypeVar</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">TypeVar</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">defusedxml</span> <span class="kn">import</span> <span class="n">ElementTree</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">defusedxml</span><span class="w"> </span><span class="kn">import</span> <span class="n">ElementTree</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Annotation</span><span class="p">,</span>
     <span class="n">AnnotationType</span><span class="p">,</span>
     <span class="n">Bbox</span><span class="p">,</span>
@@ -359,21 +359,21 @@ document.write(`
     <span class="n">ExtractedMask</span><span class="p">,</span>
     <span class="n">Label</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">SubsetBase</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.errors</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">SubsetBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">DatasetImportError</span><span class="p">,</span>
     <span class="n">InvalidAnnotationError</span><span class="p">,</span>
     <span class="n">InvalidFieldError</span><span class="p">,</span>
     <span class="n">MissingFieldError</span><span class="p">,</span>
     <span class="n">UndeclaredLabelError</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.importer</span> <span class="kn">import</span> <span class="n">ImportContext</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.media</span> <span class="kn">import</span> <span class="n">Image</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.image</span> <span class="kn">import</span> <span class="n">find_images</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.mask_tools</span> <span class="kn">import</span> <span class="n">invert_colormap</span><span class="p">,</span> <span class="n">lazy_mask</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.meta_file_util</span> <span class="kn">import</span> <span class="n">has_meta_file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.importer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImportContext</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.image</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_images</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.mask_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">invert_colormap</span><span class="p">,</span> <span class="n">lazy_mask</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.meta_file_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">has_meta_file</span>
 
-<span class="kn">from</span> <span class="nn">.format</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.format</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">VocImporterType</span><span class="p">,</span>
     <span class="n">VocInstColormap</span><span class="p">,</span>
     <span class="n">VocPath</span><span class="p">,</span>
@@ -390,8 +390,8 @@ document.write(`
 
 <div class="viewcode-block" id="VocBase">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.voc.base.html#datumaro.plugins.data_formats.voc.base.VocBase">[docs]</a>
-<span class="k">class</span> <span class="nc">VocBase</span><span class="p">(</span><span class="n">SubsetBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VocBase</span><span class="p">(</span><span class="n">SubsetBase</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">task</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">VocTask</span><span class="p">]</span> <span class="o">=</span> <span class="n">VocTask</span><span class="o">.</span><span class="n">voc</span><span class="p">,</span>
@@ -440,13 +440,13 @@ document.write(`
             <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_items</span> <span class="o">=</span> <span class="p">{</span><span class="n">item</span><span class="p">:</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_subset_list</span><span class="p">(</span><span class="n">path</span><span class="p">)}</span>
 
-    <span class="k">def</span> <span class="nf">_get_label_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_label_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="n">label_id</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">label_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">UndeclaredLabelError</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">label_id</span>
 
-    <span class="k">def</span> <span class="nf">_load_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset_path</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset_path</span><span class="p">):</span>
         <span class="n">label_map</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">has_meta_file</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">):</span>
             <span class="n">label_map</span> <span class="o">=</span> <span class="n">parse_meta_file</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">)</span>
@@ -457,7 +457,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">make_voc_categories</span><span class="p">(</span><span class="n">label_map</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_task</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_load_subset_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_path</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_subset_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_path</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">subset_path</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">DatasetImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Can&#39;t find txt subset list file at &#39;</span><span class="si">{</span><span class="n">subset_path</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
 
@@ -485,7 +485,7 @@ document.write(`
                 <span class="n">subset_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">subset_list</span>
 
-    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_image_dir</span><span class="p">):</span>
             <span class="n">images</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_dir</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">):</span> <span class="n">p</span>
@@ -556,7 +556,7 @@ document.write(`
                 <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span><span class="o">.</span><span class="n">error_policy</span><span class="o">.</span><span class="n">report_item_error</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">item_id</span><span class="o">=</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">))</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_parse_field</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">xpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">,</span> <span class="n">required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_field</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">xpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">,</span> <span class="n">required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
         <span class="n">elem</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">xpath</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">elem</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">required</span><span class="p">:</span>
@@ -570,10 +570,10 @@ document.write(`
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">elem</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">InvalidFieldError</span><span class="p">(</span><span class="n">xpath</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+            <span class="k">raise</span> <span class="n">InvalidFieldError</span><span class="p">(</span><span class="n">xpath</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_parse_bool_field</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">xpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_bool_field</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">xpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]:</span>
         <span class="n">elem</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">xpath</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">elem</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">default</span>
@@ -582,7 +582,7 @@ document.write(`
             <span class="k">raise</span> <span class="n">InvalidFieldError</span><span class="p">(</span><span class="n">xpath</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">elem</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span>
 
-    <span class="k">def</span> <span class="nf">_parse_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">object_elem</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">object_elem</span><span class="p">):</span>
         <span class="n">attributes</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;difficult&quot;</span><span class="p">,</span> <span class="s2">&quot;truncated&quot;</span><span class="p">,</span> <span class="s2">&quot;occluded&quot;</span><span class="p">]:</span>
@@ -608,7 +608,7 @@ document.write(`
         <span class="k">return</span> <span class="n">attributes</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_parse_bbox</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">object_elem</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_bbox</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">object_elem</span><span class="p">):</span>
         <span class="n">bbox_elem</span> <span class="o">=</span> <span class="n">object_elem</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;bndbox&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">bbox_elem</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">MissingFieldError</span><span class="p">(</span><span class="s2">&quot;bndbox&quot;</span><span class="p">)</span>
@@ -619,7 +619,7 @@ document.write(`
         <span class="n">ymax</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_parse_field</span><span class="p">(</span><span class="n">bbox_elem</span><span class="p">,</span> <span class="s2">&quot;ymax&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">xmin</span><span class="p">,</span> <span class="n">ymin</span><span class="p">,</span> <span class="n">xmax</span> <span class="o">-</span> <span class="n">xmin</span><span class="p">,</span> <span class="n">ymax</span> <span class="o">-</span> <span class="n">ymin</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_parse_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_elem</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">item_id</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_elem</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">item_id</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]:</span>
         <span class="n">item_annotations</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="n">obj_id</span> <span class="o">=</span> <span class="mi">0</span>
@@ -674,10 +674,10 @@ document.write(`
         <span class="k">return</span> <span class="n">item_annotations</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_lazy_extract_mask</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_lazy_extract_mask</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
         <span class="k">return</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">mask</span> <span class="o">==</span> <span class="n">c</span>
 
-    <span class="k">def</span> <span class="nf">_parse_masks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_id</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_masks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_id</span><span class="p">):</span>
         <span class="n">item_annotations</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="n">class_mask</span> <span class="o">=</span> <span class="kc">None</span>
@@ -732,7 +732,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">item_annotations</span>
 
-    <span class="k">def</span> <span class="nf">_parse_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Label</span><span class="p">]]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Label</span><span class="p">]]:</span>
         <span class="n">annotations</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">task_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">label_id</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]):</span>
@@ -767,55 +767,55 @@ document.write(`
         <span class="k">return</span> <span class="n">annotations</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">is_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
 
 
 <div class="viewcode-block" id="VocClassificationBase">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.voc.base.html#datumaro.plugins.data_formats.voc.base.VocClassificationBase">[docs]</a>
-<span class="k">class</span> <span class="nc">VocClassificationBase</span><span class="p">(</span><span class="n">VocBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VocClassificationBase</span><span class="p">(</span><span class="n">VocBase</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="n">VocTask</span><span class="o">.</span><span class="n">voc_classification</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="VocDetectionBase">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.voc.base.html#datumaro.plugins.data_formats.voc.base.VocDetectionBase">[docs]</a>
-<span class="k">class</span> <span class="nc">VocDetectionBase</span><span class="p">(</span><span class="n">VocBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VocDetectionBase</span><span class="p">(</span><span class="n">VocBase</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="n">VocTask</span><span class="o">.</span><span class="n">voc_detection</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="VocSegmentationBase">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.voc.base.html#datumaro.plugins.data_formats.voc.base.VocSegmentationBase">[docs]</a>
-<span class="k">class</span> <span class="nc">VocSegmentationBase</span><span class="p">(</span><span class="n">VocBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VocSegmentationBase</span><span class="p">(</span><span class="n">VocBase</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="n">VocTask</span><span class="o">.</span><span class="n">voc_segmentation</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="VocInstanceSegmentationBase">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.voc.base.html#datumaro.plugins.data_formats.voc.base.VocInstanceSegmentationBase">[docs]</a>
-<span class="k">class</span> <span class="nc">VocInstanceSegmentationBase</span><span class="p">(</span><span class="n">VocBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VocInstanceSegmentationBase</span><span class="p">(</span><span class="n">VocBase</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="n">VocTask</span><span class="o">.</span><span class="n">voc_instance_segmentation</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="VocLayoutBase">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.voc.base.html#datumaro.plugins.data_formats.voc.base.VocLayoutBase">[docs]</a>
-<span class="k">class</span> <span class="nc">VocLayoutBase</span><span class="p">(</span><span class="n">VocBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VocLayoutBase</span><span class="p">(</span><span class="n">VocBase</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="n">VocTask</span><span class="o">.</span><span class="n">voc_layout</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="VocActionBase">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.voc.base.html#datumaro.plugins.data_formats.voc.base.VocActionBase">[docs]</a>
-<span class="k">class</span> <span class="nc">VocActionBase</span><span class="p">(</span><span class="n">VocBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VocActionBase</span><span class="p">(</span><span class="n">VocBase</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="n">VocTask</span><span class="o">.</span><span class="n">voc_action</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 </pre></div>

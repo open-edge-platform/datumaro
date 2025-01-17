@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -344,42 +344,42 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">contextlib</span>
-<span class="kn">import</span> <span class="nn">csv</span>
-<span class="kn">import</span> <span class="nn">errno</span>
-<span class="kn">import</span> <span class="nn">fnmatch</span>
-<span class="kn">import</span> <span class="nn">functools</span>
-<span class="kn">import</span> <span class="nn">glob</span>
-<span class="kn">import</span> <span class="nn">itertools</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">types</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">contextlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">errno</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">fnmatch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">glob</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">types</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">cv2</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">attr</span> <span class="kn">import</span> <span class="n">attrs</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">attr</span><span class="w"> </span><span class="kn">import</span> <span class="n">attrs</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">Label</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">,</span> <span class="n">Mask</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetBase</span><span class="p">,</span> <span class="n">DatasetItem</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_item_storage</span> <span class="kn">import</span> <span class="n">ItemStatus</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.errors</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">Label</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">,</span> <span class="n">Mask</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetBase</span><span class="p">,</span> <span class="n">DatasetItem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_item_storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">ItemStatus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">DatasetError</span><span class="p">,</span>
     <span class="n">MediaTypeError</span><span class="p">,</span>
     <span class="n">RepeatedItemError</span><span class="p">,</span>
     <span class="n">UndefinedLabel</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.exporter</span> <span class="kn">import</span> <span class="n">Exporter</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.format_detection</span> <span class="kn">import</span> <span class="n">FormatDetectionContext</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.importer</span> <span class="kn">import</span> <span class="n">ImportContext</span><span class="p">,</span> <span class="n">Importer</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.media</span> <span class="kn">import</span> <span class="n">Image</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.validator</span> <span class="kn">import</span> <span class="n">Severity</span>
-<span class="kn">from</span> <span class="nn">datumaro.util</span> <span class="kn">import</span> <span class="n">parse_json_file</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.annotation_util</span> <span class="kn">import</span> <span class="n">find_instances</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.image</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.exporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Exporter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.format_detection</span><span class="w"> </span><span class="kn">import</span> <span class="n">FormatDetectionContext</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.importer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImportContext</span><span class="p">,</span> <span class="n">Importer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.validator</span><span class="w"> </span><span class="kn">import</span> <span class="n">Severity</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_json_file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.annotation_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_instances</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.image</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">DEFAULT_IMAGE_META_FILE_NAME</span><span class="p">,</span>
     <span class="n">find_images</span><span class="p">,</span>
     <span class="n">lazy_image</span><span class="p">,</span>
@@ -388,8 +388,8 @@ document.write(`
     <span class="n">save_image</span><span class="p">,</span>
     <span class="n">save_image_meta_file</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.meta_file_util</span> <span class="kn">import</span> <span class="n">has_meta_file</span><span class="p">,</span> <span class="n">parse_meta_file</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.os_util</span> <span class="kn">import</span> <span class="n">make_file_name</span><span class="p">,</span> <span class="n">split_path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.meta_file_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">has_meta_file</span><span class="p">,</span> <span class="n">parse_meta_file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.os_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_file_name</span><span class="p">,</span> <span class="n">split_path</span>
 
 <span class="c1"># A regex to check whether a string can be used as a &quot;normal&quot; path</span>
 <span class="c1"># component.</span>
@@ -409,11 +409,11 @@ document.write(`
 <div class="viewcode-block" id="UnsupportedSubsetNameError">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.open_images.html#datumaro.plugins.data_formats.open_images.UnsupportedSubsetNameError">[docs]</a>
 <span class="nd">@attrs</span><span class="p">(</span><span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">UnsupportedSubsetNameError</span><span class="p">(</span><span class="n">DatasetError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnsupportedSubsetNameError</span><span class="p">(</span><span class="n">DatasetError</span><span class="p">):</span>
     <span class="n">item_id</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">subset</span><span class="p">:</span> <span class="nb">str</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2"> has an unsupported subset name </span><span class="si">%r</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">subset</span><span class="p">)</span></div>
 
 
@@ -421,11 +421,11 @@ document.write(`
 <div class="viewcode-block" id="UnsupportedBoxIdError">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.open_images.html#datumaro.plugins.data_formats.open_images.UnsupportedBoxIdError">[docs]</a>
 <span class="nd">@attrs</span><span class="p">(</span><span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">UnsupportedBoxIdError</span><span class="p">(</span><span class="n">DatasetError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnsupportedBoxIdError</span><span class="p">(</span><span class="n">DatasetError</span><span class="p">):</span>
     <span class="n">item_id</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">box_id</span><span class="p">:</span> <span class="nb">str</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2"> has a mask with an unsupported box ID </span><span class="si">%r</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">box_id</span><span class="p">)</span></div>
 
 
@@ -433,18 +433,18 @@ document.write(`
 <div class="viewcode-block" id="UnsupportedMaskPathError">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.open_images.html#datumaro.plugins.data_formats.open_images.UnsupportedMaskPathError">[docs]</a>
 <span class="nd">@attrs</span><span class="p">(</span><span class="n">auto_attribs</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">UnsupportedMaskPathError</span><span class="p">(</span><span class="n">DatasetError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnsupportedMaskPathError</span><span class="p">(</span><span class="n">DatasetError</span><span class="p">):</span>
     <span class="n">item_id</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">mask_path</span><span class="p">:</span> <span class="nb">str</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2"> has a mask with an unsupported path </span><span class="si">%r</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask_path</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="OpenImagesPath">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.open_images.html#datumaro.plugins.data_formats.open_images.OpenImagesPath">[docs]</a>
-<span class="k">class</span> <span class="nc">OpenImagesPath</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OpenImagesPath</span><span class="p">:</span>
     <span class="n">ANNOTATIONS_DIR</span> <span class="o">=</span> <span class="s2">&quot;annotations&quot;</span>
     <span class="n">IMAGES_DIR</span> <span class="o">=</span> <span class="s2">&quot;images&quot;</span>
     <span class="n">MASKS_DIR</span> <span class="o">=</span> <span class="s2">&quot;masks&quot;</span>
@@ -525,8 +525,8 @@ document.write(`
 
 <div class="viewcode-block" id="OpenImagesBase">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.open_images.html#datumaro.plugins.data_formats.open_images.OpenImagesBase">[docs]</a>
-<span class="k">class</span> <span class="nc">OpenImagesBase</span><span class="p">(</span><span class="n">DatasetBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OpenImagesBase</span><span class="p">(</span><span class="n">DatasetBase</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -569,28 +569,28 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">_load_categories</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_load_items</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span>
 
 <div class="viewcode-block" id="OpenImagesBase.categories">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.open_images.html#datumaro.plugins.data_formats.open_images.OpenImagesBase.categories">[docs]</a>
-    <span class="k">def</span> <span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span></div>
 
 
     <span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
-    <span class="k">def</span> <span class="nf">_open_csv_annotation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_open_csv_annotation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">):</span>
         <span class="n">absolute_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_annotation_dir</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
 
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">absolute_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictReader</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_glob_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_glob_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">annotation_file</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_annotation_files</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">fnmatch</span><span class="o">.</span><span class="n">fnmatch</span><span class="p">(</span><span class="n">annotation_file</span><span class="p">,</span> <span class="n">pattern</span><span class="p">):</span>
                 <span class="k">yield</span> <span class="n">annotation_file</span>
 
-    <span class="k">def</span> <span class="nf">_load_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">label_categories</span> <span class="o">=</span> <span class="n">LabelCategories</span><span class="p">()</span>
 
         <span class="n">class_desc_patterns</span> <span class="o">=</span> <span class="p">[</span>
@@ -635,7 +635,7 @@ document.write(`
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_load_label_category_parents</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_load_label_category_parents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_label_category_parents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">label_categories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span>
 
         <span class="n">hierarchy_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_annotation_dir</span><span class="p">,</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">HIERARCHY_FILE_NAME</span><span class="p">)</span>
@@ -645,7 +645,7 @@ document.write(`
         <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
             <span class="k">return</span>
 
-        <span class="k">def</span> <span class="nf">set_parents_from_node</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">category</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">set_parents_from_node</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">category</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">child_node</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Subcategory&quot;</span><span class="p">,</span> <span class="p">[]):</span>
                 <span class="n">_</span><span class="p">,</span> <span class="n">child_category</span> <span class="o">=</span> <span class="n">label_categories</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">child_node</span><span class="p">[</span><span class="s2">&quot;LabelName&quot;</span><span class="p">])</span>
 
@@ -657,7 +657,7 @@ document.write(`
         <span class="n">_</span><span class="p">,</span> <span class="n">root_category</span> <span class="o">=</span> <span class="n">label_categories</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">root_node</span><span class="p">[</span><span class="s2">&quot;LabelName&quot;</span><span class="p">])</span>
         <span class="n">set_parents_from_node</span><span class="p">(</span><span class="n">root_node</span><span class="p">,</span> <span class="n">root_category</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_load_items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">images_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset_dir</span><span class="p">,</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">IMAGES_DIR</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_image_paths_by_id</span> <span class="o">=</span> <span class="p">{</span>
@@ -674,7 +674,7 @@ document.write(`
 
         <span class="n">items_by_id</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="k">def</span> <span class="nf">load_from</span><span class="p">(</span><span class="n">annotation_name</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">load_from</span><span class="p">(</span><span class="n">annotation_name</span><span class="p">):</span>
             <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_open_csv_annotation</span><span class="p">(</span><span class="n">annotation_name</span><span class="p">)</span> <span class="k">as</span> <span class="n">image_reader</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">image_description</span> <span class="ow">in</span> <span class="n">image_reader</span><span class="p">:</span>
                     <span class="n">image_id</span> <span class="o">=</span> <span class="n">image_description</span><span class="p">[</span><span class="s2">&quot;ImageID&quot;</span><span class="p">]</span>
@@ -708,7 +708,7 @@ document.write(`
         <span class="n">normalized_coords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_bboxes</span><span class="p">(</span><span class="n">items_by_id</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_load_masks</span><span class="p">(</span><span class="n">items_by_id</span><span class="p">,</span> <span class="n">normalized_coords</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_add_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span><span class="p">):</span>
         <span class="n">image_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_paths_by_id</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item_id</span><span class="p">)</span>
         <span class="n">image</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">image_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -723,11 +723,11 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">item</span>
 
-    <span class="k">def</span> <span class="nf">_get_subset_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_subset_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
         <span class="n">parts</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;oidv6&quot;</span> <span class="k">else</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_load_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items_by_id</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items_by_id</span><span class="p">):</span>
         <span class="n">label_categories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span>
 
         <span class="c1"># TODO: implement reading of machine-annotated labels</span>
@@ -760,7 +760,7 @@ document.write(`
                     <span class="p">)</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_ann_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_load_bboxes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items_by_id</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_bboxes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items_by_id</span><span class="p">):</span>
         <span class="n">label_categories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span>
 
         <span class="c1"># OID specifies box coordinates in the normalized form, which we have to</span>
@@ -844,7 +844,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">normalized_coords</span>
 
-    <span class="k">def</span> <span class="nf">_load_masks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items_by_id</span><span class="p">,</span> <span class="n">normalized_coords</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_masks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items_by_id</span><span class="p">,</span> <span class="n">normalized_coords</span><span class="p">):</span>
         <span class="n">label_categories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span>
 
         <span class="k">for</span> <span class="n">mask_path</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_glob_annotations</span><span class="p">(</span><span class="s2">&quot;*&quot;</span> <span class="o">+</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">MASK_DESCRIPTION_FILE_SUFFIX</span><span class="p">):</span>
@@ -947,7 +947,7 @@ document.write(`
                     <span class="bp">self</span><span class="o">.</span><span class="n">_ann_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_load_and_resize_mask</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_and_resize_mask</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
         <span class="n">raw</span> <span class="o">=</span> <span class="n">load_image</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
         <span class="n">resized</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="p">(</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_NEAREST</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">resized</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span></div>
@@ -956,7 +956,7 @@ document.write(`
 
 <div class="viewcode-block" id="OpenImagesImporter">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.open_images.html#datumaro.plugins.data_formats.open_images.OpenImagesImporter">[docs]</a>
-<span class="k">class</span> <span class="nc">OpenImagesImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OpenImagesImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
     <span class="n">POSSIBLE_ANNOTATION_PATTERNS</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">FULL_IMAGE_DESCRIPTION_FILE_NAME</span><span class="p">,</span>
         <span class="o">*</span><span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">SUBSET_IMAGE_DESCRIPTION_FILE_PATTERNS</span><span class="p">,</span>
@@ -968,7 +968,7 @@ document.write(`
 <div class="viewcode-block" id="OpenImagesImporter.detect">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.open_images.html#datumaro.plugins.data_formats.open_images.OpenImagesImporter.detect">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">detect</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">detect</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">ann_dirs</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">ANNOTATIONS_DIR</span><span class="si">}</span><span class="s2">/&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
         <span class="n">ann_patterns</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">ann_dirs</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">POSSIBLE_ANNOTATION_PATTERNS</span><span class="p">)</span>
         <span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">require_any</span><span class="p">():</span>
@@ -980,7 +980,7 @@ document.write(`
 <div class="viewcode-block" id="OpenImagesImporter.find_sources">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.open_images.html#datumaro.plugins.data_formats.open_images.OpenImagesImporter.find_sources">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">POSSIBLE_ANNOTATION_PATTERNS</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">path</span><span class="p">),</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">ANNOTATIONS_DIR</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)):</span>
                 <span class="k">return</span> <span class="p">[{</span><span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="n">path</span><span class="p">,</span> <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="n">OpenImagesBase</span><span class="o">.</span><span class="n">NAME</span><span class="p">}]</span>
@@ -992,13 +992,13 @@ document.write(`
 <div class="viewcode-block" id="OpenImagesImporter.get_file_extensions">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.open_images.html#datumaro.plugins.data_formats.open_images.OpenImagesImporter.get_file_extensions">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_file_extensions</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_file_extensions</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">({</span><span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">p</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">POSSIBLE_ANNOTATION_PATTERNS</span><span class="p">})</span></div>
 </div>
 
 
 
-<span class="k">class</span> <span class="nc">_LazyCsvDictWriter</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_LazyCsvDictWriter</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    For annotation files, we only learn that the file is required after</span>
 <span class="sd">    we find at least one occurrence of the corresponding annotation type.</span>
@@ -1009,19 +1009,19 @@ document.write(`
 <span class="sd">    once the first row is written.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">writer_manager_factory</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">writer_manager_factory</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_writer_manager_factory</span> <span class="o">=</span> <span class="n">writer_manager_factory</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_writer_manager</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_writer_manager</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_writer_manager</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">writerow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rowdict</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">writerow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rowdict</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_writer_manager</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_writer_manager</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_writer_manager_factory</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_writer_manager</span><span class="o">.</span><span class="fm">__enter__</span><span class="p">()</span>
@@ -1029,7 +1029,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">rowdict</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">_AnnotationWriter</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_AnnotationWriter</span><span class="p">:</span>
     <span class="n">_POSSIBLE_ANNOTATION_FILE_PATTERNS</span> <span class="o">=</span> <span class="p">(</span>
         <span class="c1"># class description files don&#39;t need to be listed,</span>
         <span class="c1"># because they are always written</span>
@@ -1041,14 +1041,14 @@ document.write(`
         <span class="n">DEFAULT_IMAGE_META_FILE_NAME</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_dir</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_dir</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_annotations_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">OpenImagesPath</span><span class="o">.</span><span class="n">ANNOTATIONS_DIR</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_written_annotations</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_annotations_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
-    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_written_annotations</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">file_name</span><span class="p">)</span>
 
         <span class="n">file_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_annotations_dir</span><span class="p">,</span> <span class="n">file_name</span><span class="p">)</span>
@@ -1068,17 +1068,17 @@ document.write(`
         <span class="n">os</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">temp_file_path</span><span class="p">,</span> <span class="n">file_path</span><span class="p">)</span>
 
     <span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
-    <span class="k">def</span> <span class="nf">open_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">field_names</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">write_header</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">open_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">field_names</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">write_header</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictWriter</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">field_names</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">write_header</span><span class="p">:</span>
                 <span class="n">writer</span><span class="o">.</span><span class="n">writeheader</span><span class="p">()</span>
             <span class="k">yield</span> <span class="n">writer</span>
 
-    <span class="k">def</span> <span class="nf">open_csv_lazy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">field_names</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">open_csv_lazy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">field_names</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">_LazyCsvDictWriter</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">open_csv</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">field_names</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">remove_unwritten</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_unwritten</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">file_name</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_annotations_dir</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">file_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_written_annotations</span> <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span>
                 <span class="n">fnmatch</span><span class="o">.</span><span class="n">fnmatch</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span>
@@ -1089,10 +1089,10 @@ document.write(`
 
 <div class="viewcode-block" id="OpenImagesExporter">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.open_images.html#datumaro.plugins.data_formats.open_images.OpenImagesExporter">[docs]</a>
-<span class="k">class</span> <span class="nc">OpenImagesExporter</span><span class="p">(</span><span class="n">Exporter</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OpenImagesExporter</span><span class="p">(</span><span class="n">Exporter</span><span class="p">):</span>
     <span class="n">DEFAULT_IMAGE_EXT</span> <span class="o">=</span> <span class="s2">&quot;.jpg&quot;</span>
 
-    <span class="k">def</span> <span class="nf">_apply_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">(),</span> <span class="n">Image</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">MediaTypeError</span><span class="p">(</span><span class="s2">&quot;Media type is not an image&quot;</span><span class="p">)</span>
 
@@ -1101,7 +1101,7 @@ document.write(`
 <div class="viewcode-block" id="OpenImagesExporter.patch">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.open_images.html#datumaro.plugins.data_formats.open_images.OpenImagesExporter.patch">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">patch</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">patch</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">patch</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">patch</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
         <span class="n">converter</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">)</span>
         <span class="n">annotation_writer</span> <span class="o">=</span> <span class="n">_AnnotationWriter</span><span class="p">(</span><span class="n">save_dir</span><span class="p">)</span>
         <span class="n">converter</span><span class="o">.</span><span class="n">_save</span><span class="p">(</span><span class="n">annotation_writer</span><span class="p">)</span>
@@ -1120,12 +1120,12 @@ document.write(`
                 <span class="n">os</span><span class="o">.</span><span class="n">unlink</span><span class="p">(</span><span class="n">image_path</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotation_writer</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotation_writer</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_save_categories</span><span class="p">(</span><span class="n">annotation_writer</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_save_label_category_parents</span><span class="p">(</span><span class="n">annotation_writer</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_save_subsets</span><span class="p">(</span><span class="n">annotation_writer</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_save_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotation_writer</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_save_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotation_writer</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_dataset_meta</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_save_meta_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>
 
@@ -1143,12 +1143,12 @@ document.write(`
                     <span class="p">}</span>
                 <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_save_label_category_parents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotation_writer</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_save_label_category_parents</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotation_writer</span><span class="p">):</span>
         <span class="n">all_label_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="n">hierarchy_nodes</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">orphan_nodes</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="k">def</span> <span class="nf">get_node</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">get_node</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">hierarchy_nodes</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;LabelName&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">})</span>
 
         <span class="k">for</span> <span class="n">category</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]:</span>
@@ -1190,7 +1190,7 @@ document.write(`
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">root_node</span><span class="p">,</span> <span class="n">hierarchy_file</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
             <span class="n">hierarchy_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_save_subsets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotation_writer</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_save_subsets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotation_writer</span><span class="p">):</span>
         <span class="n">label_categories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">())</span>
 
         <span class="n">image_meta</span> <span class="o">=</span> <span class="p">{}</span>
@@ -1246,7 +1246,7 @@ document.write(`
 
             <span class="n">save_image_meta_file</span><span class="p">(</span><span class="n">image_meta</span><span class="p">,</span> <span class="n">image_meta_file_path</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_save_item_annotations</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_save_item_annotations</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">item</span><span class="p">,</span>
         <span class="n">label_description_writer</span><span class="p">,</span>

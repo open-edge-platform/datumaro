@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -344,36 +344,36 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
-<span class="kn">import</span> <span class="nn">math</span>
-<span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.algorithms.hash_key_inference.base</span> <span class="kn">import</span> <span class="n">HashInference</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.algorithms.hash_key_inference.hashkey_util</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.algorithms.hash_key_inference.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">HashInference</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.algorithms.hash_key_inference.hashkey_util</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">calculate_hamming</span><span class="p">,</span>
     <span class="n">format_templates</span><span class="p">,</span>
     <span class="n">select_uninferenced_dataset</span><span class="p">,</span>
     <span class="n">templates</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="n">HashKey</span><span class="p">,</span> <span class="n">Label</span><span class="p">,</span> <span class="n">LabelCategories</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset</span> <span class="kn">import</span> <span class="n">Dataset</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetItem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">HashKey</span><span class="p">,</span> <span class="n">Label</span><span class="p">,</span> <span class="n">LabelCategories</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">datumaro.plugins.ndr</span> <span class="k">as</span> <span class="nn">ndr</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">datumaro.plugins.ndr</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ndr</span>
 <span class="k">else</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">datumaro.util.import_util</span> <span class="kn">import</span> <span class="n">lazy_import</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.import_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">lazy_import</span>
 
     <span class="n">ndr</span> <span class="o">=</span> <span class="n">lazy_import</span><span class="p">(</span><span class="s2">&quot;datumaro.plugins.ndr&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="match_num_item_for_cluster">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.match_num_item_for_cluster">[docs]</a>
-<span class="k">def</span> <span class="nf">match_num_item_for_cluster</span><span class="p">(</span><span class="n">ratio</span><span class="p">,</span> <span class="n">dataset_len</span><span class="p">,</span> <span class="n">cluster_num_item_list</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">match_num_item_for_cluster</span><span class="p">(</span><span class="n">ratio</span><span class="p">,</span> <span class="n">dataset_len</span><span class="p">,</span> <span class="n">cluster_num_item_list</span><span class="p">):</span>
     <span class="n">total_num_selected_item</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">dataset_len</span> <span class="o">*</span> <span class="n">ratio</span><span class="p">)</span>
 
     <span class="n">cluster_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cluster_num_item_list</span><span class="p">)</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">cluster_num_item_list</span><span class="p">)</span>
@@ -400,11 +400,11 @@ document.write(`
 
 <div class="viewcode-block" id="PruneBase">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.PruneBase">[docs]</a>
-<span class="k">class</span> <span class="nc">PruneBase</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PruneBase</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
 <div class="viewcode-block" id="PruneBase.base">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.PruneBase.base">[docs]</a>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">base</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">base</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ratio</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">num_centers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
@@ -432,14 +432,14 @@ document.write(`
 
 <div class="viewcode-block" id="RandomSelect">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.RandomSelect">[docs]</a>
-<span class="k">class</span> <span class="nc">RandomSelect</span><span class="p">(</span><span class="n">PruneBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RandomSelect</span><span class="p">(</span><span class="n">PruneBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Select items randomly from the dataset.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="RandomSelect.base">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.RandomSelect.base">[docs]</a>
-    <span class="k">def</span> <span class="nf">base</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">num_centers</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">database_keys</span><span class="p">,</span> <span class="n">item_list</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">base</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">num_centers</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">database_keys</span><span class="p">,</span> <span class="n">item_list</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
         <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">dataset_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">item_list</span><span class="p">)</span>
         <span class="n">num_selected_item</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">dataset_len</span> <span class="o">*</span> <span class="n">ratio</span><span class="p">)</span>
@@ -452,15 +452,15 @@ document.write(`
 
 <div class="viewcode-block" id="Centroid">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.Centroid">[docs]</a>
-<span class="k">class</span> <span class="nc">Centroid</span><span class="p">(</span><span class="n">PruneBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Centroid</span><span class="p">(</span><span class="n">PruneBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Select items through clustering with centers targeting the desired number.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Centroid.base">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.Centroid.base">[docs]</a>
-    <span class="k">def</span> <span class="nf">base</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">num_centers</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">database_keys</span><span class="p">,</span> <span class="n">item_list</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">KMeans</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">base</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">num_centers</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">database_keys</span><span class="p">,</span> <span class="n">item_list</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.cluster</span><span class="w"> </span><span class="kn">import</span> <span class="n">KMeans</span>
 
         <span class="n">num_selected_centers</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">item_list</span><span class="p">)</span> <span class="o">*</span> <span class="n">ratio</span><span class="p">)</span>
         <span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="n">num_selected_centers</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -490,15 +490,15 @@ document.write(`
 
 <div class="viewcode-block" id="ClusteredRandom">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.ClusteredRandom">[docs]</a>
-<span class="k">class</span> <span class="nc">ClusteredRandom</span><span class="p">(</span><span class="n">PruneBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ClusteredRandom</span><span class="p">(</span><span class="n">PruneBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Select items through clustering and choose randomly within each cluster.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="ClusteredRandom.base">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.ClusteredRandom.base">[docs]</a>
-    <span class="k">def</span> <span class="nf">base</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">num_centers</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">database_keys</span><span class="p">,</span> <span class="n">item_list</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">KMeans</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">base</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">num_centers</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">database_keys</span><span class="p">,</span> <span class="n">item_list</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.cluster</span><span class="w"> </span><span class="kn">import</span> <span class="n">KMeans</span>
 
         <span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="n">num_centers</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">clusters</span> <span class="o">=</span> <span class="n">kmeans</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">database_keys</span><span class="p">)</span>
@@ -522,15 +522,15 @@ document.write(`
 
 <div class="viewcode-block" id="QueryClust">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.QueryClust">[docs]</a>
-<span class="k">class</span> <span class="nc">QueryClust</span><span class="p">(</span><span class="n">PruneBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">QueryClust</span><span class="p">(</span><span class="n">PruneBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Select items through clustering with inits that imply each label.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="QueryClust.base">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.QueryClust.base">[docs]</a>
-    <span class="k">def</span> <span class="nf">base</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">num_centers</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">database_keys</span><span class="p">,</span> <span class="n">item_list</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">KMeans</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">base</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">num_centers</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">database_keys</span><span class="p">,</span> <span class="n">item_list</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.cluster</span><span class="w"> </span><span class="kn">import</span> <span class="n">KMeans</span>
 
         <span class="n">center_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_centers</span><span class="p">)}</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">item_list</span><span class="p">:</span>
@@ -581,15 +581,15 @@ document.write(`
 
 <div class="viewcode-block" id="Entropy">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.Entropy">[docs]</a>
-<span class="k">class</span> <span class="nc">Entropy</span><span class="p">(</span><span class="n">PruneBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Entropy</span><span class="p">(</span><span class="n">PruneBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Select items through clustering and choose them based on label entropy in each cluster.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Entropy.base">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.Entropy.base">[docs]</a>
-    <span class="k">def</span> <span class="nf">base</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">num_centers</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">database_keys</span><span class="p">,</span> <span class="n">item_list</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
-        <span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">KMeans</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">base</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">num_centers</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">database_keys</span><span class="p">,</span> <span class="n">item_list</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.cluster</span><span class="w"> </span><span class="kn">import</span> <span class="n">KMeans</span>
 
         <span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="n">num_centers</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">clusters</span> <span class="o">=</span> <span class="n">kmeans</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">database_keys</span><span class="p">)</span>
@@ -620,14 +620,14 @@ document.write(`
 
 <div class="viewcode-block" id="NDRSelect">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.NDRSelect">[docs]</a>
-<span class="k">class</span> <span class="nc">NDRSelect</span><span class="p">(</span><span class="n">PruneBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NDRSelect</span><span class="p">(</span><span class="n">PruneBase</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Select items based on NDR among each subset.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="NDRSelect.base">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.NDRSelect.base">[docs]</a>
-    <span class="k">def</span> <span class="nf">base</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">num_centers</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">database_keys</span><span class="p">,</span> <span class="n">item_list</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">base</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">num_centers</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">database_keys</span><span class="p">,</span> <span class="n">item_list</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
         <span class="n">subset_lists</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">subsets</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
         <span class="n">selected_items</span> <span class="o">=</span> <span class="p">[]</span>
@@ -644,8 +644,8 @@ document.write(`
 
 <div class="viewcode-block" id="Prune">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.Prune">[docs]</a>
-<span class="k">class</span> <span class="nc">Prune</span><span class="p">(</span><span class="n">HashInference</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Prune</span><span class="p">(</span><span class="n">HashInference</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span>
         <span class="n">cluster_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;random&quot;</span><span class="p">,</span>
@@ -668,7 +668,7 @@ document.write(`
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_data</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_prepare_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hash_type</span> <span class="o">==</span> <span class="s2">&quot;txt&quot;</span><span class="p">:</span>
             <span class="n">category_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prompting</span><span class="p">()</span>
 
@@ -704,7 +704,7 @@ document.write(`
                         <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_item_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_prompting</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prompting</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">category_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">detected_format</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span><span class="o">.</span><span class="n">format</span>
         <span class="n">template</span> <span class="o">=</span> <span class="n">format_templates</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">detected_format</span><span class="p">,</span> <span class="n">templates</span><span class="p">)</span>
@@ -714,7 +714,7 @@ document.write(`
 
 <div class="viewcode-block" id="Prune.get_pruned">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.Prune.get_pruned">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_pruned</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_pruned</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
         <span class="n">method</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;random&quot;</span><span class="p">:</span> <span class="n">RandomSelect</span><span class="p">,</span>
             <span class="s2">&quot;cluster_random&quot;</span><span class="p">:</span> <span class="n">ClusteredRandom</span><span class="p">,</span>

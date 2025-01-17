@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -347,19 +347,19 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">groupby</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">NewType</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">groupby</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">NewType</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Literal</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Literal</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">,</span> <span class="n">Mask</span><span class="p">,</span> <span class="n">RleMask</span><span class="p">,</span> <span class="n">Shape</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.mask_tools</span> <span class="kn">import</span> <span class="n">mask_to_rle</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">,</span> <span class="n">Mask</span><span class="p">,</span> <span class="n">RleMask</span><span class="p">,</span> <span class="n">Shape</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.mask_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">mask_to_rle</span>
 
 
 <div class="viewcode-block" id="find_instances">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.annotation_util.html#datumaro.components.annotations.matcher.find_instances">[docs]</a>
-<span class="k">def</span> <span class="nf">find_instances</span><span class="p">(</span><span class="n">instance_anns</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_instances</span><span class="p">(</span><span class="n">instance_anns</span><span class="p">):</span>
     <span class="n">instance_anns</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">instance_anns</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">a</span><span class="p">:</span> <span class="n">a</span><span class="o">.</span><span class="n">group</span><span class="p">)</span>
     <span class="n">ann_groups</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">g_id</span><span class="p">,</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">groupby</span><span class="p">(</span><span class="n">instance_anns</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">:</span> <span class="n">a</span><span class="o">.</span><span class="n">group</span><span class="p">):</span>
@@ -374,7 +374,7 @@ document.write(`
 
 <div class="viewcode-block" id="find_group_leader">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.annotation_util.html#datumaro.components.annotations.matcher.find_group_leader">[docs]</a>
-<span class="k">def</span> <span class="nf">find_group_leader</span><span class="p">(</span><span class="n">group</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_group_leader</span><span class="p">(</span><span class="n">group</span><span class="p">):</span>
     <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">get_area</span><span class="p">())</span></div>
 
 
@@ -384,7 +384,7 @@ document.write(`
 <span class="n">SpatialAnnotation</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">_Shape</span><span class="p">,</span> <span class="n">Mask</span><span class="p">]</span>
 
 
-<span class="k">def</span> <span class="nf">_get_bbox</span><span class="p">(</span><span class="n">ann</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">,</span> <span class="n">SpatialAnnotation</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">BboxCoords</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_bbox</span><span class="p">(</span><span class="n">ann</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Sequence</span><span class="p">,</span> <span class="n">SpatialAnnotation</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">BboxCoords</span><span class="p">:</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="p">(</span><span class="n">Shape</span><span class="p">,</span> <span class="n">Mask</span><span class="p">)):</span>
         <span class="k">return</span> <span class="n">ann</span><span class="o">.</span><span class="n">get_bbox</span><span class="p">()</span>
     <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">&quot;__len__&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">ann</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
@@ -397,7 +397,7 @@ document.write(`
 
 <div class="viewcode-block" id="max_bbox">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.annotation_util.html#datumaro.components.annotations.matcher.max_bbox">[docs]</a>
-<span class="k">def</span> <span class="nf">max_bbox</span><span class="p">(</span><span class="n">annotations</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">BboxCoords</span><span class="p">,</span> <span class="n">SpatialAnnotation</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">BboxCoords</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">max_bbox</span><span class="p">(</span><span class="n">annotations</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">BboxCoords</span><span class="p">,</span> <span class="n">SpatialAnnotation</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">BboxCoords</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes the maximum bbox for the set of spatial annotations and boxes.</span>
 
@@ -416,7 +416,7 @@ document.write(`
 
 <div class="viewcode-block" id="mean_bbox">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.annotation_util.html#datumaro.components.annotations.matcher.mean_bbox">[docs]</a>
-<span class="k">def</span> <span class="nf">mean_bbox</span><span class="p">(</span><span class="n">annotations</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">BboxCoords</span><span class="p">,</span> <span class="n">SpatialAnnotation</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">BboxCoords</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mean_bbox</span><span class="p">(</span><span class="n">annotations</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">BboxCoords</span><span class="p">,</span> <span class="n">SpatialAnnotation</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">BboxCoords</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes the mean bbox for the set of spatial annotations and boxes.</span>
 
@@ -436,14 +436,14 @@ document.write(`
 
 <div class="viewcode-block" id="softmax">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.annotation_util.html#datumaro.components.annotations.matcher.softmax">[docs]</a>
-<span class="k">def</span> <span class="nf">softmax</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">softmax</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div>
 
 
 
 <div class="viewcode-block" id="nms">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.annotation_util.html#datumaro.components.annotations.matcher.nms">[docs]</a>
-<span class="k">def</span> <span class="nf">nms</span><span class="p">(</span><span class="n">segments</span><span class="p">,</span> <span class="n">iou_thresh</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">nms</span><span class="p">(</span><span class="n">segments</span><span class="p">,</span> <span class="n">iou_thresh</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Non-maxima suppression algorithm.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -468,7 +468,7 @@ document.write(`
 
 <div class="viewcode-block" id="bbox_iou">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.annotation_util.html#datumaro.components.annotations.matcher.bbox_iou">[docs]</a>
-<span class="k">def</span> <span class="nf">bbox_iou</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">bbox_iou</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    IoU computations for simple cases with bounding boxes</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -497,12 +497,12 @@ document.write(`
 
 <div class="viewcode-block" id="segment_iou">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.annotation_util.html#datumaro.components.annotations.matcher.segment_iou">[docs]</a>
-<span class="k">def</span> <span class="nf">segment_iou</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">segment_iou</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generic IoU computation with masks, polygons, and boxes.</span>
 <span class="sd">    Returns -1 if no intersection, [0; 1] otherwise</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">pycocotools</span> <span class="kn">import</span> <span class="n">mask</span> <span class="k">as</span> <span class="n">mask_utils</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pycocotools</span><span class="w"> </span><span class="kn">import</span> <span class="n">mask</span> <span class="k">as</span> <span class="n">mask_utils</span>
 
     <span class="n">a_bbox</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">get_bbox</span><span class="p">())</span>
     <span class="n">b_bbox</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">get_bbox</span><span class="p">())</span>
@@ -516,7 +516,7 @@ document.write(`
         <span class="n">w</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">a_bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">a_bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">b_bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">b_bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
         <span class="n">h</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">a_bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">a_bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">b_bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">b_bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
 
-        <span class="k">def</span> <span class="nf">_to_rle</span><span class="p">(</span><span class="n">ann</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_to_rle</span><span class="p">(</span><span class="n">ann</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">ann</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">polygon</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">mask_utils</span><span class="o">.</span><span class="n">frPyObjects</span><span class="p">([</span><span class="n">ann</span><span class="o">.</span><span class="n">points</span><span class="p">],</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="n">RleMask</span><span class="p">):</span>
@@ -534,7 +534,7 @@ document.write(`
 
 <div class="viewcode-block" id="PDJ">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.annotation_util.html#datumaro.components.annotations.matcher.PDJ">[docs]</a>
-<span class="k">def</span> <span class="nf">PDJ</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ratio</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">bbox</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">PDJ</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ratio</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">bbox</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Percentage of Detected Joints metric.</span>
 <span class="sd">    Counts the number of matching points.</span>
@@ -561,7 +561,7 @@ document.write(`
 
 <div class="viewcode-block" id="OKS">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.annotation_util.html#datumaro.components.annotations.matcher.OKS">[docs]</a>
-<span class="k">def</span> <span class="nf">OKS</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bbox</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">OKS</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bbox</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Object Keypoint Similarity metric.</span>
 <span class="sd">    https://cocodataset.org/#keypoints-eval</span>
@@ -589,7 +589,7 @@ document.write(`
 
 <div class="viewcode-block" id="approximate_line">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.annotation_util.html#datumaro.components.annotations.matcher.approximate_line">[docs]</a>
-<span class="k">def</span> <span class="nf">approximate_line</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">segments</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">approximate_line</span><span class="p">(</span><span class="n">points</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">segments</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Approximates a 2d line to the required number of segments. The new points</span>
 <span class="sd">    are distributed uniformly across the input line.</span>
@@ -643,7 +643,7 @@ document.write(`
 
 <div class="viewcode-block" id="make_label_id_mapping">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.annotation_util.html#datumaro.components.annotations.matcher.make_label_id_mapping">[docs]</a>
-<span class="k">def</span> <span class="nf">make_label_id_mapping</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_label_id_mapping</span><span class="p">(</span>
     <span class="n">src_labels</span><span class="p">:</span> <span class="n">LabelCategories</span><span class="p">,</span> <span class="n">dst_labels</span><span class="p">:</span> <span class="n">LabelCategories</span><span class="p">,</span> <span class="n">fallback</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">int</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -665,7 +665,7 @@ document.write(`
         <span class="k">for</span> <span class="n">src_id</span><span class="p">,</span> <span class="n">src_label</span> <span class="ow">in</span> <span class="n">source_labels</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
     <span class="p">}</span>
 
-    <span class="k">def</span> <span class="nf">map_id</span><span class="p">(</span><span class="n">src_id</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">map_id</span><span class="p">(</span><span class="n">src_id</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">id_mapping</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">src_id</span><span class="p">,</span> <span class="n">fallback</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">map_id</span><span class="p">,</span> <span class="n">id_mapping</span><span class="p">,</span> <span class="n">source_labels</span><span class="p">,</span> <span class="n">target_labels</span></div>

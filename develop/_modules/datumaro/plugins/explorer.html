@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -344,22 +344,22 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">tokenizers</span> <span class="kn">import</span> <span class="n">Tokenizer</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tokenizers</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tokenizer</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="n">Annotation</span><span class="p">,</span> <span class="n">HashKey</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetItem</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.errors</span> <span class="kn">import</span> <span class="n">MediaTypeError</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.media</span> <span class="kn">import</span> <span class="n">Image</span>
-<span class="kn">from</span> <span class="nn">datumaro.plugins.openvino_plugin.launcher</span> <span class="kn">import</span> <span class="n">OpenvinoLauncher</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotation</span><span class="p">,</span> <span class="n">HashKey</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">MediaTypeError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.openvino_plugin.launcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenvinoLauncher</span>
 
 
 <div class="viewcode-block" id="ExplorerLauncher">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.explorer.html#datumaro.plugins.explorer.ExplorerLauncher">[docs]</a>
-<span class="k">class</span> <span class="nc">ExplorerLauncher</span><span class="p">(</span><span class="n">OpenvinoLauncher</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ExplorerLauncher</span><span class="p">(</span><span class="n">OpenvinoLauncher</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -377,7 +377,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_output_blobs</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_net</span><span class="o">.</span><span class="n">outputs</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">_tokenize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">context_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">77</span><span class="p">,</span> <span class="n">truncate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_tokenize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texts</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">context_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">77</span><span class="p">,</span> <span class="n">truncate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span><span class="p">:</span>
             <span class="n">checkpoint</span> <span class="o">=</span> <span class="s2">&quot;openai/clip-vit-base-patch32&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_tokenizer</span> <span class="o">=</span> <span class="n">Tokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">)</span>
@@ -394,7 +394,7 @@ document.write(`
             <span class="n">result</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">token</span>
         <span class="k">return</span> <span class="n">result</span>
 
-    <span class="k">def</span> <span class="nf">_compute_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">):</span>
         <span class="n">features</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
         <span class="n">hash_key</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">hash_key</span> <span class="o">=</span> <span class="n">hash_key</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
@@ -403,7 +403,7 @@ document.write(`
 
 <div class="viewcode-block" id="ExplorerLauncher.infer_text">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.explorer.html#datumaro.plugins.explorer.ExplorerLauncher.infer_text">[docs]</a>
-    <span class="k">def</span> <span class="nf">infer_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">use_prompt</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HashKey</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">infer_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">use_prompt</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HashKey</span><span class="p">:</span>
         <span class="n">prompt_text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;a photo of a </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">use_prompt</span> <span class="k">else</span> <span class="n">text</span>
         <span class="n">inputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tokenize</span><span class="p">(</span><span class="n">prompt_text</span><span class="p">)</span>
         <span class="n">preds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">infer</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
@@ -413,21 +413,21 @@ document.write(`
 
 <div class="viewcode-block" id="ExplorerLauncher.infer_item">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.explorer.html#datumaro.plugins.explorer.ExplorerLauncher.infer_item">[docs]</a>
-    <span class="k">def</span> <span class="nf">infer_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HashKey</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">infer_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HashKey</span><span class="p">:</span>
         <span class="n">anns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">launch</span><span class="p">([</span><span class="n">item</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">anns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="ExplorerLauncher.launch">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.explorer.html#datumaro.plugins.explorer.ExplorerLauncher.launch">[docs]</a>
-    <span class="k">def</span> <span class="nf">launch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">launch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]]:</span>
         <span class="n">outputs</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">launch</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">outputs</span></div>
 
 
 <div class="viewcode-block" id="ExplorerLauncher.type_check">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.explorer.html#datumaro.plugins.explorer.ExplorerLauncher.type_check">[docs]</a>
-    <span class="k">def</span> <span class="nf">type_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">type_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">MediaTypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Media type should be Image, Current type=</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">True</span></div>

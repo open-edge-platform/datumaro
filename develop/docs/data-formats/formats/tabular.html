@@ -28,7 +28,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -669,8 +669,8 @@ document.write(`
 <p>Datumaro only supports tabular data in <code class="docutils literal notranslate"><span class="pre">.csv</span></code> format where the first row is a header with unique column names.
 It’s because other formats can be converted to <code class="docutils literal notranslate"><span class="pre">.csv</span></code> easily as shown below.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># convert &#39;.arff&#39; to &#39;.csv&#39;</span>
-<span class="kn">from</span> <span class="nn">scipy.io.arff</span> <span class="kn">import</span> <span class="n">loadarff</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.io.arff</span><span class="w"> </span><span class="kn">import</span> <span class="n">loadarff</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="n">data</span> <span class="o">=</span> <span class="n">loadarff</span><span class="p">(</span><span class="s2">&quot;dataset.arff&quot;</span><span class="p">)</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 <span class="n">categorical</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="o">==</span><span class="s2">&quot;O&quot;</span><span class="p">]</span>
@@ -684,7 +684,7 @@ It’s because other formats can be converted to <code class="docutils literal n
 <span class="n">pd</span><span class="o">.</span><span class="n">read_pickle</span><span class="p">(</span><span class="s2">&quot;dataset.pickle&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;pickle.csv&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 <span class="c1"># convert &#39;.jay&#39; to &#39;.csv&#39;</span>
-<span class="kn">import</span> <span class="nn">datatable</span> <span class="k">as</span> <span class="nn">dt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datatable</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dt</span>
 <span class="n">data</span> <span class="o">=</span> <span class="n">dt</span><span class="o">.</span><span class="n">fread</span><span class="p">(</span><span class="s2">&quot;dataset.jay&quot;</span><span class="p">)</span>
 <span class="n">data</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;jay.csv&quot;</span><span class="p">)</span>
 </pre></div>
@@ -715,7 +715,7 @@ datum<span class="w"> </span>project<span class="w"> </span>import<span class="w
 </pre></div>
 </div>
 <p>It is also possible to import the dataset using Python API:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datumaro</span> <span class="k">as</span> <span class="nn">dm</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dm</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="s1">&#39;&lt;path/to/dataset&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;tabular&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -727,7 +727,7 @@ datum<span class="w"> </span>project<span class="w"> </span>import<span class="w
 datum<span class="w"> </span>project<span class="w"> </span>import<span class="w"> </span>--format<span class="w"> </span>tabular<span class="w"> </span>&lt;path/to/electricity/dataset&gt;
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datumaro</span> <span class="k">as</span> <span class="nn">dm</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dm</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="s1">&#39;&lt;path/to/buddy/dataset&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;tabular&#39;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;input&quot;</span><span class="p">:</span><span class="s2">&quot;length(m)&quot;</span><span class="p">,</span> <span class="s2">&quot;output&quot;</span><span class="p">:[</span><span class="s2">&quot;breed_category&quot;</span><span class="p">,</span> <span class="s2">&quot;pet_category&quot;</span><span class="p">]})</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="s1">&#39;&lt;path/to/electricity/dataset&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;tabular&#39;</span><span class="p">)</span>
 </pre></div>
@@ -744,7 +744,7 @@ datum<span class="w"> </span>project<span class="w"> </span>import<span class="w
 datum<span class="w"> </span>project<span class="w"> </span><span class="nb">export</span><span class="w"> </span>-f<span class="w"> </span>tabular<span class="w"> </span>-o<span class="w"> </span>&lt;output/dir&gt;
 </pre></div>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datumaro</span> <span class="k">as</span> <span class="nn">dm</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dm</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="s1">&#39;&lt;path/to/dataset&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;tabular&#39;</span><span class="p">)</span>
 <span class="n">dataset</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="s1">&#39;&lt;path/to/output/dir&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;tabular&#39;</span><span class="p">)</span>
 </pre></div>

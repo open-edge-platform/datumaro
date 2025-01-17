@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -348,28 +348,28 @@ document.write(`
 <span class="c1"># It is provided by OpenVINO™ Model Server Quickstart guide,</span>
 <span class="c1"># https://github.com/openvinotoolkit/model_server/blob/main/docs/ovms_quickstart.md</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
 
-<span class="kn">import</span> <span class="nn">cv2</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.abstracts</span> <span class="kn">import</span> <span class="n">IModelInterpreter</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.abstracts.model_interpreter</span> <span class="kn">import</span> <span class="n">LauncherInputType</span><span class="p">,</span> <span class="n">ModelPred</span><span class="p">,</span> <span class="n">PrepInfo</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="n">Annotation</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">LabelCategories</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetItem</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.media</span> <span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.abstracts</span><span class="w"> </span><span class="kn">import</span> <span class="n">IModelInterpreter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.abstracts.model_interpreter</span><span class="w"> </span><span class="kn">import</span> <span class="n">LauncherInputType</span><span class="p">,</span> <span class="n">ModelPred</span><span class="p">,</span> <span class="n">PrepInfo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotation</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">LabelCategories</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
 
 
 <div class="viewcode-block" id="FaceDetectionModelInterpreter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.inference_server_plugin.samples.face_detection.html#datumaro.plugins.inference_server_plugin.samples.face_detection.FaceDetectionModelInterpreter">[docs]</a>
-<span class="k">class</span> <span class="nc">FaceDetectionModelInterpreter</span><span class="p">(</span><span class="n">IModelInterpreter</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FaceDetectionModelInterpreter</span><span class="p">(</span><span class="n">IModelInterpreter</span><span class="p">):</span>
     <span class="n">height</span> <span class="o">=</span> <span class="mi">400</span>
     <span class="n">width</span> <span class="o">=</span> <span class="mi">600</span>
     <span class="n">conf_threshold</span> <span class="o">=</span> <span class="mf">0.5</span>
 
 <div class="viewcode-block" id="FaceDetectionModelInterpreter.preprocess">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.inference_server_plugin.samples.face_detection.html#datumaro.plugins.inference_server_plugin.samples.face_detection.FaceDetectionModelInterpreter.preprocess">[docs]</a>
-    <span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">LauncherInputType</span><span class="p">,</span> <span class="n">PrepInfo</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">LauncherInputType</span><span class="p">,</span> <span class="n">PrepInfo</span><span class="p">]:</span>
         <span class="n">img</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">media_as</span><span class="p">(</span><span class="n">Image</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
         <span class="k">assert</span> <span class="n">img</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span>
         <span class="n">h_img</span><span class="p">,</span> <span class="n">w_img</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span>
@@ -384,7 +384,7 @@ document.write(`
 
 <div class="viewcode-block" id="FaceDetectionModelInterpreter.postprocess">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.inference_server_plugin.samples.face_detection.html#datumaro.plugins.inference_server_plugin.samples.face_detection.FaceDetectionModelInterpreter.postprocess">[docs]</a>
-    <span class="k">def</span> <span class="nf">postprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred</span><span class="p">:</span> <span class="n">ModelPred</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="n">PrepInfo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">postprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred</span><span class="p">:</span> <span class="n">ModelPred</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="n">PrepInfo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]:</span>
         <span class="n">detection</span> <span class="o">=</span> <span class="n">pred</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;detection_out&quot;</span><span class="p">)</span>
         <span class="n">h_img</span><span class="p">,</span> <span class="n">w_img</span> <span class="o">=</span> <span class="n">info</span>  <span class="c1"># Info has the image size</span>
 
@@ -414,7 +414,7 @@ document.write(`
 
 <div class="viewcode-block" id="FaceDetectionModelInterpreter.get_categories">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.inference_server_plugin.samples.face_detection.html#datumaro.plugins.inference_server_plugin.samples.face_detection.FaceDetectionModelInterpreter.get_categories">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">label_categories</span> <span class="o">=</span> <span class="n">LabelCategories</span><span class="p">()</span>
         <span class="n">label_categories</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;empty&quot;</span><span class="p">)</span>
         <span class="n">label_categories</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;face&quot;</span><span class="p">)</span>

@@ -28,7 +28,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -706,12 +706,12 @@ datum<span class="w"> </span>model<span class="w"> </span>add<span class="w"> </
 <p>Interpretation script for an OpenVINO detection model (<code class="docutils literal notranslate"><span class="pre">convert.py</span></code>):
 You can find OpenVINO model interpreter samples in
 <code class="docutils literal notranslate"><span class="pre">datumaro/plugins/openvino/samples</span></code> (<a class="reference internal" href="../../explanation/plugins/openvino_plugin.html"><span class="doc std std-doc">instruction</span></a>).</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datumaro</span> <span class="k">as</span> <span class="nn">dm</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dm</span>
 
 <span class="n">max_det</span> <span class="o">=</span> <span class="mi">10</span>
 <span class="n">conf_thresh</span> <span class="o">=</span> <span class="mf">0.1</span>
 
-<span class="k">def</span> <span class="nf">process_outputs</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">process_outputs</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">outputs</span><span class="p">):</span>
     <span class="c1"># inputs = model input, array or images, shape = (N, C, H, W)</span>
     <span class="c1"># outputs = model output, shape = (N, 1, K, 7)</span>
     <span class="c1"># results = conversion result, [ [ Annotation, ... ], ... ]</span>
@@ -737,7 +737,7 @@ You can find OpenVINO model interpreter samples in
 
     <span class="k">return</span> <span class="n">results</span>
 
-<span class="k">def</span> <span class="nf">get_categories</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_categories</span><span class="p">():</span>
     <span class="c1"># Optionally, provide output categories - label map etc.</span>
     <span class="c1"># Example:</span>
     <span class="n">label_categories</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">LabelCategories</span><span class="p">()</span>

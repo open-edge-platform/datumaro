@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -345,29 +345,29 @@ document.write(`
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 <span class="sd">&quot;&quot;&quot;Bbox-to-instance mask transform using Segment Anything Model&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">import</span> <span class="nn">datumaro.plugins.sam_transforms.interpreters.sam_decoder_for_bbox</span> <span class="k">as</span> <span class="nn">sam_decoder_for_bbox_interp</span>
-<span class="kn">import</span> <span class="nn">datumaro.plugins.sam_transforms.interpreters.sam_encoder</span> <span class="k">as</span> <span class="nn">sam_encoder_interp</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">Mask</span><span class="p">,</span> <span class="n">Polygon</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.cli_plugin</span> <span class="kn">import</span> <span class="n">CliPlugin</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">IDataset</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.transformer</span> <span class="kn">import</span> <span class="n">ModelTransform</span>
-<span class="kn">from</span> <span class="nn">datumaro.plugins.inference_server_plugin</span> <span class="kn">import</span> <span class="n">OVMSLauncher</span><span class="p">,</span> <span class="n">TritonLauncher</span>
-<span class="kn">from</span> <span class="nn">datumaro.plugins.inference_server_plugin.base</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datumaro.plugins.sam_transforms.interpreters.sam_decoder_for_bbox</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sam_decoder_for_bbox_interp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datumaro.plugins.sam_transforms.interpreters.sam_encoder</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sam_encoder_interp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">Mask</span><span class="p">,</span> <span class="n">Polygon</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.cli_plugin</span><span class="w"> </span><span class="kn">import</span> <span class="n">CliPlugin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">IDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelTransform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.inference_server_plugin</span><span class="w"> </span><span class="kn">import</span> <span class="n">OVMSLauncher</span><span class="p">,</span> <span class="n">TritonLauncher</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.inference_server_plugin.base</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">InferenceServerType</span><span class="p">,</span>
     <span class="n">ProtocolType</span><span class="p">,</span>
     <span class="n">TLSConfig</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.mask_tools</span> <span class="kn">import</span> <span class="n">extract_contours</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.mask_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">extract_contours</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;SAMBboxToInstanceMask&quot;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="SAMBboxToInstanceMask">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.plugins.sam_transforms.SAMBboxToInstanceMask">[docs]</a>
-<span class="k">class</span> <span class="nc">SAMBboxToInstanceMask</span><span class="p">(</span><span class="n">ModelTransform</span><span class="p">,</span> <span class="n">CliPlugin</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SAMBboxToInstanceMask</span><span class="p">(</span><span class="n">ModelTransform</span><span class="p">,</span> <span class="n">CliPlugin</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert bounding boxes to instance mask using Segment Anything Model.</span>
 
 <span class="sd">    This transform convert all the `Bbox` annotations in the dataset item to</span>
@@ -391,7 +391,7 @@ document.write(`
 <span class="sd">            Set to 0 for single-process mode. Default is 0.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">extractor</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">,</span>
         <span class="n">inference_server_type</span><span class="p">:</span> <span class="n">InferenceServerType</span> <span class="o">=</span> <span class="n">InferenceServerType</span><span class="o">.</span><span class="n">ovms</span><span class="p">,</span>
@@ -440,7 +440,7 @@ document.write(`
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_to_polygon</span> <span class="o">=</span> <span class="n">to_polygon</span>
 
-    <span class="k">def</span> <span class="nf">_process_batch</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_batch</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">batch</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
@@ -479,7 +479,7 @@ document.write(`
         <span class="k">return</span> <span class="n">items</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_convert_to_polygon</span><span class="p">(</span><span class="n">masks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Mask</span><span class="p">]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_to_polygon</span><span class="p">(</span><span class="n">masks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Mask</span><span class="p">]):</span>
         <span class="k">return</span> <span class="p">[</span>
             <span class="n">Polygon</span><span class="p">(</span>
                 <span class="n">points</span><span class="o">=</span><span class="n">contour</span><span class="p">,</span>

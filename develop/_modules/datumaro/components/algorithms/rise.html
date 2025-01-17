@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -346,27 +346,27 @@ document.write(`
 
 <span class="c1"># pylint: disable=unused-variable</span>
 
-<span class="kn">import</span> <span class="nn">cv2</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset</span> <span class="kn">import</span> <span class="n">Dataset</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetItem</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.media</span> <span class="kn">import</span> <span class="n">Image</span>
-<span class="kn">from</span> <span class="nn">datumaro.util</span> <span class="kn">import</span> <span class="n">take_by</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">take_by</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;RISE&quot;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="RISE">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.algorithms.rise.html#datumaro.components.algorithms.rise.RISE">[docs]</a>
-<span class="k">class</span> <span class="nc">RISE</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RISE</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Implements RISE: Randomized Input Sampling for</span>
 <span class="sd">    Explanation of Black-box Models algorithm.</span>
 <span class="sd">    See explanations at: https://arxiv.org/pdf/1806.07421.pdf</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">model</span><span class="p">,</span>
         <span class="n">num_masks</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
@@ -383,7 +383,7 @@ document.write(`
 
 <div class="viewcode-block" id="RISE.normalize_saliency">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.algorithms.rise.html#datumaro.components.algorithms.rise.RISE.normalize_saliency">[docs]</a>
-    <span class="k">def</span> <span class="nf">normalize_saliency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">saliency</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">normalize_saliency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">saliency</span><span class="p">):</span>
         <span class="n">normalized_saliency</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">saliency</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">sal</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">saliency</span><span class="p">):</span>
             <span class="n">normalized_saliency</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">sal</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">sal</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">sal</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">sal</span><span class="p">))</span>
@@ -392,7 +392,7 @@ document.write(`
 
 <div class="viewcode-block" id="RISE.generate_masks">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.algorithms.rise.html#datumaro.components.algorithms.rise.RISE.generate_masks">[docs]</a>
-    <span class="k">def</span> <span class="nf">generate_masks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_size</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_masks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_size</span><span class="p">):</span>
         <span class="n">cell_size</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">image_size</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask_size</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span>
         <span class="n">up_size</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask_size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">cs</span> <span class="k">for</span> <span class="n">cs</span> <span class="ow">in</span> <span class="n">cell_size</span><span class="p">])</span>
 
@@ -415,7 +415,7 @@ document.write(`
 
 <div class="viewcode-block" id="RISE.generate_masked_dataset">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.algorithms.rise.html#datumaro.components.algorithms.rise.RISE.generate_masked_dataset">[docs]</a>
-    <span class="k">def</span> <span class="nf">generate_masked_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">image_size</span><span class="p">,</span> <span class="n">masks</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_masked_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">image_size</span><span class="p">,</span> <span class="n">masks</span><span class="p">):</span>
         <span class="n">input_image</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">image_size</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">INTER_LINEAR</span><span class="p">)</span>
 
         <span class="n">items</span> <span class="o">=</span> <span class="p">[]</span>
@@ -432,7 +432,7 @@ document.write(`
 
 <div class="viewcode-block" id="RISE.apply">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.algorithms.rise.html#datumaro.components.algorithms.rise.RISE.apply">[docs]</a>
-    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">progressive</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">progressive</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s2">&quot;Expected an input image in (H, W, C) format&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
             <span class="k">assert</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="s2">&quot;Expected BGR or BGRA input&quot;</span>

@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -344,20 +344,20 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.abstracts</span> <span class="kn">import</span> <span class="n">IModelInterpreter</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.abstracts.model_interpreter</span> <span class="kn">import</span> <span class="n">LauncherInputType</span><span class="p">,</span> <span class="n">ModelPred</span><span class="p">,</span> <span class="n">PrepInfo</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="n">Annotation</span><span class="p">,</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">FeatureVector</span><span class="p">,</span> <span class="n">Mask</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetItem</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.media</span> <span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.abstracts</span><span class="w"> </span><span class="kn">import</span> <span class="n">IModelInterpreter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.abstracts.model_interpreter</span><span class="w"> </span><span class="kn">import</span> <span class="n">LauncherInputType</span><span class="p">,</span> <span class="n">ModelPred</span><span class="p">,</span> <span class="n">PrepInfo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotation</span><span class="p">,</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">FeatureVector</span><span class="p">,</span> <span class="n">Mask</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
 
 
 <div class="viewcode-block" id="SAMDecoderForBboxInterpreter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.interpreters.sam_decoder_for_bbox.html#datumaro.plugins.sam_transforms.interpreters.sam_decoder_for_bbox.SAMDecoderForBboxInterpreter">[docs]</a>
-<span class="k">class</span> <span class="nc">SAMDecoderForBboxInterpreter</span><span class="p">(</span><span class="n">IModelInterpreter</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SAMDecoderForBboxInterpreter</span><span class="p">(</span><span class="n">IModelInterpreter</span><span class="p">):</span>
     <span class="n">h_model</span> <span class="o">=</span> <span class="mi">1024</span>
     <span class="n">w_model</span> <span class="o">=</span> <span class="mi">1024</span>
     <span class="n">onnx_mask_input</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">256</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
@@ -366,7 +366,7 @@ document.write(`
 
 <div class="viewcode-block" id="SAMDecoderForBboxInterpreter.preprocess">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.interpreters.sam_decoder_for_bbox.html#datumaro.plugins.sam_transforms.interpreters.sam_decoder_for_bbox.SAMDecoderForBboxInterpreter.preprocess">[docs]</a>
-    <span class="k">def</span> <span class="nf">preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">LauncherInputType</span><span class="p">,</span> <span class="n">PrepInfo</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">preprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inp</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">LauncherInputType</span><span class="p">,</span> <span class="n">PrepInfo</span><span class="p">]:</span>
         <span class="n">img</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">media_as</span><span class="p">(</span><span class="n">Image</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
 
         <span class="n">img_embed</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -400,7 +400,7 @@ document.write(`
 
 <div class="viewcode-block" id="SAMDecoderForBboxInterpreter.postprocess">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.interpreters.sam_decoder_for_bbox.html#datumaro.plugins.sam_transforms.interpreters.sam_decoder_for_bbox.SAMDecoderForBboxInterpreter.postprocess">[docs]</a>
-    <span class="k">def</span> <span class="nf">postprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred</span><span class="p">:</span> <span class="n">ModelPred</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="n">PrepInfo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">postprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pred</span><span class="p">:</span> <span class="n">ModelPred</span><span class="p">,</span> <span class="n">info</span><span class="p">:</span> <span class="n">PrepInfo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Postprocesses the outputs of the SAM decoder to generate masks associated with bounding boxes.</span>
 
 <span class="sd">        Parameters:</span>
@@ -433,7 +433,7 @@ document.write(`
 
 <div class="viewcode-block" id="SAMDecoderForBboxInterpreter.get_categories">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.interpreters.sam_decoder_for_bbox.html#datumaro.plugins.sam_transforms.interpreters.sam_decoder_for_bbox.SAMDecoderForBboxInterpreter.get_categories">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 </div>
 

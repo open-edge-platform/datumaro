@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -344,29 +344,29 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">errno</span>
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">iglob</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">errno</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">glob</span><span class="w"> </span><span class="kn">import</span> <span class="n">iglob</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Cuboid3d</span><span class="p">,</span> <span class="n">LabelCategories</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">SubsetBase</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.errors</span> <span class="kn">import</span> <span class="n">InvalidFieldError</span><span class="p">,</span> <span class="n">UndeclaredLabelError</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.importer</span> <span class="kn">import</span> <span class="n">ImportContext</span><span class="p">,</span> <span class="n">Importer</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.media</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">PointCloud</span>
-<span class="kn">from</span> <span class="nn">datumaro.util</span> <span class="kn">import</span> <span class="n">parse_json_file</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.image</span> <span class="kn">import</span> <span class="n">find_images</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Cuboid3d</span><span class="p">,</span> <span class="n">LabelCategories</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">SubsetBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">InvalidFieldError</span><span class="p">,</span> <span class="n">UndeclaredLabelError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.importer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImportContext</span><span class="p">,</span> <span class="n">Importer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">PointCloud</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_json_file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.image</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_images</span>
 
-<span class="kn">from</span> <span class="nn">.format</span> <span class="kn">import</span> <span class="n">PointCloudPath</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.format</span><span class="w"> </span><span class="kn">import</span> <span class="n">PointCloudPath</span>
 
 
 <div class="viewcode-block" id="SuperviselyPointCloudBase">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.sly_pointcloud.base.html#datumaro.plugins.data_formats.sly_pointcloud.base.SuperviselyPointCloudBase">[docs]</a>
-<span class="k">class</span> <span class="nc">SuperviselyPointCloudBase</span><span class="p">(</span><span class="n">SubsetBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SuperviselyPointCloudBase</span><span class="p">(</span><span class="n">SubsetBase</span><span class="p">):</span>
     <span class="n">NAME</span> <span class="o">=</span> <span class="s2">&quot;sly_pointcloud&quot;</span>
     <span class="n">_SUPPORTED_SHAPES</span> <span class="o">=</span> <span class="s2">&quot;cuboid&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -386,7 +386,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_items</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_load_items</span><span class="p">(</span><span class="n">items</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">rootpath</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">rootpath</span><span class="p">):</span>
         <span class="n">mapping</span> <span class="o">=</span> <span class="n">parse_json_file</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rootpath</span><span class="p">,</span> <span class="n">PointCloudPath</span><span class="o">.</span><span class="n">KEY_ID_FILE</span><span class="p">))</span>
         <span class="n">meta</span> <span class="o">=</span> <span class="n">parse_json_file</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rootpath</span><span class="p">,</span> <span class="n">PointCloudPath</span><span class="o">.</span><span class="n">META_FILE</span><span class="p">))</span>
 
@@ -419,12 +419,12 @@ document.write(`
 
         <span class="n">categories</span> <span class="o">=</span> <span class="p">{</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">:</span> <span class="n">label_cat</span><span class="p">}</span>
 
-        <span class="k">def</span> <span class="nf">_get_label_attrs</span><span class="p">(</span><span class="n">label_id</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_get_label_attrs</span><span class="p">(</span><span class="n">label_id</span><span class="p">):</span>
             <span class="n">attrs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">label_cat</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span>
             <span class="n">attrs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">label_cat</span><span class="p">[</span><span class="n">label_id</span><span class="p">]</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">attrs</span>
 
-        <span class="k">def</span> <span class="nf">_parse_tag</span><span class="p">(</span><span class="n">tag</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_parse_tag</span><span class="p">(</span><span class="n">tag</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">tag</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">:</span>
                 <span class="n">value</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">elif</span> <span class="n">tag</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;false&quot;</span><span class="p">:</span>
@@ -497,7 +497,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">items</span><span class="p">,</span> <span class="n">categories</span>
 
-    <span class="k">def</span> <span class="nf">_load_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parsed</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parsed</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">frame_id</span><span class="p">,</span> <span class="n">frame_desc</span> <span class="ow">in</span> <span class="n">parsed</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">pcd_name</span> <span class="o">=</span> <span class="n">frame_desc</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
             <span class="n">name</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">pcd_name</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -535,21 +535,21 @@ document.write(`
 
 <div class="viewcode-block" id="SuperviselyPointCloudImporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.sly_pointcloud.base.html#datumaro.plugins.data_formats.sly_pointcloud.base.SuperviselyPointCloudImporter">[docs]</a>
-<span class="k">class</span> <span class="nc">SuperviselyPointCloudImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SuperviselyPointCloudImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
     <span class="n">NAME</span> <span class="o">=</span> <span class="s2">&quot;sly_pointcloud&quot;</span>
     <span class="n">_ANNO_EXT</span> <span class="o">=</span> <span class="s2">&quot;.json&quot;</span>
 
 <div class="viewcode-block" id="SuperviselyPointCloudImporter.find_sources">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.sly_pointcloud.base.html#datumaro.plugins.data_formats.sly_pointcloud.base.SuperviselyPointCloudImporter.find_sources">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_sources_recursive</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ANNO_EXT</span><span class="p">,</span> <span class="s2">&quot;sly_pointcloud&quot;</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;meta&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="SuperviselyPointCloudImporter.get_file_extensions">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.sly_pointcloud.base.html#datumaro.plugins.data_formats.sly_pointcloud.base.SuperviselyPointCloudImporter.get_file_extensions">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_file_extensions</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_file_extensions</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="k">return</span> <span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">_ANNO_EXT</span><span class="p">]</span></div>
 </div>
 

@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -347,32 +347,32 @@ document.write(`
 <span class="c1"># pylint: disable=exec-used</span>
 
 
-<span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">import</span> <span class="nn">urllib</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">fields</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">urllib</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">fields</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">openvino.runtime</span> <span class="kn">import</span> <span class="n">Core</span>
-<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">openvino.runtime</span><span class="w"> </span><span class="kn">import</span> <span class="n">Core</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.abstracts.model_interpreter</span> <span class="kn">import</span> <span class="n">LauncherInputType</span><span class="p">,</span> <span class="n">ModelPred</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.cli_plugin</span> <span class="kn">import</span> <span class="n">CliPlugin</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.launcher</span> <span class="kn">import</span> <span class="n">LauncherWithModelInterpreter</span>
-<span class="kn">from</span> <span class="nn">datumaro.errors</span> <span class="kn">import</span> <span class="n">DatumaroError</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.definitions</span> <span class="kn">import</span> <span class="n">get_datumaro_cache_dir</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.samples</span> <span class="kn">import</span> <span class="n">get_samples_path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.abstracts.model_interpreter</span><span class="w"> </span><span class="kn">import</span> <span class="n">LauncherInputType</span><span class="p">,</span> <span class="n">ModelPred</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.cli_plugin</span><span class="w"> </span><span class="kn">import</span> <span class="n">CliPlugin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.launcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">LauncherWithModelInterpreter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatumaroError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.definitions</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_datumaro_cache_dir</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.samples</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_samples_path</span>
 
 
-<span class="k">class</span> <span class="nc">_OpenvinoImporter</span><span class="p">(</span><span class="n">CliPlugin</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_OpenvinoImporter</span><span class="p">(</span><span class="n">CliPlugin</span><span class="p">):</span>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_parse_output_layers</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse_output_layers</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)]</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
             <span class="s2">&quot;-d&quot;</span><span class="p">,</span> <span class="s2">&quot;--description&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to the model description file (.xml)&quot;</span>
@@ -395,7 +395,7 @@ document.write(`
         <span class="k">return</span> <span class="n">parser</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">copy_model</span><span class="p">(</span><span class="n">model_dir</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy_model</span><span class="p">(</span><span class="n">model_dir</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
         <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">model</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">],</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_dir</span><span class="p">,</span> <span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">model</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">])))</span>
         <span class="n">model</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">model</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">])</span>
 
@@ -409,7 +409,7 @@ document.write(`
 <div class="viewcode-block" id="OpenvinoModelInfo">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.openvino_plugin.launcher.html#datumaro.plugins.openvino_plugin.launcher.OpenvinoModelInfo">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">OpenvinoModelInfo</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OpenvinoModelInfo</span><span class="p">:</span>
     <span class="n">interpreter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
     <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
     <span class="n">weights</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
@@ -417,10 +417,10 @@ document.write(`
 
 <div class="viewcode-block" id="OpenvinoModelInfo.validate">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.openvino_plugin.launcher.html#datumaro.plugins.openvino_plugin.launcher.OpenvinoModelInfo.validate">[docs]</a>
-    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate integrity of the member variables&quot;&quot;&quot;</span>
 
-        <span class="k">def</span> <span class="nf">_validate</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_validate</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">path</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
                 <span class="n">path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
@@ -438,7 +438,7 @@ document.write(`
 <div class="viewcode-block" id="BuiltinOpenvinoModelInfo">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.openvino_plugin.launcher.html#datumaro.plugins.openvino_plugin.launcher.BuiltinOpenvinoModelInfo">[docs]</a>
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">BuiltinOpenvinoModelInfo</span><span class="p">(</span><span class="n">OpenvinoModelInfo</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BuiltinOpenvinoModelInfo</span><span class="p">(</span><span class="n">OpenvinoModelInfo</span><span class="p">):</span>
     <span class="n">downloadable_models</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;clip_text_ViT-B_32&quot;</span><span class="p">,</span>
         <span class="s2">&quot;clip_visual_ViT-B_32&quot;</span><span class="p">,</span>
@@ -450,7 +450,7 @@ document.write(`
 <div class="viewcode-block" id="BuiltinOpenvinoModelInfo.create_from_model_name">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.openvino_plugin.launcher.html#datumaro.plugins.openvino_plugin.launcher.BuiltinOpenvinoModelInfo.create_from_model_name">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">create_from_model_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;BuiltinOpenvinoModelInfo&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_from_model_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">model_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;BuiltinOpenvinoModelInfo&quot;</span><span class="p">:</span>
         <span class="n">openvino_plugin_samples_dir</span> <span class="o">=</span> <span class="n">get_samples_path</span><span class="p">()</span>
         <span class="n">interpreter</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">openvino_plugin_samples_dir</span><span class="p">,</span> <span class="n">model_name</span> <span class="o">+</span> <span class="s2">&quot;_interp.py&quot;</span><span class="p">)</span>
         <span class="n">interpreter</span> <span class="o">=</span> <span class="n">interpreter</span> <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">interpreter</span><span class="p">)</span> <span class="k">else</span> <span class="n">interpreter</span>
@@ -486,7 +486,7 @@ document.write(`
 
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_download_file</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file_root</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_download_file</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file_root</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Downloading: &quot;</span><span class="si">{}</span><span class="s1">&quot; to </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">file_root</span><span class="p">))</span>
         <span class="n">req</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
         <span class="k">with</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">req</span><span class="p">)</span> <span class="k">as</span> <span class="n">source</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_root</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output</span><span class="p">:</span>  <span class="c1"># nosec B310</span>
@@ -508,10 +508,10 @@ document.write(`
 
 <div class="viewcode-block" id="BuiltinOpenvinoModelInfo.override">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.openvino_plugin.launcher.html#datumaro.plugins.openvino_plugin.launcher.BuiltinOpenvinoModelInfo.override">[docs]</a>
-    <span class="k">def</span> <span class="nf">override</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">OpenvinoModelInfo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">override</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">OpenvinoModelInfo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Override builtin model variables to other&quot;&quot;&quot;</span>
 
-        <span class="k">def</span> <span class="nf">_apply</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_apply</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">other_item</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
             <span class="n">self_item</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">other_item</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">self_item</span><span class="p">:</span>
@@ -526,10 +526,10 @@ document.write(`
 
 <div class="viewcode-block" id="OpenvinoLauncher">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.openvino_plugin.launcher.html#datumaro.plugins.openvino_plugin.launcher.OpenvinoLauncher">[docs]</a>
-<span class="k">class</span> <span class="nc">OpenvinoLauncher</span><span class="p">(</span><span class="n">LauncherWithModelInterpreter</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OpenvinoLauncher</span><span class="p">(</span><span class="n">LauncherWithModelInterpreter</span><span class="p">):</span>
     <span class="n">cli_plugin</span> <span class="o">=</span> <span class="n">_OpenvinoImporter</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">weights</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -570,14 +570,14 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_load_executable_net</span><span class="p">()</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_network</span><span class="o">.</span><span class="n">inputs</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">outputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_network</span><span class="o">.</span><span class="n">outputs</span>
 
-    <span class="k">def</span> <span class="nf">_check_model_support</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">net</span><span class="p">,</span> <span class="n">device</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_model_support</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">net</span><span class="p">,</span> <span class="n">device</span><span class="p">):</span>
         <span class="n">not_supported_layers</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
             <span class="n">name</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">dev</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_core</span><span class="o">.</span><span class="n">query_model</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">dev</span>
         <span class="p">)</span>
@@ -588,7 +588,7 @@ document.write(`
             <span class="p">)</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Some layers are not supported on the device&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_load_executable_net</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_executable_net</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
         <span class="n">network</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_network</span>
 
         <span class="n">iter_inputs</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">inputs</span><span class="p">)</span>
@@ -626,7 +626,7 @@ document.write(`
 
 <div class="viewcode-block" id="OpenvinoLauncher.infer">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.openvino_plugin.launcher.html#datumaro.plugins.openvino_plugin.launcher.OpenvinoLauncher.infer">[docs]</a>
-    <span class="k">def</span> <span class="nf">infer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">LauncherInputType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ModelPred</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">infer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">LauncherInputType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ModelPred</span><span class="p">]:</span>
         <span class="n">batch_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span> <span class="o">&lt;</span> <span class="n">batch_size</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_load_executable_net</span><span class="p">(</span><span class="n">batch_size</span><span class="p">)</span>

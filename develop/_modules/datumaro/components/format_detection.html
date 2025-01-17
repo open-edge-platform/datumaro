@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -344,15 +344,15 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">contextlib</span>
-<span class="kn">import</span> <span class="nn">fnmatch</span>
-<span class="kn">import</span> <span class="nn">glob</span>
-<span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
-<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">IntEnum</span><span class="p">,</span> <span class="n">auto</span>
-<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BufferedReader</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">contextlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">fnmatch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">glob</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">IntEnum</span><span class="p">,</span> <span class="n">auto</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">BufferedReader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Any</span><span class="p">,</span>
     <span class="n">Callable</span><span class="p">,</span>
     <span class="n">Collection</span><span class="p">,</span>
@@ -367,12 +367,12 @@ document.write(`
     <span class="n">Union</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Protocol</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Protocol</span>
 
 
 <div class="viewcode-block" id="FormatDetectionConfidence">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.importer.html#datumaro.components.format_detection.FormatDetectionConfidence">[docs]</a>
-<span class="k">class</span> <span class="nc">FormatDetectionConfidence</span><span class="p">(</span><span class="n">IntEnum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FormatDetectionConfidence</span><span class="p">(</span><span class="n">IntEnum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represents the level of confidence that a detector has in a dataset</span>
 <span class="sd">    belonging to the detector&#39;s format.</span>
@@ -406,14 +406,14 @@ document.write(`
 <div class="viewcode-block" id="DetectedFormat">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.format_detection.html#datumaro.components.format_detection.DetectedFormat">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">DetectedFormat</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DetectedFormat</span><span class="p">:</span>
     <span class="n">confidence</span><span class="p">:</span> <span class="n">FormatDetectionConfidence</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">compare</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">compare</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__o</span><span class="p">:</span> <span class="s2">&quot;DetectedFormat&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__o</span><span class="p">:</span> <span class="s2">&quot;DetectedFormat&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">__o</span><span class="o">.</span><span class="n">name</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span></div>
 
 
@@ -427,22 +427,22 @@ document.write(`
 
 <div class="viewcode-block" id="RejectionReason">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.format_detection.html#datumaro.components.format_detection.RejectionReason">[docs]</a>
-<span class="k">class</span> <span class="nc">RejectionReason</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RejectionReason</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="n">unmet_requirements</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
     <span class="n">insufficient_confidence</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
     <span class="n">detection_unsupported</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span></div>
 
 
 
-<span class="k">class</span> <span class="nc">_FormatRejected</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_FormatRejected</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">reason</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RejectionReason</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reason</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RejectionReason</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
 
 <div class="viewcode-block" id="FormatRequirementsUnmet">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.format_detection.html#datumaro.components.format_detection.FormatRequirementsUnmet">[docs]</a>
-<span class="k">class</span> <span class="nc">FormatRequirementsUnmet</span><span class="p">(</span><span class="n">_FormatRejected</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FormatRequirementsUnmet</span><span class="p">(</span><span class="n">_FormatRejected</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represents a situation where a dataset does not meet the requirements</span>
 <span class="sd">    of a given dataset format.</span>
@@ -457,11 +457,11 @@ document.write(`
 <span class="sd">    methods.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">failed_alternatives</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">failed_alternatives</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">assert</span> <span class="n">failed_alternatives</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">failed_alternatives</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">failed_alternatives</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">failed_alternatives</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
@@ -474,14 +474,14 @@ document.write(`
         <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">reason</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RejectionReason</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reason</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RejectionReason</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">RejectionReason</span><span class="o">.</span><span class="n">unmet_requirements</span></div>
 
 
 
 <div class="viewcode-block" id="FormatDetectionUnsupported">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.format_detection.html#datumaro.components.format_detection.FormatDetectionUnsupported">[docs]</a>
-<span class="k">class</span> <span class="nc">FormatDetectionUnsupported</span><span class="p">(</span><span class="n">_FormatRejected</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FormatDetectionUnsupported</span><span class="p">(</span><span class="n">_FormatRejected</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represents a situation where detection is attempted with a format that</span>
 <span class="sd">    does not support it.</span>
@@ -490,18 +490,18 @@ document.write(`
 <span class="sd">    `FormatDetectionContext.raise_unsupported` instead.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;Detection for this format is unsupported&quot;</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">reason</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RejectionReason</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reason</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RejectionReason</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">RejectionReason</span><span class="o">.</span><span class="n">detection_unsupported</span></div>
 
 
 
 <div class="viewcode-block" id="FormatDetectionContext">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.importer.html#datumaro.components.format_detection.FormatDetectionContext">[docs]</a>
-<span class="k">class</span> <span class="nc">FormatDetectionContext</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FormatDetectionContext</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    An instance of this class is given to a dataset format detector.</span>
 <span class="sd">    See the `FormatDetector` documentation. The class should not</span>
@@ -514,11 +514,11 @@ document.write(`
 <span class="sd">    met, the return value depends on the method.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">class</span> <span class="nc">_OneOrMoreContext</span><span class="p">:</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">_OneOrMoreContext</span><span class="p">:</span>
         <span class="n">failed_alternatives</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
         <span class="n">had_successful_alternatives</span><span class="p">:</span> <span class="nb">bool</span>
 
-        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">failed_alternatives</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">had_successful_alternatives</span> <span class="o">=</span> <span class="kc">False</span>
 
@@ -526,12 +526,12 @@ document.write(`
     <span class="c1"># is directly within a `require_any` block.</span>
     <span class="n">_one_or_more_context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">_OneOrMoreContext</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_root_path</span> <span class="o">=</span> <span class="n">root_path</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_one_or_more_context</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">root_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">root_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the path to the root directory of the dataset.</span>
 <span class="sd">        Detectors should avoid using this property in favor of specific</span>
@@ -539,7 +539,7 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_root_path</span>
 
-    <span class="k">def</span> <span class="nf">_is_path_within_root</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_path_within_root</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Checks that `path` is a relative path and does not attempt to leave</span>
 <span class="sd">        the dataset root by using `..` segments.</span>
@@ -560,14 +560,14 @@ document.write(`
 
         <span class="k">return</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="nf">_start_requirement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_start_requirement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_one_or_more_context</span><span class="p">,</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;a requirement (</span><span class="si">{</span><span class="n">req_type</span><span class="si">}</span><span class="s2">) can&#39;t be placed directly within &quot;</span> <span class="s2">&quot;a &#39;require_any&#39; block&quot;</span>
         <span class="p">)</span>
 
 <div class="viewcode-block" id="FormatDetectionContext.raise_unsupported">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.importer.html#datumaro.components.format_detection.FormatDetectionContext.raise_unsupported">[docs]</a>
-    <span class="k">def</span> <span class="nf">raise_unsupported</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NoReturn</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">raise_unsupported</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NoReturn</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Raises a `FormatDetectionUnsupported` exception to signal that the</span>
 <span class="sd">        current format does not support detection.</span>
@@ -578,7 +578,7 @@ document.write(`
 
 <div class="viewcode-block" id="FormatDetectionContext.fail">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.importer.html#datumaro.components.format_detection.FormatDetectionContext.fail">[docs]</a>
-    <span class="k">def</span> <span class="nf">fail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">requirement_desc</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NoReturn</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">requirement_desc</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">NoReturn</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Places a requirement that is never met. `requirement_desc` must contain</span>
 <span class="sd">        a human-readable description of the requirement.</span>
@@ -590,7 +590,7 @@ document.write(`
 
 <div class="viewcode-block" id="FormatDetectionContext.require_file">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.importer.html#datumaro.components.format_detection.FormatDetectionContext.require_file">[docs]</a>
-    <span class="k">def</span> <span class="nf">require_file</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">require_file</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -620,7 +620,7 @@ document.write(`
 
 <div class="viewcode-block" id="FormatDetectionContext.require_files">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.importer.html#datumaro.components.format_detection.FormatDetectionContext.require_files">[docs]</a>
-    <span class="k">def</span> <span class="nf">require_files</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">require_files</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -638,7 +638,7 @@ document.write(`
 
 <div class="viewcode-block" id="FormatDetectionContext.require_files_iter">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.importer.html#datumaro.components.format_detection.FormatDetectionContext.require_files_iter">[docs]</a>
-    <span class="k">def</span> <span class="nf">require_files_iter</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">require_files_iter</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -653,7 +653,7 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_require_files_iter</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="n">exclude_fnames</span><span class="o">=</span><span class="n">exclude_fnames</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_require_files_iter</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_require_files_iter</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -693,7 +693,7 @@ document.write(`
 <div class="viewcode-block" id="FormatDetectionContext.probe_text_file">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.importer.html#datumaro.components.format_detection.FormatDetectionContext.probe_text_file">[docs]</a>
     <span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
-    <span class="k">def</span> <span class="nf">probe_text_file</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">probe_text_file</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">requirement_desc</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">is_binary_file</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">BufferedReader</span><span class="p">,</span> <span class="n">TextIO</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -743,7 +743,7 @@ document.write(`
 <div class="viewcode-block" id="FormatDetectionContext.require_any">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.importer.html#datumaro.components.format_detection.FormatDetectionContext.require_any">[docs]</a>
     <span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
-    <span class="k">def</span> <span class="nf">require_any</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="kc">None</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">require_any</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="kc">None</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a context manager that can be used to place a requirement that</span>
 <span class="sd">        is considered met if at least one of several alternative sets of</span>
@@ -794,7 +794,7 @@ document.write(`
 <div class="viewcode-block" id="FormatDetectionContext.alternative">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.importer.html#datumaro.components.format_detection.FormatDetectionContext.alternative">[docs]</a>
     <span class="nd">@contextlib</span><span class="o">.</span><span class="n">contextmanager</span>
-    <span class="k">def</span> <span class="nf">alternative</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="kc">None</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">alternative</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="kc">None</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a context manager that can be used in combination with</span>
 <span class="sd">        `require_any` to define alternative requirements. See the</span>
@@ -845,7 +845,7 @@ document.write(`
 
 <div class="viewcode-block" id="apply_format_detector">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.format_detection.html#datumaro.components.format_detection.apply_format_detector">[docs]</a>
-<span class="k">def</span> <span class="nf">apply_format_detector</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">apply_format_detector</span><span class="p">(</span>
     <span class="n">dataset_root_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">detector</span><span class="p">:</span> <span class="n">FormatDetector</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FormatDetectionConfidence</span><span class="p">:</span>
@@ -866,8 +866,8 @@ document.write(`
 
 <div class="viewcode-block" id="RejectionCallback">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.format_detection.html#datumaro.components.format_detection.RejectionCallback">[docs]</a>
-<span class="k">class</span> <span class="nc">RejectionCallback</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RejectionCallback</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">format_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">reason</span><span class="p">:</span> <span class="n">RejectionReason</span><span class="p">,</span>
@@ -879,7 +879,7 @@ document.write(`
 
 <div class="viewcode-block" id="detect_dataset_format">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.format_detection.html#datumaro.components.format_detection.detect_dataset_format">[docs]</a>
-<span class="k">def</span> <span class="nf">detect_dataset_format</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">detect_dataset_format</span><span class="p">(</span>
     <span class="n">formats</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">FormatDetector</span><span class="p">]],</span>
     <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
@@ -909,7 +909,7 @@ document.write(`
     <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Path </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2"> doesn&#39;t exist&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">report_insufficient_confidence</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">report_insufficient_confidence</span><span class="p">(</span>
         <span class="n">format_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">format_with_more_confidence</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="p">):</span>
@@ -952,7 +952,7 @@ document.write(`
     <span class="c1"># However, some datasets&#39; detect() are currently broken,</span>
     <span class="c1"># so that it is inevitable to introduce this.</span>
     <span class="c1"># We must revisit this after fixing detect().</span>
-    <span class="k">def</span> <span class="nf">_give_more_priority_to_with_subset_dirs</span><span class="p">(</span><span class="n">matches</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DetectedFormat</span><span class="p">]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_give_more_priority_to_with_subset_dirs</span><span class="p">(</span><span class="n">matches</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DetectedFormat</span><span class="p">]):</span>
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">match</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">matches</span><span class="p">):</span>
             <span class="n">with_subset_dir_match</span> <span class="o">=</span> <span class="n">DetectedFormat</span><span class="p">(</span>
                 <span class="k">match</span><span class="o">.</span><span class="n">confidence</span><span class="p">,</span> <span class="n">match</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_with_subset_dirs&quot;</span>

@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -342,18 +342,18 @@ document.write(`
   <h1>Source code for threading</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Thread module emulating a subset of Java&#39;s threading model.&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">os</span> <span class="k">as</span> <span class="nn">_os</span>
-<span class="kn">import</span> <span class="nn">sys</span> <span class="k">as</span> <span class="nn">_sys</span>
-<span class="kn">import</span> <span class="nn">_thread</span>
-<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">_thread</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
 
-<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">monotonic</span> <span class="k">as</span> <span class="n">_time</span>
-<span class="kn">from</span> <span class="nn">_weakrefset</span> <span class="kn">import</span> <span class="n">WeakSet</span>
-<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">islice</span> <span class="k">as</span> <span class="n">_islice</span><span class="p">,</span> <span class="n">count</span> <span class="k">as</span> <span class="n">_count</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">time</span><span class="w"> </span><span class="kn">import</span> <span class="n">monotonic</span> <span class="k">as</span> <span class="n">_time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">_weakrefset</span><span class="w"> </span><span class="kn">import</span> <span class="n">WeakSet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">islice</span> <span class="k">as</span> <span class="n">_islice</span><span class="p">,</span> <span class="n">count</span> <span class="k">as</span> <span class="n">_count</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">_collections</span> <span class="kn">import</span> <span class="n">deque</span> <span class="k">as</span> <span class="n">_deque</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">_collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">deque</span> <span class="k">as</span> <span class="n">_deque</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">deque</span> <span class="k">as</span> <span class="n">_deque</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">deque</span> <span class="k">as</span> <span class="n">_deque</span>
 
 <span class="c1"># Note regarding PEP 8 compliant names</span>
 <span class="c1">#  This threading model was originally inspired by Java, and inherited</span>
@@ -397,7 +397,7 @@ document.write(`
 <span class="n">_profile_hook</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="n">_trace_hook</span> <span class="o">=</span> <span class="kc">None</span>
 
-<span class="k">def</span> <span class="nf">setprofile</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">setprofile</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set a profile function for all threads started from the threading module.</span>
 
 <span class="sd">    The func will be passed to sys.setprofile() for each thread, before its</span>
@@ -407,11 +407,11 @@ document.write(`
     <span class="k">global</span> <span class="n">_profile_hook</span>
     <span class="n">_profile_hook</span> <span class="o">=</span> <span class="n">func</span>
 
-<span class="k">def</span> <span class="nf">getprofile</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">getprofile</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the profiler function as set by threading.setprofile().&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_profile_hook</span>
 
-<span class="k">def</span> <span class="nf">settrace</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">settrace</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Set a trace function for all threads started from the threading module.</span>
 
 <span class="sd">    The func will be passed to sys.settrace() for each thread, before its run()</span>
@@ -421,7 +421,7 @@ document.write(`
     <span class="k">global</span> <span class="n">_trace_hook</span>
     <span class="n">_trace_hook</span> <span class="o">=</span> <span class="n">func</span>
 
-<span class="k">def</span> <span class="nf">gettrace</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">gettrace</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the trace function as set by threading.settrace().&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">_trace_hook</span>
 
@@ -429,7 +429,7 @@ document.write(`
 
 <span class="n">Lock</span> <span class="o">=</span> <span class="n">_allocate_lock</span>
 
-<span class="k">def</span> <span class="nf">RLock</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">RLock</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Factory function that returns a new reentrant lock.</span>
 
 <span class="sd">    A reentrant lock must be released by the thread that acquired it. Once a</span>
@@ -442,7 +442,7 @@ document.write(`
         <span class="k">return</span> <span class="n">_PyRLock</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">_CRLock</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-<span class="k">class</span> <span class="nc">_RLock</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_RLock</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This class implements reentrant lock objects.</span>
 
 <span class="sd">    A reentrant lock must be released by the thread that acquired it. Once a</span>
@@ -452,12 +452,12 @@ document.write(`
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_block</span> <span class="o">=</span> <span class="n">_allocate_lock</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_owner</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_count</span> <span class="o">=</span> <span class="mi">0</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">owner</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_owner</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">owner</span> <span class="o">=</span> <span class="n">_active</span><span class="p">[</span><span class="n">owner</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
@@ -472,12 +472,12 @@ document.write(`
             <span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_at_fork_reinit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_at_fork_reinit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">_at_fork_reinit</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_owner</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_count</span> <span class="o">=</span> <span class="mi">0</span>
 
-    <span class="k">def</span> <span class="nf">acquire</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">blocking</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">acquire</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">blocking</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Acquire a lock, blocking or non-blocking.</span>
 
 <span class="sd">        When invoked without arguments: if this thread already owns the lock,</span>
@@ -515,7 +515,7 @@ document.write(`
 
     <span class="fm">__enter__</span> <span class="o">=</span> <span class="n">acquire</span>
 
-    <span class="k">def</span> <span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Release a lock, decrementing the recursion level.</span>
 
 <span class="sd">        If after the decrement it is zero, reset the lock to unlocked (not owned</span>
@@ -538,16 +538,16 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">_owner</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">tb</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">tb</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
 
     <span class="c1"># Internal methods used by condition variables</span>
 
-    <span class="k">def</span> <span class="nf">_acquire_restore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_acquire_restore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_count</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_owner</span> <span class="o">=</span> <span class="n">state</span>
 
-    <span class="k">def</span> <span class="nf">_release_save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_release_save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;cannot release un-acquired lock&quot;</span><span class="p">)</span>
         <span class="n">count</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_count</span>
@@ -557,7 +557,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_block</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="n">owner</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_is_owned</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_owned</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_owner</span> <span class="o">==</span> <span class="n">get_ident</span><span class="p">()</span>
 
 <span class="n">_PyRLock</span> <span class="o">=</span> <span class="n">_RLock</span>
@@ -565,7 +565,7 @@ document.write(`
 
 <div class="viewcode-block" id="Condition">
 <a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Condition">[docs]</a>
-<span class="k">class</span> <span class="nc">Condition</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Condition</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Class that implements a condition variable.</span>
 
 <span class="sd">    A condition variable allows one or more threads to wait until they are</span>
@@ -577,7 +577,7 @@ document.write(`
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lock</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lock</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">lock</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">lock</span> <span class="o">=</span> <span class="n">RLock</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span> <span class="o">=</span> <span class="n">lock</span>
@@ -601,26 +601,26 @@ document.write(`
             <span class="k">pass</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_waiters</span> <span class="o">=</span> <span class="n">_deque</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_at_fork_reinit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_at_fork_reinit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="o">.</span><span class="n">_at_fork_reinit</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_waiters</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="o">.</span><span class="fm">__enter__</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;&lt;Condition(</span><span class="si">%s</span><span class="s2">, </span><span class="si">%d</span><span class="s2">)&gt;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_waiters</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">_release_save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_release_save</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>           <span class="c1"># No state to save</span>
 
-    <span class="k">def</span> <span class="nf">_acquire_restore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_acquire_restore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">()</span>           <span class="c1"># Ignore saved state</span>
 
-    <span class="k">def</span> <span class="nf">_is_owned</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_owned</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Return True if lock is owned by current_thread.</span>
         <span class="c1"># This method is called only if _lock doesn&#39;t have _is_owned().</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lock</span><span class="o">.</span><span class="n">acquire</span><span class="p">(</span><span class="kc">False</span><span class="p">):</span>
@@ -631,7 +631,7 @@ document.write(`
 
 <div class="viewcode-block" id="Condition.wait">
 <a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Condition.wait">[docs]</a>
-    <span class="k">def</span> <span class="nf">wait</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wait</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Wait until notified or until a timeout occurs.</span>
 
 <span class="sd">        If the calling thread has not acquired the lock when this method is</span>
@@ -682,7 +682,7 @@ document.write(`
 
 <div class="viewcode-block" id="Condition.wait_for">
 <a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Condition.wait_for">[docs]</a>
-    <span class="k">def</span> <span class="nf">wait_for</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">predicate</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wait_for</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">predicate</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Wait until a condition evaluates to True.</span>
 
 <span class="sd">        predicate should be a callable which result will be interpreted as a</span>
@@ -708,7 +708,7 @@ document.write(`
 
 <div class="viewcode-block" id="Condition.notify">
 <a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Condition.notify">[docs]</a>
-    <span class="k">def</span> <span class="nf">notify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">notify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Wake up one or more threads waiting on this condition, if any.</span>
 
 <span class="sd">        If the calling thread has not acquired the lock when this method is</span>
@@ -741,7 +741,7 @@ document.write(`
 
 <div class="viewcode-block" id="Condition.notify_all">
 <a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Condition.notify_all">[docs]</a>
-    <span class="k">def</span> <span class="nf">notify_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">notify_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Wake up all threads waiting on this condition.</span>
 
 <span class="sd">        If the calling thread has not acquired the lock when this method</span>
@@ -753,13 +753,13 @@ document.write(`
 
 <div class="viewcode-block" id="Condition.notifyAll">
 <a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Condition.notifyAll">[docs]</a>
-    <span class="k">def</span> <span class="nf">notifyAll</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">notifyAll</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Wake up all threads waiting on this condition.</span>
 
 <span class="sd">        This method is deprecated, use notify_all() instead.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">import</span> <span class="nn">warnings</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;notifyAll() is deprecated, use notify_all() instead&#39;</span><span class="p">,</span>
                       <span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">notify_all</span><span class="p">()</span></div>
@@ -767,7 +767,7 @@ document.write(`
 
 
 
-<span class="k">class</span> <span class="nc">Semaphore</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Semaphore</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;This class implements semaphore objects.</span>
 
 <span class="sd">    Semaphores manage a counter representing the number of release() calls minus</span>
@@ -779,13 +779,13 @@ document.write(`
 
     <span class="c1"># After Tim Peters&#39; semaphore class, but not quite the same (no maximum)</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;semaphore initial value must be &gt;= 0&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cond</span> <span class="o">=</span> <span class="n">Condition</span><span class="p">(</span><span class="n">Lock</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">value</span>
 
-    <span class="k">def</span> <span class="nf">acquire</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">blocking</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">acquire</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">blocking</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Acquire a semaphore, decrementing the internal counter by one.</span>
 
 <span class="sd">        When invoked without arguments: if the internal counter is larger than</span>
@@ -832,7 +832,7 @@ document.write(`
 
     <span class="fm">__enter__</span> <span class="o">=</span> <span class="n">acquire</span>
 
-    <span class="k">def</span> <span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Release a semaphore, incrementing the internal counter by one or more.</span>
 
 <span class="sd">        When the counter is zero on entry and another thread is waiting for it</span>
@@ -846,11 +846,11 @@ document.write(`
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_cond</span><span class="o">.</span><span class="n">notify</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">tb</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">tb</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
 
 
-<span class="k">class</span> <span class="nc">BoundedSemaphore</span><span class="p">(</span><span class="n">Semaphore</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BoundedSemaphore</span><span class="p">(</span><span class="n">Semaphore</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Implements a bounded semaphore.</span>
 
 <span class="sd">    A bounded semaphore checks to make sure its current value doesn&#39;t exceed its</span>
@@ -867,11 +867,11 @@ document.write(`
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="n">Semaphore</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_initial_value</span> <span class="o">=</span> <span class="n">value</span>
 
-    <span class="k">def</span> <span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Release a semaphore, incrementing the internal counter by one or more.</span>
 
 <span class="sd">        When the counter is zero on entry and another thread is waiting for it</span>
@@ -891,7 +891,7 @@ document.write(`
                 <span class="bp">self</span><span class="o">.</span><span class="n">_cond</span><span class="o">.</span><span class="n">notify</span><span class="p">()</span>
 
 
-<span class="k">class</span> <span class="nc">Event</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Event</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Class implementing event objects.</span>
 
 <span class="sd">    Events manage a flag that can be set to true with the set() method and reset</span>
@@ -902,30 +902,30 @@ document.write(`
 
     <span class="c1"># After Tim Peters&#39; event class (without is_posted())</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cond</span> <span class="o">=</span> <span class="n">Condition</span><span class="p">(</span><span class="n">Lock</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_flag</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="k">def</span> <span class="nf">_at_fork_reinit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_at_fork_reinit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Private method called by Thread._reset_internal_locks()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cond</span><span class="o">.</span><span class="n">_at_fork_reinit</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">is_set</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_set</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return true if and only if the internal flag is true.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flag</span>
 
-    <span class="k">def</span> <span class="nf">isSet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">isSet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return true if and only if the internal flag is true.</span>
 
 <span class="sd">        This method is deprecated, use is_set() instead.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">import</span> <span class="nn">warnings</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;isSet() is deprecated, use is_set() instead&#39;</span><span class="p">,</span>
                       <span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_set</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the internal flag to true.</span>
 
 <span class="sd">        All threads waiting for it to become true are awakened. Threads</span>
@@ -936,7 +936,7 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">_flag</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_cond</span><span class="o">.</span><span class="n">notify_all</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset the internal flag to false.</span>
 
 <span class="sd">        Subsequently, threads calling wait() will block until set() is called to</span>
@@ -946,7 +946,7 @@ document.write(`
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cond</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_flag</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="k">def</span> <span class="nf">wait</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wait</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Block until the internal flag is true.</span>
 
 <span class="sd">        If the internal flag is true on entry, return immediately. Otherwise,</span>
@@ -979,7 +979,7 @@ document.write(`
 <span class="c1"># since the previous cycle.  In addition, a &#39;resetting&#39; state exists which is</span>
 <span class="c1"># similar to &#39;draining&#39; except that threads leave with a BrokenBarrierError,</span>
 <span class="c1"># and a &#39;broken&#39; state in which all threads get the exception.</span>
-<span class="k">class</span> <span class="nc">Barrier</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Barrier</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Implements a Barrier.</span>
 
 <span class="sd">    Useful for synchronizing a fixed number of threads at known synchronization</span>
@@ -988,7 +988,7 @@ document.write(`
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parties</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parties</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a barrier, initialised to &#39;parties&#39; threads.</span>
 
 <span class="sd">        &#39;action&#39; is a callable which, when supplied, will be called by one of</span>
@@ -1004,7 +1004,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># 0 filling, 1 draining, -1 resetting, -2 broken</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_count</span> <span class="o">=</span> <span class="mi">0</span>
 
-    <span class="k">def</span> <span class="nf">wait</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wait</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Wait for the barrier.</span>
 
 <span class="sd">        When the specified number of threads have started waiting, they are all</span>
@@ -1034,7 +1034,7 @@ document.write(`
 
     <span class="c1"># Block until the barrier is ready for us, or raise an exception</span>
     <span class="c1"># if it is broken.</span>
-    <span class="k">def</span> <span class="nf">_enter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_enter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="ow">in</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
             <span class="c1"># It is draining or resetting, wait until done</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_cond</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
@@ -1045,7 +1045,7 @@ document.write(`
 
     <span class="c1"># Optionally run the &#39;action&#39; and release the threads waiting</span>
     <span class="c1"># in the barrier.</span>
-    <span class="k">def</span> <span class="nf">_release</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_release</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_action</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_action</span><span class="p">()</span>
@@ -1059,7 +1059,7 @@ document.write(`
 
     <span class="c1"># Wait in the barrier until we are released.  Raise an exception</span>
     <span class="c1"># if the barrier is reset or broken.</span>
-    <span class="k">def</span> <span class="nf">_wait</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_wait</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cond</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span><span class="k">lambda</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">timeout</span><span class="p">):</span>
             <span class="c1">#timed out.  Break the barrier</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_break</span><span class="p">()</span>
@@ -1070,14 +1070,14 @@ document.write(`
 
     <span class="c1"># If we are the last thread to exit the barrier, signal any threads</span>
     <span class="c1"># waiting for the barrier to drain.</span>
-    <span class="k">def</span> <span class="nf">_exit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_exit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="ow">in</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
                 <span class="c1">#resetting or draining</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="mi">0</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_cond</span><span class="o">.</span><span class="n">notify_all</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset the barrier to the initial state.</span>
 
 <span class="sd">        Any threads currently waiting will get the BrokenBarrier exception</span>
@@ -1097,7 +1097,7 @@ document.write(`
                 <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_cond</span><span class="o">.</span><span class="n">notify_all</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">abort</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">abort</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Place the barrier into a &#39;broken&#39; state.</span>
 
 <span class="sd">        Useful in case of error.  Any currently waiting threads and threads</span>
@@ -1107,19 +1107,19 @@ document.write(`
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cond</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_break</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_break</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_break</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># An internal error was detected.  The barrier is set to</span>
         <span class="c1"># a broken state all parties awakened.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cond</span><span class="o">.</span><span class="n">notify_all</span><span class="p">()</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">parties</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parties</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of threads required to trip the barrier.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parties</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">n_waiting</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n_waiting</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of threads currently waiting at the barrier.&quot;&quot;&quot;</span>
         <span class="c1"># We don&#39;t need synchronization here since this is an ephemeral result</span>
         <span class="c1"># anyway.  It returns the correct value in the steady state.</span>
@@ -1128,18 +1128,18 @@ document.write(`
         <span class="k">return</span> <span class="mi">0</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">broken</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">broken</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return True if the barrier is in a broken state.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">==</span> <span class="o">-</span><span class="mi">2</span>
 
 <span class="c1"># exception raised by the Barrier class</span>
-<span class="k">class</span> <span class="nc">BrokenBarrierError</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BrokenBarrierError</span><span class="p">(</span><span class="ne">RuntimeError</span><span class="p">):</span>
     <span class="k">pass</span>
 
 
 <span class="c1"># Helper to generate new thread names</span>
 <span class="n">_counter</span> <span class="o">=</span> <span class="n">_count</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="fm">__next__</span>
-<span class="k">def</span> <span class="nf">_newname</span><span class="p">(</span><span class="n">name_template</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_newname</span><span class="p">(</span><span class="n">name_template</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">name_template</span> <span class="o">%</span> <span class="n">_counter</span><span class="p">()</span>
 
 <span class="c1"># Active thread administration.</span>
@@ -1157,7 +1157,7 @@ document.write(`
 <span class="n">_shutdown_locks_lock</span> <span class="o">=</span> <span class="n">_allocate_lock</span><span class="p">()</span>
 <span class="n">_shutdown_locks</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
-<span class="k">def</span> <span class="nf">_maintain_shutdown_locks</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_maintain_shutdown_locks</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Drop any shutdown locks that don&#39;t correspond to running threads anymore.</span>
 
@@ -1175,7 +1175,7 @@ document.write(`
 
 <div class="viewcode-block" id="Thread">
 <a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Thread">[docs]</a>
-<span class="k">class</span> <span class="nc">Thread</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Thread</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A class that represents a thread of control.</span>
 
 <span class="sd">    This class can be safely subclassed in a limited fashion. There are two ways</span>
@@ -1186,7 +1186,7 @@ document.write(`
 
     <span class="n">_initialized</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;This constructor should always be called with keyword arguments. Arguments are:</span>
 
@@ -1244,7 +1244,7 @@ document.write(`
         <span class="c1"># For debugging and _after_fork()</span>
         <span class="n">_dangling</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_reset_internal_locks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_alive</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_reset_internal_locks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_alive</span><span class="p">):</span>
         <span class="c1"># private!  Called by _after_fork() to reset our internal locks as</span>
         <span class="c1"># they may be in an invalid state leading to a deadlock or crash.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_started</span><span class="o">.</span><span class="n">_at_fork_reinit</span><span class="p">()</span>
@@ -1261,7 +1261,7 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">_is_stopped</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_tstate_lock</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initialized</span><span class="p">,</span> <span class="s2">&quot;Thread.__init__() was not called&quot;</span>
         <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;initial&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_started</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
@@ -1277,7 +1277,7 @@ document.write(`
 
 <div class="viewcode-block" id="Thread.start">
 <a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Thread.start">[docs]</a>
-    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Start the thread&#39;s activity.</span>
 
 <span class="sd">        It must be called at most once per thread object. It arranges for the</span>
@@ -1306,7 +1306,7 @@ document.write(`
 
 <div class="viewcode-block" id="Thread.run">
 <a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Thread.run">[docs]</a>
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Method representing the thread&#39;s activity.</span>
 
 <span class="sd">        You may override this method in a subclass. The standard run() method</span>
@@ -1324,7 +1324,7 @@ document.write(`
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_target</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_args</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_bootstrap</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_bootstrap</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Wrapper around the real bootstrap code that ignores</span>
         <span class="c1"># exceptions during interpreter cleanup.  Those typically</span>
         <span class="c1"># happen when a daemon thread wakes up at an unfortunate</span>
@@ -1344,14 +1344,14 @@ document.write(`
                 <span class="k">return</span>
             <span class="k">raise</span>
 
-    <span class="k">def</span> <span class="nf">_set_ident</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_ident</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ident</span> <span class="o">=</span> <span class="n">get_ident</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">_HAVE_THREAD_NATIVE_ID</span><span class="p">:</span>
-        <span class="k">def</span> <span class="nf">_set_native_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_set_native_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_native_id</span> <span class="o">=</span> <span class="n">get_native_id</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_set_tstate_lock</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_tstate_lock</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set a lock object which will be released by the interpreter when</span>
 <span class="sd">        the underlying thread state (see pystate.h) gets deleted.</span>
@@ -1364,7 +1364,7 @@ document.write(`
                 <span class="n">_maintain_shutdown_locks</span><span class="p">()</span>
                 <span class="n">_shutdown_locks</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tstate_lock</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_bootstrap_inner</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_bootstrap_inner</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_set_ident</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_set_tstate_lock</span><span class="p">()</span>
@@ -1393,7 +1393,7 @@ document.write(`
                 <span class="k">except</span><span class="p">:</span>
                     <span class="k">pass</span>
 
-    <span class="k">def</span> <span class="nf">_stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># After calling ._stop(), .is_alive() returns False and .join() returns</span>
         <span class="c1"># immediately.  ._tstate_lock must be released before calling ._stop().</span>
         <span class="c1">#</span>
@@ -1420,7 +1420,7 @@ document.write(`
                 <span class="c1"># Remove our lock and other released locks from _shutdown_locks</span>
                 <span class="n">_maintain_shutdown_locks</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="s2">&quot;Remove current thread from the dict of currently running threads.&quot;</span>
         <span class="k">with</span> <span class="n">_active_limbo_lock</span><span class="p">:</span>
             <span class="k">del</span> <span class="n">_active</span><span class="p">[</span><span class="n">get_ident</span><span class="p">()]</span>
@@ -1431,7 +1431,7 @@ document.write(`
 
 <div class="viewcode-block" id="Thread.join">
 <a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Thread.join">[docs]</a>
-    <span class="k">def</span> <span class="nf">join</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">join</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Wait until the thread terminates.</span>
 
 <span class="sd">        This blocks the calling thread until the thread whose join() method is</span>
@@ -1470,7 +1470,7 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">_wait_for_tstate_lock</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="nb">max</span><span class="p">(</span><span class="n">timeout</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_wait_for_tstate_lock</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_wait_for_tstate_lock</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
         <span class="c1"># Issue #18808: wait for the thread state to be gone.</span>
         <span class="c1"># At the end of the thread&#39;s life, after all knowledge of the thread</span>
         <span class="c1"># is removed from C data structures, C code releases our _tstate_lock.</span>
@@ -1498,7 +1498,7 @@ document.write(`
             <span class="k">raise</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;A string used for identification purposes only.</span>
 
 <span class="sd">        It has no semantics. Multiple threads may be given the same name. The</span>
@@ -1509,12 +1509,12 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
 
     <span class="nd">@name</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initialized</span><span class="p">,</span> <span class="s2">&quot;Thread.__init__() not called&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">ident</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ident</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Thread identifier of this thread or None if it has not been started.</span>
 
 <span class="sd">        This is a nonzero integer. See the get_ident() function. Thread</span>
@@ -1527,7 +1527,7 @@ document.write(`
 
     <span class="k">if</span> <span class="n">_HAVE_THREAD_NATIVE_ID</span><span class="p">:</span>
         <span class="nd">@property</span>
-        <span class="k">def</span> <span class="nf">native_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">native_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Native integral thread ID of this thread, or None if it has not been started.</span>
 
 <span class="sd">            This is a non-negative integer. See the get_native_id() function.</span>
@@ -1539,7 +1539,7 @@ document.write(`
 
 <div class="viewcode-block" id="Thread.is_alive">
 <a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Thread.is_alive">[docs]</a>
-    <span class="k">def</span> <span class="nf">is_alive</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_alive</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return whether the thread is alive.</span>
 
 <span class="sd">        This method returns True just before the run() method starts until just</span>
@@ -1555,7 +1555,7 @@ document.write(`
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">daemon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">daemon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;A boolean value indicating whether this thread is a daemon thread.</span>
 
 <span class="sd">        This must be set before start() is called, otherwise RuntimeError is</span>
@@ -1570,7 +1570,7 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_daemonic</span>
 
     <span class="nd">@daemon</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">daemon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">daemonic</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">daemon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">daemonic</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initialized</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Thread.__init__() not called&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_started</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
@@ -1579,13 +1579,13 @@ document.write(`
 
 <div class="viewcode-block" id="Thread.isDaemon">
 <a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Thread.isDaemon">[docs]</a>
-    <span class="k">def</span> <span class="nf">isDaemon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">isDaemon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return whether this thread is a daemon.</span>
 
 <span class="sd">        This method is deprecated, use the daemon attribute instead.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">import</span> <span class="nn">warnings</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;isDaemon() is deprecated, get the daemon attribute instead&#39;</span><span class="p">,</span>
                       <span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">daemon</span></div>
@@ -1593,13 +1593,13 @@ document.write(`
 
 <div class="viewcode-block" id="Thread.setDaemon">
 <a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Thread.setDaemon">[docs]</a>
-    <span class="k">def</span> <span class="nf">setDaemon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">daemonic</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setDaemon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">daemonic</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set whether this thread is a daemon.</span>
 
 <span class="sd">        This method is deprecated, use the .daemon property instead.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">import</span> <span class="nn">warnings</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;setDaemon() is deprecated, set the daemon attribute instead&#39;</span><span class="p">,</span>
                       <span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="n">daemonic</span></div>
@@ -1607,13 +1607,13 @@ document.write(`
 
 <div class="viewcode-block" id="Thread.getName">
 <a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Thread.getName">[docs]</a>
-    <span class="k">def</span> <span class="nf">getName</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getName</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a string used for identification purposes only.</span>
 
 <span class="sd">        This method is deprecated, use the name attribute instead.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">import</span> <span class="nn">warnings</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;getName() is deprecated, get the name attribute instead&#39;</span><span class="p">,</span>
                       <span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span></div>
@@ -1621,13 +1621,13 @@ document.write(`
 
 <div class="viewcode-block" id="Thread.setName">
 <a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Thread.setName">[docs]</a>
-    <span class="k">def</span> <span class="nf">setName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setName</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the name string for this thread.</span>
 
 <span class="sd">        This method is deprecated, use the name attribute instead.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">import</span> <span class="nn">warnings</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;setName() is deprecated, set the name attribute instead&#39;</span><span class="p">,</span>
                       <span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span></div>
@@ -1636,21 +1636,21 @@ document.write(`
 
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">_thread</span> <span class="kn">import</span> <span class="p">(</span><span class="n">_excepthook</span> <span class="k">as</span> <span class="n">excepthook</span><span class="p">,</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">_thread</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">_excepthook</span> <span class="k">as</span> <span class="n">excepthook</span><span class="p">,</span>
                          <span class="n">_ExceptHookArgs</span> <span class="k">as</span> <span class="n">ExceptHookArgs</span><span class="p">)</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="c1"># Simple Python implementation if _thread._excepthook() is not available</span>
-    <span class="kn">from</span> <span class="nn">traceback</span> <span class="kn">import</span> <span class="n">print_exception</span> <span class="k">as</span> <span class="n">_print_exception</span>
-    <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">traceback</span><span class="w"> </span><span class="kn">import</span> <span class="n">print_exception</span> <span class="k">as</span> <span class="n">_print_exception</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">namedtuple</span>
 
     <span class="n">_ExceptHookArgs</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span>
         <span class="s1">&#39;ExceptHookArgs&#39;</span><span class="p">,</span>
         <span class="s1">&#39;exc_type exc_value exc_traceback thread&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">ExceptHookArgs</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ExceptHookArgs</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">_ExceptHookArgs</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">excepthook</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="o">/</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">excepthook</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="o">/</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Handle uncaught Thread.run() exception.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1685,7 +1685,7 @@ document.write(`
 <span class="n">__excepthook__</span> <span class="o">=</span> <span class="n">excepthook</span>
 
 
-<span class="k">def</span> <span class="nf">_make_invoke_excepthook</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_make_invoke_excepthook</span><span class="p">():</span>
     <span class="c1"># Create a local namespace to ensure that variables remain alive</span>
     <span class="c1"># when _invoke_excepthook() is called, even if it is called late during</span>
     <span class="c1"># Python shutdown. It is mostly needed for daemon threads.</span>
@@ -1701,7 +1701,7 @@ document.write(`
     <span class="n">local_print</span> <span class="o">=</span> <span class="nb">print</span>
     <span class="n">local_sys</span> <span class="o">=</span> <span class="n">_sys</span>
 
-    <span class="k">def</span> <span class="nf">invoke_excepthook</span><span class="p">(</span><span class="n">thread</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">invoke_excepthook</span><span class="p">(</span><span class="n">thread</span><span class="p">):</span>
         <span class="k">global</span> <span class="n">excepthook</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">hook</span> <span class="o">=</span> <span class="n">excepthook</span>
@@ -1738,7 +1738,7 @@ document.write(`
 
 <span class="c1"># The timer class was contributed by Itamar Shtull-Trauring</span>
 
-<span class="k">class</span> <span class="nc">Timer</span><span class="p">(</span><span class="n">Thread</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Timer</span><span class="p">(</span><span class="n">Thread</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Call a function after a specified number of seconds:</span>
 
 <span class="sd">            t = Timer(30.0, f, args=None, kwargs=None)</span>
@@ -1747,7 +1747,7 @@ document.write(`
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="n">Thread</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">interval</span> <span class="o">=</span> <span class="n">interval</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">function</span> <span class="o">=</span> <span class="n">function</span>
@@ -1755,11 +1755,11 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span> <span class="k">if</span> <span class="n">kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">finished</span> <span class="o">=</span> <span class="n">Event</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">cancel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cancel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Stop the timer if it hasn&#39;t finished yet.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">finished</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">finished</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interval</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">finished</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
@@ -1768,9 +1768,9 @@ document.write(`
 
 <span class="c1"># Special thread class to represent the main thread</span>
 
-<span class="k">class</span> <span class="nc">_MainThread</span><span class="p">(</span><span class="n">Thread</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_MainThread</span><span class="p">(</span><span class="n">Thread</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">Thread</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;MainThread&quot;</span><span class="p">,</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_tstate_lock</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_started</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
@@ -1789,9 +1789,9 @@ document.write(`
 <span class="c1"># They are marked as daemon threads so we won&#39;t wait for them</span>
 <span class="c1"># when we exit (conform previous semantics).</span>
 
-<span class="k">class</span> <span class="nc">_DummyThread</span><span class="p">(</span><span class="n">Thread</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_DummyThread</span><span class="p">(</span><span class="n">Thread</span><span class="p">):</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">Thread</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">_newname</span><span class="p">(</span><span class="s2">&quot;Dummy-</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">),</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_started</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
@@ -1801,20 +1801,20 @@ document.write(`
         <span class="k">with</span> <span class="n">_active_limbo_lock</span><span class="p">:</span>
             <span class="n">_active</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_ident</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="nf">_stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
 
-    <span class="k">def</span> <span class="nf">is_alive</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_alive</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">assert</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_stopped</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_started</span><span class="o">.</span><span class="n">is_set</span><span class="p">()</span>
         <span class="k">return</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="nf">join</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">join</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;cannot join a dummy thread&quot;</span>
 
 
 <span class="c1"># Global API functions</span>
 
-<span class="k">def</span> <span class="nf">current_thread</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">current_thread</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the current Thread object, corresponding to the caller&#39;s thread of control.</span>
 
 <span class="sd">    If the caller&#39;s thread of control was not created through the threading</span>
@@ -1826,18 +1826,18 @@ document.write(`
     <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">_DummyThread</span><span class="p">()</span>
 
-<span class="k">def</span> <span class="nf">currentThread</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">currentThread</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the current Thread object, corresponding to the caller&#39;s thread of control.</span>
 
 <span class="sd">    This function is deprecated, use current_thread() instead.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">import</span> <span class="nn">warnings</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
     <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;currentThread() is deprecated, use current_thread() instead&#39;</span><span class="p">,</span>
                   <span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">current_thread</span><span class="p">()</span>
 
-<span class="k">def</span> <span class="nf">active_count</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">active_count</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the number of Thread objects currently alive.</span>
 
 <span class="sd">    The returned count is equal to the length of the list returned by</span>
@@ -1847,22 +1847,22 @@ document.write(`
     <span class="k">with</span> <span class="n">_active_limbo_lock</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">_active</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">_limbo</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">activeCount</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">activeCount</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the number of Thread objects currently alive.</span>
 
 <span class="sd">    This function is deprecated, use active_count() instead.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">import</span> <span class="nn">warnings</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
     <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;activeCount() is deprecated, use active_count() instead&#39;</span><span class="p">,</span>
                   <span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">active_count</span><span class="p">()</span>
 
-<span class="k">def</span> <span class="nf">_enumerate</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_enumerate</span><span class="p">():</span>
     <span class="c1"># Same as enumerate(), but without the lock. Internal use only.</span>
     <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">_active</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">_limbo</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 
-<span class="k">def</span> <span class="nf">enumerate</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">enumerate</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a list of all Thread objects currently alive.</span>
 
 <span class="sd">    The list includes daemonic threads, dummy thread objects created by</span>
@@ -1877,7 +1877,7 @@ document.write(`
 <span class="n">_threading_atexits</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">_SHUTTING_DOWN</span> <span class="o">=</span> <span class="kc">False</span>
 
-<span class="k">def</span> <span class="nf">_register_atexit</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_register_atexit</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">arg</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;CPython internal: register *func* to be called before joining threads.</span>
 
 <span class="sd">    The registered *func* is called with its arguments just before all</span>
@@ -1894,7 +1894,7 @@ document.write(`
     <span class="n">_threading_atexits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">call</span><span class="p">)</span>
 
 
-<span class="kn">from</span> <span class="nn">_thread</span> <span class="kn">import</span> <span class="n">stack_size</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">_thread</span><span class="w"> </span><span class="kn">import</span> <span class="n">stack_size</span>
 
 <span class="c1"># Create the main thread object,</span>
 <span class="c1"># and make it available for the interpreter</span>
@@ -1902,7 +1902,7 @@ document.write(`
 
 <span class="n">_main_thread</span> <span class="o">=</span> <span class="n">_MainThread</span><span class="p">()</span>
 
-<span class="k">def</span> <span class="nf">_shutdown</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_shutdown</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wait until the Python thread state of all non-daemon threads get deleted.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1958,7 +1958,7 @@ document.write(`
         <span class="c1"># threads to complete</span>
 
 
-<span class="k">def</span> <span class="nf">main_thread</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">main_thread</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the main thread object.</span>
 
 <span class="sd">    In normal conditions, the main thread is the thread from which the</span>
@@ -1970,12 +1970,12 @@ document.write(`
 <span class="c1"># module, or from the python fallback</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">_thread</span> <span class="kn">import</span> <span class="n">_local</span> <span class="k">as</span> <span class="n">local</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">_thread</span><span class="w"> </span><span class="kn">import</span> <span class="n">_local</span> <span class="k">as</span> <span class="n">local</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">_threading_local</span> <span class="kn">import</span> <span class="n">local</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">_threading_local</span><span class="w"> </span><span class="kn">import</span> <span class="n">local</span>
 
 
-<span class="k">def</span> <span class="nf">_after_fork</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_after_fork</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Cleanup threading module state that should not exist after a fork.</span>
 <span class="sd">    &quot;&quot;&quot;</span>

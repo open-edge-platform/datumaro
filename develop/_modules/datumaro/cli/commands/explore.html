@@ -27,7 +27,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
@@ -347,30 +347,30 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">argparse</span>
-<span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">import</span> <span class="nn">uuid</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.algorithms.hash_key_inference.explorer</span> <span class="kn">import</span> <span class="n">Explorer</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.algorithms.hash_key_inference.hashkey_util</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.algorithms.hash_key_inference.explorer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Explorer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.algorithms.hash_key_inference.hashkey_util</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">check_and_convert_to_list</span><span class="p">,</span>
     <span class="n">match_query_subset</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetItem</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.errors</span> <span class="kn">import</span> <span class="n">ProjectNotFoundError</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.media</span> <span class="kn">import</span> <span class="n">Image</span>
-<span class="kn">from</span> <span class="nn">datumaro.util</span> <span class="kn">import</span> <span class="n">str_to_bool</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.scope</span> <span class="kn">import</span> <span class="n">scope_add</span><span class="p">,</span> <span class="n">scoped</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProjectNotFoundError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">str_to_bool</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.scope</span><span class="w"> </span><span class="kn">import</span> <span class="n">scope_add</span><span class="p">,</span> <span class="n">scoped</span>
 
-<span class="kn">from</span> <span class="nn">..util</span> <span class="kn">import</span> <span class="n">MultilineFormatter</span>
-<span class="kn">from</span> <span class="nn">..util.project</span> <span class="kn">import</span> <span class="n">load_project</span><span class="p">,</span> <span class="n">parse_full_revpath</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..util</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultilineFormatter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..util.project</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_project</span><span class="p">,</span> <span class="n">parse_full_revpath</span>
 
 
 <div class="viewcode-block" id="build_parser">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.commands.explore.html#datumaro.cli.commands.explore.build_parser">[docs]</a>
-<span class="k">def</span> <span class="nf">build_parser</span><span class="p">(</span><span class="n">parser_ctor</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_parser</span><span class="p">(</span><span class="n">parser_ctor</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">):</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">parser_ctor</span><span class="p">(</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Explore similar data of query in dataset&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
@@ -462,7 +462,7 @@ document.write(`
 
 <div class="viewcode-block" id="get_sensitive_args">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.commands.explore.html#datumaro.cli.commands.explore.get_sensitive_args">[docs]</a>
-<span class="k">def</span> <span class="nf">get_sensitive_args</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_sensitive_args</span><span class="p">():</span>
     <span class="k">return</span> <span class="p">{</span>
         <span class="n">explore_command</span><span class="p">:</span> <span class="p">[</span>
             <span class="s2">&quot;target&quot;</span><span class="p">,</span>
@@ -477,7 +477,7 @@ document.write(`
 <div class="viewcode-block" id="explore_command">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.commands.explore.html#datumaro.cli.commands.explore.explore_command">[docs]</a>
 <span class="nd">@scoped</span>
-<span class="k">def</span> <span class="nf">explore_command</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">explore_command</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
     <span class="n">project</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">project</span> <span class="o">=</span> <span class="n">scope_add</span><span class="p">(</span><span class="n">load_project</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">project_dir</span><span class="p">))</span>
