@@ -7,7 +7,7 @@ from enum import Enum, auto
 from concurrent.futures import ThreadPoolExecutor 
 from queue import Queue 
 from typing import Any, Iterable, List, Optional, Sequence 
-from pathlib import Path ##imported this for path
+from pathlib import Path 
 
 import cv2
 import numpy as np
@@ -106,6 +106,8 @@ class NDR(Transform, CliPlugin):
             "than result length (default: %(default)s)",
         )
         parser.add_argument("-s", "--seed", type=int, help="Random seed")
+        parser.add_argument("-S", "--save_media", action="store_true", help="Save core set images")
+        parser.add_argument("-o", "--output_dir", type=str, help="Directory to save images")
         return parser
 
     def __init__(
@@ -118,6 +120,8 @@ class NDR(Transform, CliPlugin):
         over_sample=None,
         under_sample=None,
         seed=None,
+        save_media= False,
+        output_dir= None,
         **kwargs,
     ):
         """
@@ -147,6 +151,12 @@ class NDR(Transform, CliPlugin):
             if uniform, sample data with uniform distribution
             if inverse, sample data with reciprocal of the number
             of data which have same hash key
+        save_media: bool
+            Flag to indicate if media should be saved.
+            If True, the media files will be saved in the specified output directory.
+        output_dir: str, optional
+            Directory to save the media files.
+            If not provided, defaults to './output'. The directory is created if it doesn't exist.    
 
         Algorithm Specific for gradient
             block_shape: tuple, (h, w)
@@ -196,7 +206,10 @@ class NDR(Transform, CliPlugin):
         self._embeddings = []
         self._deduplicated_item_ids = None
         
-        self.seed = seed
+        if seed:
+            self.seed = seed
+        else:
+            self.seed = None
         self.working_subset = working_subset
         self.duplicated_subset = duplicated_subset
         self.algorithm = algorithm
@@ -204,9 +217,13 @@ class NDR(Transform, CliPlugin):
         self.over_sample = over_sample
         self.under_sample = under_sample
         self.algorithm_specific = kwargs
-        self.kept_item_id = set() ### declared it here , also removed all the unecessary comments 
+        self.kept_item_id = None
         self._initialized = False
+        self.save_media= save_media
 
+        if save_media:
+         self.output_dir = Path(output_dir) if output_dir else Path('./output')
+         self.output_dir.mkdir(parents=True, exist_ok=True)
 
     def get_deduplicated_item_ids(self) -> Sequence[str]:
         """Returns the list of deduplicated items, before resolving under-/oversampling conditions"""
@@ -214,35 +231,30 @@ class NDR(Transform, CliPlugin):
             raise Exception("The index is not initialized yet.")
         return sorted(self._deduplicated_item_ids)
     
-    def save_deduplicated_item_ids(self, output_dir: Path):
+    def save_deduplicated_item_ids(self):
      """Saves list of deduplicated frame IDs (before sampling) as deduplicated.list"""
-     with (output_dir / "deduplicated.list").open('w') as f:
+     with (self.output_dir / "deduplicated.list").open('w') as f:
         for sample_id in self.get_deduplicated_item_ids():
             print(sample_id, file=f)
 
     def get_core_set_item_ids(self):
-        """Returns the list of core set frame ids after deduplication and sampling/cutting """ ### edited the documentation (from 'after')
+        """Returns the list of core set frame ids after deduplication and sampling/cutting """
         
         if not self._initialized:
             raise Exception("The index is not initialized yet.")
         return sorted(self.kept_item_id) 
     
-    def save_core_set_item_ids(self, output_dir: Path, kept_item_id: set): ###this is the function that will write the ids somewhere hopefully
+    def save_core_set_item_ids(self):
         """ Saves list of final selected frame IDs (after sampling) as core_set_frames.list """
-        with (output_dir / "core_set_frames.list").open('w') as f:
-            for sample_id in kept_item_id:
+        with (self.output_dir / "core_set_frames.list").open('w') as f:
+            for sample_id in self.get_core_set_item_ids():
                 print(sample_id, file=f)                    
-
 
     def append_state(self, values: Iterable[Any]):
         """Append precomputed state values to internal storage"""
         for sample, embedding in values:
             self._sample_keys.append(sample)
             self._embeddings.append(embedding)
-
-    def init_cache(self):
-        """Initialize internal caches"""
-        return self._initialized
 
     def compute_state(self, item, img):
         """Compute embedding state for a given image"""
@@ -273,10 +285,10 @@ class NDR(Transform, CliPlugin):
         else:
             raise NotImplementedError()
 
-        return item.id, embedding
+        return item.id, embedding 
 
     def _remove(self):
-        # Uses cached states and threading   ###this comment was also generated by claude, but edited it and thought its better that it stays
+        # Uses cached states and threading
         if not self._sample_keys and not self._embeddings:
             if self.working_subset == DEFAULT_SUBSET_NAME:
                 working_subset_length = float("inf")
@@ -319,7 +331,6 @@ class NDR(Transform, CliPlugin):
         else:
             raise NotImplementedError()
 
-        
         self._deduplicated_item_ids = set(self._sample_keys[ii] for ii in kept_index)
 
         kept_index = self._keep_cut(
@@ -333,6 +344,8 @@ class NDR(Transform, CliPlugin):
             self.under_sample,
         )
         self.kept_item_id = set(self._sample_keys[ii] for ii in kept_index)
+        if self.save_media : 
+            self.save_core_set_item_ids()
 
     def _gradient_based(self, all_imgs, block_shape=(4, 4), hash_dim=32, sim_threshold=0.5):
         if len(block_shape) != 2:
@@ -522,6 +535,3 @@ class NDR(Transform, CliPlugin):
             self._initialized = True
         for item in self._extractor:
             yield self.wrap_item(item, subset=self._check_subset(item))
-
- ###Now need to look into cli and and i dont think i need the code in refrence script from line 198-201, baaki check once, and rest ig is done somewhat
- ##might need to change the actual cli folder files aswell
