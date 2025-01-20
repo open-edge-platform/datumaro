@@ -1424,10 +1424,9 @@ class PointsCategories(Categories):
             """
             Validate a list of point positions in the format [x1, y1, x2, y2, ..., xn, yn].
 
-            To be used as an attrs validator for the positions field of PointsCategories Category.
+            To be used as an attrs validator for the positions field of PointsCategories.Category.
 
             Args:
-                inst: The instance being validated.
                 attribute: The attribute being validated (unused).
                 positions (list[float]): A list of point positions.
 
