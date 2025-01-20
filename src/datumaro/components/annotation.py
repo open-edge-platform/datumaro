@@ -1419,34 +1419,40 @@ class PointsCategories(Categories):
         # Set of default x, y coordinates of the points
         positions: List[float] = field(factory=list)
 
-        def __attrs_post_init__(self):
-            """
-            Validates that the number of positions is equal to the number of labels.
-            """
-            if len(self.positions) > 0 and len(self.positions) != len(self.labels) * 2:
-                msg = "The number of positions should be equal to the number of labels"
-                raise ValueError(msg)
-
         @positions.validator
-        def positions_validator(self, attribute, positions) -> list[float]:
+        def positions_validator(self, attribute, positions: list[float] | None) -> None:
             """
             Validate a list of point positions in the format [x1, y1, x2, y2, ..., xn, yn].
 
-            To be used as an attrs validator in PointsCategories class.
+            To be used as an attrs validator for the positions field of PointsCategories Category.
+
+            Args:
+                inst: The instance being validated.
+                attribute: The attribute being validated (unused).
+                positions (list[float]): A list of point positions.
+
+            Raises:
+                ValueError: If the provided value cannot be converted to a list of floats,
+                    or if the number of positions is not even.
             """
+            del attribute
+            print(len(self.labels))
             if positions is None or positions == []:
                 self.positions = []
             else:
-                # convert to a list of tuples
+                # convert to a list of floats
                 try:
                     positions = list(map(float, positions))
                 except (TypeError, ValueError):
-                    raise ValueError(
-                        f"Cannot convert {attribute.name} to list of floats. Check your input data."
-                    )
+                    msg = "Cannot convert positions to list of floats. Check your input data."
+                    raise ValueError(msg)
                 # validate the positions
                 if len(positions) % 2 != 0:
-                    raise ValueError(f"{attribute.name} must have an even number of elements")
+                    msg = "positions must have an even number of elements"
+                    raise ValueError(msg)
+                if len(self.labels) > 0 and len(self.positions) != len(self.labels) * 2:
+                    msg = "The number of positions should be equal to the number of labels"
+                    raise ValueError(msg)
                 # normalize the positions
                 self.positions = normalize_points(positions)
 
