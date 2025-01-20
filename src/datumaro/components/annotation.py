@@ -1420,14 +1420,16 @@ class PointsCategories(Categories):
         positions: List[float] = field(factory=list)
 
         @positions.validator
-        def positions_validator(self, attribute, positions: list[float] | None) -> None:
+        def positions_validator(
+            self, attribute: attr.Attribute[list], positions: list[float] | None
+        ) -> None:
             """
             Validate a list of point positions in the format [x1, y1, x2, y2, ..., xn, yn].
 
             To be used as an attrs validator for the positions field of PointsCategories.Category.
 
             Args:
-                attribute: The attribute being validated (unused).
+                attribute (attr.Attribute[list]): The attribute being validated (unused).
                 positions (list[float]): A list of point positions.
 
             Raises:
