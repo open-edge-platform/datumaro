@@ -181,9 +181,15 @@ class PointsCategoriesTest:
         """Tests for the validator of the `positions` field in PointsCategories.Category."""
 
         @staticmethod
-        def test_empty_positions():
+        def test_empty_positions_list():
             """Test that an empty list of positions is allowed."""
             obj = PointsCategories.Category(positions=[])
+            assert obj.positions == []  # Should allow empty list
+
+        @staticmethod
+        def test_empty_positions_tuple():
+            """Test that an empty list of positions is allowed."""
+            obj = PointsCategories.Category(positions=())
             assert obj.positions == []  # Should allow empty list
 
         @staticmethod
@@ -237,3 +243,19 @@ class PointsCategoriesTest:
                 ValueError, match="number of positions should be equal to the number of labels"
             ):
                 PointsCategories.Category(labels=labels, positions=positions)
+
+        @staticmethod
+        def test_positions_allowed_with_empty_labels():
+            """Test that the the number of coordinates check is skipped when labels is empty."""
+            labels = []  # no labels
+            positions = [1.0, 2.0, 3.0, 4.0]  # 2 positions
+            obj = PointsCategories.Category(labels=labels, positions=positions)
+            assert obj
+
+        @staticmethod
+        def test_labels_allowed_with_empty_positions():
+            """Test that the the number of coordinates check is skipped when positions is empty."""
+            labels = ["p1", "p2", "p3"]  # 3 labels
+            positions = []  # no positions
+            obj = PointsCategories.Category(labels=labels, positions=positions)
+            assert obj
