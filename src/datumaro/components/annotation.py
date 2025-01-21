@@ -1417,7 +1417,7 @@ class PointsCategories(Categories):
         joints: Set[Tuple[int, int]] = field(factory=set, validator=default_if_none(set))
 
         # Set of default x, y coordinates of the points
-        positions: List[float] = field(factory=list)
+        positions: List[float] = field(default=[])
 
         @positions.validator
         def positions_validator(
@@ -1429,17 +1429,15 @@ class PointsCategories(Categories):
             To be used as an attrs validator for the positions field of PointsCategories.Category.
 
             Args:
-                attribute (attr.Attribute[list]): The attribute being validated (unused).
+                attribute (attr.Attribute[list]): The attribute being validated.
                 positions (list[float]): A list of point positions.
 
             Raises:
                 ValueError: If the provided value cannot be converted to a list of floats,
-                    or if the number of positions is not even.
+                    or if the number of positions is invalid.
             """
-            del attribute
-            print(len(self.labels))
-            if positions is None or positions == []:
-                self.positions = []
+            if positions is None:
+                positions = []
             else:
                 # convert to a list of floats
                 try:
@@ -1447,15 +1445,18 @@ class PointsCategories(Categories):
                 except (TypeError, ValueError):
                     msg = "Cannot convert positions to list of floats. Check your input data."
                     raise ValueError(msg)
-                # validate the positions
+                # check if number of coordinates is even
                 if len(positions) % 2 != 0:
                     msg = "positions must have an even number of elements"
                     raise ValueError(msg)
-                if len(self.labels) > 0 and len(self.positions) != len(self.labels) * 2:
-                    msg = "The number of positions should be equal to the number of labels"
-                    raise ValueError(msg)
-                # normalize the positions
-                self.positions = normalize_points(positions)
+                if len(positions) > 0:
+                    # check if the number of positions is equal to the number of labels
+                    if len(self.labels) > 0 and len(positions) != len(self.labels) * 2:
+                        msg = "The number of positions should be equal to the number of labels"
+                        raise ValueError(msg)
+                    # normalize the positions
+                    positions = normalize_points(positions)
+            setattr(self, attribute.name, positions)
 
     items: Dict[int, Category] = field(factory=dict, validator=default_if_none(dict))
 
