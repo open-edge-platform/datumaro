@@ -20,7 +20,6 @@ from datumaro.components.annotation import (
     PointsCategories,
     RotatedBbox,
 )
-from datumaro.util.attrs_util import validate_points_positions
 from datumaro.util.image import lazy_image
 from datumaro.util.points_util import normalize_points
 
