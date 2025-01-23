@@ -1,4 +1,4 @@
-# Copyright (C) 2020-2024 Intel Corporation
+# Copyright (C) 2020-2025 Intel Corporation
 #
 # SPDX-License-Identifier: MIT
 
@@ -17,9 +17,11 @@ from datumaro.components.annotation import (
     ExtractedMask,
     HashKey,
     Mask,
+    PointsCategories,
     RotatedBbox,
 )
 from datumaro.util.image import lazy_image
+from datumaro.util.points_util import normalize_points
 
 
 class EllipseTest:
@@ -142,3 +144,117 @@ class AnnotationsTest:
         semantic_seg_mask = annotations.get_semantic_seg_mask(ignore_index=255, dtype=dtype)
 
         assert np.allclose(semantic_seg_mask, fxt_index_mask)
+
+
+class PointsCategoriesTest:
+    @pytest.mark.parametrize(
+        "positions, expected",
+        [
+            (
+                [2, 3, 4, 6, 3, 5],
+                [0.0, 0.0, 0.666667, 1.0, 0.333333, 0.666667],
+            ),  # basic functionality
+            ([1, 1, 1, 1, 1, 1], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]),  # all points are the same
+            ([1, 1, 3, 1, 5, 1], [0.0, 0.0, 0.5, 0.0, 1.0, 0.0]),  # points form horizontal line
+            ([1, 1, 1, 3, 1, 5], [0.0, 0.0, 0.0, 0.5, 0.0, 1.0]),  # points form vertical line
+            (
+                [-2, -3, -4, -6, -3, -5],
+                [0.666667, 1.0, 0.0, 0.0, 0.333333, 0.333333],
+            ),  # negative coords
+            (
+                [1000, 2000, 4000, 6000, 3000, 5000],
+                [0.0, 0.0, 0.75, 1.0, 0.50, 0.75],
+            ),  # large range
+            (
+                [0.001, 0.002, 0.004, 0.006, 0.003, 0.005],
+                [0.0, 0.0, 0.75, 1.0, 0.50, 0.75],
+            ),  # small range
+            ([2, 3], [0.0, 0.0]),  # single point
+        ],
+    )
+    def test_normalize_positions(self, positions, expected):
+        result = normalize_points(positions)
+        assert np.allclose(result, expected), f"Expected {expected}, got {result}"
+
+    class PointsPositionsValidatorTest:
+        """Tests for the validator of the `positions` field in PointsCategories.Category."""
+
+        @staticmethod
+        def test_empty_positions_list():
+            """Test that an empty list of positions is allowed."""
+            obj = PointsCategories.Category(positions=[])
+            assert obj.positions == []  # Should allow empty list
+
+        @staticmethod
+        def test_empty_positions_tuple():
+            """Test that an empty list of positions is allowed."""
+            obj = PointsCategories.Category(positions=())
+            assert obj.positions == []  # Should allow empty list
+
+        @staticmethod
+        def test_none_positions():
+            """Test that None is allowed and converted to an empty list."""
+            obj = PointsCategories.Category(positions=None)
+            assert obj.positions == []  # Should allow None and convert to empty list
+
+        @staticmethod
+        def test_valid_positions():
+            """Test that valid positions are allowed."""
+            labels = ["p1", "p2"]
+            positions = [1.0, 2.0, 3.0, 4.0]
+            obj = PointsCategories.Category(labels=labels, positions=positions)
+            assert obj
+
+        @staticmethod
+        def test_type_not_list():
+            """Test that a non-list type for positions raises an error."""
+            with pytest.raises(ValueError, match="Cannot convert positions to list of floats"):
+                PointsCategories.Category(positions=56)
+
+        @staticmethod
+        def test_coordinates_as_string():
+            """Test that the coordinates may be represented as a string."""
+            labels = ["p1", "p2"]
+            positions = ["1", "2", "3", "4"]
+            obj = PointsCategories.Category(labels=labels, positions=positions)
+            assert obj
+
+        @staticmethod
+        def test_non_numeric_elements():
+            """Test that passing non-numeric elements raises an error."""
+            labels = ["p1", "p2"]
+            positions = [1.0, 2.0, 3.0, "not_a_number"]
+            with pytest.raises(ValueError, match="Cannot convert positions to list of floats"):
+                PointsCategories.Category(labels=labels, positions=positions)
+
+        @staticmethod
+        def test_uneven_number_of_elements():
+            """Test that an uneven number of elements raises an error."""
+            with pytest.raises(ValueError, match="positions must have an even number of elements"):
+                PointsCategories.Category(positions=[1.0, 2.0, 3.0])
+
+        @staticmethod
+        def test_num_positions_not_same_as_num_labels():
+            """Test that the number of positions must match the number of labels."""
+            labels = ["p1", "p2", "p3"]  # 3 labels
+            positions = [1.0, 2.0, 3.0, 4.0]  # 2 positions
+            with pytest.raises(
+                ValueError, match="number of positions should be equal to the number of labels"
+            ):
+                PointsCategories.Category(labels=labels, positions=positions)
+
+        @staticmethod
+        def test_positions_allowed_with_empty_labels():
+            """Test that the the number of coordinates check is skipped when labels is empty."""
+            labels = []  # no labels
+            positions = [1.0, 2.0, 3.0, 4.0]  # 2 positions
+            obj = PointsCategories.Category(labels=labels, positions=positions)
+            assert obj
+
+        @staticmethod
+        def test_labels_allowed_with_empty_positions():
+            """Test that the the number of coordinates check is skipped when positions is empty."""
+            labels = ["p1", "p2", "p3"]  # 3 labels
+            positions = []  # no positions
+            obj = PointsCategories.Category(labels=labels, positions=positions)
+            assert obj

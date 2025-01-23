@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Q4 2024 Release 1.10.0
 
 ### New features
+- Add default position information to PointsCategories class
+  (<https://github.com/openvinotoolkit/datumaro/pull/1702>)
 - Support KITTI 3D format
   (<https://github.com/openvinotoolkit/datumaro/pull/1619>)
   (<https://github.com/openvinotoolkit/datumaro/pull/1621>)
