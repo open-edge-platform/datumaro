@@ -29,13 +29,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu-24.04']
+        os: ['ubuntu-24.04', 'windows-2022']
         python-version: ['3.12']
         include:
           - python-version: "3.12"
             tox-env-py: "312"
           - os: "ubuntu-24.04"
             tox-env-os: "lin"
+          - os: "windows-2022"
+            tox-env-os: "win"
     name: pr test (${{ matrix.os }}, Python ${{ matrix.python-version }})
     runs-on: ${{ matrix.os }}
     steps:
