@@ -9,6 +9,9 @@ from unittest import TestCase, skipIf
 
 import numpy as np
 import pytest
+from tokenizers import Tokenizer
+from tokenizers.models import BPE
+from tokenizers.trainers import BpeTrainer
 
 from datumaro.components.annotation import (
     AnnotationType,
@@ -38,8 +41,6 @@ from tests.utils.assets import get_test_asset_path
 
 try:
     import torch
-    from torchtext.data.utils import get_tokenizer
-    from torchtext.vocab import build_vocab_from_iterator
     from torchvision import datasets, transforms
 except ImportError:
     TORCH_AVAILABLE = False
@@ -203,30 +204,8 @@ def fxt_tabular_caption_dataset():
 
 
 @pytest.fixture
-def fxt_dummy_tokenizer():
-    def dummy_tokenizer(text):
-        return text.split()
-
-    return dummy_tokenizer
-
-
-@pytest.fixture
 def data_iter():
     return [(1, "This is a sample text"), (2, "Another sample text")]
-
-
-@pytest.fixture
-def fxt_dummy_vocab(fxt_dummy_tokenizer, data_iter):
-    vocab = build_vocab_from_iterator(
-        map(fxt_dummy_tokenizer, (text for _, text in data_iter)), specials=["<unk>"]
-    )
-    vocab.set_default_index(vocab["<unk>"])
-    return vocab
-
-
-@pytest.fixture
-def fxt_tabular_fixture(fxt_dummy_tokenizer, fxt_dummy_vocab):
-    return {"target": {"input": "text"}, "tokenizer": fxt_dummy_tokenizer, "vocab": fxt_dummy_vocab}
 
 
 @pytest.mark.new
@@ -481,18 +460,17 @@ class MultiframeworkConverterTest:
     @pytest.mark.skipif(not TORCH_AVAILABLE, reason="PyTorch is not installed")
     def test_can_convert_torch_framework_tabular_label(self, fxt_tabular_label_dataset):
         class IMDBDataset(Dataset):
-            def __init__(self, data_iter, vocab, transform=None):
+            def __init__(self, data_iter, tokenizer, transform=None):
                 self.data = list(data_iter)
-                self.vocab = vocab
                 self.transform = transform
-                self.tokenizer = get_tokenizer("basic_english")
+                self.tokenizer = tokenizer
 
             def __len__(self):
                 return len(self.data)
 
             def __getitem__(self, idx):
                 label, text = self.data[idx]
-                token_ids = [self.vocab[token] for token in self.tokenizer(text)]
+                token_ids = self.tokenizer(text)
 
                 if self.transform:
                     token_ids = self.transform(token_ids)
@@ -505,22 +483,23 @@ class MultiframeworkConverterTest:
         # First item of IMDB
         first_item = (
             1,
-            "I rented I AM CURIOUS-YELLOW from my video store because of all the controversy that surrounded it when it was first released in 1967. I also heard that at first it was seized by U.S. customs if it ever tried to enter this country, therefore being a fan of films considered \"controversial\" I really had to see this for myself.<br /><br />The plot is centered around a young Swedish drama student named Lena who wants to learn everything she can about life. In particular she wants to focus her attentions to making some sort of documentary on what the average Swede thought about certain political issues such as the Vietnam War and race issues in the United States. In between asking politicians and ordinary denizens of Stockholm about their opinions on politics, she has sex with her drama teacher, classmates, and married men.<br /><br />What kills me about I AM CURIOUS-YELLOW is that 40 years ago, this was considered pornographic. Really, the sex and nudity scenes are few and far between, even then it's not shot like some cheaply made porno. While my countrymen mind find it shocking, in reality sex and nudity are a major staple in Swedish cinema. Even Ingmar Bergman, arguably their answer to good old boy John Ford, had sex scenes in his films.<br /><br />I do commend the filmmakers for the fact that any sex shown in the film is shown for artistic purposes rather than just to shock people and make money to be shown in pornographic theaters in America. I AM CURIOUS-YELLOW is a good film for anyone wanting to study the meat and potatoes (no pun intended) of Swedish cinema. But really, this film doesn't have much of a plot.",
+            "I rented I AM CURIOUS-YELLOW from my video store because of all the controversy that surrounded it when it was first released in 1967. I also heard that at first it was seized by U.S. customs if it ever tried to enter this country, therefore being a fan of films considered controversial I really had to see this for myself.<br /><br />The plot is centered around a young Swedish drama student named Lena who wants to learn everything she can about life. In particular she wants to focus her attentions to making some sort of documentary on what the average Swede thought about certain political issues such as the Vietnam War and race issues in the United States. In between asking politicians and ordinary denizens of Stockholm about their opinions on politics, she has sex with her drama teacher, classmates, and married men.<br /><br />What kills me about I AM CURIOUS-YELLOW is that 40 years ago, this was considered pornographic. Really, the sex and nudity scenes are few and far between, even then it's not shot like some cheaply made porno. While my countrymen mind find it shocking, in reality sex and nudity are a major staple in Swedish cinema. Even Ingmar Bergman, arguably their answer to good old boy John Ford, had sex scenes in his films.<br /><br />I do commend the filmmakers for the fact that any sex shown in the film is shown for artistic purposes rather than just to shock people and make money to be shown in pornographic theaters in America. I AM CURIOUS-YELLOW is a good film for anyone wanting to study the meat and potatoes (no pun intended) of Swedish cinema. But really, this film doesn't have much of a plot.",
         )
-        tokenizer = get_tokenizer("basic_english")
+        tokenizer = Tokenizer(BPE(unk_token="[UNK]"))
+        trainer = BpeTrainer(special_tokens=["[UNK]", "[CLS]", "[SEP]", "[PAD]", "[MASK]"])
+        tokenizer.train_from_iterator(first_item[1], trainer)
 
-        # Build vocabulary
-        vocab = build_vocab_from_iterator([tokenizer(first_item[1])], specials=["<unk>"])
-        vocab.set_default_index(vocab["<unk>"])
+        def apply_tokenizer(text):
+            return tokenizer.encode(text).ids
 
         # Create torch dataset
-        torch_dataset = IMDBDataset(iter([first_item]), vocab)
+        torch_dataset = IMDBDataset(iter([first_item]), apply_tokenizer)
 
         # Convert to dm_torch_dataset
         dm_dataset = fxt_tabular_label_dataset
         multi_framework_dataset = FrameworkConverter(dm_dataset, subset="train", task="tabular")
         dm_torch_dataset = multi_framework_dataset.to_framework(
-            framework="torch", target={"input": "text"}, tokenizer=tokenizer, vocab=vocab
+            framework="torch", target={"input": "text"}, tokenizer=apply_tokenizer
         )
 
         # Verify equality of items in torch_dataset and dm_torch_dataset
@@ -539,25 +518,22 @@ class MultiframeworkConverterTest:
     @pytest.mark.skipif(not TORCH_AVAILABLE, reason="PyTorch is not installed")
     def test_can_convert_torch_framework_tabular_caption(self, fxt_tabular_caption_dataset):
         class Multi30kDataset(Dataset):
-            def __init__(self, dataset, src_tokenizer, tgt_tokenizer, src_vocab, tgt_vocab):
+            def __init__(self, dataset, src_tokenizer, tgt_tokenizer):
                 self.dataset = list(dataset)
                 self.src_tokenizer = src_tokenizer
                 self.tgt_tokenizer = tgt_tokenizer
-                self.src_vocab = src_vocab
-                self.tgt_vocab = tgt_vocab
 
             def __len__(self):
                 return len(self.dataset)
 
-            def _data_process(self, text, tokenizer, vocab):
-                tokens = tokenizer(text)
-                token_ids = [vocab[token] for token in tokens]
+            def _data_process(self, text, tokenizer):
+                token_ids = tokenizer(text)
                 return torch.tensor(token_ids, dtype=torch.long)
 
             def __getitem__(self, idx):
                 src, tgt = self.dataset[idx]
-                src_tensor = self._data_process(src, self.src_tokenizer, self.src_vocab)
-                tgt_tensor = self._data_process(tgt, self.tgt_tokenizer, self.tgt_vocab)
+                src_tensor = self._data_process(src, self.src_tokenizer)
+                tgt_tensor = self._data_process(tgt, self.tgt_tokenizer)
                 return src_tensor, tgt_tensor
 
         # Prepare data and tokenizer
@@ -567,23 +543,22 @@ class MultiframeworkConverterTest:
             "Two young, White males are outside near many bushes.",
         )
 
-        dummy_tokenizer = str.split
+        def build_single_vocab(item):
+            tokenizer = Tokenizer(BPE(unk_token="[UNK]"))
+            trainer = BpeTrainer(special_tokens=["[UNK]", "[CLS]", "[SEP]", "[PAD]", "[MASK]"])
+            tokenizer.train_from_iterator(item, trainer)
 
-        def build_single_vocab(item, tokenizer, specials):
-            tokens = tokenizer(item)
-            vocab = build_vocab_from_iterator([tokens], specials=specials)
-            vocab.set_default_index(vocab["<unk>"])
-            return vocab
+            def encode(text):
+                return tokenizer.encode(text).ids
+
+            return encode
 
         # Build vocabularies
-        specials = ["<unk>", "<pad>", "<bos>", "<eos>"]
-        src_vocab = build_single_vocab(first_item[0], dummy_tokenizer, specials)
-        tgt_vocab = build_single_vocab(first_item[1], dummy_tokenizer, specials)
+        src_tokenizer = build_single_vocab(first_item[0])
+        tgt_tokenizer = build_single_vocab(first_item[1])
 
         # Create torch dataset
-        torch_dataset = Multi30kDataset(
-            iter([first_item]), dummy_tokenizer, dummy_tokenizer, src_vocab, tgt_vocab
-        )
+        torch_dataset = Multi30kDataset(iter([first_item]), src_tokenizer, tgt_tokenizer)
 
         # Convert to dm_torch_dataset
         dm_dataset = fxt_tabular_caption_dataset
@@ -591,8 +566,7 @@ class MultiframeworkConverterTest:
         dm_torch_dataset = multi_framework_dataset.to_framework(
             framework="torch",
             target={"input": "source", "output": "target"},
-            tokenizer=(dummy_tokenizer, dummy_tokenizer),
-            vocab=(src_vocab, tgt_vocab),
+            tokenizer=(src_tokenizer, tgt_tokenizer),
         )
 
         # Verify equality of items in torch_dataset and dm_torch_dataset

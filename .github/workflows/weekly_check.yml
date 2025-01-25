@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.9', '3.10', '3.11']
+        python-version: ['3.9', '3.10', '3.11', '3.12']
         extra: ['default', 'tf', 'tfds', 'torch']
         include:
           - python-version: "3.9"
@@ -28,6 +28,8 @@ jobs:
             tox-env-py: "310"
           - python-version: "3.11"
             tox-env-py: "311"
+          - python-version: "3.12"
+            tox-env-py: "312"
     name: stability test (Python ${{ matrix.python-version }}, Extra ${{ matrix.extra }})
     runs-on: ubuntu-latest
     steps:

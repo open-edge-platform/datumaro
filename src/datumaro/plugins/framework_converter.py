@@ -128,8 +128,8 @@ try:
                         "Please provide target column for tabular task which is used for input"
                     )
 
-                if not (tokenizer and vocab):
-                    raise ValueError("Both tokenizer and vocab must be provided for tabular task")
+                if not (tokenizer):
+                    raise ValueError("A tokenizer must be provided for tabular task")
                 self.tokenizer = tokenizer
                 self.vocab = vocab
 
@@ -144,20 +144,20 @@ try:
 
                 if self.output_target:
                     src_tokenizer, tgt_tokenizer = self.tokenizer
-                    src_vocab, tgt_vocab = self.vocab
+                    src_vocab, tgt_vocab = self.vocab if self.vocab else None, None
                     src_tokens = src_tokenizer(text)
-                    src_token_ids = src_vocab(src_tokens)
+                    src_token_ids = src_vocab(src_tokens) if src_vocab else src_tokens
 
                     label_text = label[0]["caption"].split(f"{self.output_target}:")[-1]
                     tgt_tokens = tgt_tokenizer(label_text)
-                    tgt_token_ids = tgt_vocab(tgt_tokens)
+                    tgt_token_ids = tgt_vocab(tgt_tokens) if tgt_vocab else tgt_tokens
 
                     return torch.tensor(src_token_ids, dtype=torch.long), torch.tensor(
                         tgt_token_ids, dtype=torch.long
                     )
                 else:
                     tokens = self.tokenizer(text)
-                    token_ids = self.vocab(tokens)
+                    token_ids = self.vocab(tokens) if self.vocab else tokens
                     return torch.tensor(token_ids, dtype=torch.long), torch.tensor(
                         label[0]["label"], dtype=torch.long
                     )
