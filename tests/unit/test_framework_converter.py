@@ -148,14 +148,29 @@ def fxt_dataset():
 
 
 @pytest.fixture
-def fxt_tabular_label_dataset():
+def fxt_text_example():
+    return """Datumaro is a framework and CLI tool to build, transform, and analyze datasets.
+                a tool to build composite datasets and iterate over them
+                a tool to create and maintain datasets
+                    Version control of annotations and images
+                    Publication (with removal of sensitive information)
+                    Editing
+                    Joining and splitting
+                    Exporting, format changing
+                    Image preprocessing
+                a dataset storage
+                a tool to debug datasets
+                A network can be used to generate informative data subsets (e.g., with false-positives) to be analyzed further
+            """
+
+
+@pytest.fixture
+def fxt_tabular_label_dataset(fxt_text_example):
     table = Table.from_list(
         [
             {
                 "label": 1,
-                "text": "I rented I AM CURIOUS-YELLOW from my video store because of all the controversy that surrounded it when it was first released in 1967. I also heard that at first it was seized by U.S. customs if it ever tried to enter this country, therefore being a fan of films considered "
-                "controversial"
-                " I really had to see this for myself.<br /><br />The plot is centered around a young Swedish drama student named Lena who wants to learn everything she can about life. In particular she wants to focus her attentions to making some sort of documentary on what the average Swede thought about certain political issues such as the Vietnam War and race issues in the United States. In between asking politicians and ordinary denizens of Stockholm about their opinions on politics, she has sex with her drama teacher, classmates, and married men.<br /><br />What kills me about I AM CURIOUS-YELLOW is that 40 years ago, this was considered pornographic. Really, the sex and nudity scenes are few and far between, even then it's not shot like some cheaply made porno. While my countrymen mind find it shocking, in reality sex and nudity are a major staple in Swedish cinema. Even Ingmar Bergman, arguably their answer to good old boy John Ford, had sex scenes in his films.<br /><br />I do commend the filmmakers for the fact that any sex shown in the film is shown for artistic purposes rather than just to shock people and make money to be shown in pornographic theaters in America. I AM CURIOUS-YELLOW is a good film for anyone wanting to study the meat and potatoes (no pun intended) of Swedish cinema. But really, this film doesn't have much of a plot.",
+                "text": fxt_text_example,
             }
         ]
     )
@@ -458,7 +473,9 @@ class MultiframeworkConverterTest:
                 assert torch_ann["iscrowd"] == dm_ann["attributes"]["is_crowd"]
 
     @pytest.mark.skipif(not TORCH_AVAILABLE, reason="PyTorch is not installed")
-    def test_can_convert_torch_framework_tabular_label(self, fxt_tabular_label_dataset):
+    def test_can_convert_torch_framework_tabular_label(
+        self, fxt_tabular_label_dataset, fxt_text_example
+    ):
         class IMDBDataset(Dataset):
             def __init__(self, data_iter, tokenizer, transform=None):
                 self.data = list(data_iter)
@@ -483,7 +500,7 @@ class MultiframeworkConverterTest:
         # First item of IMDB
         first_item = (
             1,
-            "I rented I AM CURIOUS-YELLOW from my video store because of all the controversy that surrounded it when it was first released in 1967. I also heard that at first it was seized by U.S. customs if it ever tried to enter this country, therefore being a fan of films considered controversial I really had to see this for myself.<br /><br />The plot is centered around a young Swedish drama student named Lena who wants to learn everything she can about life. In particular she wants to focus her attentions to making some sort of documentary on what the average Swede thought about certain political issues such as the Vietnam War and race issues in the United States. In between asking politicians and ordinary denizens of Stockholm about their opinions on politics, she has sex with her drama teacher, classmates, and married men.<br /><br />What kills me about I AM CURIOUS-YELLOW is that 40 years ago, this was considered pornographic. Really, the sex and nudity scenes are few and far between, even then it's not shot like some cheaply made porno. While my countrymen mind find it shocking, in reality sex and nudity are a major staple in Swedish cinema. Even Ingmar Bergman, arguably their answer to good old boy John Ford, had sex scenes in his films.<br /><br />I do commend the filmmakers for the fact that any sex shown in the film is shown for artistic purposes rather than just to shock people and make money to be shown in pornographic theaters in America. I AM CURIOUS-YELLOW is a good film for anyone wanting to study the meat and potatoes (no pun intended) of Swedish cinema. But really, this film doesn't have much of a plot.",
+            fxt_text_example,
         )
         tokenizer = Tokenizer(BPE(unk_token="[UNK]"))
         trainer = BpeTrainer(special_tokens=["[UNK]", "[CLS]", "[SEP]", "[PAD]", "[MASK]"])
@@ -901,3 +918,14 @@ class MultiframeworkConverterTest:
     def test_tf_dataset_import(self):
         with pytest.raises(ImportError):
             from datumaro.plugins.framework_converter import DmTfDataset
+
+    @pytest.mark.skipif(not TORCH_AVAILABLE, reason="PyTorch is not installed")
+    def test_missing_tokenizer(self, fxt_tabular_label_dataset, fxt_text_example):
+        # Convert to dm_torch_dataset
+        dm_dataset = fxt_tabular_label_dataset
+        multi_framework_dataset = FrameworkConverter(dm_dataset, subset="train", task="tabular")
+
+        with pytest.raises(ValueError):
+            dm_torch_dataset = multi_framework_dataset.to_framework(
+                framework="torch", target={"input": "text"}
+            )
