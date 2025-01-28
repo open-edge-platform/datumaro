@@ -100,6 +100,15 @@ try:
     import torch
 
     class DmTorchDataset(_MultiFrameworkDataset, torch.utils.data.Dataset):
+        """
+        Create a PyTorch dataset for a specific task given a dataset and subset.
+
+        :param tokenizer: Callable converting a string into a series of tokens.
+                          The output can either be token IDs (integers) or token strings (text).
+                          If the later, the vocab parameter must also be provided.
+        :param vocab: Callable converting a list of token IDs into a list of token strings
+        """
+
         def __init__(
             self,
             dataset: Dataset,
