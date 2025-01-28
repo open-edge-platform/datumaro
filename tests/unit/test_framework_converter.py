@@ -476,9 +476,9 @@ class MultiframeworkConverterTest:
     def test_can_convert_torch_framework_tabular_label(
         self, fxt_tabular_label_dataset, fxt_text_example
     ):
-        class IMDBDataset(Dataset):
-            def __init__(self, data_iter, tokenizer, transform=None):
-                self.data = list(data_iter)
+        class DummyTabularDataset(Dataset):
+            def __init__(self, data, tokenizer, transform=None):
+                self.data = data
                 self.transform = transform
                 self.tokenizer = tokenizer
 
@@ -497,7 +497,6 @@ class MultiframeworkConverterTest:
                 )
 
         # Prepare data and tokenizer
-        # First item of IMDB
         first_item = (
             1,
             fxt_text_example,
@@ -510,7 +509,7 @@ class MultiframeworkConverterTest:
             return tokenizer.encode(text).ids
 
         # Create torch dataset
-        torch_dataset = IMDBDataset(iter([first_item]), apply_tokenizer)
+        torch_dataset = DummyTabularDataset([first_item], apply_tokenizer)
 
         # Convert to dm_torch_dataset
         dm_dataset = fxt_tabular_label_dataset
