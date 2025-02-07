@@ -60,7 +60,7 @@ jobs:
 
       - name: Upload SARIF file
         if: ${{ always() }}
-        uses: github/codeql-action/upload-sarif@17a820bf2e43b47be2c72b39cc905417bc1ab6d0 # v3.28.8
+        uses: github/codeql-action/upload-sarif@dd746615b3b9d728a6a37ca2045b68ca76d4841a # v3.28.8
         with:
           sarif_file: "trivy-results-vuln.sarif"
 
@@ -99,7 +99,7 @@ jobs:
 
       - name: Upload SARIF file
         if: ${{ always() }}
-        uses: github/codeql-action/upload-sarif@17a820bf2e43b47be2c72b39cc905417bc1ab6d0 # v3.28.8
+        uses: github/codeql-action/upload-sarif@dd746615b3b9d728a6a37ca2045b68ca76d4841a # v3.28.8
         with:
           sarif_file: "trivy-results-misconfig.sarif"
 
@@ -130,7 +130,7 @@ jobs:
 
       - name: Upload SARIF file
         if: ${{ always() }}
-        uses: github/codeql-action/upload-sarif@17a820bf2e43b47be2c72b39cc905417bc1ab6d0 # v3.28.8
+        uses: github/codeql-action/upload-sarif@dd746615b3b9d728a6a37ca2045b68ca76d4841a # v3.28.8
         with:
           sarif_file: bandit-results.sarif
 
@@ -160,7 +160,7 @@ jobs:
 
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@48ab28a6f5dbc2a99bf1e0131198dd8f1df78169 # v3.28.0
+        uses: github/codeql-action/init@dd746615b3b9d728a6a37ca2045b68ca76d4841a # v3.28.8
         with:
           languages: ${{ matrix.language }}
       - name: Setup Python
@@ -173,7 +173,7 @@ jobs:
           pip install build
           python -m build
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@48ab28a6f5dbc2a99bf1e0131198dd8f1df78169 # v3.28.0
+        uses: github/codeql-action/analyze@dd746615b3b9d728a6a37ca2045b68ca76d4841a # v3.28.8
         with:
           category: "/language:${{matrix.language}}"
 
