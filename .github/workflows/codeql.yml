@@ -12,15 +12,17 @@
 name: "CodeQL"
 
 on:
+  schedule:
+    - cron: "0 0 * * *"
   push:
-    branches: [ "develop", "releases/*" ]
+    branches: ["develop", "releases/*"]
   pull_request:
     branches: ["develop", "releases/*"]
 
 jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     permissions:
       # required for all workflows
       security-events: write
