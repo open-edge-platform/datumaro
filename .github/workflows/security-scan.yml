@@ -64,12 +64,20 @@ jobs:
         with:
           sarif_file: "trivy-results-vuln.sarif"
 
+      - name: Run Trivy Scan (spdx)
+        uses: aquasecurity/trivy-action@18f2510ee396bbf400402947b394f2dd8c87dbb0 # v0.29.0
+        with:
+          scan-type: fs
+          format: "spdx-json"
+          scan-ref: trivy_input
+          output: trivy-results-spdx.json
+
       - name: Upload Trivy results artifact
         if: ${{ always() }}
         uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
         with:
           name: trivy-vuln-results
-          path: "${{ github.workspace }}/trivy-results-vuln.sarif"
+          path: "${{ github.workspace }}/trivy-results-*"
           retention-days: 7
 
       - name: Upload deps list
