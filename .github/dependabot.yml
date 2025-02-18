@@ -1,9 +1,14 @@
 version: 2
 updates:
-  - package-ecosystem: github-actions
+  - package-ecosystem: "github-actions"
     directory: /
     schedule:
       interval: daily
+    groups:
+      github-actions-dependency:
+        applies-to: version-updates
+        patterns:
+          - "*"
 
   - package-ecosystem: pip
     directory: /
