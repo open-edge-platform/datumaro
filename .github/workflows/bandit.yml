@@ -29,7 +29,7 @@ jobs:
             pip install bandit
             echo "Bandit version: "$(bandit --version | head -1)
             echo "The files will be checked: "$(echo $CHANGED_FILES)
-            bandit -a file --ini tox.ini -r $CHANGED_FILES
+            bandit -a file -r -c .ci/ipas_default.config $CHANGED_FILES
           else
             echo "No files with the \"py\" extension found"
           fi
