@@ -348,15 +348,16 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">contextlib</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">enum</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">inspect</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">linecache</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">types</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">typing</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">unicodedata</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">operator</span><span class="w"> </span><span class="kn">import</span> <span class="n">itemgetter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Mapping</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">cached_property</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">NamedTuple</span><span class="p">,</span> <span class="n">TypeVar</span>
 
 <span class="c1"># We need to import _compat itself in addition to the _compat members to avoid</span>
 <span class="c1"># having the thread-local in the globals here.</span>
@@ -553,7 +554,12 @@ document.write(`
 
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_compile_and_eval</span><span class="p">(</span><span class="n">script</span><span class="p">,</span> <span class="n">globs</span><span class="p">,</span> <span class="n">locs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_compile_and_eval</span><span class="p">(</span>
+    <span class="n">script</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">globs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">locs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Evaluate the script with the given global (globs) and local (locs)</span>
 <span class="sd">    variables.</span>
@@ -562,10 +568,16 @@ document.write(`
     <span class="nb">eval</span><span class="p">(</span><span class="n">bytecode</span><span class="p">,</span> <span class="n">globs</span><span class="p">,</span> <span class="n">locs</span><span class="p">)</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_make_method</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">script</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">globs</span><span class="p">,</span> <span class="nb">locals</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_linecache_and_compile</span><span class="p">(</span>
+    <span class="n">script</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">globs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="nb">locals</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create the method with the script given and return the method object.</span>
+<span class="sd">    Cache the script with _linecache_, compile it and return the _locals_.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">locs</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="nb">locals</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">locals</span>
 
     <span class="c1"># In order of debuggers like PDB being able to step through the code,</span>
@@ -588,10 +600,10 @@ document.write(`
 
     <span class="n">_compile_and_eval</span><span class="p">(</span><span class="n">script</span><span class="p">,</span> <span class="n">globs</span><span class="p">,</span> <span class="n">locs</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">locs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">locs</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_make_attr_tuple_class</span><span class="p">(</span><span class="n">cls_name</span><span class="p">,</span> <span class="n">attr_names</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_make_attr_tuple_class</span><span class="p">(</span><span class="n">cls_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">attr_names</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a tuple subclass to hold `Attribute`s for an `attrs` class.</span>
 
@@ -602,35 +614,22 @@ document.write(`
 <span class="sd">        x = property(itemgetter(0))</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">attr_class_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cls_name</span><span class="si">}</span><span class="s2">Attributes&quot;</span>
-    <span class="n">attr_class_template</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="sa">f</span><span class="s2">&quot;class </span><span class="si">{</span><span class="n">attr_class_name</span><span class="si">}</span><span class="s2">(tuple):&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;    __slots__ = ()&quot;</span><span class="p">,</span>
-    <span class="p">]</span>
-    <span class="k">if</span> <span class="n">attr_names</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">attr_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">attr_names</span><span class="p">):</span>
-            <span class="n">attr_class_template</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">attr_name</span><span class="si">}</span><span class="s2"> = _attrs_property(_attrs_itemgetter(</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">))&quot;</span>
-            <span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">attr_class_template</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;    pass&quot;</span><span class="p">)</span>
-    <span class="n">globs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;_attrs_itemgetter&quot;</span><span class="p">:</span> <span class="n">itemgetter</span><span class="p">,</span> <span class="s2">&quot;_attrs_property&quot;</span><span class="p">:</span> <span class="nb">property</span><span class="p">}</span>
-    <span class="n">_compile_and_eval</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">attr_class_template</span><span class="p">),</span> <span class="n">globs</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">globs</span><span class="p">[</span><span class="n">attr_class_name</span><span class="p">]</span>
+    <span class="n">body</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">attr_name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">attr_names</span><span class="p">):</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">getter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="n">body</span><span class="p">[</span><span class="n">attr_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getter</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="n">attr_class_name</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,),</span> <span class="n">body</span><span class="p">)</span>
 
 
 <span class="c1"># Tuple class for extracted attributes from a class definition.</span>
 <span class="c1"># `base_attrs` is a subset of `attrs`.</span>
-<span class="n">_Attributes</span> <span class="o">=</span> <span class="n">_make_attr_tuple_class</span><span class="p">(</span>
-    <span class="s2">&quot;_Attributes&quot;</span><span class="p">,</span>
-    <span class="p">[</span>
-        <span class="c1"># all attributes to build dunder methods for</span>
-        <span class="s2">&quot;attrs&quot;</span><span class="p">,</span>
-        <span class="c1"># attributes that have been inherited</span>
-        <span class="s2">&quot;base_attrs&quot;</span><span class="p">,</span>
-        <span class="c1"># map inherited attributes to their originating classes</span>
-        <span class="s2">&quot;base_attrs_map&quot;</span><span class="p">,</span>
-    <span class="p">],</span>
-<span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_Attributes</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
+    <span class="n">attrs</span><span class="p">:</span> <span class="nb">type</span>
+    <span class="n">base_attrs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Attribute</span><span class="p">]</span>
+    <span class="n">base_attrs_map</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">]</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_is_class_var</span><span class="p">(</span><span class="n">annot</span><span class="p">):</span>
@@ -657,7 +656,9 @@ document.write(`
     <span class="k">return</span> <span class="n">attrib_name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_collect_base_attrs</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">taken_attr_names</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_collect_base_attrs</span><span class="p">(</span>
+    <span class="bp">cls</span><span class="p">,</span> <span class="n">taken_attr_names</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Attribute</span><span class="p">],</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">type</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Collect attr.ibs from base classes of *cls*, except *taken_attr_names*.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -718,7 +719,7 @@ document.write(`
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_transform_attrs</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span> <span class="n">these</span><span class="p">,</span> <span class="n">auto_attribs</span><span class="p">,</span> <span class="n">kw_only</span><span class="p">,</span> <span class="n">collect_by_mro</span><span class="p">,</span> <span class="n">field_transformer</span>
-<span class="p">):</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Attributes</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Transform all `_CountingAttr`s on a class into `Attribute`s.</span>
 
@@ -738,7 +739,7 @@ document.write(`
         <span class="n">ca_names</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">name</span>
             <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">cd</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">_CountingAttr</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">attr</span><span class="o">.</span><span class="vm">__class__</span> <span class="ow">is</span> <span class="n">_CountingAttr</span>
         <span class="p">}</span>
         <span class="n">ca_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">annot_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
@@ -748,12 +749,12 @@ document.write(`
             <span class="n">annot_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">attr_name</span><span class="p">)</span>
             <span class="n">a</span> <span class="o">=</span> <span class="n">cd</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">attr_name</span><span class="p">,</span> <span class="n">NOTHING</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">_CountingAttr</span><span class="p">):</span>
-                <span class="n">a</span> <span class="o">=</span> <span class="n">attrib</span><span class="p">()</span> <span class="k">if</span> <span class="n">a</span> <span class="ow">is</span> <span class="n">NOTHING</span> <span class="k">else</span> <span class="n">attrib</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">a</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="vm">__class__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">_CountingAttr</span><span class="p">:</span>
+                <span class="n">a</span> <span class="o">=</span> <span class="n">attrib</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
             <span class="n">ca_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">attr_name</span><span class="p">,</span> <span class="n">a</span><span class="p">))</span>
 
         <span class="n">unannotated</span> <span class="o">=</span> <span class="n">ca_names</span> <span class="o">-</span> <span class="n">annot_names</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">unannotated</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">unannotated</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">UnannotatedAttributeError</span><span class="p">(</span>
                 <span class="s2">&quot;The following `attr.ib`s lack a type annotation: &quot;</span>
                 <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
@@ -766,16 +767,14 @@ document.write(`
             <span class="p">(</span>
                 <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">cd</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">_CountingAttr</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">attr</span><span class="o">.</span><span class="vm">__class__</span> <span class="ow">is</span> <span class="n">_CountingAttr</span>
             <span class="p">),</span>
             <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">counter</span><span class="p">,</span>
         <span class="p">)</span>
 
+    <span class="n">fca</span> <span class="o">=</span> <span class="n">Attribute</span><span class="o">.</span><span class="n">from_counting_attr</span>
     <span class="n">own_attrs</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">Attribute</span><span class="o">.</span><span class="n">from_counting_attr</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="n">attr_name</span><span class="p">,</span> <span class="n">ca</span><span class="o">=</span><span class="n">ca</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">anns</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">attr_name</span><span class="p">)</span>
-        <span class="p">)</span>
-        <span class="k">for</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">ca</span> <span class="ow">in</span> <span class="n">ca_list</span>
+        <span class="n">fca</span><span class="p">(</span><span class="n">attr_name</span><span class="p">,</span> <span class="n">ca</span><span class="p">,</span> <span class="n">anns</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">attr_name</span><span class="p">))</span> <span class="k">for</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">ca</span> <span class="ow">in</span> <span class="n">ca_list</span>
     <span class="p">]</span>
 
     <span class="k">if</span> <span class="n">collect_by_mro</span><span class="p">:</span>
@@ -793,6 +792,10 @@ document.write(`
 
     <span class="n">attrs</span> <span class="o">=</span> <span class="n">base_attrs</span> <span class="o">+</span> <span class="n">own_attrs</span>
 
+    <span class="k">if</span> <span class="n">field_transformer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">attrs</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">field_transformer</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attrs</span><span class="p">))</span>
+
+    <span class="c1"># Check attr order after executing the field_transformer.</span>
     <span class="c1"># Mandatory vs non-mandatory attr order only matters when they are part of</span>
     <span class="c1"># the __init__ signature and when they aren&#39;t kw_only (which are moved to</span>
     <span class="c1"># the end and can be mandatory or non-mandatory in any order, as they will</span>
@@ -806,23 +809,20 @@ document.write(`
         <span class="k">if</span> <span class="n">had_default</span> <span class="ow">is</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">a</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NOTHING</span><span class="p">:</span>
             <span class="n">had_default</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="k">if</span> <span class="n">field_transformer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">attrs</span> <span class="o">=</span> <span class="n">field_transformer</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attrs</span><span class="p">)</span>
-
     <span class="c1"># Resolve default field alias after executing field_transformer.</span>
     <span class="c1"># This allows field_transformer to differentiate between explicit vs</span>
     <span class="c1"># default aliases and supply their own defaults.</span>
-    <span class="n">attrs</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="n">a</span><span class="o">.</span><span class="n">evolve</span><span class="p">(</span><span class="n">alias</span><span class="o">=</span><span class="n">_default_init_alias_for</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">))</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">a</span><span class="o">.</span><span class="n">alias</span> <span class="k">else</span> <span class="n">a</span>
-        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">attrs</span>
-    <span class="p">]</span>
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">a</span><span class="o">.</span><span class="n">alias</span><span class="p">:</span>
+            <span class="c1"># Evolve is very slow, so we hold our nose and do it dirty.</span>
+            <span class="n">_OBJ_SETATTR</span><span class="o">.</span><span class="fm">__get__</span><span class="p">(</span><span class="n">a</span><span class="p">)(</span><span class="s2">&quot;alias&quot;</span><span class="p">,</span> <span class="n">_default_init_alias_for</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
 
     <span class="c1"># Create AttrsClass *after* applying the field_transformer since it may</span>
     <span class="c1"># add or remove attributes!</span>
     <span class="n">attr_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">]</span>
     <span class="n">AttrsClass</span> <span class="o">=</span> <span class="n">_make_attr_tuple_class</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">attr_names</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">_Attributes</span><span class="p">((</span><span class="n">AttrsClass</span><span class="p">(</span><span class="n">attrs</span><span class="p">),</span> <span class="n">base_attrs</span><span class="p">,</span> <span class="n">base_attr_map</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">_Attributes</span><span class="p">(</span><span class="n">AttrsClass</span><span class="p">(</span><span class="n">attrs</span><span class="p">),</span> <span class="n">base_attrs</span><span class="p">,</span> <span class="n">base_attr_map</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_make_cached_property_getattr</span><span class="p">(</span><span class="n">cached_properties</span><span class="p">,</span> <span class="n">original_getattr</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
@@ -872,15 +872,9 @@ document.write(`
         <span class="s2">&quot;original_getattr&quot;</span><span class="p">:</span> <span class="n">original_getattr</span><span class="p">,</span>
     <span class="p">}</span>
 
-    <span class="k">return</span> <span class="n">_make_method</span><span class="p">(</span>
-        <span class="s2">&quot;__getattr__&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">),</span>
-        <span class="n">unique_filename</span><span class="p">,</span>
-        <span class="n">glob</span><span class="p">,</span>
-        <span class="nb">locals</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;_cls&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="p">,</span>
-        <span class="p">},</span>
-    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">_linecache_and_compile</span><span class="p">(</span>
+        <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">),</span> <span class="n">unique_filename</span><span class="p">,</span> <span class="n">glob</span><span class="p">,</span> <span class="nb">locals</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;_cls&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="p">}</span>
+    <span class="p">)[</span><span class="s2">&quot;__getattr__&quot;</span><span class="p">]</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_frozen_setattrs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
@@ -975,6 +969,7 @@ document.write(`
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;_add_method_dunders&quot;</span><span class="p">,</span>
         <span class="s2">&quot;_attr_names&quot;</span><span class="p">,</span>
         <span class="s2">&quot;_attrs&quot;</span><span class="p">,</span>
         <span class="s2">&quot;_base_attr_map&quot;</span><span class="p">,</span>
@@ -990,6 +985,8 @@ document.write(`
         <span class="s2">&quot;_is_exc&quot;</span><span class="p">,</span>
         <span class="s2">&quot;_on_setattr&quot;</span><span class="p">,</span>
         <span class="s2">&quot;_pre_init_has_args&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_repr_added&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_script_snippets&quot;</span><span class="p">,</span>
         <span class="s2">&quot;_slots&quot;</span><span class="p">,</span>
         <span class="s2">&quot;_weakref_slot&quot;</span><span class="p">,</span>
         <span class="s2">&quot;_wrote_own_setattr&quot;</span><span class="p">,</span>
@@ -997,7 +994,7 @@ document.write(`
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="bp">cls</span><span class="p">,</span>
+        <span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span>
         <span class="n">these</span><span class="p">,</span>
         <span class="n">slots</span><span class="p">,</span>
         <span class="n">frozen</span><span class="p">,</span>
@@ -1087,8 +1084,41 @@ document.write(`
                 <span class="bp">self</span><span class="o">.</span><span class="n">_cls_dict</span><span class="p">[</span><span class="s2">&quot;__setstate__&quot;</span><span class="p">],</span>
             <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_getstate_setstate</span><span class="p">()</span>
 
+        <span class="c1"># tuples of script, globs, hook</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_script_snippets</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span>
+            <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]</span>
+        <span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_repr_added</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># We want to only do this check once; in 99.9% of cases these</span>
+        <span class="c1"># exist.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cls</span><span class="p">,</span> <span class="s2">&quot;__module__&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cls</span><span class="p">,</span> <span class="s2">&quot;__qualname__&quot;</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_method_dunders</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_method_dunders_safe</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_method_dunders</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_method_dunders_unsafe</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;_ClassBuilder(cls=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">)&gt;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_eval_snippets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluate any registered snippets in one go.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">script</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">snippet</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">snippet</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_script_snippets</span><span class="p">])</span>
+        <span class="n">globs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">snippet_globs</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_script_snippets</span><span class="p">:</span>
+            <span class="n">globs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">snippet_globs</span><span class="p">)</span>
+
+        <span class="n">locs</span> <span class="o">=</span> <span class="n">_linecache_and_compile</span><span class="p">(</span>
+            <span class="n">script</span><span class="p">,</span>
+            <span class="n">_generate_unique_filename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cls</span><span class="p">,</span> <span class="s2">&quot;methods&quot;</span><span class="p">),</span>
+            <span class="n">globs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_script_snippets</span><span class="p">:</span>
+            <span class="n">hook</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cls_dict</span><span class="p">,</span> <span class="n">locs</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">build_class</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1096,6 +1126,7 @@ document.write(`
 
 <span class="sd">        Builder cannot be used after calling this method.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_eval_snippets</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_slots</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
             <span class="bp">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_slots_class</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1202,9 +1233,9 @@ document.write(`
             <span class="n">names</span> <span class="o">+=</span> <span class="p">(</span><span class="s2">&quot;__weakref__&quot;</span><span class="p">,)</span>
 
         <span class="n">cached_properties</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">name</span><span class="p">:</span> <span class="n">cached_property</span><span class="o">.</span><span class="n">func</span>
-            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">cached_property</span> <span class="ow">in</span> <span class="n">cd</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cached_property</span><span class="p">,</span> <span class="n">functools</span><span class="o">.</span><span class="n">cached_property</span><span class="p">)</span>
+            <span class="n">name</span><span class="p">:</span> <span class="n">cached_prop</span><span class="o">.</span><span class="n">func</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">cached_prop</span> <span class="ow">in</span> <span class="n">cd</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cached_prop</span><span class="p">,</span> <span class="n">cached_property</span><span class="p">)</span>
         <span class="p">}</span>
 
         <span class="c1"># Collect methods with a `__class__` reference that are shadowed in the new class.</span>
@@ -1289,14 +1320,17 @@ document.write(`
         <span class="k">return</span> <span class="bp">cls</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">add_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ns</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cls_dict</span><span class="p">[</span><span class="s2">&quot;__repr__&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_method_dunders</span><span class="p">(</span>
-            <span class="n">_make_repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_attrs</span><span class="p">,</span> <span class="n">ns</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cls</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="n">script</span><span class="p">,</span> <span class="n">globs</span> <span class="o">=</span> <span class="n">_make_repr_script</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_attrs</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">_attach_repr</span><span class="p">(</span><span class="n">cls_dict</span><span class="p">,</span> <span class="n">globs</span><span class="p">):</span>
+            <span class="n">cls_dict</span><span class="p">[</span><span class="s2">&quot;__repr__&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_method_dunders</span><span class="p">(</span><span class="n">globs</span><span class="p">[</span><span class="s2">&quot;__repr__&quot;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_script_snippets</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">script</span><span class="p">,</span> <span class="n">globs</span><span class="p">,</span> <span class="n">_attach_repr</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_repr_added</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">add_str</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">repr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cls_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;__repr__&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">repr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_repr_added</span><span class="p">:</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;__str__ can only be generated if a __repr__ exists.&quot;</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
@@ -1352,34 +1386,42 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">add_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cls_dict</span><span class="p">[</span><span class="s2">&quot;__hash__&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_method_dunders</span><span class="p">(</span>
-            <span class="n">_make_hash</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_cls</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_attrs</span><span class="p">,</span>
-                <span class="n">frozen</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_frozen</span><span class="p">,</span>
-                <span class="n">cache_hash</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_cache_hash</span><span class="p">,</span>
-            <span class="p">)</span>
+        <span class="n">script</span><span class="p">,</span> <span class="n">globs</span> <span class="o">=</span> <span class="n">_make_hash_script</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cls</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_attrs</span><span class="p">,</span>
+            <span class="n">frozen</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_frozen</span><span class="p">,</span>
+            <span class="n">cache_hash</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_cache_hash</span><span class="p">,</span>
         <span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">attach_hash</span><span class="p">(</span><span class="n">cls_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">locs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cls_dict</span><span class="p">[</span><span class="s2">&quot;__hash__&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_method_dunders</span><span class="p">(</span><span class="n">locs</span><span class="p">[</span><span class="s2">&quot;__hash__&quot;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_script_snippets</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">script</span><span class="p">,</span> <span class="n">globs</span><span class="p">,</span> <span class="n">attach_hash</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">add_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cls_dict</span><span class="p">[</span><span class="s2">&quot;__init__&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_method_dunders</span><span class="p">(</span>
-            <span class="n">_make_init</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_cls</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_attrs</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_has_pre_init</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_pre_init_has_args</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_has_post_init</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_frozen</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_slots</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_cache_hash</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_base_attr_map</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_is_exc</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_on_setattr</span><span class="p">,</span>
-                <span class="n">attrs_init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="p">)</span>
+        <span class="n">script</span><span class="p">,</span> <span class="n">globs</span><span class="p">,</span> <span class="n">annotations</span> <span class="o">=</span> <span class="n">_make_init_script</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cls</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_attrs</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_has_pre_init</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pre_init_has_args</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_has_post_init</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_frozen</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_slots</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cache_hash</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_base_attr_map</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_exc</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_on_setattr</span><span class="p">,</span>
+            <span class="n">attrs_init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">_attach_init</span><span class="p">(</span><span class="n">cls_dict</span><span class="p">,</span> <span class="n">globs</span><span class="p">):</span>
+            <span class="n">init</span> <span class="o">=</span> <span class="n">globs</span><span class="p">[</span><span class="s2">&quot;__init__&quot;</span><span class="p">]</span>
+            <span class="n">init</span><span class="o">.</span><span class="vm">__annotations__</span> <span class="o">=</span> <span class="n">annotations</span>
+            <span class="n">cls_dict</span><span class="p">[</span><span class="s2">&quot;__init__&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_method_dunders</span><span class="p">(</span><span class="n">init</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_script_snippets</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">script</span><span class="p">,</span> <span class="n">globs</span><span class="p">,</span> <span class="n">_attach_init</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="bp">self</span>
 
@@ -1397,32 +1439,41 @@ document.write(`
         <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">add_attrs_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_cls_dict</span><span class="p">[</span><span class="s2">&quot;__attrs_init__&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_method_dunders</span><span class="p">(</span>
-            <span class="n">_make_init</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_cls</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_attrs</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_has_pre_init</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_pre_init_has_args</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_has_post_init</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_frozen</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_slots</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_cache_hash</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_base_attr_map</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_is_exc</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_on_setattr</span><span class="p">,</span>
-                <span class="n">attrs_init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="p">)</span>
+        <span class="n">script</span><span class="p">,</span> <span class="n">globs</span><span class="p">,</span> <span class="n">annotations</span> <span class="o">=</span> <span class="n">_make_init_script</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cls</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_attrs</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_has_pre_init</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pre_init_has_args</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_has_post_init</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_frozen</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_slots</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cache_hash</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_base_attr_map</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_exc</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_on_setattr</span><span class="p">,</span>
+            <span class="n">attrs_init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">_attach_attrs_init</span><span class="p">(</span><span class="n">cls_dict</span><span class="p">,</span> <span class="n">globs</span><span class="p">):</span>
+            <span class="n">init</span> <span class="o">=</span> <span class="n">globs</span><span class="p">[</span><span class="s2">&quot;__attrs_init__&quot;</span><span class="p">]</span>
+            <span class="n">init</span><span class="o">.</span><span class="vm">__annotations__</span> <span class="o">=</span> <span class="n">annotations</span>
+            <span class="n">cls_dict</span><span class="p">[</span><span class="s2">&quot;__attrs_init__&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_method_dunders</span><span class="p">(</span><span class="n">init</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_script_snippets</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">script</span><span class="p">,</span> <span class="n">globs</span><span class="p">,</span> <span class="n">_attach_attrs_init</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">add_eq</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">cd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cls_dict</span>
 
-        <span class="n">cd</span><span class="p">[</span><span class="s2">&quot;__eq__&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_method_dunders</span><span class="p">(</span>
-            <span class="n">_make_eq</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cls</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attrs</span><span class="p">)</span>
-        <span class="p">)</span>
-        <span class="n">cd</span><span class="p">[</span><span class="s2">&quot;__ne__&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_method_dunders</span><span class="p">(</span><span class="n">_make_ne</span><span class="p">())</span>
+        <span class="n">script</span><span class="p">,</span> <span class="n">globs</span> <span class="o">=</span> <span class="n">_make_eq_script</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_attrs</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">_attach_eq</span><span class="p">(</span><span class="n">cls_dict</span><span class="p">,</span> <span class="n">globs</span><span class="p">):</span>
+            <span class="n">cls_dict</span><span class="p">[</span><span class="s2">&quot;__eq__&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_method_dunders</span><span class="p">(</span><span class="n">globs</span><span class="p">[</span><span class="s2">&quot;__eq__&quot;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_script_snippets</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">script</span><span class="p">,</span> <span class="n">globs</span><span class="p">,</span> <span class="n">_attach_eq</span><span class="p">))</span>
+
+        <span class="n">cd</span><span class="p">[</span><span class="s2">&quot;__ne__&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="fm">__ne__</span>
 
         <span class="k">return</span> <span class="bp">self</span>
 
@@ -1437,9 +1488,6 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">add_setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frozen</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span>
-
         <span class="n">sa_attrs</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attrs</span><span class="p">:</span>
             <span class="n">on_setattr</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">on_setattr</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_on_setattr</span>
@@ -1471,7 +1519,21 @@ document.write(`
 
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_add_method_dunders</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add_method_dunders_unsafe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add __module__ and __qualname__ to a *method*.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">method</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cls</span><span class="o">.</span><span class="vm">__module__</span>
+
+        <span class="n">method</span><span class="o">.</span><span class="vm">__qualname__</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_cls</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">method</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="n">method</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Method generated by attrs for class </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_cls</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">method</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add_method_dunders_safe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add __module__ and __qualname__ to a *method* if possible.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1482,10 +1544,7 @@ document.write(`
             <span class="n">method</span><span class="o">.</span><span class="vm">__qualname__</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_cls</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">method</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span>
 
         <span class="k">with</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">suppress</span><span class="p">(</span><span class="ne">AttributeError</span><span class="p">):</span>
-            <span class="n">method</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="s2">&quot;Method generated by attrs for class &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_cls</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">.&quot;</span>
-            <span class="p">)</span>
+            <span class="n">method</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Method generated by attrs for class </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_cls</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2">.&quot;</span>
 
         <span class="k">return</span> <span class="n">method</span>
 
@@ -1733,10 +1792,12 @@ document.write(`
             <span class="n">has_own_setattr</span><span class="p">,</span>
             <span class="n">field_transformer</span><span class="p">,</span>
         <span class="p">)</span>
+
         <span class="k">if</span> <span class="n">_determine_whether_to_implement</span><span class="p">(</span>
             <span class="bp">cls</span><span class="p">,</span> <span class="nb">repr</span><span class="p">,</span> <span class="n">auto_detect</span><span class="p">,</span> <span class="p">(</span><span class="s2">&quot;__repr__&quot;</span><span class="p">,)</span>
         <span class="p">):</span>
             <span class="n">builder</span><span class="o">.</span><span class="n">add_repr</span><span class="p">(</span><span class="n">repr_ns</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="nb">str</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">builder</span><span class="o">.</span><span class="n">add_str</span><span class="p">()</span>
 
@@ -1750,7 +1811,8 @@ document.write(`
         <span class="p">):</span>
             <span class="n">builder</span><span class="o">.</span><span class="n">add_order</span><span class="p">()</span>
 
-        <span class="n">builder</span><span class="o">.</span><span class="n">add_setattr</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">frozen</span><span class="p">:</span>
+            <span class="n">builder</span><span class="o">.</span><span class="n">add_setattr</span><span class="p">()</span>
 
         <span class="k">nonlocal</span> <span class="nb">hash</span>
         <span class="k">if</span> <span class="p">(</span>
@@ -1829,7 +1891,7 @@ document.write(`
     <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="fm">__setattr__</span> <span class="ow">is</span> <span class="n">_frozen_setattrs</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_generate_unique_filename</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">func_name</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_generate_unique_filename</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">func_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a &quot;filename&quot; suitable for a function being generated.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1839,15 +1901,16 @@ document.write(`
     <span class="p">)</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_make_hash</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attrs</span><span class="p">,</span> <span class="n">frozen</span><span class="p">,</span> <span class="n">cache_hash</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_make_hash_script</span><span class="p">(</span>
+    <span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">attrs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Attribute</span><span class="p">],</span> <span class="n">frozen</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">cache_hash</span><span class="p">:</span> <span class="nb">bool</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
     <span class="n">attrs</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
         <span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">attrs</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">hash</span> <span class="ow">is</span> <span class="kc">True</span> <span class="ow">or</span> <span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">hash</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">a</span><span class="o">.</span><span class="n">eq</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">)</span>
     <span class="p">)</span>
 
     <span class="n">tab</span> <span class="o">=</span> <span class="s2">&quot;        &quot;</span>
 
-    <span class="n">unique_filename</span> <span class="o">=</span> <span class="n">_generate_unique_filename</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;hash&quot;</span><span class="p">)</span>
-    <span class="n">type_hash</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">(</span><span class="n">unique_filename</span><span class="p">)</span>
+    <span class="n">type_hash</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">(</span><span class="n">_generate_unique_filename</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;hash&quot;</span><span class="p">))</span>
     <span class="c1"># If eq is custom generated, we need to include the functions in globs</span>
     <span class="n">globs</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -1907,43 +1970,41 @@ document.write(`
         <span class="n">append_hash_computation_lines</span><span class="p">(</span><span class="s2">&quot;return &quot;</span><span class="p">,</span> <span class="n">tab</span><span class="p">)</span>
 
     <span class="n">script</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">method_lines</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">_make_method</span><span class="p">(</span><span class="s2">&quot;__hash__&quot;</span><span class="p">,</span> <span class="n">script</span><span class="p">,</span> <span class="n">unique_filename</span><span class="p">,</span> <span class="n">globs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">script</span><span class="p">,</span> <span class="n">globs</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_add_hash</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attrs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_add_hash</span><span class="p">(</span><span class="bp">cls</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">attrs</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Attribute</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Add a hash method to *cls*.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="bp">cls</span><span class="o">.</span><span class="fm">__hash__</span> <span class="o">=</span> <span class="n">_make_hash</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attrs</span><span class="p">,</span> <span class="n">frozen</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cache_hash</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">script</span><span class="p">,</span> <span class="n">globs</span> <span class="o">=</span> <span class="n">_make_hash_script</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">attrs</span><span class="p">,</span> <span class="n">frozen</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">cache_hash</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+    <span class="n">_compile_and_eval</span><span class="p">(</span>
+        <span class="n">script</span><span class="p">,</span> <span class="n">globs</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">_generate_unique_filename</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;__hash__&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="bp">cls</span><span class="o">.</span><span class="fm">__hash__</span> <span class="o">=</span> <span class="n">globs</span><span class="p">[</span><span class="s2">&quot;__hash__&quot;</span><span class="p">]</span>
     <span class="k">return</span> <span class="bp">cls</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_make_ne</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="fm">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Create __ne__ method.</span>
+<span class="sd">    Check equality and either forward a NotImplemented or</span>
+<span class="sd">    return the result negated.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="bp">NotImplemented</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">NotImplemented</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Check equality and either forward a NotImplemented or</span>
-<span class="sd">        return the result negated.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="bp">NotImplemented</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">NotImplemented</span>
-
-        <span class="k">return</span> <span class="ow">not</span> <span class="n">result</span>
-
-    <span class="k">return</span> <span class="fm">__ne__</span>
+    <span class="k">return</span> <span class="ow">not</span> <span class="n">result</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_make_eq</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attrs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_make_eq_script</span><span class="p">(</span><span class="n">attrs</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create __eq__ method for *cls* with *attrs*.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">attrs</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">attrs</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">eq</span><span class="p">]</span>
 
-    <span class="n">unique_filename</span> <span class="o">=</span> <span class="n">_generate_unique_filename</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;eq&quot;</span><span class="p">)</span>
     <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span>
         <span class="s2">&quot;def __eq__(self, other):&quot;</span><span class="p">,</span>
         <span class="s2">&quot;    if other.__class__ is not self.__class__:&quot;</span><span class="p">,</span>
@@ -1972,7 +2033,7 @@ document.write(`
 
     <span class="n">script</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">_make_method</span><span class="p">(</span><span class="s2">&quot;__eq__&quot;</span><span class="p">,</span> <span class="n">script</span><span class="p">,</span> <span class="n">unique_filename</span><span class="p">,</span> <span class="n">globs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">script</span><span class="p">,</span> <span class="n">globs</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_make_order</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attrs</span><span class="p">):</span>
@@ -2038,14 +2099,20 @@ document.write(`
     <span class="k">if</span> <span class="n">attrs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">attrs</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__attrs_attrs__</span>
 
-    <span class="bp">cls</span><span class="o">.</span><span class="fm">__eq__</span> <span class="o">=</span> <span class="n">_make_eq</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attrs</span><span class="p">)</span>
-    <span class="bp">cls</span><span class="o">.</span><span class="fm">__ne__</span> <span class="o">=</span> <span class="n">_make_ne</span><span class="p">()</span>
+    <span class="n">script</span><span class="p">,</span> <span class="n">globs</span> <span class="o">=</span> <span class="n">_make_eq_script</span><span class="p">(</span><span class="n">attrs</span><span class="p">)</span>
+    <span class="n">_compile_and_eval</span><span class="p">(</span>
+        <span class="n">script</span><span class="p">,</span> <span class="n">globs</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">_generate_unique_filename</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;__eq__&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="bp">cls</span><span class="o">.</span><span class="fm">__eq__</span> <span class="o">=</span> <span class="n">globs</span><span class="p">[</span><span class="s2">&quot;__eq__&quot;</span><span class="p">]</span>
+    <span class="bp">cls</span><span class="o">.</span><span class="fm">__ne__</span> <span class="o">=</span> <span class="fm">__ne__</span>
 
     <span class="k">return</span> <span class="bp">cls</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_make_repr</span><span class="p">(</span><span class="n">attrs</span><span class="p">,</span> <span class="n">ns</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
-    <span class="n">unique_filename</span> <span class="o">=</span> <span class="n">_generate_unique_filename</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;repr&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_make_repr_script</span><span class="p">(</span><span class="n">attrs</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the source and globs for a __repr__ and return it.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Figure out which attributes to include, and which function to use to</span>
     <span class="c1"># format them. The a.repr value can be either bool or a custom</span>
     <span class="c1"># callable.</span>
@@ -2096,9 +2163,7 @@ document.write(`
         <span class="s2">&quot;    already_repring.remove(id(self))&quot;</span><span class="p">,</span>
     <span class="p">]</span>
 
-    <span class="k">return</span> <span class="n">_make_method</span><span class="p">(</span>
-        <span class="s2">&quot;__repr__&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">),</span> <span class="n">unique_filename</span><span class="p">,</span> <span class="n">globs</span><span class="o">=</span><span class="n">globs</span>
-    <span class="p">)</span>
+    <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">),</span> <span class="n">globs</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_add_repr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">ns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">attrs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -2108,7 +2173,11 @@ document.write(`
     <span class="k">if</span> <span class="n">attrs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">attrs</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__attrs_attrs__</span>
 
-    <span class="bp">cls</span><span class="o">.</span><span class="fm">__repr__</span> <span class="o">=</span> <span class="n">_make_repr</span><span class="p">(</span><span class="n">attrs</span><span class="p">,</span> <span class="n">ns</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span>
+    <span class="n">script</span><span class="p">,</span> <span class="n">globs</span> <span class="o">=</span> <span class="n">_make_repr_script</span><span class="p">(</span><span class="n">attrs</span><span class="p">,</span> <span class="n">ns</span><span class="p">)</span>
+    <span class="n">_compile_and_eval</span><span class="p">(</span>
+        <span class="n">script</span><span class="p">,</span> <span class="n">globs</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">_generate_unique_filename</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;__repr__&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="bp">cls</span><span class="o">.</span><span class="fm">__repr__</span> <span class="o">=</span> <span class="n">globs</span><span class="p">[</span><span class="s2">&quot;__repr__&quot;</span><span class="p">]</span>
     <span class="k">return</span> <span class="bp">cls</span>
 
 
@@ -2213,7 +2282,7 @@ document.write(`
     <span class="k">return</span> <span class="bp">cls</span> <span class="ow">and</span> <span class="s2">&quot;__slots__&quot;</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_make_init</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_make_init_script</span><span class="p">(</span>
     <span class="bp">cls</span><span class="p">,</span>
     <span class="n">attrs</span><span class="p">,</span>
     <span class="n">pre_init</span><span class="p">,</span>
@@ -2226,7 +2295,7 @@ document.write(`
     <span class="n">is_exc</span><span class="p">,</span>
     <span class="n">cls_on_setattr</span><span class="p">,</span>
     <span class="n">attrs_init</span><span class="p">,</span>
-<span class="p">):</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
     <span class="n">has_cls_on_setattr</span> <span class="o">=</span> <span class="p">(</span>
         <span class="n">cls_on_setattr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">cls_on_setattr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">setters</span><span class="o">.</span><span class="n">NO_OP</span>
     <span class="p">)</span>
@@ -2254,8 +2323,6 @@ document.write(`
         <span class="k">elif</span> <span class="n">has_cls_on_setattr</span> <span class="ow">and</span> <span class="n">a</span><span class="o">.</span><span class="n">on_setattr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">setters</span><span class="o">.</span><span class="n">NO_OP</span><span class="p">:</span>
             <span class="n">needs_cached_setattr</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="n">unique_filename</span> <span class="o">=</span> <span class="n">_generate_unique_filename</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;init&quot;</span><span class="p">)</span>
-
     <span class="n">script</span><span class="p">,</span> <span class="n">globs</span><span class="p">,</span> <span class="n">annotations</span> <span class="o">=</span> <span class="n">_attrs_to_init_script</span><span class="p">(</span>
         <span class="n">filtered_attrs</span><span class="p">,</span>
         <span class="n">frozen</span><span class="p">,</span>
@@ -2281,15 +2348,7 @@ document.write(`
         <span class="c1"># setattr hooks.</span>
         <span class="n">globs</span><span class="p">[</span><span class="s2">&quot;_cached_setattr_get&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_OBJ_SETATTR</span><span class="o">.</span><span class="fm">__get__</span>
 
-    <span class="n">init</span> <span class="o">=</span> <span class="n">_make_method</span><span class="p">(</span>
-        <span class="s2">&quot;__attrs_init__&quot;</span> <span class="k">if</span> <span class="n">attrs_init</span> <span class="k">else</span> <span class="s2">&quot;__init__&quot;</span><span class="p">,</span>
-        <span class="n">script</span><span class="p">,</span>
-        <span class="n">unique_filename</span><span class="p">,</span>
-        <span class="n">globs</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">init</span><span class="o">.</span><span class="vm">__annotations__</span> <span class="o">=</span> <span class="n">annotations</span>
-
-    <span class="k">return</span> <span class="n">init</span>
+    <span class="k">return</span> <span class="n">script</span><span class="p">,</span> <span class="n">globs</span><span class="p">,</span> <span class="n">annotations</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_setattr</span><span class="p">(</span><span class="n">attr_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value_var</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">has_on_setattr</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -2775,33 +2834,32 @@ document.write(`
         <span class="k">raise</span> <span class="n">FrozenInstanceError</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">from_counting_attr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">ca</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_counting_attr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ca</span><span class="p">:</span> <span class="n">_CountingAttr</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="c1"># type holds the annotated value. deal with conflicts:</span>
         <span class="k">if</span> <span class="nb">type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="nb">type</span> <span class="o">=</span> <span class="n">ca</span><span class="o">.</span><span class="n">type</span>
         <span class="k">elif</span> <span class="n">ca</span><span class="o">.</span><span class="n">type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Type annotation and type argument cannot both be present&quot;</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Type annotation and type argument cannot both be present for &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-        <span class="n">inst_dict</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">k</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ca</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">Attribute</span><span class="o">.</span><span class="vm">__slots__</span>
-            <span class="k">if</span> <span class="n">k</span>
-            <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span>
-                <span class="s2">&quot;name&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;validator&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;default&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;type&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;inherited&quot;</span><span class="p">,</span>
-            <span class="p">)</span>  <span class="c1"># exclude methods and deprecated alias</span>
-        <span class="p">}</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
-            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-            <span class="n">validator</span><span class="o">=</span><span class="n">ca</span><span class="o">.</span><span class="n">_validator</span><span class="p">,</span>
-            <span class="n">default</span><span class="o">=</span><span class="n">ca</span><span class="o">.</span><span class="n">_default</span><span class="p">,</span>
-            <span class="nb">type</span><span class="o">=</span><span class="nb">type</span><span class="p">,</span>
-            <span class="n">cmp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">inherited</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">inst_dict</span><span class="p">,</span>
+            <span class="n">name</span><span class="p">,</span>
+            <span class="n">ca</span><span class="o">.</span><span class="n">_default</span><span class="p">,</span>
+            <span class="n">ca</span><span class="o">.</span><span class="n">_validator</span><span class="p">,</span>
+            <span class="n">ca</span><span class="o">.</span><span class="n">repr</span><span class="p">,</span>
+            <span class="kc">None</span><span class="p">,</span>
+            <span class="n">ca</span><span class="o">.</span><span class="n">hash</span><span class="p">,</span>
+            <span class="n">ca</span><span class="o">.</span><span class="n">init</span><span class="p">,</span>
+            <span class="kc">False</span><span class="p">,</span>
+            <span class="n">ca</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
+            <span class="nb">type</span><span class="p">,</span>
+            <span class="n">ca</span><span class="o">.</span><span class="n">converter</span><span class="p">,</span>
+            <span class="n">ca</span><span class="o">.</span><span class="n">kw_only</span><span class="p">,</span>
+            <span class="n">ca</span><span class="o">.</span><span class="n">eq</span><span class="p">,</span>
+            <span class="n">ca</span><span class="o">.</span><span class="n">eq_key</span><span class="p">,</span>
+            <span class="n">ca</span><span class="o">.</span><span class="n">order</span><span class="p">,</span>
+            <span class="n">ca</span><span class="o">.</span><span class="n">order_key</span><span class="p">,</span>
+            <span class="n">ca</span><span class="o">.</span><span class="n">on_setattr</span><span class="p">,</span>
+            <span class="n">ca</span><span class="o">.</span><span class="n">alias</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="c1"># Don&#39;t use attrs.evolve since fields(Attribute) doesn&#39;t work</span>
@@ -3225,6 +3283,12 @@ document.write(`
 <span class="sd">        `attrs.define`, you have to pass the hooks yourself: ``make_class(...,</span>
 <span class="sd">        on_setattr=setters.pipe(setters.convert, setters.validate)``</span>
 
+<span class="sd">    .. warning::</span>
+
+<span class="sd">        It is *your* duty to ensure that the class name and the attribute names</span>
+<span class="sd">        are valid identifiers. ``make_class()`` will *not* validate them for</span>
+<span class="sd">        you.</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        name (str): The name for the new class.</span>
 
@@ -3249,7 +3313,11 @@ document.write(`
 <span class="sd">    .. versionadded:: 17.1.0 *bases*</span>
 <span class="sd">    .. versionchanged:: 18.1.0 If *attrs* is ordered, the order is retained.</span>
 <span class="sd">    .. versionchanged:: 23.2.0 *class_body*</span>
+<span class="sd">    .. versionchanged:: 25.2.0 Class names can now be unicode.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Class identifiers are converted into the normal form NFKC while parsing</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">unicodedata</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="s2">&quot;NFKC&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attrs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">cls_dict</span> <span class="o">=</span> <span class="n">attrs</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attrs</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
@@ -3381,7 +3449,7 @@ document.write(`
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">converters</span><span class="p">:</span>
         <span class="c1"># If the converter list is empty, pipe_converter is the identity.</span>
-        <span class="n">A</span> <span class="o">=</span> <span class="n">typing</span><span class="o">.</span><span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">)</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">)</span>
         <span class="n">pipe_converter</span><span class="o">.</span><span class="vm">__annotations__</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;val&quot;</span><span class="p">:</span> <span class="n">A</span><span class="p">,</span> <span class="s2">&quot;return&quot;</span><span class="p">:</span> <span class="n">A</span><span class="p">})</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># Get parameter type from first converter.</span>
