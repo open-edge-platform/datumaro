@@ -1,0 +1,134 @@
+# ADE20k (v2020)
+
+## Format explanation
+
+The original ADE20K 2020 dataset is available
+[here](https://groups.csail.mit.edu/vision/datasets/ADE20K/).
+
+The consistency set (for checking the annotation consistency)
+is available [here](https://groups.csail.mit.edu/vision/datasets/ADE20K/ADE20K_2017_05_30_consistency.zip).
+
+Supported annotation types:
+- `Masks`
+
+Supported annotation attributes:
+- `occluded` (boolean): whether the object is occluded by another object
+- other arbitrary boolean attributes, which can be specified
+  in the annotation file `<image_name>.json`
+
+## Import ADE20K dataset
+
+A Datumaro project with an ADE20k source can be created in the following way:
+
+```bash
+datum project create
+datum project import --format ade20k2020 <path/to/dataset>
+```
+
+It is also possible to import the dataset using Python API:
+
+```python
+import datumaro as dm
+
+ade20k_dataset = dm.Dataset.import_from('<path/to/dataset>', 'ade20k2020')
+```
+
+ADE20K dataset directory should have the following structure:
+
+<!--lint disable fenced-code-flag-->
+```
+dataset/
+├── dataset_meta.json # a list of non-format labels (optional)
+├── subset1/
+│   ├── img1/  # directory with instance masks for img1
+│   |    ├── instance_001_img1.png
+│   |    ├── instance_002_img1.png
+│   |    └── ...
+│   ├── img1.jpg
+│   ├── img1.json
+│   ├── img1_seg.png
+│   ├── img1_parts_1.png
+│   |
+│   ├── img2/  # directory with instance masks for img2
+│   |    ├── instance_001_img2.png
+│   |    ├── instance_002_img2.png
+│   |    └── ...
+│   ├── img2.jpg
+│   ├── img2.json
+│   └── ...
+│
+└── subset2/
+    ├── super_label_1/
+    |   ├── img3/  # directory with instance masks for img3
+    |   |    ├── instance_001_img3.png
+    |   |    ├── instance_002_img3.png
+    |   |    └── ...
+    |   ├── img3.jpg
+    |   ├── img3.json
+    |   ├── img3_seg.png
+    |   ├── img3_parts_1.png
+    |   └── ...
+    |
+    ├── img4/  # directory with instance masks for img4
+    |   ├── instance_001_img4.png
+    |   ├── instance_002_img4.png
+    |   └── ...
+    ├── img4.jpg
+    ├── img4.json
+    ├── img4_seg.png
+    └── ...
+```
+
+The mask images `<image_name>_seg.png` contain information about the object
+class segmentation masks and also separate each class into instances.
+The channels R and G encode the objects class masks.
+The channel B encodes the instance object masks.
+
+The mask images `<image_name>_parts_N.png` contain segmentation masks for
+parts of objects, where N is a number indicating the level in the part
+hierarchy.
+
+The `<image_name>` directory contains instance masks for each
+object in the image, these masks represent one-channel images,
+each pixel of which indicates an affinity to a specific object.
+
+The annotation files `<image_name>.json` describe the content of each image.
+See our [tests asset](https://github.com/openvinotoolkit/datumaro/tree/develop/tests/assets/ade20k2020_dataset)
+for example of this file,
+or check [ADE20K toolkit](https://github.com/CSAILVision/ADE20K) for it.
+
+To add custom classes, you can use [`dataset_meta.json`](/docs/data-formats/formats/index.rst#dataset-meta-info-file).
+
+## Export to other formats
+
+Datumaro can convert an ADE20K dataset into any other format [Datumaro supports](/docs/data-formats/formats/index.rst).
+To get the expected result, convert the dataset to a format
+that supports segmentation masks.
+
+There are several ways to convert an ADE20k dataset to other dataset
+formats using CLI:
+
+```bash
+datum project create
+datum project import -f ade20k2020 <path/to/dataset>
+datum project export -f coco -o ./save_dir -- --save-media
+```
+or
+``` bash
+datum convert -if ade20k2020 -i <path/to/dataset> \
+    -f coco -o <output/dir> -- --save-media
+```
+
+Or, using Python API:
+
+```python
+import datumaro as dm
+
+dataset = dm.Dataset.import_from('<path/to/dataset>', 'ade20k2020')
+dataset.export('save_dir', 'voc')
+```
+
+## Examples
+
+Examples of using this format from the code can be found in
+[the format tests](https://github.com/openvinotoolkit/datumaro/blob/develop/tests/unit/test_ade20k2020_format.py)

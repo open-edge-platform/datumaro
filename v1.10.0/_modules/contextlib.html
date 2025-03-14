@@ -1,0 +1,1155 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>contextlib &#8212; Datumaro 1.10.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=8b7c274f" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../_static/documentation_options.js?v=1d24b1d9"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/contextlib';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.10.0 documentation - Home"/>
+    <script>document.write(`<img src="../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.10.0 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../docs/index.html">
+                        Docs
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../docs/index.html">
+                        Docs
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">contextlib</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for contextlib</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Utilities for with-statement contexts.  See PEP 343.&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">abc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">_collections_abc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">deque</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">wraps</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">MethodType</span><span class="p">,</span> <span class="n">GenericAlias</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;asynccontextmanager&quot;</span><span class="p">,</span> <span class="s2">&quot;contextmanager&quot;</span><span class="p">,</span> <span class="s2">&quot;closing&quot;</span><span class="p">,</span> <span class="s2">&quot;nullcontext&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;AbstractContextManager&quot;</span><span class="p">,</span> <span class="s2">&quot;AbstractAsyncContextManager&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;AsyncExitStack&quot;</span><span class="p">,</span> <span class="s2">&quot;ContextDecorator&quot;</span><span class="p">,</span> <span class="s2">&quot;ExitStack&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;redirect_stdout&quot;</span><span class="p">,</span> <span class="s2">&quot;redirect_stderr&quot;</span><span class="p">,</span> <span class="s2">&quot;suppress&quot;</span><span class="p">,</span> <span class="s2">&quot;aclosing&quot;</span><span class="p">]</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">AbstractContextManager</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An abstract base class for context managers.&quot;&quot;&quot;</span>
+
+    <span class="n">__class_getitem__</span> <span class="o">=</span> <span class="nb">classmethod</span><span class="p">(</span><span class="n">GenericAlias</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return `self` upon entering the runtime context.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Raise any exception triggered within the runtime context.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__subclasshook__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">C</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">cls</span> <span class="ow">is</span> <span class="n">AbstractContextManager</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_collections_abc</span><span class="o">.</span><span class="n">_check_methods</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="s2">&quot;__enter__&quot;</span><span class="p">,</span> <span class="s2">&quot;__exit__&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">NotImplemented</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">AbstractAsyncContextManager</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An abstract base class for asynchronous context managers.&quot;&quot;&quot;</span>
+
+    <span class="n">__class_getitem__</span> <span class="o">=</span> <span class="nb">classmethod</span><span class="p">(</span><span class="n">GenericAlias</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="fm">__aenter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return `self` upon entering the runtime context.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="fm">__aexit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Raise any exception triggered within the runtime context.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__subclasshook__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">C</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">cls</span> <span class="ow">is</span> <span class="n">AbstractAsyncContextManager</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_collections_abc</span><span class="o">.</span><span class="n">_check_methods</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="s2">&quot;__aenter__&quot;</span><span class="p">,</span>
+                                                   <span class="s2">&quot;__aexit__&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">NotImplemented</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ContextDecorator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="s2">&quot;A base class or mixin that enables context managers to work as decorators.&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_recreate_cm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a recreated instance of self.</span>
+
+<span class="sd">        Allows an otherwise one-shot context manager like</span>
+<span class="sd">        _GeneratorContextManager to support use as</span>
+<span class="sd">        a decorator via implicit recreation.</span>
+
+<span class="sd">        This is a private interface just for _GeneratorContextManager.</span>
+<span class="sd">        See issue #11647 for details.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+        <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">inner</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recreate_cm</span><span class="p">():</span>
+                <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">inner</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">AsyncContextDecorator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="s2">&quot;A base class or mixin that enables async context managers to work as decorators.&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_recreate_cm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a recreated instance of self.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+        <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">inner</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+            <span class="k">async</span> <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recreate_cm</span><span class="p">():</span>
+                <span class="k">return</span> <span class="k">await</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">inner</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_GeneratorContextManagerBase</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Shared functionality for @contextmanager and @asynccontextmanager.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwds</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gen</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwds</span> <span class="o">=</span> <span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwds</span>
+        <span class="c1"># Issue 19330: ensure context manager instances have good docstrings</span>
+        <span class="n">doc</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="s2">&quot;__doc__&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">doc</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__doc__</span>
+        <span class="bp">self</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">doc</span>
+        <span class="c1"># Unfortunately, this still doesn&#39;t provide good help output when</span>
+        <span class="c1"># inspecting the created context manager instances, since pydoc</span>
+        <span class="c1"># currently bypasses the instance docstring and shows the docstring</span>
+        <span class="c1"># for the class instead.</span>
+        <span class="c1"># See http://bugs.python.org/issue19404 for more details.</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_recreate_cm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># _GCMB instances are one-shot context managers, so the</span>
+        <span class="c1"># CM must be recreated each time a decorated function is</span>
+        <span class="c1"># called</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwds</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_GeneratorContextManager</span><span class="p">(</span>
+    <span class="n">_GeneratorContextManagerBase</span><span class="p">,</span>
+    <span class="n">AbstractContextManager</span><span class="p">,</span>
+    <span class="n">ContextDecorator</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper for @contextmanager decorator.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># do not keep args and kwds alive unnecessarily</span>
+        <span class="c1"># they are only needed for recreation, which is not possible anymore</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwds</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gen</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;generator didn&#39;t yield&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">typ</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">typ</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gen</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;generator didn&#39;t stop&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># Need to force instantiation so we can reliably</span>
+                <span class="c1"># tell if we get the same exception back</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">typ</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">gen</span><span class="o">.</span><span class="n">throw</span><span class="p">(</span><span class="n">typ</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">StopIteration</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="c1"># Suppress StopIteration *unless* it&#39;s the same exception that</span>
+                <span class="c1"># was passed to throw().  This prevents a StopIteration</span>
+                <span class="c1"># raised inside the &quot;with&quot; statement from being suppressed.</span>
+                <span class="k">return</span> <span class="n">exc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">value</span>
+            <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="c1"># Don&#39;t re-raise the passed in exception. (issue27122)</span>
+                <span class="k">if</span> <span class="n">exc</span> <span class="ow">is</span> <span class="n">value</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+                <span class="c1"># Avoid suppressing if a StopIteration exception</span>
+                <span class="c1"># was passed to throw() and later wrapped into a RuntimeError</span>
+                <span class="c1"># (see PEP 479 for sync generators; async generators also</span>
+                <span class="c1"># have this behavior). But do this only if the exception wrapped</span>
+                <span class="c1"># by the RuntimeError is actually Stop(Async)Iteration (see</span>
+                <span class="c1"># issue29692).</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="ne">StopIteration</span><span class="p">)</span>
+                    <span class="ow">and</span> <span class="n">exc</span><span class="o">.</span><span class="n">__cause__</span> <span class="ow">is</span> <span class="n">value</span>
+                <span class="p">):</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+                <span class="k">raise</span>
+            <span class="k">except</span> <span class="ne">BaseException</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="c1"># only re-raise if it&#39;s *not* the exception that was</span>
+                <span class="c1"># passed to throw(), because __exit__() must not raise</span>
+                <span class="c1"># an exception unless __exit__() itself failed.  But throw()</span>
+                <span class="c1"># has to raise the exception to signal propagation, so this</span>
+                <span class="c1"># fixes the impedance mismatch between the throw() protocol</span>
+                <span class="c1"># and the __exit__() protocol.</span>
+                <span class="k">if</span> <span class="n">exc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">value</span><span class="p">:</span>
+                    <span class="k">raise</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;generator didn&#39;t stop after throw()&quot;</span><span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_AsyncGeneratorContextManager</span><span class="p">(</span>
+    <span class="n">_GeneratorContextManagerBase</span><span class="p">,</span>
+    <span class="n">AbstractAsyncContextManager</span><span class="p">,</span>
+    <span class="n">AsyncContextDecorator</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper for @asynccontextmanager decorator.&quot;&quot;&quot;</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="fm">__aenter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># do not keep args and kwds alive unnecessarily</span>
+        <span class="c1"># they are only needed for recreation, which is not possible anymore</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwds</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="k">await</span> <span class="n">anext</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gen</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">StopAsyncIteration</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;generator didn&#39;t yield&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="fm">__aexit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">typ</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">typ</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">await</span> <span class="n">anext</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gen</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">StopAsyncIteration</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;generator didn&#39;t stop&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># Need to force instantiation so we can reliably</span>
+                <span class="c1"># tell if we get the same exception back</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">typ</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">gen</span><span class="o">.</span><span class="n">athrow</span><span class="p">(</span><span class="n">typ</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">StopAsyncIteration</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="c1"># Suppress StopIteration *unless* it&#39;s the same exception that</span>
+                <span class="c1"># was passed to throw().  This prevents a StopIteration</span>
+                <span class="c1"># raised inside the &quot;with&quot; statement from being suppressed.</span>
+                <span class="k">return</span> <span class="n">exc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">value</span>
+            <span class="k">except</span> <span class="ne">RuntimeError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="c1"># Don&#39;t re-raise the passed in exception. (issue27122)</span>
+                <span class="k">if</span> <span class="n">exc</span> <span class="ow">is</span> <span class="n">value</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+                <span class="c1"># Avoid suppressing if a Stop(Async)Iteration exception</span>
+                <span class="c1"># was passed to athrow() and later wrapped into a RuntimeError</span>
+                <span class="c1"># (see PEP 479 for sync generators; async generators also</span>
+                <span class="c1"># have this behavior). But do this only if the exception wrapped</span>
+                <span class="c1"># by the RuntimeError is actully Stop(Async)Iteration (see</span>
+                <span class="c1"># issue29692).</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="ne">StopIteration</span><span class="p">,</span> <span class="ne">StopAsyncIteration</span><span class="p">))</span>
+                    <span class="ow">and</span> <span class="n">exc</span><span class="o">.</span><span class="n">__cause__</span> <span class="ow">is</span> <span class="n">value</span>
+                <span class="p">):</span>
+                    <span class="k">return</span> <span class="kc">False</span>
+                <span class="k">raise</span>
+            <span class="k">except</span> <span class="ne">BaseException</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="c1"># only re-raise if it&#39;s *not* the exception that was</span>
+                <span class="c1"># passed to throw(), because __exit__() must not raise</span>
+                <span class="c1"># an exception unless __exit__() itself failed.  But throw()</span>
+                <span class="c1"># has to raise the exception to signal propagation, so this</span>
+                <span class="c1"># fixes the impedance mismatch between the throw() protocol</span>
+                <span class="c1"># and the __exit__() protocol.</span>
+                <span class="k">if</span> <span class="n">exc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">value</span><span class="p">:</span>
+                    <span class="k">raise</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;generator didn&#39;t stop after athrow()&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="contextmanager">
+<a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.util.multi_procs_util.html#datumaro.components.dataset.contextmanager">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">contextmanager</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;@contextmanager decorator.</span>
+
+<span class="sd">    Typical usage:</span>
+
+<span class="sd">        @contextmanager</span>
+<span class="sd">        def some_generator(&lt;arguments&gt;):</span>
+<span class="sd">            &lt;setup&gt;</span>
+<span class="sd">            try:</span>
+<span class="sd">                yield &lt;value&gt;</span>
+<span class="sd">            finally:</span>
+<span class="sd">                &lt;cleanup&gt;</span>
+
+<span class="sd">    This makes this:</span>
+
+<span class="sd">        with some_generator(&lt;arguments&gt;) as &lt;variable&gt;:</span>
+<span class="sd">            &lt;body&gt;</span>
+
+<span class="sd">    equivalent to this:</span>
+
+<span class="sd">        &lt;setup&gt;</span>
+<span class="sd">        try:</span>
+<span class="sd">            &lt;variable&gt; = &lt;value&gt;</span>
+<span class="sd">            &lt;body&gt;</span>
+<span class="sd">        finally:</span>
+<span class="sd">            &lt;cleanup&gt;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">helper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_GeneratorContextManager</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwds</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">helper</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">asynccontextmanager</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;@asynccontextmanager decorator.</span>
+
+<span class="sd">    Typical usage:</span>
+
+<span class="sd">        @asynccontextmanager</span>
+<span class="sd">        async def some_async_generator(&lt;arguments&gt;):</span>
+<span class="sd">            &lt;setup&gt;</span>
+<span class="sd">            try:</span>
+<span class="sd">                yield &lt;value&gt;</span>
+<span class="sd">            finally:</span>
+<span class="sd">                &lt;cleanup&gt;</span>
+
+<span class="sd">    This makes this:</span>
+
+<span class="sd">        async with some_async_generator(&lt;arguments&gt;) as &lt;variable&gt;:</span>
+<span class="sd">            &lt;body&gt;</span>
+
+<span class="sd">    equivalent to this:</span>
+
+<span class="sd">        &lt;setup&gt;</span>
+<span class="sd">        try:</span>
+<span class="sd">            &lt;variable&gt; = &lt;value&gt;</span>
+<span class="sd">            &lt;body&gt;</span>
+<span class="sd">        finally:</span>
+<span class="sd">            &lt;cleanup&gt;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">helper</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_AsyncGeneratorContextManager</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwds</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">helper</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">closing</span><span class="p">(</span><span class="n">AbstractContextManager</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Context to automatically close something at the end of a block.</span>
+
+<span class="sd">    Code like this:</span>
+
+<span class="sd">        with closing(&lt;module&gt;.open(&lt;arguments&gt;)) as f:</span>
+<span class="sd">            &lt;block&gt;</span>
+
+<span class="sd">    is equivalent to this:</span>
+
+<span class="sd">        f = &lt;module&gt;.open(&lt;arguments&gt;)</span>
+<span class="sd">        try:</span>
+<span class="sd">            &lt;block&gt;</span>
+<span class="sd">        finally:</span>
+<span class="sd">            f.close()</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thing</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thing</span> <span class="o">=</span> <span class="n">thing</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">thing</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">exc_info</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thing</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">aclosing</span><span class="p">(</span><span class="n">AbstractAsyncContextManager</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Async context manager for safely finalizing an asynchronously cleaned-up</span>
+<span class="sd">    resource such as an async generator, calling its ``aclose()`` method.</span>
+
+<span class="sd">    Code like this:</span>
+
+<span class="sd">        async with aclosing(&lt;module&gt;.fetch(&lt;arguments&gt;)) as agen:</span>
+<span class="sd">            &lt;block&gt;</span>
+
+<span class="sd">    is equivalent to this:</span>
+
+<span class="sd">        agen = &lt;module&gt;.fetch(&lt;arguments&gt;)</span>
+<span class="sd">        try:</span>
+<span class="sd">            &lt;block&gt;</span>
+<span class="sd">        finally:</span>
+<span class="sd">            await agen.aclose()</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thing</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thing</span> <span class="o">=</span> <span class="n">thing</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="fm">__aenter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">thing</span>
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="fm">__aexit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">exc_info</span><span class="p">):</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">thing</span><span class="o">.</span><span class="n">aclose</span><span class="p">()</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_RedirectStream</span><span class="p">(</span><span class="n">AbstractContextManager</span><span class="p">):</span>
+
+    <span class="n">_stream</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_target</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_new_target</span> <span class="o">=</span> <span class="n">new_target</span>
+        <span class="c1"># We use a list of old targets to make this CM re-entrant</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_old_targets</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_old_targets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stream</span><span class="p">))</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stream</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_target</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_target</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exctype</span><span class="p">,</span> <span class="n">excinst</span><span class="p">,</span> <span class="n">exctb</span><span class="p">):</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stream</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_old_targets</span><span class="o">.</span><span class="n">pop</span><span class="p">())</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">redirect_stdout</span><span class="p">(</span><span class="n">_RedirectStream</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Context manager for temporarily redirecting stdout to another file.</span>
+
+<span class="sd">        # How to send help() to stderr</span>
+<span class="sd">        with redirect_stdout(sys.stderr):</span>
+<span class="sd">            help(dir)</span>
+
+<span class="sd">        # How to write help() to a file</span>
+<span class="sd">        with open(&#39;help.txt&#39;, &#39;w&#39;) as f:</span>
+<span class="sd">            with redirect_stdout(f):</span>
+<span class="sd">                help(pow)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_stream</span> <span class="o">=</span> <span class="s2">&quot;stdout&quot;</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">redirect_stderr</span><span class="p">(</span><span class="n">_RedirectStream</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Context manager for temporarily redirecting stderr to another file.&quot;&quot;&quot;</span>
+
+    <span class="n">_stream</span> <span class="o">=</span> <span class="s2">&quot;stderr&quot;</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">suppress</span><span class="p">(</span><span class="n">AbstractContextManager</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Context manager to suppress specified exceptions</span>
+
+<span class="sd">    After the exception is suppressed, execution proceeds with the next</span>
+<span class="sd">    statement following the with statement.</span>
+
+<span class="sd">         with suppress(FileNotFoundError):</span>
+<span class="sd">             os.remove(somefile)</span>
+<span class="sd">         # Execution still resumes here if the file was already removed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">exceptions</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_exceptions</span> <span class="o">=</span> <span class="n">exceptions</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exctype</span><span class="p">,</span> <span class="n">excinst</span><span class="p">,</span> <span class="n">exctb</span><span class="p">):</span>
+        <span class="c1"># Unlike isinstance and issubclass, CPython exception handling</span>
+        <span class="c1"># currently only looks at the concrete type hierarchy (ignoring</span>
+        <span class="c1"># the instance and subclass checking hooks). While Guido considers</span>
+        <span class="c1"># that a bug rather than a feature, it&#39;s a fairly hard one to fix</span>
+        <span class="c1"># due to various internal implementation details. suppress provides</span>
+        <span class="c1"># the simpler issubclass based semantics, rather than trying to</span>
+        <span class="c1"># exactly reproduce the limitations of the CPython interpreter.</span>
+        <span class="c1">#</span>
+        <span class="c1"># See http://bugs.python.org/issue12029 for more details</span>
+        <span class="k">return</span> <span class="n">exctype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">exctype</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exceptions</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_BaseExitStack</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A base class for ExitStack and AsyncExitStack.&quot;&quot;&quot;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_exit_wrapper</span><span class="p">(</span><span class="n">cm</span><span class="p">,</span> <span class="n">cm_exit</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">MethodType</span><span class="p">(</span><span class="n">cm_exit</span><span class="p">,</span> <span class="n">cm</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_cb_wrapper</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_exit_wrapper</span><span class="p">(</span><span class="n">exc_type</span><span class="p">,</span> <span class="n">exc</span><span class="p">,</span> <span class="n">tb</span><span class="p">):</span>
+            <span class="n">callback</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_exit_wrapper</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_exit_callbacks</span> <span class="o">=</span> <span class="n">deque</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">pop_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Preserve the context stack by transferring it to a new instance.&quot;&quot;&quot;</span>
+        <span class="n">new_stack</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)()</span>
+        <span class="n">new_stack</span><span class="o">.</span><span class="n">_exit_callbacks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exit_callbacks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_exit_callbacks</span> <span class="o">=</span> <span class="n">deque</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">new_stack</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">push</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exit</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Registers a callback with the standard __exit__ method signature.</span>
+
+<span class="sd">        Can suppress exceptions the same way __exit__ method can.</span>
+<span class="sd">        Also accepts any object with an __exit__ method (registering a call</span>
+<span class="sd">        to the method instead of the object itself).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># We use an unbound method rather than a bound method to follow</span>
+        <span class="c1"># the standard lookup behaviour for special methods.</span>
+        <span class="n">_cb_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">exit</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">exit_method</span> <span class="o">=</span> <span class="n">_cb_type</span><span class="o">.</span><span class="fm">__exit__</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="c1"># Not a context manager, so assume it&#39;s a callable.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_push_exit_callback</span><span class="p">(</span><span class="n">exit</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_push_cm_exit</span><span class="p">(</span><span class="n">exit</span><span class="p">,</span> <span class="n">exit_method</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">exit</span>  <span class="c1"># Allow use as a decorator.</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">enter_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cm</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Enters the supplied context manager.</span>
+
+<span class="sd">        If successful, also pushes its __exit__ method as a callback and</span>
+<span class="sd">        returns the result of the __enter__ method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># We look up the special methods on the type to match the with</span>
+        <span class="c1"># statement.</span>
+        <span class="n">_cm_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">cm</span><span class="p">)</span>
+        <span class="n">_exit</span> <span class="o">=</span> <span class="n">_cm_type</span><span class="o">.</span><span class="fm">__exit__</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">_cm_type</span><span class="o">.</span><span class="fm">__enter__</span><span class="p">(</span><span class="n">cm</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_push_cm_exit</span><span class="p">(</span><span class="n">cm</span><span class="p">,</span> <span class="n">_exit</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Registers an arbitrary callback and arguments.</span>
+
+<span class="sd">        Cannot suppress exceptions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_exit_wrapper</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_cb_wrapper</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+
+        <span class="c1"># We changed the signature, so using @wraps is not appropriate, but</span>
+        <span class="c1"># setting __wrapped__ may still help with introspection.</span>
+        <span class="n">_exit_wrapper</span><span class="o">.</span><span class="n">__wrapped__</span> <span class="o">=</span> <span class="n">callback</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_push_exit_callback</span><span class="p">(</span><span class="n">_exit_wrapper</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">callback</span>  <span class="c1"># Allow use as a decorator</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_push_cm_exit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cm</span><span class="p">,</span> <span class="n">cm_exit</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper to correctly register callbacks to __exit__ methods.&quot;&quot;&quot;</span>
+        <span class="n">_exit_wrapper</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_exit_wrapper</span><span class="p">(</span><span class="n">cm</span><span class="p">,</span> <span class="n">cm_exit</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_push_exit_callback</span><span class="p">(</span><span class="n">_exit_wrapper</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_push_exit_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">is_sync</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_exit_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">is_sync</span><span class="p">,</span> <span class="n">callback</span><span class="p">))</span>
+
+
+<span class="c1"># Inspired by discussions on http://bugs.python.org/issue13585</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ExitStack</span><span class="p">(</span><span class="n">_BaseExitStack</span><span class="p">,</span> <span class="n">AbstractContextManager</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Context manager for dynamic management of a stack of exit callbacks.</span>
+
+<span class="sd">    For example:</span>
+<span class="sd">        with ExitStack() as stack:</span>
+<span class="sd">            files = [stack.enter_context(open(fname)) for fname in filenames]</span>
+<span class="sd">            # All opened files will automatically be closed at the end of</span>
+<span class="sd">            # the with statement, even if attempts to open files later</span>
+<span class="sd">            # in the list raise an exception.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">exc_details</span><span class="p">):</span>
+        <span class="n">received_exc</span> <span class="o">=</span> <span class="n">exc_details</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+        <span class="c1"># We manipulate the exception state so it behaves as though</span>
+        <span class="c1"># we were actually nesting multiple with statements</span>
+        <span class="n">frame_exc</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_fix_exception_context</span><span class="p">(</span><span class="n">new_exc</span><span class="p">,</span> <span class="n">old_exc</span><span class="p">):</span>
+            <span class="c1"># Context may not be correct, so find the end of the chain</span>
+            <span class="k">while</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">exc_context</span> <span class="o">=</span> <span class="n">new_exc</span><span class="o">.</span><span class="n">__context__</span>
+                <span class="k">if</span> <span class="n">exc_context</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">exc_context</span> <span class="ow">is</span> <span class="n">old_exc</span><span class="p">:</span>
+                    <span class="c1"># Context is already set correctly (see issue 20317)</span>
+                    <span class="k">return</span>
+                <span class="k">if</span> <span class="n">exc_context</span> <span class="ow">is</span> <span class="n">frame_exc</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="n">new_exc</span> <span class="o">=</span> <span class="n">exc_context</span>
+            <span class="c1"># Change the end of the chain to point to the exception</span>
+            <span class="c1"># we expect it to reference</span>
+            <span class="n">new_exc</span><span class="o">.</span><span class="n">__context__</span> <span class="o">=</span> <span class="n">old_exc</span>
+
+        <span class="c1"># Callbacks are invoked in LIFO order to match the behaviour of</span>
+        <span class="c1"># nested context managers</span>
+        <span class="n">suppressed_exc</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">pending_raise</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exit_callbacks</span><span class="p">:</span>
+            <span class="n">is_sync</span><span class="p">,</span> <span class="n">cb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exit_callbacks</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="n">is_sync</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">cb</span><span class="p">(</span><span class="o">*</span><span class="n">exc_details</span><span class="p">):</span>
+                    <span class="n">suppressed_exc</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">pending_raise</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="n">exc_details</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">new_exc_details</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()</span>
+                <span class="c1"># simulate the stack of exceptions by setting the context</span>
+                <span class="n">_fix_exception_context</span><span class="p">(</span><span class="n">new_exc_details</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">exc_details</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">pending_raise</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">exc_details</span> <span class="o">=</span> <span class="n">new_exc_details</span>
+        <span class="k">if</span> <span class="n">pending_raise</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># bare &quot;raise exc_details[1]&quot; replaces our carefully</span>
+                <span class="c1"># set-up context</span>
+                <span class="n">fixed_ctx</span> <span class="o">=</span> <span class="n">exc_details</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">__context__</span>
+                <span class="k">raise</span> <span class="n">exc_details</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+                <span class="n">exc_details</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">__context__</span> <span class="o">=</span> <span class="n">fixed_ctx</span>
+                <span class="k">raise</span>
+        <span class="k">return</span> <span class="n">received_exc</span> <span class="ow">and</span> <span class="n">suppressed_exc</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Immediately unwind the context stack.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+
+<span class="c1"># Inspired by discussions on https://bugs.python.org/issue29302</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AsyncExitStack</span><span class="p">(</span><span class="n">_BaseExitStack</span><span class="p">,</span> <span class="n">AbstractAsyncContextManager</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Async context manager for dynamic management of a stack of exit</span>
+<span class="sd">    callbacks.</span>
+
+<span class="sd">    For example:</span>
+<span class="sd">        async with AsyncExitStack() as stack:</span>
+<span class="sd">            connections = [await stack.enter_async_context(get_connection())</span>
+<span class="sd">                for i in range(5)]</span>
+<span class="sd">            # All opened connections will automatically be released at the</span>
+<span class="sd">            # end of the async with statement, even if attempts to open a</span>
+<span class="sd">            # connection later in the list raise an exception.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_async_exit_wrapper</span><span class="p">(</span><span class="n">cm</span><span class="p">,</span> <span class="n">cm_exit</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">MethodType</span><span class="p">(</span><span class="n">cm_exit</span><span class="p">,</span> <span class="n">cm</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_async_cb_wrapper</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_exit_wrapper</span><span class="p">(</span><span class="n">exc_type</span><span class="p">,</span> <span class="n">exc</span><span class="p">,</span> <span class="n">tb</span><span class="p">):</span>
+            <span class="k">await</span> <span class="n">callback</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_exit_wrapper</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">enter_async_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cm</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Enters the supplied async context manager.</span>
+
+<span class="sd">        If successful, also pushes its __aexit__ method as a callback and</span>
+<span class="sd">        returns the result of the __aenter__ method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_cm_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">cm</span><span class="p">)</span>
+        <span class="n">_exit</span> <span class="o">=</span> <span class="n">_cm_type</span><span class="o">.</span><span class="fm">__aexit__</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">_cm_type</span><span class="o">.</span><span class="fm">__aenter__</span><span class="p">(</span><span class="n">cm</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_push_async_cm_exit</span><span class="p">(</span><span class="n">cm</span><span class="p">,</span> <span class="n">_exit</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">push_async_exit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exit</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Registers a coroutine function with the standard __aexit__ method</span>
+<span class="sd">        signature.</span>
+
+<span class="sd">        Can suppress exceptions the same way __aexit__ method can.</span>
+<span class="sd">        Also accepts any object with an __aexit__ method (registering a call</span>
+<span class="sd">        to the method instead of the object itself).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_cb_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">exit</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">exit_method</span> <span class="o">=</span> <span class="n">_cb_type</span><span class="o">.</span><span class="fm">__aexit__</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="c1"># Not an async context manager, so assume it&#39;s a coroutine function</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_push_exit_callback</span><span class="p">(</span><span class="n">exit</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_push_async_cm_exit</span><span class="p">(</span><span class="n">exit</span><span class="p">,</span> <span class="n">exit_method</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">exit</span>  <span class="c1"># Allow use as a decorator</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">push_async_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Registers an arbitrary coroutine function and arguments.</span>
+
+<span class="sd">        Cannot suppress exceptions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_exit_wrapper</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_async_cb_wrapper</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+
+        <span class="c1"># We changed the signature, so using @wraps is not appropriate, but</span>
+        <span class="c1"># setting __wrapped__ may still help with introspection.</span>
+        <span class="n">_exit_wrapper</span><span class="o">.</span><span class="n">__wrapped__</span> <span class="o">=</span> <span class="n">callback</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_push_exit_callback</span><span class="p">(</span><span class="n">_exit_wrapper</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">callback</span>  <span class="c1"># Allow use as a decorator</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">aclose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Immediately unwind the context stack.&quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__aexit__</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_push_async_cm_exit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cm</span><span class="p">,</span> <span class="n">cm_exit</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper to correctly register coroutine function to __aexit__</span>
+<span class="sd">        method.&quot;&quot;&quot;</span>
+        <span class="n">_exit_wrapper</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_async_exit_wrapper</span><span class="p">(</span><span class="n">cm</span><span class="p">,</span> <span class="n">cm_exit</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_push_exit_callback</span><span class="p">(</span><span class="n">_exit_wrapper</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="fm">__aenter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="fm">__aexit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">exc_details</span><span class="p">):</span>
+        <span class="n">received_exc</span> <span class="o">=</span> <span class="n">exc_details</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+        <span class="c1"># We manipulate the exception state so it behaves as though</span>
+        <span class="c1"># we were actually nesting multiple with statements</span>
+        <span class="n">frame_exc</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_fix_exception_context</span><span class="p">(</span><span class="n">new_exc</span><span class="p">,</span> <span class="n">old_exc</span><span class="p">):</span>
+            <span class="c1"># Context may not be correct, so find the end of the chain</span>
+            <span class="k">while</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">exc_context</span> <span class="o">=</span> <span class="n">new_exc</span><span class="o">.</span><span class="n">__context__</span>
+                <span class="k">if</span> <span class="n">exc_context</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">exc_context</span> <span class="ow">is</span> <span class="n">old_exc</span><span class="p">:</span>
+                    <span class="c1"># Context is already set correctly (see issue 20317)</span>
+                    <span class="k">return</span>
+                <span class="k">if</span> <span class="n">exc_context</span> <span class="ow">is</span> <span class="n">frame_exc</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="n">new_exc</span> <span class="o">=</span> <span class="n">exc_context</span>
+            <span class="c1"># Change the end of the chain to point to the exception</span>
+            <span class="c1"># we expect it to reference</span>
+            <span class="n">new_exc</span><span class="o">.</span><span class="n">__context__</span> <span class="o">=</span> <span class="n">old_exc</span>
+
+        <span class="c1"># Callbacks are invoked in LIFO order to match the behaviour of</span>
+        <span class="c1"># nested context managers</span>
+        <span class="n">suppressed_exc</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">pending_raise</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exit_callbacks</span><span class="p">:</span>
+            <span class="n">is_sync</span><span class="p">,</span> <span class="n">cb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exit_callbacks</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">is_sync</span><span class="p">:</span>
+                    <span class="n">cb_suppress</span> <span class="o">=</span> <span class="n">cb</span><span class="p">(</span><span class="o">*</span><span class="n">exc_details</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">cb_suppress</span> <span class="o">=</span> <span class="k">await</span> <span class="n">cb</span><span class="p">(</span><span class="o">*</span><span class="n">exc_details</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">cb_suppress</span><span class="p">:</span>
+                    <span class="n">suppressed_exc</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">pending_raise</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="n">exc_details</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">new_exc_details</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()</span>
+                <span class="c1"># simulate the stack of exceptions by setting the context</span>
+                <span class="n">_fix_exception_context</span><span class="p">(</span><span class="n">new_exc_details</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">exc_details</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">pending_raise</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">exc_details</span> <span class="o">=</span> <span class="n">new_exc_details</span>
+        <span class="k">if</span> <span class="n">pending_raise</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># bare &quot;raise exc_details[1]&quot; replaces our carefully</span>
+                <span class="c1"># set-up context</span>
+                <span class="n">fixed_ctx</span> <span class="o">=</span> <span class="n">exc_details</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">__context__</span>
+                <span class="k">raise</span> <span class="n">exc_details</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+                <span class="n">exc_details</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">__context__</span> <span class="o">=</span> <span class="n">fixed_ctx</span>
+                <span class="k">raise</span>
+        <span class="k">return</span> <span class="n">received_exc</span> <span class="ow">and</span> <span class="n">suppressed_exc</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">nullcontext</span><span class="p">(</span><span class="n">AbstractContextManager</span><span class="p">,</span> <span class="n">AbstractAsyncContextManager</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Context manager that does no additional processing.</span>
+
+<span class="sd">    Used as a stand-in for a normal context manager, when a particular</span>
+<span class="sd">    block of code is only sometimes used with a normal context manager:</span>
+
+<span class="sd">    cm = optional_cm if condition else nullcontext()</span>
+<span class="sd">    with cm:</span>
+<span class="sd">        # Perform operation, using optional_cm if condition is True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enter_result</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">enter_result</span> <span class="o">=</span> <span class="n">enter_result</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">enter_result</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">excinfo</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="fm">__aenter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">enter_result</span>
+
+    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="fm">__aexit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">excinfo</span><span class="p">):</span>
+        <span class="k">pass</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

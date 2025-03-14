@@ -1,0 +1,227 @@
+{
+ "cells": [
+  {
+   "attachments": {},
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Import and Export Public Data\n",
+    "\n",
+    "[![Jupyter Notebook](https://img.shields.io/badge/jupyter-%23FA0F00.svg?style=for-the-badge&logo=jupyter&logoColor=white)](https://github.com/openvinotoolkit/datumaro/blob/develop/notebooks/14_import_export_det_data.ipynb)\n",
+    "\n",
+    "In this notebook, we are going to show you how to import public data through Datumaro.\n",
+    "\n",
+    "## Import MS-COCO data\n",
+    "\n",
+    "MS-COCO is one of the most popular data, which contains the number 120K of data and they are annotated into bounding boxes, polygons, and masks. We import MS-COCO data for instance segmentation tasks among other tasks such as panoptic segmentation or person keypoint detection."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "WARNING:root:File './coco_dataset/annotations/image_info_test-dev2017.json' was skipped, could't match this file with any of these tasks: coco_instances\n",
+      "WARNING:root:File './coco_dataset/annotations/image_info_test2017.json' was skipped, could't match this file with any of these tasks: coco_instances\n",
+      "WARNING:root:File './coco_dataset/annotations/image_info_unlabeled2017.json' was skipped, could't match this file with any of these tasks: coco_instances\n",
+      "WARNING:root:File './coco_dataset/annotations/person_keypoints_val2017.json' was skipped, could't match this file with any of these tasks: coco_instances\n",
+      "WARNING:root:File './coco_dataset/annotations/captions_val2017.json' was skipped, could't match this file with any of these tasks: coco_instances\n",
+      "WARNING:root:File './coco_dataset/annotations/person_keypoints_train2017.json' was skipped, could't match this file with any of these tasks: coco_instances\n",
+      "WARNING:root:File './coco_dataset/annotations/captions_train2017.json' was skipped, could't match this file with any of these tasks: coco_instances\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Dataset\n",
+      "\tsize=123287\n",
+      "\tsource_path=./coco_dataset\n",
+      "\tmedia_type=<class 'datumaro.components.media.Image'>\n",
+      "\tannotated_items_count=122218\n",
+      "\tannotations_count=1915643\n",
+      "subsets\n",
+      "\ttrain2017: # of items=118287, # of annotated items=117266, # of annotations=1836996, annotation types=['bbox', 'polygon', 'mask']\n",
+      "\tval2017: # of items=5000, # of annotated items=4952, # of annotations=78647, annotation types=['bbox', 'polygon', 'mask']\n",
+      "infos\n",
+      "\tcategories\n",
+      "\tlabel: ['person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat', 'traffic light', 'fire hydrant', 'stop sign', 'parking meter', 'bench', 'bird', 'cat', 'dog', 'horse', 'sheep', 'cow', 'elephant', 'bear', 'zebra', 'giraffe', 'backpack', 'umbrella', 'handbag', 'tie', 'suitcase', 'frisbee', 'skis', 'snowboard', 'sports ball', 'kite', 'baseball bat', 'baseball glove', 'skateboard', 'surfboard', 'tennis racket', 'bottle', 'wine glass', 'cup', 'fork', 'knife', 'spoon', 'bowl', 'banana', 'apple', 'sandwich', 'orange', 'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake', 'chair', 'couch', 'potted plant', 'bed', 'dining table', 'toilet', 'tv', 'laptop', 'mouse', 'remote', 'keyboard', 'cell phone', 'microwave', 'oven', 'toaster', 'sink', 'refrigerator', 'book', 'clock', 'vase', 'scissors', 'teddy bear', 'hair drier', 'toothbrush']\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "from datumaro.components.dataset import Dataset\n",
+    "\n",
+    "coco_path = \"./coco_dataset\"\n",
+    "coco_dataset = Dataset.import_from(coco_path, \"coco_instances\")\n",
+    "\n",
+    "print(coco_dataset)"
+   ]
+  },
+  {
+   "attachments": {},
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Export MS-COCO data into Pascal-VOC data format\n",
+    "\n",
+    "We now export the imported COCO dataset into another popular data format Pascal-VOC.\n",
+    "This helps us to reuse the same data feeding code blocks in training or deployment frameworks.\n",
+    "Below shows the reformatted COCO dataset with Pascal-VOC format."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Original MS-COCO data format\n",
+      "\u001b[01;34m./coco_dataset\u001b[00m\n",
+      "├── \u001b[01;34mannotations\u001b[00m\n",
+      "└── \u001b[01;34mimages\u001b[00m\n",
+      "\n",
+      "2 directories, 0 files\n",
+      "Reformulated MS-COCO data with Pascal-VOC format\n",
+      "\u001b[01;34m./coco_dataset_with_voc_format\u001b[00m\n",
+      "├── \u001b[01;34mAnnotations\u001b[00m\n",
+      "├── \u001b[01;34mImageSets\u001b[00m\n",
+      "├── \u001b[01;34mJPEGImages\u001b[00m\n",
+      "├── labelmap.txt\n",
+      "├── \u001b[01;34mSegmentationClass\u001b[00m\n",
+      "└── \u001b[01;34mSegmentationObject\u001b[00m\n",
+      "\n",
+      "5 directories, 1 file\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(\"Original MS-COCO data format\")\n",
+    "!tree -L 1 ./coco_dataset\n",
+    "\n",
+    "save_path = \"coco_dataset_with_voc_format\"\n",
+    "coco_dataset.export(save_path, \"voc\", save_media=True)\n",
+    "\n",
+    "print(\"Reformulated MS-COCO data with Pascal-VOC format\")\n",
+    "!tree -L 1 ./coco_dataset_with_voc_format"
+   ]
+  },
+  {
+   "attachments": {},
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Import Pascal-VOC data\n",
+    "\n",
+    "We now move on to import Pascal-VOC data. Similar to MS-COCO data, Pascal-VOC supports multiple tasks including object detection, segmentation, person layout, and action classification. We are going to import Pascal-VOC data with the task-specific purpose.\n",
+    "\n",
+    "First, we import the data for object detection tasks, where Pascal VOC contains 21 classes including `background` class. We here check that items have only a bounding box annotation type."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Dataset\n",
+      "\tsize=10022\n",
+      "\tsource_path=VOCdevkit/VOC2007\n",
+      "\tmedia_type=<class 'datumaro.components.media.Image'>\n",
+      "\tannotated_items_count=10022\n",
+      "\tannotations_count=31324\n",
+      "subsets\n",
+      "\ttrain: # of items=2501, # of annotated items=2501, # of annotations=7844, annotation types=['bbox']\n",
+      "\ttrainval: # of items=5011, # of annotated items=5011, # of annotations=15662, annotation types=['bbox']\n",
+      "\tval: # of items=2510, # of annotated items=2510, # of annotations=7818, annotation types=['bbox']\n",
+      "infos\n",
+      "\tcategories\n",
+      "\tlabel: ['background', 'aeroplane', 'bicycle', 'bird', 'boat', 'bottle', 'bus', 'car', 'cat', 'chair', 'cow', 'diningtable', 'dog', 'horse', 'motorbike', 'person', 'pottedplant', 'sheep', 'sofa', 'train', 'tvmonitor', 'ignored']\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "voc_path = \"VOCdevkit/VOC2007\"\n",
+    "voc_dataset = Dataset.import_from(voc_path, \"voc_detection\")\n",
+    "\n",
+    "print(voc_dataset)"
+   ]
+  },
+  {
+   "attachments": {},
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Import Pascal-VOC data for another task\n",
+    "\n",
+    "We now import Pascal-VOC data for a person layout task, where this is composed of bounding boxes according to person bodies, e.g., `head`, `hand`, and `foot` within `person`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Dataset\n",
+      "\tsize=1292\n",
+      "\tsource_path=VOCdevkit/VOC2007\n",
+      "\tmedia_type=<class 'datumaro.components.media.Image'>\n",
+      "\tannotated_items_count=644\n",
+      "\tannotations_count=3986\n",
+      "subsets\n",
+      "\ttrain: # of items=318, # of annotated items=166, # of annotations=1001, annotation types=['bbox']\n",
+      "\ttrainval: # of items=646, # of annotated items=322, # of annotations=1993, annotation types=['bbox']\n",
+      "\tval: # of items=328, # of annotated items=156, # of annotations=992, annotation types=['bbox']\n",
+      "infos\n",
+      "\tcategories\n",
+      "\tlabel: ['background', 'person', 'head', 'hand', 'foot']\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "voc_layout_dataset = Dataset.import_from(voc_path, \"voc_layout\")\n",
+    "\n",
+    "print(voc_layout_dataset)"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "datum",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.16"
+  },
+  "orig_nbformat": 4
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}

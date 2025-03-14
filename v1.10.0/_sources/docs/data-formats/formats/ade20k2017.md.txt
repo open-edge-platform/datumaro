@@ -1,0 +1,115 @@
+# ADE20k (v2017)
+
+## Format explanation
+
+The original ADE20K 2017 dataset is available
+[here](https://www.kaggle.com/soumikrakshit/ade20k).
+
+The consistency set (for checking the annotation consistency)
+is available [here](https://groups.csail.mit.edu/vision/datasets/ADE20K/ADE20K_2017_05_30_consistency.zip).
+
+Supported annotation types:
+- `Masks`
+
+Supported annotation attributes:
+- `occluded` (boolean): whether the object is occluded by another object
+- other arbitrary boolean attributes, which can be specified
+  in the annotation file `<image_name>_atr.txt`
+
+## Import ADE20K 2017 dataset
+
+A Datumaro project with an ADE20k source can be created in the following way:
+
+```bash
+datum project create
+datum project import --format ade20k2017 <path/to/dataset>
+```
+
+It is also possible to import the dataset using Python API:
+
+```python
+import datumaro as dm
+
+ade20k_dataset = dm.Dataset.import_from('<path/to/dataset>', 'ade20k2017')
+```
+
+ADE20K dataset directory should have the following structure:
+
+<!--lint disable fenced-code-flag-->
+```
+dataset/
+├── dataset_meta.json # a list of non-format labels (optional)
+├── subset1/
+│   └── super_label_1/
+│       ├── img1.jpg
+│       ├── img1_atr.txt
+│       ├── img1_parts_1.png
+│       ├── img1_seg.png
+│       ├── img2.jpg
+│       ├── img2_atr.txt
+│       └── ...
+└── subset2/
+    ├── img3.jpg
+    ├── img3_atr.txt
+    ├── img3_parts_1.png
+    ├── img3_parts_2.png
+    ├── img4.jpg
+    ├── img4_atr.txt
+    ├── img4_seg.png
+    └── ...
+```
+
+The mask images `<image_name>_seg.png` contain information about the object
+class segmentation masks and also separate each class into instances.
+The channels R and G encode the objects class masks.
+The channel B encodes the instance object masks.
+
+The mask images `<image_name>_parts_N.png` contain segmentation masks for parts
+of objects, where N is a number indicating the level in the part hierarchy.
+
+The annotation files `<image_name>_atr.txt` describe the content of each
+image. Each line in the text file contains:
+- column 1: instance number,
+- column 2: part level (0 for objects),
+- column 3: occluded (1 for true),
+- column 4: original raw name (might provide a more detailed categorization),
+- column 5: class name (parsed using wordnet),
+- column 6: double-quoted list of attributes, separated by commas.
+Each column is separated by a `#`. See example of dataset
+[here](https://github.com/openvinotoolkit/datumaro/tree/develop/tests/assets/ade20k2017_dataset).
+
+To add custom classes, you can use [`dataset_meta.json`](/docs/data-formats/formats/index.rst#dataset-meta-info-file).
+
+## Export to other formats
+
+Datumaro can convert an ADE20K dataset into any other format [Datumaro supports](/docs/data-formats/formats/index.rst).
+To get the expected result, convert the dataset to a format
+that supports segmentation masks.
+
+There are several ways to convert an ADE20k 2017 dataset to other dataset
+formats using CLI:
+
+```bash
+datum project create
+datum project import -f ade20k2017 <path/to/dataset>
+datum project export -f coco -o <output/dir> -- --save-media
+```
+or
+``` bash
+datum convert -if ade20k2017 -i <path/to/dataset> \
+    -f coco -o <output/dir> -- --save-media
+```
+
+Or, using Python API:
+
+```python
+import datumaro as dm
+
+dataset = dm.Dataset.import_from('<path/to/dataset>', 'ade202017')
+dataset.export('save_dir', 'coco')
+```
+
+## Examples
+
+Examples of using this format from the code can be found in
+[the format tests](https://github.com/openvinotoolkit/datumaro/blob/develop/tests/unit/test_ade20k2017_format.py)

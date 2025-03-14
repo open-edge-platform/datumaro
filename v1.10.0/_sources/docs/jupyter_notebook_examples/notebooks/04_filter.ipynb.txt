@@ -1,0 +1,475 @@
+{
+ "cells": [
+  {
+   "attachments": {},
+   "cell_type": "markdown",
+   "id": "652f6b58",
+   "metadata": {},
+   "source": [
+    "# Filter Data through Your Query"
+   ]
+  },
+  {
+   "attachments": {},
+   "cell_type": "markdown",
+   "id": "ca821a19",
+   "metadata": {},
+   "source": [
+    "[![Jupyter Notebook](https://img.shields.io/badge/jupyter-%23FA0F00.svg?style=for-the-badge&logo=jupyter&logoColor=white)](https://github.com/openvinotoolkit/datumaro/blob/develop/notebooks/04_filter.ipynb)\n",
+    "\n",
+    "In this notebook example, we'll take a look at Datumaro `filter` API. Datumaro provides two Python API types for filtering.\n",
+    "\n",
+    "1) Using the XML [XPath](https://devhints.io/xpath) query\n",
+    "\n",
+    "    It is a Python string query that can be useful for simple filtering or CLI users.\n",
+    "    If you use this query, Datumaro dataset item representation is converted to XML format\n",
+    "    and filtered by the selector of XPath query. For more details about this, please refer to\n",
+    "    [this link](https://openvinotoolkit.github.io/datumaro/latest/docs/command-reference/context_free/filter.html).\n",
+    "\n",
+    "2) Using the user-provided Python function query\n",
+    "\n",
+    "    It is a Python callable such as `Callable[[DatasetItem], bool]` (for filtering dataset items)\n",
+    "    or `Callable[[DatasetItem, Annotation], bool]` (for filtering annotations).\n",
+    "    Users can implement their own Python function for the given dataset item or annotation.\n",
+    "\n",
+    "Firstly, we start this lesson with importing Datumaro in our runtime session."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "da198c67",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Copyright (C) 2023 Intel Corporation\n",
+    "#\n",
+    "# SPDX-License-Identifier: MIT\n",
+    "\n",
+    "import datumaro as dm"
+   ]
+  },
+  {
+   "attachments": {},
+   "cell_type": "markdown",
+   "id": "9e2cf885",
+   "metadata": {},
+   "source": [
+    "### Filtered by subset"
+   ]
+  },
+  {
+   "attachments": {},
+   "cell_type": "markdown",
+   "id": "031f1d62",
+   "metadata": {},
+   "source": [
+    "To show filtering by subset, we first import the dummy VOC dataset from the [testing asset in our repository](https://github.com/openvinotoolkit/datumaro/tree/develop/tests/assets)."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "b9640838",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Subsets: ['test', 'train']\n"
+     ]
+    }
+   ],
+   "source": [
+    "dataset = dm.Dataset.import_from(\"../tests/assets/voc_dataset/voc_dataset1\", format=\"voc\")\n",
+    "print(\"Subsets:\", list(dataset.subsets().keys()))"
+   ]
+  },
+  {
+   "attachments": {},
+   "cell_type": "markdown",
+   "id": "db0e0346",
+   "metadata": {},
+   "source": [
+    "In VOC dataset, there are 'train' and 'test' subsets.\n",
+    "We will filter out 'test' subset using the XPath string query this time.\n",
+    "You can see that there remains only 'train' subset after filtering."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "51bf3388",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Subsets: ['train']\n"
+     ]
+    }
+   ],
+   "source": [
+    "filtered = dataset.clone().filter('/item[subset=\"train\"]')\n",
+    "print(\"Subsets:\", list(filtered.subsets().keys()))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "87e2e813",
+   "metadata": {},
+   "source": [
+    "This time, we can do the same thing with the user-provided Python function query as follows. From now on, we will show both query types for filtering."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "fb608396",
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Subsets: ['train']\n"
+     ]
+    }
+   ],
+   "source": [
+    "def retain_train_subset(item):\n",
+    "    return item.subset == \"train\"\n",
+    "\n",
+    "\n",
+    "filtered = dataset.clone().filter(retain_train_subset)\n",
+    "print(\"Subsets:\", list(filtered.subsets().keys()))"
+   ]
+  },
+  {
+   "attachments": {},
+   "cell_type": "markdown",
+   "id": "9b23d1af",
+   "metadata": {},
+   "source": [
+    "### Filtered by image width or height"
+   ]
+  },
+  {
+   "attachments": {},
+   "cell_type": "markdown",
+   "id": "6d6ca87d",
+   "metadata": {},
+   "source": [
+    "To show filtering by image width or height, we create a dummy `Dataset` from the following code.\n",
+    "There are two items with images that are horizontally long or vertically long."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "87feaf56",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "ID: \"horizontally_long\", Height: 10, Width: 20\n",
+      "ID: \"vertically_long\", Height: 20, Width: 10\n"
+     ]
+    }
+   ],
+   "source": [
+    "import numpy as np\n",
+    "\n",
+    "dataset = dm.Dataset.from_iterable(\n",
+    "    [\n",
+    "        dm.DatasetItem(\n",
+    "            id=\"horizontally_long\",\n",
+    "            media=dm.Image.from_numpy(np.zeros(shape=(10, 20, 3), dtype=np.uint8)),\n",
+    "        ),\n",
+    "        dm.DatasetItem(\n",
+    "            id=\"vertically_long\",\n",
+    "            media=dm.Image.from_numpy(np.zeros(shape=(20, 10, 3), dtype=np.uint8)),\n",
+    "        ),\n",
+    "    ]\n",
+    ")\n",
+    "for item in dataset:\n",
+    "    print(f'ID: \"{item.id}\", Height: {item.media.size[0]}, Width: {item.media.size[1]}')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "7b693479",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "\"Vertically long\" item will remain\n",
+      "ID: \"vertically_long\", Height: 20, Width: 10\n",
+      "Now, conversely, \"Horizontally long\" item will remain conversely\n",
+      "ID: \"horizontally_long\", Height: 10, Width: 20\n"
+     ]
+    }
+   ],
+   "source": [
+    "print('\"Vertically long\" item will remain')\n",
+    "\n",
+    "filtered = dataset.clone().filter(\"/item[image/width < image/height]\")\n",
+    "for item in filtered:\n",
+    "    print(f'ID: \"{item.id}\", Height: {item.media.size[0]}, Width: {item.media.size[1]}')\n",
+    "\n",
+    "\n",
+    "def retain_horizontally_long(item):\n",
+    "    return item.media.size[0] < item.media.size[1]\n",
+    "\n",
+    "\n",
+    "print('Now, conversely, \"Horizontally long\" item will remain conversely')\n",
+    "\n",
+    "filtered = dataset.clone().filter(retain_horizontally_long)\n",
+    "for item in filtered:\n",
+    "    print(f'ID: \"{item.id}\", Height: {item.media.size[0]}, Width: {item.media.size[1]}')"
+   ]
+  },
+  {
+   "attachments": {},
+   "cell_type": "markdown",
+   "id": "cbde6b17",
+   "metadata": {},
+   "source": [
+    "### Filtered by label and area"
+   ]
+  },
+  {
+   "attachments": {},
+   "cell_type": "markdown",
+   "id": "1e0dc1de",
+   "metadata": {},
+   "source": [
+    "Let's get back to the dummy VOC dataset at the first lesson.\n",
+    "We want to remove all annotations associated with the `person` label in the dataset.\n",
+    "You can see that there is one item with `id=2007_000001` having `person` label."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "0c8248a9",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "There exist a person\n",
+      "ID: 2007_000001 has \"person\" label\n"
+     ]
+    }
+   ],
+   "source": [
+    "def find_item_with_given_label_name(dataset, label_name):\n",
+    "    label_cats = dataset.categories()[dm.AnnotationType.label]\n",
+    "    for item in dataset:\n",
+    "        labels = {label_cats[ann.label].name for ann in item.annotations}\n",
+    "        if label_name in labels:\n",
+    "            print(f'ID: {item.id} has \"{label_name}\" label')\n",
+    "\n",
+    "\n",
+    "dataset = dm.Dataset.import_from(\"../tests/assets/voc_dataset/voc_dataset1\", format=\"voc\")\n",
+    "print(\"There exist a person\")\n",
+    "find_item_with_given_label_name(dataset, \"person\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "aafc4b35",
+   "metadata": {},
+   "source": [
+    "We can remove all annotations not having `person` label with the following query.\n",
+    "On the other hand, using the Python function, we can remove all `airplane` annotations as well.\n",
+    "As shown, you have to set `filter_annotations` as `True` if you want to apply filtering to annotations.\n",
+    "The default value is `False`.\n",
+    "Therefore, in the previous examples, we have been able to apply filtering to dataset items rather than annotations."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 8,
+   "id": "98ad83ad",
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "There is no person\n",
+      "ID: 2007_000001 has \"person\" label\n",
+      "There is an airplane\n",
+      "Now, we removed it\n"
+     ]
+    }
+   ],
+   "source": [
+    "filtered = dataset.clone().filter('/item/annotation[label!=\"person\"]', filter_annotations=True)\n",
+    "print(\"There is no person\")\n",
+    "find_item_with_given_label_name(dataset, \"person\")\n",
+    "\n",
+    "print(\"There is an airplane\")\n",
+    "find_item_with_given_label_name(dataset, \"airplane\")\n",
+    "\n",
+    "\n",
+    "def remove_airplane(item, ann):\n",
+    "    label_cats = dataset.categories()[dm.AnnotationType.label]\n",
+    "    return label_cats[ann.label].name != \"airplane\"\n",
+    "\n",
+    "\n",
+    "print(\"Now, we removed it\")\n",
+    "filtered = dataset.clone().filter(remove_airplane, filter_annotations=True)\n",
+    "find_item_with_given_label_name(dataset, \"airplane\")"
+   ]
+  },
+  {
+   "attachments": {},
+   "cell_type": "markdown",
+   "id": "3201198f",
+   "metadata": {},
+   "source": [
+    "### Filtered by attributes"
+   ]
+  },
+  {
+   "attachments": {},
+   "cell_type": "markdown",
+   "id": "ee1e403a",
+   "metadata": {},
+   "source": [
+    "Some data format has special attributes for each dataset item or annotation.\n",
+    "One of them would be `occluded` boolean which has been used for COCO format.\n",
+    "This boolean used to indicate whether the object is occluded by another object or not.\n",
+    "We can also filter a dataset item or annotation with attribute fields.\n",
+    "The following example will show how to do that."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "id": "f8ddf924",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "ID: item_with_occlusion\n",
+      "ID: item_without_occlusion\n"
+     ]
+    }
+   ],
+   "source": [
+    "dataset = dm.Dataset.from_iterable(\n",
+    "    [\n",
+    "        dm.DatasetItem(\n",
+    "            id=\"item_with_occlusion\",\n",
+    "            media=dm.Image.from_numpy(np.zeros(shape=(10, 20, 3), dtype=np.uint8)),\n",
+    "            annotations=[\n",
+    "                dm.Bbox(0, 0, 1, 1, attributes={\"occluded\": True}),\n",
+    "            ],\n",
+    "        ),\n",
+    "        dm.DatasetItem(\n",
+    "            id=\"item_without_occlusion\",\n",
+    "            media=dm.Image.from_numpy(np.zeros(shape=(10, 20, 3), dtype=np.uint8)),\n",
+    "            annotations=[\n",
+    "                dm.Bbox(0, 0, 1, 1, attributes={\"occluded\": False}),\n",
+    "            ],\n",
+    "        ),\n",
+    "    ]\n",
+    ")\n",
+    "for item in dataset:\n",
+    "    print(f\"ID: {item.id}\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "3d0c8cdf",
+   "metadata": {},
+   "source": [
+    "Now, we will retain annotations with `occluded=False` only.\n",
+    "However, we set `remove_empty=True` flag as well.\n",
+    "By setting this flag to `True`, at the same time that we filter annotations,\n",
+    "we can remove the dataset item which has no annotations after filtering as well.\n",
+    "Therefore, `item_with_occlusion` should be removed because it has no bbox after filtering."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "id": "3a971546",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "There is no item with occlusion\n",
+      "ID: item_without_occlusion\n",
+      "There is no item with occlusion again\n",
+      "ID: item_without_occlusion\n"
+     ]
+    }
+   ],
+   "source": [
+    "print(\"There is no item with occlusion\")\n",
+    "filtered = dataset.clone().filter(\n",
+    "    '/item/annotation[occluded=\"False\"]', filter_annotations=True, remove_empty=True\n",
+    ")\n",
+    "for item in filtered:\n",
+    "    print(f\"ID: {item.id}\")\n",
+    "\n",
+    "\n",
+    "def remove_occluded_ann(item, ann):\n",
+    "    return not ann.attributes.get(\"occluded\", False)\n",
+    "\n",
+    "\n",
+    "print(\"There is no item with occlusion again\")\n",
+    "filtered = dataset.clone().filter(remove_occluded_ann, filter_annotations=True, remove_empty=True)\n",
+    "for item in filtered:\n",
+    "    print(f\"ID: {item.id}\")"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.9.13"
+  },
+  "vscode": {
+   "interpreter": {
+    "hash": "1e90bae80f8f1f04a7aff772db01befa8d30966fbd5491c30dbbd054d522be4c"
+   }
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}

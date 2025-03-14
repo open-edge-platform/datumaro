@@ -1,0 +1,936 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Import and Export Public Semantic Segmentation Data &#8212; Datumaro 1.10.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/nbsphinx-code-cells.css?v=2aa19091" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=8b7c274f" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../../../_static/documentation_options.js?v=1d24b1d9"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/jupyter_notebook_examples/notebooks/15_import_export_seg_data';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Encrypt Your Dataset" href="09_encrypt_dataset.html" />
+    <link rel="prev" title="Import and Export Public Data" href="14_import_export_det_data.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.10.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.10.0 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../../index.html">
+                        Docs
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../../index.html">
+                        Docs
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Get Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/introduction.html">Introduction</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../get-started/quick-start-guide/index.html">Quick Start Guide</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../get-started/quick-start-guide/installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../get-started/quick-start-guide/usage.html">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../get-started/quick-start-guide/examples.html">Examples</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Level Up</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../level-up/basic_skills/index.html">Basic Skills</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/basic_skills/01_project_manipulation.html">Level 1: Project Manipulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/basic_skills/02_dataset_download.html">Level 2: Dataset download</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/basic_skills/03_dataset_import_export.html">Level 3: Data Import and Export</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/basic_skills/04_detect_data_format.html">Level 4: Detect Data Format from an Unknown Dataset</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../level-up/intermediate_skills/index.html">Intermediate Skills</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/05_data_aggregation.html">Level 5: Data Subset Aggregation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/06_data_comparison.html">Level 6: Data Comparison with Two Heterogeneous Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/07_data_merge.html">Level 7: Merge Two Heterogeneous Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/08_data_validate.html">Level 8: Dataset Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/09_data_filtering.html">Level 9: Dataset Filtering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/10_data_exploration.html">Level 10: Dataset Explorartion from a Query Image/Text</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/11_data_generation.html">Level 11: Data Generation</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../level-up/advanced_skills/index.html">Advanced Skills</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/advanced_skills/12_project_versioning.html">Level 12: Project Versioning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/advanced_skills/13_pseudo_label_generation.html">Level 13: Pseudo Label Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/advanced_skills/14_data_pruning.html">Level 14: Dataset Pruning</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Formats</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../data-formats/formats/index.html">Supported Data Formats</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/ade20k2017.html">ADE20k (v2017)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/ade20k2020.html">ADE20k (v2020)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/align_celeba.html">Align CelebA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/arrow.html">Arrow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/ava_action.html">AVA Action</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/brats.html">BraTS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/brats_numpy.html">BraTS Numpy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/celeba.html">CelebA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/cifar.html">CIFAR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/cityscapes.html">Cityscapes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/coco.html">COCO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/common_semantic_segmentation.html">Common Semantic Segmentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/common_super_resolution.html">Common Super Resolution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/cvat.html">CVAT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/datumaro_binary.html">DatumaroBinary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/datumaro.html">Datumaro</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/dota.html">DOTA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/icdar.html">ICDAR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/image_zip.html">Image zip</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/imagenet.html">ImageNet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/kaggle.html">Kaggle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/kinetics.html">Kinetics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/kitti.html">KITTI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/kitti_raw.html">Velodyne Points / KITTI Raw 3D</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/labelme.html">LabelMe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/lfw.html">LFW</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mapillary_vistas.html">Mapillary Vistas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/market1501.html">Market-1501</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mars.html">MARS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mmdet.html">MMDetection COCO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mnist.html">MNIST</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mot.html">Multiple Object Tracking (MOT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mots.html">Multiple Object Tracking and Segmentation (MOTS)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mpii_json.html">MPII Human Pose JSON</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mpii.html">MPII Human Pose</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mvtec.html">MVTec AD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/nyu_depth_v2.html">NYU Depth Dataset V2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/open_images.html">Open Images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/pascal_voc.html">Pascal VOC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/roboflow.html">Roboflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/segment_anything.html">Segment Anything</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/sly_pointcloud.html">Supervisely Point Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/synthia.html">SYNTHIA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/tabular.html">Tabular</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/vgg_face2.html">Vgg Face2 CSV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/video.html">Video</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/vott_csv.html">VoTT CSV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/vott_json.html">VoTT JSON</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/wider_face.html">WIDER Face</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/yolo.html">YOLO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/yolo_ultralytics.html">YOLO-Ultralytics</a></li>
+</ul>
+</li>
+
+
+<li class="toctree-l1"><a class="reference internal" href="../../data-formats/media_formats.html">Supported Media Formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data-formats/datumaro_format.html">Datumaro Format</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Hands-on Examples</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../dataset_IO.html">Dataset I/O</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="14_import_export_det_data.html">Import and Export Public Data</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Import and Export Public Semantic Segmentation Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09_encrypt_dataset.html">Encrypt Your Dataset</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../manipulate.html">Manipulate</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="01_merge_multiple_datasets_for_classification.html">Merge Multiple Datasets for Classification Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_merge_heterogeneous_datasets_for_detection.html">Merge Heterogeneous Datasets for Detection</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../explore.html">Explore</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="03_visualize.html">Visualize Your Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07_data_explorer.html">Find Most Similar Data from Image or Text Queries</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../refine.html">Refine</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="11_validate.html">Validate Dataset To Detect Anomalies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_correct_dataset.html">Correct Dataset from Validation Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_filter.html">Filter Data through Your Query</a></li>
+<li class="toctree-l2"><a class="reference internal" href="17_data_pruning.html">Prune Dataset to extract representative subset</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../transform.html">Transform</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-10"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="05_transform.html">Transform Dataset: Re-id, Reindexing, Remapping, etc.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_tiling.html">Tile your Dataset to Cope with High-Resolution Images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="18_bbox_to_instance_mask_using_sam.html">Transform bounding box to instance mask annotations using Segment Anything Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="19_automatic_instance_mask_gen_using_sam.html">Automatic instance mask annotations generation using Segment Anything Model</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../e2e_example.html">From Datumaro to Model Training</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-11"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="08_e2e_example_yolo_ultralytics_trainer.html">Train Your OpenVINO™ Model Using YoloV8 Trainer For Any Dataset Format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10_noisy_label_detection_cls.html">Noisy label detection for classification tasks from training loss dynamics statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="13_noisy_label_detection_det.html">Noisy label detection for detection tasks from training loss dynamics statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="16_missing_annotation_detection.html">Missing Annotation Detection</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Command Line Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/overview.html">Overview</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../command-reference/context_free/index.html">Context-free Commands</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-12"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/compare.html">Compare</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/convert.html">Convert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/detect.html">Detect</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/dinfo.html">Info</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/download.html">Download</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/explain.html">Explain</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/explorer.html">Explore</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/filter.html">Filter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/generate.html">Generate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/merge.html">Merge</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/patch.html">Patch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/prune.html">Prune</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/stats.html">Stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/transform.html">Transform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context_free/validate.html">Validate</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../command-reference/context/index.html">Context Commands</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-13"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context/checkout.html">Checkout</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context/commit.html">Commit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context/create.html">Create</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context/export.html">Export</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context/log.html">Log</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context/models.html">Model (context)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context/projects.html">Project (context)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context/sources.html">Source (context)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context/status.html">Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/context/util.html">Util</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../command-reference/helper/index.html">Helper Commands</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-14"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../command-reference/helper/format.html">Format</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../reference/datumaro_module.html">Datumaro Module</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-15"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../reference/_autosummary/datumaro.html">datumaro</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-16"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../reference/_autosummary/datumaro.cli.html">datumaro.cli</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-17"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.cli.commands.html">datumaro.cli.commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.cli.contexts.html">datumaro.cli.contexts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.cli.helpers.html">datumaro.cli.helpers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.cli.util.html">datumaro.cli.util</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.html">datumaro.components</a><input class="toctree-checkbox" id="toctree-checkbox-18" name="toctree-checkbox-18" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-18"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.abstracts.html">datumaro.components.abstracts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.algorithms.html">datumaro.components.algorithms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.annotation.html">datumaro.components.annotation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.annotations.html">datumaro.components.annotations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.cli_plugin.html">datumaro.components.cli_plugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.comparator.html">datumaro.components.comparator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.config.html">datumaro.components.config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.config_model.html">datumaro.components.config_model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.contexts.html">datumaro.components.contexts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.crypter.html">datumaro.components.crypter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.dataset.html">datumaro.components.dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.dataset_base.html">datumaro.components.dataset_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.dataset_item_storage.html">datumaro.components.dataset_item_storage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.dataset_storage.html">datumaro.components.dataset_storage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.environment.html">datumaro.components.environment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.errors.html">datumaro.components.errors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.exporter.html">datumaro.components.exporter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.extractor_tfds.html">datumaro.components.extractor_tfds</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.filter.html">datumaro.components.filter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.format_detection.html">datumaro.components.format_detection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.generator.html">datumaro.components.generator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.hl_ops.html">datumaro.components.hl_ops</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.importer.html">datumaro.components.importer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.launcher.html">datumaro.components.launcher</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.lazy_plugin.html">datumaro.components.lazy_plugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.media.html">datumaro.components.media</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.merge.html">datumaro.components.merge</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.operations.html">datumaro.components.operations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.progress_reporting.html">datumaro.components.progress_reporting</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.project.html">datumaro.components.project</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.registry.html">datumaro.components.registry</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.shift_analyzer.html">datumaro.components.shift_analyzer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.transformer.html">datumaro.components.transformer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.validator.html">datumaro.components.validator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.visualizer.html">datumaro.components.visualizer</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/_autosummary/datumaro.errors.html">datumaro.errors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/_autosummary/datumaro.ops.html">datumaro.ops</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.html">datumaro.plugins</a><input class="toctree-checkbox" id="toctree-checkbox-19" name="toctree-checkbox-19" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-19"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.accuracy_checker_plugin.html">datumaro.plugins.accuracy_checker_plugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.anchor_generator.html">datumaro.plugins.anchor_generator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.configurable_validator.html">datumaro.plugins.configurable_validator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.data_formats.html">datumaro.plugins.data_formats</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.explorer.html">datumaro.plugins.explorer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.framework_converter.html">datumaro.plugins.framework_converter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.inference_server_plugin.html">datumaro.plugins.inference_server_plugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.missing_annotation_detection.html">datumaro.plugins.missing_annotation_detection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.ndr.html">datumaro.plugins.ndr</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.openvino_plugin.html">datumaro.plugins.openvino_plugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.sam_transforms.html">datumaro.plugins.sam_transforms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.sampler.html">datumaro.plugins.sampler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.specs.html">datumaro.plugins.specs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.splitter.html">datumaro.plugins.splitter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.synthetic_data.html">datumaro.plugins.synthetic_data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.tiling.html">datumaro.plugins.tiling</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.transforms.html">datumaro.plugins.transforms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.validators.html">datumaro.plugins.validators</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/_autosummary/datumaro.project.html">datumaro.project</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/_autosummary/datumaro.rust_api.html">datumaro.rust_api</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.html">datumaro.util</a><input class="toctree-checkbox" id="toctree-checkbox-20" name="toctree-checkbox-20" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-20"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.annotation_util.html">datumaro.util.annotation_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.attrs_util.html">datumaro.util.attrs_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.definitions.html">datumaro.util.definitions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.file_utils.html">datumaro.util.file_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.image.html">datumaro.util.image</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.image_cache.html">datumaro.util.image_cache</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.import_util.html">datumaro.util.import_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.log_utils.html">datumaro.util.log_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.mask_tools.html">datumaro.util.mask_tools</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.meta_file_util.html">datumaro.util.meta_file_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.multi_procs_util.html">datumaro.util.multi_procs_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.os_util.html">datumaro.util.os_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.pickle_util.html">datumaro.util.pickle_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.points_util.html">datumaro.util.points_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.samples.html">datumaro.util.samples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.scope.html">datumaro.util.scope</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.tabular_util.html">datumaro.util.tabular_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.telemetry_stub.html">datumaro.util.telemetry_stub</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.telemetry_utils.html">datumaro.util.telemetry_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.tf_util.html">datumaro.util.tf_util</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/_autosummary/datumaro.version.html">datumaro.version</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/supported_plugins.html">Supported Plugins</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Explanation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../explanation/concept.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../explanation/architecture.html">Architecture</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../explanation/project.html">Command-Line Workflow</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../explanation/plugins/index.html">Plugins</a><input class="toctree-checkbox" id="toctree-checkbox-21" name="toctree-checkbox-21" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-21"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../explanation/plugins/openvino_plugin.html">OpenVINO™ Inference Interpreter</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Misc</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user-manual/how_to_use_datumaro.html">How to use Datumaro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user-manual/model_preparation.html">Model Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user-manual/extending.html">Extending</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user-manual/how_to_control_tm_data_collection.html">How to control telemetry data collection</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Release Notes</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../release_notes.html">Release Notes</a><input class="toctree-checkbox" id="toctree-checkbox-22" name="toctree-checkbox-22" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-22"><i class="fa-solid fa-chevron-down"></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Docs</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../dataset_IO.html" class="nav-link">Dataset I/O</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">Import and...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="Import-and-Export-Public-Semantic-Segmentation-Data">
+<h1>Import and Export Public Semantic Segmentation Data<a class="headerlink" href="#Import-and-Export-Public-Semantic-Segmentation-Data" title="Link to this heading">#</a></h1>
+<p><a class="reference external" href="https://github.com/openvinotoolkit/datumaro/blob/develop/notebooks/14_import_export_seg_data.ipynb"><img alt="Jupyter Notebook" src="https://img.shields.io/badge/jupyter-%23FA0F00.svg?style=for-the-badge&amp;logo=jupyter&amp;logoColor=white" /></a></p>
+<p>In this notebook, we turn to import and export segmentation data through Datumaro.</p>
+<section id="Import-Cityscapes-data">
+<h2>Import Cityscapes data<a class="headerlink" href="#Import-Cityscapes-data" title="Link to this heading">#</a></h2>
+<p>Cityscapes is one of the most popular benchmarking data in semantic segmentation tasks.</p>
+<p>This provides both fine-grained and coarse ground truths of having pixel-wise classification, i.e., every pixel is annotated into a class between total 20 categories.</p>
+<p>You can download this for free <a class="reference external" href="https://www.cityscapes-dataset.com/dataset-overview/">here</a>!</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.environment</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_ENVIRONMENT</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
+
+<span class="n">cityscapes_path</span> <span class="o">=</span> <span class="s2">&quot;cityscapes&quot;</span>
+
+<span class="n">detected_formats</span> <span class="o">=</span> <span class="n">DEFAULT_ENVIRONMENT</span><span class="o">.</span><span class="n">detect_dataset</span><span class="p">(</span><span class="n">cityscapes_path</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">detected_formats</span><span class="p">)</span>
+
+<span class="n">cityscapes_dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="n">cityscapes_path</span><span class="p">,</span> <span class="n">detected_formats</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">cityscapes_dataset</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;cityscapes&#39;]
+Dataset
+        size=5000
+        source_path=cityscapes
+        media_type=&lt;class &#39;datumaro.components.media.Image&#39;&gt;
+        annotated_items_count=5000
+        annotations_count=45729
+subsets
+        test: # of items=1525, # of annotated items=1525, # of annotations=1525, annotation types=[&#39;mask&#39;]
+        train: # of items=2975, # of annotated items=2975, # of annotations=37698, annotation types=[&#39;mask&#39;]
+        val: # of items=500, # of annotated items=500, # of annotations=6506, annotation types=[&#39;mask&#39;]
+infos
+        categories
+        label: [&#39;road&#39;, &#39;sidewalk&#39;, &#39;building&#39;, &#39;wall&#39;, &#39;fence&#39;, &#39;pole&#39;, &#39;trafficlight&#39;, &#39;trafficsign&#39;, &#39;vegetation&#39;, &#39;terrain&#39;, &#39;sky&#39;, &#39;person&#39;, &#39;rider&#39;, &#39;car&#39;, &#39;truck&#39;, &#39;bus&#39;, &#39;train&#39;, &#39;motorcycle&#39;, &#39;bicycle&#39;, &#39;background&#39;]
+        mask: []
+
+</pre></div></div>
+</div>
+</section>
+<section id="Import-ADE20K-data">
+<h2>Import ADE20K data<a class="headerlink" href="#Import-ADE20K-data" title="Link to this heading">#</a></h2>
+<p>We now turn to import another public semantic segmentation data ADE20K.</p>
+<p>This is also open to the public for free. Click <a class="reference external" href="https://groups.csail.mit.edu/vision/datasets/ADE20K/">here</a>!</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ade20k_path</span> <span class="o">=</span> <span class="s2">&quot;ADE20K_2021_17_01/images/ADE/&quot;</span>
+
+<span class="n">detected_formats</span> <span class="o">=</span> <span class="n">DEFAULT_ENVIRONMENT</span><span class="o">.</span><span class="n">detect_dataset</span><span class="p">(</span><span class="n">ade20k_path</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">detected_formats</span><span class="p">)</span>
+
+<span class="n">ade20k_dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="n">ade20k_path</span><span class="p">,</span> <span class="n">detected_formats</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ade20k_dataset</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[&#39;ade20k2020&#39;]
+Dataset
+        size=27574
+        source_path=ADE20K_2021_17_01/images/ADE/
+        media_type=&lt;class &#39;datumaro.components.media.Image&#39;&gt;
+        annotated_items_count=27574
+        annotations_count=1752558
+subsets
+        training: # of items=25574, # of annotated items=25574, # of annotations=1576969, annotation types=[&#39;polygon&#39;, &#39;mask&#39;]
+        validation: # of items=2000, # of annotated items=2000, # of annotations=175589, annotation types=[&#39;polygon&#39;, &#39;mask&#39;]
+infos
+        categories
+        label: [&#39;wall&#39;, &#39;window&#39;, &#39;podium&#39;, &#39;altar&#39;, &#39;ceiling&#39;, &#39;vault&#39;, &#39;column&#39;, &#39;floor&#39;, &#39;bench&#39;, &#39;seats&#39;, &#39;capital&#39;, &#39;shaft&#39;, &#39;base&#39;, &#39;cross&#39;, &#39;staircase&#39;, &#39;railing&#39;, &#39;steps&#39;, &#39;pendant lamp&#39;, &#39;mezzanine&#39;, &#39;door&#39;, &#39;plant&#39;, &#39;candle&#39;, &#39;sculpture&#39;, &#39;pulpit&#39;, &#39;candelabra&#39;, &#39;aquarium&#39;, &#39;plants&#39;, &#39;person&#39;, &#39;head&#39;, &#39;eye&#39;, &#39;mouth&#39;, &#39;right arm&#39;, &#39;right hand&#39;, &#39;left arm&#39;, &#39;left hand&#39;, &#39;right leg&#39;, &#39;right foot&#39;, &#39;left leg&#39;, &#39;left foot&#39;, &#39;sign&#39;, &#39;hair&#39;, &#39;back&#39;, &#39;fence&#39;, &#39;fish&#39;, &#39;rocks&#39;, &#39;text&#39;, &#39;gate&#39;, &#39;people&#39;, &#39;columns&#39;, &#39;console&#39;, &#39;gaze&#39;, &#39;neck&#39;, &#39;shark&#39;, &#39;shoal&#39;, &#39;water&#39;, &#39;jellyfish&#39;, &#39;cabinet&#39;, &#39;table&#39;, &#39;keyboard&#39;, &#39;sky&#39;, &#39;building&#39;, &#39;backpack&#39;, &#39;paper&#39;, &#39;plant pot&#39;, &#39;jacket&#39;, &#39;sidewalk&#39;, &#39;street light&#39;, &#39;umbrella&#39;, &#39;penguin&#39;, &#39;algae&#39;, &#39;trees&#39;, &#39;car&#39;, &#39;tree&#39;, &#39;arcades&#39;, &#39;fluorescent tube&#39;, &#39;buildings&#39;, &#39;semi-flush mount light&#39;, &#39;van&#39;, &#39;trash can&#39;, &#39;road&#39;, &#39;bag&#39;, &#39;shop window&#39;, &#39;brand name&#39;, &#39;air conditioning&#39;, &#39;awning&#39;, &#39;ground&#39;, &#39;bulletin board&#39;, &#39;muntin&#39;, &#39;pane&#39;, &#39;handrail&#39;, &#39;chair&#39;, &#39;purse&#39;, &#39;cakes&#39;, &#39;scarf&#39;, &#39;bookcase&#39;, &#39;binders&#39;, &#39;box&#39;, &#39;shelves&#39;, &#39;book&#39;, &#39;file box&#39;, &#39;file boxes&#39;, &#39;index card&#39;, &#39;index cards&#39;, &#39;folder&#39;, &#39;books&#39;, &#39;filing cabinet&#39;, &#39;picture&#39;, &#39;light troffer&#39;, &#39;torso&#39;, &#39;shelf&#39;, &#39;top&#39;, &#39;side&#39;, &#39;front&#39;, &#39;binder&#39;, &#39;boxes&#39;, &#39;videos&#39;, &#39;hole puncher&#39;, &#39;papers&#39;, &#39;glasses case&#39;, &#39;glasses&#39;, &#39;notebook&#39;, &#39;clock&#39;, &#39;rail&#39;, &#39;stile&#39;, &#39;sash&#39;, &#39;casing interior&#39;, &#39;frame&#39;, &#39;face&#39;, &#39;hand&#39;, &#39;ladder&#39;, &#39;computer case&#39;, &#39;monitor&#39;, &#39;desk&#39;, &#39;screen&#39;, &#39;computer&#39;, &#39;drawer&#39;, &#39;handle&#39;, &#39;double door&#39;, &#39;wall spotlight&#39;, &#39;swivel chair&#39;, &#39;leg&#39;, &#39;armrest&#39;, &#39;seat&#39;, &#39;projection screen&#39;, &#39;showcase&#39;, &#39;floor lamp&#39;, &#39;paper rack&#39;, &#39;briefcase&#39;, &#39;door frame&#39;, &#39;fluorescent tubes&#39;, &#39;rifle&#39;, &#39;haversack&#39;, &#39;chest&#39;, &#39;bomb&#39;, &#39;machine gun&#39;, &#39;rifles&#39;, &#39;ceiling recessed light&#39;, &#39;air vent&#39;, &#39;ceiling spotlight&#39;, &#39;outlet&#39;, &#39;hinge&#39;, &#39;knob&#39;, &#39;lock&#39;, &#39;grille&#39;, &#39;board&#39;, &#39;drawing&#39;, &#39;light switch&#39;, &#39;step&#39;, &#39;sofa&#39;, &#39;painting&#39;, &#39;poster&#39;, &#39;armchair&#39;, &#39;arm&#39;, &#39;wheel&#39;, &#39;pedestal&#39;, &#39;pictures&#39;, &#39;counter&#39;, &#39;brochure&#39;, &#39;easel&#39;, &#39;ceiling fan&#39;, &#39;canopy&#39;, &#39;tube&#39;, &#39;motor&#39;, &#39;blade&#39;, &#39;television&#39;, &#39;stand&#39;, &#39;skylight&#39;, &#39;test&#39;, &#39;divider&#39;, &#39;wheelchair&#39;, &#39;sconce&#39;, &#39;bulb&#39;, &#39;fire extinguisher&#39;, &#39;pipe&#39;, &#39;ceiling spotlights&#39;, &#39;flowers&#39;, &#39;radiator&#39;, &#39;candle holder&#39;, &#39;stone&#39;, &#39;chandelier&#39;, &#39;carpet&#39;, &#39;beam&#39;, &#39;lower sash&#39;, &#39;upper sash&#39;, &#39;sprinkler&#39;, &#39;ottoman&#39;, &#39;stool&#39;, &#39;vase&#39;, &#39;ear&#39;, &#39;blind&#39;, &#39;microphone&#39;, &#39;pen&#39;, &#39;bottle&#39;, &#39;glass&#39;, &#39;bowl&#39;, &#39;card&#39;, &#39;names&#39;, &#39;sink&#39;, &#39;faucet&#39;, &#39;mirror&#39;, &#39;paper cups&#39;, &#39;paper cup&#39;, &#39;papr cup&#39;, &#39;pitcher&#39;, &#39;ballon&#39;, &#39;ballons&#39;, &#39;grass&#39;, &#39;curtain&#39;, &#39;side table&#39;, &#39;flowerpot&#39;, &#39;shell&#39;, &#39;canvas&#39;, &#39;basket&#39;, &#39;mug&#39;, &#39;brushes&#39;, &#39;brush&#39;, &#39;desk lamp&#39;, &#39;coffee cup&#39;, &#39;opening&#39;, &#39;stem&#39;, &#39;cap&#39;, &#39;paper towels&#39;, &#39;stretcher&#39;, &#39;paintbrush&#39;, &#39;jar&#39;, &#39;sketch&#39;, &#39;shirt&#39;, &#39;pot&#39;, &#39;calendar&#39;, &#39;palette&#39;, &#39;rule&#39;, &#39;goggles&#39;, &#39;label&#39;, &#39;toothpick&#39;, &#39;scissors&#39;, &#39;crafts&#39;, &#39;glue&#39;, &#39;gliue&#39;, &#39;plug&#39;, &#39;pliers&#39;, &#39;welder&#39;, &#39;flush mount light&#39;, &#39;diploma&#39;, &#39;basin&#39;, &#39;exhibitor&#39;, &#39;nose&#39;, &#39;drawing table&#39;, &#39;laptop&#39;, &#39;piston&#39;, &#39;paper rolls&#39;, &#39;roll&#39;, &#39;bucket&#39;, &#39;paint brushes&#39;, &#39;platform&#39;, &#39;scaffolding&#39;, &#39;tin&#39;, &#39;potters wheel&#39;, &#39;plate&#39;, &#39;cooker&#39;, &#39;chest of drawers&#39;, &#39;bass drum&#39;, &#39;lithograph&#39;, &#39;fluorescent&#39;, &#39;backplate&#39;, &#39;light source&#39;, &#39;highlight&#39;, &#39;wardrobe&#39;, &#39;can&#39;, &#39;pencils&#39;, &#39;white coat&#39;, &#39;paint box&#39;, &#39;canister&#39;, &#39;oil&#39;, &#39;spray&#39;, &#39;trestle&#39;, &#39;loft&#39;, &#39;hat&#39;, &#39;dog&#39;, &#39;jars&#39;, &#39;cds&#39;, &#39;speaker&#39;, &#39;music system&#39;, &#39;folding screen&#39;, &#39;apron&#39;, &#39;cup&#39;, &#39;cutter&#39;, &#39;cushion&#39;, &#39;wall spotlights&#39;, &#39;loom&#39;, &#39;textile loom&#39;, &#39;paintings&#39;, &#39;tray&#39;, &#39;arm support&#39;, &#39;rug&#39;, &#39;seat cushion&#39;, &#39;tins&#39;, &#39;plane&#39;, &#39;extractor hood&#39;, &#39;lid&#39;, &#39;shade&#39;, &#39;diffusor&#39;, &#39;dress&#39;, &#39;shoe&#39;, &#39;guitar&#39;, &#39;notice&#39;, &#39;aperture&#39;, &#39;scotch tape&#39;, &#39;paper roll&#39;, &#39;spoon&#39;, &#39;statue&#39;, &#39;trolley table&#39;, &#39;towel&#39;, &#39;cloth&#39;, &#39;dummy&#39;, &#39;spindle&#39;, &#39;blanket&#39;, &#39;dvd&#39;, &#39;fan&#39;, &#39;stall&#39;, &#39;rack&#39;, &#39;chinese lantern&#39;, &#39;trays&#39;, &#39;switch&#39;, &#39;photo machine&#39;, &#39;blackboard&#39;, &#39;notebooks&#39;, &#39;metal shutter&#39;, &#39;hose&#39;, &#39;stove&#39;, &#39;trestles&#39;, &#39;lectern&#39;, &#39;back pillow&#39;, &#39;inside arm&#39;, &#39;outside arm&#39;, &#39;console table&#39;, &#39;workbench&#39;, &#39;canvases&#39;, &#39;lathe&#39;, &#39;toy&#39;, &#39;planer&#39;, &#39;circular saw&#39;, &#39;projector&#39;, &#39;plank&#39;, &#39;shavings&#39;, &#39;cabinets&#39;, &#39;aerial&#39;, &#39;table lamp&#39;, &#39;bed&#39;, &#39;drill bits&#39;, &#39;diffuser&#39;, &#39;chain&#39;, &#39;file cabinet&#39;, &#39;magazines&#39;, &#39;post-it&#39;, &#39;chair desk&#39;, &#39;telephone&#39;, &#39;botijo&#39;, &#39;ceramics&#39;, &#39;figurine&#39;, &#39;thermostat&#39;, &#39;model&#39;, &#39;ribbon&#39;, &#39;ribbons&#39;, &#39;clay&#39;, &#39;bell&#39;, &#39;ice cream&#39;, &#39;plastic cup&#39;, &#39;heater&#39;, &#39;coffee table&#39;, &#39;bicycle&#39;, &#39;paint bucket&#39;, &#39;folders&#39;, &#39;hangers&#39;, &#39;dresser&#39;, &#39;refrigerator&#39;, &#39;frames&#39;, &#39;pillow&#39;, &#39;fireplace&#39;, &#39;seat base&#39;, &#39;mattress&#39;, &#39;h-stretcher&#39;, &#39;microwave&#39;, &#39;range&#39;, &#39;bar&#39;, &#39;tread&#39;, &#39;riser&#39;, &#39;panel&#39;, &#39;ice maker&#39;, &#39;button panel&#39;, &#39;dial&#39;, &#39;oven&#39;, &#39;stuffed animal head&#39;, &#39;metal piping&#39;, &#39;sliding door&#39;, &#39;curtain rod&#39;, &#39;carper&#39;, &#39;billiard table&#39;, &#39;table tenis&#39;, &#39;dartboard&#39;, &#39;ball&#39;, &#39;sideboard&#39;, &#39;puff&#39;, &#39;cat&#39;, &#39;flower&#39;, &#39;stage&#39;, &#39;flag&#39;, &#39;piano&#39;, &#39;mouse&#39;, &#39;camera&#39;, &#39;chairs&#39;, &#39;fax machine&#39;, &#39;box stands&#39;, &#39;pencil case&#39;, &#39;ceiling re&#39;, &#39;grand piano&#39;, &#39;pit&#39;, &#39;spotlight&#39;, &#39;baptismal font&#39;, &#39;baptistry&#39;, &#39;font&#39;, &#39;stone wall&#39;, &#39;symbol&#39;, &#39;balustrade&#39;, &#39;balcony&#39;, &#39;dome&#39;, &#39;gear&#39;, &#39;gas cylinder&#39;, &#39;berth&#39;, &#39;pyramid&#39;, &#39;tomb&#39;, &#39;niche&#39;, &#39;headstone&#39;, &#39;hut&#39;, &#39;stones&#39;, &#39;embankment&#39;, &#39;tapestry&#39;, &#39;ruins&#39;, &#39;dustpan&#39;, &#39;scraper&#39;, &#39;embrasure&#39;, &#39;benches&#39;, &#39;altarpiece&#39;, &#39;organ&#39;, &#39;rose window&#39;, &#39;catwalk&#39;, &#39;runway&#39;, &#39;floor spotlight&#39;, &#39;candles&#39;, &#39;doors&#39;, &#39;score&#39;, &#39;coat&#39;, &#39;banner&#39;, &#39;pack&#39;, &#39;cell phone&#39;, &#39;lighter&#39;, &#39;tissue pack&#39;, &#39;cup paper&#39;, &#39;tissue box&#39;, &#39;clothes&#39;, &#39;desks&#39;, &#39;closet&#39;, &#39;toys&#39;, &#39;display board&#39;, &#39;work coat&#39;, &#39;garland&#39;, &#39;file&#39;, &#39;globe&#39;, &#39;mobile&#39;, &#39;map&#39;, &#39;drawing tables&#39;, &#39;lockers&#39;, &#39;television stand&#39;, &#39;bidon&#39;, &#39;work surface&#39;, &#39;set office&#39;, &#39;printer&#39;, &#39;white board&#39;, &#39;school desk&#39;, &#39;sckool desk&#39;, &#39;scool desk&#39;, &#39;sscool desk&#39;, &#39;clothespin&#39;, &#39;rope&#39;, &#39;schoo desk&#39;, &#39;magazine&#39;, &#39;stuffed bird&#39;, &#39;trophy&#39;, &#39;desk organizer&#39;, &#39;compter&#39;, &#39;watermelon&#39;, &#39;mechanism&#39;, &#39;spotlights&#39;, &#39;arm panel&#39;, &#39;skirt&#39;, &#39;pillar&#39;, &#39;knife&#39;, &#39;fork&#39;, &#39;napkin&#39;, &#39;confessional booth&#39;, &#39;thermos&#39;, &#39;witness stand&#39;, &#39;seating&#39;, &#39;security camera&#39;, &#39;baby chair&#39;, &#39;number&#39;, &#39;cradle&#39;, &#39;coffin&#39;, &#39;torchiere lamp&#39;, &#39;earmuffs&#39;, &#39;planks&#39;, &#39;broom&#39;, &#39;cannon&#39;, &#39;pole&#39;, &#39;barrel&#39;, &#39;boat&#39;, &#39;cells&#39;, &#39;bars&#39;, &#39;units&#39;, &#39;cell door&#39;, &#39;plaque&#39;, &#39;grille door&#39;, &#39;door bars&#39;, &#39;cell&#39;, &#39;toilet&#39;, &#39;stick&#39;, &#39;box jury&#39;, &#39;house&#39;, &#39;fruit&#39;, &#39;folding door&#39;, &#39;rocking chair&#39;, &#39;rocker&#39;, &#39;teapot&#39;, &#39;rudder&#39;, &#39;anchor&#39;, &#39;heart&#39;, &#39;recorder&#39;, &#39;abacus&#39;, &#39;slide&#39;, &#39;mat&#39;, &#39;water can&#39;, &#39;casserole&#39;, &#39;mask&#39;, &#39;tap&#39;, &#39;dropper&#39;, &#39;centrifuge&#39;, &#39;teeth&#39;, &#39;sweater&#39;, &#39;flask&#39;, &#39;extractor fan&#39;, &#39;microscope&#39;, &#39;sash lock&#39;, &#39;wallet&#39;, &#39;panes&#39;, &#39;tile&#39;, &#39;id&#39;, &#39;ashtray&#39;, &#39;paprs&#39;, &#39;tables&#39;, &#39;first floor&#39;, &#39;name&#39;, &#39;notebokk&#39;, &#39;trolley&#39;, &#39;elevator&#39;, &#39;chess&#39;, &#39;brochures&#39;, &#39;christmas tree&#39;, &#39;puzzle&#39;, &#39;plant pots&#39;, &#39;autopsy table&#39;, &#39;cold storage&#39;, &#39;cold storage door&#39;, &#39;decorative glass&#39;, &#39;mosque&#39;, &#39;arch&#39;, &#39;railings&#39;, &#39;grandfather clock&#39;, &#39;entrance&#39;, &#39;stalls&#39;, &#39;shoes&#39;, &#39;airplane&#39;, &#39;machine&#39;, &#39;skeleton&#39;, &#39;colour board&#39;, &#39;shutter&#39;, &#39;tower&#39;, &#39;monitors&#39;, &#39;stairs&#39;, &#39;modern art&#39;, &#39;saxophone&#39;, &#39;music machine&#39;, &#39;music control table&#39;, &#39;music devices&#39;, &#39;compact discs&#39;, &#39;mousepad&#39;, &#39;cassettes&#39;, &#39;graphic equalizer&#39;, &#39;synthesizer&#39;, &#39;suitcase&#39;, &#39;guitar cover&#39;, &#39;tripod&#39;, &#39;drums&#39;, &#39;music stand&#39;, &#39;headphones&#39;, &#39;wire&#39;, &#39;cd stand&#39;, &#39;remote control&#39;, &#39;television camera&#39;, &#39;record player&#39;, &#39;keys&#39;, &#39;loudspeaker&#39;, &#39;power&#39;, &#39;equalizer&#39;, &#39;strip&#39;, &#39;clarinet&#39;, &#39;cumputer&#39;, &#39;keyboaard&#39;, &#39;mineral&#39;, &#39;bones&#39;, &#39;elephant&#39;, &#39;bird&#39;, &#39;animal&#39;, &#39;antlers&#39;, &#39;skull&#39;, &#39;bone&#39;, &#39;skulls&#39;, &#39;planetarium&#39;, &#39;cake&#39;, &#39;idol&#39;, &#39;pantheon&#39;, &#39;model dinosaur&#39;, &#39;file cabinets&#39;, &#39;shrine&#39;, &#39;fruits&#39;, &#39;trolley crane&#39;, &#39;light tower&#39;, &#39;violin&#39;, &#39;material&#39;, &#39;microph&#39;, &#39;ramp&#39;, &#39;lighting&#39;, &#39;amphitheater&#39;, &#39;throne&#39;, &#39;coat of arms&#39;, &#39;ticket booth&#39;, &#39;ticket window&#39;, &#39;mountain&#39;, &#39;shanties&#39;, &#39;shanty&#39;, &#39;pylon&#39;, &#39;path&#39;, &#39;ring binder&#39;, &#39;hanger&#39;, &#39;voting booth&#39;, &#39;ballots&#39;, &#39;voting instructions&#39;, &#39;judge table&#39;, &#39;secretary table&#39;, &#39;night table&#39;, &#39;manchette&#39;, &#39;headboard&#39;, &#39;sill&#39;, &#39;casing&#39;, &#39;receiver&#39;, &#39;bathtub&#39;, &#39;firewood&#39;, &#39;sheves&#39;, &#39;hot tub&#39;, &#39;tank&#39;, &#39;key&#39;, &#39;packet&#39;, &#39;gloves&#39;, &#39;brick&#39;, &#39;package&#39;, &#39;kettle&#39;, &#39;wood&#39;, &#39;clothes rack&#39;, &#39;footboard&#39;, &#39;moulding&#39;, &#39;side rail&#39;, &#39;sneaker&#39;, &#39;sneakers&#39;, &#39;boot&#39;, &#39;pulley&#39;, &#39;sugar bowl&#39;, &#39;radio&#39;, &#39;towels&#39;, &#39;iron&#39;, &#39;hair dryer&#39;, &#39;safes&#39;, &#39;t-shirt&#39;, &#39;flip flop&#39;, &#39;spray bottle&#39;, &#39;plastic&#39;, &#39;cardboard&#39;, &#39;suit hanger&#39;, &#39;duvet&#39;, &#39;portable fridge&#39;, &#39;ceiling lamp&#39;, &#39;blankets&#39;, &#39;beds&#39;, &#39;toilet paper&#39;, &#39;sheet&#39;, &#39;boiler&#39;, &#39;washing machine&#39;, &#39;tumble dryer&#39;, &#39;shower stall&#39;, &#39;shower screen&#39;, &#39;table football&#39;, &#39;table tennis&#39;, &#39;magazine rack&#39;, &#39;corner pocket&#39;, &#39;folding chair&#39;, &#39;tele vision&#39;, &#39;dvd player&#39;, &#39;teddy&#39;, &#39;pipelines&#39;, &#39;piprlinrd&#39;, &#39;water vapor&#39;, &#39;countertop&#39;, &#39;watercraft&#39;, &#39;shower&#39;, &#39;cistern&#39;, &#39;toilet brush&#39;, &#39;towel rack&#39;, &#39;soap&#39;, &#39;tank lid&#39;, &#39;soap dispenser&#39;, &#39;dish&#39;, &#39;soaps&#39;, &#39;ceramic pot&#39;, &#39;sponge&#39;, &#39;pool&#39;, &#39;toothbrush&#39;, &#39;bathrobe&#39;, &#39;wall recessed light&#39;, &#39;slippers&#39;, &#39;flusher&#39;, &#39;leaves&#39;, &#39;soap dish&#39;, &#39;tissue&#39;, &#39;towel ring&#39;, &#39;rop&#39;, &#39;bidet&#39;, &#39;toilet paper holder&#39;, &#39;wall mount&#39;, &#39;rod&#39;, &#39;sockets&#39;, &#39;pots&#39;, &#39;bath sponge&#39;, &#39;towel dispenser&#39;, &#39;slipper&#39;, &#39;trunk&#39;, &#39;scales&#39;, &#39;sponges&#39;, &#39;soap bottle&#39;, &#39;vanity&#39;, &#39;figure&#39;, &#39;tap wrench&#39;, &#39;overflot plate&#39;, &#39;legs&#39;, &#39;drain&#39;, &#39;faucet drain lever&#39;, &#39;cream&#39;, &#39;bow&#39;, &#39;drain pipe&#39;, &#39;toothpaste&#39;, &#39;vent&#39;, &#39;hairbrush&#39;, &#39;razor&#39;, &#39;towel radiator&#39;, &#39;towel rail&#39;, &#39;tissue dispenser&#39;, &#39;bottles&#39;, &#39;sea star&#39;, &#39;toilet paper roll&#39;, &#39;shaving brush&#39;, &#39;shower curtain&#39;, &#39;coffee maker&#39;, &#39;rings&#39;, &#39;bouquet&#39;, &#39;drain plug&#39;, &#39;deodorant&#39;, &#39;window scarf&#39;, &#39;post&#39;, &#39;umbrella stand&#39;, &#39;buttons&#39;, &#39;slates&#39;, &#39;head rail&#39;, &#39;exercise machine&#39;, &#39;nail brush&#39;, &#39;shower door&#39;, &#39;foam&#39;, &#39;ironing board&#39;, &#39;toilet bag&#39;, &#39;toilet paper rolls&#39;, &#39;trap door&#39;, &#39;soap bar&#39;, &#39;newspaper&#39;, &#39;shampoo&#39;, &#39;molding&#39;, &#39;watering can&#39;, &#39;coaster&#39;, &#39;water valve&#39;, &#39;float&#39;, &#39;shower tray&#39;, &#39;shower faucet&#39;, &#39;sandal&#39;, &#39;saucepan&#39;, &#39;shower shelf&#39;, &#39;valve&#39;, &#39;powder&#39;, &#39;toilet kit&#39;, &#39;partition wall&#39;, &#39;comb&#39;, &#39;toilet set&#39;, &#39;shower head&#39;, &#39;bathroom tiles&#39;, &#39;floot&#39;, &#39;paper towels box&#39;, &#39;electric toothbrush&#39;, &#39;matchbox&#39;, &#39;widow&#39;, &#39;shower room&#39;, &#39;night light&#39;, &#39;clamp lamp&#39;, &#39;clamp&#39;, &#39;ceramic box&#39;, &#39;paper clip&#39;, &#39;trousers&#39;, &#39;flyscreen&#39;, &#39;cover curtain&#39;, &#39;teacup&#39;, &#39;cord&#39;, &#39;gutter&#39;, &#39;leaf&#39;, &#39;single hung&#39;, &#39;helmet&#39;, &#39;racket&#39;, &#39;sport bag&#39;, &#39;socket&#39;, &#39;sheets&#39;, &#39;decoder&#39;, &#39;slats&#39;, &#39;strawberries&#39;, &#39;rocking horse&#39;, &#39;sea water&#39;, &#39;sofa bed&#39;, &#39;binoculars&#39;, &#39;balls&#39;, &#39;blinds&#39;, &#39;coffee pot&#39;, &#39;doll&#39;, &#39;bed column&#39;, &#39;canlendar&#39;, &#39;flashlight&#39;, &#39;alarm clock&#39;, &#39;bedspread&#39;, &#39;threshold&#39;, &#39;support&#39;, &#39;stereo&#39;, &#39;necklace&#39;, &#39;earrings&#39;, &#39;bracelet&#39;, &#39;clothing&#39;, &#39;casket&#39;, &#39;side jamb&#39;, &#39;interior casing&#39;, &#39;throw&#39;, &#39;clock radio&#39;, &#39;oar&#39;, &#39;chimney&#39;, &#39;shovel&#39;, &#39;poker&#39;, &#39;fishing pole&#39;, &#39;cool box&#39;, &#39;eyeglasses&#39;, &#39;comforter&#39;, &#39;mirror support&#39;, &#39;cover&#39;, &#39;wireless&#39;, &#39;hook&#39;, &#39;fire&#39;, &#39;ice bucket&#39;, &#39;tallboy&#39;, &#39;closure&#39;, &#39;quilt&#39;, &#39;branch&#39;, &#39;deck chair&#39;, &#39;palm tree&#39;, &#39;orange&#39;, &#39;swimming pool&#39;, &#39;bedpost&#39;, &#39;pottery&#39;, &#39;branches&#39;, &#39;wicker basket&#39;, &#39;cane&#39;, &#39;dressing table&#39;, &#39;curtains&#39;, &#39;spread&#39;, &#39;welcome card&#39;, &#39;land&#39;, &#39;truckle bed&#39;, &#39;half moon&#39;, &#39;net&#39;, &#39;cow&#39;, &#39;deer&#39;, &#39;box spring&#39;, &#39;switches&#39;, &#39;fringe&#39;, &#39;chaise lounge&#39;, &#39;smoke detector&#39;, &#39;electronic organ&#39;, &#39;upper&#39;, &#39;menu&#39;, &#39;showerhead&#39;, &#39;caca&#39;, &#39;herb&#39;, &#39;digital clock&#39;, &#39;placard&#39;, &#39;distaff&#39;, &#39;power strip&#39;, &#39;cpu&#39;, &#39;tablecloth&#39;, &#39;art&#39;, &#39;tissues&#39;, &#39;dish rack&#39;, &#39;glass box&#39;, &#39;lampshade&#39;, &#39;fireplace utensils&#39;, &#39;well&#39;, &#39;pinecone&#39;, &#39;appliance&#39;, &#39;ornament&#39;, &#39;notepad&#39;, &#39;sleeping robe&#39;, &#39;dressing screen&#39;, &#39;skating boots&#39;, &#39;baseboard&#39;, &#39;phone charger&#39;, &#39;pad of paper&#39;, &#39;stands&#39;, &#39;dog dish&#39;, &#39;small table&#39;, &#39;watch&#39;, &#39;wooden overhang&#39;, &#39;fur&#39;, &#39;suitcases&#39;, &#39;sticker&#39;, &#39;asdf&#39;, &#39;button&#39;, &#39;extractor pipe&#39;, &#39;files&#39;, &#39;webcam&#39;, &#39;envelope&#39;, &#39;handbag&#39;, &#39;sock&#39;, &#39;joist&#39;, &#39;star&#39;, &#39;sweaters&#39;, &#39;socks&#39;, &#39;decor&#39;, &#39;curtain cover&#39;, &#39;desk chair&#39;, &#39;night ttable&#39;, &#39;windwo&#39;, &#39;shade translucent&#39;, &#39;apple&#39;, &#39;harpoon&#39;, &#39;puf&#39;, &#39;traverse&#39;, &#39;tureen&#39;, &#39;potty&#39;, &#39;sand beach&#39;, &#39;dlooe&#39;, &#39;sliding doors&#39;, &#39;sutter&#39;, &#39;nordic comforter&#39;, &#39;decoration&#39;, &#39;chais&#39;, &#39;cage&#39;, &#39;bed runner&#39;, &#39;teddy bear&#39;, &#39;bunk&#39;, &#39;floor recessed light&#39;, &#39;hammock&#39;, &#39;windows&#39;, &#39;cushions&#39;, &#39;bow window&#39;, &#39;dishwasher&#39;, &#39;food processor&#39;, &#39;pendant plant&#39;, &#39;botlle&#39;, &#39;knife set&#39;, &#39;dishcloth&#39;, &#39;maracas&#39;, &#39;tricycle&#39;, &#39;block&#39;, &#39;blocks&#39;, &#39;hammer&#39;, &#39;train&#39;, &#39;helicopter&#39;, &#39;steering wheel&#39;, &#39;carousel horse&#39;, &#39;safety rail&#39;, &#39;club&#39;, &#39;cube&#39;, &#39;mural&#39;, &#39;laundry basket&#39;, &#39;pens&#39;, &#39;moon decoration&#39;, &#39;bunk bed&#39;, &#39;cockpot&#39;, &#39;jackets&#39;, &#39;skirts&#39;, &#39;shirts&#39;, &#39;t-shirts&#39;, &#39;dresses&#39;, &#39;drill&#39;, &#39;boots&#39;, &#39;closet rod&#39;, &#39;belt&#39;, &#39;ties&#39;, &#39;blouse&#39;, &#39;coats&#39;, &#39;sweatshirt&#39;, &#39;heel shoe&#39;, &#39;tie&#39;, &#39;sokcs&#39;, &#39;flip flops&#39;, &#39;snow&#39;, &#39;pepper&#39;, &#39;pet dish&#39;, &#39;place mat&#39;, &#39;dog bed&#39;, &#39;napkins&#39;, &#39;tassle&#39;, &#39;decanter&#39;, &#39;bottle rack&#39;, &#39;fruit bowl&#39;, &#39;plates&#39;, &#39;napkin ring&#39;, &#39;valance&#39;, &#39;centerpiece&#39;, &#39;table cloth&#39;, &#39;body&#39;, &#39;filter&#39;, &#39;table runners&#39;, &#39;cello cover&#39;, &#39;birdcage&#39;, &#39;salt and pepper&#39;, &#39;doily&#39;, &#39;strawberry&#39;, &#39;saucers&#39;, &#39;lantern&#39;, &#39;kitchen island&#39;, &#39;barbecue&#39;, &#39;food&#39;, &#39;bread&#39;, &#39;canes&#39;, &#39;cutlery&#39;, &#39;mortar&#39;, &#39;logs&#39;, &#39;mitten&#39;, &#39;runner cloth&#39;, &#39;plate mat&#39;, &#39;surfboard&#39;, &#39;football&#39;, &#39;baseball&#39;, &#39;vases&#39;, &#39;table runner&#39;, &#39;chopstick&#39;, &#39;mantle&#39;, &#39;foot rest&#39;, &#39;pool ball&#39;, &#39;butter dish&#39;, &#39;wine rack&#39;, &#39;gravy boat&#39;, &#39;log&#39;, &#39;andiron&#39;, &#39;flame&#39;, &#39;decorative wood&#39;, &#39;gourd&#39;, &#39;jug&#39;, &#39;wood art&#39;, &#39;cruet&#39;, &#39;cove&#39;, &#39;goblet&#39;, &#39;urn&#39;, &#39;platter&#39;, &#39;salt&#39;, &#39;bowls&#39;, &#39;pine decoration&#39;, &#39;fabric&#39;, &#39;saltcellar&#39;, &#39;cards&#39;, &#39;video&#39;, &#39;napkin rack&#39;, &#39;coat rack&#39;, &#39;counters&#39;, &#39;table mat&#39;, &#39;fire utensils&#39;, &#39;light switches&#39;, &#39;bascket&#39;, &#39;toaster&#39;, &#39;cereal dispenser&#39;, &#39;vasse&#39;, &#39;pepper shaker&#39;, &#39;piture&#39;, &#39;glass separation&#39;, &#39;ceramic hob&#39;, &#39;dvds&#39;, &#39;colum&#39;, &#39;grapes&#39;, &#39;oil lamp&#39;, &#39;plat&#39;, &#39;knige&#39;, &#39;cruet set&#39;, &#39;flowrs&#39;, &#39;postcard&#39;, &#39;sauceboat&#39;, &#39;coral&#39;, &#39;pear&#39;, &#39;feeding bottle&#39;, &#39;photo album&#39;, &#39;vanity bag&#39;, &#39;sports bag&#39;, &#39;peaked cap&#39;, &#39;bedspring&#39;, &#39;contact lens case&#39;, &#39;padlock&#39;, &#39;plastic cups&#39;, &#39;sleeping bag&#39;, &#39;tape&#39;, &#39;buttocks&#39;, &#39;clamp spotlight&#39;, &#39;blender&#39;, &#39;seal&#39;, &#39;otlet&#39;, &#39;swatshirt&#39;, &#39;bottle pack&#39;, &#39;bananas&#39;, &#39;dvd box&#39;, &#39;jack&#39;, &#39;clothes hanging&#39;, &#39;chothing&#39;, &#39;motorbike&#39;, &#39;arcade machine&#39;, &#39;carousel&#39;, &#39;ticket vending machine&#39;, &#39;cue&#39;, &#39;pinball&#39;, &#39;pool balls&#39;, &#39;side pocket&#39;, &#39;slot machines&#39;, &#39;paddle&#39;, &#39;cues&#39;, &#39;amphora&#39;, &#39;tennis table&#39;, &#39;ping pong paddle&#39;, &#39;scoreboard&#39;, &#39;ball storage&#39;, &#39;slot machine&#39;, &#39;table game&#39;, &#39;footrest&#39;, &#39;chalk&#39;, &#39;steps machine&#39;, &#39;vending machine&#39;, &#39;juke box&#39;, &#39;puppet&#39;, &#39;gaming table&#39;, &#39;chips&#39;, &#39;rowing machine&#39;, &#39;rack cue&#39;, &#39;wheelbarrow&#39;, &#39;machines&#39;, &#39;garage door&#39;, &#39;rim&#39;, &#39;toolbox&#39;, &#39;boards&#39;, &#39;windshield&#39;, &#39;headlight&#39;, &#39;make&#39;, &#39;taper&#39;, &#39;tractor&#39;, &#39;pigeonhole&#39;, &#39;treadmill&#39;, &#39;vacuum cleaner&#39;, &#39;cars&#39;, &#39;hedge&#39;, &#39;tools&#39;, &#39;engine&#39;, &#39;paint can&#39;, &#39;cans&#39;, &#39;skate&#39;, &#39;elevator door&#39;, &#39;pile of junk&#39;, &#39;porexpan board&#39;, &#39;rake&#39;, &#39;metal shutters&#39;, &#39;taillight&#39;, &#39;license plate&#39;, &#39;bumper&#39;, &#39;skateboard&#39;, &#39;wire mower&#39;, &#39;rack tool&#39;, &#39;screwdriver&#39;, &#39;skis&#39;, &#39;golf bag&#39;, &#39;rackets&#39;, &#39;skates&#39;, &#39;secateurs&#39;, &#39;logo&#39;, &#39;cable&#39;, &#39;ax&#39;, &#39;paint pot&#39;, &#39;junk&#39;, &#39;tool kit&#39;, &#39;chainsaw&#39;, &#39;vest&#39;, &#39;tulipa&#39;, &#39;writing desk&#39;, &#39;paper weight&#39;, &#39;pen box&#39;, &#39;pad&#39;, &#39;cords&#39;, &#39;power cord&#39;, &#39;scanner&#39;, &#39;screem&#39;, &#39;phone fax&#39;, &#39;cd stack&#39;, &#39;scratching post&#39;, &#39;rock&#39;, &#39;paper filer&#39;, &#39;miniature chair&#39;, &#39;typewriter&#39;, &#39;rolls&#39;, &#39;sticks&#39;, &#39;clip&#39;, &#39;vessel&#39;, &#39;compas&#39;, &#39;external drivers&#39;, &#39;pencil cup&#39;, &#39;telescope&#39;, &#39;pencil&#39;, &#39;back control&#39;, &#39;calculator&#39;, &#39;folded box&#39;, &#39;stapler&#39;, &#39;dvds box&#39;, &#39;cds box&#39;, &#39;dvds rack&#39;, &#39;hard drive&#39;, &#39;pen set&#39;, &#39;transformer&#39;, &#39;joystick&#39;, &#39;guillotine&#39;, &#39;photocopier&#39;, &#39;lever&#39;, &#39;kit&#39;, &#39;butterfly&#39;, &#39;control&#39;, &#39;pot pen&#39;, &#39;video camera&#39;, &#39;telephone booth&#39;, &#39;guitar case&#39;, &#39;tape measure&#39;, &#39;baskets&#39;, &#39;blinder&#39;, &#39;strip light&#39;, &#39;sound equipment&#39;, &#39;duster&#39;, &#39;creamer&#39;, &#39;coffee&#39;, &#39;skirting board&#39;, &#39;hotel safe&#39;, &#39;baby carriage&#39;, &#39;right shoulder&#39;, &#39;left shoulder&#39;, &#39;shorts&#39;, &#39;dried flowers&#39;, &#39;telepho&#39;, &#39;bed trolley&#39;, &#39;photo&#39;, &#39;stuffed animal&#39;, &#39;burner&#39;, &#39;frying pan&#39;, &#39;gripper&#39;, &#39;skimmer&#39;, &#39;hotplate&#39;, &#39;utensils canister&#39;, &#39;cutting board&#39;, &#39;squeezer&#39;, &#39;spout&#39;, &#39;crock&#39;, &#39;spice rack&#39;, &#39;grater&#39;, &#39;spices rack&#39;, &#39;coffee grinder&#39;, &#39;dishcloths&#39;, &#39;can opener&#39;, &#39;bread lift&#39;, &#39;bread slot&#39;, &#39;pan&#39;, &#39;cup maker&#39;, &#39;ladle&#39;, &#39;spoons&#39;, &#39;pot rack&#39;, &#39;cake mold&#39;, &#39;wreath&#39;, &#39;whisk&#39;, &#39;nuts&#39;, &#39;spatula&#39;, &#39;egg&#39;, &#39;bin&#39;, &#39;utensils rack&#39;, &#39;water dispenser&#39;, &#39;magnet&#39;, &#39;latch&#39;, &#39;water cooler&#39;, &#39;baseboards&#39;, &#39;mop handle&#39;, &#39;pipes&#39;, &#39;breadbasket&#39;, &#39;stopper&#39;, &#39;wok&#39;, &#39;display&#39;, &#39;trash bag&#39;, &#39;plate rack&#39;, &#39;dispenser&#39;, &#39;mug holder&#39;, &#39;bread box&#39;, &#39;wooden cutlery&#39;, &#39;utensils&#39;, &#39;weight&#39;, &#39;foot&#39;, &#39;overhang&#39;, &#39;paper napkins&#39;, &#39;dish soap&#39;, &#39;slow cooker&#39;, &#39;raw disposal basket&#39;, &#39;salt pepper cellar&#39;, &#39;kitchen utensils&#39;, &#39;vegetables&#39;, &#39;strainer&#39;, &#39;pet bowl&#39;, &#39;tomato&#39;, &#39;pumpkin&#39;, &#39;oranges&#39;, &#39;dish towel&#39;, &#39;straws&#39;, &#39;cups&#39;, &#39;garlic&#39;, &#39;mixer&#39;, &#39;plates rack&#39;, &#39;small chair&#39;, &#39;forks&#39;, &#39;push buttons&#39;, &#39;towel paper&#39;, &#39;spatulas&#39;, &#39;grinder&#39;, &#39;sliding&#39;, &#39;umbrella rack&#39;, &#39;detergent dispenser&#39;, &#39;lemon&#39;, &#39;coffee cup rack&#39;, &#39;avocados&#39;, &#39;head jamb&#39;, &#39;funnel&#39;, &#39;folding table&#39;, &#39;mill&#39;, &#39;hanging utensils&#39;, &#39;container&#39;, &#39;generator&#39;, &#39;controls&#39;, &#39;ceiling decor&#39;, &#39;dishes&#39;, &#39;packets&#39;, &#39;paper napkin&#39;, &#39;pressure cooker&#39;, &#39;pastries&#39;, &#39;dish drainer&#39;, &#39;heating&#39;, &#39;organizer&#39;, &#39;crackers&#39;, &#39;pot holder&#39;, &#39;oil jar&#39;, &#39;vinegar jar&#39;, &#39;grill&#39;, &#39;pot lid&#39;, &#39;dried herbs&#39;, &#39;drapes&#39;, &#39;wooden utensils&#39;, &#39;pinecones&#39;, &#39;knobs&#39;, &#39;paper towels dispenser&#39;, &#39;extension cord&#39;, &#39;hot mitt&#39;, &#39;large fork&#39;, &#39;swiss chard&#39;, &#39;hand bellows&#39;, &#39;intercom&#39;, &#39;pepper grinder&#39;, &#39;spices&#39;, &#39;shaker&#39;, &#39;toaster oven&#39;, &#39;fryer&#39;, &#39;letter mail&#39;, &#39;dipper&#39;, &#39;ipod&#39;, &#39;tablecloths&#39;, &#39;measuring spoons&#39;, &#39;peach&#39;, &#39;large rabbit&#39;, &#39;rabbit&#39;, &#39;bib&#39;, &#39;corkscrew&#39;, &#39;pot of herbs&#39;, &#39;pans&#39;, &#39;onions&#39;, &#39;hot peppers&#39;, &#39;onion&#39;, &#39;pot hanger&#39;, &#39;pressure washer&#39;, &#39;football trophy&#39;, &#39;containers&#39;, &#39;fruit stand&#39;, &#39;sunflower&#39;, &#39;pitchfork&#39;, &#39;peppers&#39;, &#39;wheat&#39;, &#39;slotted spoon&#39;, &#39;twizzlers&#39;, &#39;potted fern&#39;, &#39;tin box&#39;, &#39;island&#39;, &#39;alarm&#39;, &#39;place setting&#39;, &#39;tiles&#39;, &#39;champagne bucket&#39;, &#39;cheese&#39;, &#39;turtle&#39;, &#39;pineapple&#39;, &#39;mirrors&#39;, &#39;buttons panel&#39;, &#39;pestle&#39;, &#39;sauce&#39;, &#39;npkin&#39;, &#39;eggs&#39;, &#39;mug set&#39;, &#39;kitchen&#39;, &#39;cabinetç&#39;, &#39;saw&#39;, &#39;egg cup&#39;, &#39;coasters&#39;, &#39;outet&#39;, &#39;griddle&#39;, &#39;lobster&#39;, &#39;papers roll&#39;, &#39;processing machine&#39;, &#39;cock&#39;, &#39;rolling pin&#39;, &#39;plaate&#39;, &#39;berbiqui&#39;, &#39;oytlet&#39;, &#39;winddow&#39;, &#39;cabomet&#39;, &#39;caabinet&#39;, &#39;worctop&#39;, &#39;cabubet&#39;, &#39;cceiling&#39;, &#39;plae&#39;, &#39;teacups&#39;, &#39;lemons&#39;, &#39;casse&#39;, &#39;bottlr&#39;, &#39;cheese dish&#39;, &#39;dog feeder&#39;, &#39;hotlp&#39;, &#39;doo&#39;, &#39;stoo&#39;, &#39;abinet&#39;, &#39;lettuce&#39;, &#39;paper r&#39;, &#39;chairs lift&#39;, &#39;air freshener&#39;, &#39;teacup set&#39;, &#39;water tank&#39;, &#39;cabine&#39;, &#39;mushroom&#39;, &#39;stools&#39;, &#39;marking pens&#39;, &#39;egg tray&#39;, &#39;copper vessel&#39;, &#39;iron po&#39;, &#39;buns&#39;, &#39;iron pot&#39;, &#39;scoop&#39;, &#39;scourer&#39;, &#39;water filter&#39;, &#39;screw&#39;, &#39;cigarette packet&#39;, &#39;stuffed head&#39;, &#39;special shape&#39;, &#39;grating&#39;, &#39;folding chairs&#39;, &#39;hourglass&#39;, &#39;tilt wand&#39;, &#39;palm trees&#39;, &#39;spiral staircase&#39;, &#39;back cushion&#39;, &#39;shells&#39;, &#39;stringer&#39;, &#39;packages&#39;, &#39;bookend&#39;, &#39;pediment&#39;, &#39;tea set&#39;, &#39;crock rack&#39;, &#39;wood figure&#39;, &#39;vcr&#39;, &#39;deer antler&#39;, &#39;zipper&#39;, &#39;silver bird statue&#39;, &#39;fish tank&#39;, &#39;cd box&#39;, &#39;tapes&#39;, &#39;cd&#39;, &#39;cart&#39;, &#39;piano pedals&#39;, &#39;woodcarving&#39;, &#39;instrument&#39;, &#39;decorations&#39;, &#39;metal decoration&#39;, &#39;coconuts&#39;, &#39;coconut&#39;, &#39;ceiling piece&#39;, &#39;pillows&#39;, &#39;seltzer bottle&#39;, &#39;silver canister&#39;, &#39;bull skull&#39;, &#39;bookends&#39;, &#39;shrub&#39;, &#39;crock pot&#39;, &#39;gramophone&#39;, &#39;canoe&#39;, &#39;checkers table&#39;, &#39;checkers pieces&#39;, &#39;motion detector&#39;, &#39;log holder&#39;, &#39;sewing machine&#39;, &#39;troller&#39;, &#39;mantle piece&#39;, &#39;sculptures&#39;, &#39;notecards&#39;, &#39;music box&#39;, &#39;curtain support&#39;, &#39;swinging seat&#39;, &#39;carpets&#39;, &#39;fax&#39;, &#39;beams&#39;, &#39;drawings&#39;, &#39;painiting&#39;, &#39;rocking&#39;, &#39;stained glass&#39;, &#39;starfish&#39;, &#39;stocking&#39;, &#39;stockings&#39;, &#39;pine decor&#39;, &#39;turntables&#39;, &#39;records&#39;, &#39;jamb&#39;, &#39;dvd players&#39;, &#39;mailbox&#39;, &#39;dumbbell&#39;, &#39;flute&#39;, &#39;light sw&#39;, &#39;xxx&#39;, &#39;drum&#39;, &#39;sade&#39;, &#39;folding doors&#39;, &#39;firewood rack&#39;, &#39;backplaete&#39;, &#39;picnic spot&#39;, &#39;pant&#39;, &#39;barrels&#39;, &#39;caffee table&#39;, &#39;cables&#39;, &#39;dve&#39;, &#39;soundbar&#39;, &#39;cobbles&#39;, &#39;leather&#39;, &#39;floor fan&#39;, &#39;microw&#39;, &#39;signs&#39;, &#39;case&#39;, &#39;wall clock&#39;, &#39;siphon&#39;, &#39;sheets pack&#39;, &#39;sliding rod&#39;, &#39;ourlet&#39;, &#39;snowboard&#39;, &#39;safety side&#39;, &#39;baby walker&#39;, &#39;bassinet&#39;, &#39;balloon&#39;, &#39;crib&#39;, &#39;sweatshirts&#39;, &#39;visor&#39;, &#39;walker&#39;, &#39;training potty&#39;, &#39;pantry&#39;, &#39;coffee cups&#39;, &#39;roller&#39;, &#39;colander&#39;, &#39;salt shaker&#39;, &#39;pastry&#39;, &#39;packs&#39;, &#39;bags&#39;, &#39;frying pans&#39;, &#39;cooler&#39;, &#39;kitchen towel&#39;, &#39;potatoes&#39;, &#39;cork&#39;, &#39;tupper&#39;, &#39;scratcher&#39;, &#39;book rack&#39;, &#39;ornamental box&#39;, &#39;ornaments&#39;, &#39;dollhouse&#39;, &#39;tent&#39;, &#39;carp&#39;, &#39;dppr&#39;, &#39;cue place&#39;, &#39;cue rack&#39;, &#39;hockey table&#39;, &#39;cassette&#39;, &#39;pool bass&#39;, &#39;elliptical machine&#39;, &#39;dryer&#39;, &#39;triangle&#39;, &#39;billiard ball&#39;, &#39;billiard balls&#39;, &#39;pool triangle&#39;, &#39;waall&#39;, &#39;router&#39;, &#39;chess table&#39;, &#39;ches table&#39;, &#39;trowel&#39;, &#39;showers&#39;, &#39;reloj&#39;, &#39;platre&#39;, &#39;televisio&#39;, &#39;cd rack&#39;, &#39;foot rail&#39;, &#39;bed side&#39;, &#39;hill&#39;, &#39;gravel&#39;, &#39;factory&#39;, &#39;smoke&#39;, &#39;freight train&#39;, &#39;field&#39;, &#39;truck&#39;, &#39;advertisement&#39;, &#39;steam shovel&#39;, &#39;roadroller&#39;, &#39;toe board&#39;, &#39;cross bracing&#39;, &#39;roof&#39;, &#39;security cameras&#39;, &#39;traffic light&#39;, &#39;crane&#39;, &#39;digger&#39;, &#39;tool&#39;, &#39;steamroller&#39;, &#39;bulldozer&#39;, &#39;materials&#39;, &#39;footpath&#39;, &#39;bus&#39;, &#39;bushes&#39;, &#39;cabin&#39;, &#39;tarpaulin&#39;, &#39;wooden structure&#39;, &#39;sledgehammer&#39;, &#39;bush&#39;, &#39;parking meter&#39;, &#39;train tracks&#39;, &#39;power showel&#39;, &#39;excavator&#39;, &#39;river water&#39;, &#39;drilling equipment&#39;, &#39;tubes&#39;, &#39;ciment mixer&#39;, &#39;ship&#39;, &#39;dock&#39;, &#39;shipyard&#39;, &#39;tanks&#39;, &#39;dirt track&#39;, &#39;trench&#39;, &#39;earth&#39;, &#39;hole&#39;, &#39;winch&#39;, &#39;pallets&#39;, &#39;hoe&#39;, &#39;sand&#39;, &#39;traffic cone&#39;, &#39;dust&#39;, &#39;demolition house&#39;, &#39;mechanical shovel&#39;, &#39;debris&#39;, &#39;conveyor belt&#39;, &#39;barrier&#39;, &#39;curb&#39;, &#39;central reservation&#39;, &#39;manufacturing plant&#39;, &#39;fumes&#39;, &#39;footbridge&#39;, &#39;blast furnace&#39;, &#39;cloud&#39;, &#39;trash&#39;, &#39;garbage&#39;, &#39;rubbish dump&#39;, &#39;gasworks&#39;, &#39;chimneys&#39;, &#39;industry&#39;, &#39;houses&#39;, &#39;pilon&#39;, &#39;hills&#39;, &#39;buildings factory&#39;, &#39;bridge&#39;, &#39;plastic bottles&#39;, &#39;paath&#39;, &#39;trailer&#39;, &#39;light post&#39;, &#39;pond&#39;, &#39;post light&#39;, &#39;lgiht post&#39;, &#39;manhole&#39;, &#39;wheels&#39;, &#39;junk pile&#39;, &#39;pallet&#39;, &#39;wire mesh&#39;, &#39;car scrapping&#39;, &#39;cars scrapping&#39;, &#39;cars scraping&#39;, &#39;tires&#39;, &#39;scrapping cars&#39;, &#39;tree trunk&#39;, &#39;landfill&#39;, &#39;clouds&#39;, &#39;pile of trash&#39;, &#39;lumber&#39;, &#39;warehouse&#39;, &#39;steel beam&#39;, &#39;crosswalk&#39;, &#39;rung&#39;, &#39;cave entrance&#39;, &#39;erase&#39;, &#39;pavilion&#39;, &#39;parking&#39;, &#39;nuclear reactor&#39;, &#39;tarmac&#39;, &#39;steel wire&#39;, &#39;refinery&#39;, &#39;industrial building&#39;, &#39;metal structure&#39;, &#39;electrical substation&#39;, &#39;electrical plant&#39;, &#39;quonset hut&#39;, &#39;station&#39;, &#39;railway&#39;, &#39;rail track&#39;, &#39;car wreck&#39;, &#39;rubble&#39;, &#39;breakwater&#39;, &#39;stones beach&#39;, &#39;wood wall&#39;, &#39;dam&#39;, &#39;spillway&#39;, &#39;tools box&#39;, &#39;water tower&#39;, &#39;wagon&#39;, &#39;protective railing&#39;, &#39;disposal plant&#39;, &#39;windmill&#39;, &#39;structure&#39;, &#39;caar&#39;, &#39;lagoon&#39;, &#39;sand hill&#39;, &#39;cliff&#39;, &#39;badlands&#39;, &#39;mound&#39;, &#39;shrubs&#39;, &#39;parking lot&#39;, &#39;cliffs&#39;, &#39;canyons&#39;, &#39;barren land&#39;, &#39;woman&#39;, &#39;badlands hills&#39;, &#39;bamboo cane&#39;, &#39;bamboo canes&#39;, &#39;sandals&#39;, &#39;sun&#39;, &#39;seagull&#39;, &#39;mountains&#39;, &#39;sea&#39;, &#39;wave&#39;, &#39;rainbow&#39;, &#39;cloudy sky&#39;, &#39;water surf&#39;, &#39;person sitting&#39;, &#39;pier&#39;, &#39;deck chairs&#39;, &#39;tortoise&#39;, &#39;planats&#39;, &#39;bog water&#39;, &#39;water bog&#39;, &#39;bonsai tree&#39;, &#39;blueberry&#39;, &#39;grassland&#39;, &#39;plateau&#39;, &#39;spire&#39;, &#39;gull&#39;, &#39;duck&#39;, &#39;bollard&#39;, &#39;platns&#39;, &#39;waterfall&#39;, &#39;canyon&#39;, &#39;mountain pass&#39;, &#39;rocky mountains&#39;, &#39;cave&#39;, &#39;stalactite&#39;, &#39;stalactites&#39;, &#39;stalagmite&#39;, &#39;stalagmites&#39;, &#39;rocky ceiling&#39;, &#39;rocky wall&#39;, &#39;rocky ground&#39;, &#39;cavern&#39;, &#39;parachute&#39;, &#39;valley&#39;, &#39;mountain ledge&#39;, &#39;ledge&#39;, &#39;sailboat&#39;, &#39;lighthouse&#39;, &#39;tunnel&#39;, &#39;village&#39;, &#39;straw&#39;, &#39;quay&#39;, &#39;waves&#39;, &#39;lake&#39;, &#39;ice&#39;, &#39;dune&#39;, &#39;silos&#39;, &#39;horse&#39;, &#39;sheep&#39;, &#39;flock of sheep&#39;, &#39;sheep pen&#39;, &#39;animals&#39;, &#39;chicken&#39;, &#39;barn&#39;, &#39;foal&#39;, &#39;river&#39;, &#39;rafting&#39;, &#39;pebbles&#39;, &#39;soil&#39;, &#39;moss&#39;, &#39;foliage&#39;, &#39;jground&#39;, &#39;white water&#39;, &#39;ice wall&#39;, &#39;ice ground&#39;, &#39;crevasse&#39;, &#39;ice mountain&#39;, &#39;glove&#39;, &#39;sand dune&#39;, &#39;weeds&#39;, &#39;semidesert ground&#39;, &#39;desert&#39;, &#39;sand dunes&#39;, &#39;lumps&#39;, &#39;cactus&#39;, &#39;ground shrubs&#39;, &#39;moon&#39;, &#39;desert ground&#39;, &#39;poles&#39;, &#39;backpacks&#39;, &#39;beard&#39;, &#39;escarpment&#39;, &#39;vineyard&#39;, &#39;vine&#39;, &#39;straw bale&#39;, &#39;combine harvester&#39;, &#39;grass field&#39;, &#39;sunflowers field&#39;, &#39;pplant&#39;, &#39;kite&#39;, &#39;puddle&#39;, &#39;slope&#39;, &#39;greenhouse&#39;, &#39;plants shrubs&#39;, &#39;ground sand&#39;, &#39;bee&#39;, &#39;pert&#39;, &#39;deck&#39;, &#39;fish farm water&#39;, &#39;lily pads&#39;, &#39;water lily&#39;, &#39;oilcloth&#39;, &#39;spade&#39;, &#39;milestone&#39;, &#39;nukestibe&#39;, &#39;seaplane&#39;, &#39;undergrowth&#39;, &#39;tree trunks&#39;, &#39;scrubland&#39;, &#39;tree leaves&#39;, &#39;tree top&#39;, &#39;trees top&#39;, &#39;ground leaves&#39;, &#39;stump&#39;, &#39;snow land&#39;, &#39;ski&#39;, &#39;stone path&#39;, &#39;topiary tree&#39;, &#39;tinb&#39;, &#39;bakk&#39;, &#39;riad&#39;, &#39;baseball field&#39;, &#39;parking place&#39;, &#39;iceberg&#39;, &#39;snowy&#39;, &#39;rocky mountain grot&#39;, &#39;grotto&#39;, &#39;pond water&#39;, &#39;rowing&#39;, &#39;hay roll&#39;, &#39;hay rolls&#39;, &#39;hay bale&#39;, &#39;seedbed&#39;, &#39;wind chimes&#39;, &#39;hillside&#39;, &#39;desert field&#39;, &#39;rock formations&#39;, &#39;rocky formations&#39;, &#39;rocky formation&#39;, &#39;meter&#39;, &#39;stumps&#39;, &#39;killer whale&#39;, &#39;floe&#39;, &#39;walrus&#39;, &#39;ice field&#39;, &#39;drift ice&#39;, &#39;sean lion&#39;, &#39;sea lion&#39;, &#39;persons&#39;, &#39;ice shelf&#39;, &#39;glacier&#39;, &#39;sea water ice&#39;, &#39;sleigh&#39;, &#39;expedition&#39;, &#39;water ice&#39;, &#39;rubber boat&#39;, &#39;islet&#39;, &#39;rock formation&#39;, &#39;boats&#39;, &#39;diving goggles&#39;, &#39;swmming pool&#39;, &#39;bandstand&#39;, &#39;pagoda&#39;, &#39;duck shelter&#39;, &#39;fog&#39;, &#39;riverside&#39;, &#39;whitewater&#39;, &#39;lava&#39;, &#39;salt marsh&#39;, &#39;rowing boat&#39;, &#39;tableland&#39;, &#39;ground desert&#39;, &#39;fog bank&#39;, &#39;refuge&#39;, &#39;ski lift&#39;, &#39;forest&#39;, &#39;boulder&#39;, &#39;rock cliff&#39;, &#39;sidewalk cafe&#39;, &#39;track&#39;, &#39;snowy mountain pass&#39;, &#39;cable railway&#39;, &#39;sled&#39;, &#39;rocky plain&#39;, &#39;snowy road&#39;, &#39;snow covered plain&#39;, &#39;snowy trees&#39;, &#39;,pimtaom&#39;, &#39;sail&#39;, &#39;buoy&#39;, &#39;fishing rod&#39;, &#39;wave splash&#39;, &#39;dolphin&#39;, &#39;peoples&#39;, &#39;seagul&#39;, &#39;pumpkins&#39;, &#39;goose&#39;, &#39;gooses&#39;, &#39;monolith&#39;, &#39;cows&#39;, &#39;fences&#39;, &#39;equipment&#39;, &#39;pig&#39;, &#39;sty&#39;, &#39;moose&#39;, &#39;goat&#39;, &#39;shack&#39;, &#39;camel&#39;, &#39;livestock&#39;, &#39;pork&#39;, &#39;donkey&#39;, &#39;reaper&#39;, &#39;violin bow&#39;, &#39;observatory&#39;, &#39;ñbench&#39;, &#39;nest&#39;, &#39;stream&#39;, &#39;sack&#39;, &#39;quicksand&#39;, &#39;raft&#39;, &#39;row&#39;, &#39;urbanization&#39;, &#39;trucks&#39;, &#39;shelter&#39;, &#39;beach lake&#39;, &#39;lake house&#39;, &#39;mustache&#39;, &#39;rope bridge&#39;, &#39;skywalk&#39;, &#39;sun deck&#39;, &#39;suspension rope bridge&#39;, &#39;telegraph pole&#39;, &#39;suspension bridge&#39;, &#39;salt plain&#39;, &#39;sandbar&#39;, &#39;savanna&#39;, &#39;zebra&#39;, &#39;scrubs&#39;, &#39;sinkhole&#39;, &#39;airpl&#39;, &#39;hot air balloon&#39;, &#39;snow covered ground&#39;, &#39;snowy ground&#39;, &#39;remote control car&#39;, &#39;sly&#39;, &#39;roks&#39;, &#39;swan&#39;, &#39;topiary trees&#39;, &#39;paving stone&#39;, &#39;animal topiary&#39;, &#39;steet light&#39;, &#39;ree&#39;, &#39;hen house&#39;, &#39;hen&#39;, &#39;tundra&#39;, &#39;antler&#39;, &#39;plane wreckage&#39;, &#39;creek&#39;, &#39;alga&#39;, &#39;diver&#39;, &#39;seaweed&#39;, &#39;ray&#39;, &#39;1&#39;, &#39;urban valley&#39;, &#39;clabe car&#39;, &#39;crater&#39;, &#39;water mist&#39;, &#39;gateway&#39;, &#39;ravine&#39;, &#39;plats&#39;, &#39;sstone&#39;, &#39;rioe&#39;, &#39;cliff and waterfall&#39;, &#39;plantas&#39;, &#39;waterfall frozen&#39;, &#39;planat&#39;, &#39;horn&#39;, &#39;tail&#39;, &#39;buoys&#39;, &#39;surf&#39;, &#39;wheat spike&#39;, &#39;boillers&#39;, &#39;furrow&#39;, &#39;office&#39;, &#39;fitting room&#39;, &#39;gas cap&#39;, &#39;hood&#39;, &#39;fender&#39;, &#39;trumpet&#39;, &#39;bread roll&#39;, &#39;bread rolls&#39;, &#39;breads&#39;, &#39;roasting&#39;, &#39;candies&#39;, &#39;cookies&#39;, &#39;price tag&#39;, &#39;cash register&#39;, &#39;cookie&#39;, &#39;bread basket&#39;, &#39;bread tray&#39;, &#39;meat&#39;, &#39;cut slices machine&#39;, &#39;pie&#39;, &#39;loaves&#39;, &#39;tart&#39;, &#39;snuffs&#39;, &#39;biscuit&#39;, &#39;ham&#39;, &#39;sausage&#39;, &#39;olives&#39;, &#39;napking&#39;, &#39;pickle&#39;, &#39;ingots&#39;, &#39;strongroom&#39;, &#39;security door frame&#39;, &#39;security door&#39;, &#39;safe door&#39;, &#39;safe&#39;, &#39;strongbox&#39;, &#39;beer machine&#39;, &#39;billboard&#39;, &#39;head deer&#39;, &#39;armor&#39;, &#39;cocktail shaker&#39;, &#39;mugs&#39;, &#39;rubbish&#39;, &#39;till&#39;, &#39;hairdresser chair&#39;, &#39;hairdressers chair&#39;, &#39;hair spray&#39;, &#39;souk&#39;, &#39;belts&#39;, &#39;lanterns&#39;, &#39;necklaces&#39;, &#39;pendant&#39;, &#39;meat hooks&#39;, &#39;foodstuffs&#39;, &#39;apples&#39;, &#39;blusher brush&#39;, &#39;auxiliary trolley&#39;, &#39;trolley tray&#39;, &#39;razor cut hair&#39;, &#39;washbasin chair&#39;, &#39;spray can&#39;, &#39;cubicle&#39;, &#39;fountain&#39;, &#39;washing hair&#39;, &#39;cape&#39;, &#39;book stand&#39;, &#39;postcards&#39;, &#39;candy&#39;, &#39;exhi&#39;, &#39;àèr&#39;, &#39;bood&#39;, &#39;water machine&#39;, &#39;freezer&#39;, &#39;cutting machine&#39;, &#39;girder&#39;, &#39;meat piece&#39;, &#39;cold store&#39;, &#39;shop&#39;, &#39;hams&#39;, &#39;tongue&#39;, &#39;butchery&#39;, &#39;meat pieces&#39;, &#39;feed&#39;, &#39;sandwich&#39;, &#39;ceiling s&#39;, &#39;chocolates&#39;, &#39;polythene cover&#39;, &#39;goods&#39;, &#39;chocolate&#39;, &#39;candy bag&#39;, &#39;candy track&#39;, &#39;ice cream machine&#39;, &#39;money&#39;, &#39;trellis&#39;, &#39;brochures rack&#39;, &#39;rotisserie&#39;, &#39;earring&#39;, &#39;terminal&#39;, &#39;dice&#39;, &#39;coat stand&#39;, &#39;tops&#39;, &#39;shawl&#39;, &#39;purses&#39;, &#39;pyjamas&#39;, &#39;soccer ball&#39;, &#39;juice machine&#39;, &#39;cubicles&#39;, &#39;sprays&#39;, &#39;tongs&#39;, &#39;saucepans&#39;, &#39;set of pigeonholes&#39;, &#39;sugar&#39;, &#39;sweets&#39;, &#39;sweet&#39;, &#39;veil&#39;, &#39;baby weighs&#39;, &#39;escalator&#39;, &#39;thread&#39;, &#39;fabrics&#39;, &#39;cooks&#39;, &#39;private place&#39;, &#39;shopping cart&#39;, &#39;trash trolley&#39;, &#39;merchandise&#39;, &#39;flavorings&#39;, &#39;shellfish&#39;, &#39;mussels&#39;, &#39;clams&#39;, &#39;wig&#39;, &#39;hairpieces&#39;, &#39;fluoresc&#39;, &#39;goldfish bowl&#39;, &#39;cocoon&#39;, &#39;garlics&#39;, &#39;tray rack&#39;, &#39;propeller&#39;, &#39;cowbell&#39;, &#39;miniature sofa&#39;, &#39;magnifying glass&#39;, &#39;forklift&#39;, &#39;caps&#39;, &#39;scarfs&#39;, &#39;hats&#39;, &#39;feather&#39;, &#39;ice cone&#39;, &#39;wafers&#39;, &#39;cauldron&#39;, &#39;sausages&#39;, &#39;oni&#39;, &#39;accordion&#39;, &#39;sample&#39;, &#39;pendulum&#39;, &#39;ring&#39;, &#39;bracelets&#39;, &#39;kiosk&#39;, &#39;jewelry display&#39;, &#39;sopping cart&#39;, &#39;contrabass&#39;, &#39;banjo&#39;, &#39;harp&#39;, &#39;cello&#39;, &#39;pack of snuff&#39;, &#39;candy bags&#39;, &#39;showc&#39;, &#39;medicines&#39;, &#39;photo backdrops&#39;, &#39;bagpipes&#39;, &#39;whistle&#39;, &#39;flyer&#39;, &#39;badge&#39;, &#39;top support&#39;, &#39;hands&#39;, &#39;garlic cloves&#39;, &#39;earthenware jar&#39;, &#39;fryer basket&#39;, &#39;trolley trays&#39;, &#39;show&#39;, &#39;heel&#39;, &#39;shoelace&#39;, &#39;shops&#39;, &#39;lights&#39;, &#39;baseball glove&#39;, &#39;racks&#39;, &#39;cabbages&#39;, &#39;revolving pass&#39;, &#39;tomatoes&#39;, &#39;pack bags&#39;, &#39;margarine&#39;, &#39;shopping carts&#39;, &#39;milk jug&#39;, &#39;water pump&#39;, &#39;ticket counter&#39;, &#39;cigar box&#39;, &#39;paper dishes&#39;, &#39;swimming costume&#39;, &#39;peaks&#39;, &#39;crockery&#39;, &#39;set square&#39;, &#39;oil tubes&#39;, &#39;exercise bike&#39;, &#39;camcorder&#39;, &#39;barrel rack&#39;, &#39;hoop&#39;, &#39;stave&#39;, &#39;wooden wedge&#39;, &#39;football table&#39;, &#39;arcade machines&#39;, &#39;change machine&#39;, &#39;ticket box&#39;, &#39;booth&#39;, &#39;merry-go-round&#39;, &#39;balloons&#39;, &#39;ride&#39;, &#39;roller coaster&#39;, &#39;fairground ride&#39;, &#39;pavilions&#39;, &#39;roller coaster cars&#39;, &#39;big wheel&#39;, &#39;fairground&#39;, &#39;funfair&#39;, &#39;swing&#39;, &#39;ferris wheel&#39;, &#39;tents&#39;, &#39;trailers&#39;, &#39;park&#39;, &#39;cranes&#39;, &#39;fence rubble&#39;, &#39;boardwalk&#39;, &#39;horse carousel&#39;, &#39;planter&#39;, &#39;wires&#39;, &#39;cable car&#39;, &#39;walkway&#39;, &#39;rocket&#39;, &#39;castle&#39;, &#39;hay stacks&#39;, &#39;tarp&#39;, &#39;squash&#39;, &#39;tinsel&#39;, &#39;christmas lights&#39;, &#39;booths&#39;, &#39;ride structure&#39;, &#39;fairground attraction&#39;, &#39;grandstand&#39;, &#39;ticket office&#39;, &#39;court&#39;, &#39;basketball hoop&#39;, &#39;ice rink&#39;, &#39;goal&#39;, &#39;ice track&#39;, &#39;tablet&#39;, &#39;ice hockey rink&#39;, &#39;hockey rink&#39;, &#39;indoor track&#39;, &#39;obstacle&#39;, &#39;building arena&#39;, &#39;playing field&#39;, &#39;postes&#39;, &#39;pitch&#39;, &#39;running track&#39;, &#39;hurdle&#39;, &#39;medal&#39;, &#39;caravan&#39;, &#39;tennis court&#39;, &#39;inflatable park&#39;, &#39;bottom rail&#39;, &#39;inflatable toy&#39;, &#39;wall re&#39;, &#39;bat&#39;, &#39;basketball court&#39;, &#39;basketball&#39;, &#39;white mark&#39;, &#39;menus&#39;, &#39;disk&#39;, &#39;notice board&#39;, &#39;bleachers&#39;, &#39;ball rack&#39;, &#39;skittle alley&#39;, &#39;banners&#39;, &#39;skittles&#39;, &#39;skittle&#39;, &#39;bowling alley&#39;, &#39;bowling pins&#39;, &#39;bowling alleys&#39;, &#39;gates&#39;, &#39;ball stands&#39;, &#39;bowling ball return&#39;, &#39;skittle alleys&#39;, &#39;ropes&#39;, &#39;boxing gloves&#39;, &#39;punching bag&#39;, &#39;bullring&#39;, &#39;cloak&#39;, &#39;bull&#39;, &#39;terraces&#39;, &#39;bullfighter&#39;, &#39;bonfire&#39;, &#39;truk&#39;, &#39;chip&#39;, &#39;shield&#39;, &#39;hobby-horse&#39;, &#39;models&#39;, &#39;hobby-elephant&#39;, &#39;light bulb&#39;, &#39;circus&#39;, &#39;supporting iron metal&#39;, &#39;floor light&#39;, &#39;card table&#39;, &#39;peak&#39;, &#39;ornamental structure&#39;, &#39;plinth&#39;, &#39;fruit machine&#39;, &#39;video game&#39;, &#39;craps table&#39;, &#39;games table&#39;, &#39;game table&#39;, &#39;light display&#39;, &#39;roulette table&#39;, &#39;roulette&#39;, &#39;shoulder&#39;, &#39;games room&#39;, &#39;big top&#39;, &#39;skyscraper&#39;, &#39;covered wagon&#39;, &#39;sand track&#39;, &#39;clubs&#39;, &#39;golf club&#39;, &#39;golf sticks&#39;, &#39;sand trap&#39;, &#39;golf cart&#39;, &#39;gun&#39;, &#39;target&#39;, &#39;cabins&#39;, &#39;earphones&#39;, &#39;shooting pad&#39;, &#39;supporting metal&#39;, &#39;cases&#39;, &#39;trunks&#39;, &#39;floodlights&#39;, &#39;gazebo&#39;, &#39;fire hydrant&#39;, &#39;fern&#39;, &#39;baloons&#39;, &#39;pergola&#39;, &#39;cymbal&#39;, &#39;golf ball&#39;, &#39;stone slab&#39;, &#39;marker&#39;, &#39;golfer&#39;, &#39;banker&#39;, &#39;golg club&#39;, &#39;stationary bicycle&#39;, &#39;weights&#39;, &#39;horizontal bar&#39;, &#39;asymmetric bars&#39;, &#39;barbell&#39;, &#39;dumbbells&#39;, &#39;treadmills&#39;, &#39;gym machine&#39;, &#39;exercise bench&#39;, &#39;exercise bikes&#39;, &#39;exercise machines&#39;, &#39;pelota court&#39;, &#39;maze&#39;, &#39;lawn mower&#39;, &#39;eyebrow&#39;, &#39;skating rink&#39;, &#39;forecourt&#39;, &#39;mosaic&#39;, &#39;petal&#39;, &#39;drinking fountain&#39;, &#39;labyrinth&#39;, &#39;reel&#39;, &#39;kite string&#39;, &#39;buildigs&#39;, &#39;wsall&#39;, &#39;graund&#39;, &#39;swimming pool ladder&#39;, &#39;trampoline&#39;, &#39;locker&#39;, &#39;poncho&#39;, &#39;steel&#39;, &#39;buckets&#39;, &#39;padlocks&#39;, &#39;sword&#39;, &#39;puff doll&#39;, &#39;strips&#39;, &#39;tiger&#39;, &#39;artificial golf green&#39;, &#39;monkey&#39;, &#39;hippopotamus head&#39;, &#39;golf green&#39;, &#39;playground&#39;, &#39;inflatable bounce game&#39;, &#39;inflatable glove&#39;, &#39;arcade&#39;, &#39;squirrel&#39;, &#39;satellite dish&#39;, &#39;cement&#39;, &#39;game&#39;, &#39;games&#39;, &#39;patio&#39;, &#39;ducks&#39;, &#39;root&#39;, &#39;window rose&#39;, &#39;fags&#39;, &#39;flags&#39;, &#39;monument&#39;, &#39;leash&#39;, &#39;cub&#39;, &#39;swings&#39;, &#39;playground equipment&#39;, &#39;seesaw&#39;, &#39;park gear&#39;, &#39;bounce seat&#39;, &#39;sandbox&#39;, &#39;slides&#39;, &#39;fish structure&#39;, &#39;bicycle rack&#39;, &#39;bear cutout&#39;, &#39;tire seat&#39;, &#39;climbing frame&#39;, &#39;childish games&#39;, &#39;pool bar&#39;, &#39;porch&#39;, &#39;muffin&#39;, &#39;coastline&#39;, &#39;putting green&#39;, &#39;dormer&#39;, &#39;litter basket&#39;, &#39;creeper&#39;, &#39;whip&#39;, &#39;racetrack&#39;, &#39;mobile home&#39;, &#39;race car&#39;, &#39;speedway&#39;, &#39;racing track&#39;, &#39;race circuit&#39;, &#39;umbrellas&#39;, &#39;equestrian obstacle&#39;, &#39;sandpit&#39;, &#39;flowerpots&#39;, &#39;thermometer&#39;, &#39;steam room&#39;, &#39;sauna&#39;, &#39;schoolyard&#39;, &#39;ski slope&#39;, &#39;chair lift&#39;, &#39;ski trail&#39;, &#39;lift&#39;, &#39;snow track&#39;, &#39;doort&#39;, &#39;sky lift&#39;, &#39;soccer goal&#39;, &#39;massage bed&#39;, &#39;floodlight&#39;, &#39;stagelight&#39;, &#39;building materials&#39;, &#39;steam roller&#39;, &#39;stadium&#39;, &#39;starting gate&#39;, &#39;rider&#39;, &#39;starting gate trolley&#39;, &#39;deck boat&#39;, &#39;mast&#39;, &#39;diving board&#39;, &#39;rubber ring&#39;, &#39;handr&#39;, &#39;terrace&#39;, &#39;plant tree&#39;, &#39;tyrees&#39;, &#39;trtees&#39;, &#39;racquet&#39;, &#39;barbed wire&#39;, &#39;velodrome&#39;, &#39;crank&#39;, &#39;volleyball court&#39;, &#39;water chute&#39;, &#39;pala&#39;, &#39;airlock&#39;, &#39;luggage&#39;, &#39;luggage rack&#39;, &#39;check-in-desk&#39;, &#39;screens&#39;, &#39;store&#39;, &#39;moving walkway&#39;, &#39;buttress&#39;, &#39;check-in-desks&#39;, &#39;carts&#39;, &#39;fire alarm&#39;, &#39;pendant lamps&#39;, &#39;glass wall&#39;, &#39;landing track&#39;, &#39;trolleys&#39;, &#39;baggage carts&#39;, &#39;buses&#39;, &#39;wiper&#39;, &#39;ticket machine&#39;, &#39;safety belt&#39;, &#39;rear dash&#39;, &#39;head sport&#39;, &#39;seat belt clipper&#39;, &#39;seat belt&#39;, &#39;dashboard&#39;, &#39;gas pedal&#39;, &#39;brake pedal&#39;, &#39;clutch pedal&#39;, &#39;gearshift&#39;, &#39;glove compartment&#39;, &#39;odometer&#39;, &#39;carport&#39;, &#39;control panel&#39;, &#39;instrument panel&#39;, &#39;flight deck&#39;, &#39;key pad&#39;, &#39;radar screen&#39;, &#39;steering&#39;, &#39;window frame&#39;, &#39;camouflage&#39;, &#39;background&#39;, &#39;cockpit&#39;, &#39;gears&#39;, &#39;switchboard&#39;, &#39;hardware&#39;, &#39;button box&#39;, &#39;ceiling controls&#39;, &#39;control panels&#39;, &#39;harness&#39;, &#39;suit&#39;, &#39;airplanes&#39;, &#39;meters&#39;, &#39;power outlet&#39;, &#39;level&#39;, &#39;seat water&#39;, &#39;menu card&#39;, &#39;swimsuit&#39;, &#39;security cordon&#39;, &#39;hoist&#39;, &#39;service elevator&#39;, &#39;elevator doors&#39;, &#39;separation&#39;, &#39;wood stove&#39;, &#39;bicycles&#39;, &#39;dishrack&#39;, &#39;spice jar&#39;, &#39;wood board&#39;, &#39;papr&#39;, &#39;fuselage&#39;, &#39;landing gear&#39;, &#39;wing&#39;, &#39;stabilizer&#39;, &#39;turbine engine&#39;, &#39;hatch&#39;, &#39;clipboard&#39;, &#39;headrest&#39;, &#39;lower deck&#39;, &#39;recessed light&#39;, &#39;wheelhouse&#39;, &#39;revolving door&#39;, &#39;checkpoint&#39;, &#39;security checkpoint&#39;, &#39;envelopes&#39;, &#39;support pole&#39;, &#39;rails&#39;, &#39;railroad track&#39;, &#39;subway&#39;, &#39;tracks&#39;, &#39;railroad&#39;, &#39;railroad train&#39;, &#39;platf&#39;, &#39;gear shift&#39;, &#39;paddles&#39;, &#39;cinch&#39;, &#39;dunes&#39;, &#39;jam&#39;, &#39;spice&#39;, &#39;bough&#39;, &#39;pants&#39;, &#39;ventilator&#39;, &#39;recycling bin&#39;, &#39;icicle&#39;, &#39;street number&#39;, &#39;torrent water&#39;, &#39;hoof&#39;, &#39;reed&#39;, &#39;stripes&#39;, &#39;posters&#39;, &#39;eaves&#39;, &#39;paperweight&#39;, &#39;driveway&#39;, &#39;courts&#39;, &#39;terrace cafe&#39;, &#39;entry phone&#39;, &#39;mesh guard rail&#39;, &#39;house number&#39;, &#39;ceramic ware&#39;, &#39;handlebar&#39;, &#39;rock wall&#39;, &#39;hip tiles&#39;, &#39;site hut&#39;, &#39;salt and pepper shakers&#39;, &#39;table base&#39;, &#39;silverware&#39;, &#39;traffic marker&#39;, &#39;gangway&#39;, &#39;city&#39;, &#39;parterre&#39;, &#39;grills&#39;, &#39;mop&#39;, &#39;wireless phone&#39;, &#39;power line&#39;, &#39;pilot cockpit&#39;, &#39;megaphone&#39;, &#39;sunglasses&#39;, &#39;hull&#39;, &#39;business card&#39;, &#39;saddle&#39;, &#39;pedal&#39;, &#39;doorbell&#39;, &#39;sheeps&#39;, &#39;sugar packet&#39;, &#39;placecard&#39;, &#39;placecard holder&#39;, &#39;ring bell&#39;, &#39;napkin holder&#39;, &#39;bus station&#39;, &#39;flyers&#39;, &#39;copier&#39;, &#39;filing cabinets&#39;, &#39;business cards&#39;, &#39;ski lift cabin&#39;, &#39;funicular&#39;, &#39;vaulted niche&#39;, &#39;hanging clothes&#39;, &#39;belt rack&#39;, &#39;light pole&#39;, &#39;rest&#39;, &#39;port&#39;, &#39;motorbikes&#39;, &#39;pie spinach&#39;, &#39;finger&#39;, &#39;nail&#39;, &#39;crumb&#39;, &#39;spinach&#39;, &#39;parking space&#39;, &#39;steeple&#39;, &#39;cd shelf&#39;, &#39;street sign&#39;, &#39;motion sensor&#39;, &#39;kayak&#39;, &#39;ceramics box&#39;, &#39;fire escape&#39;, &#39;shore&#39;, &#39;icicles&#39;, &#39;page&#39;, &#39;canal&#39;, &#39;gas station&#39;, &#39;roundabout&#39;, &#39;sping&#39;, &#39;breaker box&#39;, &#39;mausoleum&#39;, &#39;columbarium&#39;, &#39;columbarium niche&#39;, &#39;champagne stand&#39;, &#39;scarecrows&#39;, &#39;cork stopper&#39;, &#39;wipe&#39;, &#39;power lines&#39;, &#39;housing&#39;, &#39;obelisk&#39;, &#39;board game&#39;, &#39;wood blocks&#39;, &#39;bowling pin&#39;, &#39;roof rack&#39;, &#39;antenna&#39;, &#39;guard rail&#39;, &#39;stripe&#39;, &#39;safety net&#39;, &#39;phone jack&#39;, &#39;water spurt&#39;, &#39;laptop bag&#39;, &#39;bud&#39;, &#39;buds&#39;, &#39;ski lift pole&#39;, &#39;ridge tiles&#39;, &#39;maps&#39;, &#39;doorway arch&#39;, &#39;storm sewer&#39;, &#39;telephone pole&#39;, &#39;snowboarder&#39;, &#39;snowboard shape&#39;, &#39;chippings&#39;, &#39;fenders&#39;, &#39;floatation device&#39;, &#39;radar&#39;, &#39;catch&#39;, &#39;bus stop&#39;, &#39;plants pot&#39;, &#39;power box&#39;, &#39;fabric softener&#39;, &#39;petrol pump&#39;, &#39;valley urban&#39;, &#39;water wheel&#39;, &#39;ski stand&#39;, &#39;football stadium&#39;, &#39;shutters&#39;, &#39;drill rig&#39;, &#39;stone ball&#39;, &#39;roots&#39;, &#39;shed&#39;, &#39;tombstone&#39;, &#39;joists&#39;, &#39;street lights&#39;, &#39;swamp&#39;, &#39;paints&#39;, &#39;machinery&#39;, &#39;ditch&#39;, &#39;posts&#39;, &#39;runway strip&#39;, &#39;postcard stand&#39;, &#39;watchtower&#39;, &#39;crate&#39;, &#39;crates&#39;, &#39;aqueduct&#39;, &#39;rakes&#39;, &#39;bookstall&#39;, &#39;veranda awning&#39;, &#39;external driver&#39;, &#39;aircraft carrier&#39;, &#39;red board&#39;, &#39;sacks&#39;, &#39;industrial plant&#39;, &#39;runnel water&#39;, &#39;supplies&#39;, &#39;poster board&#39;, &#39;toll booth&#39;, &#39;sweet peas&#39;, &#39;sulfur mine&#39;, &#39;chorizo&#39;, &#39;chorizos&#39;, &#39;jetty&#39;, &#39;garden&#39;, &#39;barrack buildings&#39;, &#39;mallet&#39;, &#39;camels&#39;, &#39;orchestra&#39;, &#39;hand trolley&#39;, &#39;bar lift&#39;, &#39;sinkhole water&#39;, &#39;weighbridge&#39;, &#39;cargo&#39;, &#39;ridge liles&#39;, &#39;stake&#39;, &#39;remains&#39;, &#39;service station&#39;, &#39;flag pole&#39;, &#39;cigarettes&#39;, &#39;lodge&#39;, &#39;viaduct&#39;, &#39;crane truck&#39;, &#39;sepulcher&#39;, &#39;incense&#39;, &#39;pole sign&#39;, &#39;cylinder&#39;, &#39;adding machine&#39;, &#39;control tower&#39;, &#39;estuary&#39;, &#39;steam vase&#39;, &#39;gas bottle&#39;, &#39;chocolate cakes&#39;, &#39;bakery items&#39;, &#39;lion&#39;, &#39;baby lion&#39;, &#39;walnuts&#39;, &#39;coast&#39;, &#39;baby cheetah&#39;, &#39;lagoon water&#39;, &#39;cooling tower&#39;, &#39;climber person&#39;, &#39;oilfield&#39;, &#39;whale&#39;, &#39;freezing ground&#39;, &#39;rocky island&#39;, &#39;rhinoceros&#39;, &#39;baby rhinoceros&#39;, &#39;snowy hill&#39;, &#39;person swimming&#39;, &#39;incinerator&#39;, &#39;ice floe&#39;, &#39;bear&#39;, &#39;acropolis&#39;, &#39;viewpoint&#39;, &#39;backdrop&#39;, &#39;musical instruments&#39;, &#39;ember&#39;, &#39;barricade&#39;, &#39;butter&#39;, &#39;buffet&#39;, &#39;deck house&#39;, &#39;hens&#39;, &#39;silo&#39;, &#39;trough&#39;, &#39;sacks wall&#39;, &#39;gas well&#39;, &#39;hollow&#39;, &#39;housing project&#39;, &#39;howdah&#39;, &#39;winglet&#39;, &#39;oxygen tank&#39;, &#39;test tube&#39;, &#39;laboratory machine&#39;, &#39;pipette&#39;, &#39;storage jar&#39;, &#39;laboratory machines&#39;, &#39;sign ballon&#39;, &#39;spaceship&#39;, &#39;launch pad&#39;, &#39;millrace&#39;, &#39;quagmire&#39;, &#39;hedge partial&#39;, &#39;lab bench&#39;, &#39;scrub&#39;, &#39;popcorn machine&#39;, &#39;snacks&#39;, &#39;sanck bar&#39;, &#39;notes&#39;, &#39;ski pole&#39;, &#39;pelt&#39;, &#39;sinks&#39;, &#39;dye&#39;, &#39;pelts&#39;, &#39;leathers&#39;, &#39;toll gate&#39;, &#39;grapevine&#39;, &#39;bunch&#39;, &#39;vinery&#39;, &#39;control room&#39;, &#39;urinal&#39;, &#39;paper box&#39;, &#39;water fountain&#39;, &#39;waterscape&#39;, &#39;docks&#39;, &#39;waterway&#39;, &#39;wetland&#39;, &#39;tornado&#39;, &#39;fluorescet tube&#39;, &#39;bear pum&#39;, &#39;gradstand&#39;, &#39;fende&#39;, &#39;pon&#39;, &#39;light aircraft&#39;, &#39;seeds&#39;, &#39;sewer&#39;, &#39;bricks&#39;, &#39;textiles&#39;, &#39;motorbike cart&#39;, &#39;gable&#39;, &#39;channel&#39;, &#39;_ñamts&#39;, &#39;p_lant&#39;, &#39;garage&#39;, &#39;pollard&#39;, &#39;sieve&#39;, &#39;pipeline&#39;, &#39;backp&#39;, &#39;freight goods&#39;, &#39;airport cart&#39;, &#39;mobile conveyor&#39;, &#39;belt loader&#39;, &#39;parking entrance&#39;, &#39;tenis court&#39;, &#39;swmming pool lader&#39;, &#39;atm&#39;, &#39;stones wall&#39;, &#39;plant por&#39;, &#39;batting cage&#39;, &#39;tire&#39;, &#39;umbrela&#39;, &#39;sailbo&#39;, &#39;bicycle racks&#39;, &#39;houseboat&#39;, &#39;p&#39;, &#39;housee&#39;, &#39;fireworks&#39;, &#39;ledges&#39;, &#39;suspensions&#39;, &#39;railroad tracks&#39;, &#39;supermarket&#39;, &#39;harbor&#39;, &#39;posters pole&#39;, &#39;gondola&#39;, &#39;channel water&#39;, &#39;sodewañl&#39;, &#39;light&#39;, &#39;wipers&#39;, &#39;fuel can&#39;, &#39;fuel tank&#39;, &#39;camping stove&#39;, &#39;raukubg&#39;, &#39;waññ&#39;, &#39;canal water&#39;, &#39;umbr&#39;, &#39;inflatable doll&#39;, &#39;solar panels&#39;, &#39;castle in ruins&#39;, &#39;church&#39;, &#39;tombstones&#39;, &#39;headstone cross&#39;, &#39;headstones&#39;, &#39;gravestone&#39;, &#39;gravestones&#39;, &#39;tombs&#39;, &#39;lamp&#39;, &#39;finial&#39;, &#39;rainshield&#39;, &#39;lamp housing&#39;, &#39;leave&#39;, &#39;henhouse&#39;, &#39;feeder&#39;, &#39;chick&#39;, &#39;chicks&#39;, &#39;vane&#39;, &#39;roads&#39;, &#39;air machine&#39;, &#39;square&#39;, &#39;covered bridge&#39;, &#39;battlement&#39;, &#39;lattice&#39;, &#39;-&#39;, &#39;water ditch&#39;, &#39;sawhorse&#39;, &#39;electricity meter&#39;, &#39;flagstones&#39;, &#39;grpimd&#39;, &#39;truck crane&#39;, &#39;train track&#39;, &#39;orchard&#39;, &#39;amplifier&#39;, &#39;life preserver&#39;, &#39;streetlight&#39;, &#39;fire engine&#39;, &#39;swing door&#39;, &#39;fire truck&#39;, &#39;tree branches&#39;, &#39;fort&#39;, &#39;palisade&#39;, &#39;huts&#39;, &#39;water bell&#39;, &#39;petrol pump hose&#39;, &#39;petrol pumps&#39;, &#39;petrol station&#39;, &#39;fuel station&#39;, &#39;guardhouse&#39;, &#39;missile&#39;, &#39;hangar&#39;, &#39;motorboat&#39;, &#39;motorboats&#39;, &#39;catamaran&#39;, &#39;boar&#39;, &#39;mooring&#39;, &#39;landing gar&#39;, &#39;skids&#39;, &#39;heliport&#39;, &#39;drom&#39;, &#39;helic&#39;, &#39;tanker&#39;, &#39;overpass&#39;, &#39;tubing&#39;, &#39;traffic cones&#39;, &#39;hard shoulder&#39;, &#39;mitra&#39;, &#39;persoon&#39;, &#39;palm&#39;, &#39;statues&#39;, &#39;igloo&#39;, &#39;snowshoe&#39;, &#39;entry&#39;, &#39;roadd&#39;, &#39;ranch&#39;, &#39;stonea&#39;, &#39;kasbah&#39;, &#39;kennels&#39;, &#39;kennel&#39;, &#39;hutch&#39;, &#39;pins&#39;, &#39;ice decoration&#39;, &#39;violoncello&#39;, &#39;tanker aircraft&#39;, &#39;aircraft&#39;, &#39;buiulding&#39;, &#39;concrete mixer&#39;, &#39;street lamp&#39;, &#39;twigs&#39;, &#39;storage&#39;, &#39;lightning&#39;, &#39;light house&#39;, &#39;electric cable&#39;, &#39;skjy&#39;, &#39;exhaust pipe&#39;, &#39;bilding&#39;, &#39;lockgate&#39;, &#39;paht&#39;, &#39;graiting&#39;, &#39;water weel&#39;, &#39;hjouse&#39;, &#39;beach wrap&#39;, &#39;price list&#39;, &#39;santa claus&#39;, &#39;sweet potatos&#39;, &#39;crutch&#39;, &#39;market&#39;, &#39;gatehouse&#39;, &#39;minaret&#39;, &#39;minar&#39;, &#39;sedewalk&#39;, &#39;person1&#39;, &#39;warship&#39;, &#39;dry dock&#39;, &#39;submarine&#39;, &#39;newspapers&#39;, &#39;pack of cigarettes&#39;, &#39;observation tower&#39;, &#39;plans&#39;, &#39;outhouse wc&#39;, &#39;outhouse&#39;, &#39;oyster bank&#39;, &#39;battlements&#39;, &#39;bulstrade&#39;, &#39;pant pot&#39;, &#39;paslm tree&#39;, &#39;trash bags&#39;, &#39;carriage&#39;, &#39;walking stick&#39;, &#39;bulbs&#39;, &#39;statue piller&#39;, &#39;scooter&#39;, &#39;cone&#39;, &#39;groundd&#39;, &#39;offering&#39;, &#39;floating bridge&#39;, &#39;railway tie&#39;, &#39;train racks&#39;, &#39;wagons&#39;, &#39;railway yard&#39;, &#39;railways&#39;, &#39;shears&#39;, &#39;sugb&#39;, &#39;cigarette&#39;, &#39;toy train&#39;, &#39;siver water&#39;, &#39;restroom&#39;, &#39;arc&#39;, &#39;solar energy&#39;, &#39;greehouse&#39;, &#39;ubrella&#39;, &#39;bmw&#39;, &#39;water hole&#39;, &#39;red light&#39;, &#39;yellow light&#39;, &#39;green light&#39;, &#39;landing tracks&#39;, &#39;premade house&#39;, &#39;quonset huts&#39;, &#39;flower basket&#39;, &#39;solar panel&#39;, &#39;hall&#39;, &#39;skyscrapers&#39;, &#39;traffic lights&#39;, &#39;weathervane&#39;, &#39;lamp post&#39;, &#39;sky scraper&#39;, &#39;sculpture of the globe&#39;, &#39;scyscraper&#39;, &#39;sky scrapers&#39;, &#39;shantytown&#39;, &#39;slum shanties&#39;, &#39;shacks&#39;, &#39;dolmen&#39;, &#39;dolmens&#39;, &#39;eat&#39;, &#39;bike path&#39;, &#39;street box&#39;, &#39;movie poster&#39;, &#39;grid&#39;, &#39;fuel pump&#39;, &#39;curbstone&#39;, &#39;sewer drain&#39;, &#39;bracket&#39;, &#39;drain vent&#39;, &#39;electricity box&#39;, &#39;gas heater&#39;, &#39;grate&#39;, &#39;power point&#39;, &#39;power meter&#39;, &#39;utility panel&#39;, &#39;utility box&#39;, &#39;gas meter&#39;, &#39;housing lamp&#39;, &#39;menu display&#39;, &#39;knocker&#39;, &#39;lamps&#39;, &#39;skip&#39;, &#39;iron cross&#39;, &#39;cornice&#39;, &#39;stilt&#39;, &#39;utility panels&#39;, &#39;piping&#39;, &#39;highway bridge&#39;, &#39;construction equipment&#39;, &#39;piper&#39;, &#39;wood box&#39;, &#39;shoe rack&#39;, &#39;garage doors&#39;, &#39;curb cut&#39;, &#39;pipe drain&#39;, &#39;storm drain&#39;, &#39;rain gutter&#39;, &#39;hoarding&#39;, &#39;meter box&#39;, &#39;porch rail&#39;, &#39;mannequin&#39;, &#39;turnbuckle&#39;, &#39;fire alarm box&#39;, &#39;sweep&#39;, &#39;ice creme stand&#39;, &#39;mailboxes&#39;, &#39;sun room&#39;, &#39;security light&#39;, &#39;steel box&#39;, &#39;rain pipe&#39;, &#39;pub front&#39;, &#39;trolly&#39;, &#39;underground station&#39;, &#39;numbers&#39;, &#39;butane gas cylinder&#39;, &#39;entrance parking&#39;, &#39;rain drain&#39;, &#39;food cart&#39;, &#39;sewer cover&#39;, &#39;shopping bag&#39;, &#39;bildings&#39;, &#39;postbox&#39;, &#39;tag&#39;, &#39;buzzer&#39;, &#39;clothing rack&#39;, &#39;tank top&#39;, &#39;necklace display&#39;, &#39;street market&#39;, &#39;card display&#39;, &#39;sphere&#39;, &#39;fire bell&#39;, &#39;bycicle carriage&#39;, &#39;street grate&#39;, &#39;plant stand&#39;, &#39;storage box&#39;, &#39;post box&#39;, &#39;underground&#39;, &#39;work hut&#39;, &#39;bitch&#39;, &#39;newspaper stand&#39;, &#39;fire booth&#39;, &#39;postcard display&#39;, &#39;bicycle path&#39;, &#39;necktie&#39;, &#39;rescue float&#39;, &#39;printed matter&#39;, &#39;balcony covered&#39;, &#39;half globe&#39;, &#39;boat stop&#39;, &#39;smoke escape&#39;, &#39;troller bin&#39;, &#39;knives&#39;, &#39;street wires&#39;, &#39;ssign&#39;, &#39;tramway&#39;, &#39;buggy&#39;, &#39;japanese lantern&#39;, &#39;temple&#39;, &#39;mountain terraces&#39;, &#39;toll plaza&#39;, &#39;bell tower&#39;, &#39;laundry&#39;, &#39;ad&#39;, &#39;locomotive&#39;, &#39;underpass&#39;, &#39;trestle bridge&#39;, &#39;aviary&#39;, &#39;plant box&#39;, &#39;caterpillar&#39;, &#39;boat trolley&#39;, &#39;vine shoot&#39;, &#39;bunch grapes&#39;, &#39;water mill&#39;, &#39;blades&#39;, &#39;ziggurat&#39;, &#39;building ziggurat&#39;, &#39;work table&#39;, &#39;railway engine&#39;, &#39;piece&#39;, &#39;pieces&#39;, &#39;switch box&#39;, &#39;pillars&#39;, &#39;car wash&#39;, &#39;industrial robot&#39;, &#39;production line&#39;, &#39;multiple socket&#39;, &#39;spanner&#39;, &#39;chains&#39;, &#39;pig tail&#39;, &#39;dvd boxes&#39;, &#39;electrical device&#39;, &#39;deer head&#39;, &#39;deer skull&#39;, &#39;brewery&#39;, &#39;vintage bottle filler&#39;, &#39;microbrewery&#39;, &#39;hai&#39;, &#39;cloth material&#39;, &#39;test tubes&#39;, &#39;precision balance&#39;, &#39;coop&#39;, &#39;birds&#39;, &#39;laboratory equipment&#39;, &#39;safety suit&#39;, &#39;support beam&#39;, &#39;semi-flush mount lights&#39;, &#39;panelling&#39;, &#39;panels&#39;, &#39;place card&#39;, &#39;runner&#39;, &#39;sealing tape&#39;, &#39;mace&#39;, &#39;award&#39;, &#39;awards&#39;, &#39;projector rack&#39;, &#39;fluorescent bulb&#39;, &#39;vhsit&#39;, &#39;chairr&#39;, &#39;bottl&#39;, &#39;spoo&#39;, &#39;raidator&#39;, &#39;control cabinet&#39;, &#39;computer console&#39;, &#39;control table&#39;, &#39;instrument control&#39;, &#39;ventilation shaft&#39;, &#39;hanger hook&#39;, &#39;fire hose&#39;, &#39;shoji screen&#39;, &#39;message board&#39;, &#39;exit sign&#39;, &#39;light sosurce&#39;, &#39;boaard&#39;, &#39;office partition&#39;, &#39;hay&#39;, &#39;trophies&#39;, &#39;developing machine&#39;, &#39;set of instruments&#39;, &#39;reclining chair&#39;, &#39;dental chair&#39;, &#39;articulated lamp&#39;, &#39;cd player&#39;, &#39;tooth cleaner&#39;, &#39;dental sink&#39;, &#39;dental swivel chair&#39;, &#39;professional degree&#39;, &#39;alembic&#39;, &#39;powder compact&#39;, &#39;makeup&#39;, &#39;toilete kit&#39;, &#39;call buttons&#39;, &#39;name plate&#39;, &#39;counterweight&#39;, &#39;furnace room&#39;, &#39;pressure gauge&#39;, &#39;forge&#39;, &#39;mold&#39;, &#39;anvil&#39;, &#39;iron bar&#39;, &#39;furnace&#39;, &#39;steel chair&#39;, &#39;manometer&#39;, &#39;hosepipe&#39;, &#39;netting&#39;, &#39;plastic sheet&#39;, &#39;hatchery&#39;, &#39;straw bales&#39;, &#39;hearth&#39;, &#39;x-rays&#39;, &#39;x-rays bed&#39;, &#39;medical machine&#39;, &#39;cages&#39;, &#39;washing machines&#39;, &#39;tumble dryers&#39;, &#39;clothesline&#39;, &#39;paper dispenser&#39;, &#39;clock face&#39;, &#39;moon dial&#39;, &#39;clocks&#39;, &#39;measurer&#39;, &#39;mail boxes&#39;, &#39;ceiling rec&#39;, &#39;fireplaace&#39;, &#39;division&#39;, &#39;newspaper rack&#39;, &#39;directory&#39;, &#39;plam tree&#39;, &#39;steel industry&#39;, &#39;ceukubg&#39;, &#39;sisde table&#39;, &#39;metal profiles&#39;, &#39;incubator&#39;, &#39;offices&#39;, &#39;iv bag&#39;, &#39;mine&#39;, &#39;torch&#39;, &#39;pen holder&#39;, &#39;mixing board&#39;, &#39;in box&#39;, &#39;video-tape&#39;, &#39;box-file&#39;, &#39;paperpile&#39;, &#39;spectacle-case&#39;, &#39;pencil sharpener&#39;, &#39;postal card&#39;, &#39;disk spindle&#39;, &#39;sticky tape dispenser&#39;, &#39;note&#39;, &#39;desk mat&#39;, &#39;screen stand&#39;, &#39;garment bag&#39;, &#39;mouse stand&#39;, &#39;comic strip&#39;, &#39;paper file&#39;, &#39;workstation&#39;, &#39;certificate&#39;, &#39;disks&#39;, &#39;file organizer&#39;, &#39;self&#39;, &#39;pingeonhole&#39;, &#39;electronic devise&#39;, &#39;separator&#39;, &#39;operation table&#39;, &#39;tensiometer&#39;, &#39;phonends&#39;, &#39;cyclotron&#39;, &#39;pigsty&#39;, &#39;feeding trough&#39;, &#39;degree certificate&#39;, &#39;keyboards&#39;, &#39;recycling materials&#39;, &#39;rolling mill&#39;, &#39;gear wheel&#39;, &#39;server&#39;, &#39;servers&#39;, &#39;sewing box&#39;, &#39;threads&#39;, &#39;stables&#39;, &#39;bolt&#39;, &#39;yoke&#39;, &#39;stable&#39;, &#39;handrair&#39;, &#39;fernce&#39;, &#39;compueter&#39;, &#39;ventilator shaft&#39;, &#39;radiography&#39;, &#39;stethoscope&#39;, &#39;syringe&#39;, &#39;cotton&#39;, &#39;office window&#39;, &#39;cream tube&#39;, &#39;visit cards&#39;, &#39;screws box&#39;, &#39;material rolls&#39;, &#39;cut table&#39;, &#39;wrenches&#39;, &#39;spanners&#39;, &#39;gauge&#39;, &#39;press&#39;, &#39;screwdrivers&#39;, &#39;trolley basket&#39;, &#39;trolley drawers&#39;, &#39;weapons&#39;, &#39;weapon&#39;, &#39;paint brush&#39;, &#39;oil tube&#39;, &#39;art mannequin&#39;, &#39;segment&#39;, &#39;chairs desk&#39;, &#39;musicians place&#39;, &#39;rose&#39;, &#39;window latch&#39;, &#39;doble door&#39;, &#39;tuner&#39;, &#39;lamp cord&#39;, &#39;clothes stand&#39;, &#39;telephone directories&#39;, &#39;tennis racket&#39;, &#39;place mats&#39;, &#39;sealing roll&#39;, &#39;multiple plug&#39;, &#39;boomerang&#39;, &#39;bonnet&#39;, &#39;id card&#39;, &#39;rubber glove&#39;, &#39;fire blanket&#39;, &#39;andirons&#39;, &#39;crane scrapping&#39;, &#39;recycling plant&#39;, &#39;suspenders&#39;, &#39;wind turbines&#39;, &#39;wind turbine&#39;, &#39;marsh water&#39;, &#39;beer pump&#39;, &#39;minced meat&#39;, &#39;meat bag&#39;, &#39;meat bags&#39;, &#39;label tag&#39;, &#39;slicer&#39;, &#39;backdrops&#39;, &#39;inflatable train&#39;, &#39;balls rack&#39;, &#39;solt machine&#39;, &#39;step machine&#39;, &#39;pectoral machine&#39;, &#39;lance&#39;, &#39;nunchaku&#39;, &#39;caravans&#39;, &#39;compartment&#39;, &#39;laminating machine&#39;, &#39;linens&#39;, &#39;clothes horse&#39;, &#39;recycling trash&#39;, &#39;textile mill&#39;, &#39;ears&#39;, &#39;autoclave&#39;, &#39;slat&#39;, &#39;street name&#39;, &#39;ride tiles&#39;, &#39;pick&#39;, &#39;revolving doors&#39;, &#39;crosses&#39;, &#39;outboard motor&#39;, &#39;walkie talkie&#39;, &#39;pigeon&#39;, &#39;stained-glass window&#39;, &#39;gap&#39;, &#39;oriental lantern&#39;, &#39;storm grate&#39;, &#39;verandah&#39;, &#39;shape&#39;, &#39;utility cover&#39;, &#39;utility covers&#39;, &#39;bridges&#39;, &#39;trolley tools&#39;, &#39;slice&#39;, &#39;storage rack&#39;, &#39;string&#39;, &#39;hanging instrument&#39;, &#39;dental instruments&#39;, &#39;system&#39;, &#39;chute&#39;, &#39;saline solution&#39;, &#39;mountain salt&#39;, &#39;massage table&#39;, &#39;drawing board&#39;, &#39;portfolio&#39;, &#39;industrial machine&#39;, &#39;hand dryer&#39;, &#39;reels&#39;, &#39;iron tubes&#39;]
+
+</pre></div></div>
+</div>
+<section id="Export-ADE20K-data-into-Cityscapes-data-format">
+<h3>Export ADE20K data into Cityscapes data format<a class="headerlink" href="#Export-ADE20K-data-into-Cityscapes-data-format" title="Link to this heading">#</a></h3>
+<p>We now export the imported ADE20K dataset into Cityscapes format as we showed for in the <a class="reference external" href="https://github.com/openvinotoolkit/datumaro/blob/develop/notebooks/14_import_export_det_data.ipynb">previous notebook example</a>.</p>
+<p>Because of the large size of entire ADE20K dataset, we are going to export only the validation set into Cityscapes data format below.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ade20k_val_dataset</span> <span class="o">=</span> <span class="n">ade20k_dataset</span><span class="o">.</span><span class="n">get_subset</span><span class="p">(</span><span class="s2">&quot;validation&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">as_dataset</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Original Cityscapes data format&quot;</span><span class="p">)</span>
+<span class="o">!</span>tree<span class="w"> </span>-L<span class="w"> </span><span class="m">2</span><span class="w"> </span>./ADE20K_2021_17_01/images/ADE
+
+<span class="n">save_path</span> <span class="o">=</span> <span class="s2">&quot;ade20k_with_cityscapes_format&quot;</span>
+<span class="n">ade20k_val_dataset</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s2">&quot;cityscapes&quot;</span><span class="p">,</span> <span class="n">save_media</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reformulated ADE20K data with Cityscapes format&quot;</span><span class="p">)</span>
+<span class="o">!</span>tree<span class="w"> </span>-L<span class="w"> </span><span class="m">2</span><span class="w"> </span>./ade20k_with_cityscapes_format
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Original Cityscapes data format
+<span class="ansi-blue-intense-fg ansi-bold">./ADE20K_2021_17_01/images/ADE</span>
+├── <span class="ansi-blue-intense-fg ansi-bold">training</span>
+│   ├── <span class="ansi-blue-intense-fg ansi-bold">cultural</span>
+│   ├── <span class="ansi-blue-intense-fg ansi-bold">home_or_hotel</span>
+│   ├── <span class="ansi-blue-intense-fg ansi-bold">industrial</span>
+│   ├── <span class="ansi-blue-intense-fg ansi-bold">nature_landscape</span>
+│   ├── <span class="ansi-blue-intense-fg ansi-bold">shopping_and_dining</span>
+│   ├── <span class="ansi-blue-intense-fg ansi-bold">sports_and_leisure</span>
+│   ├── <span class="ansi-blue-intense-fg ansi-bold">transportation</span>
+│   ├── <span class="ansi-blue-intense-fg ansi-bold">unclassified</span>
+│   ├── <span class="ansi-blue-intense-fg ansi-bold">urban</span>
+│   └── <span class="ansi-blue-intense-fg ansi-bold">work_place</span>
+└── <span class="ansi-blue-intense-fg ansi-bold">validation</span>
+    ├── <span class="ansi-blue-intense-fg ansi-bold">cultural</span>
+    ├── <span class="ansi-blue-intense-fg ansi-bold">home_or_hotel</span>
+    ├── <span class="ansi-blue-intense-fg ansi-bold">industrial</span>
+    ├── <span class="ansi-blue-intense-fg ansi-bold">nature_landscape</span>
+    ├── <span class="ansi-blue-intense-fg ansi-bold">shopping_and_dining</span>
+    ├── <span class="ansi-blue-intense-fg ansi-bold">sports_and_leisure</span>
+    ├── <span class="ansi-blue-intense-fg ansi-bold">transportation</span>
+    ├── <span class="ansi-blue-intense-fg ansi-bold">unclassified</span>
+    ├── <span class="ansi-blue-intense-fg ansi-bold">urban</span>
+    └── <span class="ansi-blue-intense-fg ansi-bold">work_place</span>
+
+22 directories, 0 files
+Reformulated ADE20K data with Cityscapes format
+<span class="ansi-blue-intense-fg ansi-bold">./ade20k_with_cityscapes_format</span>
+├── <span class="ansi-blue-intense-fg ansi-bold">gtFine</span>
+│   └── <span class="ansi-blue-intense-fg ansi-bold">validation</span>
+├── <span class="ansi-blue-intense-fg ansi-bold">leftImg8bit</span>
+│   └── <span class="ansi-blue-intense-fg ansi-bold">validation</span>
+└── meta.json
+
+4 directories, 1 file
+</pre></div></div>
+</div>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="14_import_export_det_data.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Import and Export Public Data</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="09_encrypt_dataset.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Encrypt Your Dataset</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Import-Cityscapes-data">Import Cityscapes data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Import-ADE20K-data">Import ADE20K data</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Export-ADE20K-data-into-Cityscapes-data-format">Export ADE20K data into Cityscapes data format</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../_sources/docs/jupyter_notebook_examples/notebooks/15_import_export_seg_data.ipynb.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
