@@ -114,7 +114,7 @@ html_theme_options = {
     "icon_links": [
         {
             "name": "GitHub",
-            "url": "https://github.com/openvinotoolkit/datumaro",
+            "url": "https://github.com/open-edge-platform/datumaro",
             "icon": "_static/github_icon.png",
             "type": "local",
         },

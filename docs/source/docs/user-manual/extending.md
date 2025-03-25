@@ -1,7 +1,7 @@
 # Extending
 
 There are few ways to extend and customize Datumaro behavior, which is
-supported by plugins. Check [our contribution guide](https://github.com/openvinotoolkit/datumaro/blob/develop/contributing.md)
+supported by plugins. Check [our contribution guide](https://github.com/open-edge-platform/datumaro/blob/develop/contributing.md)
 for details on plugin implementation. In general, a plugin is a Python module.
 It must be put into a plugin directory:
 - `<project_dir>/.datumaro/plugins` for project-specific plugins

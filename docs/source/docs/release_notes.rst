@@ -394,4 +394,4 @@ Bug fixes
 - Fix a problem found on model remove CLI command
 
 .. note::
-   About the release of the developed version can be read in the `CHANGELOG.md <https://github.com/openvinotoolkit/datumaro/blob/develop/CHANGELOG.md>`_ of the develop branch.
+   About the release of the developed version can be read in the `CHANGELOG.md <https://github.com/open-edge-platform/datumaro/blob/develop/CHANGELOG.md>`_ of the develop branch.

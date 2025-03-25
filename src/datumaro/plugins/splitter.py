@@ -197,7 +197,7 @@ class _TaskSpecificSplit:
         self._seed = seed
 
         # remove subset name restriction
-        # https://github.com/openvinotoolkit/datumaro/issues/194
+        # https://github.com/open-edge-platform/datumaro/issues/194
         self._subsets = subsets
         self._parts = []
         self._length = "parent"
@@ -231,7 +231,7 @@ class _TaskSpecificSplit:
         valid = ["train", "val", "test"]
         for subset, ratio in splits:
             # remove subset name restriction
-            # https://github.com/openvinotoolkit/datumaro/issues/194
+            # https://github.com/open-edge-platform/datumaro/issues/194
             if restrict:
                 assert subset in valid, "Subset name must be one of %s, got %s" % (
                     valid,

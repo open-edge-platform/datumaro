@@ -3,7 +3,7 @@
 ## Introduction
 
 [Segment Anything Model](https://github.com/facebookresearch/segment-anything) provides high quality object masks for the given point, bounding box, and text prompts.
-[Datumaro](https://github.com/openvinotoolkit/datumaro) utilzes this zero-shot generalizable model for the dataset transformation features such as:
+[Datumaro](https://github.com/open-edge-platform/datumaro) utilzes this zero-shot generalizable model for the dataset transformation features such as:
 
 1. Bounding box to instance segmentation transform
 2. Pseudo labeling for instance segmentation
@@ -18,7 +18,7 @@
 
 2. Clone Datumaro repository to your local:
     ```console
-    git clone https://github.com/openvinotoolkit/datumaro
+    git clone https://github.com/open-edge-platform/datumaro
     ```
 
 3. go to `docker/segment-anything` sub-directory

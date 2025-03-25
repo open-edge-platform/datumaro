@@ -91,4 +91,4 @@ Extra options for exporting to image_zip format:
 ## Examples
 
 Examples of using this format from the code can be found in
-[the format tests](https://github.com/openvinotoolkit/datumaro/tree/develop/tests/test_image_zip_format.py)
+[the format tests](https://github.com/open-edge-platform/datumaro/tree/develop/tests/test_image_zip_format.py)

@@ -74,4 +74,4 @@ or
 dataset = dm.Dataset.import_from('<path_to_image_directory>', format='kaggle_yolo', ann_path='<path_to_annotation_directory>')
 ```
 
-Please refer to [here](https://github.com/openvinotoolkit/datumaro/blob/develop/notebooks/20_kaggle_data_import.ipynb) for various practices.
+Please refer to [here](https://github.com/open-edge-platform/datumaro/blob/develop/notebooks/20_kaggle_data_import.ipynb) for various practices.

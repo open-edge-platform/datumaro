@@ -147,4 +147,4 @@ This allows you to proceed with the export while bypassing the warning.
 ## Examples
 
 Examples of using this format from the code can be found in
-[the format tests](https://github.com/openvinotoolkit/datumaro/tree/develop/tests/unit/test_cvat_format.py)
+[the format tests](https://github.com/open-edge-platform/datumaro/tree/develop/tests/unit/test_cvat_format.py)

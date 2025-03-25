@@ -72,7 +72,7 @@ setuptools.setup(
     description="Dataset Management Framework (Datumaro)",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/openvinotoolkit/datumaro",
+    url="https://github.com/open-edge-platform/datumaro",
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src", include=["datumaro*"]),
     classifiers=[

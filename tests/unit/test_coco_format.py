@@ -1281,7 +1281,7 @@ class CocoExtractorTests(TestCase):
 
     @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_missing_ann_field(self):
-        # https://github.com/openvinotoolkit/datumaro/issues/1344 requires to make "segmentation" optional
+        # https://github.com/open-edge-platform/datumaro/issues/1344 requires to make "segmentation" optional
         for field in ["id", "image_id", "iscrowd", "category_id", "bbox"]:
             with self.subTest(field=field):
                 with TestDir() as test_dir:

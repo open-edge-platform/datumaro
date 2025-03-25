@@ -1461,7 +1461,7 @@ class DatasetTest(TestCase):
 
     @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_does_not_load_images_on_saving(self):
-        # Issue https://github.com/openvinotoolkit/datumaro/issues/177
+        # Issue https://github.com/open-edge-platform/datumaro/issues/177
         # Missing image metadata (size etc.) can lead to image loading on
         # dataset save without image saving
 

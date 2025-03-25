@@ -2,9 +2,9 @@
 
 ## Format specification
 
-Datumaro format is [Datumaro](https://github.com/openvinotoolkit/datumaro)'s own data format.
+Datumaro format is [Datumaro](https://github.com/open-edge-platform/datumaro)'s own data format.
 It aims to cover all media types and annotation types in Datumaro as possible.
-Therefore, if you do not want information loss when re-importing your dataset by [Datumaro](https://github.com/openvinotoolkit/datumaro), we recommend exporting your dataset using the Datumaro format.
+Therefore, if you do not want information loss when re-importing your dataset by [Datumaro](https://github.com/open-edge-platform/datumaro), we recommend exporting your dataset using the Datumaro format.
 In addition, you can directly use the Datumaro format for the model training using [OpenVINO™ Training Extensions](https://github.com/openvinotoolkit/training_extensions).
 
 Supported media types:
@@ -140,4 +140,4 @@ Extra options for exporting to Datumaro format:
 ## Examples
 
 Examples of using this format from the code can be found in
-[the format tests](https://github.com/openvinotoolkit/datumaro/tree/develop/tests/unit/data_formats/datumaro/test_datumaro_format.py)
+[the format tests](https://github.com/open-edge-platform/datumaro/tree/develop/tests/unit/data_formats/datumaro/test_datumaro_format.py)

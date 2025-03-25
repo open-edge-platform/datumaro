@@ -2,7 +2,7 @@
 
 ## Format specification
 
-DatumaroBinary format is [Datumaro](https://github.com/openvinotoolkit/datumaro)'s own data format as same as [Datumaro format](./datumaro.md).
+DatumaroBinary format is [Datumaro](https://github.com/open-edge-platform/datumaro)'s own data format as same as [Datumaro format](./datumaro.md).
 Basically, it provides the same function as [Datumaro format](./datumaro.md),
 but the difference is that the annotation file is not JSON but binary format.
 Including changes in the file format, DatumaroBinary provides three key features compared to the datumaro format:
@@ -45,7 +45,7 @@ Dataset/
 
 ### Dataset encryption
 
-Another advantage of the DatumaroBinary format is that it supports dataset encryption. If your dataset is hijacked by a potential attacker and you are concerned that your intellectual properties may be damaged, you can use this feature to protect your dataset from attackers. Enabling the dataset encryption feature allows you to encrypt both annotations and media or only the annotations. If you export the dataset to DatumaroBinary format with encryption, the secret key is automatically generated at the same time. You must keep this secret key separate from the exported dataset. This is because the secret key should be needed to read the exported dataset. Therefore, you have to be careful not to lose the secret key. If you would like to see an example of dataset encryption using Datumaro's Python API, please see [here](https://github.com/openvinotoolkit/datumaro/blob/develop/notebooks/09_encrypt_dataset.ipynb). For CLI usage of encryption, please see [Import encrypted datasets](#import-encrypted-datasets) and [Export datasets with encryption](#export-datasets-with-encryption) sections.
+Another advantage of the DatumaroBinary format is that it supports dataset encryption. If your dataset is hijacked by a potential attacker and you are concerned that your intellectual properties may be damaged, you can use this feature to protect your dataset from attackers. Enabling the dataset encryption feature allows you to encrypt both annotations and media or only the annotations. If you export the dataset to DatumaroBinary format with encryption, the secret key is automatically generated at the same time. You must keep this secret key separate from the exported dataset. This is because the secret key should be needed to read the exported dataset. Therefore, you have to be careful not to lose the secret key. If you would like to see an example of dataset encryption using Datumaro's Python API, please see [here](https://github.com/open-edge-platform/datumaro/blob/develop/notebooks/09_encrypt_dataset.ipynb). For CLI usage of encryption, please see [Import encrypted datasets](#import-encrypted-datasets) and [Export datasets with encryption](#export-datasets-with-encryption) sections.
 
 ### Multi-processing import and export
 
@@ -261,4 +261,4 @@ Extra options for exporting to DatumaroBinary format:
 ## Examples
 
 Examples of using this format from the code can be found in
-[the format tests](https://github.com/openvinotoolkit/datumaro/tree/develop/tests/unit/data_formats/datumaro/test_datumaro_format.py)
+[the format tests](https://github.com/open-edge-platform/datumaro/tree/develop/tests/unit/data_formats/datumaro/test_datumaro_format.py)
