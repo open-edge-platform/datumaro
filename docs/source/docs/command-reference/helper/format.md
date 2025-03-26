@@ -13,7 +13,7 @@ usage: datum format [-h] [-li | -le] [-d DELIMITER]
 
 Parameters:
 - `-h, --help` - Print the help message and exit.
-- `-d DELIMITER, --delimiter DELIMITER` - Seperator used to list data format names (default: `\n`). For example, `datum format -d ','` command displays
+- `-d DELIMITER, --delimiter DELIMITER` - Separator used to list data format names (default: `\n`). For example, `datum format -d ','` command displays
   ```console
   Supported import formats:
   ade20k2017,ade20k2020,align_celeba,...

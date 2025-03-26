@@ -5,6 +5,9 @@ on:
   release:
     types: [published]
 
+# Declare default permissions as read only.
+permissions: read-all
+
 jobs:
   build_wheels:
     name: Build wheels on ${{ matrix.os }}
@@ -29,7 +32,6 @@ jobs:
         with:
           name: artifact-wheels_${{ matrix.os }}
           path: ./wheelhouse/*.whl
-
   build_sdist:
     name: Build source distribution
     runs-on: ubuntu-latest
@@ -54,39 +56,34 @@ jobs:
     needs: [build_wheels, build_sdist]
     environment: pypi
     runs-on: ubuntu-latest
-    permissions: write-all
     steps:
-    - name: Download artifacts
-      uses: actions/download-artifact@v4
-      with:
-        path: dist
-        pattern: artifact-*
-        merge-multiple: true
-    # to determine where to publish the source distribution to PyPI or TestPyPI
-    - name: Check tag
-      id: check-tag
-      uses: actions-ecosystem/action-regex-match@v2
-      with:
-        text: ${{ github.ref }}
-        regex: '^refs/tags/v[0-9]+\.[0-9]+\.[0-9]+(rc[0-9]+)?$'
-    - name: Upload package distributions to github
-      if: ${{ steps.check-tag.outputs.match != '' }}
-      uses: svenstaro/upload-release-action@v2
-      with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: dist/*
-        tag: ${{ github.ref }}
-        overwrite: true
-        file_glob: true
-    - name: Publish package distributions to PyPI
-      if: ${{ steps.check-tag.outputs.match != '' }}
-      uses: pypa/gh-action-pypi-publish@v1.10.2
-      with:
-        password: ${{ secrets.PYPI_API_TOKEN }}
-    - name: Publish package distributions to TestPyPI
-      if: ${{ steps.check-tag.outputs.match == '' }}
-      uses: pypa/gh-action-pypi-publish@v1.10.2
-      with:
-        password: ${{ secrets.TESTPYPI_API_TOKEN }}
-        repository-url: https://test.pypi.org/legacy/
-        verbose: true
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+          pattern: artifact-*
+          merge-multiple: true
+      # to determine where to publish the package distribution to PyPI or TestPyPI
+      - name: Check tag
+        id: check-tag
+        uses: actions-ecosystem/action-regex-match@9e6c4fb3d5e898f505be7a1fb6e7b0a278f6665b # v2.0.2
+        with:
+          text: ${{ github.ref }}
+          regex: '^refs/tags/v[0-9]+\.[0-9]+\.[0-9]+(rc[0-9]+)?$'
+      # Publish the built wheel and source tarball to github
+      - name: Upload wheel and source files as github artifact
+        if: ${{ steps.check-tag.outputs.match != '' }}
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4.6.1
+        with:
+          name: datumaro
+          path: dist/*
+          overwrite: true
+      - name: Publish package distributions to PyPI
+        if: ${{ steps.check-tag.outputs.match != '' }}
+        uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc # v1.12.4
+      - name: Publish package distributions to TestPyPI
+        if: ${{ steps.check-tag.outputs.match == '' }}
+        uses: pypa/gh-action-pypi-publish@76f52bc884231f62b9a034ebfe128415bbaabdfc # v1.12.4
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          verbose: true

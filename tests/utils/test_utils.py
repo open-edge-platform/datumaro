@@ -108,6 +108,17 @@ def compare_categories(test, expected, actual):
             sorted(expected[AnnotationType.label].items, key=lambda t: t.name),
             sorted(actual[AnnotationType.label].items, key=lambda t: t.name),
         )
+        if expected[AnnotationType.label].label_groups:
+            assert len(expected[AnnotationType.label].label_groups) == len(
+                actual[AnnotationType.label].label_groups
+            )
+            for expected_group, actual_group in zip(
+                expected[AnnotationType.label].label_groups,
+                actual[AnnotationType.label].label_groups,
+            ):
+                test.assertEqual(set(expected_group.labels), set(actual_group.labels))
+                test.assertEqual(expected_group.group_type, actual_group.group_type)
+
     if AnnotationType.mask in expected:
         test.assertEqual(
             expected[AnnotationType.mask].colormap,

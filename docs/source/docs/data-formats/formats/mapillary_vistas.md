@@ -12,7 +12,7 @@ Supported annotation types:
     - `Mask` (class, instances, panoptic)
     - `Polygon`
 
-Supported atttibutes:
+Supported attributes:
     - `is_crowd`(boolean; on panoptic `mask`): Indicates that the annotation
     covers multiple instances of the same class.
 

@@ -13,6 +13,7 @@ Intermediate Skills
    09_data_filtering
    10_data_exploration
    11_data_generation
+   12_framework_conversion
 
 .. grid:: 1 2 2 2
    :gutter: 2
@@ -101,4 +102,15 @@ Intermediate Skills
          Level 11: Data Generation
 
       :bdg-info:`CLI`
+      :bdg-warning:`Python`
+
+   .. grid-item-card::
+
+      .. button-ref:: 12_framework_conversion
+         :color: primary
+         :outline:
+         :expand:
+
+         Level 12: Framework Conversion
+
       :bdg-warning:`Python`

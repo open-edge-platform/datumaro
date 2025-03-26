@@ -2,6 +2,7 @@
 
 [![Build status](https://github.com/openvinotoolkit/datumaro/actions/workflows/health_check.yml/badge.svg)](https://github.com/openvinotoolkit/datumaro/actions/workflows/health_check.yml)
 [![codecov](https://codecov.io/gh/openvinotoolkit/datumaro/branch/develop/graph/badge.svg?token=FG25VU096Q)](https://codecov.io/gh/openvinotoolkit/datumaro)
+[![Downloads](https://static.pepy.tech/badge/datumaro)](https://pepy.tech/project/datumaro)
 
 A framework and CLI tool to build, transform, and analyze datasets.
 

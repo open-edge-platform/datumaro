@@ -46,7 +46,7 @@ At this time, it's essential to specify the column names for media and label suc
 
 ## Import Kaggle Image Txt dataset
 
-Another `kaggle_image_txt` format replaces only `columns` with an order of informations in `.txt`.
+Another `kaggle_image_txt` format replaces only `columns` with an order of information in `.txt`.
 For instance, dataset can be created by
 
 ```python
