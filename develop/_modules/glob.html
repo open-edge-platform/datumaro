@@ -352,22 +352,28 @@ document.write(`
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;glob&quot;</span><span class="p">,</span> <span class="s2">&quot;iglob&quot;</span><span class="p">,</span> <span class="s2">&quot;escape&quot;</span><span class="p">]</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">glob</span><span class="p">(</span><span class="n">pathname</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">root_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dir_fd</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">glob</span><span class="p">(</span><span class="n">pathname</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">root_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dir_fd</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">include_hidden</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a list of paths matching a pathname pattern.</span>
 
 <span class="sd">    The pattern may contain simple shell-style wildcards a la</span>
-<span class="sd">    fnmatch. However, unlike fnmatch, filenames starting with a</span>
+<span class="sd">    fnmatch. Unlike fnmatch, filenames starting with a</span>
 <span class="sd">    dot are special cases that are not matched by &#39;*&#39; and &#39;?&#39;</span>
-<span class="sd">    patterns.</span>
+<span class="sd">    patterns by default.</span>
 
-<span class="sd">    If recursive is true, the pattern &#39;**&#39; will match any files and</span>
+<span class="sd">    If `include_hidden` is true, the patterns &#39;*&#39;, &#39;?&#39;, &#39;**&#39;  will match hidden</span>
+<span class="sd">    directories.</span>
+
+<span class="sd">    If `recursive` is true, the pattern &#39;**&#39; will match any files and</span>
 <span class="sd">    zero or more directories and subdirectories.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">iglob</span><span class="p">(</span><span class="n">pathname</span><span class="p">,</span> <span class="n">root_dir</span><span class="o">=</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">dir_fd</span><span class="o">=</span><span class="n">dir_fd</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="n">recursive</span><span class="p">))</span>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">iglob</span><span class="p">(</span><span class="n">pathname</span><span class="p">,</span> <span class="n">root_dir</span><span class="o">=</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">dir_fd</span><span class="o">=</span><span class="n">dir_fd</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="n">recursive</span><span class="p">,</span>
+                      <span class="n">include_hidden</span><span class="o">=</span><span class="n">include_hidden</span><span class="p">))</span>
 
 <div class="viewcode-block" id="iglob">
 <a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.components.importer.html#datumaro.components.importer.iglob">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">iglob</span><span class="p">(</span><span class="n">pathname</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">root_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dir_fd</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">iglob</span><span class="p">(</span><span class="n">pathname</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">root_dir</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dir_fd</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+          <span class="n">include_hidden</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return an iterator which yields the paths matching a pathname pattern.</span>
 
 <span class="sd">    The pattern may contain simple shell-style wildcards a la</span>
@@ -384,7 +390,8 @@ document.write(`
         <span class="n">root_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">root_dir</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">root_dir</span> <span class="o">=</span> <span class="n">pathname</span><span class="p">[:</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">it</span> <span class="o">=</span> <span class="n">_iglob</span><span class="p">(</span><span class="n">pathname</span><span class="p">,</span> <span class="n">root_dir</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">recursive</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">it</span> <span class="o">=</span> <span class="n">_iglob</span><span class="p">(</span><span class="n">pathname</span><span class="p">,</span> <span class="n">root_dir</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">recursive</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span>
+                <span class="n">include_hidden</span><span class="o">=</span><span class="n">include_hidden</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">pathname</span> <span class="ow">or</span> <span class="n">recursive</span> <span class="ow">and</span> <span class="n">_isrecursive</span><span class="p">(</span><span class="n">pathname</span><span class="p">[:</span><span class="mi">2</span><span class="p">]):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">s</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>  <span class="c1"># skip empty string</span>
@@ -395,7 +402,8 @@ document.write(`
     <span class="k">return</span> <span class="n">it</span></div>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_iglob</span><span class="p">(</span><span class="n">pathname</span><span class="p">,</span> <span class="n">root_dir</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">recursive</span><span class="p">,</span> <span class="n">dironly</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_iglob</span><span class="p">(</span><span class="n">pathname</span><span class="p">,</span> <span class="n">root_dir</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">recursive</span><span class="p">,</span> <span class="n">dironly</span><span class="p">,</span>
+           <span class="n">include_hidden</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="n">dirname</span><span class="p">,</span> <span class="n">basename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">pathname</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">has_magic</span><span class="p">(</span><span class="n">pathname</span><span class="p">):</span>
         <span class="k">assert</span> <span class="ow">not</span> <span class="n">dironly</span>
@@ -409,15 +417,18 @@ document.write(`
         <span class="k">return</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">dirname</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">recursive</span> <span class="ow">and</span> <span class="n">_isrecursive</span><span class="p">(</span><span class="n">basename</span><span class="p">):</span>
-            <span class="k">yield from</span> <span class="n">_glob2</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">basename</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">)</span>
+            <span class="k">yield from</span> <span class="n">_glob2</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">basename</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">,</span>
+                             <span class="n">include_hidden</span><span class="o">=</span><span class="n">include_hidden</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">yield from</span> <span class="n">_glob1</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">basename</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">)</span>
+            <span class="k">yield from</span> <span class="n">_glob1</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">basename</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">,</span>
+                              <span class="n">include_hidden</span><span class="o">=</span><span class="n">include_hidden</span><span class="p">)</span>
         <span class="k">return</span>
     <span class="c1"># `os.path.split()` returns the argument itself as a dirname if it is a</span>
     <span class="c1"># drive or UNC path.  Prevent an infinite recursion if a drive or UNC path</span>
     <span class="c1"># contains magic characters (i.e. r&#39;\\?\C:&#39;).</span>
     <span class="k">if</span> <span class="n">dirname</span> <span class="o">!=</span> <span class="n">pathname</span> <span class="ow">and</span> <span class="n">has_magic</span><span class="p">(</span><span class="n">dirname</span><span class="p">):</span>
-        <span class="n">dirs</span> <span class="o">=</span> <span class="n">_iglob</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">root_dir</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">recursive</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">dirs</span> <span class="o">=</span> <span class="n">_iglob</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">root_dir</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">recursive</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span>
+                      <span class="n">include_hidden</span><span class="o">=</span><span class="n">include_hidden</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">dirs</span> <span class="o">=</span> <span class="p">[</span><span class="n">dirname</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">has_magic</span><span class="p">(</span><span class="n">basename</span><span class="p">):</span>
@@ -428,20 +439,21 @@ document.write(`
     <span class="k">else</span><span class="p">:</span>
         <span class="n">glob_in_dir</span> <span class="o">=</span> <span class="n">_glob0</span>
     <span class="k">for</span> <span class="n">dirname</span> <span class="ow">in</span> <span class="n">dirs</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">glob_in_dir</span><span class="p">(</span><span class="n">_join</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">dirname</span><span class="p">),</span> <span class="n">basename</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">glob_in_dir</span><span class="p">(</span><span class="n">_join</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">dirname</span><span class="p">),</span> <span class="n">basename</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">,</span>
+                               <span class="n">include_hidden</span><span class="o">=</span><span class="n">include_hidden</span><span class="p">):</span>
             <span class="k">yield</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
 
 <span class="c1"># These 2 helper functions non-recursively glob inside a literal directory.</span>
 <span class="c1"># They return a list of basenames.  _glob1 accepts a pattern while _glob0</span>
 <span class="c1"># takes a literal basename (so it only has to check for its existence).</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_glob1</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_glob1</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">,</span> <span class="n">include_hidden</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="n">names</span> <span class="o">=</span> <span class="n">_listdir</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">_ishidden</span><span class="p">(</span><span class="n">pattern</span><span class="p">):</span>
-        <span class="n">names</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">names</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">_ishidden</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">include_hidden</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">_ishidden</span><span class="p">(</span><span class="n">pattern</span><span class="p">):</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">names</span> <span class="k">if</span> <span class="n">include_hidden</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">_ishidden</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">fnmatch</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">pattern</span><span class="p">)</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_glob0</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">basename</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_glob0</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">basename</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">,</span> <span class="n">include_hidden</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">basename</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">_lexists</span><span class="p">(</span><span class="n">_join</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">basename</span><span class="p">),</span> <span class="n">dir_fd</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">[</span><span class="n">basename</span><span class="p">]</span>
@@ -463,10 +475,12 @@ document.write(`
 <span class="c1"># This helper function recursively yields relative pathnames inside a literal</span>
 <span class="c1"># directory.</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_glob2</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_glob2</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">pattern</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">,</span> <span class="n">include_hidden</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="k">assert</span> <span class="n">_isrecursive</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
-    <span class="k">yield</span> <span class="n">pattern</span><span class="p">[:</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">yield from</span> <span class="n">_rlistdir</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">dirname</span> <span class="ow">or</span> <span class="n">_isdir</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">):</span>
+        <span class="k">yield</span> <span class="n">pattern</span><span class="p">[:</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">yield from</span> <span class="n">_rlistdir</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">,</span>
+                         <span class="n">include_hidden</span><span class="o">=</span><span class="n">include_hidden</span><span class="p">)</span>
 
 <span class="c1"># If dironly is false, yields all file names inside a directory.</span>
 <span class="c1"># If dironly is true, yields only directory names.</span>
@@ -509,13 +523,14 @@ document.write(`
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">it</span><span class="p">)</span>
 
 <span class="c1"># Recursively yields relative pathnames inside a literal directory.</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_rlistdir</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_rlistdir</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">,</span> <span class="n">include_hidden</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="n">names</span> <span class="o">=</span> <span class="n">_listdir</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">_ishidden</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">include_hidden</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">_ishidden</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
             <span class="k">yield</span> <span class="n">x</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">_join</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="n">dirname</span> <span class="k">else</span> <span class="n">x</span>
-            <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">_rlistdir</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">_rlistdir</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dir_fd</span><span class="p">,</span> <span class="n">dironly</span><span class="p">,</span>
+                               <span class="n">include_hidden</span><span class="o">=</span><span class="n">include_hidden</span><span class="p">):</span>
                 <span class="k">yield</span> <span class="n">_join</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 
 

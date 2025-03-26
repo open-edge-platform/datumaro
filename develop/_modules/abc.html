@@ -362,7 +362,7 @@ document.write(`
 
 <span class="sd">        class C(metaclass=ABCMeta):</span>
 <span class="sd">            @abstractmethod</span>
-<span class="sd">            def my_abstract_method(self, ...):</span>
+<span class="sd">            def my_abstract_method(self, arg1, arg2, argN):</span>
 <span class="sd">                ...</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">funcobj</span><span class="o">.</span><span class="n">__isabstractmethod__</span> <span class="o">=</span> <span class="kc">True</span>
@@ -447,7 +447,7 @@ document.write(`
 <span class="sd">        implementations defined by the registering ABC be callable (not</span>
 <span class="sd">        even via super()).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="n">mcls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">namespace</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="n">mcls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">namespace</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
             <span class="bp">cls</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="n">mcls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">namespace</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="n">_abc_init</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">cls</span>

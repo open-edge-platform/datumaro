@@ -348,6 +348,7 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">keyword</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">builtins</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">abc</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">_thread</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">FunctionType</span><span class="p">,</span> <span class="n">GenericAlias</span>
@@ -591,7 +592,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="nb">type</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="n">GenericAlias</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
             <span class="n">type_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="vm">__name__</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># typing objects, e.g. List[int]</span>
@@ -660,7 +661,7 @@ document.write(`
     <span class="c1"># This is used to support the PEP 487 __set_name__ protocol in the</span>
     <span class="c1"># case where we&#39;re using a field that contains a descriptor as a</span>
     <span class="c1"># default value.  For details on __set_name__, see</span>
-    <span class="c1"># https://www.python.org/dev/peps/pep-0487/#implementation-details.</span>
+    <span class="c1"># https://peps.python.org/pep-0487/#implementation-details.</span>
     <span class="c1">#</span>
     <span class="c1"># Note that in _process_class, this Field object is overwritten</span>
     <span class="c1"># with the default value, so the end result is a descriptor that</span>
@@ -1152,8 +1153,10 @@ document.write(`
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;field </span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> is a ClassVar but specifies &#39;</span>
                             <span class="s1">&#39;kw_only&#39;</span><span class="p">)</span>
 
-    <span class="c1"># For real fields, disallow mutable defaults for known types.</span>
-    <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">_field_type</span> <span class="ow">is</span> <span class="n">_FIELD</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">default</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="nb">set</span><span class="p">)):</span>
+    <span class="c1"># For real fields, disallow mutable defaults.  Use unhashable as a proxy</span>
+    <span class="c1"># indicator for mutability.  Read the __hash__ attribute from the class,</span>
+    <span class="c1"># not the instance.</span>
+    <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">_field_type</span> <span class="ow">is</span> <span class="n">_FIELD</span> <span class="ow">and</span> <span class="n">f</span><span class="o">.</span><span class="n">default</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="fm">__hash__</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;mutable default </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">default</span><span class="p">)</span><span class="si">}</span><span class="s1"> for field &#39;</span>
                          <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">f</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> is not allowed: use default_factory&#39;</span><span class="p">)</span>
 
@@ -1224,7 +1227,7 @@ document.write(`
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_process_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">init</span><span class="p">,</span> <span class="nb">repr</span><span class="p">,</span> <span class="n">eq</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">unsafe_hash</span><span class="p">,</span> <span class="n">frozen</span><span class="p">,</span>
-                   <span class="n">match_args</span><span class="p">,</span> <span class="n">kw_only</span><span class="p">,</span> <span class="n">slots</span><span class="p">):</span>
+                   <span class="n">match_args</span><span class="p">,</span> <span class="n">kw_only</span><span class="p">,</span> <span class="n">slots</span><span class="p">,</span> <span class="n">weakref_slot</span><span class="p">):</span>
     <span class="c1"># Now that dicts retain insertion order, there&#39;s no reason to use</span>
     <span class="c1"># an ordered dict.  I am leveraging that ordering here, because</span>
     <span class="c1"># derived class fields overwrite base class fields, but the order</span>
@@ -1434,16 +1437,24 @@ document.write(`
 
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;__doc__&#39;</span><span class="p">):</span>
         <span class="c1"># Create a class doc-string.</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span>
-                       <span class="nb">str</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="bp">cls</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; -&gt; None&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># In some cases fetching a signature is not possible.</span>
+            <span class="c1"># But, we surely should not fail in this case.</span>
+            <span class="n">text_sig</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">signature</span><span class="p">(</span><span class="bp">cls</span><span class="p">))</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; -&gt; None&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+            <span class="n">text_sig</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="n">text_sig</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">match_args</span><span class="p">:</span>
         <span class="c1"># I could probably compute this once</span>
         <span class="n">_set_new_attribute</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;__match_args__&#39;</span><span class="p">,</span>
                            <span class="nb">tuple</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">std_init_fields</span><span class="p">))</span>
 
+    <span class="c1"># It&#39;s an error to specify weakref_slot if slots is False.</span>
+    <span class="k">if</span> <span class="n">weakref_slot</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">slots</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;weakref_slot is True but slots is False&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">slots</span><span class="p">:</span>
-        <span class="bp">cls</span> <span class="o">=</span> <span class="n">_add_slots</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">frozen</span><span class="p">)</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="n">_add_slots</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">frozen</span><span class="p">,</span> <span class="n">weakref_slot</span><span class="p">)</span>
 
     <span class="n">abc</span><span class="o">.</span><span class="n">update_abstractmethods</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
 
@@ -1451,7 +1462,7 @@ document.write(`
 
 
 <span class="c1"># _dataclass_getstate and _dataclass_setstate are needed for pickling frozen</span>
-<span class="c1"># classes with slots.  These could be slighly more performant if we generated</span>
+<span class="c1"># classes with slots.  These could be slightly more performant if we generated</span>
 <span class="c1"># the code instead of iterating over fields.  But that can be a project for</span>
 <span class="c1"># another day, if performance becomes an issue.</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_dataclass_getstate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1464,7 +1475,23 @@ document.write(`
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_add_slots</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">is_frozen</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_slots</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">match</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;__slots__&#39;</span><span class="p">):</span>
+        <span class="c1"># A class which does not define __slots__ at all is equivalent</span>
+        <span class="c1"># to a class defining __slots__ = (&#39;__dict__&#39;, &#39;__weakref__&#39;)</span>
+        <span class="k">case</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">yield from</span> <span class="p">(</span><span class="s1">&#39;__dict__&#39;</span><span class="p">,</span> <span class="s1">&#39;__weakref__&#39;</span><span class="p">)</span>
+        <span class="k">case</span> <span class="nb">str</span><span class="p">(</span><span class="n">slot</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">slot</span>
+        <span class="c1"># Slots may be any iterable, but we cannot handle an iterator</span>
+        <span class="c1"># because it will already be (partially) consumed.</span>
+        <span class="k">case</span> <span class="n">iterable</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="s1">&#39;__next__&#39;</span><span class="p">):</span>
+            <span class="k">yield from</span> <span class="n">iterable</span>
+        <span class="k">case</span><span class="w"> </span><span class="k">_</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Slots of &#39;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39; cannot be determined&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_add_slots</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">is_frozen</span><span class="p">,</span> <span class="n">weakref_slot</span><span class="p">):</span>
     <span class="c1"># Need to create a new class, since we can&#39;t set __slots__</span>
     <span class="c1">#  after a class has been created.</span>
 
@@ -1475,7 +1502,23 @@ document.write(`
     <span class="c1"># Create a new dict for our new class.</span>
     <span class="n">cls_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
     <span class="n">field_names</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">(</span><span class="bp">cls</span><span class="p">))</span>
-    <span class="n">cls_dict</span><span class="p">[</span><span class="s1">&#39;__slots__&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">field_names</span>
+    <span class="c1"># Make sure slots don&#39;t overlap with those in base classes.</span>
+    <span class="n">inherited_slots</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+        <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="n">_get_slots</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__mro__</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="p">)</span>
+    <span class="c1"># The slots for our class.  Remove slots from our base classes.  Add</span>
+    <span class="c1"># &#39;__weakref__&#39; if weakref_slot was given, unless it is already present.</span>
+    <span class="n">cls_dict</span><span class="p">[</span><span class="s2">&quot;__slots__&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+        <span class="n">itertools</span><span class="o">.</span><span class="n">filterfalse</span><span class="p">(</span>
+            <span class="n">inherited_slots</span><span class="o">.</span><span class="fm">__contains__</span><span class="p">,</span>
+            <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span>
+                <span class="c1"># gh-93521: &#39;__weakref__&#39; also needs to be filtered out if</span>
+                <span class="c1"># already present in inherited_slots</span>
+                <span class="n">field_names</span><span class="p">,</span> <span class="p">(</span><span class="s1">&#39;__weakref__&#39;</span><span class="p">,)</span> <span class="k">if</span> <span class="n">weakref_slot</span> <span class="k">else</span> <span class="p">()</span>
+            <span class="p">)</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
     <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="n">field_names</span><span class="p">:</span>
         <span class="c1"># Remove our attributes, if present. They&#39;ll still be</span>
         <span class="c1">#  available in _MARKER.</span>
@@ -1483,6 +1526,9 @@ document.write(`
 
     <span class="c1"># Remove __dict__ itself.</span>
     <span class="n">cls_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;__dict__&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="c1"># Clear existing `__weakref__` descriptor, it belongs to a previous type:</span>
+    <span class="n">cls_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;__weakref__&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>  <span class="c1"># gh-102069</span>
 
     <span class="c1"># And finally create the class.</span>
     <span class="n">qualname</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s1">&#39;__qualname__&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -1492,8 +1538,10 @@ document.write(`
 
     <span class="k">if</span> <span class="n">is_frozen</span><span class="p">:</span>
         <span class="c1"># Need this for pickling frozen classes with slots.</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">__getstate__</span> <span class="o">=</span> <span class="n">_dataclass_getstate</span>
-        <span class="bp">cls</span><span class="o">.</span><span class="n">__setstate__</span> <span class="o">=</span> <span class="n">_dataclass_setstate</span>
+        <span class="k">if</span> <span class="s1">&#39;__getstate__&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cls_dict</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">__getstate__</span> <span class="o">=</span> <span class="n">_dataclass_getstate</span>
+        <span class="k">if</span> <span class="s1">&#39;__setstate__&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cls_dict</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">__setstate__</span> <span class="o">=</span> <span class="n">_dataclass_setstate</span>
 
     <span class="k">return</span> <span class="bp">cls</span>
 
@@ -1502,25 +1550,25 @@ document.write(`
 <a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.components.algorithms.noisy_label_detection.loss_dynamics_analyzer.html#datumaro.components.algorithms.noisy_label_detection.loss_dynamics_analyzer.dataclass">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">dataclass</span><span class="p">(</span><span class="bp">cls</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">eq</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
               <span class="n">unsafe_hash</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">frozen</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">match_args</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-              <span class="n">kw_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">slots</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the same class as was passed in, with dunder methods</span>
-<span class="sd">    added based on the fields defined in the class.</span>
+              <span class="n">kw_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">slots</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">weakref_slot</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add dunder methods based on the fields defined in the class.</span>
 
 <span class="sd">    Examines PEP 526 __annotations__ to determine fields.</span>
 
-<span class="sd">    If init is true, an __init__() method is added to the class. If</span>
-<span class="sd">    repr is true, a __repr__() method is added. If order is true, rich</span>
+<span class="sd">    If init is true, an __init__() method is added to the class. If repr</span>
+<span class="sd">    is true, a __repr__() method is added. If order is true, rich</span>
 <span class="sd">    comparison dunder methods are added. If unsafe_hash is true, a</span>
-<span class="sd">    __hash__() method function is added. If frozen is true, fields may</span>
-<span class="sd">    not be assigned to after instance creation. If match_args is true,</span>
-<span class="sd">    the __match_args__ tuple is added. If kw_only is true, then by</span>
-<span class="sd">    default all fields are keyword-only. If slots is true, an</span>
-<span class="sd">    __slots__ attribute is added.</span>
+<span class="sd">    __hash__() method is added. If frozen is true, fields may not be</span>
+<span class="sd">    assigned to after instance creation. If match_args is true, the</span>
+<span class="sd">    __match_args__ tuple is added. If kw_only is true, then by default</span>
+<span class="sd">    all fields are keyword-only. If slots is true, a new class with a</span>
+<span class="sd">    __slots__ attribute is returned.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">wrap</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">_process_class</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">init</span><span class="p">,</span> <span class="nb">repr</span><span class="p">,</span> <span class="n">eq</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">unsafe_hash</span><span class="p">,</span>
-                              <span class="n">frozen</span><span class="p">,</span> <span class="n">match_args</span><span class="p">,</span> <span class="n">kw_only</span><span class="p">,</span> <span class="n">slots</span><span class="p">)</span>
+                              <span class="n">frozen</span><span class="p">,</span> <span class="n">match_args</span><span class="p">,</span> <span class="n">kw_only</span><span class="p">,</span> <span class="n">slots</span><span class="p">,</span>
+                              <span class="n">weakref_slot</span><span class="p">)</span>
 
     <span class="c1"># See if we&#39;re being called as @dataclass or @dataclass().</span>
     <span class="k">if</span> <span class="bp">cls</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1558,7 +1606,7 @@ document.write(`
 <span class="k">def</span><span class="w"> </span><span class="nf">is_dataclass</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns True if obj is a dataclass or an instance of a</span>
 <span class="sd">    dataclass.&quot;&quot;&quot;</span>
-    <span class="bp">cls</span> <span class="o">=</span> <span class="n">obj</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">GenericAlias</span><span class="p">)</span> <span class="k">else</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+    <span class="bp">cls</span> <span class="o">=</span> <span class="n">obj</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="k">else</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">_FIELDS</span><span class="p">)</span>
 
 
@@ -1566,7 +1614,7 @@ document.write(`
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the fields of a dataclass instance as a new dictionary mapping</span>
 <span class="sd">    field names to field values.</span>
 
-<span class="sd">    Example usage:</span>
+<span class="sd">    Example usage::</span>
 
 <span class="sd">      @dataclass</span>
 <span class="sd">      class C:</span>
@@ -1637,8 +1685,8 @@ document.write(`
 <span class="sd">          x: int</span>
 <span class="sd">          y: int</span>
 
-<span class="sd">    c = C(1, 2)</span>
-<span class="sd">    assert astuple(c) == (1, 2)</span>
+<span class="sd">      c = C(1, 2)</span>
+<span class="sd">      assert astuple(c) == (1, 2)</span>
 
 <span class="sd">    If given, &#39;tuple_factory&#39; will be used instead of built-in tuple.</span>
 <span class="sd">    The function applies recursively to field values that are</span>
@@ -1680,17 +1728,18 @@ document.write(`
 
 <span class="k">def</span><span class="w"> </span><span class="nf">make_dataclass</span><span class="p">(</span><span class="n">cls_name</span><span class="p">,</span> <span class="n">fields</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">bases</span><span class="o">=</span><span class="p">(),</span> <span class="n">namespace</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                    <span class="nb">repr</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">eq</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">unsafe_hash</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                   <span class="n">frozen</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">match_args</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">slots</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+                   <span class="n">frozen</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">match_args</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">slots</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                   <span class="n">weakref_slot</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a new dynamically created dataclass.</span>
 
 <span class="sd">    The dataclass name will be &#39;cls_name&#39;.  &#39;fields&#39; is an iterable</span>
 <span class="sd">    of either (name), (name, type) or (name, type, Field) objects. If type is</span>
 <span class="sd">    omitted, use the string &#39;typing.Any&#39;.  Field objects are created by</span>
-<span class="sd">    the equivalent of calling &#39;field(name, type [, Field-info])&#39;.</span>
+<span class="sd">    the equivalent of calling &#39;field(name, type [, Field-info])&#39;.::</span>
 
 <span class="sd">      C = make_dataclass(&#39;C&#39;, [&#39;x&#39;, (&#39;y&#39;, int), (&#39;z&#39;, int, field(init=False))], bases=(Base,))</span>
 
-<span class="sd">    is equivalent to:</span>
+<span class="sd">    is equivalent to::</span>
 
 <span class="sd">      @dataclass</span>
 <span class="sd">      class C(Base):</span>
@@ -1747,13 +1796,14 @@ document.write(`
     <span class="c1"># Apply the normal decorator.</span>
     <span class="k">return</span> <span class="n">dataclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="n">init</span><span class="p">,</span> <span class="nb">repr</span><span class="o">=</span><span class="nb">repr</span><span class="p">,</span> <span class="n">eq</span><span class="o">=</span><span class="n">eq</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">,</span>
                      <span class="n">unsafe_hash</span><span class="o">=</span><span class="n">unsafe_hash</span><span class="p">,</span> <span class="n">frozen</span><span class="o">=</span><span class="n">frozen</span><span class="p">,</span>
-                     <span class="n">match_args</span><span class="o">=</span><span class="n">match_args</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="n">kw_only</span><span class="p">,</span> <span class="n">slots</span><span class="o">=</span><span class="n">slots</span><span class="p">)</span>
+                     <span class="n">match_args</span><span class="o">=</span><span class="n">match_args</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="n">kw_only</span><span class="p">,</span> <span class="n">slots</span><span class="o">=</span><span class="n">slots</span><span class="p">,</span>
+                     <span class="n">weakref_slot</span><span class="o">=</span><span class="n">weakref_slot</span><span class="p">)</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">replace</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">**</span><span class="n">changes</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a new object replacing specified fields with new values.</span>
 
-<span class="sd">    This is especially useful for frozen classes.  Example usage:</span>
+<span class="sd">    This is especially useful for frozen classes.  Example usage::</span>
 
 <span class="sd">      @dataclass(frozen=True)</span>
 <span class="sd">      class C:</span>
@@ -1763,7 +1813,7 @@ document.write(`
 <span class="sd">      c = C(1, 2)</span>
 <span class="sd">      c1 = replace(c, x=3)</span>
 <span class="sd">      assert c1.x == 3 and c1.y == 2</span>
-<span class="sd">      &quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># We&#39;re going to mutate &#39;changes&#39;, but that&#39;s okay because it&#39;s a</span>
     <span class="c1"># new dict, even if called with &#39;replace(obj, **my_changes)&#39;.</span>

@@ -560,6 +560,13 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="nf">_is_owned</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_owner</span> <span class="o">==</span> <span class="n">get_ident</span><span class="p">()</span>
 
+    <span class="c1"># Internal method used for reentrancy checks</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_recursion_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_owner</span> <span class="o">!=</span> <span class="n">get_ident</span><span class="p">():</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_count</span>
+
 <span class="n">_PyRLock</span> <span class="o">=</span> <span class="n">_RLock</span>
 
 
@@ -785,6 +792,11 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_cond</span> <span class="o">=</span> <span class="n">Condition</span><span class="p">(</span><span class="n">Lock</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">value</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span>
+        <span class="k">return</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2"> at </span><span class="si">{</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">:</span><span class="s2">#x</span><span class="si">}</span><span class="s2">:&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; value=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="si">}</span><span class="s2">&gt;&quot;</span><span class="p">)</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">acquire</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">blocking</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Acquire a semaphore, decrementing the internal counter by one.</span>
 
@@ -871,6 +883,11 @@ document.write(`
         <span class="n">Semaphore</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_initial_value</span> <span class="o">=</span> <span class="n">value</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span>
+        <span class="k">return</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2"> at </span><span class="si">{</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">:</span><span class="s2">#x</span><span class="si">}</span><span class="s2">:&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; value=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_initial_value</span><span class="si">}</span><span class="s2">&gt;&quot;</span><span class="p">)</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Release a semaphore, incrementing the internal counter by one or more.</span>
 
@@ -905,6 +922,11 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cond</span> <span class="o">=</span> <span class="n">Condition</span><span class="p">(</span><span class="n">Lock</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_flag</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="s1">&#39;set&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flag</span> <span class="k">else</span> <span class="s1">&#39;unset&#39;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2"> at </span><span class="si">{</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">:</span><span class="s2">#x</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">status</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_at_fork_reinit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Private method called by Thread._reset_internal_locks()</span>
@@ -1003,6 +1025,13 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_parties</span> <span class="o">=</span> <span class="n">parties</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_state</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># 0 filling, 1 draining, -1 resetting, -2 broken</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_count</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">broken</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2"> at </span><span class="si">{</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">:</span><span class="s2">#x</span><span class="si">}</span><span class="s2">: broken&gt;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__qualname__</span><span class="si">}</span><span class="s2"> at </span><span class="si">{</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">:</span><span class="s2">#x</span><span class="si">}</span><span class="s2">:&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; waiters=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_waiting</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">parties</span><span class="si">}</span><span class="s2">&gt;&quot;</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">wait</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Wait for the barrier.</span>
@@ -1199,7 +1228,7 @@ document.write(`
 <span class="sd">        *name* is the thread name. By default, a unique name is constructed of</span>
 <span class="sd">        the form &quot;Thread-N&quot; where N is a small decimal number.</span>
 
-<span class="sd">        *args* is the argument tuple for the target invocation. Defaults to ().</span>
+<span class="sd">        *args* is a list or tuple of arguments for the target invocation. Defaults to ().</span>
 
 <span class="sd">        *kwargs* is a dictionary of keyword arguments for the target</span>
 <span class="sd">        invocation. Defaults to {}.</span>
@@ -1385,13 +1414,7 @@ document.write(`
             <span class="k">except</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_invoke_excepthook</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">finally</span><span class="p">:</span>
-            <span class="k">with</span> <span class="n">_active_limbo_lock</span><span class="p">:</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="c1"># We don&#39;t call self._delete() because it also</span>
-                    <span class="c1"># grabs _active_limbo_lock.</span>
-                    <span class="k">del</span> <span class="n">_active</span><span class="p">[</span><span class="n">get_ident</span><span class="p">()]</span>
-                <span class="k">except</span><span class="p">:</span>
-                    <span class="k">pass</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_delete</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># After calling ._stop(), .is_alive() returns False and .join() returns</span>
@@ -2015,6 +2038,11 @@ document.write(`
                 <span class="c1"># its new value since it can have changed.</span>
                 <span class="n">thread</span><span class="o">.</span><span class="n">_reset_internal_locks</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
                 <span class="n">ident</span> <span class="o">=</span> <span class="n">get_ident</span><span class="p">()</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thread</span><span class="p">,</span> <span class="n">_DummyThread</span><span class="p">):</span>
+                    <span class="n">thread</span><span class="o">.</span><span class="vm">__class__</span> <span class="o">=</span> <span class="n">_MainThread</span>
+                    <span class="n">thread</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="s1">&#39;MainThread&#39;</span>
+                    <span class="n">thread</span><span class="o">.</span><span class="n">_daemonic</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="n">thread</span><span class="o">.</span><span class="n">_set_tstate_lock</span><span class="p">()</span>
                 <span class="n">thread</span><span class="o">.</span><span class="n">_ident</span> <span class="o">=</span> <span class="n">ident</span>
                 <span class="n">new_active</span><span class="p">[</span><span class="n">ident</span><span class="p">]</span> <span class="o">=</span> <span class="n">thread</span>
             <span class="k">else</span><span class="p">:</span>
