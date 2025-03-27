@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Data preparation with Datumaro &#8212; Datumaro 1.10.0rc1 documentation</title>
+    <title>Data preparation with Datumaro &#8212; Datumaro 1.10.0 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../_static/documentation_options.js?v=0c3350b6"></script>
+    <script src="../../../_static/documentation_options.js?v=1d24b1d9"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -128,8 +128,8 @@
       
     
     
-    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.10.0rc1 documentation - Home"/>
-    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.10.0rc1 documentation - Home"/>`);</script>
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.10.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.10.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -368,7 +368,7 @@ document.write(`
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dm</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.environment</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_ENVIRONMENT</span>
 
-<span class="n">data_path</span> <span class="o">=</span> <span class="s2">&quot;~/data&quot;</span>
+<span class="n">data_path</span> <span class="o">=</span> <span class="s2">&quot;data&quot;</span>
 <span class="n">detected_formats</span> <span class="o">=</span> <span class="n">DEFAULT_ENVIRONMENT</span><span class="o">.</span><span class="n">detect_dataset</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span>
 <span class="n">detected_formats</span>
 </pre></div>
@@ -411,7 +411,7 @@ document.write(`
 <div class="highlight"><pre>
 Dataset
         size=2000
-        source_path=/home/sooah/data/corona_nlp_1k
+        source_path=data
         media_type=&lt;class &#39;datumaro.components.media.TableRow&#39;&gt;
         ann_types=set()
         annotated_items_count=0
@@ -468,7 +468,7 @@ infos
 <div class="highlight"><pre>
 Dataset
         size=2000
-        source_path=/home/sooah/data/corona_nlp_1k
+        source_path=data
         media_type=&lt;class &#39;datumaro.components.media.TableRow&#39;&gt;
         ann_types={&lt;AnnotationType.tabular: 14&gt;}
         annotated_items_count=2000
@@ -544,7 +544,7 @@ annotations :  [Tabular(id=0, attributes={}, group=0, object_id=-1, values={&#39
 <div class="highlight"><pre>
 Dataset
         size=2000
-        source_path=/home/sooah/data/corona_nlp_1k
+        source_path=data
         media_type=&lt;class &#39;datumaro.components.media.TableRow&#39;&gt;
         ann_types={&lt;AnnotationType.label: 1&gt;}
         annotated_items_count=2000
@@ -808,7 +808,7 @@ After Clean :  nileshshah summarized important points paper thread
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">train_iter</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">([</span><span class="n">value</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;OriginalTweet&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">result</span><span class="p">])</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">train_iter</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;OriginalTweet&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">result</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -817,27 +817,26 @@ After Clean :  nileshshah summarized important points paper thread
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.framework_converter</span><span class="w"> </span><span class="kn">import</span> <span class="n">FrameworkConverter</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">torchtext.data.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_tokenizer</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">torchtext.vocab</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_vocab_from_iterator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tokenizers</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tokenizer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tokenizers.trainers</span><span class="w"> </span><span class="kn">import</span> <span class="n">BpeTrainer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tokenizers.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">BPE</span>
 
-<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">get_tokenizer</span><span class="p">(</span><span class="s2">&quot;basic_english&quot;</span><span class="p">)</span>
-
-
-<span class="k">def</span><span class="w"> </span><span class="nf">yield_tokens</span><span class="p">(</span><span class="n">data_iter</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">data_iter</span><span class="p">:</span>
-        <span class="k">yield</span> <span class="n">tokenizer</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">Tokenizer</span><span class="p">(</span><span class="n">BPE</span><span class="p">(</span><span class="n">unk_token</span><span class="o">=</span><span class="s2">&quot;[UNK]&quot;</span><span class="p">))</span>
+<span class="n">trainer</span> <span class="o">=</span> <span class="n">BpeTrainer</span><span class="p">(</span><span class="n">special_tokens</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;[UNK]&quot;</span><span class="p">,</span> <span class="s2">&quot;[CLS]&quot;</span><span class="p">,</span> <span class="s2">&quot;[SEP]&quot;</span><span class="p">,</span> <span class="s2">&quot;[PAD]&quot;</span><span class="p">,</span> <span class="s2">&quot;[MASK]&quot;</span><span class="p">],</span> <span class="n">vocab_size</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">tokenizer</span><span class="o">.</span><span class="n">train_from_iterator</span><span class="p">(</span><span class="n">train_iter</span><span class="p">,</span> <span class="n">trainer</span><span class="p">)</span>
 
 
-<span class="n">vocab</span> <span class="o">=</span> <span class="n">build_vocab_from_iterator</span><span class="p">(</span><span class="n">train_iter</span><span class="p">,</span> <span class="n">specials</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;&lt;unk&gt;&quot;</span><span class="p">])</span>
-<span class="n">vocab</span><span class="o">.</span><span class="n">set_default_index</span><span class="p">(</span><span class="n">vocab</span><span class="p">[</span><span class="s2">&quot;&lt;unk&gt;&quot;</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">apply_tokenizer</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">ids</span>
+
 
 <span class="n">train_dataset</span> <span class="o">=</span> <span class="n">FrameworkConverter</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="s2">&quot;tabular&quot;</span><span class="p">)</span>
 <span class="n">dm_torch_train_dataset</span> <span class="o">=</span> <span class="n">train_dataset</span><span class="o">.</span><span class="n">to_framework</span><span class="p">(</span>
-    <span class="n">framework</span><span class="o">=</span><span class="s2">&quot;torch&quot;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;OriginalTweet&quot;</span><span class="p">},</span> <span class="n">tokenizer</span><span class="o">=</span><span class="n">tokenizer</span><span class="p">,</span> <span class="n">vocab</span><span class="o">=</span><span class="n">vocab</span>
+    <span class="n">framework</span><span class="o">=</span><span class="s2">&quot;torch&quot;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;OriginalTweet&quot;</span><span class="p">},</span> <span class="n">tokenizer</span><span class="o">=</span><span class="n">apply_tokenizer</span>
 <span class="p">)</span>
 <span class="n">val_dataset</span> <span class="o">=</span> <span class="n">FrameworkConverter</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="s2">&quot;tabular&quot;</span><span class="p">)</span>
 <span class="n">dm_torch_val_dataset</span> <span class="o">=</span> <span class="n">val_dataset</span><span class="o">.</span><span class="n">to_framework</span><span class="p">(</span>
-    <span class="n">framework</span><span class="o">=</span><span class="s2">&quot;torch&quot;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;OriginalTweet&quot;</span><span class="p">},</span> <span class="n">tokenizer</span><span class="o">=</span><span class="n">tokenizer</span><span class="p">,</span> <span class="n">vocab</span><span class="o">=</span><span class="n">vocab</span>
+    <span class="n">framework</span><span class="o">=</span><span class="s2">&quot;torch&quot;</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="s2">&quot;OriginalTweet&quot;</span><span class="p">},</span> <span class="n">tokenizer</span><span class="o">=</span><span class="n">apply_tokenizer</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -845,14 +844,11 @@ After Clean :  nileshshah summarized important points paper thread
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
-<div class="output_area stderr docutils container">
+<div class="output_area docutils container">
 <div class="highlight"><pre>
-2024-10-16 16:36:27.631387: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:485] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
-2024-10-16 16:36:27.645753: E external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:8454] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
-2024-10-16 16:36:27.649957: E external/local_xla/xla/stream_executor/cuda/cuda_blas.cc:1452] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
-2024-10-16 16:36:27.659912: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
-To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
-2024-10-16 16:36:28.583817: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+
+
+
 </pre></div></div>
 </div>
 </section>
@@ -889,7 +885,7 @@ To enable the following instructions: AVX2 FMA, in other operations, rebuild Ten
 
 
 <span class="c1"># Example: Model initialization</span>
-<span class="n">vocab_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">vocab</span><span class="p">)</span>  <span class="c1"># This should be the size of your vocabulary</span>
+<span class="n">vocab_size</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">get_vocab_size</span><span class="p">()</span>  <span class="c1"># This should be the size of your vocabulary</span>
 <span class="n">embed_size</span> <span class="o">=</span> <span class="mi">128</span>
 <span class="n">hidden_size</span> <span class="o">=</span> <span class="mi">256</span>
 <span class="n">output_size</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># Assume we have 3 sentiment classes: positive, neutral, negative</span>
@@ -903,8 +899,8 @@ To enable the following instructions: AVX2 FMA, in other operations, rebuild Ten
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-/home/sooah/.pyenv/versions/datum/lib/python3.11/site-packages/torch/nn/modules/rnn.py:82: UserWarning: dropout option adds dropout after all but last recurrent layer, so non-zero dropout expects num_layers greater than 1, but got dropout=0.5 and num_layers=1
-  warnings.warn(&#34;dropout option adds dropout after all but last &#34;
+/home/gppayend/datumaro/.venv/lib/python3.9/site-packages/torch/nn/modules/rnn.py:123: UserWarning: dropout option adds dropout after all but last recurrent layer, so non-zero dropout expects num_layers greater than 1, but got dropout=0.5 and num_layers=1
+  warnings.warn(
 </pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
@@ -998,7 +994,7 @@ To enable the following instructions: AVX2 FMA, in other operations, rebuild Ten
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-/tmp/ipykernel_633257/52718613.py:18: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at ../torch/csrc/utils/tensor_new.cpp:261.)
+/tmp/ipykernel_3975746/3158746090.py:22: UserWarning: Creating a tensor from a list of numpy.ndarrays is extremely slow. Please consider converting the list to a single numpy.ndarray with numpy.array() before converting to a tensor. (Triggered internally at ../torch/csrc/utils/tensor_new.cpp:278.)
   padded_inputs = torch.tensor(padded_inputs, dtype=torch.long)
 </pre></div></div>
 </div>
@@ -1007,11 +1003,26 @@ To enable the following instructions: AVX2 FMA, in other operations, rebuild Ten
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Epoch 1, Loss: 1.590895850211382 | Validation Loss: 1.5764841102063656
-Epoch 2, Loss: 1.5879455283284187 | Validation Loss: 1.5764116831123829
-Epoch 3, Loss: 1.581930335611105 | Validation Loss: 1.5686759762465954
-Epoch 4, Loss: 1.5809518098831177 | Validation Loss: 1.5715479329228401
-Epoch 5, Loss: 1.5830248109996319 | Validation Loss: 1.5709160640835762
+Epoch 1, Loss: 1.5981528386473656 | Validation Loss: 1.5755002945661545
+Epoch 6, Loss: 1.5587177649140358 | Validation Loss: 1.5804291665554047
+Epoch 11, Loss: 1.5376242958009243 | Validation Loss: 1.57389010861516
+Epoch 16, Loss: 1.4196442551910877 | Validation Loss: 1.591353114694357
+Epoch 21, Loss: 0.9002436231821775 | Validation Loss: 2.0116444639861584
+Epoch 26, Loss: 0.30961246928200126 | Validation Loss: 3.09775061160326
+Epoch 31, Loss: 0.1364015708095394 | Validation Loss: 3.5448537543416023
+Epoch 36, Loss: 0.040415472103632055 | Validation Loss: 4.306193992495537
+Epoch 41, Loss: 0.02897195731929969 | Validation Loss: 4.185450121760368
+Epoch 46, Loss: 0.004790460407093633 | Validation Loss: 4.934959881007671
+Epoch 51, Loss: 0.004315561616749619 | Validation Loss: 5.361575067043304
+Epoch 56, Loss: 0.00274838380755682 | Validation Loss: 5.652365550398827
+Epoch 61, Loss: 0.0053574990342895035 | Validation Loss: 5.875570520758629
+Epoch 66, Loss: 0.0026895136861639912 | Validation Loss: 5.973429128527641
+Epoch 71, Loss: 0.0019441933341113327 | Validation Loss: 6.165479898452759
+Epoch 76, Loss: 0.0024166149773918733 | Validation Loss: 6.309704437851906
+Epoch 81, Loss: 0.005348611933641223 | Validation Loss: 6.454881846904755
+Epoch 86, Loss: 0.1629350721486844 | Validation Loss: 3.5635672956705093
+Epoch 91, Loss: 0.06704078975599259 | Validation Loss: 4.23808716237545
+Epoch 96, Loss: 0.011165333999088034 | Validation Loss: 4.72886585444212
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -1049,26 +1060,46 @@ Epoch 5, Loss: 1.5830248109996319 | Validation Loss: 1.5709160640835762
 </pre></div>
 </div>
 </div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+huggingface/tokenizers: The current process just got forked, after parallelism has already been used. Disabling parallelism to avoid deadlocks...
+To disable this warning, you can either:
+        - Avoid using `tokenizers` before the fork if possible
+        - Explicitly set the environment variable TOKENIZERS_PARALLELISM=(true | false)
+</pre></div></div>
+</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Requirement already satisfied: seaborn in /home/sooah/.pyenv/versions/3.11.9/envs/datum/lib/python3.11/site-packages (0.13.2)
-Requirement already satisfied: numpy!=1.24.0,&gt;=1.20 in /home/sooah/.pyenv/versions/3.11.9/envs/datum/lib/python3.11/site-packages (from seaborn) (1.26.4)
-Requirement already satisfied: pandas&gt;=1.2 in /home/sooah/.pyenv/versions/3.11.9/envs/datum/lib/python3.11/site-packages (from seaborn) (2.2.3)
-Requirement already satisfied: matplotlib!=3.6.1,&gt;=3.4 in /home/sooah/.pyenv/versions/3.11.9/envs/datum/lib/python3.11/site-packages (from seaborn) (3.9.2)
-Requirement already satisfied: contourpy&gt;=1.0.1 in /home/sooah/.pyenv/versions/3.11.9/envs/datum/lib/python3.11/site-packages (from matplotlib!=3.6.1,&gt;=3.4-&gt;seaborn) (1.3.0)
-Requirement already satisfied: cycler&gt;=0.10 in /home/sooah/.pyenv/versions/3.11.9/envs/datum/lib/python3.11/site-packages (from matplotlib!=3.6.1,&gt;=3.4-&gt;seaborn) (0.12.1)
-Requirement already satisfied: fonttools&gt;=4.22.0 in /home/sooah/.pyenv/versions/3.11.9/envs/datum/lib/python3.11/site-packages (from matplotlib!=3.6.1,&gt;=3.4-&gt;seaborn) (4.54.1)
-Requirement already satisfied: kiwisolver&gt;=1.3.1 in /home/sooah/.pyenv/versions/3.11.9/envs/datum/lib/python3.11/site-packages (from matplotlib!=3.6.1,&gt;=3.4-&gt;seaborn) (1.4.7)
-Requirement already satisfied: packaging&gt;=20.0 in /home/sooah/.pyenv/versions/3.11.9/envs/datum/lib/python3.11/site-packages (from matplotlib!=3.6.1,&gt;=3.4-&gt;seaborn) (24.1)
-Requirement already satisfied: pillow&gt;=8 in /home/sooah/.pyenv/versions/3.11.9/envs/datum/lib/python3.11/site-packages (from matplotlib!=3.6.1,&gt;=3.4-&gt;seaborn) (10.4.0)
-Requirement already satisfied: pyparsing&gt;=2.3.1 in /home/sooah/.pyenv/versions/3.11.9/envs/datum/lib/python3.11/site-packages (from matplotlib!=3.6.1,&gt;=3.4-&gt;seaborn) (3.2.0)
-Requirement already satisfied: python-dateutil&gt;=2.7 in /home/sooah/.pyenv/versions/3.11.9/envs/datum/lib/python3.11/site-packages (from matplotlib!=3.6.1,&gt;=3.4-&gt;seaborn) (2.9.0.post0)
-Requirement already satisfied: pytz&gt;=2020.1 in /home/sooah/.pyenv/versions/3.11.9/envs/datum/lib/python3.11/site-packages (from pandas&gt;=1.2-&gt;seaborn) (2024.2)
-Requirement already satisfied: tzdata&gt;=2022.7 in /home/sooah/.pyenv/versions/3.11.9/envs/datum/lib/python3.11/site-packages (from pandas&gt;=1.2-&gt;seaborn) (2024.2)
-Requirement already satisfied: six&gt;=1.5 in /home/sooah/.pyenv/versions/3.11.9/envs/datum/lib/python3.11/site-packages (from python-dateutil&gt;=2.7-&gt;matplotlib!=3.6.1,&gt;=3.4-&gt;seaborn) (1.16.0)
+Collecting seaborn
+  Downloading seaborn-0.13.2-py3-none-any.whl (294 kB)
+     <span class="ansi-black-intense-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">294.9/294.9 kB</span> <span class="ansi-red-fg">2.7 MB/s</span> eta <span class="ansi-cyan-fg">0:00:00</span>a <span class="ansi-cyan-fg">0:00:01</span>
+Requirement already satisfied: numpy!=1.24.0,&gt;=1.20 in /home/gppayend/datumaro/.venv/lib/python3.9/site-packages (from seaborn) (1.26.4)
+Requirement already satisfied: pandas&gt;=1.2 in /home/gppayend/datumaro/.venv/lib/python3.9/site-packages (from seaborn) (2.2.3)
+Requirement already satisfied: matplotlib!=3.6.1,&gt;=3.4 in /home/gppayend/datumaro/.venv/lib/python3.9/site-packages (from seaborn) (3.9.4)
+Requirement already satisfied: python-dateutil&gt;=2.7 in /home/gppayend/datumaro/.venv/lib/python3.9/site-packages (from matplotlib!=3.6.1,&gt;=3.4-&gt;seaborn) (2.9.0.post0)
+Requirement already satisfied: kiwisolver&gt;=1.3.1 in /home/gppayend/datumaro/.venv/lib/python3.9/site-packages (from matplotlib!=3.6.1,&gt;=3.4-&gt;seaborn) (1.4.7)
+Requirement already satisfied: importlib-resources&gt;=3.2.0 in /home/gppayend/datumaro/.venv/lib/python3.9/site-packages (from matplotlib!=3.6.1,&gt;=3.4-&gt;seaborn) (6.5.2)
+Requirement already satisfied: fonttools&gt;=4.22.0 in /home/gppayend/datumaro/.venv/lib/python3.9/site-packages (from matplotlib!=3.6.1,&gt;=3.4-&gt;seaborn) (4.55.6)
+Requirement already satisfied: contourpy&gt;=1.0.1 in /home/gppayend/datumaro/.venv/lib/python3.9/site-packages (from matplotlib!=3.6.1,&gt;=3.4-&gt;seaborn) (1.3.0)
+Requirement already satisfied: pillow&gt;=8 in /home/gppayend/datumaro/.venv/lib/python3.9/site-packages (from matplotlib!=3.6.1,&gt;=3.4-&gt;seaborn) (11.1.0)
+Requirement already satisfied: packaging&gt;=20.0 in /home/gppayend/datumaro/.venv/lib/python3.9/site-packages (from matplotlib!=3.6.1,&gt;=3.4-&gt;seaborn) (24.2)
+Requirement already satisfied: cycler&gt;=0.10 in /home/gppayend/datumaro/.venv/lib/python3.9/site-packages (from matplotlib!=3.6.1,&gt;=3.4-&gt;seaborn) (0.12.1)
+Requirement already satisfied: pyparsing&gt;=2.3.1 in /home/gppayend/datumaro/.venv/lib/python3.9/site-packages (from matplotlib!=3.6.1,&gt;=3.4-&gt;seaborn) (3.2.1)
+Requirement already satisfied: pytz&gt;=2020.1 in /home/gppayend/datumaro/.venv/lib/python3.9/site-packages (from pandas&gt;=1.2-&gt;seaborn) (2024.2)
+Requirement already satisfied: tzdata&gt;=2022.7 in /home/gppayend/datumaro/.venv/lib/python3.9/site-packages (from pandas&gt;=1.2-&gt;seaborn) (2025.1)
+Requirement already satisfied: zipp&gt;=3.1.0 in /home/gppayend/datumaro/.venv/lib/python3.9/site-packages (from importlib-resources&gt;=3.2.0-&gt;matplotlib!=3.6.1,&gt;=3.4-&gt;seaborn) (3.21.0)
+Requirement already satisfied: six&gt;=1.5 in /home/gppayend/datumaro/.venv/lib/python3.9/site-packages (from python-dateutil&gt;=2.7-&gt;matplotlib!=3.6.1,&gt;=3.4-&gt;seaborn) (1.17.0)
+Installing collected packages: seaborn
+Successfully installed seaborn-0.13.2
+
+<span class="ansi-bold">[</span><span class="ansi-blue-fg">notice</span><span class="ansi-bold">]</span> A new release of pip available: <span class="ansi-red-fg">22.2.2</span> -&gt; <span class="ansi-green-fg">25.0</span>
+<span class="ansi-bold">[</span><span class="ansi-blue-fg">notice</span><span class="ansi-bold">]</span> To update, run: <span class="ansi-green-fg">pip install --upgrade pip</span>
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -1114,7 +1145,7 @@ Requirement already satisfied: six&gt;=1.5 in /home/sooah/.pyenv/versions/3.11.9
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">per_class_accuracy</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">val_loader</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">):</span>
@@ -1148,11 +1179,11 @@ Requirement already satisfied: six&gt;=1.5 in /home/sooah/.pyenv/versions/3.11.9
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Accuracy of class 0: 0.00%
-Accuracy of class 1: 0.62%
-Accuracy of class 2: 95.03%
-Accuracy of class 3: 0.00%
-Accuracy of class 4: 1.68%
+Accuracy of class 0: 13.01%
+Accuracy of class 1: 24.69%
+Accuracy of class 2: 33.44%
+Accuracy of class 3: 17.76%
+Accuracy of class 4: 20.59%
 </pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">

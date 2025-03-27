@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.plugins.framework_converter &#8212; Datumaro 1.10.0rc1 documentation</title>
+    <title>datumaro.plugins.framework_converter &#8212; Datumaro 1.10.0 documentation</title>
   
   
   
@@ -38,7 +38,7 @@
 <link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
   <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script src="../../../_static/documentation_options.js?v=0c3350b6"></script>
+    <script src="../../../_static/documentation_options.js?v=1d24b1d9"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -124,8 +124,8 @@
       
     
     
-    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.10.0rc1 documentation - Home"/>
-    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.10.0rc1 documentation - Home"/>`);</script>
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.10.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.10.0 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -454,6 +454,15 @@ document.write(`
     <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 
     <span class="k">class</span><span class="w"> </span><span class="nc">DmTorchDataset</span><span class="p">(</span><span class="n">_MultiFrameworkDataset</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a PyTorch dataset for a specific task given a dataset and subset.</span>
+
+<span class="sd">        :param tokenizer: Callable converting a string into a series of tokens.</span>
+<span class="sd">                          The output can either be token IDs (integers) or token strings (text).</span>
+<span class="sd">                          If the later, the vocab parameter must also be provided.</span>
+<span class="sd">        :param vocab: Callable converting a list of token IDs into a list of token strings</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span>
@@ -482,8 +491,8 @@ document.write(`
                         <span class="s2">&quot;Please provide target column for tabular task which is used for input&quot;</span>
                     <span class="p">)</span>
 
-                <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">tokenizer</span> <span class="ow">and</span> <span class="n">vocab</span><span class="p">):</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Both tokenizer and vocab must be provided for tabular task&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">tokenizer</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;A tokenizer must be provided for tabular task&quot;</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span> <span class="o">=</span> <span class="n">tokenizer</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">vocab</span> <span class="o">=</span> <span class="n">vocab</span>
 
@@ -498,20 +507,20 @@ document.write(`
 
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_target</span><span class="p">:</span>
                     <span class="n">src_tokenizer</span><span class="p">,</span> <span class="n">tgt_tokenizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span>
-                    <span class="n">src_vocab</span><span class="p">,</span> <span class="n">tgt_vocab</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocab</span>
+                    <span class="n">src_vocab</span><span class="p">,</span> <span class="n">tgt_vocab</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocab</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocab</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
                     <span class="n">src_tokens</span> <span class="o">=</span> <span class="n">src_tokenizer</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-                    <span class="n">src_token_ids</span> <span class="o">=</span> <span class="n">src_vocab</span><span class="p">(</span><span class="n">src_tokens</span><span class="p">)</span>
+                    <span class="n">src_token_ids</span> <span class="o">=</span> <span class="n">src_vocab</span><span class="p">(</span><span class="n">src_tokens</span><span class="p">)</span> <span class="k">if</span> <span class="n">src_vocab</span> <span class="k">else</span> <span class="n">src_tokens</span>
 
                     <span class="n">label_text</span> <span class="o">=</span> <span class="n">label</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;caption&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">output_target</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
                     <span class="n">tgt_tokens</span> <span class="o">=</span> <span class="n">tgt_tokenizer</span><span class="p">(</span><span class="n">label_text</span><span class="p">)</span>
-                    <span class="n">tgt_token_ids</span> <span class="o">=</span> <span class="n">tgt_vocab</span><span class="p">(</span><span class="n">tgt_tokens</span><span class="p">)</span>
+                    <span class="n">tgt_token_ids</span> <span class="o">=</span> <span class="n">tgt_vocab</span><span class="p">(</span><span class="n">tgt_tokens</span><span class="p">)</span> <span class="k">if</span> <span class="n">tgt_vocab</span> <span class="k">else</span> <span class="n">tgt_tokens</span>
 
                     <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">src_token_ids</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
                         <span class="n">tgt_token_ids</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span>
                     <span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">tokens</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tokenizer</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-                    <span class="n">token_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocab</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span>
+                    <span class="n">token_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocab</span><span class="p">(</span><span class="n">tokens</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">vocab</span> <span class="k">else</span> <span class="n">tokens</span>
                     <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">token_ids</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
                         <span class="n">label</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;label&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span>
                     <span class="p">)</span>
