@@ -7,7 +7,7 @@ The AVA action format specification is available
 
 The dataset has annotations for recognizing an action per instance from video frames
 like visual tracking task. Specifically, the AVA action dataset contains frame indices,
-bounding box cooridnates, actions, and tracking ids in the annotation file. The action
+bounding box coordinates, actions, and tracking ids in the annotation file. The action
 categories are described in `ava_action_list_v2.2.pbtxt`. For the ease use for object
 detection, the AVA action dataset provides the bounding box proposals from `Faster R-CNN`.
 

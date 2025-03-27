@@ -13,7 +13,7 @@ Prune supports various methodology.
 
 By default, datasets are updated in-place. The `-o/--output-dir` option can be used to specify another output directory. When updating in-place, use the `--overwirte` parameter (in-place updates fail by default to prevent data loss), unless a project target is modified.
 
-The current project (`-p/--project`) is also used as a context for plugins, so it can be useful for datasest paths having custom formats. When not specified, the current project's working tree is used.
+The current project (`-p/--project`) is also used as a context for plugins, so it can be useful for dataset paths having custom formats. When not specified, the current project's working tree is used.
 
 The command can be applied to a dataset or a project build target, a stage or the combined `project` target, in which case all the project targets will be affected.
 

@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## \[Unreleased\]
+
+### New features
+- Convert Cuboid2D annotation to/from 3D data
+  (<https://github.com/openvinotoolkit/datumaro/pull/1639>)
+- Add label groups for hierarchical classification in ImageNet
+  (<https://github.com/openvinotoolkit/datumaro/pull/1645>)
+
+### Enhancements
+- Enhance 'id_from_image_name' transform to ensure each identifier is unique
+  (<https://github.com/openvinotoolkit/datumaro/pull/1635>)
+- Optimize path assignment to handle point cloud in JSON without images
+  (<https://github.com/openvinotoolkit/datumaro/pull/1643>)
+- Add documentation for framework conversion
+  (<https://github.com/openvinotoolkit/datumaro/pull/1659>)
+
+### Bug fixes
+- Fix assertion to compare hashkeys against expected value
+  (<https://github.com/openvinotoolkit/datumaro/pull/1641>)
+
 ## Q1 2025 Release 1.10.0
 
 ### New features

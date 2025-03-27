@@ -221,7 +221,7 @@ datum project export -f voc -- --tasks detection,classification
 # person:255,0,0:head:
 datum project export -f voc_segmentation -- --label-map mycolormap.txt
 ```
-or you can use original voc colomap:
+or you can use original voc colormap:
 ``` bash
 datum project export -f voc_segmentation -- --label-map voc
 ```

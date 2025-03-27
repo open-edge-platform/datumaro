@@ -175,7 +175,7 @@ Extra options for exporting to KITTI format:
 datum project export -f kitti -- --label-map mycolormap.txt
 
 ```
-or you can use original kitti colomap:
+or you can use original kitti colormap:
 ``` bash
 datum project export -f kitti -- --label-map kitti
 ```

@@ -122,7 +122,7 @@ For the panoptic task, a dataset directory should have the following structure:
 
 Annotation files must have the names like `<task_name>_<subset_name>.json`.
 The year is treated as a part of the subset name.
-If the annotation file name does't match this pattern, use one of the
+If the annotation file name doesn't match this pattern, use one of the
 task-specific formats instead of plain `coco`: `coco_captions`,
 `coco_image_info`, `coco_instances`, `coco_labels`, `coco_panoptic`,
 `coco_person_keypoints`, `coco_stuff`. In this case all items of the
