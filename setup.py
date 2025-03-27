@@ -84,8 +84,8 @@ setuptools.setup(
     install_requires=CORE_REQUIREMENTS,
     extras_require={
         "tf": ["tensorflow"],
-        "tfds": ["tensorflow-datasets<4.9.3"],
-        "torch": ["torch", "torchvision", "torchtext==0.16.0"],
+        "tfds": ["tensorflow-datasets<4.9.3", "absl-py>=0.12.0"],
+        "torch": ["torch", "torchvision"],
         "default": DEFAULT_REQUIREMENTS,
     },
     ext_modules=ext_modules,
