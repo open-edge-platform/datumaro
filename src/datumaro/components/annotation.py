@@ -1,4 +1,4 @@
-# Copyright (C) 2021-2024 Intel Corporation
+# Copyright (C) 2021-2025 Intel Corporation
 #
 # SPDX-License-Identifier: MIT
 
@@ -16,6 +16,7 @@ from typing import (
     Iterator,
     List,
     Optional,
+    Sequence,
     Set,
     Tuple,
     Type,
@@ -32,6 +33,7 @@ from typing_extensions import Literal
 
 from datumaro.components.media import Image
 from datumaro.util.attrs_util import default_if_none, not_empty
+from datumaro.util.points_util import normalize_points
 
 
 class AnnotationType(IntEnum):
@@ -1598,14 +1600,57 @@ class PointsCategories(Categories):
         # Pairs of connected point indices
         joints: Set[Tuple[int, int]] = field(factory=set, validator=default_if_none(set))
 
+        # Set of default x, y coordinates of the points
+        positions: List[float] = field(default=[])
+
+        @positions.validator
+        def positions_validator(
+            self, attribute: attr.Attribute[list], positions: list[float] | None
+        ) -> None:
+            """
+            Validate a list of point positions in the format [x1, y1, x2, y2, ..., xn, yn].
+
+            To be used as an attrs validator for the positions field of PointsCategories.Category.
+
+            Args:
+                attribute (attr.Attribute[list]): The attribute being validated.
+                positions (list[float]): A list of point positions.
+
+            Raises:
+                ValueError: If the provided value cannot be converted to a list of floats,
+                    or if the number of positions is invalid.
+            """
+            if positions is None:
+                positions = []
+            else:
+                # convert to a list of floats
+                try:
+                    positions = list(map(float, positions))
+                except (TypeError, ValueError):
+                    msg = "Cannot convert positions to list of floats. Check your input data."
+                    raise ValueError(msg)
+                # check if number of coordinates is even
+                if len(positions) % 2 != 0:
+                    msg = "positions must have an even number of elements"
+                    raise ValueError(msg)
+                if len(positions) > 0:
+                    # check if the number of positions is equal to the number of labels
+                    if len(self.labels) > 0 and len(positions) != len(self.labels) * 2:
+                        msg = "The number of positions should be equal to the number of labels"
+                        raise ValueError(msg)
+                    # normalize the positions
+                    positions = normalize_points(positions)
+            setattr(self, attribute.name, positions)
+
     items: Dict[int, Category] = field(factory=dict, validator=default_if_none(dict))
 
     @classmethod
     def from_iterable(
         cls,
         iterable: Union[
-            Tuple[int, List[str]],
-            Tuple[int, List[str], Set[Tuple[int, int]]],
+            Iterable[Sequence[int, List[str]]],
+            Iterable[Sequence[int, List[str], Set[Tuple[int, int]]]],
+            Iterable[Sequence[int, List[str], Set[Tuple[int, int]], List[float]]],
         ],
     ) -> PointsCategories:
         """
@@ -1631,11 +1676,12 @@ class PointsCategories(Categories):
         label_id: int,
         labels: Optional[Iterable[str]] = None,
         joints: Iterable[Tuple[int, int]] = None,
+        positions: Iterable[float] = None,
     ):
         if joints is None:
             joints = []
         joints = set(map(tuple, joints))
-        self.items[label_id] = self.Category(labels, joints)
+        self.items[label_id] = self.Category(labels, joints, positions)
 
     def __contains__(self, idx: int) -> bool:
         return idx in self.items

@@ -1,4 +1,4 @@
-# Copyright (C) 2024 Intel Corporation
+# Copyright (C) 2025 Intel Corporation
 #
 # SPDX-License-Identifier: MIT
 
@@ -121,6 +121,18 @@ class DatumaroFormatTest:
                 compare_datasets_strict,
                 True,
                 id="test_can_save_and_load_infos",
+            ),
+            pytest.param(
+                "fxt_test_pointscategories_without_positions",
+                compare_datasets,
+                False,
+                id="test_pointscategories_without_positions",
+            ),
+            pytest.param(
+                "fxt_test_pointscategories_with_positions",
+                compare_datasets,
+                False,
+                id="test_pointscategories_with_positions",
             ),
         ],
     )

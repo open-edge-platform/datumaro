@@ -11,10 +11,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu-20.04', 'windows-2022']
-        python-version: ['3.9', '3.10', '3.11']
+        os: ['ubuntu-24.04', 'windows-2022']
+        python-version: ['3.9', '3.10', '3.11', '3.12']
         include:
-          - os: "ubuntu-20.04"
+          - os: "ubuntu-24.04"
             tox-env-os: "lin"
           - os: "windows-2022"
             tox-env-os: "win"
@@ -24,6 +24,8 @@ jobs:
             tox-env-py: "310"
           - python-version: "3.11"
             tox-env-py: "311"
+          - python-version: "3.12"
+            tox-env-py: "312"
     name: nightly regression test (${{ matrix.os }}, Python ${{ matrix.python-version }})
     runs-on: ${{ matrix.os }}
     steps:

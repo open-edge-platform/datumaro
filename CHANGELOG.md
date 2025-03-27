@@ -25,9 +25,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix assertion to compare hashkeys against expected value
   (<https://github.com/open-edge-platform/datumaro/pull/1641>)
 
-## Q4 2024 Release 1.10.0
+## Q1 2025 Release 1.10.0
 
 ### New features
+- Add default position information to PointsCategories class
+  (<https://github.com/open-edge-platform/datumaro/pull/1702>)
 - Support KITTI 3D format
   (<https://github.com/open-edge-platform/datumaro/pull/1619>, <https://github.com/open-edge-platform/datumaro/pull/1621>)
 - Add PseudoLabeling transform for unlabeled dataset
@@ -44,6 +46,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (<https://github.com/open-edge-platform/datumaro/pull/1643>)
 - Set TabularTransform to process clean transform in parallel
   (<https://github.com/open-edge-platform/datumaro/pull/1648>)
+- Add support for Python 3.12
+  (<https://github.com/open-edge-platform/datumaro/pull/1701>)
 
 ### Bug fixes
 - Fix datumaro format to load visibility information from Points annotations
