@@ -22,8 +22,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.9', '3.10', '3.11']
-        extra: ['default', 'tf', 'tfds', 'torch']
+        python-version: ["3.9", "3.10", "3.11"]
+        extra: ["default", "tf", "tfds", "torch"]
         include:
           - python-version: "3.9"
             tox-env-py: "39"
@@ -36,7 +36,7 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
-          persist-credentials: false      
+          persist-credentials: false
       - name: Installing python
         uses: actions/setup-python@v5
         with:
