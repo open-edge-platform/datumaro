@@ -5,6 +5,9 @@ on:
     branches:
       - 'develop'
 
+# No permissions by default, no specific permissions are required for this workflow
+permissions: {}
+
 # This is what will cancel the workflow concurrency
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -26,7 +29,9 @@ jobs:
             tox-env-py: "312"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
       - name: Installing Rust toolchain
         uses: actions-rs/toolchain@v1
         with:

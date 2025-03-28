@@ -3,6 +3,9 @@ on:
   workflow_dispatch: # run on request (no need for PR)
   schedule:
     - cron: "0 15 * * 2-6" # Every day at 12:00 AM in Korea time
+# No permissions by default, no specific permissions are required for this workflow
+permissions: {}
+
 defaults:
   run:
     shell: bash
@@ -29,7 +32,9 @@ jobs:
     name: nightly regression test (${{ matrix.os }}, Python ${{ matrix.python-version }})
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
       - name: Installing Rust toolchain
         uses: actions-rs/toolchain@v1
         with:

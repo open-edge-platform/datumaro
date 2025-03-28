@@ -5,8 +5,8 @@ on:
   release:
     types: [published]
 
-# Declare default permissions as read only.
-permissions: read-all
+# No specific permissions are required for this workflow
+permissions: {}
 
 jobs:
   build_wheels:
@@ -18,7 +18,9 @@ jobs:
         os: ['ubuntu-24.04', 'windows-2022']
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
       - name: Installing python
         uses: actions/setup-python@v5
         with:
@@ -37,7 +39,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
       - name: Set up Python 3.9
         uses: actions/setup-python@v5
         with:
