@@ -58,4 +58,5 @@ jobs:
       always() &&
       contains(needs.*.result, 'failure')
     uses: ./.github/workflows/notify_teams.yml
-    secrets: inherit
+    secrets:
+      MSTEAMS_WEBHOOK: ${{ secrets.MSTEAMS_WEBHOOK }}

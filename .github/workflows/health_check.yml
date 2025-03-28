@@ -3,7 +3,7 @@ on:
   workflow_dispatch: # for testing
   push:
     branches:
-      - 'develop'
+      - "develop"
 
 # No permissions by default, no specific permissions are required for this workflow
 permissions: {}
@@ -54,4 +54,5 @@ jobs:
       always() &&
       contains(needs.*.result, 'failure')
     uses: ./.github/workflows/notify_teams.yml
-    secrets: inherit
+    secrets:
+      MSTEAMS_WEBHOOK: ${{ secrets.MSTEAMS_WEBHOOK }}
