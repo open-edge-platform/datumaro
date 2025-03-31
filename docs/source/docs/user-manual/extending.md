@@ -37,22 +37,6 @@ or
 pip install datumaro[tf-gpu]
 ```
 
-### Accuracy Checker
-
-This plugin allows to use [Accuracy Checker](https://github.com/openvinotoolkit/open_model_zoo/tree/master/tools/accuracy_checker)
-to launch deep learning models from various frameworks
-(Caffe, MxNet, PyTorch, OpenVINO, ...) through Accuracy Checker's API.
-
-**Dependencies**
-
-The plugin depends on Accuracy Checker, which can be installed with `pip`:
-
-``` bash
-pip install 'git+https://github.com/openvinotoolkit/open_model_zoo.git#subdirectory=tools/accuracy_checker'
-```
-
-To execute models with deep learning frameworks, they need to be installed too.
-
 ### OpenVINO™
 
 This plugin provides support for model inference with [OpenVINO™](https://01.org/openvinotoolkit).
