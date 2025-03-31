@@ -93,14 +93,6 @@ Supported Data Formats
    * `Format specification <https://www.cityscapes-dataset.com/dataset-overview/>`_
    * `Dataset example <https://github.com/openvinotoolkit/datumaro/tree/develop/tests/assets/cityscapes_dataset>`_
    * `Format documentation <cityscapes.md>`_
-* Common Semantic Segmentation (``segmentation``) (import-only)
-   * `Format specification <https://github.com/openvinotoolkit/open_model_zoo/blob/master/tools/accuracy_checker/openvino/tools/accuracy_checker/annotation_converters/README.md>`_
-   * `Dataset example <https://github.com/openvinotoolkit/datumaro/tree/develop/tests/assets/common_semantic_segmentation_dataset>`_
-   * `Format documentation <common_semantic_segmentation.md>`_
-* Common Super Resolution
-   * `Format specification <https://github.com/openvinotoolkit/open_model_zoo/blob/master/tools/accuracy_checker/openvino/tools/accuracy_checker/annotation_converters/README.md>`_
-   * `Dataset example <https://github.com/openvinotoolkit/datumaro/tree/develop/tests/assets/common_super_resolution_dataset>`_
-   * `Format documentation <common_super_resolution.md>`_
 * CVAT (`for images`, `for video` (import-only))
    * `Format specification <https://opencv.github.io/cvat/docs/manual/advanced/xml_format>`_
    * `Dataset example <https://github.com/openvinotoolkit/datumaro/tree/develop/tests/assets/cvat_dataset>`_
