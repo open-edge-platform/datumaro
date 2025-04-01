@@ -3,7 +3,10 @@ on:
   workflow_dispatch: # for testing
   push:
     branches:
-      - 'develop'
+      - "develop"
+
+# No permissions by default, no specific permissions are required for this workflow
+permissions: {}
 
 # This is what will cancel the workflow concurrency
 concurrency:
@@ -26,7 +29,9 @@ jobs:
             tox-env-py: "312"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
       - name: Installing Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
@@ -49,4 +54,5 @@ jobs:
       always() &&
       contains(needs.*.result, 'failure')
     uses: ./.github/workflows/notify_teams.yml
-    secrets: inherit
+    secrets:
+      MSTEAMS_WEBHOOK: ${{ secrets.MSTEAMS_WEBHOOK }}
