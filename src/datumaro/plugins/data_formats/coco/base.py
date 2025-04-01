@@ -235,7 +235,7 @@ class _CocoBase(SubsetBase):
                 "Category id of '0' is reserved for no class (background) but "
                 f"category named '{category_name}' with id of '0' is found in {self._path}. "
                 "Please be warned that annotations with category id of '0' would have `None` as label. "
-                "(https://openvinotoolkit.github.io/datumaro/latest/docs/explanation/formats/coco.html#import-coco-dataset)"
+                "(https://open-edge-platform.github.io/datumaro/latest/docs/explanation/formats/coco.html#import-coco-dataset)"
             )
 
     def _load_label_categories(self, json_cat, *, keep_original_ids):

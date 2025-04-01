@@ -15,7 +15,7 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         List supported import/export data format names.
         For more detailed guides on each data format,
         please visit our documentation website:
-        https://openvinotoolkit.github.io/datumaro/stable/docs/data-formats/formats
+        https://open-edge-platform.github.io/datumaro/stable/docs/data-formats/formats
         |n
         |n
         Examples:|n

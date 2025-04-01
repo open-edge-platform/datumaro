@@ -31,7 +31,7 @@ class SAMBboxToInstanceMask(ModelTransform, CliPlugin):
     It uses the Segment Anything Model deployed in the OpenVINO™ Model Server
     or NVIDIA Triton™ Inference Server instance. To launch the server instance,
     please see the guide in this link:
-    https://github.com/openvinotoolkit/datumaro/tree/develop/docker/segment-anything/README.md
+    https://github.com/open-edge-platform/datumaro/tree/develop/docker/segment-anything/README.md
 
     Parameters:
         extractor: Dataset to transform

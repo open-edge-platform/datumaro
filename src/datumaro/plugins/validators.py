@@ -1101,7 +1101,7 @@ class SegmentationValidator(DetectionValidator):
             _, _, _w, _h = ann.get_bbox()
 
             # Detete the following block when #226 is resolved
-            # https://github.com/openvinotoolkit/datumaro/issues/226
+            # https://github.com/open-edge-platform/datumaro/issues/226
             if ann.type == AnnotationType.mask:
                 _w += 1
                 _h += 1
@@ -1149,7 +1149,7 @@ class SegmentationValidator(DetectionValidator):
             _, _, _w, _h = ann.get_bbox()
 
             # Detete the following block when #226 is resolved
-            # https://github.com/openvinotoolkit/datumaro/issues/226
+            # https://github.com/open-edge-platform/datumaro/issues/226
             if ann.type == AnnotationType.mask:
                 _w += 1
                 _h += 1

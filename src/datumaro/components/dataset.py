@@ -191,7 +191,7 @@ class Dataset(IDataset):
             infos = {}
 
         # TODO: remove the default value for media_type
-        # https://github.com/openvinotoolkit/datumaro/issues/675
+        # https://github.com/open-edge-platform/datumaro/issues/675
 
         if isinstance(categories, list):
             categories = {AnnotationType.label: LabelCategories.from_iterable(categories)}

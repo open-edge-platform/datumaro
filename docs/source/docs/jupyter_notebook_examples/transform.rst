@@ -6,7 +6,7 @@ redefinition, and tiling.
 
 In addition to these, Datumaro provides a total of 22 transformations,
 including polygon to bbox, merging segmentation masks, annotation and attribution removal, etc.
-Please refer `here <https://github.com/openvinotoolkit/datumaro/blob/develop/src/datumaro/plugins/transforms.py>`_.
+Please refer `here <https://github.com/open-edge-platform/datumaro/blob/develop/src/datumaro/plugins/transforms.py>`_.
 
 .. toctree::
    :maxdepth: 1

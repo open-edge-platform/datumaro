@@ -101,7 +101,7 @@ Note that converting a tabular dataset into other formats and vice versa is not 
 
 ## Examples
 Examples of using this format from the code can be found in
-[the format tests](https://github.com/openvinotoolkit/datumaro/blob/develop/tests/unit/test_tabular_format.py).
+[the format tests](https://github.com/open-edge-platform/datumaro/blob/develop/tests/unit/test_tabular_format.py).
 The datasets here are randomly sampled and you can find the full dataset below.
 - Electricity Datset: <https://www.openml.org/d/44156>
     |     date |   day |   period |   nswprice |   nswdemand |   vicprice |   vicdemand |   transfer | class   |

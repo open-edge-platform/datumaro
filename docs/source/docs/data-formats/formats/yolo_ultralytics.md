@@ -95,7 +95,7 @@ To add custom classes, you can use [`dataset_meta.json`](/docs/data-formats/form
 Datumaro can convert [any other image dataset format](/docs/data-formats/formats/index.rst) which has bounding box annotations into YOLO-Ultralytics format.
 After the successful conversion, you can train your own detector with the exported dataset and  [Ultralytics YOLOv8 trainer](https://github.com/ultralytics/ultralytics).
 
-> Note, if you want to see the end-to-end Jupyter-notebook example from the dataset conversion to the training, please see this [link](https://github.com/openvinotoolkit/datumaro/blob/develop/notebooks/08_e2e_example_yolo_ultralytics_trainer.ipynb).
+> Note, if you want to see the end-to-end Jupyter-notebook example from the dataset conversion to the training, please see this [link](https://github.com/open-edge-platform/datumaro/blob/develop/notebooks/08_e2e_example_yolo_ultralytics_trainer.ipynb).
 
 There are several ways to convert other dataset formats to the YOLO-Ultralytics format:
 

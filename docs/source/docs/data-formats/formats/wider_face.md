@@ -67,7 +67,7 @@ Check [README](http://shuoyang1213.me/WIDERFACE/support/bbx_annotation/wider_fac
 file of the original WIDER Face dataset to get more information
 about structure of `.txt` annotation files.
 Also example of WIDER Face dataset available in our
-[test assets](https://github.com/openvinotoolkit/datumaro/tree/develop/tests/assets/widerface_dataset).
+[test assets](https://github.com/open-edge-platform/datumaro/tree/develop/tests/assets/widerface_dataset).
 
 ## Export WIDER Face dataset
 

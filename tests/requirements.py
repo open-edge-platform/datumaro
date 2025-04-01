@@ -24,7 +24,7 @@ class Requirements:
     DATUM_GENERIC_MEDIA = "Datumaro generic media support"
 
     # GitHub issues (not bugs)
-    # https://github.com/openvinotoolkit/datumaro/issues
+    # https://github.com/open-edge-platform/datumaro/issues
     DATUM_231 = "Readable formats for CJK"
     DATUM_244 = "Add Snyk integration"
     DATUM_267 = "Add Image zip format"
@@ -43,7 +43,7 @@ class Requirements:
     DATUM_677 = "Generation of fractal images for model compression"
 
     # GitHub issues (bugs)
-    # https://github.com/openvinotoolkit/datumaro/issues
+    # https://github.com/open-edge-platform/datumaro/issues
     DATUM_BUG_219 = "Return format is not uniform"
     DATUM_BUG_257 = "Dataset.filter doesn't count removed items"
     DATUM_BUG_259 = "Dataset.filter fails on merged datasets"

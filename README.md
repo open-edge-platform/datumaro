@@ -1,7 +1,7 @@
 # Dataset Management Framework (Datumaro)
 
-[![Build status](https://github.com/openvinotoolkit/datumaro/actions/workflows/health_check.yml/badge.svg)](https://github.com/openvinotoolkit/datumaro/actions/workflows/health_check.yml)
-[![codecov](https://codecov.io/gh/openvinotoolkit/datumaro/branch/develop/graph/badge.svg?token=FG25VU096Q)](https://codecov.io/gh/openvinotoolkit/datumaro)
+[![Build status](https://github.com/open-edge-platform/datumaro/actions/workflows/health_check.yml/badge.svg)](https://github.com/open-edge-platform/datumaro/actions/workflows/health_check.yml)
+[![codecov](https://codecov.io/gh/open-edge-platform/datumaro/branch/develop/graph/badge.svg?token=FG25VU096Q)](https://codecov.io/gh/open-edge-platform/datumaro)
 [![Downloads](https://static.pepy.tech/badge/datumaro)](https://pepy.tech/project/datumaro)
 
 A framework and CLI tool to build, transform, and analyze datasets.
@@ -16,11 +16,11 @@ CVAT annotations                             ---> Publication, statistics etc.
 ```
 <!--lint enable fenced-code-flag-->
 
-- [Getting started](https://openvinotoolkit.github.io/datumaro/latest/docs/get-started/quick-start-guide)
-- [Level Up](https://openvinotoolkit.github.io/datumaro/latest/docs/level-up/basic_skills)
+- [Getting started](https://open-edge-platform.github.io/datumaro/latest/docs/get-started/quick-start-guide)
+- [Level Up](https://open-edge-platform.github.io/datumaro/latest/docs/level-up/basic_skills)
 - [Features](#features)
-- [User manual](https://openvinotoolkit.github.io/datumaro/latest/docs/user-manual/how_to_use_datumaro)
-- [Developer manual](https://openvinotoolkit.github.io/datumaro/latest/docs/reference/datumaro_module)
+- [User manual](https://open-edge-platform.github.io/datumaro/latest/docs/user-manual/how_to_use_datumaro)
+- [Developer manual](https://open-edge-platform.github.io/datumaro/latest/docs/reference/datumaro_module)
 - [Contributing](#contributing)
 
 ## Features
@@ -47,7 +47,7 @@ CVAT annotations                             ---> Publication, statistics etc.
     (`bboxes`, `masks`)
   - [YOLO](https://github.com/AlexeyAB/darknet#how-to-train-pascal-voc-data) (`bboxes`)
 
-  Other formats and documentation for them can be found [here](https://openvinotoolkit.github.io/datumaro/latest/docs/data-formats/formats).
+  Other formats and documentation for them can be found [here](https://open-edge-platform.github.io/datumaro/latest/docs/data-formats/formats).
 - Dataset building
   - Merging multiple datasets into one
   - Dataset filtering by a custom criteria:
@@ -87,10 +87,10 @@ CVAT annotations                             ---> Publication, statistics etc.
     - RISE for object detection
 
 > Check
-  [the design document](https://openvinotoolkit.github.io/datumaro/latest/docs/explanation/architecture)
+  [the design document](https://open-edge-platform.github.io/datumaro/latest/docs/explanation/architecture)
   for a full list of features.
 > Check
-  [the user manual](https://openvinotoolkit.github.io/datumaro/latest/docs/user-manual/how_to_use_datumaro)
+  [the user manual](https://open-edge-platform.github.io/datumaro/latest/docs/user-manual/how_to_use_datumaro)
   for usage instructions.
 
 ## Contributing
@@ -98,15 +98,15 @@ CVAT annotations                             ---> Publication, statistics etc.
 [(Back to top)](#dataset-management-framework-datumaro)
 
 Feel free to
-[open an Issue](https://github.com/openvinotoolkit/datumaro/issues/new), if you
+[open an Issue](https://github.com/open-edge-platform/datumaro/issues/new), if you
 think something needs to be changed. You are welcome to participate in
 development, instructions are available in our
-[contribution guide](https://github.com/openvinotoolkit/datumaro/blob/develop/contributing.md).
+[contribution guide](https://github.com/open-edge-platform/datumaro/blob/develop/contributing.md).
 
 ## Telemetry data collection note
 
-The [OpenVINO™ telemetry library](https://github.com/openvinotoolkit/telemetry/)
+The [OpenVINO™ telemetry library](https://github.com/open-edge-platform/telemetry/)
 is used to collect basic information about Datumaro usage.
 
 To enable/disable telemetry data collection please see the
-[guide](https://openvinotoolkit.github.io/datumaro/latest/docs/user-manual/how_to_control_tm_data_collection).
+[guide](https://open-edge-platform.github.io/datumaro/latest/docs/user-manual/how_to_control_tm_data_collection).
