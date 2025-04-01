@@ -2,7 +2,7 @@
 
 ## Format specification
 There are many kinds of video extensions as listed up
-[here](https://github.com/openvinotoolkit/datumaro/blob/develop/datumaro/plugins/data_formats/video.py).
+[here](https://github.com/open-edge-platform/datumaro/blob/develop/datumaro/plugins/data_formats/video.py).
 
 Datumaro can import a video into video frames by adjusting the start frame, end frame,
 and step size. Furthermore, with a `video_keyframes` format, Datumaro can extract

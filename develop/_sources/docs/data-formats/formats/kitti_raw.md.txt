@@ -178,4 +178,4 @@ dataset.export('my_dataset/', format='kitti_raw', save_media=True)
 ```
 
 Examples of using this format from the code can be found in
-[the format tests](https://github.com/openvinotoolkit/datumaro/tree/develop/tests/test_kitti_raw_format.py)
+[the format tests](https://github.com/open-edge-platform/datumaro/tree/develop/tests/test_kitti_raw_format.py)

@@ -2,7 +2,7 @@
 # OpenVINO™ Inference Interpreter
 
 Interpreter samples to parse OpenVINO™ inference outputs.
-This section is related to [datumaro/plugins/openvino_plugin](https://github.com/openvinotoolkit/datumaro/tree/develop/datumaro/plugins/openvino_plugin).
+This section is related to [datumaro/plugins/openvino_plugin](https://github.com/open-edge-platform/datumaro/tree/develop/src/datumaro/plugins/openvino_plugin).
 
 ## Models supported from interpreter samples
 There are detection and image classification examples.

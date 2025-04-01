@@ -273,7 +273,7 @@ dataset.export('./dataset', format='coco_panoptic')
 ```
 
 Examples of using this format from the code can be found in
-[the format tests](https://github.com/openvinotoolkit/datumaro/tree/develop/tests/test_coco_format.py)
+[the format tests](https://github.com/open-edge-platform/datumaro/tree/develop/tests/test_coco_format.py)
 
 ## COCO from Roboflow
 

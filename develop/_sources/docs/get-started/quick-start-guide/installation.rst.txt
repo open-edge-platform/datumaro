@@ -49,7 +49,7 @@ Install:
         curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
         # Install from the GitHub repository
-        pip install 'datumaro[default] @ git+https://github.com/openvinotoolkit/datumaro'
+        pip install 'datumaro[default] @ git+https://github.com/open-edge-platform/datumaro'
 
 
 Plugins
