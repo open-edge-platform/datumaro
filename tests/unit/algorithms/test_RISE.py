@@ -7,55 +7,14 @@ import numpy as np
 import pytest
 
 from datumaro.components.algorithms.rise import RISE
-from datumaro.components.annotation import Bbox, Label
+from datumaro.components.annotation import Bbox
 from datumaro.components.launcher import LauncherWithModelInterpreter
-from datumaro.plugins.openvino_plugin.launcher import OpenvinoLauncher
 
 from tests.requirements import Requirements, mark_requirement
 from tests.utils.assets import get_test_asset_path
 
 
 class RiseTest(TestCase):
-    @pytest.mark.xfail(reason="See ticket no. 134782")
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
-    def test_rise_can_be_applied_to_classification_model(self):
-        model = OpenvinoLauncher(
-            model_name="googlenet-v4-tf",
-            output_layers="InceptionV4/Logits/PreLogitsFlatten/flatten_1/Reshape:0",
-        )
-
-        rise = RISE(model, num_masks=10, mask_size=7, prob=0.5)
-
-        image = cv2.imread(osp.join(get_test_asset_path("rise"), "catdog.png"))
-        saliency = next(rise.apply(image))
-
-        logit_size = model.outputs[0].shape
-        self.assertEqual(saliency.shape[0], logit_size[1])
-
-        image_size = model.inputs[0].shape
-        self.assertEqual(saliency.shape[1], image_size[1])
-        self.assertEqual(saliency.shape[2], image_size[2])
-
-        class_indices = [244, 282]  # bullmastiff and tabby of imagenet.class
-        rois = [[100, 20, 180, 100], [180, 160, 240, 260]]  # location of bullmastiff and tabby
-
-        for cls_idx in range(len(class_indices)):
-            norm_saliency = saliency[class_indices[cls_idx]]
-            roi = rois[cls_idx]
-            saliency_dense_roi = (
-                np.sum(norm_saliency[roi[1] : roi[3], roi[0] : roi[2]])
-                / (roi[3] - roi[1])
-                / (roi[2] - roi[0])
-            )
-            saliency_dense_wo_roi = (
-                np.sum(norm_saliency) - np.sum(norm_saliency[roi[1] : roi[3], roi[0] : roi[2]])
-            ) / (
-                (norm_saliency.shape[0] * norm_saliency.shape[1])
-                - ((roi[3] - roi[1]) * (roi[2] - roi[0]))
-            )
-
-            self.assertLess(saliency_dense_wo_roi, saliency_dense_roi)
-
     @pytest.mark.xfail(reason="Broken unit test and need to reimplement RISE algorithm")
     @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_rise_can_be_applied_to_detection_model(self):

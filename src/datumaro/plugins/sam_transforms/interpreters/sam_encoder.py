@@ -12,7 +12,7 @@ from datumaro.components.abstracts.model_interpreter import LauncherInputType, M
 from datumaro.components.annotation import Annotation, FeatureVector
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image
-from datumaro.plugins.openvino_plugin.samples.utils import rescale_img_keeping_aspect_ratio
+from datumaro.plugins.sam_transforms.utils import rescale_img_keeping_aspect_ratio
 
 
 class SAMEncoderInterpreter(IModelInterpreter):
