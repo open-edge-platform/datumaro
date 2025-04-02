@@ -102,7 +102,6 @@ Basic dataset item manipulations:
 - [`remove_annotations`](#remove_annotations) - Removes annotations
 - [`remove_attributes`](#remove_attributes) - Removes attributes
 - [`astype_annotations`](#astype_annotations) - Transforms annotation types
-- [`pseudo_labeling`](#pseudo_labeling) - Generates pseudo labels for unlabeled data
 - [`correct`](#correct) - Corrects annotation types
 - [`clean`](#clean) - Removes noisy data for tabular dataset
 
@@ -849,35 +848,6 @@ bbox_values_decrement [-h]
 
 Optional arguments:
 - `-h`, `--help` (flag) - Show this help message and exit
-
-#### `pseudo_labeling`
-
-Assigns pseudo-labels to items in a dataset based on their similarity to predefined labels. This class is useful for semi-supervised learning when dealing with missing or uncertain labels.
-
-The process includes:
-
-- Similarity Computation: Uses hashing techniques to compute the similarity between items and predefined labels.
-- Pseudo-Label Assignment: Assigns the most similar label as a pseudo-label to each item.
-
-Attributes:
-
-- `extractor` (IDataset) - Provides access to dataset items and their annotations.
-- `labels` (Optional[List[str]]) - List of predefined labels for pseudo-labeling. Defaults to all available labels if not provided.
-- `explorer` (Optional[Explorer]) - Computes hash keys for items and labels. If not provided, a new Explorer is created.
-
-Usage:
-```console
-pseudo_labeling [-h] [--labels LABELS]
-
-Optional arguments:
-- `-h`, `--help` (flag) - Show this help message and exit
-- `--labels` (str) - Comma-separated list of label names for pseudo-labeling
-
-Examples:
-- Assign pseudo-labels based on predefined labels
-  ```console
-  datum transform -t pseudo_labeling -- --labels 'label1,label2'
-  ```
 
 #### `correct`
 
