@@ -57,7 +57,7 @@ Parameters:
 
 ### Support methods
 #### `table`
-This method allows comparing datasets based on dataset statistics and provides the results in a tabular format. The result report is saved in the formats of `table_compare.json` and `table_compare.txt`, each containing information for "High-level comparison," "Mid-level comparison," and "Low-level comparison."
+This method allows comparing datasets based on dataset statistics and provides the results in a tabular format. The result report is saved in the formats of `table_compare.json` and `table_compare.txt`, each containing information for "High-level comparison" and "Mid-level comparison".
 
 Firstly, the "High-level comparison" provides information regarding the format, classes, images, and annotations for each dataset. For example:
 ```bash
@@ -103,16 +103,6 @@ Secondly, the "Mid-level comparison" displays image means, standard deviations, 
 +--------------------------+--------------------------+--------------------------+
 ```
 
-Lastly, the "Low-level comparison" uses ShiftAnalyzer to show Covariate shift and Label shift between the two datasets. For example:
-```bash
-+-----------------+---------+
-| Field           |   Value |
-+=================+=========+
-| Covariate shift |       0 |
-+-----------------+---------+
-| Label shift     |     nan |
-+-----------------+---------+
-```
 The results are stored in the formats of `table_compare.json` and `table_compare.txt`.
 
 - Compare the current working tree with a dataset in COCO data format to create the tabular report
