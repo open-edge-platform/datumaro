@@ -16,7 +16,6 @@ from pandas.api.types import CategoricalDtype
 
 import datumaro.plugins.transforms as transforms
 import datumaro.util.mask_tools as mask_tools
-from datumaro.components.algorithms.hash_key_inference.explorer import Explorer
 from datumaro.components.annotation import (
     AnnotationType,
     Bbox,
@@ -36,7 +35,6 @@ from datumaro.components.annotation import (
 )
 from datumaro.components.dataset import Dataset, eager_mode
 from datumaro.components.dataset_base import DatasetItem
-from datumaro.components.errors import AnnotationTypeError
 from datumaro.components.media import Image, Table, TableRow, Video, VideoFrame
 
 from ..requirements import Requirements, mark_bug, mark_requirement
