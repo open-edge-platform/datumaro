@@ -34,11 +34,11 @@ jobs:
         with:
           persist-credentials: false
       - name: Install uv
-        uses: astral-sh/setup-uv@22695119d769bdb6f7032ad67b9bca0ef8c4a174 # v5.4.0
+        uses: astral-sh/setup-uv@0c5e2b8115b80b4c7c5ddf6ffdd634974642d182 # v5.4.1
       - name: Run zizmor
         run: uvx zizmor=="$ZIZMOR_VERSION" . --format sarif --config .github/zizmor.yaml > results.sarif
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@9e8d0789d4a0fa9ceb6b1738f7e269594bdd67f0 # v3.28.8
+        uses: github/codeql-action/upload-sarif@1b549b9259bda1cb5ddde3b41741a82a2d15a841 # v3.28.8
         with:
           sarif_file: results.sarif
           category: zizmor
@@ -56,6 +56,6 @@ jobs:
         with:
           persist-credentials: false
       - name: Install uv
-        uses: astral-sh/setup-uv@22695119d769bdb6f7032ad67b9bca0ef8c4a174 # v5.4.0
+        uses: astral-sh/setup-uv@0c5e2b8115b80b4c7c5ddf6ffdd634974642d182 # v5.4.1
       - name: Run zizmor
         run: uvx zizmor=="$ZIZMOR_VERSION" . --min-confidence high --min-severity high --config .github/zizmor.yaml
