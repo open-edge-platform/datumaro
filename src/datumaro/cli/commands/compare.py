@@ -224,12 +224,11 @@ def compare_command(args):
         (
             high_level_table,
             mid_level_table,
-            low_level_table,
             comparison_dict,
         ) = comparator.compare_datasets(first_dataset, second_dataset)
         if args.dst_dir:
             comparator.save_compare_report(
-                high_level_table, mid_level_table, low_level_table, comparison_dict, args.dst_dir
+                high_level_table, mid_level_table, comparison_dict, args.dst_dir
             )
 
     elif args.method is ComparisonMethod.equality:
