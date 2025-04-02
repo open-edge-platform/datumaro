@@ -73,7 +73,6 @@ class _LogManager:
 # TODO: revisit during CLI refactoring
 def _get_known_contexts():
     return [
-        ("model", contexts.model, "Actions with models"),
         ("project", contexts.project, "Actions with projects"),
         ("source", contexts.source, "Actions with data sources"),
         ("util", contexts.util, "Auxillary tools and utilities"),

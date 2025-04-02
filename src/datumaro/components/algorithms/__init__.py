@@ -3,4 +3,3 @@
 # SPDX-License-Identifier: MIT
 
 from .noisy_label_detection import *
-from .rise import *

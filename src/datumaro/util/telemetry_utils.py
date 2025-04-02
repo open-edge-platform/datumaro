@@ -43,14 +43,6 @@ def _get_action_name(command):
         return "source_remove_result"
     elif command is contexts.source.info_command:
         return "source_info_result"
-    elif command is contexts.model.add_command:
-        return "model_add_result"
-    elif command is contexts.model.remove_command:
-        return "model_remove_result"
-    elif command is contexts.model.run_command:
-        return "model_run_result"
-    elif command is contexts.model.info_command:
-        return "model_info_result"
     elif command is commands.require_project.versioning.checkout.checkout_command:
         return "checkout_result"
     elif command is commands.require_project.versioning.commit.commit_command:
@@ -61,8 +53,6 @@ def _get_action_name(command):
         return "create_result"
     elif command is commands.compare.compare_command:
         return "diff_result"
-    elif command is commands.explain.explain_command:
-        return "explain_result"
     elif command is commands.generate.generate_command:
         return "generate_result"
     elif command is commands.info.info_command:
