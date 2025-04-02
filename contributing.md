@@ -69,7 +69,6 @@ Now you are ready to create a PR(Pull Request) and get review.
 Developer should install the following optional components for running our tests:
 
 - OpenVINO
-- Accuracy Checker
 - TensorFlow
 - PyTorch
 - MxNet
