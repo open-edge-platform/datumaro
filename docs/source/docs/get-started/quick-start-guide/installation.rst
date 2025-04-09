@@ -5,7 +5,7 @@ Dependencies
 ------------
 
 - Python (3.9+)
-- Optional: OpenVINO, TensorFlow, PyTorch, MxNet, Caffe, Accuracy Checker, Git
+- Optional: OpenVINO, TensorFlow, PyTorch, MxNet, Caffe, Git
 
 Installation steps
 ------------------
@@ -49,7 +49,7 @@ Install:
         curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
         # Install from the GitHub repository
-        pip install 'datumaro[default] @ git+https://github.com/openvinotoolkit/datumaro'
+        pip install 'datumaro[default] @ git+https://github.com/open-edge-platform/datumaro'
 
 
 Plugins
@@ -64,7 +64,6 @@ plugin dependencies in the [plugins](/docs/user-manual/extending) section.
 These components are only required for plugins and not installed by default:
 
 - OpenVINO
-- Accuracy Checker
 - TensorFlow
 - PyTorch
 - MxNet

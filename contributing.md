@@ -1,13 +1,13 @@
 # Contribution Guide
 
-We appreciate any contribution to [Datumaro](https://github.com/openvinotoolkit/datumaro),
+We appreciate any contribution to [Datumaro](https://github.com/open-edge-platform/datumaro),
 whether it's in the form of a Pull Request, Feature Request or general comments/issue that you found.
 For feature requests and issues, please feel free to create a GitHub Issue in this repository.
 
 ## Related sections
 
-- [Design document](https://openvinotoolkit.github.io/datumaro/latest/docs/explanation/architecture)
-- [Developer manual](https://openvinotoolkit.github.io/datumaro/latest/docs/reference/datumaro_module)
+- [Design document](https://open-edge-platform.github.io/datumaro/latest/docs/explanation/architecture)
+- [Developer manual](https://open-edge-platform.github.io/datumaro/latest/docs/reference/datumaro_module)
 
 ## Development and pull requests
 
@@ -18,7 +18,7 @@ To set up your development environment, please follow the steps below.
 
 0. Because Datumaro has some C++ and Rust implementations to improve Python performance, you should install C++ compiler (`apt-get install build-essential`) and a [Rust toolchain](https://www.rust-lang.org/tools/install) in your system to build the binary extensions.
 
-1. Fork the [repo](https://github.com/openvinotoolkit/datumaro).
+1. Fork the [repo](https://github.com/open-edge-platform/datumaro).
 
 2. clone the forked repo.
     ``` bash
@@ -69,7 +69,6 @@ Now you are ready to create a PR(Pull Request) and get review.
 Developer should install the following optional components for running our tests:
 
 - OpenVINO
-- Accuracy Checker
 - TensorFlow
 - PyTorch
 - MxNet
@@ -161,7 +160,7 @@ class MyTests(TestCase):
 <a id="Requirements"></a>
 #### Requirements
 
-Requirements and other links need to be added to [`tests/requirements.py`](https://github.com/openvinotoolkit/datumaro/tree/develop/tests/requirements.py):
+Requirements and other links need to be added to [`tests/requirements.py`](https://github.com/open-edge-platform/datumaro/tree/develop/tests/requirements.py):
 
 ```python
 DATUM_244 = "Add Snyk integration"
@@ -178,7 +177,7 @@ DATUM_BUG_219 = "Return format is not uniform"
 
 ##### Available annotations for tests and requirements
 
-Markings are defined in [`tests/conftest.py`](https://github.com/openvinotoolkit/datumaro/tree/develop/tests/conftest.py).
+Markings are defined in [`tests/conftest.py`](https://github.com/open-edge-platform/datumaro/tree/develop/tests/conftest.py).
 
 **A list of requirements and bugs**
 ```python

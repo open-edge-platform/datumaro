@@ -333,4 +333,4 @@ in Pascal VOC 2012 has for segmentation task and this result is the same as the
 [official documentation](http://host.robots.ox.ac.uk/pascal/VOC/voc2012/dbstats.html)
 
 Examples of using this format from the code can be found in
-[tests](https://github.com/openvinotoolkit/datumaro/tree/develop/tests/test_voc_format.py)
+[tests](https://github.com/open-edge-platform/datumaro/tree/develop/tests/test_voc_format.py)

@@ -17,13 +17,13 @@ If you are trying to add a new builtin plugin that has dependencies which is not
 You need to add Python decorator to specify extra deps for the plugin class definition.
 This is required during the built-in plugin registration step to determine if a plugin is available by checking if its dependencies are installed on the system.
 
-For example, `AcLauncher` plugin needs `tensorflow` and `openvino.tools` extra dependencies.
+For example, Tensorflow Detection API plugin needs `tensorflow` as an extra dependency.
 Therefore, it added `@extra_deps("tensorflow", "openvino.tools.accuracy_checker")` to its class definition as follows.
 
 ```python
 from datumaro.components.lazy_plugin import extra_deps
 
-@extra_deps("tensorflow", "openvino.tools.accuracy_checker")
-class AcLauncher(Launcher, CliPlugin):
+@extra_deps("tensorflow")
+class TfDetectionApiBase(SubsetBase):
     ...
 ```

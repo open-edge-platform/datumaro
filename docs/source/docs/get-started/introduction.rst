@@ -28,7 +28,7 @@ Datumaro supports the following features:
   - `Cityscapes <https://www.cityscapes-dataset.com/>`_
   - `COCO <http://cocodataset.org/#format-data>`_ (`image_info`, `instances`, `person_keypoints`,
     `captions`, `labels`, `panoptic`, `stuff`)
-  - `CVAT <https://openvinotoolkit.github.io/cvat/docs/manual/advanced/xml_format>`_
+  - `CVAT <https://github.com/cvat-ai/cvat>`_
   - `ImageNet <http://image-net.org/>`_
   - `Kitti <http://www.cvlibs.net/datasets/kitti/index.php>`_ (`segmentation`, `detection`,
     `3D raw` / `velodyne points`)
@@ -43,7 +43,7 @@ Datumaro supports the following features:
     (`bboxes`, `masks`)
   - `YOLO <https://github.com/AlexeyAB/darknet#how-to-train-pascal-voc-data>`_ (`bboxes`)
 
-  Other formats and documentation for them can be found `here <https://openvinotoolkit.github.io/datumaro/latest/docs/data-formats/formats/index.html>`_.
+  Other formats and documentation for them can be found `here <https://open-edge-platform.github.io/datumaro/latest/docs/data-formats/formats/index.html>`_.
 - Dataset building
 
   - Merging multiple datasets into one

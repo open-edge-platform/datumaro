@@ -84,7 +84,7 @@ Examples:
 > _all_ (or a _reasonable_ amount) the outputs and confidences unfiltered,
 > i.e. all the `Label` annotations for classification models and
 > all the `Bbox`es for detection models.
-> You can find examples of the expected model outputs in [`tests/test_RISE.py`](https://github.com/openvinotoolkit/datumaro/tree/develop/tests/unit/algorithms/test_RISE.py)
+> You can find examples of the expected model outputs in [`tests/test_RISE.py`](https://github.com/open-edge-platform/datumaro/tree/develop/tests/unit/algorithms/test_RISE.py)
 
 For OpenVINO models the output processing script would look like this:
 

@@ -9,8 +9,10 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
       - id: files
-        uses: tj-actions/changed-files@27ae6b33eaed7bf87272fdeb9f1c54f9facc9d99 # v45.0.8
+        uses: tj-actions/changed-files@b74df86ccb65173a8e33ba5492ac1a2ca6b216fd # v45.0.8
         with:
           files: |
             **/*.py
@@ -23,13 +25,14 @@ jobs:
           python-version: "3.12"
 
       - name: Run checks
+        env:
+          CHANGED_FILES: ${{steps.files.outputs.all_changed_files}}
         run: |
-          CHANGED_FILES="${{steps.files.outputs.all_changed_files}}"
-          if [[ ! -z $CHANGED_FILES ]]; then
+          if [[ ! -z "$CHANGED_FILES" ]]; then
             pip install bandit
             echo "Bandit version: "$(bandit --version | head -1)
-            echo "The files will be checked: "$(echo $CHANGED_FILES)
-            bandit -a file -r -c .ci/ipas_default.config $CHANGED_FILES
+            echo "The files will be checked: "$(echo "$CHANGED_FILES")
+            bandit -a file -r -c .ci/ipas_default.config "$CHANGED_FILES"
           else
             echo "No files with the \"py\" extension found"
           fi

@@ -87,11 +87,11 @@ def extra_deps(*extra_dep_names: Sequence[str]):
     """Decorator to assign extra deps for the plugin class.
 
     There exist some plugins that cannot be executable with the default installation setup.
-    For example, `AcLauncher` plugin needs `tensorflow` and `openvino.tools` extra dependencies.
+    For example, Tensorflow Detection API plugin needs `tensorflow` as an extra dependency.
     In this case, you have to add this decorator to that plugin class definition as follows.
 
-    @extra_deps("tensorflow", "openvino.tools")
-    class AcLauncher(Launcher, CliPlugin):
+    @extra_deps("tensorflow")
+    class TfDetectionApiBase(SubsetBase):
     ...
     """
 

@@ -110,4 +110,4 @@ dataset
 To add custom classes, you can use [`dataset_meta.json`](/docs/data-formats/formats/index.rst#dataset-meta-info-file).
 
 See examples of annotation files in
-[test assets](https://github.com/openvinotoolkit/datumaro/tree/develop/tests/assets/mapillary_vistas_dataset).
+[test assets](https://github.com/open-edge-platform/datumaro/tree/develop/tests/assets/mapillary_vistas_dataset).
