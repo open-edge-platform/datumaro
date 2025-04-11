@@ -27,12 +27,9 @@ assignees: ""
 
 **Environment:**
 
-- OS: <!--[for example, Linux Ubuntu 16.04]-->
-- Framework version: <!--[TensorFlow or PyTorch]-->
+- OS: <!--[for example, Linux Ubuntu 22.04]-->
+- Datumaro version:
 - Python version:
-- OpenVINO version:
-- CUDA/cuDNN version:
-- GPU model and memory:
 <!--
 Include as many relevant details about the environment in which you experienced the bug as you can.
 -->
