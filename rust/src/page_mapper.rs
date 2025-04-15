@@ -1,3 +1,7 @@
+//  Copyright (C) 2025 Intel Corporation
+//
+//  SPDX-License-Identifier: MIT
+
 use crate::utils::{invalid_data, read_skipping_ws, skip_serde_json_value};
 use std::io::{Error, Read, Seek};
 
