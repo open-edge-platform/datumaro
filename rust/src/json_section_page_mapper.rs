@@ -157,7 +157,7 @@ impl JsonPageMapper<JsonSection> for JsonSectionPageMapperImpl {}
 
 impl JsonSectionPageMapperImpl {
     pub fn new(mut reader: impl Read + Seek) -> Result<Self, io::Error> {
-        let sections = Self::parse_json(&mut reader)?;
+        let sections = Self::parse_json(&mut reader, true)?;
 
         Ok(JsonSectionPageMapperImpl { sections: sections })
     }

@@ -113,7 +113,7 @@ impl CocoPageMapperImpl {
         self.annotations.get_anns(&mut reader, img_id)
     }
     pub fn new(mut reader: impl Read + Seek) -> Result<Self, io::Error> {
-        let sections = Self::parse_json(&mut reader)?;
+        let sections = Self::parse_json(&mut reader, false)?;
 
         let mut licenses = None;
         let mut info = None;

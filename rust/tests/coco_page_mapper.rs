@@ -53,6 +53,25 @@ fn test_instance() {
 }
 
 #[test]
+fn test_unknown_keys() {
+    // Tests if the dataset can be parsed when the JSON contains additional unknown keys
+    const EXAMPLE: &str = r#"
+    {
+        "licenses":[{"name":"","id":0,"url":""}],
+        "info":{"contributor":"","date_created":"","description":"","url":"","version":"","year":""},
+        "categories":[]
+        "images":[],
+        "annotations":[]
+        "unknown_key": "unknown_value",
+    }"#;
+
+    let (tempfile, mut reader) = prepare_reader(EXAMPLE);
+    let coco_page_mapper = CocoPageMapperImpl::new(&mut reader).unwrap();
+
+    println!("{:?}", coco_page_mapper);
+}
+
+#[test]
 fn test_image_info_default() {
     const EXAMPLE: &str = r#"
     {"licenses": [{"name": "", "id": 0, "url": ""}], "info": {"contributor": "", "date_created": "", "description": "", "url": "", "version": "", "year": ""}, "categories": [], "images": [{"id": 1, "width": 2, "height": 4, "file_name": "1.jpg", "license": 0, "flickr_url": "", "coco_url": "", "date_captured": 0}], "annotations": []}
