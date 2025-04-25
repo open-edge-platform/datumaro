@@ -1,4 +1,4 @@
-//  Copyright (C) 2023 Intel Corporation
+//  Copyright (C) 2025 Intel Corporation
 //
 //  SPDX-License-Identifier: MIT
 
@@ -118,7 +118,7 @@ impl DatumPageMapperImpl {
     }
 
     pub fn new(mut reader: impl Read + Seek) -> Result<Self, io::Error> {
-        let sections = Self::parse_json(&mut reader)?;
+        let sections = Self::parse_json(&mut reader, true)?;
 
         let mut dm_format_version = None;
         let mut media_type = None;

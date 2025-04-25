@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (<https://github.com/open-edge-platform/datumaro/pull/1645>)
 
 ### Enhancements
+- Add non-strict mode to JsonPageMapper in rust API and enable it for COCO
+  (<https://github.com/open-edge-platform/datumaro/pull/1753>)
 - Enhance 'id_from_image_name' transform to ensure each identifier is unique
   (<https://github.com/open-edge-platform/datumaro/pull/1635>)
 - Optimize path assignment to handle point cloud in JSON without images
