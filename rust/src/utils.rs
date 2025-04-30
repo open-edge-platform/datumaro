@@ -1,4 +1,4 @@
-//  Copyright (C) 2023 Intel Corporation
+//  Copyright (C) 2025 Intel Corporation
 //
 //  SPDX-License-Identifier: MIT
 
@@ -8,6 +8,9 @@ use pyo3::{
     prelude::*,
     types::{PyBool, PyDict, PyFloat, PyList, PyUnicode},
 };
+use serde::de::{IgnoredAny, Deserialize};
+use serde_json::{self, Deserializer};
+
 
 pub fn read_skipping_ws(mut reader: impl io::Read) -> io::Result<u8> {
     loop {
@@ -64,6 +67,15 @@ pub fn parse_serde_json_value(
             let msg = format!("Parse error: {} at pos: {}", e, cur_pos);
             Err(invalid_data(msg.as_str()))
         }
+    }
+}
+
+pub fn skip_serde_json_value<R: io::Read>(reader: &mut R) -> Result<(), std::io::Error> {
+    // Skip the next JSON value in the stream
+    let mut de = Deserializer::from_reader(reader);
+    match IgnoredAny::deserialize(&mut de) {
+        Ok(_) => Ok(()),
+        Err(_) => Err(io::Error::new(io::ErrorKind::InvalidData, "Failed to skip JSON value")),
     }
 }
 

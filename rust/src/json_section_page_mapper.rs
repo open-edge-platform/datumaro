@@ -1,4 +1,4 @@
-//  Copyright (C) 2023 Intel Corporation
+//  Copyright (C) 2025 Intel Corporation
 //
 //  SPDX-License-Identifier: MIT
 
@@ -157,7 +157,7 @@ impl JsonPageMapper<JsonSection> for JsonSectionPageMapperImpl {}
 
 impl JsonSectionPageMapperImpl {
     pub fn new(mut reader: impl Read + Seek) -> Result<Self, io::Error> {
-        let sections = Self::parse_json(&mut reader)?;
+        let sections = Self::parse_json(&mut reader, true)?;
 
         Ok(JsonSectionPageMapperImpl { sections: sections })
     }

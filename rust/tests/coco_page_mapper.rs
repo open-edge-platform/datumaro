@@ -1,4 +1,4 @@
-//  Copyright (C) 2023 Intel Corporation
+//  Copyright (C) 2025 Intel Corporation
 //
 //  SPDX-License-Identifier: MIT
 
@@ -50,6 +50,25 @@ fn test_instance() {
             assert_eq!(ann["image_id"].as_i64(), Some(img_id));
         }
     }
+}
+
+#[test]
+fn test_unknown_keys() {
+    // Tests if the dataset can be parsed when the JSON contains additional unknown keys
+    const EXAMPLE: &str = r#"
+    {
+        "licenses":[{"name":"","id":0,"url":""}],
+        "info":{"contributor":"","date_created":"","description":"","url":"","version":"","year":""},
+        "categories":[]
+        "images":[],
+        "annotations":[]
+        "unknown_key": "unknown_value",
+    }"#;
+
+    let (tempfile, mut reader) = prepare_reader(EXAMPLE);
+    let coco_page_mapper = CocoPageMapperImpl::new(&mut reader).unwrap();
+
+    println!("{:?}", coco_page_mapper);
 }
 
 #[test]
