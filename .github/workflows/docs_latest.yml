@@ -19,7 +19,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: "3.11"
       - name: Install dependencies
@@ -36,7 +36,7 @@ jobs:
           else
             echo RELEASE_VERSION=${GITHUB_REF#refs/*/} >> $GITHUB_ENV
           fi
-          echo SOURCE_NAME=${GITHUB_REF#refs/*/} >> $GITHUB_OUTPUT
+          echo SOURCE_NAME=${GITHUB_REF#refs/*/} >> $GITHUB_ENV
           echo SOURCE_BRANCH=${GITHUB_REF#refs/heads/} >> $GITHUB_OUTPUT
           echo SOURCE_TAG=${GITHUB_REF#refs/tags/} >> $GITHUB_OUTPUT
           existed_in_remote=$(git ls-remote --heads origin gh-pages)
@@ -51,7 +51,7 @@ jobs:
             git add .nojekyll
             git commit -m "Initializing gh-pages branch"
             git push origin gh-pages
-            git checkout ${{steps.branch_name.outputs.SOURCE_NAME}}
+            git checkout "${{ env.SOURCE_NAME }}"
             echo "Created gh-pages branch"
           else
             echo "Branch gh-pages already exists"
