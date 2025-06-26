@@ -26,6 +26,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Bug fixes
 - Fix assertion to compare hashkeys against expected value
   (<https://github.com/open-edge-platform/datumaro/pull/1641>)
+- Mark pyemd as optional since it does not support Python 3.12
+  (<https://github.com/open-edge-platform/datumaro/pull/1770>)
 
 ## Q1 2025 Release 1.10.0
 

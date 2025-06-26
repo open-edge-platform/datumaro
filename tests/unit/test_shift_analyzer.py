@@ -1,5 +1,6 @@
 from copy import deepcopy
 from typing import List
+from unittest import skipIf
 
 import numpy as np
 import pytest
@@ -11,6 +12,13 @@ from datumaro.components.media import Image
 from datumaro.components.shift_analyzer import ShiftAnalyzer
 
 from ..requirements import Requirements, mark_requirement
+
+try:
+    import pyemd
+
+    import_failed = False
+except ImportError:
+    import_failed = True
 
 
 @pytest.fixture
@@ -57,6 +65,7 @@ def fxt_dataset_different():
     return [src_dataset, tgt_dataset]
 
 
+@skipIf(import_failed, "Failed to import pyemd")
 @mark_requirement(Requirements.DATUM_GENERAL_REQ)
 @pytest.mark.parametrize(
     "fxt_datasets,method,expected",
