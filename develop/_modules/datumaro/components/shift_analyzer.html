@@ -357,14 +357,12 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">take_by</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">import</span><span class="w"> </span><span class="nn">pyemd</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">linalg</span><span class="p">,</span> <span class="n">stats</span>
 
     <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.openvino_plugin</span><span class="w"> </span><span class="kn">import</span> <span class="n">shift_launcher</span>
 <span class="k">else</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.import_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">lazy_import</span>
 
-    <span class="n">pyemd</span> <span class="o">=</span> <span class="n">lazy_import</span><span class="p">(</span><span class="s2">&quot;pyemd&quot;</span><span class="p">)</span>
     <span class="n">linalg</span> <span class="o">=</span> <span class="n">lazy_import</span><span class="p">(</span><span class="s2">&quot;scipy.linalg&quot;</span><span class="p">)</span>
     <span class="n">stats</span> <span class="o">=</span> <span class="n">lazy_import</span><span class="p">(</span><span class="s2">&quot;scipy.stats&quot;</span><span class="p">)</span>
     <span class="n">shift_launcher</span> <span class="o">=</span> <span class="n">lazy_import</span><span class="p">(</span><span class="s2">&quot;datumaro.plugins.openvino_plugin.shift_launcher&quot;</span><span class="p">)</span>
@@ -632,6 +630,8 @@ document.write(`
 
         <span class="n">f_concat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">f_s</span><span class="p">,</span> <span class="n">f_t</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">distances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">f_concat</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="n">f_concat</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+        <span class="kn">import</span><span class="w"> </span><span class="nn">pyemd</span>
 
         <span class="n">emd</span> <span class="o">=</span> <span class="n">pyemd</span><span class="o">.</span><span class="n">emd</span><span class="p">(</span><span class="n">w_1</span><span class="p">,</span> <span class="n">w_2</span><span class="p">,</span> <span class="n">distances</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">gamma</span> <span class="o">*</span> <span class="n">emd</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span></div>
