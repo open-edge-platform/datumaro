@@ -15,14 +15,12 @@ from datumaro.components.launcher import LauncherWithModelInterpreter
 from datumaro.util import take_by
 
 if TYPE_CHECKING:
-    import pyemd
     from scipy import linalg, stats
 
     from datumaro.plugins.openvino_plugin import shift_launcher
 else:
     from datumaro.util.import_util import lazy_import
 
-    pyemd = lazy_import("pyemd")
     linalg = lazy_import("scipy.linalg")
     stats = lazy_import("scipy.stats")
     shift_launcher = lazy_import("datumaro.plugins.openvino_plugin.shift_launcher")
@@ -264,6 +262,8 @@ class ShiftAnalyzer:
 
         f_concat = np.concatenate([f_s, f_t], axis=0)
         distances = np.linalg.norm(f_concat[:, None] - f_concat[None, :], axis=2).astype(np.float64)
+
+        import pyemd
 
         emd = pyemd.emd(w_1, w_2, distances)
         return np.exp(-gamma * emd).item()
