@@ -86,6 +86,7 @@ setuptools.setup(
         "tf": ["tensorflow"],
         "tfds": ["tensorflow-datasets<4.9.3", "absl-py>=0.12.0"],
         "torch": ["torch", "torchvision"],
+        "pyemd": ["pyemd"],
         "default": DEFAULT_REQUIREMENTS,
     },
     ext_modules=ext_modules,
