@@ -68,6 +68,7 @@ from datumaro.components.media import Image, TableRow, VideoFrame
 from datumaro.components.transformer import ItemTransform, TabularTransform, Transform
 from datumaro.util import NOTSET, filter_dict, parse_json_file, parse_str_enum_value, take_by
 from datumaro.util.annotation_util import find_group_leader, find_instances
+from datumaro.util.deprecation import deprecated
 from datumaro.util.tabular_util import emoji_pattern
 
 
@@ -2108,6 +2109,7 @@ class Clean(TabularTransform):
         return self.wrap_item(item, media=refined_media, annotations=refined_annotations)
 
 
+@deprecated()
 class PseudoLabeling(ItemTransform):
     """
     A class used to assign pseudo-labels to items in a dataset based on

@@ -26,6 +26,7 @@ from datumaro.components.merge import DEFAULT_MERGE_POLICY, get_merger
 from datumaro.components.transformer import ModelTransform, Transform
 from datumaro.components.validator import TaskType, Validator
 from datumaro.util import parse_str_enum_value
+from datumaro.util.deprecation import deprecated
 from datumaro.util.scope import on_error_do, scoped
 
 if TYPE_CHECKING:
@@ -35,6 +36,7 @@ if TYPE_CHECKING:
 __all__ = ["HLOps"]
 
 
+@deprecated()
 class HLOps:
     """High-level dataset operations for Python API."""
 

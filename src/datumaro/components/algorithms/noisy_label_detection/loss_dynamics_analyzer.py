@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Dict, List, Optional, Sequence, Tuple
 from datumaro.components.annotation import AnnotationType, LabelCategories
 from datumaro.components.dataset_base import IDataset
 from datumaro.errors import DatasetError
+from datumaro.util.deprecation import deprecated
 
 if TYPE_CHECKING:
     from matplotlib.figure import Figure
@@ -31,6 +32,7 @@ class NoisyLabelCandidate:
         return self.id == __o.id and self.subset == __o.subset and self.ann_id == __o.ann_id
 
 
+@deprecated()
 class LossDynamicsAnalyzer:
     """A class for analyzing the dynamics of training loss to identify noisy labels.
 

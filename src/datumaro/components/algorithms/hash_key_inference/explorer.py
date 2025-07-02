@@ -15,8 +15,10 @@ from datumaro.components.annotation import HashKey
 from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.errors import DatumaroError, MediaTypeError
+from datumaro.util.deprecation import deprecated
 
 
+@deprecated()
 class Explorer(HashInference):
     def __init__(
         self,

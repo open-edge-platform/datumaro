@@ -11,10 +11,12 @@ from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image
 from datumaro.util import take_by
+from datumaro.util.deprecation import deprecated
 
 __all__ = ["RISE"]
 
 
+@deprecated()
 class RISE:
     """
     Implements RISE: Randomized Input Sampling for

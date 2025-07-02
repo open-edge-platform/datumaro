@@ -10,8 +10,10 @@ from datumaro.components.annotations.matcher import BboxMatcher, match_segments_
 from datumaro.components.dataset_base import DatasetItem, IDataset
 from datumaro.components.launcher import Launcher
 from datumaro.components.transformer import ModelTransform
+from datumaro.util.deprecation import deprecated
 
 
+@deprecated()
 class MissingAnnotationDetection(ModelTransform):
     """This class is used to find annotations that are missing from the ground truth annotations.
 
