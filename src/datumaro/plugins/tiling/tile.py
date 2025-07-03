@@ -133,7 +133,7 @@ def _tile_not_support(ann: Annotation, *args, **kwargs) -> None:
     raise DatumaroError(f"type(ann)={type(ann)} is not support tiling.")
 
 
-@deprecated()
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class Tile(Transform, CliPlugin):
     """
     Apply tile tranformation to items in the dataset.

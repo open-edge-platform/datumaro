@@ -6,7 +6,7 @@ import warnings
 from functools import wraps
 
 
-def deprecated():
+def deprecated(deprecated_version: str, removed_version: str):
     """Class decorator that marks a class as deprecated."""
 
     def decorator(cls):
@@ -15,8 +15,8 @@ def deprecated():
         @wraps(original_init)
         def new_init(self, *args, **kwargs):
             warnings.warn(
-                f"The {cls.__name__} class will be deprecated in version 1.11 "
-                f"and will be removed in version 1.12.",
+                f"The {cls.__name__} class will be deprecated in version {deprecated_version} "
+                f"and will be removed in version {removed_version}.",
                 DeprecationWarning,
                 stacklevel=2,
             )

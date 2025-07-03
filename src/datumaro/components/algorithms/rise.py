@@ -16,7 +16,7 @@ from datumaro.util.deprecation import deprecated
 __all__ = ["RISE"]
 
 
-@deprecated()
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class RISE:
     """
     Implements RISE: Randomized Input Sampling for

@@ -2109,7 +2109,7 @@ class Clean(TabularTransform):
         return self.wrap_item(item, media=refined_media, annotations=refined_annotations)
 
 
-@deprecated()
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class PseudoLabeling(ItemTransform):
     """
     A class used to assign pseudo-labels to items in a dataset based on

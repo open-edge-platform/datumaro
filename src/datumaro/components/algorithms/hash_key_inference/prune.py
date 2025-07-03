@@ -54,7 +54,7 @@ def match_num_item_for_cluster(ratio, dataset_len, cluster_num_item_list):
     return norm_cluster_num_item_list.tolist()
 
 
-@deprecated()
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class PruneBase(ABC):
     @abstractmethod
     def base(
@@ -239,7 +239,7 @@ class Entropy(PruneBase):
         return selected_items, None
 
 
-@deprecated()
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class NDRSelect(PruneBase):
     """
     Select items based on NDR among each subset.
@@ -258,7 +258,7 @@ class NDRSelect(PruneBase):
         return selected_items, None
 
 
-@deprecated()
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class Prune(HashInference):
     def __init__(
         self,

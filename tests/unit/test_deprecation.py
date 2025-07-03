@@ -11,7 +11,7 @@ from datumaro.util.deprecation import deprecated
 class TestDeprecationDecorator(unittest.TestCase):
     def test_deprecated_class_warning(self):
         # Create a test class with the deprecated decorator
-        @deprecated()
+        @deprecated(deprecated_version="1.11", removed_version="1.12")
         class TestClass:
             def __init__(self, value):
                 self.value = value

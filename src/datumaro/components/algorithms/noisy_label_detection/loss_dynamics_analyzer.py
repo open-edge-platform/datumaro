@@ -32,7 +32,7 @@ class NoisyLabelCandidate:
         return self.id == __o.id and self.subset == __o.subset and self.ann_id == __o.ann_id
 
 
-@deprecated()
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class LossDynamicsAnalyzer:
     """A class for analyzing the dynamics of training loss to identify noisy labels.
 

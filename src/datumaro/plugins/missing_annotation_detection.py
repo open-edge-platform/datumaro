@@ -13,7 +13,7 @@ from datumaro.components.transformer import ModelTransform
 from datumaro.util.deprecation import deprecated
 
 
-@deprecated()
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class MissingAnnotationDetection(ModelTransform):
     """This class is used to find annotations that are missing from the ground truth annotations.
 

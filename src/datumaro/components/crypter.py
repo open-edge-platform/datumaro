@@ -11,7 +11,7 @@ from datumaro.components.errors import DatumaroError
 from datumaro.util.deprecation import deprecated
 
 
-@deprecated()
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class Crypter:
     # Prefix (datum-) = 6 and Fernet = 44, 6 + 44 = 50
     FERNET_KEY_LEN = 50
