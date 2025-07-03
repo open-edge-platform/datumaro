@@ -1,3 +1,7 @@
+# Copyright (C) 2019-2025 Intel Corporation
+#
+# SPDX-License-Identifier: MIT
+
 import warnings
 from functools import wraps
 
