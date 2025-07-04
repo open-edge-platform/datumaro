@@ -1,8 +1,10 @@
 # Copyright (C) 2021 Intel Corporation
 #
 # SPDX-License-Identifier: MIT
+from datumaro.util.deprecation import deprecated
 
 
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class Telemetry(object):
     """
     A stub for the Telemetry class, which is used when the Telemetry class

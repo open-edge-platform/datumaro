@@ -18,11 +18,13 @@ from datumaro.plugins.inference_server_plugin.base import (
     ProtocolType,
     TLSConfig,
 )
+from datumaro.util.deprecation import deprecated
 from datumaro.util.mask_tools import extract_contours
 
 __all__ = ["SAMBboxToInstanceMask"]
 
 
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class SAMBboxToInstanceMask(ModelTransform, CliPlugin):
     """Convert bounding boxes to instance mask using Segment Anything Model.
 

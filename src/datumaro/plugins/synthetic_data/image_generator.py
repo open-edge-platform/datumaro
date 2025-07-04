@@ -17,12 +17,14 @@ import requests
 
 from datumaro.components.generator import DatasetGenerator
 from datumaro.util.definitions import get_datumaro_cache_dir
+from datumaro.util.deprecation import deprecated
 from datumaro.util.image import save_image
 from datumaro.util.scope import on_error_do, on_exit_do, scope_add, scoped
 
 from .utils import IFSFunction, augment, colorize, suppress_computation_warnings
 
 
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class FractalImageGenerator(DatasetGenerator):
     """
     ImageGenerator generates 3-channel synthetic images with provided shape.

@@ -4,13 +4,6 @@
 
 import warnings
 
-warnings.warn(
-    "We are planning to clean up the entities in datumaro/__init__.py until datumaro==1.5.0. "
-    'This will affect the following import pattern: "import datumaro as dm; dm.<entity>". '
-    "If you are using this pattern in your code, please revisit it after upgrading datumaro>=1.5.0.",
-    DeprecationWarning,
-)
-
 from . import errors as errors
 from . import ops as ops
 from . import project as project

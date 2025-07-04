@@ -20,6 +20,7 @@ from datumaro.components.algorithms.hash_key_inference.hashkey_util import (
 from datumaro.components.annotation import HashKey, Label, LabelCategories
 from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
+from datumaro.util.deprecation import deprecated
 
 if TYPE_CHECKING:
     import datumaro.plugins.ndr as ndr
@@ -53,6 +54,7 @@ def match_num_item_for_cluster(ratio, dataset_len, cluster_num_item_list):
     return norm_cluster_num_item_list.tolist()
 
 
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class PruneBase(ABC):
     @abstractmethod
     def base(
@@ -237,6 +239,7 @@ class Entropy(PruneBase):
         return selected_items, None
 
 
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class NDRSelect(PruneBase):
     """
     Select items based on NDR among each subset.
@@ -255,6 +258,7 @@ class NDRSelect(PruneBase):
         return selected_items, None
 
 
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class Prune(HashInference):
     def __init__(
         self,

@@ -12,8 +12,10 @@ from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.errors import MediaTypeError
 from datumaro.components.media import Image
 from datumaro.plugins.openvino_plugin.launcher import OpenvinoLauncher
+from datumaro.util.deprecation import deprecated
 
 
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class ExplorerLauncher(OpenvinoLauncher):
     def __init__(
         self,

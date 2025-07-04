@@ -6,6 +6,7 @@ import logging as log
 from typing import List, Optional, Tuple
 
 from datumaro.components.dataset import Dataset
+from datumaro.util.deprecation import deprecated
 
 log.basicConfig(level=log.INFO)
 
@@ -87,6 +88,7 @@ try:
 
             return self._bbox_overlaps(bboxes1, bboxes2)
 
+    @deprecated(deprecated_version="1.11", removed_version="1.12")
     class DataAwareAnchorGenerator:
         def __init__(
             self,
@@ -378,6 +380,7 @@ try:
 
 except ImportError:
 
+    @deprecated(deprecated_version="1.11", removed_version="1.12")
     class DataAwareAnchorGenerator:
         def __init__(self):
             raise ImportError("Torch package not found. Cannot optimize anchor generator.")

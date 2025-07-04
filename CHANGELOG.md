@@ -29,6 +29,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Mark pyemd as optional since it does not support Python 3.12
   (<https://github.com/open-edge-platform/datumaro/pull/1770>)
 
+### Deprecations
+- Added deprecation notices to the following features that will soon be removed:
+  - Crypter
+  - Advanced dataset comparison based on similarity search with OpenVINO
+  - Synthetic dataset generation
+  - Data exploration
+  - BBox to mask using SAM
+  - Tiling
+  - Dataset versioning with DVCS
+  - Telemetry
+  - Anchor generation
+  - Missing annotation detection
+  - Model inference explanation
+  - Near-duplicate removal
+  - Pruning
+  - Pseudo-labels
+  (<https://github.com/open-edge-platform/datumaro/pull/1776>)
+
 ## Q1 2025 Release 1.10.0
 
 ### New features
