@@ -29,7 +29,6 @@ from datumaro.components.errors import DatumaroError
 from datumaro.components.media import BboxIntCoords, MosaicImage
 from datumaro.components.transformer import Transform
 from datumaro.plugins.tiling.util import x1y1x2y2_to_xywh, xywh_to_x1y1x2y2
-from datumaro.util.deprecation import deprecated
 
 AnnotationsForMerge = List[Tuple[Annotation, BboxIntCoords, sg.Polygon]]
 
@@ -194,7 +193,6 @@ def _merge_not_support(ann_type: AnnotationType, *args, **kwargs) -> None:
     raise DatumaroError(f"type(ann)={ann_type} is not support tiling.")
 
 
-@deprecated(deprecated_version="1.11", removed_version="1.12")
 class MergeTile(Transform, CliPlugin):
     """
     Transformation to merge the previously tiled dataset. It can generally
