@@ -91,7 +91,7 @@ class RandomSelect(PruneBase):
         random.seed(0)
         dataset_len = len(item_list)
         num_selected_item = math.ceil(dataset_len * ratio)
-        random_indices = random.sample(range(dataset_len), num_selected_item) # nosec B311
+        random_indices = random.sample(range(dataset_len), num_selected_item)  # nosec B311
         selected_items = [item_list[idx] for idx in random_indices]
         return selected_items, None
 
