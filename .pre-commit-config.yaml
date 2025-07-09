@@ -8,10 +8,10 @@ repos:
     hooks:
       - id: end-of-file-fixer
         exclude: |
-            (?x)^(
-                site/.*|
-                tests/assets/.*
-            )$
+          (?x)^(
+              site/.*|
+              tests/assets/.*
+          )$
 
   # Ruff
   - repo: https://github.com/charliermarsh/ruff-pre-commit
@@ -53,7 +53,7 @@ repos:
   - repo: https://github.com/jumanjihouse/pre-commit-hooks
     rev: 3.0.0
     hooks:
-      - id: git-check  # Configure in .gitattributes
+      - id: git-check # Configure in .gitattributes
 
   # notebooks
   - repo: https://github.com/nbQA-dev/nbQA
@@ -62,3 +62,26 @@ repos:
       - id: nbqa-black
       - id: nbqa-ruff
         additional_dependencies: [ruff==0.4.10]
+
+  # zizmor detects security issues in GitHub Actions workflows.
+  - repo: https://github.com/woodruffw/zizmor-pre-commit
+    rev: v1.9.0
+    hooks:
+      - id: zizmor
+        args: ["--min-severity", "medium", "--min-confidence", "high"]
+
+  # add bandit for security checks
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.8.3
+    hooks:
+      - id: bandit
+        args:
+          [
+            "-c",
+            "pyproject.toml",
+            "--severity-level",
+            "all",
+            "--confidence-level",
+            "all",
+          ]
+        additional_dependencies: ["bandit[toml]"]
