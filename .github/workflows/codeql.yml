@@ -1,38 +1,34 @@
-# For most projects, this workflow file will not need changing; you simply need
-# to commit it to your repository.
-#
-# You may wish to alter this file to override the set of languages analyzed,
-# or to provide custom queries or build logic.
-#
-# ******** NOTE ********
-# We have attempted to detect the languages in your repository. Please check
-# the `language` matrix defined below to confirm you have the correct set of
-# supported CodeQL languages.
-#
-name: "CodeQL scan"
+name: "CodeQL Scan"
 
 on:
-  schedule:
-    - cron: "0 0 * * *"
   push:
     branches: ["develop", "releases/*"]
   pull_request:
     branches: ["develop", "releases/*"]
-# No permissions by default
-permissions: {}
+  schedule:
+    - cron: "0 0 * * *"
+
+permissions: {} # No permissions by default on workflow level
 
 jobs:
   analyze:
     name: Analyze (${{ matrix.language }})
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     permissions:
-      # required for all workflows
-      security-events: write
+      security-events: write # required to publish sarif
 
     strategy:
       fail-fast: false
       matrix:
-        language: ["c-cpp", "python", "actions"]
+        include:
+          - language: actions
+            build-mode: none
+          - language: python
+            build-mode: none
+          - language: c-cpp
+            build-mode: none
+          - language: rust
+            build-mode: none
 
     steps:
       - name: Checkout repository
@@ -42,35 +38,13 @@ jobs:
 
       # Initializes the CodeQL tools for scanning.
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@39edc492dbe16b1465b0cafca41432d857bdb31a # v3.29.1
+        uses: github/codeql-action/init@181d5eefc20863364f96762470ba6f862bdef56b # v3.29.2
         with:
           languages: ${{ matrix.language }}
-
-      - name: Setup Python
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
-        with:
-          python-version: "3.11"
-
-      - name: Build
-        run: |
-          pip install build
-          python -m build
+          build-mode: ${{ matrix.build-mode }}
+          queries: security-extended
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@39edc492dbe16b1465b0cafca41432d857bdb31a # v3.29.1
+        uses: github/codeql-action/analyze@181d5eefc20863364f96762470ba6f862bdef56b # v3.29.2
         with:
           category: "/language:${{matrix.language}}"
-
-      - name: Generate CodeQL Report
-        uses: rsdmike/github-security-report-action@a149b24539044c92786ec39af8ba38c93496495d # v3.0.4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          template: report
-          outputDir: ${{matrix.language}}
-
-      - name: Upload Report
-        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
-        with:
-          name: codeql-report-${{matrix.language}}
-          path: "./${{matrix.language}}/report.pdf"
-          retention-days: 7
