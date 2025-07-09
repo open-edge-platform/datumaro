@@ -31,13 +31,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Deprecations
 - Added deprecation notices to the following features that will soon be removed:
+  - Inference
+  - Model-based transformations
   - Crypter
-  - Advanced dataset comparison based on similarity search with OpenVINO
   - Synthetic dataset generation
   - Data exploration
   - BBox to mask using SAM
-  - Tiling
-  - Dataset versioning with DVCS
   - Telemetry
   - Anchor generation
   - Missing annotation detection
@@ -45,7 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Near-duplicate removal
   - Pruning
   - Pseudo-labels
-  (<https://github.com/open-edge-platform/datumaro/pull/1776>)
+  (<https://github.com/open-edge-platform/datumaro/pull/1776>, <https://github.com/open-edge-platform/datumaro/pull/1780>)
 
 ## Q1 2025 Release 1.10.0
 

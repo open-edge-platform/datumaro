@@ -20,10 +20,12 @@ from datumaro.plugins.inference_server_plugin.base import (
     TLSConfig,
 )
 from datumaro.plugins.sam_transforms.interpreters.sam_decoder_for_amg import AMGMasks, AMGPoints
+from datumaro.util.deprecation import deprecated
 
 __all__ = ["SAMAutomaticMaskGeneration"]
 
 
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class SAMAutomaticMaskGeneration(ModelTransform, CliPlugin):
     """Produce instance segmentation masks automatically using Segment Anything Model (SAM).
 

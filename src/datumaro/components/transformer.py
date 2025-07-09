@@ -11,6 +11,7 @@ from datumaro.components.cli_plugin import CliPlugin
 from datumaro.components.dataset_base import DatasetBase, DatasetItem, IDataset
 from datumaro.components.launcher import Launcher
 from datumaro.util import is_method_redefined, take_by
+from datumaro.util.deprecation import deprecated
 from datumaro.util.multi_procs_util import consumer_generator
 
 
@@ -146,6 +147,7 @@ class TabularTransform(Transform):
         return results
 
 
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class ModelTransform(Transform):
     """A transformation class for applying a model's inference to dataset items.
 
