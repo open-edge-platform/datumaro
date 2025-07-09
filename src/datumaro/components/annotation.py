@@ -33,6 +33,7 @@ from typing_extensions import Literal
 
 from datumaro.components.media import Image
 from datumaro.util.attrs_util import default_if_none, not_empty
+from datumaro.util.deprecation import deprecated
 from datumaro.util.points_util import normalize_points
 
 
@@ -257,6 +258,7 @@ class Label(Annotation):
     label: int = field(converter=int)
 
 
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 @attrs(slots=True, eq=False, order=False)
 class HashKey(Annotation):
     _type = AnnotationType.hash_key
@@ -276,6 +278,7 @@ class HashKey(Annotation):
         return np.array_equal(self.hash_key, other.hash_key)
 
 
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 @attrs(eq=False, order=False)
 class FeatureVector(Annotation):
     _type = AnnotationType.feature_vector

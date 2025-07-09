@@ -5,6 +5,7 @@
 from typing import TYPE_CHECKING, Sequence
 
 from datumaro.components.dataset import Dataset
+from datumaro.util.deprecation import deprecated
 
 if TYPE_CHECKING:
     import datumaro.plugins.explorer as explorer
@@ -14,6 +15,7 @@ else:
     explorer = lazy_import("datumaro.plugins.explorer")
 
 
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class HashInference:
     def __init__(self, *datasets: Sequence[Dataset]) -> None:
         pass

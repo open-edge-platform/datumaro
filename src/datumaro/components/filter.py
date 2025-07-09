@@ -24,6 +24,7 @@ from datumaro.components.annotation import (
 )
 from datumaro.components.media import Image
 from datumaro.components.transformer import ItemTransform
+from datumaro.util.deprecation import deprecated
 
 if TYPE_CHECKING:
     from datumaro.components.dataset_base import CategoriesInfo, DatasetItem, IDataset
@@ -36,6 +37,7 @@ __all__ = [
 ]
 
 
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class DatasetItemEncoder:
     @classmethod
     def encode(
@@ -268,6 +270,7 @@ class DatasetItemEncoder:
         return ET.tostring(encoded_item, encoding="unicode", pretty_print=True)
 
 
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class XPathDatasetFilter(ItemTransform):
     def __init__(self, extractor: IDataset, xpath: str) -> None:
         super().__init__(extractor)
@@ -289,6 +292,7 @@ class XPathDatasetFilter(ItemTransform):
         return item
 
 
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class XPathAnnotationsFilter(ItemTransform):
     def __init__(self, extractor: IDataset, xpath: str, remove_empty: bool = False) -> None:
         super().__init__(extractor)

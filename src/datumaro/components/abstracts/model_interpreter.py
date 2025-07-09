@@ -9,6 +9,7 @@ import numpy as np
 
 from datumaro.components.annotation import Annotation
 from datumaro.components.dataset_base import DatasetItem
+from datumaro.util.deprecation import deprecated
 
 __all__ = ["IModelInterpreter", "PrepInfo", "ModelPred", "LauncherInputType"]
 
@@ -17,6 +18,7 @@ ModelPred = Union[Dict[str, np.ndarray], List[Dict[str, np.ndarray]]]
 LauncherInputType = Union[np.ndarray, Dict[str, np.ndarray]]
 
 
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class IModelInterpreter(ABC):
     @abstractmethod
     def preprocess(self, inp: DatasetItem) -> Tuple[LauncherInputType, PrepInfo]:
