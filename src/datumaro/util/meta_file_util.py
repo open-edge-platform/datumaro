@@ -10,6 +10,7 @@ import numpy as np
 
 from datumaro.components.annotation import AnnotationType, HashKey
 from datumaro.util import dump_json_file, find, parse_json_file
+from datumaro.util.deprecation import deprecated
 
 DATASET_META_FILE = "dataset_meta.json"
 DATASET_HASHKEY_FILE = "hash_keys.json"
@@ -105,6 +106,7 @@ def parse_hashkey_file(path):
     return hashkey_dict
 
 
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 def save_hashkey_file(path, item_list):
     dataset_hashkey = {}
 
@@ -132,12 +134,17 @@ def save_hashkey_file(path, item_list):
     dump_json_file(meta_file, dataset_hashkey, indent=True)
 
 
-def load_hash_key(path, dataset):
-    if not os.path.isdir(path) or not has_hashkey_file(path):
-        return dataset
-
+@deprecated(deprecated_version="1.11", removed_version="1.12")
+def _load_hash_key(path, dataset):
     hashkey_dict = parse_hashkey_file(path)
     for item in dataset:
         hash_key = hashkey_dict[item.subset + "/" + item.id]
         item.annotations.append(HashKey(hash_key=np.asarray(hash_key, dtype=np.uint8)))
     return dataset
+
+
+def load_hash_key(path, dataset):
+    if not os.path.isdir(path) or not has_hashkey_file(path):
+        return dataset
+
+    return _load_hash_key(path, dataset)

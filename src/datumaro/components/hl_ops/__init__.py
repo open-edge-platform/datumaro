@@ -26,6 +26,7 @@ from datumaro.components.merge import DEFAULT_MERGE_POLICY, get_merger
 from datumaro.components.transformer import ModelTransform, Transform
 from datumaro.components.validator import TaskType, Validator
 from datumaro.util import parse_str_enum_value
+from datumaro.util.deprecation import deprecated
 from datumaro.util.scope import on_error_do, scoped
 
 if TYPE_CHECKING:
@@ -296,6 +297,7 @@ class HLOps:
         return Dataset(source=merged, env=env)
 
     @staticmethod
+    @deprecated(deprecated_version="1.11", removed_version="1.12")
     def run_model(
         dataset: IDataset,
         model: Union[Launcher, Type[ModelTransform]],

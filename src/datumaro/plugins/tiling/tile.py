@@ -30,7 +30,6 @@ from datumaro.plugins.tiling.util import (
     x1y1x2y2_to_xywh,
     xywh_to_x1y1x2y2,
 )
-from datumaro.util.deprecation import deprecated
 
 
 def _apply_offset(geom: sg.base.BaseGeometry, roi_box: sg.Polygon) -> sg.base.BaseGeometry:
@@ -133,7 +132,6 @@ def _tile_not_support(ann: Annotation, *args, **kwargs) -> None:
     raise DatumaroError(f"type(ann)={type(ann)} is not support tiling.")
 
 
-@deprecated(deprecated_version="1.11", removed_version="1.12")
 class Tile(Transform, CliPlugin):
     """
     Apply tile tranformation to items in the dataset.

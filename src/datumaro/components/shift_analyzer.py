@@ -13,6 +13,7 @@ from datumaro.components.annotation import FeatureVector
 from datumaro.components.dataset import IDataset
 from datumaro.components.launcher import LauncherWithModelInterpreter
 from datumaro.util import take_by
+from datumaro.util.deprecation import deprecated
 
 if TYPE_CHECKING:
     from scipy import linalg, stats
@@ -26,6 +27,7 @@ else:
     shift_launcher = lazy_import("datumaro.plugins.openvino_plugin.shift_launcher")
 
 
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class RunningStats1D:
     def __init__(self):
         self.running_mean = None
@@ -67,6 +69,7 @@ class RunningStats1D:
         return self.running_sq_mean - np.matmul(mean, mean.transpose())
 
 
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class FeatureAccumulator:
     def __init__(self, model: LauncherWithModelInterpreter):
         self.model = model
@@ -83,6 +86,7 @@ class FeatureAccumulator:
         return running_stats
 
 
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class FeatureAccumulatorByLabel(FeatureAccumulator):
     def __init__(self, model):
         super().__init__(model)
@@ -106,6 +110,7 @@ class FeatureAccumulatorByLabel(FeatureAccumulator):
         return running_stats
 
 
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class ShiftAnalyzer:
     def __init__(self) -> None:
         """

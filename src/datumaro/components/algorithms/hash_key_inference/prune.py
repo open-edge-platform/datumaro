@@ -81,6 +81,7 @@ class PruneBase(ABC):
         raise NotImplementedError
 
 
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class RandomSelect(PruneBase):
     """
     Select items randomly from the dataset.
@@ -95,6 +96,7 @@ class RandomSelect(PruneBase):
         return selected_items, None
 
 
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class Centroid(PruneBase):
     """
     Select items through clustering with centers targeting the desired number.
@@ -127,6 +129,7 @@ class Centroid(PruneBase):
         return selected_items, dist_tuples
 
 
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class ClusteredRandom(PruneBase):
     """
     Select items through clustering and choose randomly within each cluster.
@@ -153,6 +156,7 @@ class ClusteredRandom(PruneBase):
         return selected_items, None
 
 
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class QueryClust(PruneBase):
     """
     Select items through clustering with inits that imply each label.
@@ -206,6 +210,7 @@ class QueryClust(PruneBase):
         return selected_items, dist_tuples
 
 
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class Entropy(PruneBase):
     """
     Select items through clustering and choose them based on label entropy in each cluster.
