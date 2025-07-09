@@ -52,7 +52,7 @@ jobs:
           pip-compile -o trivy_input/tests/requirements.txt tests/requirements.txt
 
       - name: Run Trivy Scan (vuln)
-        uses: aquasecurity/trivy-action@76071ef0d7ec797419534a183b498b4d6366cf37 # v0.31.0
+        uses: aquasecurity/trivy-action@dc5a429b52fcf669ce959baa2c2dd26090d2a6c4 # v0.32.0
         with:
           scan-type: fs
           format: "sarif"
@@ -62,12 +62,12 @@ jobs:
 
       - name: Upload SARIF file
         if: ${{ always() }}
-        uses: github/codeql-action/upload-sarif@39edc492dbe16b1465b0cafca41432d857bdb31a # v3.28.8
+        uses: github/codeql-action/upload-sarif@181d5eefc20863364f96762470ba6f862bdef56b # v3.28.8
         with:
           sarif_file: "trivy-results-vuln.sarif"
 
       - name: Run Trivy Scan (spdx)
-        uses: aquasecurity/trivy-action@76071ef0d7ec797419534a183b498b4d6366cf37 # v0.31.0
+        uses: aquasecurity/trivy-action@dc5a429b52fcf669ce959baa2c2dd26090d2a6c4 # v0.32.0
         with:
           scan-type: fs
           format: "spdx-json"
@@ -101,7 +101,7 @@ jobs:
           persist-credentials: false
 
       - name: Run Trivy Scan (dockerfile and secrets)
-        uses: aquasecurity/trivy-action@76071ef0d7ec797419534a183b498b4d6366cf37 # v0.31.0
+        uses: aquasecurity/trivy-action@dc5a429b52fcf669ce959baa2c2dd26090d2a6c4 # v0.32.0
         with:
           scan-type: fs
           format: "sarif"
@@ -111,7 +111,7 @@ jobs:
 
       - name: Upload SARIF file
         if: ${{ always() }}
-        uses: github/codeql-action/upload-sarif@39edc492dbe16b1465b0cafca41432d857bdb31a # v3.28.8
+        uses: github/codeql-action/upload-sarif@181d5eefc20863364f96762470ba6f862bdef56b # v3.28.8
         with:
           sarif_file: "trivy-results-misconfig.sarif"
 
@@ -144,7 +144,7 @@ jobs:
 
       - name: Upload SARIF file
         if: ${{ always() }}
-        uses: github/codeql-action/upload-sarif@39edc492dbe16b1465b0cafca41432d857bdb31a # v3.28.8
+        uses: github/codeql-action/upload-sarif@181d5eefc20863364f96762470ba6f862bdef56b # v3.28.8
         with:
           sarif_file: bandit-results.sarif
 
