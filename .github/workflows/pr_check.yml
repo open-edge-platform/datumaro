@@ -67,3 +67,36 @@ jobs:
         uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # v5.4.3
         with:
           flags: ${{ matrix.os }}_Python-${{ matrix.python-version }}
+  Zizmor-Scan-PR:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Run Zizmor scan
+        uses: open-edge-platform/anomalib/.github/actions/security/zizmor@fadfedd5150eb8cd39dfb659ae9bd0eb1c06720d
+        with:
+          scan-scope: "changed"
+          severity-level: "MEDIUM"
+          confidence-level: "HIGH"
+          fail-on-findings: true
+  Bandit-Scan-PR:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Run Bandit scan
+        uses: open-edge-platform/anomalib/.github/actions/security/bandit@fadfedd5150eb8cd39dfb659ae9bd0eb1c06720d
+        with:
+          scan-scope: "changed"
+          severity-level: "LOW"
+          confidence-level: "LOW"
+          config_file: "pyproject.toml"
+          fail-on-findings: true
