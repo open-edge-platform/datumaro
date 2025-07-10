@@ -1,25 +1,66 @@
-name: "Security scan"
+name: Security Scans
 
 on:
-  workflow_dispatch: # run on request (no need for PR)
-  push:
-    branches: ["develop", "releases/*"]
   schedule:
-    # every UTC 6PM from Mon to Fri
-    - cron: "0 18 * * 1-5"
+    # Run security checks every day at 2 AM UTC
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+  push:
+    branches:
+      - develop
+      - release**
 
 permissions: {}
 
 jobs:
-  Trivy-Scan-Vuln:
-    runs-on: ubuntu-24.04
+  zizmor-scan:
+    runs-on: ubuntu-latest
     permissions:
-      security-events: write
+      contents: read
+      security-events: write # Needed to upload the results to code-scanning dashboard
     steps:
       - name: Checkout code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           persist-credentials: false
+      - name: Run Zizmor scan
+        uses: open-edge-platform/anomalib/.github/actions/security/zizmor@fadfedd5150eb8cd39dfb659ae9bd0eb1c06720d
+        with:
+          scan-scope: "all"
+          severity-level: "LOW"
+          confidence-level: "LOW"
+          fail-on-findings: false # reports only
+
+  bandit-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write # Needed to upload the results to code-scanning dashboard
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Run Bandit scan
+        uses: open-edge-platform/anomalib/.github/actions/security/bandit@fadfedd5150eb8cd39dfb659ae9bd0eb1c06720d
+        with:
+          scan-scope: "all"
+          severity-level: "LOW"
+          confidence-level: "LOW"
+          config_file: "pyproject.toml"
+          fail-on-findings: false # reports only
+
+  trivy-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write # Needed to upload the results to code-scanning dashboard
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
       - name: Set up Python
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
@@ -51,134 +92,14 @@ jobs:
           mkdir -p trivy_input/tests
           pip-compile -o trivy_input/tests/requirements.txt tests/requirements.txt
 
-      - name: Run Trivy Scan (vuln)
-        uses: aquasecurity/trivy-action@76071ef0d7ec797419534a183b498b4d6366cf37 # v0.31.0
+      - name: Run Trivy scan
+        id: trivy
+        uses: open-edge-platform/anomalib/.github/actions/security/trivy@fadfedd5150eb8cd39dfb659ae9bd0eb1c06720d
         with:
-          scan-type: fs
+          scan_type: "fs"
+          scan-scope: all
+          severity: LOW
+          scanners: "vuln,secret,config"
           format: "sarif"
-          scan-ref: trivy_input
-          scanners: vuln
-          output: trivy-results-vuln.sarif
-
-      - name: Upload SARIF file
-        if: ${{ always() }}
-        uses: github/codeql-action/upload-sarif@39edc492dbe16b1465b0cafca41432d857bdb31a # v3.28.8
-        with:
-          sarif_file: "trivy-results-vuln.sarif"
-
-      - name: Run Trivy Scan (spdx)
-        uses: aquasecurity/trivy-action@76071ef0d7ec797419534a183b498b4d6366cf37 # v0.31.0
-        with:
-          scan-type: fs
-          format: "spdx-json"
-          scan-ref: trivy_input
-          output: trivy-results-spdx.json
-
-      - name: Upload Trivy results artifact
-        if: ${{ always() }}
-        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
-        with:
-          name: trivy-vuln-results
-          path: "${{ github.workspace }}/trivy-results-*"
-          retention-days: 7
-
-      - name: Upload deps list
-        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
-        if: always()
-        with:
-          name: python-deps-list
-          path: "${{ github.workspace }}/trivy_input"
-          retention-days: 7
-
-  Trivy-Scan-Misconfig:
-    runs-on: ubuntu-24.04
-    permissions:
-      security-events: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        with:
-          persist-credentials: false
-
-      - name: Run Trivy Scan (dockerfile and secrets)
-        uses: aquasecurity/trivy-action@76071ef0d7ec797419534a183b498b4d6366cf37 # v0.31.0
-        with:
-          scan-type: fs
-          format: "sarif"
-          scan-ref: .
-          scanners: misconfig,secret
-          output: trivy-results-misconfig.sarif
-
-      - name: Upload SARIF file
-        if: ${{ always() }}
-        uses: github/codeql-action/upload-sarif@39edc492dbe16b1465b0cafca41432d857bdb31a # v3.28.8
-        with:
-          sarif_file: "trivy-results-misconfig.sarif"
-
-      - name: Upload Trivy results artifact
-        if: ${{ always() }}
-        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
-        with:
-          name: trivy-misconfig-results
-          path: "${{ github.workspace }}/trivy-results-misconfig.sarif"
-          retention-days: 7
-
-  Bandit:
-    runs-on: ubuntu-24.04
-    permissions:
-      security-events: write
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        with:
-          persist-credentials: false
-      - name: Set up Python
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
-        with:
-          python-version: "3.11"
-      - name: Install bandit
-        run: pip install bandit[sarif]
-
-      - name: Bandit Scanning
-        run: bandit -r -c .ci/ipas_default.config . -f sarif -o bandit-results.sarif
-
-      - name: Upload SARIF file
-        if: ${{ always() }}
-        uses: github/codeql-action/upload-sarif@39edc492dbe16b1465b0cafca41432d857bdb31a # v3.28.8
-        with:
-          sarif_file: bandit-results.sarif
-
-      - name: Upload Bandit artifact
-        if: ${{ always() }}
-        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
-        with:
-          name: bandit-results
-          path: bandit-results.sarif
-          retention-days: 7
-
-  Summarize:
-    needs: [Trivy-Scan-Vuln, Trivy-Scan-Misconfig, Bandit]
-    if: always()
-    runs-on: ubuntu-24.04
-    steps:
-      # Create directory first
-      - name: Create results directory
-        run: mkdir -p all-results
-
-      # Download artifacts with error handling
-      - name: Download all results
-        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
-        continue-on-error: true # Don't fail if some tools didn't generate results
-        with:
-          pattern: "*-results"
-          merge-multiple: true
-          path: all-results
-
-      # Only upload if there are files
-      - name: Upload combined results
-        if: hashFiles('all-results/**/*') != ''
-        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
-        with:
-          name: security-scan-results
-          path: all-results
-          retention-days: 7
+          timeout: "15m"
+          ignore_unfixed: "false"
