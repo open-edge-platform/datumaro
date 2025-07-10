@@ -1,5 +1,8 @@
 # Segment Anything Model for Datumaro
 
+> [!WARNING]
+> The Segment Anything Model for Datumaro is deprecated and will be removed in Datumaro 2.12.
+
 ## Introduction
 
 [Segment Anything Model](https://github.com/facebookresearch/segment-anything) provides high quality object masks for the given point, bounding box, and text prompts.
