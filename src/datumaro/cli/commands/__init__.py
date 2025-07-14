@@ -28,6 +28,8 @@ __all__ = [
     "get_project_commands",
 ]
 
+deprecated = "[DEPRECATED, will be removed in 1.12]"
+
 
 def get_non_project_commands():
     return [
@@ -36,13 +38,13 @@ def get_non_project_commands():
         ("compare", compare, "Compare datasets"),
         ("dinfo", info, "Print dataset info"),
         ("download", download, "Download a publicly available dataset"),
-        ("explain", explain, "Run Explainable AI algorithm for model"),
-        ("explore", explore, "Explore similar datasetitems of query"),
+        ("explain", explain, f"{deprecated} Run Explainable AI algorithm for model"),
+        ("explore", explore, f"{deprecated} Explore similar datasetitems of query"),
         ("filter", filter, "Filter dataset items"),
-        ("generate", generate, "Generate synthetic dataset"),
+        ("generate", generate, f"{deprecated} Generate synthetic dataset"),
         ("merge", merge, "Merge datasets"),
         ("patch", patch, "Update dataset from another one"),
-        ("prune", prune, "Prune dataset"),
+        ("prune", prune, f"{deprecated} Prune dataset"),
         ("stats", stats, "Compute dataset statistics"),
         ("transform", transform, "Modify dataset items"),
         ("validate", validate, "Validate dataset"),
