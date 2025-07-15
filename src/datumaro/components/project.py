@@ -73,6 +73,7 @@ from datumaro.components.errors import (
 )
 from datumaro.components.launcher import Launcher
 from datumaro.util import find, parse_json_file, parse_str_enum_value
+from datumaro.util.deprecation import deprecated
 from datumaro.util.log_utils import catch_logs, logging_disabled
 from datumaro.util.os_util import (
     copytree,
@@ -93,6 +94,7 @@ else:
     nx = lazy_import("networkx")
 
 
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class ProjectSourceDataset(IDataset):
     def __init__(self, path: str, tree: Tree, source: str, readonly: bool = False):
         config = tree.sources[source]
