@@ -283,6 +283,7 @@ class _DataSourceBase(CrudProxy[Source]):
         self._data.remove(name)
 
 
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class ProjectSources(_DataSourceBase):
     def __init__(self, tree: Tree):
         super().__init__(tree, "sources")
@@ -382,6 +383,7 @@ class Pipeline:
         return pipeline
 
 
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class ProjectBuilder:
     def __init__(self, project: Project, tree: Tree):
         self._project = project
@@ -760,6 +762,7 @@ class ProjectBuilder:
         return missing_sources, work_dir_hashes
 
 
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class ProjectBuildTargets(CrudProxy[BuildTarget]):
     MAIN_TARGET = "project"
     BASE_STAGE = "root"
@@ -1593,6 +1596,7 @@ Revision = NewType("Revision", str)  # a commit hash or a named reference
 ObjectId = NewType("ObjectId", str)  # a commit or an object hash
 
 
+@deprecated(deprecated_version="1.11", removed_version="1.12")
 class Project:
     @staticmethod
     def find_project_dir(path: str) -> Optional[str]:
