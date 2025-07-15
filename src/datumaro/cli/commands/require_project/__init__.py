@@ -4,20 +4,22 @@
 
 from . import modification, versioning
 
+deprecated = "[DEPRECATED, will be removed in 1.12]"
+
 
 def get_project_commands():
     return [
-        ("Project modification:", None, ""),
-        ("add", modification.add, "Add dataset"),  # TODO: We will deprecated it with import soon.
-        ("create", modification.create, "Create empty project"),
-        ("export", modification.export, "Export dataset in some format"),
-        ("import", modification.import_, "Import dataset"),
-        ("remove", modification.remove, "Remove dataset"),
+        ("Project modification:", None, deprecated),
+        ("add", modification.add, f"{deprecated} Add dataset"),
+        ("create", modification.create, f"{deprecated} Create empty project"),
+        ("export", modification.export, f"{deprecated} Export dataset in some format"),
+        ("import", modification.import_, f"{deprecated} Import dataset"),
+        ("remove", modification.remove, f"{deprecated} Remove dataset"),
         ("", None, ""),
-        ("Project versioning:", None, ""),
-        ("checkout", versioning.checkout, "Switch to another branch or revision"),
-        ("commit", versioning.commit, "Commit changes in tracked files"),
-        ("log", versioning.log, "List history"),
-        ("info", versioning.info, "Print project information"),
-        ("status", versioning.status, "Display current branch and revision status"),
+        ("Project versioning:", None, deprecated),
+        ("checkout", versioning.checkout, f"{deprecated} Switch to another branch or revision"),
+        ("commit", versioning.commit, f"{deprecated} Commit changes in tracked files"),
+        ("log", versioning.log, f"{deprecated} List history"),
+        ("info", versioning.info, f"{deprecated} Print project information"),
+        ("status", versioning.status, f"{deprecated} Display current branch and revision status"),
     ]
