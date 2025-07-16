@@ -16,9 +16,13 @@ __all__ = [
 ]
 
 
+deprecated = "[DEPRECATED, will be removed in 1.12]"
+
+
 def build_parser(parser_ctor=argparse.ArgumentParser):
     parser = parser_ctor(
-        help="Remove source from project", description="Remove a source from a project"
+        help=f"{deprecated} Remove source from project",
+        description=f"{deprecated} Remove a source from a project",
     )
 
     parser.add_argument("names", nargs="+", help="Names of the sources to be removed")
@@ -53,6 +57,7 @@ def get_sensitive_args():
 
 @scoped
 def remove_command(args):
+    log.warning("This command is deprecated and will be removed in Datumaro 1.12")
     project = scope_add(load_project(args.project_dir))
 
     if not args.names:

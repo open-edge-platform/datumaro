@@ -3,18 +3,21 @@
 # SPDX-License-Identifier: MIT
 
 import argparse
+import logging as log
 
 from datumaro.util.scope import scope_add, scoped
 
 from ....util import MultilineFormatter
 from ....util.project import load_project
 
+deprecated = "[DEPRECATED, will be removed in 1.12]"
+
 
 def build_parser(parser_ctor=argparse.ArgumentParser):
     parser = parser_ctor(
-        help="Navigate to a revision",
-        description="""
-        Command forms:|n
+        help=f"{deprecated} Navigate to a revision",
+        description=f"""
+        {deprecated} Command forms:|n
         1) %(prog)s <revision>|n
         2) %(prog)s [--] <source1> ...|n
         3) %(prog)s <revision> [--] <source1> <source2> ...|n
@@ -72,6 +75,7 @@ def get_sensitive_args():
 
 @scoped
 def checkout_command(args):
+    log.warning("This command is deprecated and will be removed in Datumaro 1.12")
     has_sep = "--" in args._positionals
     if has_sep:
         pos = args._positionals.index("--")

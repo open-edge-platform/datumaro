@@ -13,12 +13,14 @@ from datumaro.util.definitions import get_datumaro_cache_dir
 
 from ..util import MultilineFormatter
 
+deprecated = "[DEPRECATED, will be removed in 1.12]"
+
 
 def build_parser(parser_ctor=argparse.ArgumentParser):
     parser = parser_ctor(
-        help="Generate synthetic dataset",
-        description="""
-        Creates a synthetic dataset with elements of the specified type and shape,
+        help=f"{deprecated} Generate synthetic dataset",
+        description=f"""
+        {deprecated} Creates a synthetic dataset with elements of the specified type and shape,
         and saves it in the provided directory.|n
         |n
         Currently, can only generate fractal images, useful for network compression.|n
@@ -75,6 +77,7 @@ def get_sensitive_args():
 
 
 def generate_command(args):
+    log.warning("This command is deprecated and will be removed in Datumaro 1.12")
     from datumaro.plugins.synthetic_data import FractalImageGenerator
 
     log.info("Generating dataset...")

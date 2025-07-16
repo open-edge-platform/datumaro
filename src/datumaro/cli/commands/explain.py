@@ -14,12 +14,14 @@ from ..util import MultilineFormatter
 from ..util.errors import CliException
 from ..util.project import load_project, parse_full_revpath
 
+deprecated = "[DEPRECATED, will be removed in 1.12]"
+
 
 def build_parser(parser_ctor=argparse.ArgumentParser):
     parser = parser_ctor(
-        help="Run Explainable AI algorithm",
-        description="""
-        Runs an explainable AI algorithm for a model.|n
+        help=f"{deprecated} Run Explainable AI algorithm",
+        description=f"""
+        {deprecated} Runs an explainable AI algorithm for a model.|n
         |n
         This tool is supposed to help an AI developer to debug
         a model and a dataset. Basically, it executes inference and
@@ -183,6 +185,7 @@ def get_sensitive_args():
 
 @scoped
 def explain_command(args):
+    log.warning("This command is deprecated and will be removed in Datumaro 1.12")
     import cv2
     from matplotlib import cm
 

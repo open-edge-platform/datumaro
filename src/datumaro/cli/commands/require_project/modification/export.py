@@ -23,13 +23,16 @@ __all__ = [
 ]
 
 
+deprecated = "[DEPRECATED, will be removed in 1.12]"
+
+
 def build_parser(parser_ctor=argparse.ArgumentParser):
     builtins = sorted(DEFAULT_ENVIRONMENT.exporters)
 
     parser = parser_ctor(
-        help="Export project",
-        description="""
-        Exports a project in some format.|n
+        help=f"{deprecated} Export project",
+        description=f"""
+        {deprecated} Exports a project in some format.|n
         |n
         Each dataset format has its own export
         options, which are passed after the '--' separator (see examples),
@@ -50,7 +53,7 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         Check the "plugins" section of the developer guide for information
         about plugin implementation.|n
         |n
-        List of builtin dataset formats: {}|n
+        List of builtin dataset formats: {{}}|n
         |n
         The command can only be applied to a project build target, a stage
         or the combined 'project' target, in which case all the targets will
@@ -121,6 +124,7 @@ def get_sensitive_args():
 
 @scoped
 def export_command(args):
+    log.warning("This command is deprecated and will be removed in Datumaro 1.12")
     has_sep = "--" in args._positionals
     if has_sep:
         pos = args._positionals.index("--")

@@ -13,12 +13,14 @@ from datumaro.util.os_util import rmtree
 from ....util import MultilineFormatter
 from ....util.errors import CliException
 
+deprecated = "[DEPRECATED, will be removed in 1.12]"
+
 
 def build_parser(parser_ctor=argparse.ArgumentParser):
     parser = parser_ctor(
-        help="Create empty project",
-        description="""
-        Create an empty Datumaro project. A project is required for the most of
+        help=f"{deprecated} Create empty project",
+        description=f"""
+        {deprecated} Create an empty Datumaro project. A project is required for the most of
         Datumaro functionality.|n
         |n
         Examples:|n
@@ -55,6 +57,7 @@ def get_sensitive_args():
 
 
 def create_command(args):
+    log.warning("This command is deprecated and will be removed in Datumaro 1.12")
     project_dir = osp.abspath(args.dst_dir)
 
     existing_project_dir = Project.find_project_dir(project_dir)
