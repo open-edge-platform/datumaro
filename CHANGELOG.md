@@ -53,6 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (<https://github.com/open-edge-platform/datumaro/pull/1776>, <https://github.com/open-edge-platform/datumaro/pull/1780>, <https://github.com/open-edge-platform/datumaro/pull/1792>, <https://github.com/open-edge-platform/datumaro/pull/1795>)
 - Deprecation of the SAM Docker image
   (<https://github.com/open-edge-platform/datumaro/pull/1783>)
+- Deprecation of Project and related features (<https://github.com/open-edge-platform/datumaro/pull/1793>)
 
 ## Q1 2025 Release 1.10.0
 
