@@ -77,7 +77,7 @@ setuptools.setup(
     packages=setuptools.find_packages(where="src", include=["datumaro*"]),
     classifiers=[
         "Programming Language :: Python :: 3",
-        "License :: OSI Approved :: MIT License",
+        "MIT",
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.9",
