@@ -30,8 +30,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (<https://github.com/open-edge-platform/datumaro/pull/1770>)
 
 ### Deprecations
+- Added deprecation to the following CLI commmands:
+  - explain, explore, generate, prune
+  - model: add, remove, run, info
+  - project: add, create, export, import, remove, checkout, commit, log, info, status
+  - source: import, add, remove
+  (<https://github.com/open-edge-platform/datumaro/pull/1792>)
 - Added deprecation notices to the following features that will soon be removed:
-  - Inference
+  - Model inference
   - Model-based transformations
   - Crypter
   - Synthetic dataset generation
@@ -44,7 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Near-duplicate removal
   - Pruning
   - Pseudo-labels
-  (<https://github.com/open-edge-platform/datumaro/pull/1776>, <https://github.com/open-edge-platform/datumaro/pull/1780>)
+  (<https://github.com/open-edge-platform/datumaro/pull/1776>, <https://github.com/open-edge-platform/datumaro/pull/1780>, <https://github.com/open-edge-platform/datumaro/pull/1792>, <https://github.com/open-edge-platform/datumaro/pull/1795>)
 - Deprecation of the SAM Docker image
   (<https://github.com/open-edge-platform/datumaro/pull/1783>)
 - Deprecation of Project and related features (<https://github.com/open-edge-platform/datumaro/pull/1793>)

@@ -22,12 +22,14 @@ from datumaro.util.scope import scope_add, scoped
 from ..util import MultilineFormatter
 from ..util.project import load_project, parse_full_revpath
 
+deprecated = "[DEPRECATED, will be removed in 1.12]"
+
 
 def build_parser(parser_ctor=argparse.ArgumentParser):
     parser = parser_ctor(
-        help="Explore similar data of query in dataset",
-        description="""
-        Applies data exploration to a dataset for image/text query.
+        help=f"{deprecated} Explore similar data of query in dataset",
+        description=f"""
+        {deprecated} Applies data exploration to a dataset for image/text query.
         The command can be useful if you have to find similar data in dataset.
         |n
         The current project (-p/--project) is used as a context for plugins
@@ -125,6 +127,7 @@ def get_sensitive_args():
 
 @scoped
 def explore_command(args):
+    log.warning("This command is deprecated and will be removed in Datumaro 1.12")
     project = None
     try:
         project = scope_add(load_project(args.project_dir))

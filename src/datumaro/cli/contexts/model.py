@@ -21,18 +21,20 @@ from ..util.project import (
     parse_full_revpath,
 )
 
+deprecated = "[DEPRECATED, will be removed in 1.12]"
+
 
 def build_add_parser(parser_ctor=argparse.ArgumentParser):
     builtins = sorted(Environment().launchers)
 
     parser = parser_ctor(
-        help="Add model to project",
-        description="""
-        Adds an executable model into a project. A model requires
+        help=f"{deprecated} Add model to project",
+        description=f"""
+        { deprecated } Adds an executable model into a project. A model requires
         a launcher to be executed. Each launcher has its own options, which
         are passed after the '--' separator, pass '-- -h' for more info.
         |n
-        List of builtin launchers: {}|n
+        List of builtin launchers: {{}}|n
         |n
         Examples:|n
         - Add an OpenVINO model into a project:|n
@@ -81,6 +83,7 @@ def get_add_sensitive_args():
 
 @scoped
 def add_command(args):
+    log.warning("This command is deprecated and will be removed in Datumaro 1.12")
     show_plugin_help = "-h" in args.extra_args or "--help" in args.extra_args
 
     project = None
@@ -140,7 +143,8 @@ def add_command(args):
 
 def build_remove_parser(parser_ctor=argparse.ArgumentParser):
     parser = parser_ctor(
-        help="Remove model from project", description="Remove a model from a project"
+        help=f"{deprecated} Remove model from project",
+        description=f"{deprecated } Remove a model from a project",
     )
 
     parser.add_argument("name", help="Name of the model to be removed")
@@ -166,6 +170,7 @@ def get_remove_sensitive_args():
 
 @scoped
 def remove_command(args):
+    log.warning("This command is deprecated and will be removed in Datumaro 1.12")
     project = scope_add(load_project(args.project_dir))
 
     project.remove_model(args.name)
@@ -178,9 +183,9 @@ def remove_command(args):
 
 def build_run_parser(parser_ctor=argparse.ArgumentParser):
     parser = parser_ctor(
-        help="Launches model inference",
-        description="""
-        Launches model inference on a dataset.|n
+        help=f"{deprecated} Launches model inference",
+        description=f"""
+        { deprecated } Launches model inference on a dataset.|n
         |n
         Target dataset is specified by a revpath. The full syntax is:|n
         - Dataset paths:|n
@@ -235,6 +240,7 @@ def get_run_sensitive_args():
 
 @scoped
 def run_command(args):
+    log.warning("This command is deprecated and will be removed in Datumaro 1.12")
     dst_dir = args.dst_dir
     if dst_dir:
         if not args.overwrite and osp.isdir(dst_dir) and os.listdir(dst_dir):
@@ -262,8 +268,8 @@ def run_command(args):
 
 def build_info_parser(parser_ctor=argparse.ArgumentParser):
     parser = parser_ctor(
-        help="Print model information in this project",
-        description="Print model information in this project",
+        help=f"{deprecated} Print model information in this project",
+        description=f"{deprecated } Print model information in this project",
         formatter_class=MultilineFormatter,
     )
 
@@ -291,6 +297,7 @@ def get_info_sensitive_args():
 
 @scoped
 def info_command(args):
+    log.warning("This command is deprecated and will be removed in Datumaro 1.12")
     project = scope_add(load_project(args.project_dir))
 
     if args.name:

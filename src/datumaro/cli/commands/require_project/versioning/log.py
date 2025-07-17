@@ -3,14 +3,17 @@
 # SPDX-License-Identifier: MIT
 
 import argparse
+import logging as log
 
 from datumaro.util.scope import scope_add, scoped
 
 from ....util.project import load_project
 
+deprecated = "[DEPRECATED, will be removed in 1.12]"
+
 
 def build_parser(parser_ctor=argparse.ArgumentParser):
-    parser = parser_ctor(description="Prints project history.")
+    parser = parser_ctor(description=f"{deprecated} Prints project history.")
 
     parser.add_argument(
         "-n",
@@ -40,6 +43,7 @@ def get_sensitive_args():
 
 @scoped
 def log_command(args):
+    log.warning("This command is deprecated and will be removed in Datumaro 1.12")
     project = scope_add(load_project(args.project_dir))
 
     revisions = project.history(args.max_count)

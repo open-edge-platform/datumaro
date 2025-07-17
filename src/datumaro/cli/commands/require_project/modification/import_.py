@@ -20,14 +20,17 @@ __all__ = [
 ]
 
 
+deprecated = "[DEPRECATED, will be removed in 1.12]"
+
+
 def build_parser(parser_ctor=argparse.ArgumentParser):
     env = DEFAULT_ENVIRONMENT
     builtins = sorted(set(env.extractors) | set(env.importers))
 
     parser = parser_ctor(
-        help="Import dataset to project",
-        description="""
-        Imports a data source to a project. A data source is a dataset
+        help=f"{deprecated} Import dataset to project",
+        description=f"""
+        {deprecated} Imports a data source to a project. A data source is a dataset
         in a supported format (check 'formats' section below).|n
         |n
         Currently, only local paths to sources are supported.|n
@@ -46,7 +49,7 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         Each dataset format has its own import options, which are passed
         after the '--' separator (see examples), pass '-- -h' for more info.|n
         |n
-        Builtin formats: {}|n
+        Builtin formats: {{}}|n
         |n
         Examples:|n
         - Add a local directory with a VOC-like dataset:|n
@@ -108,6 +111,7 @@ def get_sensitive_args():
 
 @scoped
 def import_command(args):
+    log.warning("This command is deprecated and will be removed in Datumaro 1.12")
     # Workaround. Required positionals consume positionals from the end
     args._positionals += join_cli_args(args, "url", "extra_args")
 

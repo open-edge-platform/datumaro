@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 import argparse
+import logging as log
 import os.path as osp
 
 from datumaro.util.scope import scope_add, scoped
@@ -10,12 +11,14 @@ from datumaro.util.scope import scope_add, scoped
 from ....util import MultilineFormatter
 from ....util.project import load_project
 
+deprecated = "[DEPRECATED, will be removed in 1.12]"
+
 
 def build_parser(parser_ctor=argparse.ArgumentParser):
     parser = parser_ctor(
-        help="Get project info",
-        description="""
-        Outputs project info - information about plugins,
+        help=f"{deprecated} Get project info",
+        description=f"""
+        {deprecated} Outputs project info - information about plugins,
         sources, build tree, models and revisions.|n
         |n
         Examples:|n
@@ -50,6 +53,7 @@ def get_sensitive_args():
 
 @scoped
 def info_command(args):
+    log.warning("This command is deprecated and will be removed in Datumaro 1.12")
     project = scope_add(load_project(args.project_dir))
     rev = project.get_rev(args.revision)
     env = rev.env

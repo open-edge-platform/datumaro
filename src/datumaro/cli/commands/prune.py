@@ -13,12 +13,14 @@ from datumaro.util.scope import scope_add, scoped
 from ..util import MultilineFormatter
 from ..util.project import load_project, parse_full_revpath
 
+deprecated = "[DEPRECATED, will be removed in 1.12]"
+
 
 def build_parser(parser_ctor=argparse.ArgumentParser):
     parser = parser_ctor(
-        help="Prune dataset and make a representative subset",
-        description="""
-        Apply data pruning to a dataset.|n
+        help=f"{deprecated} Prune dataset and make a representative subset",
+        description=f"""
+        {deprecated} Apply data pruning to a dataset.|n
         The command can be useful if you have to extract representative subset.
         |n
         The current project (-p/--project) is used as a context for plugins
@@ -36,12 +38,12 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         targets will be affected.|n
         |n
         Examples:|n
-        - Prune dataset with selecting random and ratio 80%:|n
+        - Prune dataset with selecting random and ratio 80%%:|n
         |s|s%(prog)s -m random -r 0.8|n
-        - Prune dataset with clustering in image hash and ratio 50%:|n
-        |s|s%(prog)s -m query_clust -h img -r 0.5|
-        - Prune dataset based on entropy with clustering in image hash and ratio 50%:|n
-        |s|s%(prog)s -m entropy -h img -r 0.5|
+        - Prune dataset with clustering in image hash and ratio 50%%:|n
+        |s|s%(prog)s -m query_clust -h img -r 0.5|n
+        - Prune dataset based on entropy with clustering in image hash and ratio 50%%:|n
+        |s|s%(prog)s -m entropy -h img -r 0.5
         """,
         formatter_class=MultilineFormatter,
     )
@@ -105,6 +107,7 @@ def get_sensitive_args():
 
 @scoped
 def prune_command(args):
+    log.warning("This command is deprecated and will be removed in Datumaro 1.12")
     project = None
     try:
         project = scope_add(load_project(args.project_dir))

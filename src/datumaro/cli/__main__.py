@@ -79,7 +79,7 @@ def _get_known_contexts():
         ("model", contexts.model, f"{deprecated} Actions with models"),
         ("project", contexts.project, f"{deprecated} Actions with projects"),
         ("source", contexts.source, f"{deprecated} Actions with data sources"),
-        ("util", contexts.util, f"{deprecated} Auxillary tools and utilities"),
+        ("util", contexts.util, "Auxillary tools and utilities"),
     ]
 
 
