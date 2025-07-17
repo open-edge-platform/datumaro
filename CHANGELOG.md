@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Q3 2025 Release 1.11.0
 
+This release includes a significant number of deprecations in the CLI and API.
+This is a one-off action to remove unused features as well as features
+such as inference which do not fit well in Datumaro. We intend to remove those
+features in Datumaro 1.12.0.
+
 ### New features
 - Convert Cuboid2D annotation to/from 3D data
   (<https://github.com/open-edge-platform/datumaro/pull/1639>)
