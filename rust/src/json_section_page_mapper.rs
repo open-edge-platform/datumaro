@@ -193,7 +193,7 @@ impl JsonSectionPageMapper {
             })
             .collect();
 
-        Ok(dict.into_py_any(self_.py()).unwrap())
+        Ok(dict.into_py_any(self_.py())?)
     }
 
     fn __len__(&self) -> PyResult<usize> {

@@ -112,7 +112,7 @@ where
                     let mut stream = de.into_iter::<HashMap<String, serde_json::Value>>();
                     let offset = curr_pos + stream.byte_offset() as u64;
 
-                    match stream.next().unwrap() {
+                    match stream.next().ok_or_else(|| stream_error("Unexpected end of stream", offset))? {
                         Ok(parsed_map) => {
                             let id = ItemPageMapKeyTrait::get_id(parsed_map, offset)?;
 
@@ -248,7 +248,7 @@ impl AnnPageMap {
                     let mut stream = de.into_iter::<HashMap<String, serde_json::Value>>();
                     let offset = curr_pos + stream.byte_offset() as u64;
 
-                    match stream.next().unwrap() {
+                    match stream.next().ok_or_else(|| stream_error("Unexpected end of stream", offset))? {
                         Ok(parsed_map) => {
                             let ann_id = if let Some(v) = parsed_map.get("id") {
                                 v.as_i64().ok_or(stream_error(

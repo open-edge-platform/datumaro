@@ -198,7 +198,8 @@ impl CocoPageMapper {
             self.mapper
                 .get_anns_dict(img_id, &mut self.reader)?
                 .iter()
-                .map(|child| convert_to_py_object(child, py).unwrap()),
+                .map(|child| convert_to_py_object(child, py))
+                .collect::<PyResult<Vec<_>>>()?,
         )?;
         Ok(anns_list.into())
     }
