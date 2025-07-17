@@ -353,23 +353,26 @@ document.write(`
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.scope</span><span class="w"> </span><span class="kn">import</span> <span class="n">scope_add</span><span class="p">,</span> <span class="n">scoped</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">....util</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultilineFormatter</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">....util.project</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_project</span>
 
+<span class="n">deprecated</span> <span class="o">=</span> <span class="s2">&quot;[DEPRECATED, will be removed in 1.12]&quot;</span>
+
 
 <div class="viewcode-block" id="build_parser">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.cli.commands.require_project.versioning.checkout.html#datumaro.cli.commands.require_project.versioning.checkout.build_parser">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">build_parser</span><span class="p">(</span><span class="n">parser_ctor</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">):</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">parser_ctor</span><span class="p">(</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Navigate to a revision&quot;</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        Command forms:|n</span>
-<span class="s2">        1) </span><span class="si">%(prog)s</span><span class="s2"> &lt;revision&gt;|n</span>
-<span class="s2">        2) </span><span class="si">%(prog)s</span><span class="s2"> [--] &lt;source1&gt; ...|n</span>
-<span class="s2">        3) </span><span class="si">%(prog)s</span><span class="s2"> &lt;revision&gt; [--] &lt;source1&gt; &lt;source2&gt; ...|n</span>
+        <span class="n">help</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">deprecated</span><span class="si">}</span><span class="s2"> Navigate to a revision&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        </span><span class="si">{</span><span class="n">deprecated</span><span class="si">}</span><span class="s2"> Command forms:|n</span>
+<span class="s2">        1) %(prog)s &lt;revision&gt;|n</span>
+<span class="s2">        2) %(prog)s [--] &lt;source1&gt; ...|n</span>
+<span class="s2">        3) %(prog)s &lt;revision&gt; [--] &lt;source1&gt; &lt;source2&gt; ...|n</span>
 <span class="s2">        |n</span>
 <span class="s2">        1 - Restores a revision and all the sources in the working directory.|n</span>
 <span class="s2">        2, 3 - Restores only specified sources from the specified revision.|n</span>
@@ -381,11 +384,11 @@ document.write(`
 <span class="s2">        |n</span>
 <span class="s2">        Examples:|n</span>
 <span class="s2">        - Restore the previous revision:|n</span>
-<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> HEAD~1 |n |n</span>
+<span class="s2">        |s|s%(prog)s HEAD~1 |n |n</span>
 <span class="s2">        - Restore the saved version of a source in the working tree|n</span>
-<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> -- source-1 |n |n</span>
+<span class="s2">        |s|s%(prog)s -- source-1 |n |n</span>
 <span class="s2">        - Restore a previous version of a source|n</span>
-<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> 33fbfbe my-source</span>
+<span class="s2">        |s|s%(prog)s 33fbfbe my-source</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span>
         <span class="n">formatter_class</span><span class="o">=</span><span class="n">MultilineFormatter</span><span class="p">,</span>
     <span class="p">)</span>
@@ -430,6 +433,7 @@ document.write(`
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.cli.commands.require_project.versioning.checkout.html#datumaro.cli.commands.require_project.versioning.checkout.checkout_command">[docs]</a>
 <span class="nd">@scoped</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">checkout_command</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;This command is deprecated and will be removed in Datumaro 1.12&quot;</span><span class="p">)</span>
     <span class="n">has_sep</span> <span class="o">=</span> <span class="s2">&quot;--&quot;</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">_positionals</span>
     <span class="k">if</span> <span class="n">has_sep</span><span class="p">:</span>
         <span class="n">pos</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">_positionals</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>

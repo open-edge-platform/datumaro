@@ -370,6 +370,9 @@ document.write(`
 <span class="p">]</span>
 
 
+<span class="n">deprecated</span> <span class="o">=</span> <span class="s2">&quot;[DEPRECATED, will be removed in 1.12]&quot;</span>
+
+
 <div class="viewcode-block" id="build_parser">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.cli.commands.require_project.modification.import_.html#datumaro.cli.commands.require_project.modification.import_.build_parser">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">build_parser</span><span class="p">(</span><span class="n">parser_ctor</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">):</span>
@@ -377,9 +380,9 @@ document.write(`
     <span class="n">builtins</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">extractors</span><span class="p">)</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">importers</span><span class="p">))</span>
 
     <span class="n">parser</span> <span class="o">=</span> <span class="n">parser_ctor</span><span class="p">(</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Import dataset to project&quot;</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        Imports a data source to a project. A data source is a dataset</span>
+        <span class="n">help</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">deprecated</span><span class="si">}</span><span class="s2"> Import dataset to project&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        </span><span class="si">{</span><span class="n">deprecated</span><span class="si">}</span><span class="s2"> Imports a data source to a project. A data source is a dataset</span>
 <span class="s2">        in a supported format (check &#39;formats&#39; section below).|n</span>
 <span class="s2">        |n</span>
 <span class="s2">        Currently, only local paths to sources are supported.|n</span>
@@ -398,18 +401,18 @@ document.write(`
 <span class="s2">        Each dataset format has its own import options, which are passed</span>
 <span class="s2">        after the &#39;--&#39; separator (see examples), pass &#39;-- -h&#39; for more info.|n</span>
 <span class="s2">        |n</span>
-<span class="s2">        Builtin formats: </span><span class="si">{}</span><span class="s2">|n</span>
+<span class="s2">        Builtin formats: </span><span class="se">{{}}</span><span class="s2">|n</span>
 <span class="s2">        |n</span>
 <span class="s2">        Examples:|n</span>
 <span class="s2">        - Add a local directory with a VOC-like dataset:|n</span>
-<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> -f voc path/to/voc|n</span>
+<span class="s2">        |s|s%(prog)s -f voc path/to/voc|n</span>
 <span class="s2">        |n</span>
 <span class="s2">        - Add a directory with a COCO dataset, use only a specific file:|n</span>
-<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> -f coco_instances -r anns/train.json path/to/coco|n</span>
+<span class="s2">        |s|s%(prog)s -f coco_instances -r anns/train.json path/to/coco|n</span>
 <span class="s2">        |n</span>
 <span class="s2">        - Add a local file with CVAT annotations, call it &#39;mysource&#39;|n</span>
 <span class="s2">        |s|s|s|sto the project in a specific place:|n</span>
-<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> -f cvat -n mysource -p project/path/ path/to/cvat.xml</span>
+<span class="s2">        |s|s%(prog)s -f cvat -n mysource -p project/path/ path/to/cvat.xml</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">builtins</span><span class="p">)</span>
         <span class="p">),</span>
@@ -466,6 +469,7 @@ document.write(`
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.cli.commands.require_project.modification.import_.html#datumaro.cli.commands.require_project.modification.import_.import_command">[docs]</a>
 <span class="nd">@scoped</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">import_command</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;This command is deprecated and will be removed in Datumaro 1.12&quot;</span><span class="p">)</span>
     <span class="c1"># Workaround. Required positionals consume positionals from the end</span>
     <span class="n">args</span><span class="o">.</span><span class="n">_positionals</span> <span class="o">+=</span> <span class="n">join_cli_args</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;extra_args&quot;</span><span class="p">)</span>
 

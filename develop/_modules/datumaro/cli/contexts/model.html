@@ -363,6 +363,8 @@ document.write(`
     <span class="n">parse_full_revpath</span><span class="p">,</span>
 <span class="p">)</span>
 
+<span class="n">deprecated</span> <span class="o">=</span> <span class="s2">&quot;[DEPRECATED, will be removed in 1.12]&quot;</span>
+
 
 <div class="viewcode-block" id="build_add_parser">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.contexts.model.html#datumaro.cli.contexts.model.build_add_parser">[docs]</a>
@@ -370,17 +372,17 @@ document.write(`
     <span class="n">builtins</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">Environment</span><span class="p">()</span><span class="o">.</span><span class="n">launchers</span><span class="p">)</span>
 
     <span class="n">parser</span> <span class="o">=</span> <span class="n">parser_ctor</span><span class="p">(</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Add model to project&quot;</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        Adds an executable model into a project. A model requires</span>
+        <span class="n">help</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">deprecated</span><span class="si">}</span><span class="s2"> Add model to project&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        </span><span class="si">{</span><span class="w"> </span><span class="n">deprecated</span><span class="w"> </span><span class="si">}</span><span class="s2"> Adds an executable model into a project. A model requires</span>
 <span class="s2">        a launcher to be executed. Each launcher has its own options, which</span>
 <span class="s2">        are passed after the &#39;--&#39; separator, pass &#39;-- -h&#39; for more info.</span>
 <span class="s2">        |n</span>
-<span class="s2">        List of builtin launchers: </span><span class="si">{}</span><span class="s2">|n</span>
+<span class="s2">        List of builtin launchers: </span><span class="se">{{}}</span><span class="s2">|n</span>
 <span class="s2">        |n</span>
 <span class="s2">        Examples:|n</span>
 <span class="s2">        - Add an OpenVINO model into a project:|n</span>
-<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> -l openvino -- -d model.xml -w model.bin -i parse_outs.py</span>
+<span class="s2">        |s|s%(prog)s -l openvino -- -d model.xml -w model.bin -i parse_outs.py</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">builtins</span><span class="p">)</span>
         <span class="p">),</span>
@@ -431,6 +433,7 @@ document.write(`
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.contexts.model.html#datumaro.cli.contexts.model.add_command">[docs]</a>
 <span class="nd">@scoped</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">add_command</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;This command is deprecated and will be removed in Datumaro 1.12&quot;</span><span class="p">)</span>
     <span class="n">show_plugin_help</span> <span class="o">=</span> <span class="s2">&quot;-h&quot;</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">extra_args</span> <span class="ow">or</span> <span class="s2">&quot;--help&quot;</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">extra_args</span>
 
     <span class="n">project</span> <span class="o">=</span> <span class="kc">None</span>
@@ -493,7 +496,8 @@ document.write(`
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.contexts.model.html#datumaro.cli.contexts.model.build_remove_parser">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">build_remove_parser</span><span class="p">(</span><span class="n">parser_ctor</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">):</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">parser_ctor</span><span class="p">(</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Remove model from project&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Remove a model from a project&quot;</span>
+        <span class="n">help</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">deprecated</span><span class="si">}</span><span class="s2"> Remove model from project&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">deprecated</span><span class="w"> </span><span class="si">}</span><span class="s2"> Remove a model from a project&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Name of the model to be removed&quot;</span><span class="p">)</span>
@@ -525,6 +529,7 @@ document.write(`
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.contexts.model.html#datumaro.cli.contexts.model.remove_command">[docs]</a>
 <span class="nd">@scoped</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">remove_command</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;This command is deprecated and will be removed in Datumaro 1.12&quot;</span><span class="p">)</span>
     <span class="n">project</span> <span class="o">=</span> <span class="n">scope_add</span><span class="p">(</span><span class="n">load_project</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">project_dir</span><span class="p">))</span>
 
     <span class="n">project</span><span class="o">.</span><span class="n">remove_model</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
@@ -540,9 +545,9 @@ document.write(`
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.contexts.model.html#datumaro.cli.contexts.model.build_run_parser">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">build_run_parser</span><span class="p">(</span><span class="n">parser_ctor</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">):</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">parser_ctor</span><span class="p">(</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Launches model inference&quot;</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        Launches model inference on a dataset.|n</span>
+        <span class="n">help</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">deprecated</span><span class="si">}</span><span class="s2"> Launches model inference&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        </span><span class="si">{</span><span class="w"> </span><span class="n">deprecated</span><span class="w"> </span><span class="si">}</span><span class="s2"> Launches model inference on a dataset.|n</span>
 <span class="s2">        |n</span>
 <span class="s2">        Target dataset is specified by a revpath. The full syntax is:|n</span>
 <span class="s2">        - Dataset paths:|n</span>
@@ -603,6 +608,7 @@ document.write(`
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.contexts.model.html#datumaro.cli.contexts.model.run_command">[docs]</a>
 <span class="nd">@scoped</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">run_command</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;This command is deprecated and will be removed in Datumaro 1.12&quot;</span><span class="p">)</span>
     <span class="n">dst_dir</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">dst_dir</span>
     <span class="k">if</span> <span class="n">dst_dir</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">overwrite</span> <span class="ow">and</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">dst_dir</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">dst_dir</span><span class="p">):</span>
@@ -633,8 +639,8 @@ document.write(`
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.contexts.model.html#datumaro.cli.contexts.model.build_info_parser">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">build_info_parser</span><span class="p">(</span><span class="n">parser_ctor</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">):</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">parser_ctor</span><span class="p">(</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Print model information in this project&quot;</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Print model information in this project&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">deprecated</span><span class="si">}</span><span class="s2"> Print model information in this project&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">deprecated</span><span class="w"> </span><span class="si">}</span><span class="s2"> Print model information in this project&quot;</span><span class="p">,</span>
         <span class="n">formatter_class</span><span class="o">=</span><span class="n">MultilineFormatter</span><span class="p">,</span>
     <span class="p">)</span>
 
@@ -668,6 +674,7 @@ document.write(`
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.contexts.model.html#datumaro.cli.contexts.model.info_command">[docs]</a>
 <span class="nd">@scoped</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">info_command</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;This command is deprecated and will be removed in Datumaro 1.12&quot;</span><span class="p">)</span>
     <span class="n">project</span> <span class="o">=</span> <span class="n">scope_add</span><span class="p">(</span><span class="n">load_project</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">project_dir</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>

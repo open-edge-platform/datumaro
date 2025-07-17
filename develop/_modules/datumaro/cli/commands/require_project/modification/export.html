@@ -373,15 +373,18 @@ document.write(`
 <span class="p">]</span>
 
 
+<span class="n">deprecated</span> <span class="o">=</span> <span class="s2">&quot;[DEPRECATED, will be removed in 1.12]&quot;</span>
+
+
 <div class="viewcode-block" id="build_parser">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.cli.commands.require_project.modification.export.html#datumaro.cli.commands.require_project.modification.export.build_parser">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">build_parser</span><span class="p">(</span><span class="n">parser_ctor</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">):</span>
     <span class="n">builtins</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">DEFAULT_ENVIRONMENT</span><span class="o">.</span><span class="n">exporters</span><span class="p">)</span>
 
     <span class="n">parser</span> <span class="o">=</span> <span class="n">parser_ctor</span><span class="p">(</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Export project&quot;</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        Exports a project in some format.|n</span>
+        <span class="n">help</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">deprecated</span><span class="si">}</span><span class="s2"> Export project&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        </span><span class="si">{</span><span class="n">deprecated</span><span class="si">}</span><span class="s2"> Exports a project in some format.|n</span>
 <span class="s2">        |n</span>
 <span class="s2">        Each dataset format has its own export</span>
 <span class="s2">        options, which are passed after the &#39;--&#39; separator (see examples),</span>
@@ -402,7 +405,7 @@ document.write(`
 <span class="s2">        Check the &quot;plugins&quot; section of the developer guide for information</span>
 <span class="s2">        about plugin implementation.|n</span>
 <span class="s2">        |n</span>
-<span class="s2">        List of builtin dataset formats: </span><span class="si">{}</span><span class="s2">|n</span>
+<span class="s2">        List of builtin dataset formats: </span><span class="se">{{}}</span><span class="s2">|n</span>
 <span class="s2">        |n</span>
 <span class="s2">        The command can only be applied to a project build target, a stage</span>
 <span class="s2">        or the combined &#39;project&#39; target, in which case all the targets will</span>
@@ -410,10 +413,10 @@ document.write(`
 <span class="s2">        |n</span>
 <span class="s2">        Examples:|n</span>
 <span class="s2">        - Export project as a VOC-like dataset, include images:|n</span>
-<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> -f voc -- --save-media|n</span>
+<span class="s2">        |s|s%(prog)s -f voc -- --save-media|n</span>
 <span class="s2">        |n</span>
 <span class="s2">        - Export project as a COCO-like dataset in other directory:|n</span>
-<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> -f coco -o path/I/like/</span>
+<span class="s2">        |s|s%(prog)s -f coco -o path/I/like/</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">builtins</span><span class="p">)</span>
         <span class="p">),</span>
@@ -479,6 +482,7 @@ document.write(`
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.cli.commands.require_project.modification.export.html#datumaro.cli.commands.require_project.modification.export.export_command">[docs]</a>
 <span class="nd">@scoped</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">export_command</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;This command is deprecated and will be removed in Datumaro 1.12&quot;</span><span class="p">)</span>
     <span class="n">has_sep</span> <span class="o">=</span> <span class="s2">&quot;--&quot;</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">_positionals</span>
     <span class="k">if</span> <span class="n">has_sep</span><span class="p">:</span>
         <span class="n">pos</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">_positionals</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>

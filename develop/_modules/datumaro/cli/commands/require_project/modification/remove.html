@@ -366,11 +366,15 @@ document.write(`
 <span class="p">]</span>
 
 
+<span class="n">deprecated</span> <span class="o">=</span> <span class="s2">&quot;[DEPRECATED, will be removed in 1.12]&quot;</span>
+
+
 <div class="viewcode-block" id="build_parser">
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.cli.commands.require_project.modification.remove.html#datumaro.cli.commands.require_project.modification.remove.build_parser">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">build_parser</span><span class="p">(</span><span class="n">parser_ctor</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">):</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">parser_ctor</span><span class="p">(</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Remove source from project&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Remove a source from a project&quot;</span>
+        <span class="n">help</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">deprecated</span><span class="si">}</span><span class="s2"> Remove source from project&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">deprecated</span><span class="si">}</span><span class="s2"> Remove a source from a project&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;names&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Names of the sources to be removed&quot;</span><span class="p">)</span>
@@ -411,6 +415,7 @@ document.write(`
 <a class="viewcode-back" href="../../../../../../docs/reference/_autosummary/datumaro.cli.commands.require_project.modification.remove.html#datumaro.cli.commands.require_project.modification.remove.remove_command">[docs]</a>
 <span class="nd">@scoped</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">remove_command</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;This command is deprecated and will be removed in Datumaro 1.12&quot;</span><span class="p">)</span>
     <span class="n">project</span> <span class="o">=</span> <span class="n">scope_add</span><span class="p">(</span><span class="n">load_project</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">project_dir</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>

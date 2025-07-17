@@ -358,14 +358,16 @@ document.write(`
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">..util</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultilineFormatter</span>
 
+<span class="n">deprecated</span> <span class="o">=</span> <span class="s2">&quot;[DEPRECATED, will be removed in 1.12]&quot;</span>
+
 
 <div class="viewcode-block" id="build_parser">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.commands.generate.html#datumaro.cli.commands.generate.build_parser">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">build_parser</span><span class="p">(</span><span class="n">parser_ctor</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">):</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">parser_ctor</span><span class="p">(</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Generate synthetic dataset&quot;</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        Creates a synthetic dataset with elements of the specified type and shape,</span>
+        <span class="n">help</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">deprecated</span><span class="si">}</span><span class="s2"> Generate synthetic dataset&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        </span><span class="si">{</span><span class="n">deprecated</span><span class="si">}</span><span class="s2"> Creates a synthetic dataset with elements of the specified type and shape,</span>
 <span class="s2">        and saves it in the provided directory.|n</span>
 <span class="s2">        |n</span>
 <span class="s2">        Currently, can only generate fractal images, useful for network compression.|n</span>
@@ -375,7 +377,7 @@ document.write(`
 <span class="s2">        |n</span>
 <span class="s2">        Examples:|n</span>
 <span class="s2">        - Generate 300 3-channel images with H=224, W=256 and store to data_dir:|n</span>
-<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> -o data_dir -k 300 --shape 224 256</span>
+<span class="s2">        |s|s%(prog)s -o data_dir -k 300 --shape 224 256</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span>
         <span class="n">formatter_class</span><span class="o">=</span><span class="n">MultilineFormatter</span><span class="p">,</span>
     <span class="p">)</span>
@@ -428,6 +430,7 @@ document.write(`
 <div class="viewcode-block" id="generate_command">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.commands.generate.html#datumaro.cli.commands.generate.generate_command">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">generate_command</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;This command is deprecated and will be removed in Datumaro 1.12&quot;</span><span class="p">)</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.synthetic_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">FractalImageGenerator</span>
 
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Generating dataset...&quot;</span><span class="p">)</span>
