@@ -6,7 +6,8 @@ use std::io::{self};
 use pyo3::{
     exceptions::PyValueError,
     prelude::*,
-    types::{PyBool, PyDict, PyFloat, PyList, PyUnicode},
+    types::{PyDict, PyList},
+    IntoPyObjectExt,
 };
 use serde::de::{IgnoredAny, Deserialize};
 use serde_json::{self, Deserializer};
@@ -60,7 +61,7 @@ pub fn parse_serde_json_value(
 ) -> Result<serde_json::Value, io::Error> {
     let de = serde_json::Deserializer::from_reader(reader);
     let mut stream = de.into_iter::<serde_json::Value>();
-    match stream.next().unwrap() {
+    match stream.next().ok_or_else(|| invalid_data("Unexpected end of stream"))? {
         Ok(x) => Ok(x),
         Err(e) => {
             let cur_pos = stream.byte_offset();
@@ -83,7 +84,7 @@ pub fn convert_to_py_object(value: &serde_json::Value, py: Python<'_>) -> PyResu
     if value.is_array() {
         let list = PyList::empty(py);
 
-        for child in value.as_array().unwrap() {
+        for child in value.as_array().ok_or_else(|| PyValueError::new_err("Expected array"))? {
             list.append(convert_to_py_object(child, py)?)?;
         }
 
@@ -91,22 +92,22 @@ pub fn convert_to_py_object(value: &serde_json::Value, py: Python<'_>) -> PyResu
     } else if value.is_object() {
         let dict = PyDict::new(py);
 
-        for (key, child) in value.as_object().unwrap().iter() {
+        for (key, child) in value.as_object().ok_or_else(|| PyValueError::new_err("Expected object"))?.iter() {
             let child = convert_to_py_object(child, py)?;
             dict.set_item(key, child)?;
         }
 
         return Ok(dict.into());
     } else if value.is_boolean() {
-        return Ok(PyBool::new(py, value.as_bool().unwrap()).into());
+        return Ok(value.as_bool().ok_or_else(|| PyValueError::new_err("Expected boolean"))?.into_py_any(py)?);
     } else if value.is_f64() {
-        return Ok(PyFloat::new(py, value.as_f64().unwrap()).into());
+        return Ok(value.as_f64().ok_or_else(|| PyValueError::new_err("Expected f64"))?.into_py_any(py)?);
     } else if value.is_i64() {
-        return Ok(value.as_i64().unwrap().to_object(py));
+        return Ok(value.as_i64().ok_or_else(|| PyValueError::new_err("Expected i64"))?.into_py_any(py)?);
     } else if value.is_u64() {
-        return Ok(value.as_u64().unwrap().to_object(py));
+        return Ok(value.as_u64().ok_or_else(|| PyValueError::new_err("Expected u64"))?.into_py_any(py)?);
     } else if value.is_string() {
-        return Ok(PyUnicode::new(py, value.as_str().unwrap()).into());
+        return Ok(value.as_str().ok_or_else(|| PyValueError::new_err("Expected string"))?.into_py_any(py)?);
     } else if value.is_null() {
         return Ok(py.None());
     } else {
