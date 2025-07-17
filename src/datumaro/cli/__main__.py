@@ -70,12 +70,15 @@ class _LogManager:
         return parser
 
 
+deprecated = "[DEPRECATED, will be removed in 1.12]"
+
+
 # TODO: revisit during CLI refactoring
 def _get_known_contexts():
     return [
-        ("model", contexts.model, "Actions with models"),
-        ("project", contexts.project, "Actions with projects"),
-        ("source", contexts.source, "Actions with data sources"),
+        ("model", contexts.model, f"{deprecated} Actions with models"),
+        ("project", contexts.project, f"{deprecated} Actions with projects"),
+        ("source", contexts.source, f"{deprecated} Actions with data sources"),
         ("util", contexts.util, "Auxillary tools and utilities"),
     ]
 
