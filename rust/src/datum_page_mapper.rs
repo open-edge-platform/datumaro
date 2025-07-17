@@ -18,16 +18,12 @@ use crate::{
 use pyo3::prelude::*;
 use serde_json::json;
 #[derive(EnumString, Debug)]
+#[strum(ascii_case_insensitive, serialize_all = "snake_case")]
 pub enum DatumJsonSection {
-    #[strum(ascii_case_insensitive)]
     DmFormatVersion(String),
-    #[strum(ascii_case_insensitive)]
     MediaType(i64),
-    #[strum(ascii_case_insensitive)]
     Infos(JsonDict),
-    #[strum(ascii_case_insensitive)]
     Categories(JsonDict),
-    #[strum(ascii_case_insensitive)]
     Items(ImgPageMap<String>),
 }
 

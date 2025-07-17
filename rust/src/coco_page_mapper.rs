@@ -17,16 +17,12 @@ use pyo3::{prelude::*, types::PyList};
 use std::{fs::File, io::BufReader, path::Path};
 
 #[derive(EnumString, Debug)]
+#[strum(ascii_case_insensitive, serialize_all = "snake_case")]
 enum CocoJsonSection {
-    #[strum(ascii_case_insensitive)]
     Licenses(JsonDict),
-    #[strum(ascii_case_insensitive)]
     Info(JsonDict),
-    #[strum(ascii_case_insensitive)]
     Categories(JsonDict),
-    #[strum(ascii_case_insensitive)]
     Images(ImgPageMap<i64>),
-    #[strum(ascii_case_insensitive)]
     Annotations(AnnPageMap),
 }
 
