@@ -19,15 +19,15 @@ use std::{fs::File, io::BufReader, path::Path};
 #[derive(EnumString, Debug)]
 enum CocoJsonSection {
     #[strum(ascii_case_insensitive)]
-    LICENSES(JsonDict),
+    Licenses(JsonDict),
     #[strum(ascii_case_insensitive)]
-    INFO(JsonDict),
+    Info(JsonDict),
     #[strum(ascii_case_insensitive)]
-    CATEGORIES(JsonDict),
+    Categories(JsonDict),
     #[strum(ascii_case_insensitive)]
-    IMAGES(ImgPageMap<i64>),
+    Images(ImgPageMap<i64>),
     #[strum(ascii_case_insensitive)]
-    ANNOTATIONS(AnnPageMap),
+    Annotations(AnnPageMap),
 }
 
 impl ParsedJsonSection for CocoJsonSection {
@@ -43,25 +43,25 @@ impl ParsedJsonSection for CocoJsonSection {
                     }
                 }
                 match curr_key {
-                    CocoJsonSection::LICENSES(_) => {
+                    CocoJsonSection::Licenses(_) => {
                         let v = parse_serde_json_value(reader)?;
-                        Ok(Box::new(CocoJsonSection::LICENSES(v)))
+                        Ok(Box::new(CocoJsonSection::Licenses(v)))
                     }
-                    CocoJsonSection::INFO(_) => {
+                    CocoJsonSection::Info(_) => {
                         let v = parse_serde_json_value(reader)?;
-                        Ok(Box::new(CocoJsonSection::INFO(v)))
+                        Ok(Box::new(CocoJsonSection::Info(v)))
                     }
-                    CocoJsonSection::CATEGORIES(_) => {
+                    CocoJsonSection::Categories(_) => {
                         let v = parse_serde_json_value(reader)?;
-                        Ok(Box::new(CocoJsonSection::CATEGORIES(v)))
+                        Ok(Box::new(CocoJsonSection::Categories(v)))
                     }
-                    CocoJsonSection::IMAGES(_) => {
+                    CocoJsonSection::Images(_) => {
                         let v = ImgPageMap::from_reader(reader)?;
-                        Ok(Box::new(CocoJsonSection::IMAGES(v)))
+                        Ok(Box::new(CocoJsonSection::Images(v)))
                     }
-                    CocoJsonSection::ANNOTATIONS(_) => {
+                    CocoJsonSection::Annotations(_) => {
                         let v = AnnPageMap::from_reader(reader)?;
-                        Ok(Box::new(CocoJsonSection::ANNOTATIONS(v)))
+                        Ok(Box::new(CocoJsonSection::Annotations(v)))
                     }
                 }
             }
@@ -123,19 +123,19 @@ impl CocoPageMapperImpl {
 
         for section in sections {
             match *section {
-                CocoJsonSection::LICENSES(v) => {
+                CocoJsonSection::Licenses(v) => {
                     licenses = Some(v);
                 }
-                CocoJsonSection::INFO(v) => {
+                CocoJsonSection::Info(v) => {
                     info = Some(v);
                 }
-                CocoJsonSection::CATEGORIES(v) => {
+                CocoJsonSection::Categories(v) => {
                     categories = Some(v);
                 }
-                CocoJsonSection::IMAGES(v) => {
+                CocoJsonSection::Images(v) => {
                     images = Some(v);
                 }
-                CocoJsonSection::ANNOTATIONS(v) => {
+                CocoJsonSection::Annotations(v) => {
                     annotations = Some(v);
                 }
             }
@@ -199,7 +199,7 @@ impl CocoPageMapper {
                 .get_anns_dict(img_id, &mut self.reader)?
                 .iter()
                 .map(|child| convert_to_py_object(child, py).unwrap()),
-        );
+        )?;
         Ok(anns_list.into())
     }
 

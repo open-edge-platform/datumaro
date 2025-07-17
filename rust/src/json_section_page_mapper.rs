@@ -6,13 +6,14 @@ use crate::{
     page_mapper::{JsonPageMapper, ParsedJsonSection},
     utils::read_skipping_ws,
 };
-use pyo3::{prelude::*, types::PyDict};
+use pyo3::{prelude::*, IntoPyObjectExt};
 use std::{
     collections::HashMap,
     fs::File,
     io::{self, BufReader, Read, Seek},
     path::Path,
 };
+
 
 #[derive(Debug)]
 pub struct JsonSection {
@@ -192,7 +193,7 @@ impl JsonSectionPageMapper {
             })
             .collect();
 
-        Ok(dict.into_py(self_.py()))
+        Ok(dict.into_py_any(self_.py()).unwrap())
     }
 
     fn __len__(&self) -> PyResult<usize> {

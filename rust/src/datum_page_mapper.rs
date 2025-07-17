@@ -20,15 +20,15 @@ use serde_json::json;
 #[derive(EnumString, Debug)]
 pub enum DatumJsonSection {
     #[strum(ascii_case_insensitive)]
-    DM_FORMAT_VERSION(String),
+    DmFormatVersion(String),
     #[strum(ascii_case_insensitive)]
-    MEDIA_TYPE(i64),
+    MediaType(i64),
     #[strum(ascii_case_insensitive)]
-    INFOS(JsonDict),
+    Infos(JsonDict),
     #[strum(ascii_case_insensitive)]
-    CATEGORIES(JsonDict),
+    Categories(JsonDict),
     #[strum(ascii_case_insensitive)]
-    ITEMS(ImgPageMap<String>),
+    Items(ImgPageMap<String>),
 }
 
 impl ParsedJsonSection for DatumJsonSection {
@@ -44,32 +44,32 @@ impl ParsedJsonSection for DatumJsonSection {
                     }
                 }
                 match curr_key {
-                    DatumJsonSection::DM_FORMAT_VERSION(_) => {
+                    DatumJsonSection::DmFormatVersion(_) => {
                         let v = parse_serde_json_value(reader)?
                             .as_str()
                             .ok_or(invalid_data(
                                 "Cannot parse datumaro format version from the json file",
                             ))?
                             .to_string();
-                        Ok(Box::new(DatumJsonSection::DM_FORMAT_VERSION(v)))
+                        Ok(Box::new(DatumJsonSection::DmFormatVersion(v)))
                     }
-                    DatumJsonSection::MEDIA_TYPE(_) => {
+                    DatumJsonSection::MediaType(_) => {
                         let v = parse_serde_json_value(reader)?
                             .as_i64()
                             .ok_or(invalid_data("Cannot parse media type from the json file"))?;
-                        Ok(Box::new(DatumJsonSection::MEDIA_TYPE(v)))
+                        Ok(Box::new(DatumJsonSection::MediaType(v)))
                     }
-                    DatumJsonSection::INFOS(_) => {
+                    DatumJsonSection::Infos(_) => {
                         let v = parse_serde_json_value(reader)?;
-                        Ok(Box::new(DatumJsonSection::INFOS(v)))
+                        Ok(Box::new(DatumJsonSection::Infos(v)))
                     }
-                    DatumJsonSection::CATEGORIES(_) => {
+                    DatumJsonSection::Categories(_) => {
                         let v = parse_serde_json_value(reader)?;
-                        Ok(Box::new(DatumJsonSection::CATEGORIES(v)))
+                        Ok(Box::new(DatumJsonSection::Categories(v)))
                     }
-                    DatumJsonSection::ITEMS(_) => {
+                    DatumJsonSection::Items(_) => {
                         let v = ImgPageMap::from_reader(reader)?;
-                        Ok(Box::new(DatumJsonSection::ITEMS(v)))
+                        Ok(Box::new(DatumJsonSection::Items(v)))
                     }
                 }
             }
@@ -128,19 +128,19 @@ impl DatumPageMapperImpl {
 
         for section in sections {
             match *section {
-                DatumJsonSection::DM_FORMAT_VERSION(v) => {
+                DatumJsonSection::DmFormatVersion(v) => {
                     dm_format_version = Some(v);
                 }
-                DatumJsonSection::MEDIA_TYPE(v) => {
+                DatumJsonSection::MediaType(v) => {
                     media_type = Some(v);
                 }
-                DatumJsonSection::INFOS(v) => {
+                DatumJsonSection::Infos(v) => {
                     infos = Some(v);
                 }
-                DatumJsonSection::CATEGORIES(v) => {
+                DatumJsonSection::Categories(v) => {
                     categories = Some(v);
                 }
-                DatumJsonSection::ITEMS(v) => {
+                DatumJsonSection::Items(v) => {
                     items = Some(v);
                 }
             }

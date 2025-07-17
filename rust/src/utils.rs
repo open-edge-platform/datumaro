@@ -6,7 +6,8 @@ use std::io::{self};
 use pyo3::{
     exceptions::PyValueError,
     prelude::*,
-    types::{PyBool, PyDict, PyFloat, PyList, PyUnicode},
+    types::{PyDict, PyList},
+    IntoPyObjectExt,
 };
 use serde::de::{IgnoredAny, Deserialize};
 use serde_json::{self, Deserializer};
@@ -98,15 +99,15 @@ pub fn convert_to_py_object(value: &serde_json::Value, py: Python<'_>) -> PyResu
 
         return Ok(dict.into());
     } else if value.is_boolean() {
-        return Ok(PyBool::new(py, value.as_bool().unwrap()).into());
+        return Ok(value.as_bool().unwrap().into_py_any(py).unwrap());
     } else if value.is_f64() {
-        return Ok(PyFloat::new(py, value.as_f64().unwrap()).into());
+        return Ok(value.as_f64().unwrap().into_py_any(py).unwrap());
     } else if value.is_i64() {
-        return Ok(value.as_i64().unwrap().to_object(py));
+        return Ok(value.as_i64().unwrap().into_py_any(py).unwrap());
     } else if value.is_u64() {
-        return Ok(value.as_u64().unwrap().to_object(py));
+        return Ok(value.as_u64().unwrap().into_py_any(py).unwrap());
     } else if value.is_string() {
-        return Ok(PyUnicode::new(py, value.as_str().unwrap()).into());
+        return Ok(value.as_str().unwrap().into_py_any(py).unwrap());
     } else if value.is_null() {
         return Ok(py.None());
     } else {
