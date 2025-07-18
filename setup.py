@@ -75,9 +75,9 @@ setuptools.setup(
     url="https://github.com/open-edge-platform/datumaro",
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src", include=["datumaro*"]),
+    license="MIT",
     classifiers=[
         "Programming Language :: Python :: 3",
-        "MIT",
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.9",
