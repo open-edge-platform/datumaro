@@ -1,0 +1,755 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Open Images &#8212; Datumaro 1.10.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=8b7c274f" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../../../_static/documentation_options.js?v=1d24b1d9"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/data-formats/formats/open_images';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.10.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.10.0 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../index.html">
+                        Docs
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../index.html">
+                        Docs
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Open Images</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="open-images">
+<h1>Open Images<a class="headerlink" href="#open-images" title="Link to this heading">#</a></h1>
+<section id="format-specification">
+<h2>Format specification<a class="headerlink" href="#format-specification" title="Link to this heading">#</a></h2>
+<p>A description of the Open Images Dataset (OID) format is available
+<a class="reference external" href="https://storage.googleapis.com/openimages/web/download.html">here</a>.
+Datumaro supports versions 4, 5 and 6.</p>
+<p>Supported annotation types:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Label</span></code> (human-verified image-level labels)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Bbox</span></code> (bounding boxes)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Mask</span></code> (segmentation masks)</p></li>
+</ul>
+<p>Supported annotation attributes:</p>
+<ul class="simple">
+<li><p>Labels</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">score</span></code> (read/write, float).
+The confidence level from 0 to 1.
+A score of 0 indicates that
+the image does not contain objects of the corresponding class.</p></li>
+</ul>
+</li>
+<li><p>Bounding boxes</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">score</span></code> (read/write, float).
+The confidence level from 0 to 1.
+In the original dataset this is always equal to 1,
+but custom datasets may be created with arbitrary values.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">occluded</span></code> (read/write, boolean).
+Whether the object is occluded by another object.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">truncated</span></code> (read/write, boolean).
+Whether the object extends beyond the boundary of the image.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">is_group_of</span></code> (read/write, boolean).
+Whether the object represents a group of objects of the same class.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">is_depiction</span></code> (read/write, boolean).
+Whether the object is a depiction (such as a drawing)
+rather than a real object.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">is_inside</span></code> (read/write, boolean).
+Whether the object is seen from the inside.</p></li>
+</ul>
+</li>
+<li><p>Masks</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">box_id</span></code> (read/write, string).
+An identifier for the bounding box associated with the mask.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">predicted_iou</span></code> (read/write, float).
+Predicted IoU value with respect to the ground truth.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="import-open-images-dataset">
+<h2>Import Open Images dataset<a class="headerlink" href="#import-open-images-dataset" title="Link to this heading">#</a></h2>
+<p>The Open Images dataset is available for free download.</p>
+<p>See the <a class="reference external" href="https://github.com/cvdfoundation/open-images-dataset"><code class="docutils literal notranslate"><span class="pre">open-images-dataset</span></code> GitHub repository</a>
+for information on how to download the images.</p>
+<p>Datumaro also requires the image description files,
+which can be downloaded from the following URLs:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://storage.googleapis.com/openimages/2018_04/image_ids_and_rotation.csv">complete set</a></p></li>
+<li><p><a class="reference external" href="https://storage.googleapis.com/openimages/v6/oidv6-train-images-with-labels-with-rotation.csv">train set</a></p></li>
+<li><p><a class="reference external" href="https://storage.googleapis.com/openimages/2018_04/validation/validation-images-with-rotation.csv">validation set</a></p></li>
+<li><p><a class="reference external" href="https://storage.googleapis.com/openimages/2018_04/test/test-images-with-rotation.csv">test set</a></p></li>
+</ul>
+<p>In addition, the following metadata file must be present
+in the <code class="docutils literal notranslate"><span class="pre">annotations</span></code> directory:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://storage.googleapis.com/openimages/v6/oidv6-class-descriptions.csv">class descriptions</a></p></li>
+</ul>
+<p>You can optionally download the following additional metadata file:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://storage.googleapis.com/openimages/2018_04/bbox_labels_600_hierarchy.json">class hierarchy</a></p></li>
+</ul>
+<p>Annotations can be downloaded from the following URLs:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://storage.googleapis.com/openimages/v6/oidv6-train-annotations-human-imagelabels.csv">train image labels</a></p></li>
+<li><p><a class="reference external" href="https://storage.googleapis.com/openimages/v5/validation-annotations-human-imagelabels.csv">validation image labels</a></p></li>
+<li><p><a class="reference external" href="https://storage.googleapis.com/openimages/v5/test-annotations-human-imagelabels.csv">test image labels</a></p></li>
+<li><p><a class="reference external" href="https://storage.googleapis.com/openimages/v6/oidv6-train-annotations-bbox.csv">train bounding boxes</a></p></li>
+<li><p><a class="reference external" href="https://storage.googleapis.com/openimages/v5/validation-annotations-bbox.csv">validation bounding boxes</a></p></li>
+<li><p><a class="reference external" href="https://storage.googleapis.com/openimages/v5/test-annotations-bbox.csv">test bounding boxes</a></p></li>
+<li><p><a class="reference external" href="https://storage.googleapis.com/openimages/v5/train-annotations-object-segmentation.csv">train segmentation masks (metadata)</a></p></li>
+<li><p>train segmentation masks (images):
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/train-masks/train-masks-0.zip">0</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/train-masks/train-masks-1.zip">1</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/train-masks/train-masks-2.zip">2</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/train-masks/train-masks-3.zip">3</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/train-masks/train-masks-4.zip">4</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/train-masks/train-masks-5.zip">5</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/train-masks/train-masks-6.zip">6</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/train-masks/train-masks-7.zip">7</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/train-masks/train-masks-8.zip">8</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/train-masks/train-masks-9.zip">9</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/train-masks/train-masks-a.zip">a</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/train-masks/train-masks-b.zip">b</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/train-masks/train-masks-c.zip">c</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/train-masks/train-masks-d.zip">d</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/train-masks/train-masks-e.zip">e</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/train-masks/train-masks-f.zip">f</a></p></li>
+<li><p><a class="reference external" href="https://storage.googleapis.com/openimages/v5/validation-annotations-object-segmentation.csv">validation segmentation masks (metadata)</a></p></li>
+<li><p>validation segmentation masks (images):
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/validation-masks/validation-masks-0.zip">0</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/validation-masks/validation-masks-1.zip">1</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/validation-masks/validation-masks-2.zip">2</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/validation-masks/validation-masks-3.zip">3</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/validation-masks/validation-masks-4.zip">4</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/validation-masks/validation-masks-5.zip">5</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/validation-masks/validation-masks-6.zip">6</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/validation-masks/validation-masks-7.zip">7</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/validation-masks/validation-masks-8.zip">8</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/validation-masks/validation-masks-9.zip">9</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/validation-masks/validation-masks-a.zip">a</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/validation-masks/validation-masks-b.zip">b</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/validation-masks/validation-masks-c.zip">c</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/validation-masks/validation-masks-d.zip">d</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/validation-masks/validation-masks-e.zip">e</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/validation-masks/validation-masks-f.zip">f</a></p></li>
+<li><p><a class="reference external" href="https://storage.googleapis.com/openimages/v5/test-annotations-object-segmentation.csv">test segmentation masks (metadata)</a></p></li>
+<li><p>test segmentation masks (images):
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/test-masks/test-masks-0.zip">0</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/test-masks/test-masks-1.zip">1</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/test-masks/test-masks-2.zip">2</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/test-masks/test-masks-3.zip">3</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/test-masks/test-masks-4.zip">4</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/test-masks/test-masks-5.zip">5</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/test-masks/test-masks-6.zip">6</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/test-masks/test-masks-7.zip">7</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/test-masks/test-masks-8.zip">8</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/test-masks/test-masks-9.zip">9</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/test-masks/test-masks-a.zip">a</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/test-masks/test-masks-b.zip">b</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/test-masks/test-masks-c.zip">c</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/test-masks/test-masks-d.zip">d</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/test-masks/test-masks-e.zip">e</a>
+<a class="reference external" href="https://storage.googleapis.com/openimages/v5/test-masks/test-masks-f.zip">f</a></p></li>
+</ul>
+<p>All annotation files are optional,
+except that if the mask metadata files for a given subset are downloaded,
+all corresponding images must be downloaded as well, and vice versa.</p>
+<p>A Datumaro project with an OID source can be created in the following way:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>datum<span class="w"> </span>project<span class="w"> </span>create
+datum<span class="w"> </span>project<span class="w"> </span>import<span class="w"> </span>--format<span class="w"> </span>open_images<span class="w"> </span>&lt;path/to/dataset&gt;
+</pre></div>
+</div>
+<p>It is possible to specify project name and project directory. Run
+<code class="docutils literal notranslate"><span class="pre">datum</span> <span class="pre">project</span> <span class="pre">create</span> <span class="pre">--help</span></code> for more information.</p>
+<p>Open Images dataset directory should have the following structure:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>└─ Dataset/
+    ├── dataset_meta.json # a list of custom labels (optional)
+    ├── annotations/
+    │   └── bbox_labels_600_hierarchy.json
+    │   └── image_ids_and_rotation.csv  # optional
+    │   └── oidv6-class-descriptions.csv
+    │   └── *-annotations-bbox.csv
+    │   └── *-annotations-human-imagelabels.csv
+    │   └── *-annotations-object-segmentation.csv
+    ├── images/
+    |   ├── test/
+    |   │   ├── &lt;image_name1.jpg&gt;
+    |   │   ├── &lt;image_name2.jpg&gt;
+    |   │   └── ...
+    |   ├── train/
+    |   │   ├── &lt;image_name1.jpg&gt;
+    |   │   ├── &lt;image_name2.jpg&gt;
+    |   │   └── ...
+    |   └── validation/
+    |       ├── &lt;image_name1.jpg&gt;
+    |       ├── &lt;image_name2.jpg&gt;
+    |       └── ...
+    └── masks/
+        ├── test/
+        │   ├── &lt;mask_name1.png&gt;
+        │   ├── &lt;mask_name2.png&gt;
+        │   └── ...
+        ├── train/
+        │   ├── &lt;mask_name1.png&gt;
+        │   ├── &lt;mask_name2.png&gt;
+        │   └── ...
+        └── validation/
+            ├── &lt;mask_name1.png&gt;
+            ├── &lt;mask_name2.png&gt;
+            └── ...
+</pre></div>
+</div>
+<p>The mask images must be extracted from the ZIP archives linked above.</p>
+<p>To use per-subset image description files instead of <code class="docutils literal notranslate"><span class="pre">image_ids_and_rotation.csv</span></code>,
+place them in the <code class="docutils literal notranslate"><span class="pre">annotations</span></code> subdirectory.
+The <code class="docutils literal notranslate"><span class="pre">annotations</span></code> directory is optional and you can store all annotation files
+in the root of input path.</p>
+<p>To add custom classes, you can use <a class="reference internal" href="#/docs/data-formats/formats/index.rst#dataset-meta-info-file"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">dataset_meta.json</span></code></span></a>.</p>
+<section id="creating-an-image-metadata-file">
+<h3>Creating an image metadata file<a class="headerlink" href="#creating-an-image-metadata-file" title="Link to this heading">#</a></h3>
+<p>To load bounding box and segmentation mask annotations,
+Datumaro needs to know the sizes of the corresponding images.
+By default, it will determine these sizes by loading each image from disk,
+which requires the images to be present and makes the loading process slow.</p>
+<p>If you want to load the aforementioned annotations on a machine where
+the images are not available,
+or just to speed up the dataset loading process,
+you can extract the image size information in advance
+and record it in an image metadata file.
+This file must be placed at <code class="docutils literal notranslate"><span class="pre">annotations/images.meta</span></code>,
+and must contain one line per image, with the following structure:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&lt;ID&gt;<span class="w"> </span>&lt;height&gt;<span class="w"> </span>&lt;width&gt;
+</pre></div>
+</div>
+<p>Where <code class="docutils literal notranslate"><span class="pre">&lt;ID&gt;</span></code> is the file name of the image without the extension,
+and <code class="docutils literal notranslate"><span class="pre">&lt;height&gt;</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;width&gt;</span></code> are the dimensions of that image.
+<code class="docutils literal notranslate"><span class="pre">&lt;ID&gt;</span></code> may be quoted with either single or double quotes.</p>
+<p>The image metadata file, if present, will be used to determine the image
+sizes without loading the images themselves.</p>
+<p>Here’s one way to create the <code class="docutils literal notranslate"><span class="pre">images.meta</span></code> file using ImageMagick,
+assuming that the images are present on the current machine:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># run this from the dataset directory</span>
+find<span class="w"> </span>images<span class="w"> </span>-name<span class="w"> </span><span class="s1">&#39;*.jpg&#39;</span><span class="w"> </span>-exec<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>identify<span class="w"> </span>-format<span class="w"> </span><span class="s1">&#39;&quot;%[basename]&quot; %[height] %[width]\n&#39;</span><span class="w"> </span><span class="o">{}</span><span class="w"> </span>+<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>&gt;<span class="w"> </span>annotations/images.meta
+</pre></div>
+</div>
+</section>
+</section>
+<section id="export-to-other-formats">
+<h2>Export to other formats<a class="headerlink" href="#export-to-other-formats" title="Link to this heading">#</a></h2>
+<p>Datumaro can convert OID into any other format <a class="reference internal" href="#/docs/data-formats/formats/index.rst"><span class="xref myst">Datumaro supports</span></a>.
+To get the expected result, convert the dataset to a format
+that supports image-level labels.
+There are several ways to convert OID to other dataset formats:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>datum<span class="w"> </span>project<span class="w"> </span>create
+datum<span class="w"> </span>project<span class="w"> </span>import<span class="w"> </span>-f<span class="w"> </span>open_images<span class="w"> </span>&lt;path/to/open_images&gt;
+datum<span class="w"> </span>project<span class="w"> </span><span class="nb">export</span><span class="w"> </span>-f<span class="w"> </span>cvat<span class="w"> </span>-o<span class="w"> </span>&lt;output/dir&gt;
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>datum<span class="w"> </span>convert<span class="w"> </span>-if<span class="w"> </span>open_images<span class="w"> </span>-i<span class="w"> </span>&lt;path/to/open_images&gt;<span class="w"> </span>-f<span class="w"> </span>cvat<span class="w"> </span>-o<span class="w"> </span>&lt;output/dir&gt;
+</pre></div>
+</div>
+<p>Or, using Python API:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dm</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="s1">&#39;&lt;path/to/dataset&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;open_images&#39;</span><span class="p">)</span>
+<span class="n">dataset</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="s1">&#39;save_dir&#39;</span><span class="p">,</span> <span class="s1">&#39;cvat&#39;</span><span class="p">,</span> <span class="n">save_media</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="export-to-open-images">
+<h2>Export to Open Images<a class="headerlink" href="#export-to-open-images" title="Link to this heading">#</a></h2>
+<p>There are several ways to convert an existing dataset to the Open Images format:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># export dataset into Open Images format from existing project</span>
+datum<span class="w"> </span>project<span class="w"> </span><span class="nb">export</span><span class="w"> </span>-p<span class="w"> </span>&lt;path/to/project&gt;<span class="w"> </span>-f<span class="w"> </span>open_images<span class="w"> </span>-o<span class="w"> </span>&lt;output/dir&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--<span class="w"> </span>--save_media
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># convert a dataset in another format to the Open Images format</span>
+datum<span class="w"> </span>convert<span class="w"> </span>-if<span class="w"> </span>imagenet<span class="w"> </span>-i<span class="w"> </span>&lt;path/to/dataset&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-f<span class="w"> </span>open_images<span class="w"> </span>-o<span class="w"> </span>&lt;output/dir&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--<span class="w"> </span>--save-media
+</pre></div>
+</div>
+<p>Extra options for exporting to the Open Images format:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--save-media</span></code> - save media files when exporting the dataset
+(by default, <code class="docutils literal notranslate"><span class="pre">False</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--image-ext</span> <span class="pre">IMAGE_EXT</span></code> - save image files with the specified extension
+when exporting the dataset (by default, uses the original extension
+or <code class="docutils literal notranslate"><span class="pre">.jpg</span></code> if there isn’t one)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--save-dataset-meta</span></code> - allow to export dataset with saving dataset meta
+file (by default <code class="docutils literal notranslate"><span class="pre">False</span></code>)</p></li>
+</ul>
+</section>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Link to this heading">#</a></h2>
+<p>Datumaro supports filtering, transformation, merging etc. for all formats
+and for the Open Images format in particular. Follow the
+<a class="reference internal" href="../../user-manual/how_to_use_datumaro.html"><span class="doc std std-doc">user manual</span></a>
+to get more information about these operations.</p>
+<p>Here are a few examples of using Datumaro operations to solve
+particular problems with the Open Images dataset:</p>
+<section id="example-1-load-the-open-images-dataset-and-convert-to-the-cvat-format">
+<h3>Example 1. Load the Open Images dataset and convert to the CVAT format<a class="headerlink" href="#example-1-load-the-open-images-dataset-and-convert-to-the-cvat-format" title="Link to this heading">#</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>datum<span class="w"> </span>project<span class="w"> </span>create<span class="w"> </span>-o<span class="w"> </span>project
+datum<span class="w"> </span>project<span class="w"> </span>import<span class="w"> </span>-p<span class="w"> </span>project<span class="w"> </span>-f<span class="w"> </span>open_images<span class="w"> </span>./open-images-dataset/
+datum<span class="w"> </span>stats<span class="w"> </span>-p<span class="w"> </span>project
+datum<span class="w"> </span>project<span class="w"> </span><span class="nb">export</span><span class="w"> </span>-p<span class="w"> </span>project<span class="w"> </span>-f<span class="w"> </span>cvat<span class="w"> </span>--<span class="w"> </span>--save-media
+</pre></div>
+</div>
+</section>
+<section id="example-2-create-a-custom-oid-like-dataset">
+<h3>Example 2. Create a custom OID-like dataset<a class="headerlink" href="#example-2-create-a-custom-oid-like-dataset" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dm</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">([</span>
+    <span class="n">dm</span><span class="o">.</span><span class="n">DatasetItem</span><span class="p">(</span>
+        <span class="nb">id</span><span class="o">=</span><span class="s1">&#39;0000000000000001&#39;</span><span class="p">,</span>
+        <span class="n">image</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
+        <span class="n">subset</span><span class="o">=</span><span class="s1">&#39;validation&#39;</span><span class="p">,</span>
+        <span class="n">annotations</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">dm</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;score&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">}),</span>
+            <span class="n">dm</span><span class="o">.</span><span class="n">Label</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;score&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}),</span>
+        <span class="p">],</span>
+    <span class="p">),</span>
+<span class="p">],</span> <span class="n">categories</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;/m/0&#39;</span><span class="p">,</span> <span class="s1">&#39;/m/1&#39;</span><span class="p">])</span>
+
+<span class="n">dataset</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="s1">&#39;./dataset&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;open_images&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Examples of using this format from the code can be found in
+<a class="reference external" href="https://github.com/open-edge-platform/datumaro/tree/develop/tests/test_open_images_format.py">the format tests</a>.</p>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#format-specification">Format specification</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-open-images-dataset">Import Open Images dataset</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-an-image-metadata-file">Creating an image metadata file</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#export-to-other-formats">Export to other formats</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#export-to-open-images">Export to Open Images</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#examples">Examples</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-1-load-the-open-images-dataset-and-convert-to-the-cvat-format">Example 1. Load the Open Images dataset and convert to the CVAT format</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-2-create-a-custom-oid-like-dataset">Example 2. Create a custom OID-like dataset</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../_sources/docs/data-formats/formats/open_images.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

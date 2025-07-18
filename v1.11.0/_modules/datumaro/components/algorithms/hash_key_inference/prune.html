@@ -1,0 +1,826 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>datumaro.components.algorithms.hash_key_inference.prune &#8212; Datumaro 1.10.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../../../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css?v=8b7c274f" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../../../../../_static/documentation_options.js?v=1d24b1d9"></script>
+    <script src="../../../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/components/algorithms/hash_key_inference/prune';</script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.10.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.10.0 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../docs/index.html">
+                        Docs
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../../docs/index.html">
+                        Docs
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">datumaro.com...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for datumaro.components.algorithms.hash_key_inference.prune</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (C) 2023 Intel Corporation</span>
+<span class="c1">#</span>
+<span class="c1"># SPDX-License-Identifier: MIT</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.algorithms.hash_key_inference.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">HashInference</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.algorithms.hash_key_inference.hashkey_util</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">calculate_hamming</span><span class="p">,</span>
+    <span class="n">format_templates</span><span class="p">,</span>
+    <span class="n">select_uninferenced_dataset</span><span class="p">,</span>
+    <span class="n">templates</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">HashKey</span><span class="p">,</span> <span class="n">Label</span><span class="p">,</span> <span class="n">LabelCategories</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.deprecation</span><span class="w"> </span><span class="kn">import</span> <span class="n">deprecated</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">datumaro.plugins.ndr</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ndr</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.import_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">lazy_import</span>
+
+    <span class="n">ndr</span> <span class="o">=</span> <span class="n">lazy_import</span><span class="p">(</span><span class="s2">&quot;datumaro.plugins.ndr&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="match_num_item_for_cluster">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.match_num_item_for_cluster">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">match_num_item_for_cluster</span><span class="p">(</span><span class="n">ratio</span><span class="p">,</span> <span class="n">dataset_len</span><span class="p">,</span> <span class="n">cluster_num_item_list</span><span class="p">):</span>
+    <span class="n">total_num_selected_item</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">dataset_len</span> <span class="o">*</span> <span class="n">ratio</span><span class="p">)</span>
+
+    <span class="n">cluster_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cluster_num_item_list</span><span class="p">)</span> <span class="o">/</span> <span class="nb">sum</span><span class="p">(</span><span class="n">cluster_num_item_list</span><span class="p">)</span>
+    <span class="n">norm_cluster_num_item_list</span> <span class="o">=</span> <span class="p">(</span><span class="n">cluster_weights</span> <span class="o">*</span> <span class="n">total_num_selected_item</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="n">remaining_items</span> <span class="o">=</span> <span class="n">total_num_selected_item</span> <span class="o">-</span> <span class="nb">sum</span><span class="p">(</span><span class="n">norm_cluster_num_item_list</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">remaining_items</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">zero_cluster_indexes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">norm_cluster_num_item_list</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">add_clust_dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">cluster_weights</span><span class="p">[</span><span class="n">zero_cluster_indexes</span><span class="p">])[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="n">remaining_items</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">dist</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">add_clust_dist</span><span class="p">):</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cluster_weights</span> <span class="o">==</span> <span class="n">dist</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
+                <span class="n">norm_cluster_num_item_list</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">elif</span> <span class="n">remaining_items</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">diff_num_item_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">cluster_weights</span> <span class="o">-</span> <span class="n">norm_cluster_num_item_list</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">diff_idx</span> <span class="ow">in</span> <span class="n">diff_num_item_list</span><span class="p">[:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">remaining_items</span><span class="p">)]:</span>
+            <span class="n">norm_cluster_num_item_list</span><span class="p">[</span><span class="n">diff_idx</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">norm_cluster_num_item_list</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="PruneBase">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.PruneBase">[docs]</a>
+<span class="nd">@deprecated</span><span class="p">(</span><span class="n">deprecated_version</span><span class="o">=</span><span class="s2">&quot;1.11&quot;</span><span class="p">,</span> <span class="n">removed_version</span><span class="o">=</span><span class="s2">&quot;1.12&quot;</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PruneBase</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<div class="viewcode-block" id="PruneBase.base">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.PruneBase.base">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">base</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">ratio</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">num_centers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+        <span class="n">labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span>
+        <span class="n">database_keys</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">item_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">],</span>
+        <span class="n">source</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dataset</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;It executes each method for pruning.</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            ratio: How much to remain dataset after pruning.</span>
+<span class="sd">            num_centers: Number of centers for clustering.</span>
+<span class="sd">            labels: Label of one annotation for each datasetitem.</span>
+<span class="sd">            database_keys: Batch of the numpy formatted hash_key.</span>
+<span class="sd">            item_list: List of datasetitem of dataset.</span>
+<span class="sd">            source: Whole dataset.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            It returns a tuple of selected items and distance of each item and clusters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="RandomSelect">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.RandomSelect">[docs]</a>
+<span class="nd">@deprecated</span><span class="p">(</span><span class="n">deprecated_version</span><span class="o">=</span><span class="s2">&quot;1.11&quot;</span><span class="p">,</span> <span class="n">removed_version</span><span class="o">=</span><span class="s2">&quot;1.12&quot;</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RandomSelect</span><span class="p">(</span><span class="n">PruneBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Select items randomly from the dataset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="RandomSelect.base">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.RandomSelect.base">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">base</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">num_centers</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">database_keys</span><span class="p">,</span> <span class="n">item_list</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">dataset_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">item_list</span><span class="p">)</span>
+        <span class="n">num_selected_item</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">dataset_len</span> <span class="o">*</span> <span class="n">ratio</span><span class="p">)</span>
+        <span class="n">random_indices</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">dataset_len</span><span class="p">),</span> <span class="n">num_selected_item</span><span class="p">)</span>  <span class="c1"># nosec B311</span>
+        <span class="n">selected_items</span> <span class="o">=</span> <span class="p">[</span><span class="n">item_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">random_indices</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">selected_items</span><span class="p">,</span> <span class="kc">None</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Centroid">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.Centroid">[docs]</a>
+<span class="nd">@deprecated</span><span class="p">(</span><span class="n">deprecated_version</span><span class="o">=</span><span class="s2">&quot;1.11&quot;</span><span class="p">,</span> <span class="n">removed_version</span><span class="o">=</span><span class="s2">&quot;1.12&quot;</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Centroid</span><span class="p">(</span><span class="n">PruneBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Select items through clustering with centers targeting the desired number.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Centroid.base">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.Centroid.base">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">base</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">num_centers</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">database_keys</span><span class="p">,</span> <span class="n">item_list</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.cluster</span><span class="w"> </span><span class="kn">import</span> <span class="n">KMeans</span>
+
+        <span class="n">num_selected_centers</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">item_list</span><span class="p">)</span> <span class="o">*</span> <span class="n">ratio</span><span class="p">)</span>
+        <span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="n">num_selected_centers</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">clusters</span> <span class="o">=</span> <span class="n">kmeans</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">database_keys</span><span class="p">)</span>
+        <span class="n">cluster_centers</span> <span class="o">=</span> <span class="n">kmeans</span><span class="o">.</span><span class="n">cluster_centers_</span>
+        <span class="n">cluster_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span>
+
+        <span class="n">selected_items</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">dist_tuples</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">cluster_id</span> <span class="ow">in</span> <span class="n">cluster_ids</span><span class="p">:</span>
+            <span class="n">cluster_center</span> <span class="o">=</span> <span class="n">cluster_centers</span><span class="p">[</span><span class="n">cluster_id</span><span class="p">]</span>
+            <span class="n">cluster_items_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">clusters</span> <span class="o">==</span> <span class="n">cluster_id</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">num_selected_items</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">cluster_items</span> <span class="o">=</span> <span class="n">database_keys</span><span class="p">[</span><span class="n">cluster_items_idx</span><span class="p">,]</span>
+            <span class="n">dist</span> <span class="o">=</span> <span class="n">calculate_hamming</span><span class="p">(</span><span class="n">cluster_center</span><span class="p">,</span> <span class="n">cluster_items</span><span class="p">)</span>
+            <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span>
+            <span class="n">item_idx_list</span> <span class="o">=</span> <span class="n">cluster_items_idx</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">item_idx_list</span><span class="p">[:</span><span class="n">num_selected_items</span><span class="p">]):</span>
+                <span class="n">selected_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item_list</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+                <span class="n">dist_tuples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">(</span><span class="n">cluster_id</span><span class="p">,</span> <span class="n">item_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">item_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">subset</span><span class="p">,</span> <span class="n">dist</span><span class="p">[</span><span class="n">ind</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">selected_items</span><span class="p">,</span> <span class="n">dist_tuples</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ClusteredRandom">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.ClusteredRandom">[docs]</a>
+<span class="nd">@deprecated</span><span class="p">(</span><span class="n">deprecated_version</span><span class="o">=</span><span class="s2">&quot;1.11&quot;</span><span class="p">,</span> <span class="n">removed_version</span><span class="o">=</span><span class="s2">&quot;1.12&quot;</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ClusteredRandom</span><span class="p">(</span><span class="n">PruneBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Select items through clustering and choose randomly within each cluster.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ClusteredRandom.base">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.ClusteredRandom.base">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">base</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">num_centers</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">database_keys</span><span class="p">,</span> <span class="n">item_list</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.cluster</span><span class="w"> </span><span class="kn">import</span> <span class="n">KMeans</span>
+
+        <span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="n">num_centers</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">clusters</span> <span class="o">=</span> <span class="n">kmeans</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">database_keys</span><span class="p">)</span>
+        <span class="n">cluster_ids</span><span class="p">,</span> <span class="n">cluster_num_item_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">norm_cluster_num_item_list</span> <span class="o">=</span> <span class="n">match_num_item_for_cluster</span><span class="p">(</span>
+            <span class="n">ratio</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">database_keys</span><span class="p">),</span> <span class="n">cluster_num_item_list</span>
+        <span class="p">)</span>
+
+        <span class="n">selected_items</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">cluster_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cluster_ids</span><span class="p">):</span>
+            <span class="n">cluster_items_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">clusters</span> <span class="o">==</span> <span class="n">cluster_id</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">num_selected_items</span> <span class="o">=</span> <span class="n">norm_cluster_num_item_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">cluster_items_idx</span><span class="p">)</span>
+            <span class="n">selected_items</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">item_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">cluster_items_idx</span><span class="p">[:</span><span class="n">num_selected_items</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">selected_items</span><span class="p">,</span> <span class="kc">None</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="QueryClust">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.QueryClust">[docs]</a>
+<span class="nd">@deprecated</span><span class="p">(</span><span class="n">deprecated_version</span><span class="o">=</span><span class="s2">&quot;1.11&quot;</span><span class="p">,</span> <span class="n">removed_version</span><span class="o">=</span><span class="s2">&quot;1.12&quot;</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">QueryClust</span><span class="p">(</span><span class="n">PruneBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Select items through clustering with inits that imply each label.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="QueryClust.base">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.QueryClust.base">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">base</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">num_centers</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">database_keys</span><span class="p">,</span> <span class="n">item_list</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.cluster</span><span class="w"> </span><span class="kn">import</span> <span class="n">KMeans</span>
+
+        <span class="n">center_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_centers</span><span class="p">)}</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">item_list</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">anno</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">anno</span><span class="p">,</span> <span class="n">Label</span><span class="p">):</span>
+                    <span class="n">label_</span> <span class="o">=</span> <span class="n">anno</span><span class="o">.</span><span class="n">label</span>
+                    <span class="k">if</span> <span class="n">center_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">label_</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">center_dict</span><span class="p">[</span><span class="n">label_</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">center_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+                <span class="k">break</span>
+
+        <span class="n">item_id_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">item_list</span><span class="p">]</span>
+        <span class="n">centroids</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">database_keys</span><span class="p">[</span><span class="n">item_id_list</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)]</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">center_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="n">item</span>
+        <span class="p">]</span>
+        <span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span>
+            <span class="n">n_clusters</span><span class="o">=</span><span class="n">num_centers</span><span class="p">,</span> <span class="n">n_init</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">centroids</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span>
+        <span class="p">)</span>
+
+        <span class="n">clusters</span> <span class="o">=</span> <span class="n">kmeans</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">database_keys</span><span class="p">)</span>
+        <span class="n">cluster_centers</span> <span class="o">=</span> <span class="n">kmeans</span><span class="o">.</span><span class="n">cluster_centers_</span>
+        <span class="n">cluster_ids</span><span class="p">,</span> <span class="n">cluster_num_item_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">norm_cluster_num_item_list</span> <span class="o">=</span> <span class="n">match_num_item_for_cluster</span><span class="p">(</span>
+            <span class="n">ratio</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">database_keys</span><span class="p">),</span> <span class="n">cluster_num_item_list</span>
+        <span class="p">)</span>
+
+        <span class="n">selected_items</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">dist_tuples</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">cluster_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cluster_ids</span><span class="p">):</span>
+            <span class="n">cluster_center</span> <span class="o">=</span> <span class="n">cluster_centers</span><span class="p">[</span><span class="n">cluster_id</span><span class="p">]</span>
+            <span class="n">cluster_items_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">clusters</span> <span class="o">==</span> <span class="n">cluster_id</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">num_selected_item</span> <span class="o">=</span> <span class="n">norm_cluster_num_item_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="n">cluster_items</span> <span class="o">=</span> <span class="n">database_keys</span><span class="p">[</span><span class="n">cluster_items_idx</span><span class="p">]</span>
+            <span class="n">dist</span> <span class="o">=</span> <span class="n">calculate_hamming</span><span class="p">(</span><span class="n">cluster_center</span><span class="p">,</span> <span class="n">cluster_items</span><span class="p">)</span>
+            <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span>
+            <span class="n">item_idx_list</span> <span class="o">=</span> <span class="n">cluster_items_idx</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">item_idx_list</span><span class="p">[:</span><span class="n">num_selected_item</span><span class="p">]):</span>
+                <span class="n">selected_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item_list</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+                <span class="n">dist_tuples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">(</span><span class="n">cluster_id</span><span class="p">,</span> <span class="n">item_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">item_list</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">subset</span><span class="p">,</span> <span class="n">dist</span><span class="p">[</span><span class="n">ind</span><span class="p">][</span><span class="n">i</span><span class="p">])</span>
+                <span class="p">)</span>
+        <span class="k">return</span> <span class="n">selected_items</span><span class="p">,</span> <span class="n">dist_tuples</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Entropy">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.Entropy">[docs]</a>
+<span class="nd">@deprecated</span><span class="p">(</span><span class="n">deprecated_version</span><span class="o">=</span><span class="s2">&quot;1.11&quot;</span><span class="p">,</span> <span class="n">removed_version</span><span class="o">=</span><span class="s2">&quot;1.12&quot;</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Entropy</span><span class="p">(</span><span class="n">PruneBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Select items through clustering and choose them based on label entropy in each cluster.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Entropy.base">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.Entropy.base">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">base</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">num_centers</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">database_keys</span><span class="p">,</span> <span class="n">item_list</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.cluster</span><span class="w"> </span><span class="kn">import</span> <span class="n">KMeans</span>
+
+        <span class="n">kmeans</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="n">num_centers</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">clusters</span> <span class="o">=</span> <span class="n">kmeans</span><span class="o">.</span><span class="n">fit_predict</span><span class="p">(</span><span class="n">database_keys</span><span class="p">)</span>
+
+        <span class="n">cluster_ids</span><span class="p">,</span> <span class="n">cluster_num_item_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">norm_cluster_num_item_list</span> <span class="o">=</span> <span class="n">match_num_item_for_cluster</span><span class="p">(</span>
+            <span class="n">ratio</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">database_keys</span><span class="p">),</span> <span class="n">cluster_num_item_list</span>
+        <span class="p">)</span>
+
+        <span class="n">selected_item_indexes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">cluster_id</span><span class="p">,</span> <span class="n">num_selected_item</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">cluster_ids</span><span class="p">,</span> <span class="n">norm_cluster_num_item_list</span><span class="p">):</span>
+            <span class="n">cluster_items_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">clusters</span> <span class="o">==</span> <span class="n">cluster_id</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="n">cluster_classes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">labels</span><span class="p">)[</span><span class="n">cluster_items_idx</span><span class="p">]</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">inv</span><span class="p">,</span> <span class="n">cnts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">cluster_classes</span><span class="p">,</span> <span class="n">return_inverse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">cnts</span>
+            <span class="n">probs</span> <span class="o">=</span> <span class="n">weights</span><span class="p">[</span><span class="n">inv</span><span class="p">]</span>
+            <span class="n">probs</span> <span class="o">/=</span> <span class="n">probs</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+            <span class="n">choices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">inv</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="n">num_selected_item</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">probs</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">selected_item_indexes</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">cluster_items_idx</span><span class="p">[</span><span class="n">choices</span><span class="p">])</span>
+
+        <span class="n">selected_items</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">item_list</span><span class="p">)[</span><span class="n">selected_item_indexes</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">selected_items</span><span class="p">,</span> <span class="kc">None</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="NDRSelect">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.NDRSelect">[docs]</a>
+<span class="nd">@deprecated</span><span class="p">(</span><span class="n">deprecated_version</span><span class="o">=</span><span class="s2">&quot;1.11&quot;</span><span class="p">,</span> <span class="n">removed_version</span><span class="o">=</span><span class="s2">&quot;1.12&quot;</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NDRSelect</span><span class="p">(</span><span class="n">PruneBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Select items based on NDR among each subset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="NDRSelect.base">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.NDRSelect.base">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">base</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">num_centers</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">database_keys</span><span class="p">,</span> <span class="n">item_list</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+        <span class="n">subset_lists</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">subsets</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="n">selected_items</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">subset_</span> <span class="ow">in</span> <span class="n">subset_lists</span><span class="p">:</span>
+            <span class="n">subset_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">get_subset</span><span class="p">(</span><span class="n">subset_</span><span class="p">))</span>
+            <span class="n">num_selected_subset_item</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">subset_len</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ratio</span><span class="p">))</span>
+            <span class="n">ndr_result</span> <span class="o">=</span> <span class="n">ndr</span><span class="o">.</span><span class="n">NDR</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">working_subset</span><span class="o">=</span><span class="n">subset_</span><span class="p">,</span> <span class="n">num_cut</span><span class="o">=</span><span class="n">num_selected_subset_item</span><span class="p">)</span>
+            <span class="n">selected_items</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">ndr_result</span><span class="o">.</span><span class="n">get_subset</span><span class="p">(</span><span class="n">subset_</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">selected_items</span><span class="p">,</span> <span class="kc">None</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Prune">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.Prune">[docs]</a>
+<span class="nd">@deprecated</span><span class="p">(</span><span class="n">deprecated_version</span><span class="o">=</span><span class="s2">&quot;1.11&quot;</span><span class="p">,</span> <span class="n">removed_version</span><span class="o">=</span><span class="s2">&quot;1.12&quot;</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Prune</span><span class="p">(</span><span class="n">HashInference</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span>
+        <span class="n">cluster_method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;random&quot;</span><span class="p">,</span>
+        <span class="n">hash_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;img&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prune make a representative and manageable subset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span> <span class="o">=</span> <span class="n">dataset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cluster_method</span> <span class="o">=</span> <span class="n">cluster_method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hash_type</span> <span class="o">=</span> <span class="n">hash_type</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_text_model</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_centers</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_database_keys</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_item_list</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_data</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hash_type</span> <span class="o">==</span> <span class="s2">&quot;txt&quot;</span><span class="p">:</span>
+            <span class="n">category_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prompting</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cluster_method</span> <span class="o">==</span> <span class="s2">&quot;random&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_item_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">datasets_to_infer</span> <span class="o">=</span> <span class="n">select_uninferenced_dataset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span><span class="p">)</span>
+        <span class="n">datasets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_hash_key</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span><span class="p">],</span> <span class="p">[</span><span class="n">datasets_to_infer</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">category</span> <span class="ow">in</span> <span class="n">datasets</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_num_centers</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">category</span><span class="o">.</span><span class="n">_indices</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">datasets</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">annotation</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">annotation</span><span class="p">,</span> <span class="n">Label</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">annotation</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">annotation</span><span class="p">,</span> <span class="n">HashKey</span><span class="p">):</span>
+                    <span class="n">hash_key</span> <span class="o">=</span> <span class="n">annotation</span><span class="o">.</span><span class="n">hash_key</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hash_type</span> <span class="o">==</span> <span class="s2">&quot;txt&quot;</span><span class="p">:</span>
+                        <span class="n">inputs</span> <span class="o">=</span> <span class="n">category_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">label</span><span class="p">))</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">List</span><span class="p">):</span>
+                            <span class="n">inputs</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+                        <span class="n">hash_key_txt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">text_model</span><span class="o">.</span><span class="n">infer_text</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span><span class="o">.</span><span class="n">hash_key</span>
+                        <span class="n">hash_key</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">hash_key</span><span class="p">,</span> <span class="n">hash_key_txt</span><span class="p">])</span>
+                    <span class="n">hash_key</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unpackbits</span><span class="p">(</span><span class="n">hash_key</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_database_keys</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_database_keys</span> <span class="o">=</span> <span class="n">hash_key</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_database_keys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+                            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_database_keys</span><span class="p">,</span> <span class="n">hash_key</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
+                        <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_item_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prompting</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">category_dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">detected_format</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span><span class="o">.</span><span class="n">format</span>
+        <span class="n">template</span> <span class="o">=</span> <span class="n">format_templates</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">detected_format</span><span class="p">,</span> <span class="n">templates</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">_indices</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">category_dict</span><span class="p">[</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">temp</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">label</span><span class="p">)</span> <span class="k">for</span> <span class="n">temp</span> <span class="ow">in</span> <span class="n">template</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">category_dict</span>
+
+<div class="viewcode-block" id="Prune.get_pruned">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.components.algorithms.hash_key_inference.prune.html#datumaro.components.algorithms.hash_key_inference.prune.Prune.get_pruned">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_pruned</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
+        <span class="n">method</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;random&quot;</span><span class="p">:</span> <span class="n">RandomSelect</span><span class="p">,</span>
+            <span class="s2">&quot;cluster_random&quot;</span><span class="p">:</span> <span class="n">ClusteredRandom</span><span class="p">,</span>
+            <span class="s2">&quot;centroid&quot;</span><span class="p">:</span> <span class="n">Centroid</span><span class="p">,</span>
+            <span class="s2">&quot;query_clust&quot;</span><span class="p">:</span> <span class="n">QueryClust</span><span class="p">,</span>
+            <span class="s2">&quot;entropy&quot;</span><span class="p">:</span> <span class="n">Entropy</span><span class="p">,</span>
+            <span class="s2">&quot;ndr&quot;</span><span class="p">:</span> <span class="n">NDRSelect</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="n">prune_method</span> <span class="o">=</span> <span class="n">method</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_cluster_method</span><span class="p">]()</span>
+        <span class="n">selected_items</span><span class="p">,</span> <span class="n">dist_tuples</span> <span class="o">=</span> <span class="n">prune_method</span><span class="o">.</span><span class="n">base</span><span class="p">(</span>
+            <span class="n">ratio</span><span class="o">=</span><span class="n">ratio</span><span class="p">,</span>
+            <span class="n">num_centers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_centers</span><span class="p">,</span>
+            <span class="n">labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">,</span>
+            <span class="n">database_keys</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_database_keys</span><span class="p">,</span>
+            <span class="n">item_list</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_item_list</span><span class="p">,</span>
+            <span class="n">source</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">result_dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span>
+            <span class="n">media_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span><span class="o">.</span><span class="n">media_type</span><span class="p">(),</span> <span class="n">ann_types</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span><span class="o">.</span><span class="n">ann_types</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="n">result_dataset</span><span class="o">.</span><span class="n">_source_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span><span class="o">.</span><span class="n">_source_path</span>
+        <span class="n">result_dataset</span><span class="o">.</span><span class="n">define_categories</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span><span class="o">.</span><span class="n">categories</span><span class="p">())</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">selected_items</span><span class="p">:</span>
+            <span class="n">result_dataset</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">dist_tuples</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">center</span><span class="p">,</span> <span class="n">id_</span><span class="p">,</span> <span class="n">subset_</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dist_tuples</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;item </span><span class="si">{</span><span class="n">id_</span><span class="si">}</span><span class="s2"> of subset </span><span class="si">{</span><span class="n">subset_</span><span class="si">}</span><span class="s2"> has distance </span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s2"> for cluster </span><span class="si">{</span><span class="n">center</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pruned dataset with </span><span class="si">{</span><span class="n">ratio</span><span class="si">}</span><span class="s2"> from </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span><span class="p">)</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">result_dataset</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result_dataset</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,750 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Roboflow &#8212; Datumaro 1.10.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=8b7c274f" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../../../_static/documentation_options.js?v=1d24b1d9"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/data-formats/formats/roboflow';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.10.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.10.0 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../index.html">
+                        Docs
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../index.html">
+                        Docs
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Roboflow</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="roboflow">
+<h1>Roboflow<a class="headerlink" href="#roboflow" title="Link to this heading">#</a></h1>
+<section id="format-specification">
+<h2>Format specification<a class="headerlink" href="#format-specification" title="Link to this heading">#</a></h2>
+<p><a class="reference external" href="https://universe.roboflow.com/">Roboflow</a> provides a range of services and tools to assist with various aspects of computer vision and machine learning projects.
+These services are aimed at simplifying the process of data importing, annotating, and training models for tasks like image classification, object detection, segmentation, and more.
+Datumaro supports various <a class="reference external" href="https://roboflow.com/formats">Roboflow formats</a> so that can make it easier for users to import and work with datasets that have been prepared and annotated using Roboflow tools.
+You can enjoy some examples <a class="reference external" href="https://universe.roboflow.com/joseph-nelson/bccd/dataset/4">here</a>.</p>
+<p>Supported annotation formats:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">COCO</span> <span class="pre">JSON</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">VOC</span> <span class="pre">XML</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">YOLOv5,</span> <span class="pre">YOLOv6,</span> <span class="pre">YOLOv7,</span> <span class="pre">YOLOv8</span> <span class="pre">TXT</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">TFRecord</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">CreateML</span> <span class="pre">JSON</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">YOLOv5</span> <span class="pre">Oriented</span> <span class="pre">Bounding</span> <span class="pre">Boxes</span> <span class="pre">TXT</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Multiclass</span> <span class="pre">Classification</span> <span class="pre">CSV</span></code></p></li>
+</ul>
+</section>
+<section id="import-roboflow-dataset">
+<h2>Import Roboflow dataset<a class="headerlink" href="#import-roboflow-dataset" title="Link to this heading">#</a></h2>
+<p>A Datumaro project with a Roboflow source can be created in the following way:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>datum<span class="w"> </span>project<span class="w"> </span>create
+datum<span class="w"> </span>project<span class="w"> </span>import<span class="w"> </span>--format<span class="w"> </span>roboflow_coco<span class="w"> </span>&lt;path/to/dataset&gt;
+</pre></div>
+</div>
+<p>Or, using Python API:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dm</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="s1">&#39;&lt;path/to/dataset&gt;&#39;</span><span class="p">,</span> <span class="s1">&#39;roboflow_coco&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="roboflow-coco-json">
+<h3>Roboflow COCO JSON<a class="headerlink" href="#roboflow-coco-json" title="Link to this heading">#</a></h3>
+<section id="directory-structure">
+<h4>Directory structure<a class="headerlink" href="#directory-structure" title="Link to this heading">#</a></h4>
+<!--lint disable fenced-code-flag-->
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>coco/
+├── train                       # Subset directory
+│   ├── _annotations.coco.json  # Annotation file
+│   ├── train_img1.jpg          # Image file
+│   ├── train_img2.jpg          # Image file
+│   └── ...
+├── valid                       # Subset directory
+│   ├── _annotations.coco.json  # Annotation file
+│   ├── valid_img1.jpg          # Image file
+│   └── ...
+└── test                        # Subset directory
+│   ├── _annotations.coco.json  # Annotation file
+│   ├── test_img1.jpg           # Image file
+│   └── ...
+</pre></div>
+</div>
+</section>
+<section id="annotation-json-file">
+<h4>Annotation JSON file<a class="headerlink" href="#annotation-json-file" title="Link to this heading">#</a></h4>
+<p>The example of <code class="docutils literal notranslate"><span class="pre">_annotations.coco.json</span></code> is given by EXAMPLE tap of <a class="reference external" href="https://roboflow.com/formats/coco-json">Roboflow COCO JSON</a>.</p>
+</section>
+</section>
+<section id="roboflow-voc-xml">
+<h3>Roboflow VOC XML<a class="headerlink" href="#roboflow-voc-xml" title="Link to this heading">#</a></h3>
+<section id="id1">
+<h4>Directory structure<a class="headerlink" href="#id1" title="Link to this heading">#</a></h4>
+<!--lint disable fenced-code-flag-->
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>voc/
+├── train                       # Subset directory
+│   ├── train_img1.jpg          # Image file
+│   ├── train_img1.xml          # Annotation file
+│   ├── train_img2.jpg          # Image file
+│   ├── train_img2.xml          # Annotation file
+│   └── ...
+├── valid                       # Subset directory
+│   ├── valid_img1.jpg          # Image file
+│   ├── valid_img1.xml          # Annotation file
+│   └── ...
+└── test                        # Subset directory
+│   ├── test_img1.jpg           # Image file
+│   ├── test_img1.xml           # Annotation file
+│   └── ...
+</pre></div>
+</div>
+</section>
+<section id="annotation-xml-file">
+<h4>Annotation XML file<a class="headerlink" href="#annotation-xml-file" title="Link to this heading">#</a></h4>
+<p>The example of <code class="docutils literal notranslate"><span class="pre">{*}.xml</span></code> is given by EXAMPLE tap of <a class="reference external" href="https://roboflow.com/formats/pascal-voc-xml">Roboflow VOC XML</a>.</p>
+</section>
+</section>
+<section id="roboflow-yolov5-yolov7-yolov8-txt">
+<h3>Roboflow YOLOv5, YOLOv7, YOLOv8 TXT<a class="headerlink" href="#roboflow-yolov5-yolov7-yolov8-txt" title="Link to this heading">#</a></h3>
+<section id="id2">
+<h4>Directory structure<a class="headerlink" href="#id2" title="Link to this heading">#</a></h4>
+<!--lint disable fenced-code-flag-->
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>yolo/
+├── data.yaml                   # YAML meta file (required)
+├── train                       # Subset directory
+│   ├── images                  # Image directory
+│   │   ├── train_img1.jpg      # Image file
+│   │   ├── train_img2.jpg      # Image file
+│   │   └── ...
+│   └── labels                  # Label directory
+│       ├── train_img1.txt      # Annotation file
+│       ├── train_img2.txt      # Annotation file
+│       └── ...
+├── valid                       # Subset directory
+│   ├── images                  # Image directory
+│   │   ├── valid_img1.jpg      # Image file
+│   │   └── ...
+│   └── labels                  # Label directory
+│       ├── valid_img1.txt      # Annotation file
+│       └── ...
+└── test                        # Subset directory
+    ├── images                  # Image directory
+    │   ├── test_img1.jpg       # Image file
+    │   └── ...
+    └── labels                  # Label directory
+        ├── test_img1.txt       # Annotation file
+        └── ...
+</pre></div>
+</div>
+</section>
+<section id="annotation-txt-file">
+<h4>Annotation TXT file<a class="headerlink" href="#annotation-txt-file" title="Link to this heading">#</a></h4>
+<p>The example of <code class="docutils literal notranslate"><span class="pre">{*}.txt</span></code> is given by EXAMPLE tap of <a class="reference external" href="https://roboflow.com/formats/yolov8-pytorch-txt">Roboflow YOLO TXT</a>.</p>
+</section>
+</section>
+<section id="roboflow-mt-yolov6-txt">
+<h3>Roboflow MT-YOLOv6 TXT<a class="headerlink" href="#roboflow-mt-yolov6-txt" title="Link to this heading">#</a></h3>
+<section id="id3">
+<h4>Directory structure<a class="headerlink" href="#id3" title="Link to this heading">#</a></h4>
+<!--lint disable fenced-code-flag-->
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>mt-yolov6/
+├── data.yaml                   # YAML meta file (required)
+├── images                      # Image directory
+│   ├── train                   # Subset directory
+│   │   ├── train_img1.jpg      # Image file
+│   │   ├── train_img2.jpg      # Image file
+│   │   └── ...
+│   ├── valid                   # Subset directory
+│   │   ├── valid_img1.jpg      # Image file
+│   │   └── ...
+│   └── test                    # Subset directory
+│       ├── test_img1.jpg       # Image file
+│       └── ...
+└── labels                      # Label directory
+    ├── train                   # Subset directory
+    │   ├── train_img1.txt      # Annotation file
+    │   ├── train_img2.txt      # Annotation file
+    │   └── ...
+    ├── valid                   # Subset directory
+    │   ├── test_img1.txt       # Annotation file
+    │   └── ...
+    └── test                    # Subset directory
+        ├── test_img1.txt       # Annotation file
+        └── ...
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h4>Annotation TXT file<a class="headerlink" href="#id4" title="Link to this heading">#</a></h4>
+<p>The example of <code class="docutils literal notranslate"><span class="pre">{*}.txt</span></code> is given by EXAMPLE tap of <a class="reference external" href="https://roboflow.com/formats/mt-yolov6">Roboflow MT-YOLOv6 TXT</a>.</p>
+</section>
+</section>
+<section id="roboflow-tensorflow-tfrecord">
+<h3>Roboflow Tensorflow TFRecord<a class="headerlink" href="#roboflow-tensorflow-tfrecord" title="Link to this heading">#</a></h3>
+<section id="id5">
+<h4>Directory structure<a class="headerlink" href="#id5" title="Link to this heading">#</a></h4>
+<!--lint disable fenced-code-flag-->
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>tfrecord/
+├── train                       # Subset directory
+│   ├── label_map.pbtxt         # Label map file (label names and ids)
+│   └── sample.tfrecord         # Tfrecord file
+├── valid                       # Subset directory
+│   ├── label_map.pbtxt         # Label map file (label names and ids)
+│   └── sample.tfrecord         # Tfrecord file
+└── test                        # Subset directory
+    ├── label_map.pbtxt         # Label map file (label names and ids)
+    └── sample.tfrecord         # Tfrecord file
+</pre></div>
+</div>
+</section>
+</section>
+<section id="roboflow-createml-json">
+<h3>Roboflow CreateML JSON<a class="headerlink" href="#roboflow-createml-json" title="Link to this heading">#</a></h3>
+<section id="id6">
+<h4>Directory structure<a class="headerlink" href="#id6" title="Link to this heading">#</a></h4>
+<!--lint disable fenced-code-flag-->
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>createml/
+├── train                           # Subset directory
+│   ├── _annotations.createml.json  # Annotation file
+│   ├── train_img1.jpg              # Image file
+│   ├── train_img2.jpg              # Image file
+│   └── ...
+├── valid                           # Subset directory
+│   ├── _annotations.createml.json  # Annotation file
+│   ├── valid_img1.jpg              # Image file
+│   └── ...
+└── test                            # Subset directory
+│   ├── _annotations.createml.json  # Annotation file
+│   ├── test_img1.jpg               # Image file
+│   └── ...
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h4>Annotation JSON file<a class="headerlink" href="#id7" title="Link to this heading">#</a></h4>
+<p>The example of <code class="docutils literal notranslate"><span class="pre">_annotations.createml.json</span></code> is given by EXAMPLE tap of <a class="reference external" href="https://roboflow.com/formats/createml-json">Roboflow CreateML JSON</a>.</p>
+</section>
+</section>
+<section id="roboflow-yolov5-oriented-bounding-boxes">
+<h3>Roboflow YOLOv5 Oriented Bounding Boxes<a class="headerlink" href="#roboflow-yolov5-oriented-bounding-boxes" title="Link to this heading">#</a></h3>
+<section id="id8">
+<h4>Directory structure<a class="headerlink" href="#id8" title="Link to this heading">#</a></h4>
+<!--lint disable fenced-code-flag-->
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>yolov5-obb/
+├── data.yaml                   # YAML meta file (required)
+├── train                       # Subset directory
+│   ├── images                  # Image directory
+│   │   ├── train_img1.jpg      # Image file
+│   │   ├── train_img2.jpg      # Image file
+│   │   └── ...
+│   └── labelTxt                # Label directory
+│       ├── train_img1.txt      # Annotation file
+│       ├── train_img2.txt      # Annotation file
+│       └── ...
+├── valid                       # Subset directory
+│   ├── images                  # Image directory
+│   │   ├── valid_img1.jpg      # Image file
+│   │   └── ...
+│   └── labelTxt                # Label directory
+│       ├── valid_img1.txt      # Annotation file
+│       └── ...
+└── test                        # Subset directory
+    ├── images                  # Image directory
+    │   ├── test_img1.jpg       # Image file
+    │   └── ...
+    └── labelTxt                # Label directory
+        ├── test_img1.txt       # Annotation file
+        └── ...
+</pre></div>
+</div>
+</section>
+<section id="id9">
+<h4>Annotation TXT file<a class="headerlink" href="#id9" title="Link to this heading">#</a></h4>
+<p>The example of <code class="docutils literal notranslate"><span class="pre">{*}.txt</span></code> is given by EXAMPLE tap of <a class="reference external" href="https://roboflow.com/formats/yolov5-obb">Roboflow YOLOv5-OBB TXT</a>.</p>
+</section>
+</section>
+<section id="roboflow-multiclass-classification-csv">
+<h3>Roboflow Multiclass Classification CSV<a class="headerlink" href="#roboflow-multiclass-classification-csv" title="Link to this heading">#</a></h3>
+<section id="id10">
+<h4>Directory structure<a class="headerlink" href="#id10" title="Link to this heading">#</a></h4>
+<!--lint disable fenced-code-flag-->
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>multiclass/
+├── data.yaml                   # YAML meta file (required)
+├── train                       # Subset directory
+│   ├── _classes.csv            # Annotation file
+│   ├── train_img1.jpg          # Image file
+│   ├── train_img2.jpg          # Image file
+│   └── ...
+├── valid                       # Subset directory
+│   ├── _classes.csv            # Annotation file
+│   ├── valid_img1.jpg          # Image file
+│   └── ...
+└── test                        # Subset directory
+    ├── _classes.csv            # Annotation file
+    ├── test_img1.jpg           # Image file
+    └── ...
+</pre></div>
+</div>
+</section>
+<section id="annotation-csv-file">
+<h4>Annotation CSV file<a class="headerlink" href="#annotation-csv-file" title="Link to this heading">#</a></h4>
+<p>The example of <code class="docutils literal notranslate"><span class="pre">_classes.csv</span></code> is given by EXAMPLE tap of <a class="reference external" href="https://roboflow.com/formats/multiclass-classification-csv">Roboflow Multiclass CSV</a>.</p>
+</section>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#format-specification">Format specification</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-roboflow-dataset">Import Roboflow dataset</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#roboflow-coco-json">Roboflow COCO JSON</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#directory-structure">Directory structure</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#annotation-json-file">Annotation JSON file</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#roboflow-voc-xml">Roboflow VOC XML</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Directory structure</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#annotation-xml-file">Annotation XML file</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#roboflow-yolov5-yolov7-yolov8-txt">Roboflow YOLOv5, YOLOv7, YOLOv8 TXT</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Directory structure</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#annotation-txt-file">Annotation TXT file</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#roboflow-mt-yolov6-txt">Roboflow MT-YOLOv6 TXT</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Directory structure</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Annotation TXT file</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#roboflow-tensorflow-tfrecord">Roboflow Tensorflow TFRecord</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Directory structure</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#roboflow-createml-json">Roboflow CreateML JSON</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Directory structure</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">Annotation JSON file</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#roboflow-yolov5-oriented-bounding-boxes">Roboflow YOLOv5 Oriented Bounding Boxes</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">Directory structure</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">Annotation TXT file</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#roboflow-multiclass-classification-csv">Roboflow Multiclass Classification CSV</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">Directory structure</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#annotation-csv-file">Annotation CSV file</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../_sources/docs/data-formats/formats/roboflow.md.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
