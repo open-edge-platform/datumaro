@@ -4,7 +4,57 @@ Release Notes
 .. toctree::
    :maxdepth: 1
 
+v1.11.0 (2024 Q3)
+-----------------
+
+This release includes a significant number of deprecations in the CLI and API.
+This is a one-off action to remove unused features as well as features
+such as inference which do not fit well in Datumaro. We intend to remove those
+features in Datumaro 1.12.0.
+
+New features
+^^^^^^^^^^^^
+- Convert Cuboid2D annotation to/from 3D data
+- Add label groups for hierarchical classification in ImageNet
+
+Enhancements
+^^^^^^^^^^^^
+- Add non-strict mode to JsonPageMapper in rust API and enable it for COCO
+- Enhance 'id_from_image_name' transform to ensure each identifier is unique
+- Optimize path assignment to handle point cloud in JSON without images
+- Add documentation for framework conversion
+
+Bug fixes
+^^^^^^^^^
+- Fix assertion to compare hashkeys against expected value
+- Mark pyemd as optional since it does not support Python 3.12
+
+Deprecations
+^^^^^^^^^^^^
+- The following CLI commmands are deprecated:
+  - explain, explore, generate, prune
+  - model: add, remove, run, info
+  - project: add, create, export, import, remove, checkout, commit, log, info, status
+  - source: import, add, remove
+- The following APIs are deprecated:
+  - Model inference
+  - Model-based transformations
+  - Crypter
+  - Synthetic dataset generation
+  - Data exploration
+  - BBox to mask using SAM
+  - Telemetry
+  - Anchor generation
+  - Missing annotation detection
+  - Model inference explanation
+  - Near-duplicate removal
+  - Pruning
+  - Pseudo-labels
+  - Projects
+  - SAM Docker image
+
 v1.10.0 (2024 Q4)
+-----------------
 
 New features
 ^^^^^^^^^^^^
