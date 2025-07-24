@@ -160,7 +160,10 @@ def segment_iou(a, b):
 
         a = _to_rle(a)
         b = _to_rle(b)
-    return float(mask_utils.iou(a, b, [not is_bbox]))
+    iou = mask_utils.iou(a, b, [not is_bbox])
+    if isinstance(iou, np.ndarray):
+        iou = iou[0, 0]
+    return float(iou)
 
 
 def PDJ(a, b, eps=None, ratio=0.05, bbox=None):
