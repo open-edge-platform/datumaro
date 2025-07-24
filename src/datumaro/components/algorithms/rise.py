@@ -47,7 +47,7 @@ class RISE:
 
     def generate_masks(self, image_size):
         cell_size = np.ceil(np.array(image_size) / self.mask_size).astype(np.int8)
-        up_size = tuple([(self.mask_size + 1) * cs for cs in cell_size])
+        up_size = tuple([(self.mask_size + 1) * int(cs) for cs in cell_size])
 
         grid = np.random.rand(self.num_masks, self.mask_size, self.mask_size) < self.prob
         grid = grid.astype("float32")
