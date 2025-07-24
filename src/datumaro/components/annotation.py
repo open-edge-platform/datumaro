@@ -271,8 +271,6 @@ class HashKey(Annotation):
             raise ValueError(value)
 
     def __eq__(self, other):
-        if not super().__eq__(other):
-            return False
         if not isinstance(other, __class__):
             return False
         return np.array_equal(self.hash_key, other.hash_key)
@@ -285,8 +283,6 @@ class FeatureVector(Annotation):
     vector: np.ndarray = field(validator=attr.validators.instance_of(np.ndarray))
 
     def __eq__(self, other):
-        if not super().__eq__(other):
-            return False
         if not isinstance(other, __class__):
             return False
         return np.array_equal(self.hash_key, other.hash_key)
@@ -340,8 +336,6 @@ class MaskCategories(Categories):
         return len(self.colormap)
 
     def __eq__(self, other):
-        if not super().__eq__(other):
-            return False
         if not isinstance(other, __class__):
             return False
         for label_id, my_color in self.colormap.items():
@@ -456,8 +450,6 @@ class Mask(Annotation):
         return paint_mask(self.as_class_mask(), colormap)
 
     def __eq__(self, other):
-        if not super().__eq__(other):
-            return False
         if not isinstance(other, __class__):
             return False
         return (
@@ -506,7 +498,7 @@ class RleMask(Mask):
 
     def __eq__(self, other):
         if not isinstance(other, __class__):
-            return super().__eq__(other)
+            return False
         return self.rle == other.rle
 
 
@@ -1813,8 +1805,6 @@ class _ImageAnnotation(Annotation):
     image: Image = field()
 
     def __eq__(self, other):
-        if not super().__eq__(other):
-            return False
         if not isinstance(other, __class__):
             return False
         return np.array_equal(self.image, other.image)
@@ -2054,8 +2044,6 @@ class TabularCategories(Categories):
         return iter(self.items)
 
     def __eq__(self, other) -> bool:
-        if not super().__eq__(other):
-            return False
         if not isinstance(other, __class__):
             return False
         return self.items == other.items
