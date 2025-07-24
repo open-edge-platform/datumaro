@@ -175,7 +175,8 @@ try:
                 image = np.expand_dims(image, axis=-1)
 
             if self.transform:
-                image = self.transform(image)
+                # Use image.copy() because PyTorch does not support non-writable tensors.
+                image = self.transform(image.copy())
 
             if self.target_transform:
                 label = self.target_transform(label)
