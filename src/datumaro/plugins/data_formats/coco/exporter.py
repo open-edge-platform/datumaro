@@ -12,6 +12,7 @@ from io import BufferedWriter
 from itertools import chain, groupby
 from typing import Dict, List, Optional, Type, Union
 
+import numpy as np
 import pycocotools.mask as mask_utils
 from json_stream.writer import streamable_dict, streamable_list
 
@@ -466,6 +467,8 @@ class _InstancesExporter(_TaskExporter):
             else:
                 rles = mask_utils.merge(rles)
             area = mask_utils.area(rles)
+            if isinstance(area, np.ndarray):
+                area = area[0]
         else:
             _, _, w, h = bbox
             segmentation = []
