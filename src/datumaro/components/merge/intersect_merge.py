@@ -94,7 +94,7 @@ class IntersectMerge(Merger):
     def __init__(self, **options):
         super().__init__(**options)
 
-    @attrs(repr_ns="IntersectMerge", kw_only=True)
+    @attrs(kw_only=True)
     class Conf:
         """
         Parameters

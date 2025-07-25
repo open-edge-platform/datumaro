@@ -13,7 +13,7 @@ from dataclasses import dataclass, fields
 from typing import Dict, List, Optional
 
 import numpy as np
-from openvino.runtime import Core
+from openvino import Core
 from tqdm import tqdm
 
 from datumaro.components.abstracts.model_interpreter import LauncherInputType, ModelPred
