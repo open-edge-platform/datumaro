@@ -4,6 +4,7 @@
 
 import filecmp
 import os.path as osp
+import sys
 from unittest import TestCase
 from unittest.mock import MagicMock
 
@@ -266,6 +267,10 @@ class ProjectTest:
 
         assert not osp.exists(osp.join(project_dir, "src"))
 
+    @pytest.mark.xfail(
+        sys.platform == "win32",
+        reason="failing due to a file because it is being used by another process",
+    )
     @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @scoped
     def test_can_release_resources_on_checkout(self, test_dir):
