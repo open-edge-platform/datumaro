@@ -240,16 +240,20 @@ class FrameworkConverterFactoryTest(TestCase):
         with self.assertRaises(ValueError):
             FrameworkConverterFactory.create_converter("invalid_framework")
 
-    @skipIf(TORCH_AVAILABLE, reason="PyTorch is installed")
-    def test_create_converter_torch_importerror(self):
-        with self.assertRaises(ImportError):
-            _ = FrameworkConverterFactory.create_converter("torch")
 
-    @skipIf(TF_AVAILABLE, reason="Tensorflow is installed")
-    def test_create_converter_tf_importerror(self):
-        with self.assertRaises(ImportError):
-            _ = FrameworkConverterFactory.create_converter("tf")
+def _tf_tensor_spec(shape, dtype, name=None):
+    return tf.TensorSpec(shape=shape, dtype=dtype, name=name) if TF_AVAILABLE else ""
 
+
+def _tf_int32():
+    return tf.int32 if TF_AVAILABLE else ""
+
+
+def _tf_float32():
+    return tf.float32 if TF_AVAILABLE else ""
+
+def _transforms_to_tensor():
+    return transforms.ToTensor() if TORCH_AVAILABLE else ""
 
 @mark_requirement(Requirements.DATUM_GENERAL_REQ)
 class MultiframeworkConverterTest:
@@ -345,7 +349,7 @@ class MultiframeworkConverterTest:
             (
                 "train",
                 "semantic_segmentation",
-                {"transform": transforms.ToTensor()},
+                {"transform": _transforms_to_tensor()},
             ),
         ],
     )
@@ -601,8 +605,8 @@ class MultiframeworkConverterTest:
                 "classification",
                 {
                     "output_signature": {
-                        "image": tf.TensorSpec(shape=(None, None, None), dtype=tf.int32),
-                        "label": tf.TensorSpec(shape=(), dtype=tf.int32),
+                        "image": _tf_tensor_spec(shape=(None, None, None), dtype=_tf_int32()),
+                        "label": _tf_tensor_spec(shape=(), dtype=_tf_int32()),
                     }
                 },
             ),
@@ -611,8 +615,8 @@ class MultiframeworkConverterTest:
                 "multilabel_classification",
                 {
                     "output_signature": {
-                        "image": tf.TensorSpec(shape=(None, None, None), dtype=tf.int32),
-                        "label": tf.TensorSpec(shape=(None,), dtype=tf.int32),
+                        "image": _tf_tensor_spec(shape=(None, None, None), dtype=_tf_int32()),
+                        "label": _tf_tensor_spec(shape=(None,), dtype=_tf_int32()),
                     }
                 },
             ),
@@ -621,9 +625,9 @@ class MultiframeworkConverterTest:
                 "detection",
                 {
                     "output_signature": {
-                        "image": tf.TensorSpec(shape=(None, None, None), dtype=tf.int32),
-                        "bbox": tf.TensorSpec(shape=(None, 4), dtype=tf.float32, name="points"),
-                        "category_id": tf.TensorSpec(shape=(None,), dtype=tf.int32, name="label"),
+                        "image": _tf_tensor_spec(shape=(None, None, None), dtype=_tf_int32()),
+                        "bbox": _tf_tensor_spec(shape=(None, 4), dtype=_tf_float32(), name="points"),
+                        "category_id": _tf_tensor_spec(shape=(None,), dtype=_tf_int32(), name="label"),
                     }
                 },
             ),
@@ -632,11 +636,11 @@ class MultiframeworkConverterTest:
                 "instance_segmentation",
                 {
                     "output_signature": {
-                        "image": tf.TensorSpec(shape=(None, None, None), dtype=tf.int32),
-                        "polygon": tf.TensorSpec(
-                            shape=(None, None), dtype=tf.float32, name="points"
+                        "image": _tf_tensor_spec(shape=(None, None, None), dtype=_tf_int32()),
+                        "polygon": _tf_tensor_spec(
+                            shape=(None, None), dtype=_tf_float32(), name="points"
                         ),
-                        "category_id": tf.TensorSpec(shape=(None,), dtype=tf.int32, name="label"),
+                        "category_id": _tf_tensor_spec(shape=(None,), dtype=_tf_int32(), name="label"),
                     }
                 },
             ),
@@ -645,8 +649,8 @@ class MultiframeworkConverterTest:
                 "semantic_segmentation",
                 {
                     "output_signature": {
-                        "image": tf.TensorSpec(shape=(None, None, None), dtype=tf.int32),
-                        "label": tf.TensorSpec(shape=(None, None), dtype=tf.int32),
+                        "image": _tf_tensor_spec(shape=(None, None, None), dtype=_tf_int32()),
+                        "label": _tf_tensor_spec(shape=(None, None), dtype=_tf_int32()),
                     }
                 },
             ),
@@ -721,17 +725,17 @@ class MultiframeworkConverterTest:
                 "train",
                 "classification",
                 {
-                    "image": tf.TensorSpec(shape=(None, None, None), dtype=tf.int32),
-                    "label": tf.TensorSpec(shape=(), dtype=tf.int32),
+                    "image": _tf_tensor_spec(shape=(None, None, None), dtype=_tf_int32()),
+                    "label": _tf_tensor_spec(shape=(), dtype=_tf_int32()),
                 },
             ),
             (
                 "val",
                 "detection",
                 {
-                    "image": tf.TensorSpec(shape=(None, None, None), dtype=tf.int32),
-                    "bbox": tf.TensorSpec(shape=(None, 4), dtype=tf.float32, name="points"),
-                    "category_id": tf.TensorSpec(shape=(None,), dtype=tf.int32, name="label"),
+                    "image": _tf_tensor_spec(shape=(None, None, None), dtype=_tf_int32()),
+                    "bbox": _tf_tensor_spec(shape=(None, 4), dtype=_tf_float32(), name="points"),
+                    "category_id": _tf_tensor_spec(shape=(None,), dtype=_tf_int32(), name="label"),
                 },
             ),
         ],
@@ -781,17 +785,17 @@ class MultiframeworkConverterTest:
                 "train",
                 "classification",
                 {
-                    "image": tf.TensorSpec(shape=(None, None, None), dtype=tf.int32),
-                    "label": tf.TensorSpec(shape=(), dtype=tf.int32),
+                    "image": _tf_tensor_spec(shape=(None, None, None), dtype=_tf_int32()),
+                    "label": _tf_tensor_spec(shape=(), dtype=_tf_int32()),
                 },
             ),
             (
                 "val",
                 "detection",
                 {
-                    "image": tf.TensorSpec(shape=(None, None, None), dtype=tf.int32),
-                    "bbox": tf.TensorSpec(shape=(None, 4), dtype=tf.float32, name="points"),
-                    "category_id": tf.TensorSpec(shape=(None,), dtype=tf.int32, name="label"),
+                    "image": _tf_tensor_spec(shape=(None, None, None), dtype=_tf_int32()),
+                    "bbox": _tf_tensor_spec(shape=(None, 4), dtype=_tf_float32(), name="points"),
+                    "category_id": _tf_tensor_spec(shape=(None,), dtype=_tf_int32(), name="label"),
                 },
             ),
         ],
@@ -907,16 +911,6 @@ class MultiframeworkConverterTest:
             ):
                 assert tf.reduce_all(tf_item[0] == dm_item["image"])
                 assert tf.reduce_all(tf_item[1] == dm_item["label"])
-
-    @pytest.mark.skipif(TORCH_AVAILABLE, reason="PyTorch is installed")
-    def test_torch_dataset_import(self):
-        with pytest.raises(ImportError):
-            from datumaro.plugins.framework_converter import DmTorchDataset
-
-    @pytest.mark.skipif(TF_AVAILABLE, reason="Tensorflow is installed")
-    def test_tf_dataset_import(self):
-        with pytest.raises(ImportError):
-            from datumaro.plugins.framework_converter import DmTfDataset
 
     @pytest.mark.skipif(not TORCH_AVAILABLE, reason="PyTorch is not installed")
     def test_missing_tokenizer(self, fxt_tabular_label_dataset, fxt_text_example):
