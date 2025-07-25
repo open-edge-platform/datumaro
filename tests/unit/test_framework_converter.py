@@ -252,8 +252,10 @@ def _tf_int32():
 def _tf_float32():
     return tf.float32 if TF_AVAILABLE else ""
 
+
 def _transforms_to_tensor():
     return transforms.ToTensor() if TORCH_AVAILABLE else ""
+
 
 @mark_requirement(Requirements.DATUM_GENERAL_REQ)
 class MultiframeworkConverterTest:
@@ -626,8 +628,12 @@ class MultiframeworkConverterTest:
                 {
                     "output_signature": {
                         "image": _tf_tensor_spec(shape=(None, None, None), dtype=_tf_int32()),
-                        "bbox": _tf_tensor_spec(shape=(None, 4), dtype=_tf_float32(), name="points"),
-                        "category_id": _tf_tensor_spec(shape=(None,), dtype=_tf_int32(), name="label"),
+                        "bbox": _tf_tensor_spec(
+                            shape=(None, 4), dtype=_tf_float32(), name="points"
+                        ),
+                        "category_id": _tf_tensor_spec(
+                            shape=(None,), dtype=_tf_int32(), name="label"
+                        ),
                     }
                 },
             ),
@@ -640,7 +646,9 @@ class MultiframeworkConverterTest:
                         "polygon": _tf_tensor_spec(
                             shape=(None, None), dtype=_tf_float32(), name="points"
                         ),
-                        "category_id": _tf_tensor_spec(shape=(None,), dtype=_tf_int32(), name="label"),
+                        "category_id": _tf_tensor_spec(
+                            shape=(None,), dtype=_tf_int32(), name="label"
+                        ),
                     }
                 },
             ),
