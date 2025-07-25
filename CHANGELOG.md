@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Enhancements
 
 - Bump version of NumPy and OpenVINO
+  (<https://github.com/open-edge-platform/datumaro/pull/1803>)
 
 ## Q3 2025 Release 1.11.0
 
