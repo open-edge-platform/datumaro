@@ -528,7 +528,10 @@ document.write(`
 
         <span class="n">a</span> <span class="o">=</span> <span class="n">_to_rle</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
         <span class="n">b</span> <span class="o">=</span> <span class="n">_to_rle</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
-    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">mask_utils</span><span class="o">.</span><span class="n">iou</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="p">[</span><span class="ow">not</span> <span class="n">is_bbox</span><span class="p">]))</span></div>
+    <span class="n">iou</span> <span class="o">=</span> <span class="n">mask_utils</span><span class="o">.</span><span class="n">iou</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="p">[</span><span class="ow">not</span> <span class="n">is_bbox</span><span class="p">])</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">iou</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="n">iou</span> <span class="o">=</span> <span class="n">iou</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">iou</span><span class="p">)</span></div>
 
 
 
