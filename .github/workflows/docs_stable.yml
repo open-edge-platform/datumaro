@@ -30,11 +30,9 @@ jobs:
         run: |
           tox -e build-docs
       - name: Create gh-pages branch
+        env:
+          TAG_NAME: ${{ github.event.release.tag_name }}
         run: |
-          echo RELEASE_VERSION=${GITHUB_REF#refs/*/} >> $GITHUB_ENV
-          echo SOURCE_NAME=${GITHUB_REF#refs/*/} >> $GITHUB_ENV
-          echo SOURCE_BRANCH=${GITHUB_REF#refs/heads/} >> $GITHUB_OUTPUT
-          echo SOURCE_TAG=${GITHUB_REF#refs/tags/} >> $GITHUB_OUTPUT
           existed_in_remote=$(git ls-remote --heads origin gh-pages)
 
           if [[ -z ${existed_in_remote} ]]; then
@@ -47,26 +45,28 @@ jobs:
             git add .nojekyll
             git commit -m "Initializing gh-pages branch"
             git push origin gh-pages
-            git checkout "${{ env.SOURCE_NAME }}"
+            git checkout "$TAG_NAME"
             echo "Created gh-pages branch"
           else
             echo "Branch gh-pages already exists"
           fi
       - name: Commit docs to gh-pages branch
+        env:
+          TAG_NAME: ${{ github.event.release.tag_name }}
         run: |
           git fetch
           git checkout gh-pages
           mkdir -p /tmp/docs_build
           cp -r docs/build/html/* /tmp/docs_build/
-          rm -rf ${{ env.RELEASE_VERSION }}/*
+          rm -rf $TAG_NAME/*
           echo '<html><head><meta http-equiv="refresh" content="0; url=stable/" /></head></html>' > index.html
-          mkdir -p ${{ env.RELEASE_VERSION }}
-          cp -r /tmp/docs_build/* ./${{ env.RELEASE_VERSION }}
-          ln -sfn ${{ env.RELEASE_VERSION }} stable
+          mkdir -p $TAG_NAME
+          cp -r /tmp/docs_build/* ./$TAG_NAME
+          ln -sfn $TAG_NAME stable
           rm -rf /tmp/docs_build
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add ./index.html ./stable ${{ env.RELEASE_VERSION }}
+          git add ./index.html ./stable $TAG_NAME
           git commit -m "Update documentation" -a || true
       - name: Push changes
         uses: ad-m/github-push-action@d91a481090679876dfc4178fef17f286781251df # v0.8.0
