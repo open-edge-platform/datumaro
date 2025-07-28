@@ -588,7 +588,7 @@ document.write(`
 
 <div class="viewcode-block" id="DmTfDataset.create">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.framework_converter.html#datumaro.plugins.framework_converter.DmTfDataset.create">[docs]</a>
-        <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">tf</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;tf.data.Dataset&quot;</span><span class="p">:</span>
             <span class="n">tf_dataset</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">))</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_process_item</span><span class="p">)</span>
             <span class="n">tf_dataset</span> <span class="o">=</span> <span class="n">tf_dataset</span>
             <span class="k">return</span> <span class="n">tf_dataset</span></div>
@@ -596,13 +596,13 @@ document.write(`
 
 <div class="viewcode-block" id="DmTfDataset.repeat">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.framework_converter.html#datumaro.plugins.framework_converter.DmTfDataset.repeat">[docs]</a>
-        <span class="k">def</span><span class="w"> </span><span class="nf">repeat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">tf</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">repeat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;tf.data.Dataset&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">create</span><span class="p">()</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">count</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="DmTfDataset.batch">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.framework_converter.html#datumaro.plugins.framework_converter.DmTfDataset.batch">[docs]</a>
-        <span class="k">def</span><span class="w"> </span><span class="nf">batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">drop_remainder</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">tf</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">drop_remainder</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;tf.data.Dataset&quot;</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">create</span><span class="p">()</span><span class="o">.</span><span class="n">batch</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">drop_remainder</span><span class="o">=</span><span class="n">drop_remainder</span><span class="p">)</span></div>
 
 
