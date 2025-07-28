@@ -13,10 +13,6 @@ from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.environment import DEFAULT_ENVIRONMENT
 from datumaro.components.importer import Importer
 from datumaro.components.media import Image
-from datumaro.plugins.data_formats.roboflow.base_tfrecord import (
-    RoboflowTfrecordBase,
-    RoboflowTfrecordImporter,
-)
 from datumaro.plugins.data_formats.roboflow.importer import (
     RoboflowCocoImporter,
     RoboflowCreateMlImporter,
@@ -37,6 +33,15 @@ except ImportError:
     TF_AVAILABLE = False
 else:
     TF_AVAILABLE = True
+
+if TF_AVAILABLE:
+    from datumaro.plugins.data_formats.roboflow.base_tfrecord import (
+        RoboflowTfrecordBase,
+        RoboflowTfrecordImporter,
+    )
+else:
+    RoboflowTfrecordBase = None
+    RoboflowTfrecordImporter = None
 
 
 DUMMY_DATASET_COCO_DIR = get_test_asset_path("roboflow_dataset", "coco")
