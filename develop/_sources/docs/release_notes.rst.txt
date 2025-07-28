@@ -4,6 +4,15 @@ Release Notes
 .. toctree::
    :maxdepth: 1
 
+v1.11.1 (2024 Q3)
+-----------------
+
+Enhancements
+^^^^^^^^^^^^
+
+- Bump version of NumPy and OpenVINO
+- Support for Python 3.13 and MacOS
+
 v1.11.0 (2024 Q3)
 -----------------
 
