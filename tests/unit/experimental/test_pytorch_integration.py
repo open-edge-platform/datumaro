@@ -6,7 +6,7 @@ import numpy as np
 import polars as pl
 import pytest
 
-from datumaro.experimental.dataset import Sample
+from datumaro.experimental.dataset import Dataset, Sample
 from datumaro.experimental.fields import (
     ImageInfo,
     bbox_field,
@@ -96,7 +96,6 @@ def test_pytorch_schema_creation():
 @pytest.mark.skipif(not torch_available, reason="PyTorch is not available")
 def test_pytorch_schema_duplicate_field_type_assertion():
     """Test that schema creation fails with assertion when two fields have the same field type - PyTorch version."""
-    from dataset import Sample
 
     # This should fail because we have two ImageFields with the same semantic context
     with pytest.raises(ValueError):
@@ -166,7 +165,6 @@ def test_pytorch_sample_integration():
 @pytest.mark.skipif(not torch_available, reason="PyTorch is not available")
 def test_pytorch_sample_tensor_field_conversion():
     """Test PyTorch tensor field conversion to/from Polars via Dataset."""
-    from dataset import Dataset
 
     class PyTorchSample(Sample):
         data: torch.Tensor = tensor_field(dtype=pl.Float32)
