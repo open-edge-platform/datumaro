@@ -322,3 +322,110 @@ def test_dataset_lazy_converters_property():
     assert isinstance(lazy_converters, list)
     # Initially should be empty
     assert len(lazy_converters) == 0
+
+
+def test_dataset_len():
+    """Test __len__ method returns correct dataset size."""
+
+    class TestSample(Sample):
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image_info: ImageInfo = image_info_field()
+
+    dataset = Dataset(TestSample)
+
+    # Initially empty
+    assert len(dataset) == 0
+
+    # Add one sample
+    sample1 = TestSample(
+        image=np.array([[[255, 0, 0]], [[0, 255, 0]]], dtype=np.uint8),
+        bbox=np.array([[0.1, 0.2, 0.3, 0.4]], dtype=np.float32),
+        image_info=ImageInfo(width=1, height=2),
+    )
+    dataset.append(sample1)
+    assert len(dataset) == 1
+
+    # Add second sample
+    sample2 = TestSample(
+        image=np.array([[[0, 0, 255]], [[255, 255, 0]]], dtype=np.uint8),
+        bbox=np.array([[0.5, 0.6, 0.7, 0.8]], dtype=np.float32),
+        image_info=ImageInfo(width=1, height=2),
+    )
+    dataset.append(sample2)
+    assert len(dataset) == 2
+
+    # Add third sample
+    sample3 = TestSample(
+        image=np.array([[[128, 64, 192]], [[96, 160, 32]]], dtype=np.uint8),
+        bbox=np.array([[0.9, 0.8, 0.7, 0.6]], dtype=np.float32),
+        image_info=ImageInfo(width=1, height=2),
+    )
+    dataset.append(sample3)
+    assert len(dataset) == 3
+
+    # Verify len() returns the same as len(dataset.df)
+    assert len(dataset) == len(dataset.df)
+
+
+def test_dataset_iter():
+    """Test __iter__ method allows iteration over dataset samples."""
+
+    class TestSample(Sample):
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image_info: ImageInfo = image_info_field()
+
+    dataset = Dataset(TestSample)
+
+    # Create sample data for testing
+    samples = [
+        TestSample(
+            image=np.array([[[255, 0, 0]], [[0, 255, 0]]], dtype=np.uint8),
+            bbox=np.array([[0.1, 0.2, 0.3, 0.4]], dtype=np.float32),
+            image_info=ImageInfo(width=1, height=2),
+        ),
+        TestSample(
+            image=np.array([[[0, 0, 255]], [[255, 255, 0]]], dtype=np.uint8),
+            bbox=np.array([[0.5, 0.6, 0.7, 0.8]], dtype=np.float32),
+            image_info=ImageInfo(width=2, height=3),
+        ),
+        TestSample(
+            image=np.array([[[128, 64, 192]], [[96, 160, 32]]], dtype=np.uint8),
+            bbox=np.array([[0.9, 0.8, 0.7, 0.6]], dtype=np.float32),
+            image_info=ImageInfo(width=3, height=4),
+        ),
+    ]
+
+    # Add samples to dataset
+    for sample in samples:
+        dataset.append(sample)
+
+    # Test iteration with for loop
+    iterated_samples: list[TestSample] = []
+    for sample in dataset:
+        iterated_samples.append(sample)
+
+    # Verify we got all samples
+    assert len(iterated_samples) == len(samples)
+
+    # Verify each sample matches what we expect
+    for original, iterated in zip(samples, iterated_samples):
+        assert isinstance(iterated, TestSample)
+        np.testing.assert_array_equal(iterated.bbox, original.bbox)
+        assert iterated.image_info.width == original.image_info.width
+        assert iterated.image_info.height == original.image_info.height
+
+    # Test iteration with list comprehension
+    list_samples = [sample for sample in dataset]
+    assert len(list_samples) == 3
+
+    # Test iteration is consistent (calling iterator multiple times)
+    first_iteration = list(dataset)
+    second_iteration = list(dataset)
+    assert len(first_iteration) == len(second_iteration)
+
+    # Test empty dataset iteration
+    empty_dataset = Dataset(TestSample)
+    empty_list = list(empty_dataset)
+    assert len(empty_list) == 0

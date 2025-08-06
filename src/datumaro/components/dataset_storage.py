@@ -434,6 +434,7 @@ class DatasetStorage(IDataset):
         return self._media_type
 
     def ann_types(self) -> Set[AnnotationType]:
+        self.init_cache()
         return self._ann_types
 
     def put(self, item: DatasetItem) -> None:

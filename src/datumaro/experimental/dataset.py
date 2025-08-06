@@ -179,6 +179,25 @@ class Dataset(Generic[DType]):
 
         return self._dtype(**attributes)
 
+    def __len__(self) -> int:
+        """
+        Return the number of samples in the dataset.
+
+        Returns:
+            The number of samples (rows) in the dataset
+        """
+        return len(self.df)
+
+    def __iter__(self):
+        """
+        Return an iterator over the samples in the dataset.
+
+        Yields:
+            Sample instances from the dataset in order
+        """
+        for i in range(len(self)):
+            yield self[i]
+
     def __setitem__(self, row_idx: int, sample: DType):
         """
         Update the dataset at the specified index with the given sample.
