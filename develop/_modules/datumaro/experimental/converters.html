@@ -1,0 +1,791 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>datumaro.experimental.converters &#8212; Datumaro 1.11.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=8b7c274f" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../../../_static/documentation_options.js?v=c8897f99"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/experimental/converters';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.11.1 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.11.1 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../docs/index.html">
+                        Docs
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../docs/index.html">
+                        Docs
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">datumaro.exp...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for datumaro.experimental.converters</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (C) 2025 Intel Corporation</span>
+<span class="c1">#</span>
+<span class="c1"># SPDX-License-Identifier: MIT</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Converter implementations for data transformation between different schemas.</span>
+
+<span class="sd">This module contains concrete converter implementations that handle various</span>
+<span class="sd">data transformations such as format conversions, dtype conversions, and</span>
+<span class="sd">multi-field transformations.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">polars</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.converter_registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">AttributeSpec</span><span class="p">,</span> <span class="n">Converter</span><span class="p">,</span> <span class="n">converter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.fields</span><span class="w"> </span><span class="kn">import</span> <span class="n">BBoxField</span><span class="p">,</span> <span class="n">ImageField</span><span class="p">,</span> <span class="n">ImagePathField</span>
+
+
+<div class="viewcode-block" id="RGBToBGRConverter">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.RGBToBGRConverter">[docs]</a>
+<span class="nd">@converter</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RGBToBGRConverter</span><span class="p">(</span><span class="n">Converter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converter that transforms RGB image format to BGR format.</span>
+
+<span class="sd">    This converter swaps the red and blue channels of RGB images to produce</span>
+<span class="sd">    BGR format images, commonly used for OpenCV compatibility.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">input_image</span><span class="p">:</span> <span class="n">AttributeSpec</span><span class="p">[</span><span class="n">ImageField</span><span class="p">]</span>
+    <span class="n">output_image</span><span class="p">:</span> <span class="n">AttributeSpec</span><span class="p">[</span><span class="n">ImageField</span><span class="p">]</span>
+
+<div class="viewcode-block" id="RGBToBGRConverter.filter_output_spec">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.RGBToBGRConverter.filter_output_spec">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">filter_output_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if input is RGB and configure output for BGR conversion.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True if the converter should be applied (RGB to BGR), False otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">input_format</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_image</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">format</span>
+        <span class="n">output_format</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_image</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">format</span>
+
+        <span class="c1"># Configure output specification for BGR format</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_image</span> <span class="o">=</span> <span class="n">AttributeSpec</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_image</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">field</span><span class="o">=</span><span class="n">ImageField</span><span class="p">(</span>
+                <span class="n">semantic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_image</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">semantic</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_image</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+                <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;BGR&quot;</span><span class="p">,</span>  <span class="c1"># Set output format to BGR</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Only apply if input is RGB and output should be BGR</span>
+        <span class="k">return</span> <span class="n">input_format</span> <span class="o">==</span> <span class="s2">&quot;RGB&quot;</span> <span class="ow">and</span> <span class="n">output_format</span> <span class="o">==</span> <span class="s2">&quot;BGR&quot;</span></div>
+
+
+<div class="viewcode-block" id="RGBToBGRConverter.convert">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.RGBToBGRConverter.convert">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert RGB image format to BGR using numpy channel swapping.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df: Input DataFrame containing RGB image data</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            DataFrame with BGR image data in the output column</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">input_column_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_image</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">output_column_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_image</span><span class="o">.</span><span class="n">name</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">rgb_to_bgr</span><span class="p">(</span><span class="n">tensor_data</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Convert RGB tensor data to BGR by reversing the channel order.&quot;&quot;&quot;</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">tensor_data</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># Flip along channel axis</span>
+            <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">schema</span><span class="p">[</span><span class="n">input_column_name</span><span class="p">]</span>
+        <span class="c1"># Apply the conversion using map_elements for efficient processing</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">with_columns</span><span class="p">(</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">input_column_name</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">map_elements</span><span class="p">(</span><span class="n">rgb_to_bgr</span><span class="p">,</span> <span class="n">return_dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="n">output_column_name</span><span class="p">)</span>
+        <span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="UInt8ToFloat32Converter">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.UInt8ToFloat32Converter">[docs]</a>
+<span class="nd">@converter</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UInt8ToFloat32Converter</span><span class="p">(</span><span class="n">Converter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert image data from UInt8 to Float32 with normalization.</span>
+
+<span class="sd">    This converter transforms 8-bit integer pixel values (0-255) to</span>
+<span class="sd">    32-bit floating point values normalized to the range [0.0, 1.0].</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">input_image</span><span class="p">:</span> <span class="n">AttributeSpec</span><span class="p">[</span><span class="n">ImageField</span><span class="p">]</span>
+    <span class="n">output_image</span><span class="p">:</span> <span class="n">AttributeSpec</span><span class="p">[</span><span class="n">ImageField</span><span class="p">]</span>
+
+<div class="viewcode-block" id="UInt8ToFloat32Converter.filter_output_spec">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.UInt8ToFloat32Converter.filter_output_spec">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">filter_output_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if input uses UInt8 dtype and configure Float32 output.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True if the converter should be applied (UInt8 input), False otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Configure output specification for Float32 dtype</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_image</span> <span class="o">=</span> <span class="n">AttributeSpec</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_image</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">field</span><span class="o">=</span><span class="n">ImageField</span><span class="p">(</span>
+                <span class="n">semantic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_image</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">semantic</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">pl</span><span class="o">.</span><span class="n">Float32</span><span class="p">,</span>
+                <span class="nb">format</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_image</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">format</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_image</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">pl</span><span class="o">.</span><span class="n">UInt8</span></div>
+
+
+<div class="viewcode-block" id="UInt8ToFloat32Converter.convert">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.UInt8ToFloat32Converter.convert">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert image data from UInt8 to normalized Float32.</span>
+
+<span class="sd">        Transforms pixel values from the range [0, 255] to [0.0, 1.0]</span>
+<span class="sd">        by dividing by 255.0.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df: Input DataFrame containing UInt8 image data</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            DataFrame with normalized Float32 image data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">input_column_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_image</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">output_column_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_image</span><span class="o">.</span><span class="n">name</span>
+
+        <span class="n">image_field</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_image</span><span class="o">.</span><span class="n">field</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Converting dtype from: </span><span class="si">{</span><span class="n">image_field</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input attribute name: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">input_image</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Output attribute name: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">output_image</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">with_columns</span><span class="p">(</span>
+            <span class="c1"># Normalize UInt8 values (0-255) to Float32 (0.0-1.0)</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">input_column_name</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">eval</span><span class="p">((</span><span class="n">pl</span><span class="o">.</span><span class="n">element</span><span class="p">()</span> <span class="o">/</span> <span class="mf">255.0</span><span class="p">)</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_image</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">dtype</span><span class="p">))</span>
+            <span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="n">output_column_name</span><span class="p">)</span>
+        <span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ImagePathToImageConverter">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.ImagePathToImageConverter">[docs]</a>
+<span class="nd">@converter</span><span class="p">(</span><span class="n">lazy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImagePathToImageConverter</span><span class="p">(</span><span class="n">Converter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Lazy converter that loads images from file paths using Pillow.</span>
+
+<span class="sd">    This converter reads image files from disk and converts them to tensor format.</span>
+<span class="sd">    It&#39;s marked as lazy to defer the expensive I/O operation until the data</span>
+<span class="sd">    is actually accessed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">input_path</span><span class="p">:</span> <span class="n">AttributeSpec</span><span class="p">[</span><span class="n">ImagePathField</span><span class="p">]</span>
+    <span class="n">output_image</span><span class="p">:</span> <span class="n">AttributeSpec</span><span class="p">[</span><span class="n">ImageField</span><span class="p">]</span>
+
+<div class="viewcode-block" id="ImagePathToImageConverter.filter_output_spec">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.ImagePathToImageConverter.filter_output_spec">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">filter_output_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Configure output image specification based on input.&quot;&quot;&quot;</span>
+        <span class="c1"># Configure output specification with default RGB format</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_image</span> <span class="o">=</span> <span class="n">AttributeSpec</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_image</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">field</span><span class="o">=</span><span class="n">ImageField</span><span class="p">(</span>
+                <span class="n">semantic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_path</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">semantic</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">pl</span><span class="o">.</span><span class="n">UInt8</span><span class="p">,</span>  <span class="c1"># Default to UInt8 for loaded images</span>
+                <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;RGB&quot;</span><span class="p">,</span>  <span class="c1"># Default to RGB format</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="ImagePathToImageConverter.convert">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.ImagePathToImageConverter.convert">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert image paths to loaded image tensors.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df: DataFrame containing image path column</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            DataFrame with loaded image data and shape information</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">input_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_path</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">output_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_image</span><span class="o">.</span><span class="n">name</span>
+
+        <span class="c1"># Load images from paths</span>
+        <span class="n">image_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">image_shapes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="n">input_col</span><span class="p">]:</span>
+            <span class="c1"># Load image using PIL</span>
+            <span class="k">with</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">img</span><span class="p">:</span>
+                <span class="c1"># Convert to RGB if needed</span>
+                <span class="k">if</span> <span class="n">img</span><span class="o">.</span><span class="n">mode</span> <span class="o">!=</span> <span class="s2">&quot;RGB&quot;</span><span class="p">:</span>
+                    <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;RGB&quot;</span><span class="p">)</span>
+
+                <span class="c1"># Convert to numpy array</span>
+                <span class="n">img_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+                <span class="n">image_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">img_array</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+                <span class="n">image_shapes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">img_array</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+
+        <span class="c1"># Create output DataFrame</span>
+        <span class="n">result_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+        <span class="n">result_df</span> <span class="o">=</span> <span class="n">result_df</span><span class="o">.</span><span class="n">with_columns</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">output_col</span><span class="p">,</span> <span class="n">image_data</span><span class="p">),</span>
+                <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">output_col</span> <span class="o">+</span> <span class="s2">&quot;_shape&quot;</span><span class="p">,</span> <span class="n">image_shapes</span><span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result_df</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="list_eval_ref">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.list_eval_ref">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">list_eval_ref</span><span class="p">(</span>
+    <span class="n">list_col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">ref_col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">op</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">pl</span><span class="o">.</span><span class="n">Expr</span><span class="p">,</span> <span class="n">pl</span><span class="o">.</span><span class="n">Expr</span><span class="p">],</span> <span class="n">pl</span><span class="o">.</span><span class="n">Expr</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">Expr</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply an operation element-wise between a list column and a reference column.</span>
+
+<span class="sd">    This helper function enables operations between elements of a list column</span>
+<span class="sd">    and values from a reference column, returning a new list column with</span>
+<span class="sd">    the results.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        list_col: Name of the list column</span>
+<span class="sd">        ref_col: Name of the reference column</span>
+<span class="sd">        op: Operation function to apply between list elements and reference values</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Polars expression for the computed list column</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        See https://github.com/pola-rs/polars/issues/7210 for implementation details</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">pl</span><span class="o">.</span><span class="n">concat_list</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">struct</span><span class="p">(</span><span class="n">list_col</span><span class="p">,</span> <span class="n">ref_col</span><span class="p">))</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span>
+        <span class="n">op</span><span class="p">(</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">element</span><span class="p">()</span><span class="o">.</span><span class="n">struct</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">list_col</span><span class="p">)</span><span class="o">.</span><span class="n">explode</span><span class="p">(),</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">element</span><span class="p">()</span><span class="o">.</span><span class="n">struct</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">ref_col</span><span class="p">),</span>
+        <span class="p">)</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="BBoxCoordinateConverter">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.BBoxCoordinateConverter">[docs]</a>
+<span class="nd">@converter</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BBoxCoordinateConverter</span><span class="p">(</span><span class="n">Converter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert bounding box coordinates between normalized and absolute formats.</span>
+
+<span class="sd">    This converter handles transformations between normalized coordinates</span>
+<span class="sd">    (range [0,1]) and absolute pixel coordinates using image dimensions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">input_bbox</span><span class="p">:</span> <span class="n">AttributeSpec</span><span class="p">[</span><span class="n">BBoxField</span><span class="p">]</span>
+    <span class="n">input_image</span><span class="p">:</span> <span class="n">AttributeSpec</span><span class="p">[</span><span class="n">ImageField</span><span class="p">]</span>
+    <span class="n">output_bbox</span><span class="p">:</span> <span class="n">AttributeSpec</span><span class="p">[</span><span class="n">BBoxField</span><span class="p">]</span>
+
+<div class="viewcode-block" id="BBoxCoordinateConverter.filter_output_spec">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.BBoxCoordinateConverter.filter_output_spec">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">filter_output_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if bbox normalization conversion is needed and configure output.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True if conversion is needed (normalization status differs), False otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">input_normalized</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_bbox</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">normalize</span>
+        <span class="n">output_normalized</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_bbox</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">normalize</span>
+
+        <span class="c1"># Determine the target normalization from output specification</span>
+        <span class="n">target_normalized</span> <span class="o">=</span> <span class="n">output_normalized</span>
+
+        <span class="c1"># Configure output specification with correct normalization</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_bbox</span> <span class="o">=</span> <span class="n">AttributeSpec</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_bbox</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">field</span><span class="o">=</span><span class="n">BBoxField</span><span class="p">(</span>
+                <span class="n">semantic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_bbox</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">semantic</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_bbox</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+                <span class="nb">format</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_bbox</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">format</span><span class="p">,</span>
+                <span class="n">normalize</span><span class="o">=</span><span class="n">target_normalized</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Apply converter only if normalization status needs to change</span>
+        <span class="k">return</span> <span class="n">input_normalized</span> <span class="o">!=</span> <span class="n">target_normalized</span></div>
+
+
+<div class="viewcode-block" id="BBoxCoordinateConverter.convert">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.BBoxCoordinateConverter.convert">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert bbox coordinates between normalized and absolute formats.</span>
+
+<span class="sd">        Uses image dimensions to transform coordinates. For normalized to absolute:</span>
+<span class="sd">        multiplies by image dimensions. For absolute to normalized: divides by</span>
+<span class="sd">        image dimensions.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df: Input DataFrame containing bbox and image data</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            DataFrame with converted bounding box coordinates</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">input_bbox_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_bbox</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">input_image_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_image</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">output_bbox_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_bbox</span><span class="o">.</span><span class="n">name</span>
+
+        <span class="c1"># Get the image shape column name</span>
+        <span class="n">image_shape_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">input_image_name</span><span class="si">}</span><span class="s2">_shape&quot;</span>
+
+        <span class="n">input_normalized</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_bbox</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">normalize</span>
+
+        <span class="c1"># Create temporary column names for dimensions</span>
+        <span class="n">temp_width_col</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">input_image_name</span><span class="si">}</span><span class="s2">_width&quot;</span>
+        <span class="n">temp_height_col</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">input_image_name</span><span class="si">}</span><span class="s2">_height&quot;</span>
+
+        <span class="c1"># Coordinate order for width/height mapping: [height, width, height, width]</span>
+        <span class="n">coordinates_order</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">op</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Expr</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Expr</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">Expr</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Choose operation based on conversion direction.&quot;&quot;&quot;</span>
+            <span class="c1"># FIXME: x.cast(pl.Float64) is a workaround for Polars bug</span>
+            <span class="c1"># https://github.com/pola-rs/polars/issues/23924</span>
+            <span class="n">xy</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span> <span class="k">if</span> <span class="n">input_normalized</span> <span class="k">else</span> <span class="n">x</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">)</span> <span class="o">/</span> <span class="n">y</span>
+            <span class="k">return</span> <span class="n">xy</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_bbox</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+        <span class="c1"># Extract width and height from image shape</span>
+        <span class="n">df_with_temp</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">with_columns</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">image_shape_name</span><span class="p">)</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="n">temp_width_col</span><span class="p">),</span>  <span class="c1"># width</span>
+                <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">image_shape_name</span><span class="p">)</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="n">temp_height_col</span><span class="p">),</span>  <span class="c1"># height</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Apply coordinate transformation</span>
+        <span class="n">result_df</span> <span class="o">=</span> <span class="n">df_with_temp</span><span class="o">.</span><span class="n">with_columns</span><span class="p">(</span>
+            <span class="n">list_eval_ref</span><span class="p">(</span>
+                <span class="n">input_bbox_name</span><span class="p">,</span>
+                <span class="n">image_shape_name</span><span class="p">,</span>
+                <span class="k">lambda</span> <span class="n">element</span><span class="p">,</span> <span class="n">ref</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">concat_arr</span><span class="p">(</span>
+                    <span class="n">op</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">ref</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">coordinates_order</span><span class="p">[</span><span class="mi">0</span><span class="p">])),</span>  <span class="c1"># x1</span>
+                    <span class="n">op</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">ref</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">coordinates_order</span><span class="p">[</span><span class="mi">1</span><span class="p">])),</span>  <span class="c1"># y1</span>
+                    <span class="n">op</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">ref</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">coordinates_order</span><span class="p">[</span><span class="mi">2</span><span class="p">])),</span>  <span class="c1"># x2</span>
+                    <span class="n">op</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">3</span><span class="p">),</span> <span class="n">ref</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">coordinates_order</span><span class="p">[</span><span class="mi">3</span><span class="p">])),</span>  <span class="c1"># y2</span>
+                <span class="p">),</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="n">output_bbox_name</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Clean up temporary columns</span>
+        <span class="n">result_df</span> <span class="o">=</span> <span class="n">result_df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="n">temp_width_col</span><span class="p">,</span> <span class="n">temp_height_col</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">result_df</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
