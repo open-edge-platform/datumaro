@@ -1,0 +1,735 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>datumaro.experimental.legacy &#8212; Datumaro 1.11.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=8b7c274f" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../../../_static/documentation_options.js?v=c8897f99"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/experimental/legacy';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.11.1 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.11.1 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../docs/index.html">
+                        Docs
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../docs/index.html">
+                        Docs
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">datumaro.exp...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for datumaro.experimental.legacy</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (C) 2025 Intel Corporation</span>
+<span class="c1">#</span>
+<span class="c1"># SPDX-License-Identifier: MIT</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Legacy dataset conversion functionality.</span>
+
+<span class="sd">This module provides functionality to convert legacy Datumaro datasets to the new</span>
+<span class="sd">experimental dataset format with automatic schema inference and type conversion.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">cast</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">polars</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotation</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Bbox</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span> <span class="k">as</span> <span class="n">LegacyDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">CategoriesInfo</span><span class="p">,</span> <span class="n">DatasetItem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">FromFileMixin</span><span class="p">,</span> <span class="n">Image</span><span class="p">,</span> <span class="n">MediaElement</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">Sample</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.fields</span><span class="w"> </span><span class="kn">import</span> <span class="n">bbox_field</span><span class="p">,</span> <span class="n">image_path_field</span><span class="p">,</span> <span class="n">tensor_field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">AttributeInfo</span><span class="p">,</span> <span class="n">Schema</span>
+
+
+<div class="viewcode-block" id="MediaConverter">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.MediaConverter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MediaConverter</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for media type converters.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="MediaConverter.get_schema_attributes">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.MediaConverter.get_schema_attributes">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_schema_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AttributeInfo</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return schema attributes for this media type.&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="MediaConverter.convert_item_media">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.MediaConverter.convert_item_media">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert_item_media</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert media from a DatasetItem to experimental format.&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="AnnotationConverter">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.AnnotationConverter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AnnotationConverter</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for annotation type converters.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AnnotationConverter.get_schema_attributes">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.AnnotationConverter.get_schema_attributes">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_schema_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">categories</span><span class="p">:</span> <span class="n">CategoriesInfo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AttributeInfo</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return schema attributes for this annotation type.&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="AnnotationConverter.convert_annotations">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.AnnotationConverter.convert_annotations">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert_annotations</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">annotations</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Annotation</span><span class="p">],</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert annotations of this type to experimental format.&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+</div>
+
+
+
+<span class="c1"># Global registries</span>
+<span class="n">_media_converters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">MediaElement</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="n">MediaConverter</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">_annotation_converters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">AnnotationType</span><span class="p">,</span> <span class="n">AnnotationConverter</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+
+<div class="viewcode-block" id="register_media_converter">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.register_media_converter">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">register_media_converter</span><span class="p">(</span>
+    <span class="n">media_type</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">MediaElement</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="n">converter</span><span class="p">:</span> <span class="n">MediaConverter</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Register a converter for a media type.&quot;&quot;&quot;</span>
+    <span class="n">_media_converters</span><span class="p">[</span><span class="n">media_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">converter</span></div>
+
+
+
+<div class="viewcode-block" id="register_annotation_converter">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.register_annotation_converter">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">register_annotation_converter</span><span class="p">(</span>
+    <span class="n">annotation_type</span><span class="p">:</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">converter</span><span class="p">:</span> <span class="n">AnnotationConverter</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Register a converter for an annotation type.&quot;&quot;&quot;</span>
+    <span class="n">_annotation_converters</span><span class="p">[</span><span class="n">annotation_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">converter</span></div>
+
+
+
+<div class="viewcode-block" id="get_media_converter">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.get_media_converter">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_media_converter</span><span class="p">(</span><span class="n">media_type</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">MediaElement</span><span class="p">[</span><span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">MediaConverter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get converter for a media type.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">registered_type</span><span class="p">,</span> <span class="n">converter</span> <span class="ow">in</span> <span class="n">_media_converters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">media_type</span><span class="p">,</span> <span class="n">registered_type</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">converter</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No converter registered for media type: </span><span class="si">{</span><span class="n">media_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_annotation_converter">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.get_annotation_converter">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_annotation_converter</span><span class="p">(</span><span class="n">annotation_type</span><span class="p">:</span> <span class="n">AnnotationType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AnnotationConverter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get converter for an annotation type.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">annotation_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_annotation_converters</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No converter registered for annotation type: </span><span class="si">{</span><span class="n">annotation_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_annotation_converters</span><span class="p">[</span><span class="n">annotation_type</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="ImageMediaConverter">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ImageMediaConverter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImageMediaConverter</span><span class="p">(</span><span class="n">MediaConverter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converter for Image media type.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ImageMediaConverter.get_schema_attributes">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ImageMediaConverter.get_schema_attributes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_schema_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AttributeInfo</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;image_path&quot;</span><span class="p">:</span> <span class="n">AttributeInfo</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">annotation</span><span class="o">=</span><span class="n">image_path_field</span><span class="p">())}</span></div>
+
+
+<div class="viewcode-block" id="ImageMediaConverter.convert_item_media">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ImageMediaConverter.convert_item_media">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert_item_media</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="n">result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>  <span class="c1"># pyright: ignore[reportUnknownMemberType]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="n">FromFileMixin</span><span class="p">):</span>
+                <span class="c1"># Handle image path</span>
+                <span class="n">result</span><span class="p">[</span><span class="s2">&quot;image_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">path</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported media type for Image: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="BboxAnnotationConverter">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.BboxAnnotationConverter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BboxAnnotationConverter</span><span class="p">(</span><span class="n">AnnotationConverter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converter for Bbox annotations.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="BboxAnnotationConverter.get_schema_attributes">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.BboxAnnotationConverter.get_schema_attributes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_schema_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">categories</span><span class="p">:</span> <span class="n">CategoriesInfo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AttributeInfo</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;bboxes&quot;</span><span class="p">:</span> <span class="n">AttributeInfo</span><span class="p">(</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">annotation</span><span class="o">=</span><span class="n">bbox_field</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">pl</span><span class="o">.</span><span class="n">Float32</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;x1y1x2y2&quot;</span><span class="p">)</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;bbox_labels&quot;</span><span class="p">:</span> <span class="n">AttributeInfo</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">annotation</span><span class="o">=</span><span class="n">tensor_field</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">pl</span><span class="o">.</span><span class="n">Int32</span><span class="p">)),</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="BboxAnnotationConverter.convert_annotations">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.BboxAnnotationConverter.convert_annotations">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert_annotations</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">annotations</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Annotation</span><span class="p">],</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="n">bboxes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">labels</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">annotations</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="n">Bbox</span><span class="p">):</span>
+                <span class="c1"># Convert from x,y,w,h to x1,y1,x2,y2 format</span>
+                <span class="n">bboxes</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">ann</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">ann</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">ann</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">ann</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="n">ann</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">ann</span><span class="o">.</span><span class="n">h</span><span class="p">])</span>
+                <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
+
+        <span class="c1"># Ensure proper shapes for empty arrays</span>
+        <span class="n">bboxes_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">bboxes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">bboxes_array</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">0</span><span class="p">,):</span>
+            <span class="n">bboxes_array</span> <span class="o">=</span> <span class="n">bboxes_array</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;bboxes&quot;</span><span class="p">:</span> <span class="n">bboxes_array</span><span class="p">,</span> <span class="s2">&quot;bbox_labels&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)}</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="register_builtin_converters">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.register_builtin_converters">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">register_builtin_converters</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Register built-in converters for common types.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Media converters</span>
+    <span class="n">register_media_converter</span><span class="p">(</span><span class="n">Image</span><span class="p">,</span> <span class="n">ImageMediaConverter</span><span class="p">())</span>
+
+    <span class="c1"># Annotation converters</span>
+    <span class="n">register_annotation_converter</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span><span class="p">,</span> <span class="n">BboxAnnotationConverter</span><span class="p">())</span></div>
+
+
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+
+
+<div class="viewcode-block" id="AnalysisResult">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.AnalysisResult">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AnalysisResult</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Result of legacy dataset analysis.&quot;&quot;&quot;</span>
+
+    <span class="n">schema</span><span class="p">:</span> <span class="n">Schema</span>
+    <span class="n">media_converter</span><span class="p">:</span> <span class="n">MediaConverter</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n">ann_converters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">AnnotationType</span><span class="p">,</span> <span class="n">AnnotationConverter</span><span class="p">]</span></div>
+
+
+
+<div class="viewcode-block" id="analyze_legacy_dataset">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.analyze_legacy_dataset">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">analyze_legacy_dataset</span><span class="p">(</span><span class="n">legacy_dataset</span><span class="p">:</span> <span class="n">LegacyDataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AnalysisResult</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Analyze legacy dataset and generate schema using registered converters.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        legacy_dataset: The legacy Datumaro dataset to analyze</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        AnalysisResult containing the inferred schema and converters</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">categories</span> <span class="o">=</span> <span class="n">legacy_dataset</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span>
+    <span class="n">media_type</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
+        <span class="n">Type</span><span class="p">[</span><span class="n">MediaElement</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="n">legacy_dataset</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span>
+    <span class="p">)</span>  <span class="c1"># pyright: ignore[reportUnknownMemberType]</span>
+    <span class="n">ann_types</span> <span class="o">=</span> <span class="n">legacy_dataset</span><span class="o">.</span><span class="n">ann_types</span><span class="p">()</span>
+
+    <span class="n">attributes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AttributeInfo</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">media_converter</span><span class="p">:</span> <span class="n">MediaConverter</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">ann_converters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">AnnotationType</span><span class="p">,</span> <span class="n">AnnotationConverter</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># Get media attributes from converter</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">media_converter</span> <span class="o">=</span> <span class="n">get_media_converter</span><span class="p">(</span><span class="n">media_type</span><span class="p">)</span>
+        <span class="n">attributes</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">media_converter</span><span class="o">.</span><span class="n">get_schema_attributes</span><span class="p">())</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="c1"># No converter for this media type - skip</span>
+        <span class="n">media_converter</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Get annotation attributes from converters</span>
+    <span class="k">for</span> <span class="n">ann_type</span> <span class="ow">in</span> <span class="n">ann_types</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ann_converter</span> <span class="o">=</span> <span class="n">get_annotation_converter</span><span class="p">(</span><span class="n">ann_type</span><span class="p">)</span>
+            <span class="n">ann_converters</span><span class="p">[</span><span class="n">ann_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">ann_converter</span>
+            <span class="n">attributes</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">ann_converter</span><span class="o">.</span><span class="n">get_schema_attributes</span><span class="p">(</span><span class="n">categories</span><span class="p">))</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="c1"># No converter for this annotation type - skip</span>
+            <span class="k">continue</span>
+
+    <span class="n">schema</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">(</span><span class="n">attributes</span><span class="o">=</span><span class="n">attributes</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">AnalysisResult</span><span class="p">(</span>
+        <span class="n">schema</span><span class="o">=</span><span class="n">schema</span><span class="p">,</span> <span class="n">media_converter</span><span class="o">=</span><span class="n">media_converter</span><span class="p">,</span> <span class="n">ann_converters</span><span class="o">=</span><span class="n">ann_converters</span>
+    <span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_convert_legacy_item</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">analysis_result</span><span class="p">:</span> <span class="n">AnalysisResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert item using converters from analysis result.&quot;&quot;&quot;</span>
+
+    <span class="n">attributes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># Convert media using the analyzed converter</span>
+    <span class="k">if</span> <span class="n">analysis_result</span><span class="o">.</span><span class="n">media_converter</span><span class="p">:</span>
+        <span class="n">attributes</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">analysis_result</span><span class="o">.</span><span class="n">media_converter</span><span class="o">.</span><span class="n">convert_item_media</span><span class="p">(</span><span class="n">item</span><span class="p">))</span>
+
+    <span class="c1"># Group annotations by type</span>
+    <span class="n">annotations_by_type</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">AnnotationType</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
+        <span class="n">ann_type</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">type</span>
+        <span class="k">if</span> <span class="n">ann_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">annotations_by_type</span><span class="p">:</span>
+            <span class="n">annotations_by_type</span><span class="p">[</span><span class="n">ann_type</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">annotations_by_type</span><span class="p">[</span><span class="n">ann_type</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ann</span><span class="p">)</span>
+
+    <span class="c1"># Convert each annotation type using the analyzed converters</span>
+    <span class="k">for</span> <span class="n">ann_type</span><span class="p">,</span> <span class="n">anns</span> <span class="ow">in</span> <span class="n">annotations_by_type</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">ann_type</span> <span class="ow">in</span> <span class="n">analysis_result</span><span class="o">.</span><span class="n">ann_converters</span><span class="p">:</span>
+            <span class="n">ann_converter</span> <span class="o">=</span> <span class="n">analysis_result</span><span class="o">.</span><span class="n">ann_converters</span><span class="p">[</span><span class="n">ann_type</span><span class="p">]</span>
+            <span class="n">attributes</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">ann_converter</span><span class="o">.</span><span class="n">convert_annotations</span><span class="p">(</span><span class="n">anns</span><span class="p">,</span> <span class="n">item</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">attributes</span>
+
+
+<div class="viewcode-block" id="convert_from_legacy">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.convert_from_legacy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_from_legacy</span><span class="p">(</span><span class="n">legacy_dataset</span><span class="p">:</span> <span class="n">LegacyDataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">[</span><span class="n">Sample</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert legacy dataset to experimental format with automatic schema inference.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        legacy_dataset: The legacy Datumaro dataset to convert</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A new experimental Dataset with inferred schema and converted data</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; legacy_ds = Dataset.import_from(&quot;path/to/coco&quot;, &quot;coco&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; experimental_ds = convert_from_legacy(legacy_ds)</span>
+<span class="sd">        &gt;&gt;&gt; sample = experimental_ds[0]</span>
+<span class="sd">        &gt;&gt;&gt; print(sample.image_path)</span>
+<span class="sd">        &gt;&gt;&gt; print(sample.bboxes.shape)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Step 1: Analyze dataset to infer schema</span>
+    <span class="n">analysis_result</span> <span class="o">=</span> <span class="n">analyze_legacy_dataset</span><span class="p">(</span><span class="n">legacy_dataset</span><span class="p">)</span>
+
+    <span class="c1"># Step 2: Create experimental dataset with inferred schema</span>
+    <span class="n">experimental_dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">analysis_result</span><span class="o">.</span><span class="n">schema</span><span class="p">)</span>
+
+    <span class="c1"># Step 3: Convert all items</span>
+    <span class="k">for</span> <span class="n">legacy_item</span> <span class="ow">in</span> <span class="n">legacy_dataset</span><span class="p">:</span>
+        <span class="c1"># Convert legacy item to experimental sample</span>
+        <span class="n">sample_data</span> <span class="o">=</span> <span class="n">_convert_legacy_item</span><span class="p">(</span><span class="n">legacy_item</span><span class="p">,</span> <span class="n">analysis_result</span><span class="p">)</span>
+
+        <span class="c1"># Create sample and add to dataset</span>
+        <span class="n">sample</span> <span class="o">=</span> <span class="n">Sample</span><span class="p">(</span><span class="o">**</span><span class="n">sample_data</span><span class="p">)</span>
+        <span class="n">experimental_dataset</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">experimental_dataset</span></div>
+
+
+
+<span class="c1"># Auto-register built-in converters when module is imported</span>
+<span class="n">register_builtin_converters</span><span class="p">()</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
