@@ -59,7 +59,6 @@ class Requirements:
     DATUM_BUG_602 = "Patch command example error"
     DATUM_BUG_606 = "transform with resize also changed the image extension from .jpg to .png"
     DATUM_BUG_618 = "ResizeTransform returns broken image pixels"
-    DATUM_BUG_721 = "Explain command cannot find the model"
     DATUM_BUG_873 = "Error using datum stats"
     DATUM_BUG_1204 = (
         "Statistics raise an error when there is a label annotation not in the category"
