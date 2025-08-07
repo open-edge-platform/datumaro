@@ -23,8 +23,6 @@ import pycocotools.mask as mask_utils
 from pandas.api.types import CategoricalDtype
 
 import datumaro.util.mask_tools as mask_tools
-from datumaro.components.algorithms.hash_key_inference.explorer import Explorer
-from datumaro.components.algorithms.hash_key_inference.hashkey_util import calculate_hamming
 from datumaro.components.annotation import (
     AnnotationType,
     Bbox,
@@ -43,7 +41,6 @@ from datumaro.components.annotation import (
     TabularCategories,
 )
 from datumaro.components.cli_plugin import CliPlugin
-from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DEFAULT_SUBSET_NAME, DatasetInfo, DatasetItem, IDataset
 from datumaro.components.errors import (
     AnnotationTypeError,
@@ -68,7 +65,6 @@ from datumaro.components.media import Image, TableRow, VideoFrame
 from datumaro.components.transformer import ItemTransform, TabularTransform, Transform
 from datumaro.util import NOTSET, filter_dict, parse_json_file, parse_str_enum_value, take_by
 from datumaro.util.annotation_util import find_group_leader, find_instances
-from datumaro.util.deprecation import deprecated
 from datumaro.util.tabular_util import emoji_pattern
 
 
@@ -2107,65 +2103,3 @@ class Clean(TabularTransform):
             refined_annotations.append(ann)
 
         return self.wrap_item(item, media=refined_media, annotations=refined_annotations)
-
-
-@deprecated(deprecated_version="1.11", removed_version="1.12")
-class PseudoLabeling(ItemTransform):
-    """
-    A class used to assign pseudo-labels to items in a dataset based on
-    their similarity to predefined labels.|n
-    |n
-    This class leverages hashing techniques to compute the similarity
-    between dataset items and a set of predefined labels.|n
-    It assigns the most similar label as a pseudo-label to each item.
-    This is particularly useful in semi-supervised
-    learning scenarios where some labels are missing or uncertain.|n
-    |n
-    Attributes:|n
-        - extractor : IDataset|n
-        The dataset extractor that provides access to dataset items and their annotations.|n
-        - labels : Optional[List[str]]|n
-        A list of label names to be used for pseudo-labeling.
-        If not provided, all available labels in the dataset will be used.|n
-        - explorer : Optional[Explorer]|n
-        An optional Explorer object used to compute hash keys for items and labels.
-        If not provided, a new Explorer will be created.|n
-    """
-
-    def __init__(
-        self,
-        extractor: IDataset,
-        labels: Optional[List[str]] = None,
-        explorer: Optional[Explorer] = None,
-    ):
-        super().__init__(extractor)
-
-        self._categories = self._extractor.categories()
-        self._labels = labels
-        self._explorer = explorer
-        self._label_indices = self._categories[AnnotationType.label]._indices
-
-        if not self._labels:
-            self._labels = list(self._label_indices.keys())
-        if not self._explorer:
-            self._explorer = Explorer(Dataset.from_iterable(list(self._extractor)))
-
-        label_hashkeys = [
-            np.unpackbits(self._explorer._get_hash_key_from_text_query(label).hash_key, axis=-1)
-            for label in self._labels
-        ]
-        self._label_hashkeys = np.stack(label_hashkeys, axis=0)
-
-    def categories(self):
-        return self._categories
-
-    def transform_item(self, item: DatasetItem):
-        hashkey_ = np.unpackbits(self._explorer._get_hash_key_from_item_query(item).hash_key)
-        logits = calculate_hamming(hashkey_, self._label_hashkeys)
-        inverse_distances = 1.0 / (logits + 1e-6)
-        probs = inverse_distances / np.sum(inverse_distances)
-        ind = np.argsort(probs)[::-1]
-
-        pseudo = np.array(self._labels)[ind][0]
-        pseudo_annotation = [Label(label=self._label_indices[pseudo])]
-        return self.wrap_item(item, annotations=pseudo_annotation)
