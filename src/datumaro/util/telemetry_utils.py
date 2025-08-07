@@ -61,8 +61,6 @@ def _get_action_name(command):
         return "create_result"
     elif command is commands.compare.compare_command:
         return "diff_result"
-    elif command is commands.generate.generate_command:
-        return "generate_result"
     elif command is commands.info.info_command:
         return "info_result"
     elif command is commands.require_project.versioning.log.log_command:
