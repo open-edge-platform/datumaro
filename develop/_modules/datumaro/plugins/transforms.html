@@ -365,8 +365,6 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">pandas.api.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">CategoricalDtype</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">datumaro.util.mask_tools</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mask_tools</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.algorithms.hash_key_inference.explorer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Explorer</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.algorithms.hash_key_inference.hashkey_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">calculate_hamming</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">AnnotationType</span><span class="p">,</span>
     <span class="n">Bbox</span><span class="p">,</span>
@@ -385,7 +383,6 @@ document.write(`
     <span class="n">TabularCategories</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.cli_plugin</span><span class="w"> </span><span class="kn">import</span> <span class="n">CliPlugin</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_SUBSET_NAME</span><span class="p">,</span> <span class="n">DatasetInfo</span><span class="p">,</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">IDataset</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">AnnotationTypeError</span><span class="p">,</span>
@@ -410,7 +407,6 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ItemTransform</span><span class="p">,</span> <span class="n">TabularTransform</span><span class="p">,</span> <span class="n">Transform</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">NOTSET</span><span class="p">,</span> <span class="n">filter_dict</span><span class="p">,</span> <span class="n">parse_json_file</span><span class="p">,</span> <span class="n">parse_str_enum_value</span><span class="p">,</span> <span class="n">take_by</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.annotation_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_group_leader</span><span class="p">,</span> <span class="n">find_instances</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.deprecation</span><span class="w"> </span><span class="kn">import</span> <span class="n">deprecated</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.tabular_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">emoji_pattern</span>
 
 
@@ -2723,77 +2719,6 @@ document.write(`
             <span class="n">refined_annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ann</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrap_item</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">media</span><span class="o">=</span><span class="n">refined_media</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="n">refined_annotations</span><span class="p">)</span></div>
-</div>
-
-
-
-<div class="viewcode-block" id="PseudoLabeling">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.transforms.html#datumaro.plugins.transforms.PseudoLabeling">[docs]</a>
-<span class="nd">@deprecated</span><span class="p">(</span><span class="n">deprecated_version</span><span class="o">=</span><span class="s2">&quot;1.11&quot;</span><span class="p">,</span> <span class="n">removed_version</span><span class="o">=</span><span class="s2">&quot;1.12&quot;</span><span class="p">)</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">PseudoLabeling</span><span class="p">(</span><span class="n">ItemTransform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A class used to assign pseudo-labels to items in a dataset based on</span>
-<span class="sd">    their similarity to predefined labels.|n</span>
-<span class="sd">    |n</span>
-<span class="sd">    This class leverages hashing techniques to compute the similarity</span>
-<span class="sd">    between dataset items and a set of predefined labels.|n</span>
-<span class="sd">    It assigns the most similar label as a pseudo-label to each item.</span>
-<span class="sd">    This is particularly useful in semi-supervised</span>
-<span class="sd">    learning scenarios where some labels are missing or uncertain.|n</span>
-<span class="sd">    |n</span>
-<span class="sd">    Attributes:|n</span>
-<span class="sd">        - extractor : IDataset|n</span>
-<span class="sd">        The dataset extractor that provides access to dataset items and their annotations.|n</span>
-<span class="sd">        - labels : Optional[List[str]]|n</span>
-<span class="sd">        A list of label names to be used for pseudo-labeling.</span>
-<span class="sd">        If not provided, all available labels in the dataset will be used.|n</span>
-<span class="sd">        - explorer : Optional[Explorer]|n</span>
-<span class="sd">        An optional Explorer object used to compute hash keys for items and labels.</span>
-<span class="sd">        If not provided, a new Explorer will be created.|n</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">extractor</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">,</span>
-        <span class="n">labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">explorer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Explorer</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">extractor</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="n">labels</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_explorer</span> <span class="o">=</span> <span class="n">explorer</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_label_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">_indices</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_label_indices</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_explorer</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_explorer</span> <span class="o">=</span> <span class="n">Explorer</span><span class="p">(</span><span class="n">Dataset</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="p">)))</span>
-
-        <span class="n">label_hashkeys</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">unpackbits</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_explorer</span><span class="o">.</span><span class="n">_get_hash_key_from_text_query</span><span class="p">(</span><span class="n">label</span><span class="p">)</span><span class="o">.</span><span class="n">hash_key</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_labels</span>
-        <span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_label_hashkeys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">label_hashkeys</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-
-<div class="viewcode-block" id="PseudoLabeling.categories">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.transforms.html#datumaro.plugins.transforms.PseudoLabeling.categories">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span></div>
-
-
-<div class="viewcode-block" id="PseudoLabeling.transform_item">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.transforms.html#datumaro.plugins.transforms.PseudoLabeling.transform_item">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">transform_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">):</span>
-        <span class="n">hashkey_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unpackbits</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_explorer</span><span class="o">.</span><span class="n">_get_hash_key_from_item_query</span><span class="p">(</span><span class="n">item</span><span class="p">)</span><span class="o">.</span><span class="n">hash_key</span><span class="p">)</span>
-        <span class="n">logits</span> <span class="o">=</span> <span class="n">calculate_hamming</span><span class="p">(</span><span class="n">hashkey_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_hashkeys</span><span class="p">)</span>
-        <span class="n">inverse_distances</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">logits</span> <span class="o">+</span> <span class="mf">1e-6</span><span class="p">)</span>
-        <span class="n">probs</span> <span class="o">=</span> <span class="n">inverse_distances</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">inverse_distances</span><span class="p">)</span>
-        <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">probs</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-
-        <span class="n">pseudo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">)[</span><span class="n">ind</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">pseudo_annotation</span> <span class="o">=</span> <span class="p">[</span><span class="n">Label</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_label_indices</span><span class="p">[</span><span class="n">pseudo</span><span class="p">])]</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrap_item</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="n">pseudo_annotation</span><span class="p">)</span></div>
 </div>
 
 </pre></div>

@@ -11,7 +11,6 @@ Intermediate Skills
    07_data_merge
    08_data_validate
    09_data_filtering
-   10_data_exploration
    11_data_generation
    12_framework_conversion
 
@@ -78,19 +77,6 @@ Intermediate Skills
       :bdg-success:`ProjectCLI`
       :bdg-info:`CLI`
       :bdg-warning:`Python`
-
-   .. grid-item-card::
-
-      .. button-ref:: 10_data_exploration
-         :color: primary
-         :outline:
-         :expand:
-
-         Level 10: Data Exploration
-
-      :bdg-warning:`Python`
-      :bdg-info:`CLI`
-      :bdg-success:`ProjectCLI`
 
    .. grid-item-card::
 
