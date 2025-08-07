@@ -4,6 +4,7 @@
 
 import os.path as osp
 import tempfile
+from typing import cast
 
 import numpy as np
 import pytest
@@ -11,9 +12,9 @@ import pytest
 from datumaro.components.annotation import AnnotationType, Bbox, LabelCategories
 from datumaro.components.dataset import Dataset as LegacyDataset
 from datumaro.components.dataset_base import DatasetItem
-from datumaro.components.media import Image
+from datumaro.components.media import Image, ImageFromFile
 from datumaro.experimental.dataset import Dataset as ExperimentalDataset
-from datumaro.experimental.legacy import convert_from_legacy
+from datumaro.experimental.legacy import convert_from_legacy, convert_to_legacy
 
 
 @pytest.fixture()
@@ -118,3 +119,43 @@ def test_object_detection(
             ]
             np.testing.assert_array_almost_equal(bboxes[0], expected_x1y1x2y2)
             assert labels[0] == first_bbox.label
+
+        # Step 5: Test conversion back to legacy format
+        reconstructed_legacy_dataset = convert_to_legacy(experimental_dataset)  # type: ignore
+
+        # Step 6: Verify the round-trip conversion
+        assert isinstance(reconstructed_legacy_dataset, LegacyDataset)
+        assert len(reconstructed_legacy_dataset) == len(experimental_dataset)
+
+        # Verify data consistency in round-trip conversion
+        for original_item, reconstructed_item in zip(legacy_dataset, reconstructed_legacy_dataset):
+            # Check media paths are preserved
+            original_media = cast(
+                ImageFromFile, original_item.media
+            )  # pyright: ignore[reportUnknownMemberType]
+            reconstructed_media = cast(
+                ImageFromFile, reconstructed_item.media
+            )  # pyright: ignore[reportUnknownMemberType]
+            assert original_media.path == reconstructed_media.path
+
+            # Get bbox annotations from both datasets
+            original_bboxes = [ann for ann in original_item.annotations if isinstance(ann, Bbox)]
+            reconstructed_bboxes = [
+                ann for ann in reconstructed_item.annotations if isinstance(ann, Bbox)
+            ]
+
+            assert len(original_bboxes) == len(reconstructed_bboxes)
+
+            # Sort both lists by bbox coordinates for consistent comparison
+            original_bboxes_sorted = sorted(original_bboxes, key=lambda b: (b.x, b.y, b.w, b.h))
+            reconstructed_bboxes_sorted = sorted(
+                reconstructed_bboxes, key=lambda b: (b.x, b.y, b.w, b.h)
+            )
+
+            # Verify each bbox is preserved through round-trip conversion
+            for orig_bbox, recon_bbox in zip(original_bboxes_sorted, reconstructed_bboxes_sorted):
+                assert orig_bbox.x == recon_bbox.x
+                assert orig_bbox.y == recon_bbox.y
+                assert orig_bbox.w == recon_bbox.w
+                assert orig_bbox.h == recon_bbox.h
+                assert orig_bbox.label == recon_bbox.label
