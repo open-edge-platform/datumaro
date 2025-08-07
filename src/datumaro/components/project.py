@@ -302,7 +302,6 @@ class BuildStageType(Enum):
     filter = auto()
     convert = auto()
     inference = auto()
-    explore = auto()
 
 
 class Pipeline:
@@ -927,18 +926,6 @@ class ProjectBuildTargets(CrudProxy[BuildTarget]):
             {
                 "type": BuildStageType.convert.name,
                 "kind": format,
-                "params": params or {},
-            },
-            name=name,
-        )
-
-    def add_explore_stage(
-        self, target: str, params: Optional[Dict] = None, name: Optional[str] = None
-    ):
-        return self.add_stage(
-            target,
-            {
-                "type": BuildStageType.explore.name,
                 "params": params or {},
             },
             name=name,
