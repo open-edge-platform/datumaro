@@ -7,7 +7,6 @@ Advanced Skills
 
    13_project_versioning
    14_pseudo_label_generation
-   15_data_pruning
 
 .. grid:: 1 2 2 2
    :gutter: 2
@@ -32,17 +31,4 @@ Advanced Skills
 
          Level 13: Psuedo Label Generation
 
-      :bdg-success:`ProjectCLI`
-
-   .. grid-item-card::
-
-      .. button-ref:: 15_data_pruning
-         :color: primary
-         :outline:
-         :expand:
-
-         Level 14: Data Pruning
-
-      :bdg-warning:`Python`
-      :bdg-info:`CLI`
       :bdg-success:`ProjectCLI`

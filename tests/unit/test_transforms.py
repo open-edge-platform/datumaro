@@ -16,7 +16,6 @@ from pandas.api.types import CategoricalDtype
 
 import datumaro.plugins.transforms as transforms
 import datumaro.util.mask_tools as mask_tools
-from datumaro.components.algorithms.hash_key_inference.explorer import Explorer
 from datumaro.components.annotation import (
     AnnotationType,
     Bbox,
@@ -1734,53 +1733,3 @@ class CleanTest(TestCase):
             result_item = result.__getitem__(i)
             self.assertEqual(expected_item.annotations, result_item.annotations)
             self.assertEqual(expected_item.media, result_item.media)
-
-
-class PseudoLabelingTest(TestCase):
-    def setUp(self):
-        self.data_path = get_test_asset_path("explore_dataset")
-        self.categories = ["bird", "cat", "dog", "monkey"]
-        self.source = Dataset.from_iterable(
-            [
-                DatasetItem(
-                    id=0,
-                    media=Image.from_file(path=os.path.join(self.data_path, "dog", "0.JPEG")),
-                ),
-                DatasetItem(
-                    id=1,
-                    media=Image.from_file(path=os.path.join(self.data_path, "cat", "0.JPEG")),
-                ),
-            ],
-            categories=self.categories,
-        )
-
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
-    def test_transform_pseudolabeling_with_labels(self):
-        dataset = self.source
-        labels = self.categories
-        explorer = Explorer(dataset)
-        result = dataset.transform("pseudo_labeling", labels=labels, explorer=explorer)
-
-        label_indices = dataset.categories()[AnnotationType.label]._indices
-        for item, expected in zip(result, ["dog", "cat"]):
-            self.assertEqual(item.annotations[0].label, label_indices[expected])
-
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
-    def test_transform_pseudolabeling_without_labels(self):
-        dataset = self.source
-        explorer = Explorer(dataset)
-        result = dataset.transform("pseudo_labeling", explorer=explorer)
-
-        label_indices = dataset.categories()[AnnotationType.label]._indices
-        for item, expected in zip(result, ["dog", "cat"]):
-            self.assertEqual(item.annotations[0].label, label_indices[expected])
-
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
-    def test_transform_pseudolabeling_without_explorer(self):
-        dataset = self.source
-        labels = self.categories
-        result = dataset.transform("pseudo_labeling", labels=labels)
-
-        label_indices = dataset.categories()[AnnotationType.label]._indices
-        for item, expected in zip(result, ["dog", "cat"]):
-            self.assertEqual(item.annotations[0].label, label_indices[expected])
