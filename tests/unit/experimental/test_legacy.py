@@ -266,7 +266,7 @@ def test_convert_simple_bbox_dataset():
 
         # Check attributes
         assert hasattr(sample, "image_path")
-        assert getattr(sample, "image_path") == image_path
+        assert Path(getattr(sample, "image_path")) == Path(image_path)
         assert hasattr(sample, "bboxes")
         assert hasattr(sample, "bbox_labels")
 
@@ -311,7 +311,7 @@ def test_convert_image_only_dataset():
 
         # Should have image attributes only
         assert hasattr(sample, "image_path")
-        assert getattr(sample, "image_path") == image_path
+        assert Path(getattr(sample, "image_path")) == Path(image_path)
         assert not hasattr(sample, "bboxes")
         assert not hasattr(sample, "bbox_labels")
 
