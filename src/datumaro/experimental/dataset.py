@@ -179,6 +179,41 @@ class Dataset(Generic[DType]):
 
         return self._dtype(**attributes)
 
+    def __len__(self) -> int:
+        """
+        Return the number of samples in the dataset.
+
+        Returns:
+            The number of samples (rows) in the dataset
+        """
+        return len(self.df)
+
+    def __iter__(self):
+        """
+        Return an iterator over the samples in the dataset.
+
+        Yields:
+            Sample instances from the dataset in order
+        """
+        for i in range(len(self)):
+            yield self[i]
+
+    def __delitem__(self, row_idx: int):
+        """
+        Delete a sample from the dataset at the specified index.
+
+        Args:
+            row_idx: The index of the sample to delete
+
+        Raises:
+            IndexError: If the row index is out of bounds
+        """
+        if row_idx < 0 or row_idx >= len(self.df):
+            raise IndexError("Row index out of bounds.")
+
+        # Create a filter to exclude the row at the specified index
+        self.df = self.df.with_row_index().filter(pl.col("index") != row_idx).drop("index")
+
     def __setitem__(self, row_idx: int, sample: DType):
         """
         Update the dataset at the specified index with the given sample.
