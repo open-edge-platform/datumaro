@@ -9,8 +9,8 @@ import os.path as osp
 
 from datumaro.cli.util import MultilineFormatter, add_subparser
 from datumaro.cli.util.errors import CliException
-from datumaro.cli.util.project import generate_next_file_name
 from datumaro.components.dataset import Dataset
+from datumaro.util.os_util import generate_next_name
 
 
 def build_split_video_parser(parser_ctor=argparse.ArgumentParser):
@@ -90,7 +90,8 @@ def split_video_command(args):
                 "Directory '%s' already exists " "(pass --overwrite to overwrite)" % dst_dir
             )
     else:
-        dst_dir = generate_next_file_name("%s-frames" % osp.basename(src_path))
+        basename = "%s-frames" % osp.basename(src_path)
+        dst_dir = generate_next_name(os.listdir("."), basename)
     dst_dir = osp.abspath(dst_dir)
 
     log.info("Exporting frames...")

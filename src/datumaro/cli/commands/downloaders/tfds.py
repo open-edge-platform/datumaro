@@ -19,8 +19,8 @@ from datumaro.components.extractor_tfds import (
 from datumaro.util import dump_json
 from datumaro.util.os_util import make_file_name
 
+from ...util.dataset_utils import generate_next_file_name
 from ...util.errors import CliException
-from ...util.project import generate_next_file_name
 from .downloader import IDatasetDownloader
 
 

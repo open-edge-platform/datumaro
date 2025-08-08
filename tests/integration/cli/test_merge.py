@@ -12,7 +12,7 @@ import datumaro.plugins.data_formats.voc.format as VOC
 from datumaro.components.annotation import AnnotationType, Bbox, LabelCategories, MaskCategories
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image
-from datumaro.components.project import Dataset, Project
+from datumaro.components.project import Dataset
 
 from ...requirements import Requirements, mark_requirement
 
@@ -344,10 +344,6 @@ class IntersectMergeTest(TestCase):
             dataset1.export(dataset1_url, "coco", save_media=True)
             dataset2.export(dataset2_url, "voc", save_media=True)
 
-            proj_dir = osp.join(test_dir, "proj")
-            with Project.init(proj_dir) as project:
-                project.import_source("source", dataset2_url, "voc")
-
             result_dir = osp.join(test_dir, "result")
             run(
                 self,
@@ -356,8 +352,7 @@ class IntersectMergeTest(TestCase):
                 "intersect",
                 "-o",
                 result_dir,
-                "-p",
-                proj_dir,
+                dataset2_url + ":voc",
                 dataset1_url + ":coco",
             )
 

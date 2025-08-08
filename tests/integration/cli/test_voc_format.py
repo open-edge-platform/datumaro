@@ -21,42 +21,28 @@ DUMMY_DATASETS_DIR = get_test_asset_path("voc_dataset")
 class VocIntegrationScenarios(TestCase):
     def _test_can_save_and_load(
         self,
-        project_path,
+        test_dir,
         source_path,
         expected_dataset,
         dataset_format,
         result_path="",
         label_map=None,
     ):
-        run(self, "project", "create", "-o", project_path)
-
-        extra_args = []
-        if result_path:
-            extra_args += ["-r", result_path]
-        run(
-            self,
-            "project",
-            "import",
-            "-p",
-            project_path,
-            "-f",
-            dataset_format,
-            *extra_args,
-            source_path,
-        )
-
-        result_dir = osp.join(project_path, "result")
+        # Convert the dataset to the target format
+        result_dir = osp.join(test_dir, "result")
         extra_args = ["--", "--save-media"]
         if label_map:
             extra_args += ["--label-map", label_map]
+
         run(
             self,
-            "project",
-            "export",
+            "convert",
+            "-i",
+            source_path,
+            "-if",
+            dataset_format,
             "-f",
             dataset_format,
-            "-p",
-            project_path,
             "-o",
             result_dir,
             *extra_args,
@@ -77,11 +63,10 @@ class VocIntegrationScenarios(TestCase):
 
         <b>Steps:</b>
         1. Get path to the source dataset from assets.
-        2. Create a datumaro project and add source dataset to it.
-        3. Leave only non-occluded annotations with `filter` command.
-        4. Split the dataset into subsets with `transform` command.
-        5. Export the project to a VOC dataset with `export` command.
-        6. Verify that the resulting dataset is equal to the expected result.
+        2. Filter to leave only non-occluded annotations with `filter` command.
+        3. Split the dataset into subsets with `transform` command.
+        4. Export to a VOC dataset with `convert` command.
+        5. Verify that the resulting dataset is equal to the expected result.
         """
 
         expected_dataset = Dataset.from_iterable(
@@ -125,27 +110,30 @@ class VocIntegrationScenarios(TestCase):
         dataset_path = osp.join(DUMMY_DATASETS_DIR, "voc_dataset2")
 
         with TestDir() as test_dir:
-            run(self, "project", "create", "-o", test_dir)
-            run(self, "project", "import", "-p", test_dir, "-f", "voc_detection", dataset_path)
-
+            # First filter to keep only non-occluded annotations
+            filtered_dir = osp.join(test_dir, "filtered")
             run(
                 self,
                 "filter",
-                "-p",
-                test_dir,
+                dataset_path + ":voc_detection",
                 "-m",
                 "i+a",
                 "-e",
                 "/item/annotation[occluded='False']",
+                "-o",
+                filtered_dir,
             )
 
+            # Then split the dataset
+            split_dir = osp.join(test_dir, "split")
             run(
                 self,
                 "transform",
-                "-p",
-                test_dir,
                 "-t",
                 "random_split",
+                "-o",
+                split_dir,
+                filtered_dir + ":voc_detection",  # Specify input format as part of path
                 "--",
                 "-s",
                 "test:.5",
@@ -155,13 +143,15 @@ class VocIntegrationScenarios(TestCase):
                 "1",
             )
 
+            # Export to VOC format
             export_path = osp.join(test_dir, "dataset")
             run(
                 self,
-                "project",
-                "export",
-                "-p",
-                test_dir,
+                "convert",
+                "-i",
+                split_dir,
+                "-if",
+                "voc_detection",
                 "-f",
                 "voc_detection",
                 "-o",
@@ -216,16 +206,14 @@ class VocIntegrationScenarios(TestCase):
         with TestDir() as test_dir:
             yolo_dir = get_test_asset_path("yolo_dataset")
 
-            run(self, "project", "create", "-o", test_dir)
-            run(self, "project", "import", "-p", test_dir, "-f", "yolo", yolo_dir)
-
             voc_export = osp.join(test_dir, "voc_export")
             run(
                 self,
-                "project",
-                "export",
-                "-p",
-                test_dir,
+                "convert",
+                "-if",
+                "yolo",
+                "-i",
+                yolo_dir,
                 "-f",
                 "voc",
                 "-o",
@@ -724,16 +712,16 @@ class VocIntegrationScenarios(TestCase):
         dataset_path = osp.join(DUMMY_DATASETS_DIR, "voc_dataset1")
 
         with TestDir() as test_dir:
-            run(self, "project", "create", "-o", test_dir)
-            run(self, "project", "import", "-p", test_dir, "-f", "voc", dataset_path)
-
+            # Apply label projection transform and export to VOC format
+            export_dir = osp.join(test_dir, "exported")
             run(
                 self,
                 "transform",
-                "-p",
-                test_dir,
                 "-t",
                 "project_labels",
+                "-o",
+                export_dir,
+                dataset_path + ":voc",
                 "--",
                 "-l",
                 "a",
@@ -743,5 +731,5 @@ class VocIntegrationScenarios(TestCase):
                 "cat",
             )
 
-            parsed_dataset = Dataset.import_from(osp.join(test_dir, "source-1"), "voc")
+            parsed_dataset = Dataset.import_from(export_dir, "voc")
             compare_datasets(self, expected_dataset, parsed_dataset)

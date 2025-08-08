@@ -17,11 +17,9 @@ from . import (
     transform,
     validate,
 )
-from .require_project import get_project_commands
 
 __all__ = [
     "get_non_project_commands",
-    "get_project_commands",
 ]
 
 deprecated = "[DEPRECATED, will be removed in 1.12]"

@@ -42,20 +42,19 @@ class YoloIntegrationScenarios(TestCase):
         with TestDir() as test_dir:
             yolo_dir = get_test_asset_path("yolo_dataset")
 
-            run(self, "project", "create", "-o", test_dir)
-            run(self, "project", "import", "-p", test_dir, "-f", "yolo", yolo_dir)
-
+            # Direct round-trip conversion: YOLO -> YOLO
             export_dir = osp.join(test_dir, "export_dir")
             run(
                 self,
-                "project",
-                "export",
-                "-p",
-                test_dir,
-                "-o",
-                export_dir,
+                "convert",
+                "-if",
+                "yolo",
+                "-i",
+                yolo_dir,
                 "-f",
                 "yolo",
+                "-o",
+                export_dir,
                 "--",
                 "--save-media",
             )
@@ -73,20 +72,18 @@ class YoloIntegrationScenarios(TestCase):
         with TestDir() as test_dir:
             mot_dir = get_test_asset_path("mot_dataset")
 
-            run(self, "project", "create", "-o", test_dir)
-            run(self, "project", "import", "-p", test_dir, "-f", "mot_seq", mot_dir)
-
             yolo_dir = osp.join(test_dir, "yolo_dir")
             run(
                 self,
-                "project",
-                "export",
-                "-p",
-                test_dir,
-                "-o",
-                yolo_dir,
+                "convert",
+                "-if",
+                "mot_seq",
+                "-i",
+                mot_dir,
                 "-f",
                 "yolo",
+                "-o",
+                yolo_dir,
                 "--",
                 "--save-media",
             )
@@ -162,27 +159,30 @@ class YoloIntegrationScenarios(TestCase):
         with TestDir() as test_dir:
             yolo_dir = get_test_asset_path("yolo_dataset")
 
-            run(self, "project", "create", "-o", test_dir)
-            run(self, "project", "import", "-p", test_dir, "-f", "yolo", yolo_dir)
-
+            # Apply filter and label remapping in one transform operation
+            filtered_dir = osp.join(test_dir, "filtered")
             run(
                 self,
                 "filter",
-                "-p",
-                test_dir,
+                yolo_dir + ":yolo",
                 "-m",
                 "i+a",
                 "-e",
                 "/item/annotation[label='label_2']",
+                "-o",
+                filtered_dir,
             )
 
+            # Apply label remapping to filtered dataset
+            remapped_dir = osp.join(test_dir, "remapped")
             run(
                 self,
                 "transform",
-                "-p",
-                test_dir,
                 "-t",
                 "remap_labels",
+                "-o",
+                remapped_dir,
+                filtered_dir,
                 "--",
                 "-l",
                 "label_2:label_2",
@@ -190,17 +190,17 @@ class YoloIntegrationScenarios(TestCase):
                 "delete",
             )
 
+            # Export directly to YOLO format
             export_dir = osp.join(test_dir, "export")
             run(
                 self,
-                "project",
-                "export",
-                "-p",
-                test_dir,
-                "-o",
-                export_dir,
+                "convert",
+                "-i",
+                remapped_dir,
                 "-f",
                 "yolo",
+                "-o",
+                export_dir,
                 "--",
                 "--save-media",
             )
@@ -216,44 +216,46 @@ class YoloIntegrationScenariosTest:
         return get_test_asset_path("yolo_dataset", request.param)
 
     @mark_requirement(Requirements.DATUM_BUG_1214)
-    def test_can_import_nested_datasets_in_project(self, fxt_yolo_dir, test_dir, helper_tc):
-        run(helper_tc, "project", "create", "-o", test_dir)
-
+    def test_can_import_and_merge_nested_datasets(self, fxt_yolo_dir, test_dir, helper_tc):
+        # Test merging multiple YOLO datasets without using project functionality
         num_total_items = 0
-        # Import twice
-        for i in range(1, 3):
-            run(
-                helper_tc,
-                "project",
-                "import",
-                "-p",
-                test_dir,
-                "-n",
-                f"dataset_{i}",
-                "-f",
-                "yolo",
-                fxt_yolo_dir,
-            )
+        dataset_dirs = []
 
-            # Reindex to prevent overlapping IDs of dataset items.
+        # Create reindexed copies of the dataset
+        for i in range(1, 3):
+            dataset_dir = osp.join(test_dir, f"dataset_{i}")
+
+            # Transform the original dataset with reindexing to prevent overlapping IDs
             run(
                 helper_tc,
                 "transform",
-                "-p",
-                test_dir,
                 "-t",
                 "reindex",
-                f"dataset_{i}",
+                "-o",
+                dataset_dir,
+                fxt_yolo_dir,
                 "--",
                 "--start",
-                f"{i * 10}",  # Reindex starting from 0 or 10
+                f"{i * 10}",  # Reindex starting from 10 or 20
             )
 
-            # Add the number of dataset items for each dataset in the project
-            num_total_items += len(
-                Dataset.import_from(osp.join(test_dir, f"dataset_{i}"), format="yolo")
-            )
+            dataset_dirs.append(dataset_dir)
+            num_total_items += len(Dataset.import_from(dataset_dir, format="yolo"))
 
-        # Import a dataset from the project
-        imported = Dataset.import_from(test_dir, format="yolo")
-        assert len(imported) == num_total_items
+        # Merge the datasets
+        merged_dir = osp.join(test_dir, "merged")
+        run(
+            helper_tc,
+            "merge",
+            "-o",
+            merged_dir,
+            "-f",
+            "yolo",
+            *dataset_dirs,
+            "--",
+            "--save-media",
+        )
+
+        # Verify the merged dataset has the expected number of items
+        merged_dataset = Dataset.import_from(merged_dir, format="yolo")
+        assert len(merged_dataset) == num_total_items

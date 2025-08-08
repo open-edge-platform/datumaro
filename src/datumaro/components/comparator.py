@@ -12,8 +12,15 @@ from unittest import TestCase
 from attr import attrib, attrs
 from tabulate import tabulate
 
-from datumaro.cli.util.project import generate_next_file_name
 from datumaro.components.annotation import AnnotationType, LabelCategories
+from datumaro.util.os_util import generate_next_name
+
+
+def generate_next_file_name(basename, basedir=".", sep=".", ext=""):
+    """Generate next file name using the core utility function."""
+    return generate_next_name(os.listdir(basedir), basename, sep, ext)
+
+
 from datumaro.components.annotations.matcher import LineMatcher, PointsMatcher, match_segments_pair
 from datumaro.components.dataset import Dataset
 from datumaro.components.operations import (

@@ -12,8 +12,8 @@ from datumaro.components.environment import DEFAULT_ENVIRONMENT
 from datumaro.util.os_util import make_file_name
 
 from ..util import MultilineFormatter
+from ..util.dataset_utils import FilterModes, generate_next_file_name
 from ..util.errors import CliException
-from ..util.project import FilterModes, generate_next_file_name
 
 
 def build_parser(parser_ctor=argparse.ArgumentParser):
@@ -133,10 +133,6 @@ def convert_command(args):
 
         fmt = matches[0]
         log.info(f"Source dataset format detected as {fmt}")
-
-    if fmt == args.output_format:
-        log.error(f"The source data format and the output data format is same as {fmt}.")
-        return 3
 
     source = osp.abspath(args.source)
 

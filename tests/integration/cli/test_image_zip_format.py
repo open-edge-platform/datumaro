@@ -34,22 +34,20 @@ class ImageZipIntegrationScenarios(TestCase):
         )
 
         with TestDir() as test_dir:
-            source_dataset.export(test_dir, format="image_dir")
-            zip_path = osp.join(test_dir, "images.zip")
-            make_zip_archive(test_dir, zip_path)
+            # Export as image_dir first
+            image_dir = osp.join(test_dir, "image_dir")
+            source_dataset.export(image_dir, format="image_dir")
 
-            proj_dir = osp.join(test_dir, "proj")
-            run(self, "project", "create", "-o", proj_dir)
-            run(self, "project", "import", "-p", proj_dir, "-f", "image_zip", zip_path)
-
+            # Convert from image_dir to image_zip format
             result_dir = osp.join(test_dir, "result")
             export_path = osp.join(result_dir, "export.zip")
             run(
                 self,
-                "project",
-                "export",
-                "-p",
-                proj_dir,
+                "convert",
+                "-if",
+                "image_dir",
+                "-i",
+                image_dir,
                 "-f",
                 "image_zip",
                 "-o",
@@ -70,16 +68,15 @@ class ImageZipIntegrationScenarios(TestCase):
                 "coco",
             )
 
-            run(self, "project", "create", "-o", test_dir)
-            run(self, "project", "import", "-p", test_dir, "-f", "coco", coco_dir)
-
+            # Convert COCO dataset directly to image_zip format
             export_path = osp.join(test_dir, "export.zip")
             run(
                 self,
-                "project",
-                "export",
-                "-p",
-                test_dir,
+                "convert",
+                "-if",
+                "coco",
+                "-i",
+                coco_dir,
                 "-f",
                 "image_zip",
                 "-o",
@@ -105,21 +102,19 @@ class ImageZipIntegrationScenarios(TestCase):
         )
 
         with TestDir() as test_dir:
-            source_dataset.export(test_dir, format="image_dir", image_ext=".jpg")
-            zip_path = osp.join(test_dir, "images.zip")
-            make_zip_archive(test_dir, zip_path)
+            # Export as image_dir first with jpg extension
+            image_dir = osp.join(test_dir, "image_dir")
+            source_dataset.export(image_dir, format="image_dir", image_ext=".jpg")
 
-            proj_dir = osp.join(test_dir, "proj")
-            run(self, "project", "create", "-o", proj_dir)
-            run(self, "project", "import", "-p", proj_dir, "-f", "image_zip", zip_path)
-
+            # Convert from image_dir to image_zip with custom image extension
             export_path = osp.join(test_dir, "export.zip")
             run(
                 self,
-                "project",
-                "export",
-                "-p",
-                proj_dir,
+                "convert",
+                "-if",
+                "image_dir",
+                "-i",
+                image_dir,
                 "-f",
                 "image_zip",
                 "-o",

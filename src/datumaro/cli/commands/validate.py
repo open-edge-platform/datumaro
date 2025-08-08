@@ -6,37 +6,29 @@ import argparse
 import logging as log
 
 from datumaro.components.environment import DEFAULT_ENVIRONMENT
-from datumaro.components.errors import ProjectNotFoundError
 from datumaro.components.validator import TaskType
 from datumaro.util import dump_json_file
-from datumaro.util.scope import scope_add, scoped
+from datumaro.util.scope import scoped
 
 from ..util import MultilineFormatter
+from ..util.dataset_utils import generate_next_file_name, parse_dataset_pathspec
 from ..util.errors import CliException
-from ..util.project import generate_next_file_name, load_project, parse_full_revpath
 
 
 def build_parser(parser_ctor=argparse.ArgumentParser):
     parser = parser_ctor(
-        help="Validate project",
+        help="Validate dataset",
         description="""
         Validates a dataset according to the task type and
         reports summary in a JSON file.|n
-        Target dataset is specified by a revpath. The full syntax is:|n
+        |n
+        Target dataset is specified by a dataset path:|n
         - Dataset paths:|n
         |s|s- <dataset path>[ :<format> ]|n
-        - Revision paths:|n
-        |s|s- <project path> [ @<rev> ] [ :<target> ]|n
-        |s|s- <rev> [ :<target> ]|n
-        |s|s- <target>|n
-        |n
-        Both forms use the -p/--project as a context for plugins. It can be
-        useful for dataset paths in targets. When not specified, the current
-        project's working tree is used.|n
         |n
         Examples:|n
-        - Validate a project's subset as a classification dataset:|n |n
-        |s|s%(prog)s -t classification -s train
+        - Validate a dataset as a classification dataset:|n |n
+        |s|s%(prog)s /path/to/dataset:coco -t classification
         """,
         formatter_class=MultilineFormatter,
     )
@@ -47,16 +39,15 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         try:
             return TaskType[s.lower()].name
         except Exception:
-            raise argparse.ArgumentTypeError(
-                "Unknown task type %s. Expected " "one of: %s" % (s, task_types)
-            )
+            import sys
 
-    parser.add_argument(
-        "_positionals", nargs=argparse.REMAINDER, help=argparse.SUPPRESS
-    )  # workaround for -- eaten by positionals
-    parser.add_argument(
-        "target", default="project", nargs="?", help="Target dataset revpath (default: project)"
-    )
+            print(
+                "Unknown task type '%s'. Available task types: %s" % (s, task_types),
+                file=sys.stderr,
+            )
+            sys.exit(1)
+
+    parser.add_argument("target", help="Target dataset path")
     parser.add_argument(
         "-t",
         "--task",
@@ -66,12 +57,6 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
     )
     parser.add_argument(
         "-s", "--subset", dest="subset_name", help="Subset to validate (default: whole dataset)"
-    )
-    parser.add_argument(
-        "-p",
-        "--project",
-        dest="project_dir",
-        help="Directory of the project to validate (default: current dir)",
     )
     parser.add_argument(
         "extra_args",
@@ -85,66 +70,32 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
 
 def get_sensitive_args():
     return {
-        validate_command: ["target", "project_dir", "subset_name", "extra_args"],
+        validate_command: ["target", "subset_name", "extra_args"],
     }
 
 
 @scoped
 def validate_command(args):
-    has_sep = "--" in args._positionals
-    if has_sep:
-        pos = args._positionals.index("--")
-        if 1 < pos:
-            raise argparse.ArgumentError(None, message="Expected no more than 1 target argument")
-    else:
-        pos = 1
-    args.target = (args._positionals[:pos] or ["project"])[0]
-    args.extra_args = args._positionals[pos + has_sep :]
-
-    show_plugin_help = "-h" in args.extra_args or "--help" in args.extra_args
-
-    project = None
-    try:
-        project = scope_add(load_project(args.project_dir))
-    except ProjectNotFoundError:
-        if not show_plugin_help and args.project_dir:
-            raise
-
-    if project is not None:
-        env = project.env
-    else:
-        env = DEFAULT_ENVIRONMENT
+    env = DEFAULT_ENVIRONMENT
 
     try:
         validator_type = env.validators[args.task]
     except KeyError:
-        raise CliException("Validator type '%s' is not found" % args.task)
+        raise CliException("Validator for '%s' task is not found" % args.task)
 
     extra_args = validator_type.parse_cmdline(args.extra_args)
 
-    dataset, target_project = parse_full_revpath(args.target, project)
-    if target_project:
-        scope_add(target_project)
+    # Parse target dataset
+    dataset = parse_dataset_pathspec(args.target, env)
 
-    dst_file_name = "validation-report"
-    if args.subset_name is not None:
+    if args.subset_name:
         dataset = dataset.get_subset(args.subset_name)
-        dst_file_name += f"-{args.subset_name}"
 
+    # Validate the dataset
     validator = validator_type(**extra_args)
-    report = validator.validate(dataset)
+    reports = validator.validate(dataset)
 
-    def _make_serializable(d):
-        for key, val in list(d.items()):
-            # tuple key to str
-            if isinstance(key, tuple) or isinstance(key, int):
-                d[str(key)] = val
-                d.pop(key)
-            if isinstance(val, dict):
-                _make_serializable(val)
-
-    _make_serializable(report)
-
-    dst_file = generate_next_file_name(dst_file_name, ext=".json")
-    log.info("Writing project validation results to '%s'" % dst_file)
-    dump_json_file(dst_file, report, indent=True, allow_numpy=True)
+    # Save the validation report
+    dst_file = generate_next_file_name("validation_report", ext=".json")
+    log.info("Writing validation report to '%s'" % dst_file)
+    dump_json_file(dst_file, reports, indent=True)

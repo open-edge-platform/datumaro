@@ -7,15 +7,12 @@ import logging as log
 import os
 import os.path as osp
 
-from datumaro.components.errors import ProjectNotFoundError
 from datumaro.components.filter import DatasetItemEncoder
-from datumaro.components.project import ProjectBuildTargets
-from datumaro.util import str_to_bool
-from datumaro.util.scope import scope_add, scoped
+from datumaro.util.scope import scoped
 
 from ..util import MultilineFormatter
+from ..util.dataset_utils import FilterModes, parse_dataset_pathspec
 from ..util.errors import CliException
-from ..util.project import FilterModes, load_project, parse_full_revpath
 
 
 def build_parser(parser_ctor=argparse.ArgumentParser):
@@ -26,9 +23,7 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         |n
         By default, datasets are updated in-place. The '-o/--output-dir'
         option can be used to specify another output directory. When
-        updating in-place, use the '--overwrite' parameter (in-place
-        updates fail by default to prevent data loss), unless a project
-        target is modified.|n
+        updating in-place, use the '--overwrite' parameter.|n
         |n
         A filter is an XPath expression, which is applied to XML
         representation of a dataset item. Check '--dry-run' parameter
@@ -44,45 +39,28 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         removed. To select an annotation, write an XPath that
         returns 'annotation' elements (see examples).|n
         |n
-        This command has the following invocation syntax:
-        - %(prog)s <target dataset revpath>|n
+        Usage: %(prog)s <dataset_path>|n
         |n
-        <revpath> - either a dataset path or a revision path. The full
-        syntax is:|n
-        - Dataset paths:|n
+        <dataset_path> - dataset path with optional format:|n
         |s|s- <dataset path>[ :<format> ]|n
-        - Revision paths:|n
-        |s|s- <project path> [ @<rev> ] [ :<target> ]|n
-        |s|s- <rev> [ :<target> ]|n
-        |s|s- <target>|n
-        |n
-        The current project (-p/--project) is also used as a context for
-        plugins, so it can be useful for dataset paths having custom formats.
-        When not specified, the current project's working tree is used.|n
-        |n
-        The command can be applied to a dataset or a project build target,
-        a stage or the combined 'project' target, in which case all the
-        targets will be affected. A build tree stage will be recorded
-        if '--stage' is enabled, and the resulting dataset(-s) will be
-        saved if '--apply' is enabled.|n
         |n
         Examples:|n
         - Filter images with width < height:|n
-        |s|s%(prog)s -e '/item[image/width < image/height]'|n
+        |s|s%(prog)s -e '/item[image/width < image/height]' dataset/|n
         |n
         - Filter images with large-area bboxes:|n
         |s|s%(prog)s -e '/item[annotation/type="bbox" and
-            annotation/area>2000]'|n
+            annotation/area>2000]' dataset/|n
         |n
         - Filter out all irrelevant annotations from items:|n
-        |s|s%(prog)s -m a -e '/item/annotation[label = "person"]'|n
+        |s|s%(prog)s -m a -e '/item/annotation[label = "person"]' dataset/|n
         |n
         - Filter out all irrelevant annotations from items:|n
         |s|s%(prog)s -m a -e '/item/annotation[label="cat" and
-        area > 99.5]'|n
+        area > 99.5]' dataset/|n
         |n
         - Filter occluded annotations and items, if no annotations left:|n
-        |s|s%(prog)s -m i+a -e '/item/annotation[occluded="True"]'|n
+        |s|s%(prog)s -m i+a -e '/item/annotation[occluded="True"]' dataset/|n
         |n
         - Filter a VOC-like dataset inplace:|n
         |s|s%(prog)s -e '/item/annotation[label = "bus"]' --overwrite dataset/:voc
@@ -91,7 +69,8 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
     )
 
     parser.add_argument(
-        "target", nargs="?", default="project", help="Target dataset revpath (default: %(default)s)"
+        "target",
+        help="Target dataset path with optional format (e.g., 'dataset/' or 'dataset/:voc')",
     )
     parser.add_argument("-e", "--filter", help="XML XPath filter expression for dataset items")
     parser.add_argument(
@@ -109,41 +88,10 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         "-o",
         "--output-dir",
         dest="dst_dir",
-        help="""
-            Output directory. Can be omitted for main project targets
-            (i.e. data sources and the 'project' target, but not
-            intermediate stages) and dataset targets.
-            If not specified, the results will be saved inplace.
-            """,
-    )
-    parser.add_argument(
-        "--stage",
-        type=str_to_bool,
-        default=True,
-        help="""
-            Include this action as a project build step.
-            If true, this operation will be saved in the project
-            build tree, allowing to reproduce the resulting dataset later.
-            Applicable only to main project targets (i.e. data sources
-            and the 'project' target, but not intermediate stages)
-            (default: %(default)s)
-            """,
-    )
-    parser.add_argument(
-        "--apply",
-        type=str_to_bool,
-        default=True,
-        help="Run this command immediately. If disabled, only the "
-        "build tree stage will be written (default: %(default)s)",
+        help="Output directory. If not specified, the results will be saved inplace.",
     )
     parser.add_argument(
         "--overwrite", action="store_true", help="Overwrite existing files in the save directory"
-    )
-    parser.add_argument(
-        "-p",
-        "--project",
-        dest="project_dir",
-        help="Directory of the project to operate on (default: current dir)",
     )
     parser.set_defaults(command=filter_command)
 
@@ -154,31 +102,23 @@ def get_sensitive_args():
     return {
         filter_command: [
             "target",
-            "filter",
             "dst_dir",
-            "project_dir",
         ],
     }
 
 
 @scoped
 def filter_command(args):
-    project = None
-    try:
-        project = scope_add(load_project(args.project_dir))
-    except ProjectNotFoundError:
-        if args.project_dir:
-            raise
-
     filter_args = FilterModes.make_filter_args(args.mode)
     filter_expr = args.filter
 
-    if args.dry_run:
-        dataset, _project = parse_full_revpath(args.target, project)
-        if _project:
-            scope_add(_project)
+    try:
+        dataset = parse_dataset_pathspec(args.target)
+    except Exception as e:
+        raise CliException(str(e))
 
-        dataset = dataset.filter(expr=filter_expr, **filter_args)
+    if args.dry_run:
+        dataset = dataset.filter(filter_expr, **filter_args)
 
         for item in dataset:
             encoded_item = DatasetItemEncoder.encode(item, dataset.categories())
@@ -189,60 +129,17 @@ def filter_command(args):
     if not args.filter:
         raise CliException("Expected a filter expression ('-e' argument)")
 
-    is_target = project is not None and args.target in project.working_tree.build_targets
-    if is_target:
-        if (
-            not args.dst_dir
-            and args.stage
-            and (args.target != ProjectBuildTargets.strip_target_name(args.target))
-        ):
-            raise CliException(
-                "Adding a stage is only allowed for " "project targets, not their stages."
-            )
+    log.info("Filtering...")
 
-        if args.target == ProjectBuildTargets.MAIN_TARGET:
-            targets = list(project.working_tree.sources)
-        else:
-            targets = [args.target]
+    dst_dir = args.dst_dir or dataset.data_path
+    if not args.overwrite and osp.isdir(dst_dir) and os.listdir(dst_dir):
+        raise CliException(
+            "Directory '%s' already exists " "(pass --overwrite to overwrite)" % dst_dir
+        )
+    dst_dir = osp.abspath(dst_dir)
 
-        build_tree = project.working_tree.clone()
-        for target in targets:
-            build_tree.build_targets.add_filter_stage(target, expr=filter_expr, params=filter_args)
+    dataset = dataset.filter(filter_expr, **filter_args)
+    dataset.save(dst_dir, save_media=True)
 
-    if args.apply:
-        log.info("Filtering...")
-
-        if is_target and not args.dst_dir:
-            for target in targets:
-                dataset = project.working_tree.make_dataset(build_tree.make_pipeline(target))
-
-                # Source might be missing in the working dir, so we specify
-                # the output directory.
-                # We specify save_media here as a heuristic. It can probably
-                # be improved by checking if there are images in the dataset
-                # directory.
-                dataset.save(project.source_data_dir(target), save_media=True)
-
-            log.info("Finished")
-        else:
-            dataset, _project = parse_full_revpath(args.target, project)
-            if _project:
-                scope_add(_project)
-
-            dst_dir = args.dst_dir or dataset.data_path
-            if not args.overwrite and osp.isdir(dst_dir) and os.listdir(dst_dir):
-                raise CliException(
-                    "Directory '%s' already exists " "(pass --overwrite to overwrite)" % dst_dir
-                )
-            dst_dir = osp.abspath(dst_dir)
-
-            dataset.filter(filter_expr, *filter_args)
-            dataset.save(dst_dir, save_media=True)
-
-            log.info("Results have been saved to '%s'" % dst_dir)
-
-    if is_target and args.stage:
-        project.working_tree.config.update(build_tree.config)
-        project.working_tree.save()
-
+    log.info("Results have been saved to '%s'" % dst_dir)
     return 0

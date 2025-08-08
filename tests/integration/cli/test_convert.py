@@ -76,8 +76,6 @@ def test_convert_object_detection(
 
     fxt_dataset.export(src_dir, format=input_format, save_media=True)
 
-    expected_code = 0 if input_format != output_format else 3
-
     cmd = [
         "convert",
         "-f",
@@ -100,7 +98,7 @@ def test_convert_object_detection(
     run(
         helper_tc,
         *cmd,
-        expected_code=expected_code,
+        expected_code=0,
     )
 
     if not give_input_format:
@@ -112,27 +110,27 @@ def test_convert_object_detection(
         ]
         assert len(matched) == 1
 
-    if expected_code == 0:
-        actual = Dataset.import_from(dst_dir, format=output_format)
+    # All conversions now succeed
+    actual = Dataset.import_from(dst_dir, format=output_format)
 
-        # COCO and YOLO force reindex annotation's "id" and "group"
-        # because they do not exist in their schemas.
-        # Therefore, we should ignore them when comparison.
-        data_formats_forcing_reindex = {"coco", "yolo"}
-        if (
-            input_format in data_formats_forcing_reindex
-            or output_format in data_formats_forcing_reindex
-        ):
-            ignore_ann_id, ignore_ann_group = True, True
-        else:
-            ignore_ann_id, ignore_ann_group = False, False
+    # COCO and YOLO force reindex annotation's "id" and "group"
+    # because they do not exist in their schemas.
+    # Therefore, we should ignore them when comparison.
+    data_formats_forcing_reindex = {"coco", "yolo"}
+    if (
+        input_format in data_formats_forcing_reindex
+        or output_format in data_formats_forcing_reindex
+    ):
+        ignore_ann_id, ignore_ann_group = True, True
+    else:
+        ignore_ann_id, ignore_ann_group = False, False
 
-        compare_datasets(
-            helper_tc,
-            fxt_dataset,
-            actual,
-            require_media=True,
-            ignored_attrs=IGNORE_ALL,
-            ignore_ann_id=ignore_ann_id,
-            ignore_ann_group=ignore_ann_group,
-        )
+    compare_datasets(
+        helper_tc,
+        fxt_dataset,
+        actual,
+        require_media=True,
+        ignored_attrs=IGNORE_ALL,
+        ignore_ann_id=ignore_ann_id,
+        ignore_ann_group=ignore_ann_group,
+    )

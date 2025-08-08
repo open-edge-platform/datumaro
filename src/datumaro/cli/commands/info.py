@@ -5,56 +5,38 @@
 import argparse
 
 from datumaro.components.annotation import AnnotationType
-from datumaro.components.errors import DatasetMergeError, MissingObjectError, ProjectNotFoundError
-from datumaro.util.scope import scope_add, scoped
+from datumaro.components.errors import MissingObjectError
+from datumaro.util.scope import scoped
 
 from ..util import MultilineFormatter
-from ..util.project import load_project, parse_full_revpath
+from ..util.dataset_utils import parse_dataset_pathspec
 
 
 def build_parser(parser_ctor=argparse.ArgumentParser):
     parser = parser_ctor(
         help="Prints dataset overview",
         description="""
-        Prints info about the dataset at <revpath>, or about the current
-        project's combined dataset, if none is specified.|n
+        Prints info about the dataset at the specified path.|n
         |n
-        <revpath> - either a dataset path or a revision path. The full
-        syntax is:|n
-        - Dataset paths:|n
+        <dataset_path> - dataset path with optional format specification:|n
         |s|s- <dataset path>[ :<format> ]|n
-        - Revision paths:|n
-        |s|s- <project path> [ @<rev> ] [ :<target> ]|n
-        |s|s- <rev> [ :<target> ]|n
-        |s|s- <target>|n
-        |n
-        Both forms use the -p/--project as a context for plugins. It can be
-        useful for dataset paths in targets. When not specified, the current
-        project's working tree is used.|n
         |n
         Examples:|n
-        - Print dataset info for the current project's working tree:|n
-        |s|s%(prog)s|n
-        |n
         - Print dataset info for a path and a format name:|n
         |s|s%(prog)s path/to/dataset:voc|n
         |n
-        - Print dataset info for a source from a past revision:|n
-        |s|s%(prog)s HEAD~2:source-2
+        - Print dataset info for a COCO dataset:|n
+        |s|s%(prog)s path/to/dataset:coco
         """,
         formatter_class=MultilineFormatter,
     )
 
     parser.add_argument(
-        "target", nargs="?", default="project", metavar="revpath", help="Target dataset revpath"
+        "target",
+        metavar="dataset_path",
+        help="Target dataset path with optional format (path:format)",
     )
     parser.add_argument("--all", action="store_true", help="Print all information")
-    parser.add_argument(
-        "-p",
-        "--project",
-        dest="project_dir",
-        help="Directory of the current project (default: current dir)",
-    )
     parser.set_defaults(command=info_command)
 
     return parser
@@ -64,38 +46,20 @@ def get_sensitive_args():
     return {
         info_command: [
             "target",
-            "project_dir",
         ],
     }
 
 
 @scoped
 def info_command(args):
-    project = None
-    try:
-        project = scope_add(load_project(args.project_dir))
-    except ProjectNotFoundError:
-        if args.project_dir:
-            raise
-
     dataset = None
     dataset_problem = ""
     try:
-        # TODO: avoid computing working tree hashes
-        dataset, target_project = parse_full_revpath(args.target, project)
-        if target_project:
-            scope_add(target_project)
-    except DatasetMergeError as e:
-        dataset_problem = (
-            "Can't merge project sources automatically: %s. "
-            "The conflicting sources are: %s"
-            % (
-                e,
-                ", ".join(e.sources),
-            )
-        )
+        dataset = parse_dataset_pathspec(args.target)
     except MissingObjectError as e:
         dataset_problem = str(e)
+    except Exception as e:
+        dataset_problem = f"Error loading dataset: {e}"
 
     def print_dataset_info(dataset, indent=""):
         print("%slength:" % indent, len(dataset))
