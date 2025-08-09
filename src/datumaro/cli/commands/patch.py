@@ -99,15 +99,7 @@ def patch_command(args):
     patch_dataset = parse_dataset_pathspec(args.patch, env)
 
     # Determine output directory
-    dst_dir = args.dst_dir
-    if dst_dir is None:
-        # For in-place updates, we need to determine the source path
-        # Extract the path from the target argument
-        if ":" in args.target:
-            target_path = args.target.rsplit(":", 1)[0]
-        else:
-            target_path = args.target
-        dst_dir = target_path
+    dst_dir = args.dst_dir or target_dataset.data_path
 
     if not args.overwrite and osp.isdir(dst_dir) and os.listdir(dst_dir):
         raise CliException(
@@ -115,16 +107,11 @@ def patch_command(args):
         )
     dst_dir = osp.abspath(dst_dir)
 
-    # Determine the target format for export
-    target_format = "datumaro"  # default
-    if ":" in args.target:
-        target_format = args.target.rsplit(":", 1)[1]
-
     # Get the exporter for the target format
     try:
-        exporter = env.exporters[target_format]
+        exporter = env.exporters[target_dataset.format]
     except KeyError:
-        raise CliException("Exporter for format '%s' is not found" % target_format)
+        raise CliException("Exporter for format '%s' is not found" % target_dataset.format)
 
     extra_args = exporter.parse_cmdline(args.extra_args)
 

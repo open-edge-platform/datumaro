@@ -7,13 +7,13 @@ import logging as log
 import os
 import os.path as osp
 
-from datumaro.components.dataset import DEFAULT_FORMAT, Dataset
+from datumaro.components.dataset import DEFAULT_FORMAT
 from datumaro.components.environment import DEFAULT_ENVIRONMENT
 from datumaro.components.hl_ops import HLOps
 from datumaro.components.merge.intersect_merge import IntersectMerge
 
 from ..util import MultilineFormatter, join_cli_args
-from ..util.dataset_utils import generate_next_file_name
+from ..util.dataset_utils import generate_next_file_name, parse_dataset_pathspec
 from ..util.errors import CliException
 
 
@@ -199,31 +199,10 @@ def merge_command(args):
     source_datasets = []
     try:
         for target in args.targets:
-            # Parse target as path:format or just path
-            if ":" in target and not (
-                len(target) > 1 and target[1] == ":"
-            ):  # Avoid splitting Windows paths like C:\path
-                dataset_path, dataset_format = target.rsplit(":", 1)
-            else:
-                dataset_path = target
-                dataset_format = None
-
-            if dataset_format is None:
-                # Try to detect format
-                matches = env.detect_dataset(dataset_path)
-                if len(matches) == 0:
-                    raise CliException(
-                        f"Failed to detect dataset format for '{dataset_path}'. "
-                        "Try to specify format explicitly like 'path:format'"
-                    )
-                elif len(matches) != 1:
-                    raise CliException(
-                        f"Multiple formats match the dataset '{dataset_path}': {', '.join(matches)}. "
-                        "Try to specify format explicitly like 'path:format'"
-                    )
-                dataset_format = matches[0]
-
-            dataset = Dataset.import_from(dataset_path, dataset_format)
+            try:
+                dataset = parse_dataset_pathspec(target, env=env)
+            except Exception as e:
+                raise CliException(str(e))
             source_datasets.append(dataset)
     except Exception as e:
         raise CliException(str(e))

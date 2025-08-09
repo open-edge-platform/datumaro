@@ -99,13 +99,7 @@ def transform_command(args):
     extra_args = transform.parse_cmdline(args.extra_args)
 
     # Determine output directory
-    dst_dir = args.dst_dir
-    if dst_dir is None:
-        # For in-place updates, extract path from target argument
-        if ":" in args.target:
-            dst_dir = args.target.rsplit(":", 1)[0]
-        else:
-            dst_dir = args.target
+    dst_dir = args.dst_dir or dataset.data_path
 
     if not args.overwrite and osp.isdir(dst_dir) and os.listdir(dst_dir):
         raise CliException(
