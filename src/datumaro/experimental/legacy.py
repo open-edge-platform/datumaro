@@ -8,6 +8,8 @@ This module provides functionality to convert legacy Datumaro datasets to the ne
 experimental dataset format with automatic schema inference and type conversion.
 """
 
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
 from typing import Any, Type, cast
 
