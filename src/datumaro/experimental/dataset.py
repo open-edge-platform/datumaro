@@ -3,10 +3,10 @@
 # SPDX-License-Identifier: MIT
 
 from functools import cache
-from typing import Any, Generic, List, Sequence, Type, TypeGuard, Union, cast, get_args, get_origin
+from typing import Any, Generic, List, Sequence, Type, Union, cast, get_args, get_origin
 
 import polars as pl
-from typing_extensions import Annotated, TypeVar, dataclass_transform
+from typing_extensions import Annotated, TypeGuard, TypeVar, dataclass_transform
 
 from .converter_registry import Converter, find_conversion_path
 from .schema import AttributeInfo, Field, Schema
