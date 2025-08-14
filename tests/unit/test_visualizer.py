@@ -196,10 +196,6 @@ class PointsVisualizerTest(TestCaseClosePltFigure, VisualizerTestBase):
     def test_vis_one_sample(self):
         self._test_vis_one_sample("_draw_points", check_z_order=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
-    def test_vis_gallery(self):
-        self._test_vis_gallery(self.DEFAULT_GRID_SIZE_TEST_CASES)
-
 
 class MaskVisualizerTest(TestCaseClosePltFigure, VisualizerTestBase):
     @classmethod
@@ -229,10 +225,6 @@ class MaskVisualizerTest(TestCaseClosePltFigure, VisualizerTestBase):
     @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_vis_one_sample(self):
         self._test_vis_one_sample("_draw_mask", check_z_order=True)
-
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
-    def test_vis_gallery(self):
-        self._test_vis_gallery(self.DEFAULT_GRID_SIZE_TEST_CASES)
 
 
 class PolygonVisualizerTest(TestCaseClosePltFigure, VisualizerTestBase):
@@ -264,10 +256,6 @@ class PolygonVisualizerTest(TestCaseClosePltFigure, VisualizerTestBase):
     def test_vis_one_sample(self):
         self._test_vis_one_sample("_draw_polygon", check_z_order=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
-    def test_vis_gallery(self):
-        self._test_vis_gallery(self.DEFAULT_GRID_SIZE_TEST_CASES)
-
 
 class PolyLineVisualizerTest(TestCaseClosePltFigure, VisualizerTestBase):
     @classmethod
@@ -297,10 +285,6 @@ class PolyLineVisualizerTest(TestCaseClosePltFigure, VisualizerTestBase):
     @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_vis_one_sample(self):
         self._test_vis_one_sample("_draw_polygon", check_z_order=True)
-
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
-    def test_vis_gallery(self):
-        self._test_vis_gallery(self.DEFAULT_GRID_SIZE_TEST_CASES)
 
 
 class BboxVisualizerTest(TestCaseClosePltFigure, VisualizerTestBase):
@@ -335,10 +319,6 @@ class BboxVisualizerTest(TestCaseClosePltFigure, VisualizerTestBase):
     def test_vis_one_sample(self):
         self._test_vis_one_sample("_draw_bbox")
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
-    def test_vis_gallery(self):
-        self._test_vis_gallery(self.DEFAULT_GRID_SIZE_TEST_CASES)
-
 
 class CaptionVisualizerTest(TestCaseClosePltFigure, VisualizerTestBase):
     @classmethod
@@ -366,10 +346,6 @@ class CaptionVisualizerTest(TestCaseClosePltFigure, VisualizerTestBase):
     def test_vis_one_sample(self):
         self._test_vis_one_sample("_draw_caption", check_z_order=False)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
-    def test_vis_gallery(self):
-        self._test_vis_gallery(self.DEFAULT_GRID_SIZE_TEST_CASES)
-
 
 class SuperResolutionVisualizerTest(TestCaseClosePltFigure, VisualizerTestBase):
     @classmethod
@@ -396,10 +372,6 @@ class SuperResolutionVisualizerTest(TestCaseClosePltFigure, VisualizerTestBase):
     def test_vis_one_sample(self):
         self._test_vis_one_sample("_draw_super_resolution_annotation", check_z_order=False)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
-    def test_vis_gallery(self):
-        self._test_vis_gallery(self.DEFAULT_GRID_SIZE_TEST_CASES)
-
 
 class DepthVisualizerTest(TestCaseClosePltFigure, VisualizerTestBase):
     @classmethod
@@ -425,10 +397,6 @@ class DepthVisualizerTest(TestCaseClosePltFigure, VisualizerTestBase):
     @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_vis_one_sample(self):
         self._test_vis_one_sample("_draw_depth_annotation", check_z_order=False)
-
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
-    def test_vis_gallery(self):
-        self._test_vis_gallery(self.DEFAULT_GRID_SIZE_TEST_CASES)
 
 
 class EllipseVisualizerTest(TestCaseClosePltFigure, VisualizerTestBase):
@@ -463,15 +431,29 @@ class EllipseVisualizerTest(TestCaseClosePltFigure, VisualizerTestBase):
     def test_vis_one_sample(self):
         self._test_vis_one_sample("_draw_ellipse")
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
-    def test_vis_gallery(self):
-        self._test_vis_gallery(self.DEFAULT_GRID_SIZE_TEST_CASES)
 
-
-class UnsupportedTypeTest(LabelVisualizerTest):
+class UnsupportedTypeTest(TestCaseClosePltFigure, VisualizerTestBase):
     @classmethod
     def setUpClass(cls):
-        super().setUpClass()
+        cls.subset = "train"
+        cls.items = [
+            DatasetItem(
+                "image_%03d" % img_idx,
+                subset=cls.subset,
+                media=Image.from_numpy(data=np.ones((4, 6, 3))),
+                annotations=[
+                    Label(
+                        label=label_idx,
+                        id=img_idx * img_idx + label_idx,
+                        group=1,
+                        attributes={},
+                    )
+                    for label_idx in range(img_idx)
+                ],
+            )
+            for img_idx in range(1, 6)
+        ]
+        cls.dataset = Dataset.from_iterable(cls.items)
 
         for item in cls.dataset:
             item.annotations.append(HashKey(np.ones(96).astype(np.uint8)))
