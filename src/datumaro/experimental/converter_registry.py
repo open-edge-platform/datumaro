@@ -9,6 +9,8 @@ including converter registration, schema mapping, and automatic conversion
 path discovery using graph algorithms.
 """
 
+from __future__ import annotations
+
 import heapq
 from abc import ABC, abstractmethod
 from collections import defaultdict

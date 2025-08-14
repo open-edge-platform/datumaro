@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: MIT
 
+from __future__ import annotations
+
 from functools import cache
 from typing import Any, Generic, List, Sequence, Type, Union, cast, get_args, get_origin
 
