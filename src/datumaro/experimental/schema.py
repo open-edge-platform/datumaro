@@ -5,11 +5,15 @@
 Schema definitions for the dataset system.
 """
 
+import copy
 from dataclasses import dataclass, field
 from enum import Flag, auto
-from typing import Any
+from typing import TYPE_CHECKING, Any, Dict, Optional
 
 import polars as pl
+
+if TYPE_CHECKING:
+    from .categories import Categories
 
 
 class Semantic(Flag):
@@ -90,6 +94,7 @@ class AttributeInfo:
 
     type: type
     annotation: Field
+    categories: Optional["Categories"] = None
 
 
 @dataclass
@@ -112,3 +117,33 @@ class Schema:
                     f"Fields '{seen[key]}' and '{name}' conflict."
                 )
             seen[key] = name
+
+    def with_categories(self, categories: Dict[str, "Categories"]) -> "Schema":
+        """
+        Create a new schema with categories applied to specific attributes.
+
+        Args:
+            categories: Dictionary mapping attribute names to categories
+
+        Returns:
+            A new Schema instance with categories applied
+
+        Raises:
+            ValueError: If an attribute name is not found in the schema
+        """
+        # Make a shallow copy of this schema
+        new_schema = copy.copy(self)
+
+        # Also copy the attributes dict to avoid modifying the original AttributeInfo objects
+        new_schema.attributes = {
+            name: copy.copy(attr_info) for name, attr_info in self.attributes.items()
+        }
+
+        # Add categories to specific attributes
+        for attr_name, category in categories.items():
+            if attr_name in new_schema.attributes:
+                new_schema.attributes[attr_name].categories = category
+            else:
+                raise ValueError(f"Attribute '{attr_name}' not found in schema")
+
+        return new_schema
