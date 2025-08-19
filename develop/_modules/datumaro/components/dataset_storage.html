@@ -603,6 +603,8 @@ document.write(`
 
         <span class="k">def</span><span class="w"> </span><span class="nf">_add_ann_types</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">ann</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">hash_key</span><span class="p">:</span>
+                    <span class="k">continue</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_ann_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
 
         <span class="n">media_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_media_type</span>
@@ -823,6 +825,10 @@ document.write(`
                 <span class="s2">&quot;Mismatching item media type &#39;</span><span class="si">%s</span><span class="s2">&#39;, &quot;</span>
                 <span class="s2">&quot;the dataset contains &#39;</span><span class="si">%s</span><span class="s2">&#39; items.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_media_type</span><span class="p">)</span>
             <span class="p">)</span>
+
+        <span class="n">ann_types</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">ann</span><span class="o">.</span><span class="n">type</span> <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">])</span>
+        <span class="c1"># hash_key can be included any task</span>
+        <span class="n">ann_types</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">hash_key</span><span class="p">)</span>
 
         <span class="n">is_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_storage</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 
@@ -1137,6 +1143,8 @@ document.write(`
             <span class="k">yield</span> <span class="n">item</span>
 
             <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">ann</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">hash_key</span><span class="p">:</span>
+                    <span class="k">continue</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_ann_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>

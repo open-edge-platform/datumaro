@@ -365,6 +365,7 @@ document.write(`
     <span class="n">Cuboid2D</span><span class="p">,</span>
     <span class="n">Cuboid3d</span><span class="p">,</span>
     <span class="n">Ellipse</span><span class="p">,</span>
+    <span class="n">HashKey</span><span class="p">,</span>
     <span class="n">Label</span><span class="p">,</span>
     <span class="n">LabelCategories</span><span class="p">,</span>
     <span class="n">Mask</span><span class="p">,</span>
@@ -666,6 +667,8 @@ document.write(`
                 <span class="n">converted_ann</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_cuboid_3d_object</span><span class="p">(</span><span class="n">ann</span><span class="p">)</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="n">Ellipse</span><span class="p">):</span>
                 <span class="n">converted_ann</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_ellipse_object</span><span class="p">(</span><span class="n">ann</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="n">HashKey</span><span class="p">):</span>
+                <span class="k">continue</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="n">Cuboid2D</span><span class="p">):</span>
                 <span class="n">converted_ann</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_cuboid_2d_object</span><span class="p">(</span><span class="n">ann</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
@@ -933,6 +936,9 @@ document.write(`
                 <span class="k">continue</span>
 
             <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">pool</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_hashkey_meta</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_save_hashkey_file</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">)</span>
 
 <div class="viewcode-block" id="DatumaroExporter.patch">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro.exporter.html#datumaro.plugins.data_formats.datumaro.exporter.DatumaroExporter.patch">[docs]</a>

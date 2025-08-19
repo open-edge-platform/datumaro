@@ -350,7 +350,18 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bbox</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">HashKey</span>
+
+
+<div class="viewcode-block" id="gen_hash_key">
+<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.openvino_plugin.samples.utils.html#datumaro.plugins.openvino_plugin.samples.otx_custom_object_detection_gen3_atss_interp.gen_hash_key">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">gen_hash_key</span><span class="p">(</span><span class="n">features</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HashKey</span><span class="p">:</span>
+    <span class="n">features</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
+    <span class="n">hash_key</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">hash_key</span> <span class="o">=</span> <span class="n">hash_key</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+    <span class="n">hash_key</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">packbits</span><span class="p">(</span><span class="n">hash_key</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">HashKey</span><span class="p">(</span><span class="n">hash_key</span><span class="p">)</span></div>
+
 
 
 <div class="viewcode-block" id="create_bboxes_with_rescaling">
