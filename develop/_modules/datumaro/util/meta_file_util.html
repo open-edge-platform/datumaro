@@ -347,59 +347,38 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrderedDict</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">HashKey</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">dump_json_file</span><span class="p">,</span> <span class="n">find</span><span class="p">,</span> <span class="n">parse_json_file</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.deprecation</span><span class="w"> </span><span class="kn">import</span> <span class="n">deprecated</span>
 
 <span class="n">DATASET_META_FILE</span> <span class="o">=</span> <span class="s2">&quot;dataset_meta.json&quot;</span>
-<span class="n">DATASET_HASHKEY_FILE</span> <span class="o">=</span> <span class="s2">&quot;hash_keys.json&quot;</span>
-<span class="n">DATASET_HASHKEY_FOLDER</span> <span class="o">=</span> <span class="s2">&quot;hash_key_meta&quot;</span>
 
 
 <div class="viewcode-block" id="is_meta_file">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.meta_file_util.html#datumaro.components.dataset.is_meta_file">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.meta_file_util.html#datumaro.plugins.data_formats.yolo.base.is_meta_file">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">is_meta_file</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">))[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;.json&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="has_meta_file">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.meta_file_util.html#datumaro.components.dataset.has_meta_file">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.meta_file_util.html#datumaro.plugins.data_formats.yolo.base.has_meta_file">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">has_meta_file</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">get_meta_file</span><span class="p">(</span><span class="n">path</span><span class="p">))</span></div>
 
 
 
-<div class="viewcode-block" id="has_hashkey_file">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.meta_file_util.html#datumaro.components.dataset.has_hashkey_file">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">has_hashkey_file</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">get_hashkey_file</span><span class="p">(</span><span class="n">path</span><span class="p">))</span></div>
-
-
-
 <div class="viewcode-block" id="get_meta_file">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.meta_file_util.html#datumaro.components.dataset.get_meta_file">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.meta_file_util.html#datumaro.plugins.data_formats.yolo.base.get_meta_file">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_meta_file</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">DATASET_META_FILE</span><span class="p">)</span></div>
 
 
 
-<div class="viewcode-block" id="get_hashkey_file">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.meta_file_util.html#datumaro.components.dataset.get_hashkey_file">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_hashkey_file</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-    <span class="n">hashkey_folder_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">DATASET_HASHKEY_FOLDER</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">hashkey_folder_path</span><span class="p">,</span> <span class="n">DATASET_HASHKEY_FILE</span><span class="p">)</span></div>
-
-
-
 <div class="viewcode-block" id="parse_meta_file">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.meta_file_util.html#datumaro.components.dataset.parse_meta_file">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.meta_file_util.html#datumaro.plugins.data_formats.yolo.base.parse_meta_file">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">parse_meta_file</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
     <span class="n">meta_file</span> <span class="o">=</span> <span class="n">path</span>
     <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
@@ -424,7 +403,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="save_meta_file">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.meta_file_util.html#datumaro.components.dataset.save_meta_file">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.meta_file_util.html#datumaro.plugins.data_formats.yolo.base.save_meta_file">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">save_meta_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">categories</span><span class="p">):</span>
     <span class="n">dataset_meta</span> <span class="o">=</span> <span class="p">{}</span>
 
@@ -452,76 +431,6 @@ document.write(`
         <span class="n">meta_file</span> <span class="o">=</span> <span class="n">get_meta_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
     <span class="n">dump_json_file</span><span class="p">(</span><span class="n">meta_file</span><span class="p">,</span> <span class="n">dataset_meta</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
-
-
-
-<div class="viewcode-block" id="parse_hashkey_file">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.meta_file_util.html#datumaro.components.dataset.parse_hashkey_file">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">parse_hashkey_file</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-    <span class="n">meta_file</span> <span class="o">=</span> <span class="n">path</span>
-    <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-        <span class="n">meta_file</span> <span class="o">=</span> <span class="n">get_hashkey_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">meta_file</span><span class="p">):</span>
-        <span class="k">return</span> <span class="kc">None</span>
-
-    <span class="n">dataset_meta</span> <span class="o">=</span> <span class="n">parse_json_file</span><span class="p">(</span><span class="n">meta_file</span><span class="p">)</span>
-
-    <span class="n">hashkey_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">id_</span><span class="p">,</span> <span class="n">hashkey</span> <span class="ow">in</span> <span class="n">dataset_meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;hashkey&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="n">hashkey_dict</span><span class="p">[</span><span class="n">id_</span><span class="p">]</span> <span class="o">=</span> <span class="n">hashkey</span>
-
-    <span class="k">return</span> <span class="n">hashkey_dict</span></div>
-
-
-
-<div class="viewcode-block" id="save_hashkey_file">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.meta_file_util.html#datumaro.components.dataset.save_hashkey_file">[docs]</a>
-<span class="nd">@deprecated</span><span class="p">(</span><span class="n">deprecated_version</span><span class="o">=</span><span class="s2">&quot;1.11&quot;</span><span class="p">,</span> <span class="n">removed_version</span><span class="o">=</span><span class="s2">&quot;1.12&quot;</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">save_hashkey_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">item_list</span><span class="p">):</span>
-    <span class="n">dataset_hashkey</span> <span class="o">=</span> <span class="p">{}</span>
-
-    <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-        <span class="n">meta_file</span> <span class="o">=</span> <span class="n">get_hashkey_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-    <span class="n">hashkey_folder_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">DATASET_HASHKEY_FOLDER</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">hashkey_folder_path</span><span class="p">):</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">hashkey_folder_path</span><span class="p">)</span>
-
-    <span class="n">hashkey_dict</span> <span class="o">=</span> <span class="n">parse_hashkey_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">hashkey_dict</span><span class="p">:</span>
-        <span class="n">hashkey_dict</span> <span class="o">=</span> <span class="p">{}</span>
-
-    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">item_list</span><span class="p">:</span>
-        <span class="n">item_id</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span>
-        <span class="n">item_subset</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">subset</span>
-        <span class="k">for</span> <span class="n">annotation</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">annotation</span><span class="p">,</span> <span class="n">HashKey</span><span class="p">):</span>
-                <span class="n">hashkey</span> <span class="o">=</span> <span class="n">annotation</span><span class="o">.</span><span class="n">hash_key</span>
-                <span class="k">break</span>
-        <span class="n">hashkey_dict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">item_subset</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">item_id</span><span class="p">:</span> <span class="n">hashkey</span><span class="o">.</span><span class="n">tolist</span><span class="p">()})</span>
-
-    <span class="n">dataset_hashkey</span><span class="p">[</span><span class="s2">&quot;hashkey&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hashkey_dict</span>
-
-    <span class="n">dump_json_file</span><span class="p">(</span><span class="n">meta_file</span><span class="p">,</span> <span class="n">dataset_hashkey</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
-
-
-
-<span class="nd">@deprecated</span><span class="p">(</span><span class="n">deprecated_version</span><span class="o">=</span><span class="s2">&quot;1.11&quot;</span><span class="p">,</span> <span class="n">removed_version</span><span class="o">=</span><span class="s2">&quot;1.12&quot;</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_load_hash_key</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
-    <span class="n">hashkey_dict</span> <span class="o">=</span> <span class="n">parse_hashkey_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">:</span>
-        <span class="n">hash_key</span> <span class="o">=</span> <span class="n">hashkey_dict</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">subset</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">]</span>
-        <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">HashKey</span><span class="p">(</span><span class="n">hash_key</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">hash_key</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)))</span>
-    <span class="k">return</span> <span class="n">dataset</span>
-
-
-<div class="viewcode-block" id="load_hash_key">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.meta_file_util.html#datumaro.components.dataset.load_hash_key">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">load_hash_key</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">has_hashkey_file</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">dataset</span>
-
-    <span class="k">return</span> <span class="n">_load_hash_key</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dataset</span><span class="p">)</span></div>
 
 </pre></div>
 
