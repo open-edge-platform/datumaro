@@ -5,12 +5,10 @@
 import argparse
 
 from datumaro.cli.util import MultilineFormatter
-from datumaro.cli.util.project import load_project
 from datumaro.components.environment import DEFAULT_ENVIRONMENT
-from datumaro.components.errors import ProjectNotFoundError
 from datumaro.components.format_detection import RejectionReason
 from datumaro.util import dump_json_file
-from datumaro.util.scope import scope_add, scoped
+from datumaro.util.scope import scoped
 
 
 def build_parser(parser_ctor=argparse.ArgumentParser):
@@ -67,17 +65,7 @@ def get_sensitive_args():
 
 @scoped
 def detect_format_command(args):
-    project = None
-    try:
-        project = scope_add(load_project(args.project_dir))
-    except ProjectNotFoundError:
-        if args.project_dir:
-            raise
-
-    if project is not None:
-        env = project.env
-    else:
-        env = DEFAULT_ENVIRONMENT
+    env = DEFAULT_ENVIRONMENT
 
     report = {"rejected_formats": {}}
 

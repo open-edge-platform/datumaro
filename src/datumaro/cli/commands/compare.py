@@ -9,14 +9,13 @@ import os.path as osp
 from enum import Enum, auto
 
 from datumaro.components.comparator import DistanceComparator, EqualityComparator, TableComparator
-from datumaro.components.errors import ProjectNotFoundError
 from datumaro.util.os_util import rmtree
-from datumaro.util.scope import on_error_do, scope_add, scoped
+from datumaro.util.scope import on_error_do, scoped
 
 from ..util import MultilineFormatter
 from ..util.compare import DistanceCompareVisualizer
+from ..util.dataset_utils import generate_next_file_name, parse_dataset_pathspec
 from ..util.errors import CliException
-from ..util.project import generate_next_file_name, load_project, parse_full_revpath
 
 
 class ComparisonMethod(Enum):
@@ -32,26 +31,12 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
     parser = parser_ctor(
         help="Compares two datasets",
         description="""
-        Compares two datasets. This command has multiple forms:|n
-        1) %(prog)s <revpath>|n
-        2) %(prog)s <revpath> <revpath>|n
+        Compares two datasets by specifying their paths.|n
         |n
-        1 - Compares the current project's main target ('project')
-        in the working tree with the specified dataset.|n
-        2 - Compares two specified datasets.|n
+        Usage: %(prog)s <dataset1> <dataset2>|n
         |n
-        <revpath> - either a dataset path or a revision path. The full
-        syntax is:|n
-        - Dataset paths:|n
+        <dataset> - dataset path with optional format specification:|n
         |s|s- <dataset path>[ :<format> ]|n
-        - Revision paths:|n
-        |s|s- <project path> [ @<rev> ] [ :<target> ]|n
-        |s|s- <rev> [ :<target> ]|n
-        |s|s- <target>|n
-        |n
-        Both forms use the -p/--project as a context for plugins. It can be
-        useful for dataset paths in targets. When not specified, the current
-        project's working tree is used.|n
         |n
         Annotations can be matched 3 ways:|n
         - by comparision table|n
@@ -59,22 +44,16 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         - by distance computation|n
         |n
         Examples:|n
-        - Compare two projects by distance, match boxes if IoU > 0.7,|n
+        - Compare two datasets by distance, match boxes if IoU > 0.7,|n
         |s|s|s|ssave results to Tensorboard:|n
-        |s|s%(prog)s other/project -o diff/ -f tensorboard --iou-thresh 0.7|n
+        |s|s%(prog)s dataset1/ dataset2/ -o diff/ -f tensorboard --iou-thresh 0.7|n
         |n
-        - Compare two projects for equality, exclude annotation groups |n
+        - Compare two datasets for equality, exclude annotation groups |n
         |s|s|s|sand the 'is_crowd' attribute from comparison:|n
-        |s|s%(prog)s other/project/ -if group -ia is_crowd -m equality|n
+        |s|s%(prog)s dataset1/ dataset2/ -if group -ia is_crowd -m equality|n
         |n
         - Compare two datasets, specify formats:|n
         |s|s%(prog)s path/to/dataset1:voc path/to/dataset2:coco|n
-        |n
-        - Compare the current working tree and a dataset:|n
-        |s|s%(prog)s path/to/dataset2:coco|n
-        |n
-        - Compare a source from a previous revision and a dataset:|n
-        |s|s%(prog)s HEAD~2:source-2 path/to/dataset2:yolo
         """,
         formatter_class=MultilineFormatter,
     )
@@ -101,10 +80,8 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
                 "method '%s', the only available are: %s" % (s, comp_methods),
             )
 
-    parser.add_argument("first_target", help="The first dataset revpath to be compared")
-    parser.add_argument(
-        "second_target", nargs="?", help="The second dataset revpath to be compared"
-    )
+    parser.add_argument("first_target", help="The first dataset path to be compared")
+    parser.add_argument("second_target", help="The second dataset path to be compared")
     parser.add_argument(
         "-o",
         "--output-dir",
@@ -121,12 +98,6 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
     )
     parser.add_argument(
         "--overwrite", action="store_true", help="Overwrite existing files in the save directory"
-    )
-    parser.add_argument(
-        "-p",
-        "--project",
-        dest="project_dir",
-        help="Directory of the current project (default: current dir)",
     )
     parser.set_defaults(command=compare_command)
 
@@ -174,7 +145,6 @@ def get_sensitive_args():
             "first_target",
             "second_target",
             "dst_dir",
-            "project_dir",
         ],
     }
 
@@ -195,27 +165,9 @@ def compare_command(args):
         on_error_do(rmtree, dst_dir, ignore_errors=True)
         os.makedirs(dst_dir)
 
-    project = None
     try:
-        project = scope_add(load_project(args.project_dir))
-    except ProjectNotFoundError:
-        if args.project_dir:
-            raise
-
-    try:
-        if not args.second_target:
-            first_dataset = project.working_tree.make_dataset()
-            second_dataset, target_project = parse_full_revpath(args.first_target, project)
-            if target_project:
-                scope_add(target_project)
-        else:
-            first_dataset, target_project = parse_full_revpath(args.first_target, project)
-            if target_project:
-                scope_add(target_project)
-
-            second_dataset, target_project = parse_full_revpath(args.second_target, project)
-            if target_project:
-                scope_add(target_project)
+        first_dataset = parse_dataset_pathspec(args.first_target)
+        second_dataset = parse_dataset_pathspec(args.second_target)
     except Exception as e:
         raise CliException(str(e))
 
@@ -233,7 +185,7 @@ def compare_command(args):
             )
 
     elif args.method is ComparisonMethod.equality:
-        if args.ignore_field:
+        if not args.ignore_field:
             args.ignore_field = eq_default_if
 
         comparator = EqualityComparator(

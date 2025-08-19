@@ -5,9 +5,8 @@ import numpy as np
 
 from datumaro.components.annotation import Bbox
 from datumaro.components.dataset_base import DatasetItem
-from datumaro.components.errors import ReadonlyDatasetError
 from datumaro.components.media import Image
-from datumaro.components.project import Dataset, Project
+from datumaro.components.project import Dataset
 
 from ...requirements import Requirements, mark_requirement
 
@@ -101,7 +100,8 @@ class PatchTest(TestCase):
                 dataset_url + ":coco",
                 patch_url + ":voc",
                 "--",
-                "--reindex=1",
+                "--reindex",
+                "1",
                 "--save-media",
             )
 
@@ -177,30 +177,4 @@ class PatchTest(TestCase):
             dataset.export(dataset_url, "coco", save_media=True)
             patch.export(patch_url, "coco", save_media=True)
 
-            project_dir = osp.join(test_dir, "proj")
-            with Project.init(project_dir) as project:
-                project.import_source("source-1", dataset_url, "coco", no_cache=True)
-                project.commit("first commit")
-
-            with self.subTest("without overwrite"):
-                run(
-                    self,
-                    "patch",
-                    "-p",
-                    project_dir,
-                    "HEAD:source-1",
-                    patch_url + ":coco",
-                    expected_code=1,
-                )
-
-            with self.subTest("with overwrite"):
-                with self.assertRaises(ReadonlyDatasetError):
-                    run(
-                        self,
-                        "patch",
-                        "-p",
-                        project_dir,
-                        "--overwrite",
-                        "HEAD:source-1",
-                        patch_url + ":coco",
-                    )
+            run(self, "patch", dataset_url + ":coco", patch_url + ":coco", expected_code=1)

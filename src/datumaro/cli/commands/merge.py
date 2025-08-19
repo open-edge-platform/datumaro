@@ -9,20 +9,17 @@ import os.path as osp
 
 from datumaro.components.dataset import DEFAULT_FORMAT
 from datumaro.components.environment import DEFAULT_ENVIRONMENT
-from datumaro.components.errors import ProjectNotFoundError
 from datumaro.components.hl_ops import HLOps
 from datumaro.components.merge.intersect_merge import IntersectMerge
-from datumaro.components.project import ProjectBuildTargets
-from datumaro.util.scope import scope_add, scoped
 
 from ..util import MultilineFormatter, join_cli_args
+from ..util.dataset_utils import generate_next_file_name, parse_dataset_pathspec
 from ..util.errors import CliException
-from ..util.project import generate_next_file_name, load_project, parse_full_revpath
 
 
 def build_parser(parser_ctor=argparse.ArgumentParser):
     parser = parser_ctor(
-        help="Merge few datasets or projects",
+        help="Merge multiple datasets",
         description="""
         Merges multiple datasets into one and produces a new dataset.
         The command can be useful if you want to merge several datasets
@@ -52,28 +49,8 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         ground by voting or return a list of conflicts.
         |n
         |n
-        This command has multiple forms:|n
-        1) %(prog)s <revpath>|n
-        2) %(prog)s <revpath> <revpath> ...|n
-        |n
-        1 - Merges the current project's main target ('project')
-        in the working tree with the specified dataset.|n
-        2 - Merges the specified datasets.
-        Note that the current project is not included in the list of merged
-        sources automatically.|n
-        |n
-        <revpath> - either a dataset path or a revision path. The full
-        syntax is:|n
-        - Dataset paths:|n
+        Dataset paths can optionally specify format:|n
         |s|s- <dataset path>[ :<format> ]|n
-        - Revision paths:|n
-        |s|s- <project path> [ @<rev> ] [ :<target> ]|n
-        |s|s- <rev> [ :<target> ]|n
-        |s|s- <target>|n
-        |n
-        The current project (-p/--project) is used as a context for plugins.
-        It can be useful for dataset paths in targets. When not specified,
-        the current project's working tree is used.|n
         |n
         The output format can be specified with the '-f/--format' option.
         Each dataset format has its own export
@@ -83,24 +60,18 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         '--save-media' parameter.|n
         |n
         Examples:|n
-        - Merge annotations from 3 (or more) annotators:|n
-        |s|s%(prog)s project1/ project2/ project3/|n
+        - Merge annotations from 3 (or more) datasets:|n
+        |s|s%(prog)s dataset1/ dataset2/ dataset3/|n
         |n
         - Merge datasets with varying merge policies:|n
-        |s|s%(prog)s project1/ project2/ -m <union|intersect|exact>|n
+        |s|s%(prog)s dataset1/ dataset2/ -m <union|intersect|exact>|n
         |n
         - Check groups of the merged dataset for consistency:|n
         |s|s|slook for groups consising of 'person', 'hand' 'head', 'foot'|n
-        |s|s%(prog)s project1/ project2/ -g 'person,hand?,head,foot?'|n
+        |s|s%(prog)s dataset1/ dataset2/ -g 'person,hand?,head,foot?'|n
         |n
         - Merge two datasets, specify formats:|n
         |s|s%(prog)s path/to/dataset1:voc path/to/dataset2:coco|n
-        |n
-        - Merge the current working tree and a dataset:|n
-        |s|s%(prog)s path/to/dataset2:coco|n
-        |n
-        - Merge a source from a previous revision and a dataset:|n
-        |s|s%(prog)s HEAD~2:source-2 path/to/dataset2:yolo
         |n
         - Merge datasets and save in different format:|n
         |s|s%(prog)s -f voc dataset1/:yolo path2/:coco -- --save-media
@@ -134,12 +105,6 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
     )
     parser.add_argument(
         "-f", "--format", default=DEFAULT_FORMAT, help="Output format (default: %(default)s)"
-    )
-    parser.add_argument(
-        "-p",
-        "--project",
-        dest="project_dir",
-        help="Directory of the 'current' project (default: current dir)",
     )
     parser.add_argument(
         "extra_args",
@@ -191,11 +156,10 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
 
 def get_sensitive_args():
     return {
-        merge_command: ["targets", "project_dir", "dst_dir", "groups"],
+        merge_command: ["targets", "dst_dir", "groups"],
     }
 
 
-@scoped
 def merge_command(args):
     # Workaround. Required positionals consume positionals from the end
     args._positionals += join_cli_args(args, "targets", "extra_args")
@@ -207,10 +171,11 @@ def merge_command(args):
             raise argparse.ArgumentError(None, message="Expected at least 1 target argument")
     else:
         pos = len(args._positionals)
-    args.targets = args._positionals[:pos] or [ProjectBuildTargets.MAIN_TARGET]
+    args.targets = args._positionals[:pos]
     args.extra_args = args._positionals[pos + has_sep :]
 
-    show_plugin_help = "-h" in args.extra_args or "--help" in args.extra_args
+    if not args.targets:
+        raise CliException("Expected at least 1 target dataset")
 
     dst_dir = args.dst_dir
     if dst_dir:
@@ -222,17 +187,7 @@ def merge_command(args):
         dst_dir = generate_next_file_name("merged")
     dst_dir = osp.abspath(dst_dir)
 
-    project = None
-    try:
-        project = scope_add(load_project(args.project_dir))
-    except ProjectNotFoundError:
-        if not show_plugin_help and len(args.targets) == 1 and args.project_dir:
-            raise
-
-    if project is not None:
-        env = project.env
-    else:
-        env = DEFAULT_ENVIRONMENT
+    env = DEFAULT_ENVIRONMENT
 
     try:
         exporter = env.exporters[args.format]
@@ -243,14 +198,12 @@ def merge_command(args):
 
     source_datasets = []
     try:
-        if len(args.targets) == 1:
-            source_datasets.append(project.working_tree.make_dataset())
-
-        for t in args.targets:
-            target_dataset, target_project = parse_full_revpath(t, project)
-            if target_project:
-                scope_add(target_project)
-            source_datasets.append(target_dataset)
+        for target in args.targets:
+            try:
+                dataset = parse_dataset_pathspec(target, env=env)
+            except Exception as e:
+                raise CliException(str(e))
+            source_datasets.append(dataset)
     except Exception as e:
         raise CliException(str(e))
 

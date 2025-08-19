@@ -17,7 +17,7 @@ from ..util.telemetry_utils import (
 )
 from ..version import __version__
 from . import contexts, helpers
-from .commands import get_non_project_commands, get_project_commands
+from .commands import get_non_project_commands
 from .util import add_subparser, make_subcommands_help
 from .util.errors import CliException
 
@@ -76,9 +76,6 @@ deprecated = "[DEPRECATED, will be removed in 1.12]"
 # TODO: revisit during CLI refactoring
 def _get_known_contexts():
     return [
-        ("model", contexts.model, f"{deprecated} Actions with models"),
-        ("project", contexts.project, f"{deprecated} Actions with projects"),
-        ("source", contexts.source, f"{deprecated} Actions with data sources"),
         ("util", contexts.util, "Auxillary tools and utilities"),
     ]
 
@@ -95,7 +92,7 @@ def _get_helper_commands():
 
 def _get_sensitive_args():
     known_contexts = _get_known_contexts()
-    known_commands = get_project_commands() + get_non_project_commands() + _get_helper_commands()
+    known_commands = get_non_project_commands() + _get_helper_commands()
 
     res = {}
     for _, command, _ in known_contexts + known_commands:

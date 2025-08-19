@@ -8,12 +8,11 @@ import os
 import os.path as osp
 
 from datumaro.components.environment import DEFAULT_ENVIRONMENT
-from datumaro.components.errors import ProjectNotFoundError
-from datumaro.util.scope import scope_add, scoped
+from datumaro.util.scope import scoped
 
 from ..util import MultilineFormatter
+from ..util.dataset_utils import parse_dataset_pathspec
 from ..util.errors import CliException
-from ..util.project import load_project, parse_full_revpath
 
 
 def build_parser(parser_ctor=argparse.ArgumentParser):
@@ -41,48 +40,26 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         and after the '--' separator. Particularly, this is useful to include
         images in the output dataset with '--save-media'.|n
         |n
-        This command can be applied to the current project targets or
-        arbitrary datasets outside a project. Note that if the target dataset
-        is read-only (e.g. if it is a project, stage or a cache entry),
-        the output directory must be provided.|n
+        This command can be applied to arbitrary datasets.|n
         |n
         This command has the following invocation syntax:
-        - %(prog)s <target dataset revpath> <patch dataset revpath>|n
+        - %(prog)s <target dataset path> <patch dataset path>|n
         |n
-        <revpath> - either a dataset path or a revision path. The full
-        syntax is:|n
-        - Dataset paths:|n
+        <dataset path> - a dataset path with optional format specification:|n
         |s|s- <dataset path>[ :<format> ]|n
-        - Revision paths:|n
-        |s|s- <project path> [ @<rev> ] [ :<target> ]|n
-        |s|s- <rev> [ :<target> ]|n
-        |s|s- <target>|n
-        |n
-        The current project (-p/--project) is also used as a context for
-        plugins, so it can be useful for dataset paths having custom formats.
-        When not specified, the current project's working tree is used.|n
         |n
         Examples:|n
         - Update a VOC-like dataset with COCO-like annotations:|n
         |s|s%(prog)s --overwrite dataset1/:voc dataset2/:coco -- --save-media|n
         |n
-        - Generate a patched dataset, based on a project:|n
-        |s|s%(prog)s -o patched_proj1/ proj1/ proj2/|n
-        |n
-        - Update the "source1" source in the current project with a dataset:|n
-        |s|s%(prog)s -p proj/ --overwrite source1 path/to/dataset2:coco|n
-        |n
-        - Generate a patched source from a previous revision and a dataset:|n
-        |s|s%(prog)s -o new_src2/ HEAD~2:source-2 path/to/dataset2:yolo|n
-        |n
-        - Update a dataset in a custom format, described in a project plugin:|n
-        |s|s%(prog)s -p proj/ --overwrite dataset/:my_format dataset2/:coco
+        - Generate a patched dataset:|n
+        |s|s%(prog)s -o patched_dataset/ dataset1/ dataset2/|n
         """,
         formatter_class=MultilineFormatter,
     )
 
-    parser.add_argument("target", help="Target dataset revpath")
-    parser.add_argument("patch", help="Patch dataset revpath")
+    parser.add_argument("target", help="Target dataset path")
+    parser.add_argument("patch", help="Patch dataset path")
     parser.add_argument(
         "-o",
         "--output-dir",
@@ -94,12 +71,6 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         "--overwrite",
         action="store_true",
         help="Overwrite existing files in the save directory, " "if it is not empty",
-    )
-    parser.add_argument(
-        "-p",
-        "--project",
-        dest="project_dir",
-        help="Directory of the 'current' project (default: current dir)",
     )
     parser.add_argument(
         "extra_args",
@@ -115,48 +86,39 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
 
 def get_sensitive_args():
     return {
-        patch_command: ["target", "patch", "dst_dir", "project_dir", "extra_args"],
+        patch_command: ["target", "patch", "dst_dir", "extra_args"],
     }
 
 
 @scoped
 def patch_command(args):
-    project = None
-    try:
-        project = scope_add(load_project(args.project_dir))
-    except ProjectNotFoundError:
-        if args.project_dir:
-            raise
+    env = DEFAULT_ENVIRONMENT
 
-    if project is not None:
-        env = project.env
-    else:
-        env = DEFAULT_ENVIRONMENT
+    # Parse target and patch datasets
+    target_dataset = parse_dataset_pathspec(args.target, env)
+    patch_dataset = parse_dataset_pathspec(args.patch, env)
 
-    target_dataset, _project = parse_full_revpath(args.target, project)
-    if _project is not None:
-        scope_add(_project)
-
-    try:
-        exporter = env.exporters[target_dataset.format]
-    except KeyError:
-        raise CliException("Exporter for format '%s' is not found" % args.format)
-
-    extra_args = exporter.parse_cmdline(args.extra_args)
-
+    # Determine output directory
     dst_dir = args.dst_dir or target_dataset.data_path
+
     if not args.overwrite and osp.isdir(dst_dir) and os.listdir(dst_dir):
         raise CliException(
             "Directory '%s' already exists " "(pass --overwrite to overwrite)" % dst_dir
         )
     dst_dir = osp.abspath(dst_dir)
 
-    patch_dataset, _project = parse_full_revpath(args.patch, project)
-    if _project is not None:
-        scope_add(_project)
+    # Get the exporter for the target format
+    try:
+        exporter = env.exporters[target_dataset.format]
+    except KeyError:
+        raise CliException("Exporter for format '%s' is not found" % target_dataset.format)
 
+    extra_args = exporter.parse_cmdline(args.extra_args)
+
+    # Apply the patch
     target_dataset.update(patch_dataset)
 
+    # Save the updated dataset
     target_dataset.save(save_dir=dst_dir, **extra_args)
 
     log.info("Patched dataset has been saved to '%s'" % dst_dir)

@@ -5,12 +5,11 @@
 import json
 import logging as log
 import os
-from argparse import Namespace
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Dict
 
-from datumaro.cli.commands.require_project.modification import create, import_
+from datumaro.components.dataset import Dataset
 
 from ...util.errors import CliException
 from . import IDatasetDownloader
@@ -72,38 +71,32 @@ class KaggleDatasetDownloader(IDatasetDownloader):
                 )
             log.info(f"Getting subset {subset}...")
             import_kwargs = import_kwargs["subsets"][subset]
+
+        # Get format from kwargs or extra_args
         if extra_args:
-            parsed = import_.build_parser().parse(extra_args)
-            format = parsed.format
+            # Parse extra_args to get format - simplified approach
+            format_name = import_kwargs.get("format", "auto")
+            for arg in extra_args:
+                if arg.startswith("--format="):
+                    format_name = arg.split("=", 1)[1]
+                    break
         else:
-            format = import_kwargs.pop("format")
+            format_name = import_kwargs.pop("format", "auto")
 
         with TemporaryDirectory() as tmp_dir:
             kaggle.api.dataset_download_cli(dataset_id, path=tmp_dir, force=overwrite, unzip=True)
-            create.create_command(Namespace(dst_dir=dst_dir))
             make_all_paths_absolute(import_kwargs, tmp_dir)
-            if not extra_args:
-                extra_args = {}
-                for k, v in import_kwargs.items():
-                    if isinstance(v, (dict, list, tuple)):
-                        extra_args[k] = json.dumps(v)
-                    else:
-                        extra_args[k] = str(v)
-                extra_args = [f"--{k}={v}" for k, v in extra_args.items()]
-            source_name = kaggle.api.split_dataset_string(dataset_id)[1]
-            import_.import_command(
-                Namespace(
-                    _positionals=[],
-                    url=tmp_dir,
-                    project_dir=dst_dir,
-                    format=format,
-                    extra_args=extra_args,
-                    name=source_name,
-                    rpath=None,
-                    no_check=False,
-                )
-            )
-            log.info("Dataset downloaded successfully.")
+
+            # Import dataset directly and export to destination
+            try:
+                dataset = Dataset.import_from(tmp_dir, format_name, **import_kwargs)
+                if dst_dir:
+                    dataset.export(dst_dir, format_name if output_format is None else output_format)
+                    log.info(f"Dataset downloaded and exported to {dst_dir} successfully.")
+                else:
+                    log.info("Dataset downloaded successfully to temporary directory.")
+            except Exception as e:
+                raise CliException(f"Failed to import dataset: {e}")
 
     @classmethod
     def describe(cls, report_format="txt", report_file=None) -> None:
