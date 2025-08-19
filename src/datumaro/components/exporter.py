@@ -13,7 +13,6 @@ import attr
 from attrs import define, field
 
 from datumaro.components.cli_plugin import CliPlugin
-from datumaro.components.crypter import NULL_CRYPTER, Crypter
 from datumaro.components.dataset_base import DatasetItem, IDataset
 from datumaro.components.errors import (
     AnnotationExportError,
@@ -228,7 +227,6 @@ class Exporter(CliPlugin):
         name=None,
         subdir=None,
         basedir=None,
-        crypter: Crypter = NULL_CRYPTER,
     ):
         assert not (
             (subdir or name or basedir) and path
@@ -242,7 +240,7 @@ class Exporter(CliPlugin):
         path = path or osp.join(basedir, self._make_image_filename(item, name=name, subdir=subdir))
         path = osp.abspath(path)
 
-        item.media.save(path, crypter=crypter)
+        item.media.save(path)
 
     def _save_point_cloud(self, item=None, path=None, *, name=None, subdir=None, basedir=None):
         assert not (
@@ -258,7 +256,7 @@ class Exporter(CliPlugin):
         path = osp.abspath(path)
 
         os.makedirs(osp.dirname(path), exist_ok=True)
-        item.media.save(path, crypter=NULL_CRYPTER)
+        item.media.save(path)
 
     def _save_meta_file(self, path):
         save_meta_file(path, self._extractor.categories())
@@ -281,7 +279,6 @@ class ExportContextComponent:
         images_dir: str,
         pcd_dir: str,
         video_dir: str,
-        crypter: Crypter = NULL_CRYPTER,
         image_ext: Optional[str] = None,
         default_image_ext: Optional[str] = None,
         source_path: Optional[str] = None,
@@ -291,7 +288,6 @@ class ExportContextComponent:
         self._images_dir = images_dir
         self._pcd_dir = pcd_dir
         self._video_dir = video_dir
-        self._crypter = crypter
         self._image_ext = image_ext
         self._default_image_ext = default_image_ext
         self._source_path = source_path
@@ -355,7 +351,7 @@ class ExportContextComponent:
         path = osp.abspath(path)
 
         os.makedirs(osp.dirname(path), exist_ok=True)
-        item.media.save(path, crypter=self._crypter if encryption else NULL_CRYPTER)
+        item.media.save(path)
 
     def save_point_cloud(
         self,
@@ -382,7 +378,7 @@ class ExportContextComponent:
             basedir = osp.join(basedir, subdir) if subdir is not None else basedir
             return {"fp": osp.join(basedir, self.make_pcd_extra_image_filename(item, i, image))}
 
-        item.media.save(path, helper, crypter=NULL_CRYPTER)
+        item.media.save(path, helper)
 
     def save_video(
         self,
@@ -407,9 +403,9 @@ class ExportContextComponent:
         if not osp.exists(path):
             os.makedirs(osp.dirname(path), exist_ok=True)
             if isinstance(item.media, VideoFrame):
-                item.media.video.save(path, crypter=NULL_CRYPTER)
+                item.media.video.save(path)
             else:  # Video
-                item.media.save(path, crypter=NULL_CRYPTER)
+                item.media.save(path)
 
     @property
     def images_dir(self) -> str:
@@ -426,10 +422,6 @@ class ExportContextComponent:
     @property
     def save_media(self) -> bool:
         return self._save_media
-
-    @property
-    def crypter(self) -> Crypter:
-        return self._crypter
 
     @property
     def source_path(self) -> str:

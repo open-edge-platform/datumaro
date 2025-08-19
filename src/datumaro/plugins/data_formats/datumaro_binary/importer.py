@@ -18,15 +18,6 @@ class DatumaroBinaryImporter(DatumaroImporter):
     def build_cmdline_parser(cls, **kwargs):
         parser = super().build_cmdline_parser(**kwargs)
         parser.add_argument(
-            "--encryption-key",
-            type=str,
-            default=None,
-            help="If the dataset is encrypted, "
-            "it (secret key) is needed to import the dataset. "
-            "If the incorrect key is given, it cannot be imported."
-            "Ignore this argument if your dataset does not require encryption.",
-        )
-        parser.add_argument(
             "--num-workers",
             type=int,
             default=0,

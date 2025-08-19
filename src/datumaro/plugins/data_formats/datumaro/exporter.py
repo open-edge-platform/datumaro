@@ -34,7 +34,6 @@ from datumaro.components.annotation import (
     RleMask,
     Shape,
 )
-from datumaro.components.crypter import NULL_CRYPTER
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.dataset_item_storage import ItemStatus
 from datumaro.components.errors import PathSeparatorInSubsetNameError
@@ -508,7 +507,6 @@ class DatumaroExporter(Exporter):
             images_dir=images_dir,
             pcd_dir=pcd_dir,
             video_dir=video_dir,
-            crypter=NULL_CRYPTER,
             image_ext=self._image_ext,
             default_image_ext=self._default_image_ext,
         )
