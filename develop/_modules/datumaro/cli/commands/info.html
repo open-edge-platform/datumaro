@@ -350,11 +350,11 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationType</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetMergeError</span><span class="p">,</span> <span class="n">MissingObjectError</span><span class="p">,</span> <span class="n">ProjectNotFoundError</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.scope</span><span class="w"> </span><span class="kn">import</span> <span class="n">scope_add</span><span class="p">,</span> <span class="n">scoped</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">MissingObjectError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.scope</span><span class="w"> </span><span class="kn">import</span> <span class="n">scoped</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">..util</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultilineFormatter</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..util.project</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_project</span><span class="p">,</span> <span class="n">parse_full_revpath</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..util.dataset_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_dataset_pathspec</span>
 
 
 <div class="viewcode-block" id="build_parser">
@@ -363,45 +363,27 @@ document.write(`
     <span class="n">parser</span> <span class="o">=</span> <span class="n">parser_ctor</span><span class="p">(</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Prints dataset overview&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        Prints info about the dataset at &lt;revpath&gt;, or about the current</span>
-<span class="s2">        project&#39;s combined dataset, if none is specified.|n</span>
+<span class="s2">        Prints info about the dataset at the specified path.|n</span>
 <span class="s2">        |n</span>
-<span class="s2">        &lt;revpath&gt; - either a dataset path or a revision path. The full</span>
-<span class="s2">        syntax is:|n</span>
-<span class="s2">        - Dataset paths:|n</span>
+<span class="s2">        &lt;dataset_path&gt; - dataset path with optional format specification:|n</span>
 <span class="s2">        |s|s- &lt;dataset path&gt;[ :&lt;format&gt; ]|n</span>
-<span class="s2">        - Revision paths:|n</span>
-<span class="s2">        |s|s- &lt;project path&gt; [ @&lt;rev&gt; ] [ :&lt;target&gt; ]|n</span>
-<span class="s2">        |s|s- &lt;rev&gt; [ :&lt;target&gt; ]|n</span>
-<span class="s2">        |s|s- &lt;target&gt;|n</span>
-<span class="s2">        |n</span>
-<span class="s2">        Both forms use the -p/--project as a context for plugins. It can be</span>
-<span class="s2">        useful for dataset paths in targets. When not specified, the current</span>
-<span class="s2">        project&#39;s working tree is used.|n</span>
 <span class="s2">        |n</span>
 <span class="s2">        Examples:|n</span>
-<span class="s2">        - Print dataset info for the current project&#39;s working tree:|n</span>
-<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2">|n</span>
-<span class="s2">        |n</span>
 <span class="s2">        - Print dataset info for a path and a format name:|n</span>
 <span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> path/to/dataset:voc|n</span>
 <span class="s2">        |n</span>
-<span class="s2">        - Print dataset info for a source from a past revision:|n</span>
-<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> HEAD~2:source-2</span>
+<span class="s2">        - Print dataset info for a COCO dataset:|n</span>
+<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> path/to/dataset:coco</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span>
         <span class="n">formatter_class</span><span class="o">=</span><span class="n">MultilineFormatter</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;?&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;project&quot;</span><span class="p">,</span> <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;revpath&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Target dataset revpath&quot;</span>
+        <span class="s2">&quot;target&quot;</span><span class="p">,</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;dataset_path&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Target dataset path with optional format (path:format)&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--all&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Print all information&quot;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;-p&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;--project&quot;</span><span class="p">,</span>
-        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;project_dir&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Directory of the current project (default: current dir)&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="n">info_command</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">parser</span></div>
@@ -414,7 +396,6 @@ document.write(`
     <span class="k">return</span> <span class="p">{</span>
         <span class="n">info_command</span><span class="p">:</span> <span class="p">[</span>
             <span class="s2">&quot;target&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;project_dir&quot;</span><span class="p">,</span>
         <span class="p">],</span>
     <span class="p">}</span></div>
 
@@ -424,31 +405,14 @@ document.write(`
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.commands.info.html#datumaro.cli.commands.info.info_command">[docs]</a>
 <span class="nd">@scoped</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">info_command</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
-    <span class="n">project</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">project</span> <span class="o">=</span> <span class="n">scope_add</span><span class="p">(</span><span class="n">load_project</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">project_dir</span><span class="p">))</span>
-    <span class="k">except</span> <span class="n">ProjectNotFoundError</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">project_dir</span><span class="p">:</span>
-            <span class="k">raise</span>
-
     <span class="n">dataset</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">dataset_problem</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="c1"># TODO: avoid computing working tree hashes</span>
-        <span class="n">dataset</span><span class="p">,</span> <span class="n">target_project</span> <span class="o">=</span> <span class="n">parse_full_revpath</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">project</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">target_project</span><span class="p">:</span>
-            <span class="n">scope_add</span><span class="p">(</span><span class="n">target_project</span><span class="p">)</span>
-    <span class="k">except</span> <span class="n">DatasetMergeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">dataset_problem</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;Can&#39;t merge project sources automatically: </span><span class="si">%s</span><span class="s2">. &quot;</span>
-            <span class="s2">&quot;The conflicting sources are: </span><span class="si">%s</span><span class="s2">&quot;</span>
-            <span class="o">%</span> <span class="p">(</span>
-                <span class="n">e</span><span class="p">,</span>
-                <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">sources</span><span class="p">),</span>
-            <span class="p">)</span>
-        <span class="p">)</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">parse_dataset_pathspec</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">target</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">MissingObjectError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="n">dataset_problem</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">dataset_problem</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Error loading dataset: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">print_dataset_info</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">length:&quot;</span> <span class="o">%</span> <span class="n">indent</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">))</span>

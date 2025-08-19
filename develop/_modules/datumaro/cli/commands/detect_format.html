@@ -350,12 +350,10 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.cli.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultilineFormatter</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.cli.util.project</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_project</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.environment</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_ENVIRONMENT</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProjectNotFoundError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.format_detection</span><span class="w"> </span><span class="kn">import</span> <span class="n">RejectionReason</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">dump_json_file</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.scope</span><span class="w"> </span><span class="kn">import</span> <span class="n">scope_add</span><span class="p">,</span> <span class="n">scoped</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.scope</span><span class="w"> </span><span class="kn">import</span> <span class="n">scoped</span>
 
 
 <div class="viewcode-block" id="build_parser">
@@ -420,17 +418,7 @@ document.write(`
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.commands.detect_format.html#datumaro.cli.commands.detect_format.detect_format_command">[docs]</a>
 <span class="nd">@scoped</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">detect_format_command</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
-    <span class="n">project</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">project</span> <span class="o">=</span> <span class="n">scope_add</span><span class="p">(</span><span class="n">load_project</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">project_dir</span><span class="p">))</span>
-    <span class="k">except</span> <span class="n">ProjectNotFoundError</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">project_dir</span><span class="p">:</span>
-            <span class="k">raise</span>
-
-    <span class="k">if</span> <span class="n">project</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">env</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">env</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">env</span> <span class="o">=</span> <span class="n">DEFAULT_ENVIRONMENT</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">DEFAULT_ENVIRONMENT</span>
 
     <span class="n">report</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;rejected_formats&quot;</span><span class="p">:</span> <span class="p">{}}</span>
 

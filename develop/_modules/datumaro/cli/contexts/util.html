@@ -351,8 +351,8 @@ document.write(`
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.cli.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultilineFormatter</span><span class="p">,</span> <span class="n">add_subparser</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.cli.util.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">CliException</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.cli.util.project</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_next_file_name</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.os_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_next_name</span>
 
 
 <div class="viewcode-block" id="build_split_video_parser">
@@ -440,7 +440,8 @@ document.write(`
                 <span class="s2">&quot;Directory &#39;</span><span class="si">%s</span><span class="s2">&#39; already exists &quot;</span> <span class="s2">&quot;(pass --overwrite to overwrite)&quot;</span> <span class="o">%</span> <span class="n">dst_dir</span>
             <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">dst_dir</span> <span class="o">=</span> <span class="n">generate_next_file_name</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">-frames&quot;</span> <span class="o">%</span> <span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">src_path</span><span class="p">))</span>
+        <span class="n">basename</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">-frames&quot;</span> <span class="o">%</span> <span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">src_path</span><span class="p">)</span>
+        <span class="n">dst_dir</span> <span class="o">=</span> <span class="n">generate_next_name</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">),</span> <span class="n">basename</span><span class="p">)</span>
     <span class="n">dst_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">dst_dir</span><span class="p">)</span>
 
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Exporting frames...&quot;</span><span class="p">)</span>

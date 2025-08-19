@@ -350,12 +350,11 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">argparse</span><span class="w"> </span><span class="kn">import</span> <span class="n">Namespace</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tempfile</span><span class="w"> </span><span class="kn">import</span> <span class="n">TemporaryDirectory</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.cli.commands.require_project.modification</span><span class="w"> </span><span class="kn">import</span> <span class="n">create</span><span class="p">,</span> <span class="n">import_</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">...util.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">CliException</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">IDatasetDownloader</span>
@@ -424,38 +423,32 @@ document.write(`
                 <span class="p">)</span>
             <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Getting subset </span><span class="si">{</span><span class="n">subset</span><span class="si">}</span><span class="s2">...&quot;</span><span class="p">)</span>
             <span class="n">import_kwargs</span> <span class="o">=</span> <span class="n">import_kwargs</span><span class="p">[</span><span class="s2">&quot;subsets&quot;</span><span class="p">][</span><span class="n">subset</span><span class="p">]</span>
+
+        <span class="c1"># Get format from kwargs or extra_args</span>
         <span class="k">if</span> <span class="n">extra_args</span><span class="p">:</span>
-            <span class="n">parsed</span> <span class="o">=</span> <span class="n">import_</span><span class="o">.</span><span class="n">build_parser</span><span class="p">()</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">extra_args</span><span class="p">)</span>
-            <span class="nb">format</span> <span class="o">=</span> <span class="n">parsed</span><span class="o">.</span><span class="n">format</span>
+            <span class="c1"># Parse extra_args to get format - simplified approach</span>
+            <span class="n">format_name</span> <span class="o">=</span> <span class="n">import_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;format&quot;</span><span class="p">,</span> <span class="s2">&quot;auto&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">extra_args</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">arg</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;--format=&quot;</span><span class="p">):</span>
+                    <span class="n">format_name</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">break</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="nb">format</span> <span class="o">=</span> <span class="n">import_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;format&quot;</span><span class="p">)</span>
+            <span class="n">format_name</span> <span class="o">=</span> <span class="n">import_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;format&quot;</span><span class="p">,</span> <span class="s2">&quot;auto&quot;</span><span class="p">)</span>
 
         <span class="k">with</span> <span class="n">TemporaryDirectory</span><span class="p">()</span> <span class="k">as</span> <span class="n">tmp_dir</span><span class="p">:</span>
             <span class="n">kaggle</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">dataset_download_cli</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">tmp_dir</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">overwrite</span><span class="p">,</span> <span class="n">unzip</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="n">create</span><span class="o">.</span><span class="n">create_command</span><span class="p">(</span><span class="n">Namespace</span><span class="p">(</span><span class="n">dst_dir</span><span class="o">=</span><span class="n">dst_dir</span><span class="p">))</span>
             <span class="n">make_all_paths_absolute</span><span class="p">(</span><span class="n">import_kwargs</span><span class="p">,</span> <span class="n">tmp_dir</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">extra_args</span><span class="p">:</span>
-                <span class="n">extra_args</span> <span class="o">=</span> <span class="p">{}</span>
-                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">import_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
-                        <span class="n">extra_args</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">extra_args</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-                <span class="n">extra_args</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;--</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">v</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">extra_args</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
-            <span class="n">source_name</span> <span class="o">=</span> <span class="n">kaggle</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">split_dataset_string</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">import_</span><span class="o">.</span><span class="n">import_command</span><span class="p">(</span>
-                <span class="n">Namespace</span><span class="p">(</span>
-                    <span class="n">_positionals</span><span class="o">=</span><span class="p">[],</span>
-                    <span class="n">url</span><span class="o">=</span><span class="n">tmp_dir</span><span class="p">,</span>
-                    <span class="n">project_dir</span><span class="o">=</span><span class="n">dst_dir</span><span class="p">,</span>
-                    <span class="nb">format</span><span class="o">=</span><span class="nb">format</span><span class="p">,</span>
-                    <span class="n">extra_args</span><span class="o">=</span><span class="n">extra_args</span><span class="p">,</span>
-                    <span class="n">name</span><span class="o">=</span><span class="n">source_name</span><span class="p">,</span>
-                    <span class="n">rpath</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                    <span class="n">no_check</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-                <span class="p">)</span>
-            <span class="p">)</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Dataset downloaded successfully.&quot;</span><span class="p">)</span></div>
+
+            <span class="c1"># Import dataset directly and export to destination</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">,</span> <span class="n">format_name</span><span class="p">,</span> <span class="o">**</span><span class="n">import_kwargs</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">dst_dir</span><span class="p">:</span>
+                    <span class="n">dataset</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="n">dst_dir</span><span class="p">,</span> <span class="n">format_name</span> <span class="k">if</span> <span class="n">output_format</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">output_format</span><span class="p">)</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dataset downloaded and exported to </span><span class="si">{</span><span class="n">dst_dir</span><span class="si">}</span><span class="s2"> successfully.&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Dataset downloaded successfully to temporary directory.&quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">CliException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to import dataset: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="KaggleDatasetDownloader.describe">

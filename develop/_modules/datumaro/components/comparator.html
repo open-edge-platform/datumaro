@@ -354,8 +354,18 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">attr</span><span class="w"> </span><span class="kn">import</span> <span class="n">attrib</span><span class="p">,</span> <span class="n">attrs</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">tabulate</span><span class="w"> </span><span class="kn">import</span> <span class="n">tabulate</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.cli.util.project</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_next_file_name</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">LabelCategories</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.os_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_next_name</span>
+
+
+<div class="viewcode-block" id="generate_next_file_name">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.comparator.html#datumaro.components.comparator.generate_next_file_name">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_next_file_name</span><span class="p">(</span><span class="n">basename</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate next file name using the core utility function.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">generate_next_name</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">basedir</span><span class="p">),</span> <span class="n">basename</span><span class="p">,</span> <span class="n">sep</span><span class="p">,</span> <span class="n">ext</span><span class="p">)</span></div>
+
+
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotations.matcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">LineMatcher</span><span class="p">,</span> <span class="n">PointsMatcher</span><span class="p">,</span> <span class="n">match_segments_pair</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.operations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>

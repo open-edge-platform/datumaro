@@ -354,22 +354,19 @@ document.write(`
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_FORMAT</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.environment</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_ENVIRONMENT</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProjectNotFoundError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.hl_ops</span><span class="w"> </span><span class="kn">import</span> <span class="n">HLOps</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.merge.intersect_merge</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntersectMerge</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.project</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProjectBuildTargets</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.scope</span><span class="w"> </span><span class="kn">import</span> <span class="n">scope_add</span><span class="p">,</span> <span class="n">scoped</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">..util</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultilineFormatter</span><span class="p">,</span> <span class="n">join_cli_args</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..util.dataset_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_next_file_name</span><span class="p">,</span> <span class="n">parse_dataset_pathspec</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..util.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">CliException</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..util.project</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_next_file_name</span><span class="p">,</span> <span class="n">load_project</span><span class="p">,</span> <span class="n">parse_full_revpath</span>
 
 
 <div class="viewcode-block" id="build_parser">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.commands.merge.html#datumaro.cli.commands.merge.build_parser">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">build_parser</span><span class="p">(</span><span class="n">parser_ctor</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">):</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">parser_ctor</span><span class="p">(</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Merge few datasets or projects&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Merge multiple datasets&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">        Merges multiple datasets into one and produces a new dataset.</span>
 <span class="s2">        The command can be useful if you want to merge several datasets</span>
@@ -399,28 +396,8 @@ document.write(`
 <span class="s2">        ground by voting or return a list of conflicts.</span>
 <span class="s2">        |n</span>
 <span class="s2">        |n</span>
-<span class="s2">        This command has multiple forms:|n</span>
-<span class="s2">        1) </span><span class="si">%(prog)s</span><span class="s2"> &lt;revpath&gt;|n</span>
-<span class="s2">        2) </span><span class="si">%(prog)s</span><span class="s2"> &lt;revpath&gt; &lt;revpath&gt; ...|n</span>
-<span class="s2">        |n</span>
-<span class="s2">        1 - Merges the current project&#39;s main target (&#39;project&#39;)</span>
-<span class="s2">        in the working tree with the specified dataset.|n</span>
-<span class="s2">        2 - Merges the specified datasets.</span>
-<span class="s2">        Note that the current project is not included in the list of merged</span>
-<span class="s2">        sources automatically.|n</span>
-<span class="s2">        |n</span>
-<span class="s2">        &lt;revpath&gt; - either a dataset path or a revision path. The full</span>
-<span class="s2">        syntax is:|n</span>
-<span class="s2">        - Dataset paths:|n</span>
+<span class="s2">        Dataset paths can optionally specify format:|n</span>
 <span class="s2">        |s|s- &lt;dataset path&gt;[ :&lt;format&gt; ]|n</span>
-<span class="s2">        - Revision paths:|n</span>
-<span class="s2">        |s|s- &lt;project path&gt; [ @&lt;rev&gt; ] [ :&lt;target&gt; ]|n</span>
-<span class="s2">        |s|s- &lt;rev&gt; [ :&lt;target&gt; ]|n</span>
-<span class="s2">        |s|s- &lt;target&gt;|n</span>
-<span class="s2">        |n</span>
-<span class="s2">        The current project (-p/--project) is used as a context for plugins.</span>
-<span class="s2">        It can be useful for dataset paths in targets. When not specified,</span>
-<span class="s2">        the current project&#39;s working tree is used.|n</span>
 <span class="s2">        |n</span>
 <span class="s2">        The output format can be specified with the &#39;-f/--format&#39; option.</span>
 <span class="s2">        Each dataset format has its own export</span>
@@ -430,24 +407,18 @@ document.write(`
 <span class="s2">        &#39;--save-media&#39; parameter.|n</span>
 <span class="s2">        |n</span>
 <span class="s2">        Examples:|n</span>
-<span class="s2">        - Merge annotations from 3 (or more) annotators:|n</span>
-<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> project1/ project2/ project3/|n</span>
+<span class="s2">        - Merge annotations from 3 (or more) datasets:|n</span>
+<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> dataset1/ dataset2/ dataset3/|n</span>
 <span class="s2">        |n</span>
 <span class="s2">        - Merge datasets with varying merge policies:|n</span>
-<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> project1/ project2/ -m &lt;union|intersect|exact&gt;|n</span>
+<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> dataset1/ dataset2/ -m &lt;union|intersect|exact&gt;|n</span>
 <span class="s2">        |n</span>
 <span class="s2">        - Check groups of the merged dataset for consistency:|n</span>
 <span class="s2">        |s|s|slook for groups consising of &#39;person&#39;, &#39;hand&#39; &#39;head&#39;, &#39;foot&#39;|n</span>
-<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> project1/ project2/ -g &#39;person,hand?,head,foot?&#39;|n</span>
+<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> dataset1/ dataset2/ -g &#39;person,hand?,head,foot?&#39;|n</span>
 <span class="s2">        |n</span>
 <span class="s2">        - Merge two datasets, specify formats:|n</span>
 <span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> path/to/dataset1:voc path/to/dataset2:coco|n</span>
-<span class="s2">        |n</span>
-<span class="s2">        - Merge the current working tree and a dataset:|n</span>
-<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> path/to/dataset2:coco|n</span>
-<span class="s2">        |n</span>
-<span class="s2">        - Merge a source from a previous revision and a dataset:|n</span>
-<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> HEAD~2:source-2 path/to/dataset2:yolo</span>
 <span class="s2">        |n</span>
 <span class="s2">        - Merge datasets and save in different format:|n</span>
 <span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> -f voc dataset1/:yolo path2/:coco -- --save-media</span>
@@ -481,12 +452,6 @@ document.write(`
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;-f&quot;</span><span class="p">,</span> <span class="s2">&quot;--format&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">DEFAULT_FORMAT</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Output format (default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span>
-    <span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;-p&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;--project&quot;</span><span class="p">,</span>
-        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;project_dir&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Directory of the &#39;current&#39; project (default: current dir)&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;extra_args&quot;</span><span class="p">,</span>
@@ -541,14 +506,13 @@ document.write(`
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.commands.merge.html#datumaro.cli.commands.merge.get_sensitive_args">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_sensitive_args</span><span class="p">():</span>
     <span class="k">return</span> <span class="p">{</span>
-        <span class="n">merge_command</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="s2">&quot;project_dir&quot;</span><span class="p">,</span> <span class="s2">&quot;dst_dir&quot;</span><span class="p">,</span> <span class="s2">&quot;groups&quot;</span><span class="p">],</span>
+        <span class="n">merge_command</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="s2">&quot;dst_dir&quot;</span><span class="p">,</span> <span class="s2">&quot;groups&quot;</span><span class="p">],</span>
     <span class="p">}</span></div>
 
 
 
 <div class="viewcode-block" id="merge_command">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.commands.merge.html#datumaro.cli.commands.merge.merge_command">[docs]</a>
-<span class="nd">@scoped</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">merge_command</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
     <span class="c1"># Workaround. Required positionals consume positionals from the end</span>
     <span class="n">args</span><span class="o">.</span><span class="n">_positionals</span> <span class="o">+=</span> <span class="n">join_cli_args</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="s2">&quot;extra_args&quot;</span><span class="p">)</span>
@@ -560,10 +524,11 @@ document.write(`
             <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentError</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Expected at least 1 target argument&quot;</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">pos</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">_positionals</span><span class="p">)</span>
-    <span class="n">args</span><span class="o">.</span><span class="n">targets</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">_positionals</span><span class="p">[:</span><span class="n">pos</span><span class="p">]</span> <span class="ow">or</span> <span class="p">[</span><span class="n">ProjectBuildTargets</span><span class="o">.</span><span class="n">MAIN_TARGET</span><span class="p">]</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">targets</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">_positionals</span><span class="p">[:</span><span class="n">pos</span><span class="p">]</span>
     <span class="n">args</span><span class="o">.</span><span class="n">extra_args</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">_positionals</span><span class="p">[</span><span class="n">pos</span> <span class="o">+</span> <span class="n">has_sep</span> <span class="p">:]</span>
 
-    <span class="n">show_plugin_help</span> <span class="o">=</span> <span class="s2">&quot;-h&quot;</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">extra_args</span> <span class="ow">or</span> <span class="s2">&quot;--help&quot;</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">extra_args</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">targets</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CliException</span><span class="p">(</span><span class="s2">&quot;Expected at least 1 target dataset&quot;</span><span class="p">)</span>
 
     <span class="n">dst_dir</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">dst_dir</span>
     <span class="k">if</span> <span class="n">dst_dir</span><span class="p">:</span>
@@ -575,17 +540,7 @@ document.write(`
         <span class="n">dst_dir</span> <span class="o">=</span> <span class="n">generate_next_file_name</span><span class="p">(</span><span class="s2">&quot;merged&quot;</span><span class="p">)</span>
     <span class="n">dst_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">dst_dir</span><span class="p">)</span>
 
-    <span class="n">project</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">project</span> <span class="o">=</span> <span class="n">scope_add</span><span class="p">(</span><span class="n">load_project</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">project_dir</span><span class="p">))</span>
-    <span class="k">except</span> <span class="n">ProjectNotFoundError</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">show_plugin_help</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">targets</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">args</span><span class="o">.</span><span class="n">project_dir</span><span class="p">:</span>
-            <span class="k">raise</span>
-
-    <span class="k">if</span> <span class="n">project</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">env</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">env</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">env</span> <span class="o">=</span> <span class="n">DEFAULT_ENVIRONMENT</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">DEFAULT_ENVIRONMENT</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">exporter</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">exporters</span><span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">format</span><span class="p">]</span>
@@ -596,14 +551,12 @@ document.write(`
 
     <span class="n">source_datasets</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">targets</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">source_datasets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">project</span><span class="o">.</span><span class="n">working_tree</span><span class="o">.</span><span class="n">make_dataset</span><span class="p">())</span>
-
-        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">targets</span><span class="p">:</span>
-            <span class="n">target_dataset</span><span class="p">,</span> <span class="n">target_project</span> <span class="o">=</span> <span class="n">parse_full_revpath</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">project</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">target_project</span><span class="p">:</span>
-                <span class="n">scope_add</span><span class="p">(</span><span class="n">target_project</span><span class="p">)</span>
-            <span class="n">source_datasets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">target_dataset</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">targets</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">dataset</span> <span class="o">=</span> <span class="n">parse_dataset_pathspec</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">CliException</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="n">source_datasets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">CliException</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
 

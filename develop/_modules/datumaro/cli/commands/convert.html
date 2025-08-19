@@ -357,8 +357,8 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.os_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_file_name</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">..util</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultilineFormatter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..util.dataset_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilterModes</span><span class="p">,</span> <span class="n">generate_next_file_name</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..util.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">CliException</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..util.project</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilterModes</span><span class="p">,</span> <span class="n">generate_next_file_name</span>
 
 
 <div class="viewcode-block" id="build_parser">
@@ -486,10 +486,6 @@ document.write(`
 
         <span class="n">fmt</span> <span class="o">=</span> <span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Source dataset format detected as </span><span class="si">{</span><span class="n">fmt</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="n">args</span><span class="o">.</span><span class="n">output_format</span><span class="p">:</span>
-        <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The source data format and the output data format is same as </span><span class="si">{</span><span class="n">fmt</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="mi">3</span>
 
     <span class="n">source</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
 

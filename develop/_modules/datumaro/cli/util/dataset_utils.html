@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>datumaro.cli.util.project &#8212; Datumaro 1.11.1 documentation</title>
+    <title>datumaro.cli.util.dataset_utils &#8212; Datumaro 1.11.1 documentation</title>
   
   
   
@@ -45,7 +45,7 @@
     <script src="../../../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/cli/util/project';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/cli/util/dataset_utils';</script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -342,7 +342,7 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <h1>Source code for datumaro.cli.util.project</h1><div class="highlight"><pre>
+  <h1>Source code for datumaro.cli.util.dataset_utils</h1><div class="highlight"><pre>
 <span></span><span class="c1"># Copyright (C) 2019-2021 Intel Corporation</span>
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
@@ -350,27 +350,15 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.cli.util.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">WrongRevpathError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.environment</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_ENVIRONMENT</span><span class="p">,</span> <span class="n">Environment</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatumaroError</span><span class="p">,</span> <span class="n">ProjectNotFoundError</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.project</span><span class="w"> </span><span class="kn">import</span> <span class="n">Project</span><span class="p">,</span> <span class="n">Revision</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.os_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_next_name</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.scope</span><span class="w"> </span><span class="kn">import</span> <span class="n">on_error_do</span><span class="p">,</span> <span class="n">scoped</span>
-
-
-<div class="viewcode-block" id="load_project">
-<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.project.html#datumaro.cli.commands.require_project.modification.add.load_project">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">load_project</span><span class="p">(</span><span class="n">project_dir</span><span class="p">,</span> <span class="n">readonly</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;load a Project.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">Project</span><span class="p">(</span><span class="n">project_dir</span><span class="p">,</span> <span class="n">readonly</span><span class="o">=</span><span class="n">readonly</span><span class="p">)</span></div>
-
 
 
 <div class="viewcode-block" id="generate_next_file_name">
-<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.project.html#datumaro.cli.commands.require_project.modification.add.generate_next_file_name">[docs]</a>
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.dataset_utils.html#datumaro.cli.commands.stats.generate_next_file_name">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">generate_next_file_name</span><span class="p">(</span><span class="n">basename</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    If basedir does not contain basename, returns basename,</span>
@@ -378,13 +366,12 @@ document.write(`
 <span class="sd">    and the number, next to the last used number in the basedir for</span>
 <span class="sd">    files with basename prefix. Optionally, appends ext.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="k">return</span> <span class="n">generate_next_name</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">basedir</span><span class="p">),</span> <span class="n">basename</span><span class="p">,</span> <span class="n">sep</span><span class="p">,</span> <span class="n">ext</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="parse_dataset_pathspec">
-<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.project.html#datumaro.cli.commands.require_project.modification.add.parse_dataset_pathspec">[docs]</a>
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.dataset_utils.html#datumaro.cli.commands.stats.parse_dataset_pathspec">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">parse_dataset_pathspec</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Environment</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dataset</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Parses Dataset paths. The syntax is:</span>
@@ -392,7 +379,6 @@ document.write(`
 
 <span class="sd">    Returns: a dataset from the parsed path</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        (?P&lt;dataset_path&gt;(?: [^:] | :[/\\] )+)</span>
@@ -407,134 +393,12 @@ document.write(`
 
     <span class="n">path</span> <span class="o">=</span> <span class="n">match</span><span class="p">[</span><span class="s2">&quot;dataset_path&quot;</span><span class="p">]</span>
     <span class="nb">format</span> <span class="o">=</span> <span class="n">match</span><span class="p">[</span><span class="s2">&quot;format&quot;</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">format</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">)</span></div>
-
-
-
-<div class="viewcode-block" id="parse_revspec">
-<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.project.html#datumaro.cli.commands.require_project.modification.add.parse_revspec">[docs]</a>
-<span class="nd">@scoped</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">parse_revspec</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ctx_project</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Project</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">Project</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Parses Revision paths. The syntax is:</span>
-<span class="sd">        - &lt;project path&gt; [ @&lt;rev&gt; ] [ :&lt;target&gt; ]</span>
-<span class="sd">        - &lt;rev&gt; [ :&lt;target&gt; ]</span>
-<span class="sd">        - &lt;target&gt;</span>
-<span class="sd">    The second and the third forms assume an existing &quot;current&quot; project.</span>
-
-<span class="sd">    Returns: the dataset and the project from the parsed path.</span>
-<span class="sd">        The project is only returned when specified in the revpath.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span>
-<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        (?P&lt;proj_path&gt;(?: [^@:] | :[/\\] )+)</span>
-<span class="sd">        (@(?P&lt;rev&gt;[^:]+))?</span>
-<span class="sd">        (:(?P&lt;source&gt;.+))?</span>
-<span class="sd">        &quot;&quot;&quot;</span><span class="p">,</span>
-        <span class="n">s</span><span class="p">,</span>
-        <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">VERBOSE</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Failed to recognize revspec in &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="n">s</span><span class="p">)</span>
-    <span class="n">match</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">groupdict</span><span class="p">()</span>
-
-    <span class="n">proj_path</span> <span class="o">=</span> <span class="n">match</span><span class="p">[</span><span class="s2">&quot;proj_path&quot;</span><span class="p">]</span>
-    <span class="n">rev</span> <span class="o">=</span> <span class="n">match</span><span class="p">[</span><span class="s2">&quot;rev&quot;</span><span class="p">]</span>
-    <span class="n">source</span> <span class="o">=</span> <span class="n">match</span><span class="p">[</span><span class="s2">&quot;source&quot;</span><span class="p">]</span>
-
-    <span class="n">target_project</span> <span class="o">=</span> <span class="kc">None</span>
-
-    <span class="k">assert</span> <span class="n">proj_path</span>
-    <span class="k">if</span> <span class="n">rev</span><span class="p">:</span>
-        <span class="n">target_project</span> <span class="o">=</span> <span class="n">load_project</span><span class="p">(</span><span class="n">proj_path</span><span class="p">,</span> <span class="n">readonly</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">project</span> <span class="o">=</span> <span class="n">target_project</span>
-    <span class="c1"># proj_path is either proj_path or rev or source name</span>
-    <span class="k">elif</span> <span class="n">Project</span><span class="o">.</span><span class="n">find_project_dir</span><span class="p">(</span><span class="n">proj_path</span><span class="p">):</span>
-        <span class="n">target_project</span> <span class="o">=</span> <span class="n">load_project</span><span class="p">(</span><span class="n">proj_path</span><span class="p">,</span> <span class="n">readonly</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">project</span> <span class="o">=</span> <span class="n">target_project</span>
-    <span class="k">elif</span> <span class="n">ctx_project</span><span class="p">:</span>
-        <span class="n">project</span> <span class="o">=</span> <span class="n">ctx_project</span>
-        <span class="k">if</span> <span class="n">project</span><span class="o">.</span><span class="n">is_ref</span><span class="p">(</span><span class="n">proj_path</span><span class="p">):</span>
-            <span class="n">rev</span> <span class="o">=</span> <span class="n">proj_path</span>
-        <span class="k">elif</span> <span class="ow">not</span> <span class="n">source</span><span class="p">:</span>
-            <span class="n">source</span> <span class="o">=</span> <span class="n">proj_path</span>
-
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">ProjectNotFoundError</span><span class="p">(</span>
-            <span class="s2">&quot;Failed to find project at &#39;</span><span class="si">%s</span><span class="s2">&#39;. &quot;</span>
-            <span class="s2">&quot;Specify project path with &#39;-p/--project&#39; or in the &quot;</span>
-            <span class="s2">&quot;target pathspec.&quot;</span> <span class="o">%</span> <span class="n">proj_path</span>
-        <span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">target_project</span><span class="p">:</span>
-        <span class="n">on_error_do</span><span class="p">(</span><span class="n">Project</span><span class="o">.</span><span class="n">close</span><span class="p">,</span> <span class="n">target_project</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-    <span class="n">tree</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">get_rev</span><span class="p">(</span><span class="n">rev</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">tree</span><span class="o">.</span><span class="n">make_dataset</span><span class="p">(</span><span class="n">source</span><span class="p">),</span> <span class="n">target_project</span></div>
-
-
-
-<div class="viewcode-block" id="parse_full_revpath">
-<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.project.html#datumaro.cli.commands.require_project.modification.add.parse_full_revpath">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">parse_full_revpath</span><span class="p">(</span>
-    <span class="n">s</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ctx_project</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Project</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Project</span><span class="p">]]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    revpath - either a Dataset path or a Revision path.</span>
-
-<span class="sd">    Returns: the dataset and the project from the parsed path</span>
-<span class="sd">      The project is only returned when specified in the revpath.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="n">ctx_project</span><span class="p">:</span>
-        <span class="n">env</span> <span class="o">=</span> <span class="n">ctx_project</span><span class="o">.</span><span class="n">env</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">env</span> <span class="o">=</span> <span class="n">DEFAULT_ENVIRONMENT</span>
-
-    <span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">parse_revspec</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">ctx_project</span><span class="o">=</span><span class="n">ctx_project</span><span class="p">)</span>
-    <span class="k">except</span> <span class="p">(</span><span class="n">DatumaroError</span><span class="p">,</span> <span class="ne">OSError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">parse_dataset_pathspec</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">),</span> <span class="kc">None</span>
-    <span class="k">except</span> <span class="p">(</span><span class="n">DatumaroError</span><span class="p">,</span> <span class="ne">OSError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
-
-    <span class="k">raise</span> <span class="n">WrongRevpathError</span><span class="p">(</span><span class="n">problems</span><span class="o">=</span><span class="n">errors</span><span class="p">)</span></div>
-
-
-
-<div class="viewcode-block" id="split_local_revpath">
-<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.project.html#datumaro.cli.commands.require_project.modification.add.split_local_revpath">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">split_local_revpath</span><span class="p">(</span><span class="n">revpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Revision</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Splits the given string into revpath components.</span>
-
-<span class="sd">    A local revpath is a path to a revision withing the current project.</span>
-<span class="sd">    The syntax is:</span>
-<span class="sd">        - [ &lt;revision&gt; : ] [ &lt;target&gt; ]</span>
-<span class="sd">    At least one part must be present.</span>
-
-<span class="sd">    Returns: (revision, build target)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">sep_pos</span> <span class="o">=</span> <span class="n">revpath</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="o">-</span><span class="mi">1</span> <span class="o">&lt;</span> <span class="n">sep_pos</span><span class="p">:</span>
-        <span class="n">rev</span> <span class="o">=</span> <span class="n">revpath</span><span class="p">[:</span><span class="n">sep_pos</span><span class="p">]</span>
-        <span class="n">target</span> <span class="o">=</span> <span class="n">revpath</span><span class="p">[</span><span class="n">sep_pos</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">rev</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-        <span class="n">target</span> <span class="o">=</span> <span class="n">revpath</span>
-
-    <span class="k">return</span> <span class="n">rev</span><span class="p">,</span> <span class="n">target</span></div>
+    <span class="k">return</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">format</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">env</span> <span class="ow">or</span> <span class="n">DEFAULT_ENVIRONMENT</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="FilterModes">
-<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.project.html#datumaro.cli.commands.require_project.modification.add.FilterModes">[docs]</a>
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.dataset_utils.html#datumaro.cli.commands.stats.FilterModes">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FilterModes</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="c1"># primary</span>
     <span class="n">items</span> <span class="o">=</span> <span class="mi">1</span>
@@ -549,7 +413,7 @@ document.write(`
     <span class="n">annotations_items</span> <span class="o">=</span> <span class="mi">3</span>
 
 <div class="viewcode-block" id="FilterModes.parse">
-<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.project.html#datumaro.cli.commands.require_project.modification.add.FilterModes.parse">[docs]</a>
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.dataset_utils.html#datumaro.cli.commands.stats.FilterModes.parse">[docs]</a>
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">parse</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
         <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
@@ -558,7 +422,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="FilterModes.make_filter_args">
-<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.project.html#datumaro.cli.commands.require_project.modification.add.FilterModes.make_filter_args">[docs]</a>
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.dataset_utils.html#datumaro.cli.commands.stats.FilterModes.make_filter_args">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">make_filter_args</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="bp">cls</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
@@ -575,7 +439,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="FilterModes.list_options">
-<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.project.html#datumaro.cli.commands.require_project.modification.add.FilterModes.list_options">[docs]</a>
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.dataset_utils.html#datumaro.cli.commands.stats.FilterModes.list_options">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">list_options</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot;+&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">cls</span><span class="p">]</span></div>

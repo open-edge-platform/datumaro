@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>datumaro.cli.util.project &#8212; Datumaro 1.11.1 documentation</title>
+    <title>datumaro.cli.util.dataset_utils &#8212; Datumaro 1.11.1 documentation</title>
   
   
   
@@ -46,11 +46,11 @@
     <script src="../../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/reference/_autosummary/datumaro.cli.util.project';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/reference/_autosummary/datumaro.cli.util.dataset_utils';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="datumaro.components" href="datumaro.components.html" />
-    <link rel="prev" title="datumaro.cli.util.errors" href="datumaro.cli.util.errors.html" />
+    <link rel="next" title="datumaro.cli.util.errors" href="datumaro.cli.util.errors.html" />
+    <link rel="prev" title="datumaro.cli.util.compare" href="datumaro.cli.util.compare.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -606,48 +606,30 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="module-datumaro.cli.util.project">
-<span id="datumaro-cli-util-project"></span><h1>datumaro.cli.util.project<a class="headerlink" href="#module-datumaro.cli.util.project" title="Link to this heading">#</a></h1>
+  <section id="module-datumaro.cli.util.dataset_utils">
+<span id="datumaro-cli-util-dataset-utils"></span><h1>datumaro.cli.util.dataset_utils<a class="headerlink" href="#module-datumaro.cli.util.dataset_utils" title="Link to this heading">#</a></h1>
 <p class="rubric">Functions</p>
 <table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.cli.util.project.generate_next_file_name" title="datumaro.cli.util.project.generate_next_file_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_next_file_name</span></code></a>(basename[, basedir, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.cli.util.dataset_utils.generate_next_file_name" title="datumaro.cli.util.dataset_utils.generate_next_file_name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">generate_next_file_name</span></code></a>(basename[, basedir, ...])</p></td>
 <td><p>If basedir does not contain basename, returns basename, otherwise generates a name by appending sep to the basename and the number, next to the last used number in the basedir for files with basename prefix.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.cli.util.project.load_project" title="datumaro.cli.util.project.load_project"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_project</span></code></a>(project_dir[, readonly])</p></td>
-<td><p>load a Project.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.cli.util.project.parse_dataset_pathspec" title="datumaro.cli.util.project.parse_dataset_pathspec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_dataset_pathspec</span></code></a>(s[, env])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.cli.util.dataset_utils.parse_dataset_pathspec" title="datumaro.cli.util.dataset_utils.parse_dataset_pathspec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_dataset_pathspec</span></code></a>(s[, env])</p></td>
 <td><p>Parses Dataset paths. The syntax is:</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.cli.util.project.parse_full_revpath" title="datumaro.cli.util.project.parse_full_revpath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_full_revpath</span></code></a>(s[, ctx_project])</p></td>
-<td><p>revpath - either a Dataset path or a Revision path.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.cli.util.project.parse_revspec" title="datumaro.cli.util.project.parse_revspec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parse_revspec</span></code></a>(s[, ctx_project])</p></td>
-<td><p>Parses Revision paths. The syntax is:</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.cli.util.project.split_local_revpath" title="datumaro.cli.util.project.split_local_revpath"><code class="xref py py-obj docutils literal notranslate"><span class="pre">split_local_revpath</span></code></a>(revpath)</p></td>
-<td><p>Splits the given string into revpath components.</p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Classes</p>
 <table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.cli.util.project.FilterModes" title="datumaro.cli.util.project.FilterModes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FilterModes</span></code></a>(value[, names, module, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.cli.util.dataset_utils.FilterModes" title="datumaro.cli.util.dataset_utils.FilterModes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FilterModes</span></code></a>(value[, names, module, ...])</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py function">
-<dt class="sig sig-object py" id="datumaro.cli.util.project.load_project">
-<span class="sig-prename descclassname"><span class="pre">datumaro.cli.util.project.</span></span><span class="sig-name descname"><span class="pre">load_project</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">project_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">readonly</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/datumaro/cli/util/project.html#load_project"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.cli.util.project.load_project" title="Link to this definition">#</a></dt>
-<dd><p>load a Project.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="datumaro.cli.util.project.generate_next_file_name">
-<span class="sig-prename descclassname"><span class="pre">datumaro.cli.util.project.</span></span><span class="sig-name descname"><span class="pre">generate_next_file_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basedir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/datumaro/cli/util/project.html#generate_next_file_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.cli.util.project.generate_next_file_name" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="datumaro.cli.util.dataset_utils.generate_next_file_name">
+<span class="sig-prename descclassname"><span class="pre">datumaro.cli.util.dataset_utils.</span></span><span class="sig-name descname"><span class="pre">generate_next_file_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basedir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/datumaro/cli/util/dataset_utils.html#generate_next_file_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.cli.util.dataset_utils.generate_next_file_name" title="Link to this definition">#</a></dt>
 <dd><p>If basedir does not contain basename, returns basename,
 otherwise generates a name by appending sep to the basename
 and the number, next to the last used number in the basedir for
@@ -655,8 +637,8 @@ files with basename prefix. Optionally, appends ext.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="datumaro.cli.util.project.parse_dataset_pathspec">
-<span class="sig-prename descclassname"><span class="pre">datumaro.cli.util.project.</span></span><span class="sig-name descname"><span class="pre">parse_dataset_pathspec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.components.environment.html#datumaro.components.environment.Environment" title="datumaro.components.environment.Environment"><span class="pre">Environment</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="datumaro.components.dataset.html#datumaro.components.dataset.Dataset" title="datumaro.components.dataset.Dataset"><span class="pre">Dataset</span></a></span></span><a class="reference internal" href="../../../_modules/datumaro/cli/util/project.html#parse_dataset_pathspec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.cli.util.project.parse_dataset_pathspec" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="datumaro.cli.util.dataset_utils.parse_dataset_pathspec">
+<span class="sig-prename descclassname"><span class="pre">datumaro.cli.util.dataset_utils.</span></span><span class="sig-name descname"><span class="pre">parse_dataset_pathspec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.components.environment.html#datumaro.components.environment.Environment" title="datumaro.components.environment.Environment"><span class="pre">Environment</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="datumaro.components.dataset.html#datumaro.components.dataset.Dataset" title="datumaro.components.dataset.Dataset"><span class="pre">Dataset</span></a></span></span><a class="reference internal" href="../../../_modules/datumaro/cli/util/dataset_utils.html#parse_dataset_pathspec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.cli.util.dataset_utils.parse_dataset_pathspec" title="Link to this definition">#</a></dt>
 <dd><dl class="simple">
 <dt>Parses Dataset paths. The syntax is:</dt><dd><ul class="simple">
 <li><p>&lt;dataset path&gt;[ :&lt;format&gt; ]</p></li>
@@ -666,106 +648,63 @@ files with basename prefix. Optionally, appends ext.</p>
 <p>Returns: a dataset from the parsed path</p>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="datumaro.cli.util.project.parse_revspec">
-<span class="sig-prename descclassname"><span class="pre">datumaro.cli.util.project.</span></span><span class="sig-name descname"><span class="pre">parse_revspec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ctx_project</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.components.project.html#datumaro.components.project.Project" title="datumaro.components.project.Project"><span class="pre">Project</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.13)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="datumaro.components.dataset.html#datumaro.components.dataset.Dataset" title="datumaro.components.dataset.Dataset"><span class="pre">Dataset</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="datumaro.components.project.html#datumaro.components.project.Project" title="datumaro.components.project.Project"><span class="pre">Project</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/datumaro/cli/util/project.html#parse_revspec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.cli.util.project.parse_revspec" title="Link to this definition">#</a></dt>
-<dd><dl class="simple">
-<dt>Parses Revision paths. The syntax is:</dt><dd><ul class="simple">
-<li><p>&lt;project path&gt; [ &#64;&lt;rev&gt; ] [ :&lt;target&gt; ]</p></li>
-<li><p>&lt;rev&gt; [ :&lt;target&gt; ]</p></li>
-<li><p>&lt;target&gt;</p></li>
-</ul>
-</dd>
-</dl>
-<p>The second and the third forms assume an existing “current” project.</p>
-<dl class="simple">
-<dt>Returns: the dataset and the project from the parsed path.</dt><dd><p>The project is only returned when specified in the revpath.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="datumaro.cli.util.project.parse_full_revpath">
-<span class="sig-prename descclassname"><span class="pre">datumaro.cli.util.project.</span></span><span class="sig-name descname"><span class="pre">parse_full_revpath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ctx_project</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.components.project.html#datumaro.components.project.Project" title="datumaro.components.project.Project"><span class="pre">Project</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.13)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="datumaro.components.dataset.html#datumaro.components.dataset.Dataset" title="datumaro.components.dataset.Dataset"><span class="pre">Dataset</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="datumaro.components.project.html#datumaro.components.project.Project" title="datumaro.components.project.Project"><span class="pre">Project</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/datumaro/cli/util/project.html#parse_full_revpath"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.cli.util.project.parse_full_revpath" title="Link to this definition">#</a></dt>
-<dd><p>revpath - either a Dataset path or a Revision path.</p>
-<dl class="simple">
-<dt>Returns: the dataset and the project from the parsed path</dt><dd><p>The project is only returned when specified in the revpath.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="datumaro.cli.util.project.split_local_revpath">
-<span class="sig-prename descclassname"><span class="pre">datumaro.cli.util.project.</span></span><span class="sig-name descname"><span class="pre">split_local_revpath</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">revpath</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.13)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><span class="pre">Revision</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/datumaro/cli/util/project.html#split_local_revpath"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.cli.util.project.split_local_revpath" title="Link to this definition">#</a></dt>
-<dd><p>Splits the given string into revpath components.</p>
-<p>A local revpath is a path to a revision withing the current project.
-The syntax is:</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>[ &lt;revision&gt; : ] [ &lt;target&gt; ]</p></li>
-</ul>
-</div></blockquote>
-<p>At least one part must be present.</p>
-<p>Returns: (revision, build target)</p>
-</dd></dl>
-
 <dl class="py class">
-<dt class="sig sig-object py" id="datumaro.cli.util.project.FilterModes">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datumaro.cli.util.project.</span></span><span class="sig-name descname"><span class="pre">FilterModes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/datumaro/cli/util/project.html#FilterModes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.cli.util.project.FilterModes" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="datumaro.cli.util.dataset_utils.FilterModes">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datumaro.cli.util.dataset_utils.</span></span><span class="sig-name descname"><span class="pre">FilterModes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qualname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/datumaro/cli/util/dataset_utils.html#FilterModes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.cli.util.dataset_utils.FilterModes" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="datumaro.components.dataset_item_storage.html#datumaro.components.dataset_item_storage.Enum" title="enum.Enum"><code class="xref py py-class docutils literal notranslate"><span class="pre">Enum</span></code></a></p>
 <dl class="py attribute">
-<dt class="sig sig-object py" id="datumaro.cli.util.project.FilterModes.items">
-<span class="sig-name descname"><span class="pre">items</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#datumaro.cli.util.project.FilterModes.items" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="datumaro.cli.util.dataset_utils.FilterModes.items">
+<span class="sig-name descname"><span class="pre">items</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#datumaro.cli.util.dataset_utils.FilterModes.items" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="datumaro.cli.util.project.FilterModes.annotations">
-<span class="sig-name descname"><span class="pre">annotations</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#datumaro.cli.util.project.FilterModes.annotations" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="datumaro.cli.util.dataset_utils.FilterModes.annotations">
+<span class="sig-name descname"><span class="pre">annotations</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#datumaro.cli.util.dataset_utils.FilterModes.annotations" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="datumaro.cli.util.project.FilterModes.items_annotations">
-<span class="sig-name descname"><span class="pre">items_annotations</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#datumaro.cli.util.project.FilterModes.items_annotations" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="datumaro.cli.util.dataset_utils.FilterModes.items_annotations">
+<span class="sig-name descname"><span class="pre">items_annotations</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#datumaro.cli.util.dataset_utils.FilterModes.items_annotations" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="datumaro.cli.util.project.FilterModes.i">
-<span class="sig-name descname"><span class="pre">i</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#datumaro.cli.util.project.FilterModes.i" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="datumaro.cli.util.dataset_utils.FilterModes.i">
+<span class="sig-name descname"><span class="pre">i</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#datumaro.cli.util.dataset_utils.FilterModes.i" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="datumaro.cli.util.project.FilterModes.a">
-<span class="sig-name descname"><span class="pre">a</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#datumaro.cli.util.project.FilterModes.a" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="datumaro.cli.util.dataset_utils.FilterModes.a">
+<span class="sig-name descname"><span class="pre">a</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#datumaro.cli.util.dataset_utils.FilterModes.a" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="datumaro.cli.util.project.FilterModes.i_a">
-<span class="sig-name descname"><span class="pre">i_a</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#datumaro.cli.util.project.FilterModes.i_a" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="datumaro.cli.util.dataset_utils.FilterModes.i_a">
+<span class="sig-name descname"><span class="pre">i_a</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#datumaro.cli.util.dataset_utils.FilterModes.i_a" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="datumaro.cli.util.project.FilterModes.a_i">
-<span class="sig-name descname"><span class="pre">a_i</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#datumaro.cli.util.project.FilterModes.a_i" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="datumaro.cli.util.dataset_utils.FilterModes.a_i">
+<span class="sig-name descname"><span class="pre">a_i</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#datumaro.cli.util.dataset_utils.FilterModes.a_i" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="datumaro.cli.util.project.FilterModes.annotations_items">
-<span class="sig-name descname"><span class="pre">annotations_items</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#datumaro.cli.util.project.FilterModes.annotations_items" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="datumaro.cli.util.dataset_utils.FilterModes.annotations_items">
+<span class="sig-name descname"><span class="pre">annotations_items</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#datumaro.cli.util.dataset_utils.FilterModes.annotations_items" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="datumaro.cli.util.project.FilterModes.parse">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/datumaro/cli/util/project.html#FilterModes.parse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.cli.util.project.FilterModes.parse" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="datumaro.cli.util.dataset_utils.FilterModes.parse">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">s</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/datumaro/cli/util/dataset_utils.html#FilterModes.parse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.cli.util.dataset_utils.FilterModes.parse" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="datumaro.cli.util.project.FilterModes.make_filter_args">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">make_filter_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/datumaro/cli/util/project.html#FilterModes.make_filter_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.cli.util.project.FilterModes.make_filter_args" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="datumaro.cli.util.dataset_utils.FilterModes.make_filter_args">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">make_filter_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/datumaro/cli/util/dataset_utils.html#FilterModes.make_filter_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.cli.util.dataset_utils.FilterModes.make_filter_args" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="datumaro.cli.util.project.FilterModes.list_options">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">list_options</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/datumaro/cli/util/project.html#FilterModes.list_options"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.cli.util.project.FilterModes.list_options" title="Link to this definition">#</a></dt>
+<dt class="sig sig-object py" id="datumaro.cli.util.dataset_utils.FilterModes.list_options">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">list_options</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/datumaro/cli/util/dataset_utils.html#FilterModes.list_options"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.cli.util.dataset_utils.FilterModes.list_options" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -783,20 +722,20 @@ The syntax is:</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="datumaro.cli.util.errors.html"
+       href="datumaro.cli.util.compare.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">datumaro.cli.util.errors</p>
+        <p class="prev-next-title">datumaro.cli.util.compare</p>
       </div>
     </a>
     <a class="right-next"
-       href="datumaro.components.html"
+       href="datumaro.cli.util.errors.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">datumaro.components</p>
+        <p class="prev-next-title">datumaro.cli.util.errors</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -818,24 +757,20 @@ The syntax is:</p>
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.util.project.load_project"><code class="docutils literal notranslate"><span class="pre">load_project()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.util.project.generate_next_file_name"><code class="docutils literal notranslate"><span class="pre">generate_next_file_name()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.util.project.parse_dataset_pathspec"><code class="docutils literal notranslate"><span class="pre">parse_dataset_pathspec()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.util.project.parse_revspec"><code class="docutils literal notranslate"><span class="pre">parse_revspec()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.util.project.parse_full_revpath"><code class="docutils literal notranslate"><span class="pre">parse_full_revpath()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.util.project.split_local_revpath"><code class="docutils literal notranslate"><span class="pre">split_local_revpath()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.util.project.FilterModes"><code class="docutils literal notranslate"><span class="pre">FilterModes</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.util.project.FilterModes.items"><code class="docutils literal notranslate"><span class="pre">FilterModes.items</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.util.project.FilterModes.annotations"><code class="docutils literal notranslate"><span class="pre">FilterModes.annotations</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.util.project.FilterModes.items_annotations"><code class="docutils literal notranslate"><span class="pre">FilterModes.items_annotations</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.util.project.FilterModes.i"><code class="docutils literal notranslate"><span class="pre">FilterModes.i</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.util.project.FilterModes.a"><code class="docutils literal notranslate"><span class="pre">FilterModes.a</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.util.project.FilterModes.i_a"><code class="docutils literal notranslate"><span class="pre">FilterModes.i_a</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.util.project.FilterModes.a_i"><code class="docutils literal notranslate"><span class="pre">FilterModes.a_i</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.util.project.FilterModes.annotations_items"><code class="docutils literal notranslate"><span class="pre">FilterModes.annotations_items</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.util.project.FilterModes.parse"><code class="docutils literal notranslate"><span class="pre">FilterModes.parse()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.util.project.FilterModes.make_filter_args"><code class="docutils literal notranslate"><span class="pre">FilterModes.make_filter_args()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.util.project.FilterModes.list_options"><code class="docutils literal notranslate"><span class="pre">FilterModes.list_options()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.util.dataset_utils.generate_next_file_name"><code class="docutils literal notranslate"><span class="pre">generate_next_file_name()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.util.dataset_utils.parse_dataset_pathspec"><code class="docutils literal notranslate"><span class="pre">parse_dataset_pathspec()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.util.dataset_utils.FilterModes"><code class="docutils literal notranslate"><span class="pre">FilterModes</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.util.dataset_utils.FilterModes.items"><code class="docutils literal notranslate"><span class="pre">FilterModes.items</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.util.dataset_utils.FilterModes.annotations"><code class="docutils literal notranslate"><span class="pre">FilterModes.annotations</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.util.dataset_utils.FilterModes.items_annotations"><code class="docutils literal notranslate"><span class="pre">FilterModes.items_annotations</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.util.dataset_utils.FilterModes.i"><code class="docutils literal notranslate"><span class="pre">FilterModes.i</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.util.dataset_utils.FilterModes.a"><code class="docutils literal notranslate"><span class="pre">FilterModes.a</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.util.dataset_utils.FilterModes.i_a"><code class="docutils literal notranslate"><span class="pre">FilterModes.i_a</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.util.dataset_utils.FilterModes.a_i"><code class="docutils literal notranslate"><span class="pre">FilterModes.a_i</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.util.dataset_utils.FilterModes.annotations_items"><code class="docutils literal notranslate"><span class="pre">FilterModes.annotations_items</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.util.dataset_utils.FilterModes.parse"><code class="docutils literal notranslate"><span class="pre">FilterModes.parse()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.util.dataset_utils.FilterModes.make_filter_args"><code class="docutils literal notranslate"><span class="pre">FilterModes.make_filter_args()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.util.dataset_utils.FilterModes.list_options"><code class="docutils literal notranslate"><span class="pre">FilterModes.list_options()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -844,7 +779,7 @@ The syntax is:</p>
   <div class="sidebar-secondary-item">
 
   <div class="tocsection sourcelink">
-    <a href="../../../_sources/docs/reference/_autosummary/datumaro.cli.util.project.rst.txt">
+    <a href="../../../_sources/docs/reference/_autosummary/datumaro.cli.util.dataset_utils.rst.txt">
       <i class="fa-solid fa-file-lines"></i> Show Source
     </a>
   </div>

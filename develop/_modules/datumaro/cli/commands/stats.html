@@ -350,14 +350,12 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.cli.util.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">CliException</span><span class="p">,</span> <span class="n">WrongRevpathError</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConflictingCategoriesError</span><span class="p">,</span> <span class="n">ProjectNotFoundError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.operations</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_ann_statistics</span><span class="p">,</span> <span class="n">compute_image_statistics</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">dump_json_file</span><span class="p">,</span> <span class="n">str_to_bool</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.scope</span><span class="w"> </span><span class="kn">import</span> <span class="n">scope_add</span><span class="p">,</span> <span class="n">scoped</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.scope</span><span class="w"> </span><span class="kn">import</span> <span class="n">scoped</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">..util</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultilineFormatter</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..util.project</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_next_file_name</span><span class="p">,</span> <span class="n">load_project</span><span class="p">,</span> <span class="n">parse_full_revpath</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..util.dataset_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_next_file_name</span><span class="p">,</span> <span class="n">parse_dataset_pathspec</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;build_parser&quot;</span><span class="p">,</span>
@@ -369,33 +367,23 @@ document.write(`
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.commands.stats.html#datumaro.cli.commands.stats.build_parser">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">build_parser</span><span class="p">(</span><span class="n">parser_ctor</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">):</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">parser_ctor</span><span class="p">(</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Get project statistics&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Get dataset statistics&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        Outputs various project statistics like image mean and std (RGB),</span>
+<span class="s2">        Outputs various dataset statistics like image mean and std (RGB),</span>
 <span class="s2">        annotations count etc.|n</span>
 <span class="s2">        |n</span>
-<span class="s2">        Target dataset is specified by a revpath. The full syntax is:|n</span>
+<span class="s2">        Target dataset is specified by a dataset path:|n</span>
 <span class="s2">        - Dataset paths:|n</span>
 <span class="s2">        |s|s- &lt;dataset path&gt;[ :&lt;format&gt; ]|n</span>
-<span class="s2">        - Revision paths:|n</span>
-<span class="s2">        |s|s- &lt;project path&gt; [ @&lt;rev&gt; ] [ :&lt;target&gt; ]|n</span>
-<span class="s2">        |s|s- &lt;rev&gt; [ :&lt;target&gt; ]|n</span>
-<span class="s2">        |s|s- &lt;target&gt;|n</span>
-<span class="s2">        |n</span>
-<span class="s2">        Both forms use the -p/--project as a context for plugins. It can be</span>
-<span class="s2">        useful for dataset paths in targets. When not specified, the current</span>
-<span class="s2">        project&#39;s working tree is used.|n</span>
 <span class="s2">        |n</span>
 <span class="s2">        Examples:|n</span>
-<span class="s2">        - Compute project statistics:|n</span>
-<span class="s2">        |s|s</span><span class="si">%(prog)s</span>
+<span class="s2">        - Compute dataset statistics:|n</span>
+<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> /path/to/dataset:coco</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span>
         <span class="n">formatter_class</span><span class="o">=</span><span class="n">MultilineFormatter</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;project&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;?&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Target dataset revpath (default: project)&quot;</span>
-    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Target dataset path&quot;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-s&quot;</span><span class="p">,</span> <span class="s2">&quot;--subset&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Compute stats only for a specific subset&quot;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;--image-stats&quot;</span><span class="p">,</span>
@@ -409,12 +397,6 @@ document.write(`
         <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Compute annotation statistics (default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;-p&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;--project&quot;</span><span class="p">,</span>
-        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;project_dir&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Directory of the project to operate on (default: current dir)&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="n">stats_command</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">parser</span></div>
@@ -425,7 +407,7 @@ document.write(`
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.commands.stats.html#datumaro.cli.commands.stats.get_sensitive_args">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_sensitive_args</span><span class="p">():</span>
     <span class="k">return</span> <span class="p">{</span>
-        <span class="n">stats_command</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;project_dir&quot;</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">],</span>
+        <span class="n">stats_command</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">],</span>
     <span class="p">}</span></div>
 
 
@@ -434,30 +416,10 @@ document.write(`
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.commands.stats.html#datumaro.cli.commands.stats.stats_command">[docs]</a>
 <span class="nd">@scoped</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">stats_command</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
-    <span class="n">project</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">project</span> <span class="o">=</span> <span class="n">scope_add</span><span class="p">(</span><span class="n">load_project</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">project_dir</span><span class="p">))</span>
-    <span class="k">except</span> <span class="n">ProjectNotFoundError</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">project_dir</span><span class="p">:</span>
-            <span class="k">raise</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.environment</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_ENVIRONMENT</span>
 
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">dataset</span><span class="p">,</span> <span class="n">target_project</span> <span class="o">=</span> <span class="n">parse_full_revpath</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">project</span><span class="p">)</span>
-    <span class="k">except</span> <span class="n">WrongRevpathError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">e</span><span class="o">.</span><span class="n">problems</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">ConflictingCategoriesError</span><span class="p">):</span>
-                <span class="n">src_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">src</span> <span class="k">for</span> <span class="n">src</span> <span class="ow">in</span> <span class="n">project</span><span class="o">.</span><span class="n">working_tree</span><span class="o">.</span><span class="n">sources</span><span class="p">]</span>
-                <span class="k">raise</span> <span class="n">CliException</span><span class="p">(</span>
-                    <span class="s2">&quot;There are more than two sources with heterogeneous categories in the project. &quot;</span>
-                    <span class="s2">&quot;This prevents computing the statistics of the merged one. &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;Please specify one of the sources in the project (</span><span class="si">{</span><span class="n">src_names</span><span class="si">}</span><span class="s2">), &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;such as `datum stats </span><span class="si">{</span><span class="n">src_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">`&quot;</span>
-                <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
-
-        <span class="k">raise</span> <span class="n">e</span>
-
-    <span class="k">if</span> <span class="n">target_project</span><span class="p">:</span>
-        <span class="n">scope_add</span><span class="p">(</span><span class="n">target_project</span><span class="p">)</span>
+    <span class="c1"># Parse target dataset</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">parse_dataset_pathspec</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">DEFAULT_ENVIRONMENT</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">subset</span><span class="p">:</span>
         <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">get_subset</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">subset</span><span class="p">)</span>
@@ -469,7 +431,7 @@ document.write(`
         <span class="n">stats</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">compute_ann_statistics</span><span class="p">(</span><span class="n">dataset</span><span class="p">))</span>
 
     <span class="n">dst_file</span> <span class="o">=</span> <span class="n">generate_next_file_name</span><span class="p">(</span><span class="s2">&quot;statistics&quot;</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s2">&quot;.json&quot;</span><span class="p">)</span>
-    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Writing project statistics to &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="n">dst_file</span><span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Writing dataset statistics to &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="n">dst_file</span><span class="p">)</span>
     <span class="n">dump_json_file</span><span class="p">(</span><span class="n">dst_file</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 </pre></div>

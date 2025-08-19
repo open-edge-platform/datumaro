@@ -353,12 +353,11 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.environment</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_ENVIRONMENT</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProjectNotFoundError</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.scope</span><span class="w"> </span><span class="kn">import</span> <span class="n">scope_add</span><span class="p">,</span> <span class="n">scoped</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.scope</span><span class="w"> </span><span class="kn">import</span> <span class="n">scoped</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">..util</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultilineFormatter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..util.dataset_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_dataset_pathspec</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..util.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">CliException</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..util.project</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_project</span><span class="p">,</span> <span class="n">parse_full_revpath</span>
 
 
 <div class="viewcode-block" id="build_parser">
@@ -388,48 +387,26 @@ document.write(`
 <span class="s2">        and after the &#39;--&#39; separator. Particularly, this is useful to include</span>
 <span class="s2">        images in the output dataset with &#39;--save-media&#39;.|n</span>
 <span class="s2">        |n</span>
-<span class="s2">        This command can be applied to the current project targets or</span>
-<span class="s2">        arbitrary datasets outside a project. Note that if the target dataset</span>
-<span class="s2">        is read-only (e.g. if it is a project, stage or a cache entry),</span>
-<span class="s2">        the output directory must be provided.|n</span>
+<span class="s2">        This command can be applied to arbitrary datasets.|n</span>
 <span class="s2">        |n</span>
 <span class="s2">        This command has the following invocation syntax:</span>
-<span class="s2">        - </span><span class="si">%(prog)s</span><span class="s2"> &lt;target dataset revpath&gt; &lt;patch dataset revpath&gt;|n</span>
+<span class="s2">        - </span><span class="si">%(prog)s</span><span class="s2"> &lt;target dataset path&gt; &lt;patch dataset path&gt;|n</span>
 <span class="s2">        |n</span>
-<span class="s2">        &lt;revpath&gt; - either a dataset path or a revision path. The full</span>
-<span class="s2">        syntax is:|n</span>
-<span class="s2">        - Dataset paths:|n</span>
+<span class="s2">        &lt;dataset path&gt; - a dataset path with optional format specification:|n</span>
 <span class="s2">        |s|s- &lt;dataset path&gt;[ :&lt;format&gt; ]|n</span>
-<span class="s2">        - Revision paths:|n</span>
-<span class="s2">        |s|s- &lt;project path&gt; [ @&lt;rev&gt; ] [ :&lt;target&gt; ]|n</span>
-<span class="s2">        |s|s- &lt;rev&gt; [ :&lt;target&gt; ]|n</span>
-<span class="s2">        |s|s- &lt;target&gt;|n</span>
-<span class="s2">        |n</span>
-<span class="s2">        The current project (-p/--project) is also used as a context for</span>
-<span class="s2">        plugins, so it can be useful for dataset paths having custom formats.</span>
-<span class="s2">        When not specified, the current project&#39;s working tree is used.|n</span>
 <span class="s2">        |n</span>
 <span class="s2">        Examples:|n</span>
 <span class="s2">        - Update a VOC-like dataset with COCO-like annotations:|n</span>
 <span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> --overwrite dataset1/:voc dataset2/:coco -- --save-media|n</span>
 <span class="s2">        |n</span>
-<span class="s2">        - Generate a patched dataset, based on a project:|n</span>
-<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> -o patched_proj1/ proj1/ proj2/|n</span>
-<span class="s2">        |n</span>
-<span class="s2">        - Update the &quot;source1&quot; source in the current project with a dataset:|n</span>
-<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> -p proj/ --overwrite source1 path/to/dataset2:coco|n</span>
-<span class="s2">        |n</span>
-<span class="s2">        - Generate a patched source from a previous revision and a dataset:|n</span>
-<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> -o new_src2/ HEAD~2:source-2 path/to/dataset2:yolo|n</span>
-<span class="s2">        |n</span>
-<span class="s2">        - Update a dataset in a custom format, described in a project plugin:|n</span>
-<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> -p proj/ --overwrite dataset/:my_format dataset2/:coco</span>
+<span class="s2">        - Generate a patched dataset:|n</span>
+<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> -o patched_dataset/ dataset1/ dataset2/|n</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span>
         <span class="n">formatter_class</span><span class="o">=</span><span class="n">MultilineFormatter</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Target dataset revpath&quot;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;patch&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Patch dataset revpath&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Target dataset path&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;patch&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Patch dataset path&quot;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;-o&quot;</span><span class="p">,</span>
         <span class="s2">&quot;--output-dir&quot;</span><span class="p">,</span>
@@ -441,12 +418,6 @@ document.write(`
         <span class="s2">&quot;--overwrite&quot;</span><span class="p">,</span>
         <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Overwrite existing files in the save directory, &quot;</span> <span class="s2">&quot;if it is not empty&quot;</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;-p&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;--project&quot;</span><span class="p">,</span>
-        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;project_dir&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Directory of the &#39;current&#39; project (default: current dir)&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;extra_args&quot;</span><span class="p">,</span>
@@ -465,7 +436,7 @@ document.write(`
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.commands.patch.html#datumaro.cli.commands.patch.get_sensitive_args">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_sensitive_args</span><span class="p">():</span>
     <span class="k">return</span> <span class="p">{</span>
-        <span class="n">patch_command</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="s2">&quot;patch&quot;</span><span class="p">,</span> <span class="s2">&quot;dst_dir&quot;</span><span class="p">,</span> <span class="s2">&quot;project_dir&quot;</span><span class="p">,</span> <span class="s2">&quot;extra_args&quot;</span><span class="p">],</span>
+        <span class="n">patch_command</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="s2">&quot;patch&quot;</span><span class="p">,</span> <span class="s2">&quot;dst_dir&quot;</span><span class="p">,</span> <span class="s2">&quot;extra_args&quot;</span><span class="p">],</span>
     <span class="p">}</span></div>
 
 
@@ -474,42 +445,33 @@ document.write(`
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.commands.patch.html#datumaro.cli.commands.patch.patch_command">[docs]</a>
 <span class="nd">@scoped</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">patch_command</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
-    <span class="n">project</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">project</span> <span class="o">=</span> <span class="n">scope_add</span><span class="p">(</span><span class="n">load_project</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">project_dir</span><span class="p">))</span>
-    <span class="k">except</span> <span class="n">ProjectNotFoundError</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">project_dir</span><span class="p">:</span>
-            <span class="k">raise</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">DEFAULT_ENVIRONMENT</span>
 
-    <span class="k">if</span> <span class="n">project</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">env</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">env</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">env</span> <span class="o">=</span> <span class="n">DEFAULT_ENVIRONMENT</span>
+    <span class="c1"># Parse target and patch datasets</span>
+    <span class="n">target_dataset</span> <span class="o">=</span> <span class="n">parse_dataset_pathspec</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
+    <span class="n">patch_dataset</span> <span class="o">=</span> <span class="n">parse_dataset_pathspec</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">patch</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
 
-    <span class="n">target_dataset</span><span class="p">,</span> <span class="n">_project</span> <span class="o">=</span> <span class="n">parse_full_revpath</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">project</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">_project</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">scope_add</span><span class="p">(</span><span class="n">_project</span><span class="p">)</span>
-
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">exporter</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">exporters</span><span class="p">[</span><span class="n">target_dataset</span><span class="o">.</span><span class="n">format</span><span class="p">]</span>
-    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">CliException</span><span class="p">(</span><span class="s2">&quot;Exporter for format &#39;</span><span class="si">%s</span><span class="s2">&#39; is not found&quot;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">format</span><span class="p">)</span>
-
-    <span class="n">extra_args</span> <span class="o">=</span> <span class="n">exporter</span><span class="o">.</span><span class="n">parse_cmdline</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">extra_args</span><span class="p">)</span>
-
+    <span class="c1"># Determine output directory</span>
     <span class="n">dst_dir</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">dst_dir</span> <span class="ow">or</span> <span class="n">target_dataset</span><span class="o">.</span><span class="n">data_path</span>
+
     <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">overwrite</span> <span class="ow">and</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">dst_dir</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">dst_dir</span><span class="p">):</span>
         <span class="k">raise</span> <span class="n">CliException</span><span class="p">(</span>
             <span class="s2">&quot;Directory &#39;</span><span class="si">%s</span><span class="s2">&#39; already exists &quot;</span> <span class="s2">&quot;(pass --overwrite to overwrite)&quot;</span> <span class="o">%</span> <span class="n">dst_dir</span>
         <span class="p">)</span>
     <span class="n">dst_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">dst_dir</span><span class="p">)</span>
 
-    <span class="n">patch_dataset</span><span class="p">,</span> <span class="n">_project</span> <span class="o">=</span> <span class="n">parse_full_revpath</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">patch</span><span class="p">,</span> <span class="n">project</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">_project</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">scope_add</span><span class="p">(</span><span class="n">_project</span><span class="p">)</span>
+    <span class="c1"># Get the exporter for the target format</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">exporter</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">exporters</span><span class="p">[</span><span class="n">target_dataset</span><span class="o">.</span><span class="n">format</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CliException</span><span class="p">(</span><span class="s2">&quot;Exporter for format &#39;</span><span class="si">%s</span><span class="s2">&#39; is not found&quot;</span> <span class="o">%</span> <span class="n">target_dataset</span><span class="o">.</span><span class="n">format</span><span class="p">)</span>
 
+    <span class="n">extra_args</span> <span class="o">=</span> <span class="n">exporter</span><span class="o">.</span><span class="n">parse_cmdline</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">extra_args</span><span class="p">)</span>
+
+    <span class="c1"># Apply the patch</span>
     <span class="n">target_dataset</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">patch_dataset</span><span class="p">)</span>
 
+    <span class="c1"># Save the updated dataset</span>
     <span class="n">target_dataset</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">save_dir</span><span class="o">=</span><span class="n">dst_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_args</span><span class="p">)</span>
 
     <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Patched dataset has been saved to &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="n">dst_dir</span><span class="p">)</span>

@@ -351,39 +351,31 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.environment</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_ENVIRONMENT</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProjectNotFoundError</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.validator</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskType</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">dump_json_file</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.scope</span><span class="w"> </span><span class="kn">import</span> <span class="n">scope_add</span><span class="p">,</span> <span class="n">scoped</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.scope</span><span class="w"> </span><span class="kn">import</span> <span class="n">scoped</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">..util</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultilineFormatter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..util.dataset_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_next_file_name</span><span class="p">,</span> <span class="n">parse_dataset_pathspec</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">..util.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">CliException</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..util.project</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_next_file_name</span><span class="p">,</span> <span class="n">load_project</span><span class="p">,</span> <span class="n">parse_full_revpath</span>
 
 
 <div class="viewcode-block" id="build_parser">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.commands.validate.html#datumaro.cli.commands.validate.build_parser">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">build_parser</span><span class="p">(</span><span class="n">parser_ctor</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">):</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">parser_ctor</span><span class="p">(</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Validate project&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Validate dataset&quot;</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">        Validates a dataset according to the task type and</span>
 <span class="s2">        reports summary in a JSON file.|n</span>
-<span class="s2">        Target dataset is specified by a revpath. The full syntax is:|n</span>
+<span class="s2">        |n</span>
+<span class="s2">        Target dataset is specified by a dataset path:|n</span>
 <span class="s2">        - Dataset paths:|n</span>
 <span class="s2">        |s|s- &lt;dataset path&gt;[ :&lt;format&gt; ]|n</span>
-<span class="s2">        - Revision paths:|n</span>
-<span class="s2">        |s|s- &lt;project path&gt; [ @&lt;rev&gt; ] [ :&lt;target&gt; ]|n</span>
-<span class="s2">        |s|s- &lt;rev&gt; [ :&lt;target&gt; ]|n</span>
-<span class="s2">        |s|s- &lt;target&gt;|n</span>
-<span class="s2">        |n</span>
-<span class="s2">        Both forms use the -p/--project as a context for plugins. It can be</span>
-<span class="s2">        useful for dataset paths in targets. When not specified, the current</span>
-<span class="s2">        project&#39;s working tree is used.|n</span>
 <span class="s2">        |n</span>
 <span class="s2">        Examples:|n</span>
-<span class="s2">        - Validate a project&#39;s subset as a classification dataset:|n |n</span>
-<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> -t classification -s train</span>
+<span class="s2">        - Validate a dataset as a classification dataset:|n |n</span>
+<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> /path/to/dataset:coco -t classification</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span>
         <span class="n">formatter_class</span><span class="o">=</span><span class="n">MultilineFormatter</span><span class="p">,</span>
     <span class="p">)</span>
@@ -394,16 +386,15 @@ document.write(`
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">TaskType</span><span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span><span class="o">.</span><span class="n">name</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentTypeError</span><span class="p">(</span>
-                <span class="s2">&quot;Unknown task type </span><span class="si">%s</span><span class="s2">. Expected &quot;</span> <span class="s2">&quot;one of: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">task_types</span><span class="p">)</span>
-            <span class="p">)</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;_positionals&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">REMAINDER</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">SUPPRESS</span>
-    <span class="p">)</span>  <span class="c1"># workaround for -- eaten by positionals</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;project&quot;</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;?&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Target dataset revpath (default: project)&quot;</span>
-    <span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;Unknown task type &#39;</span><span class="si">%s</span><span class="s2">&#39;. Available task types: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">task_types</span><span class="p">),</span>
+                <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Target dataset path&quot;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;-t&quot;</span><span class="p">,</span>
         <span class="s2">&quot;--task&quot;</span><span class="p">,</span>
@@ -413,12 +404,6 @@ document.write(`
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;-s&quot;</span><span class="p">,</span> <span class="s2">&quot;--subset&quot;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;subset_name&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Subset to validate (default: whole dataset)&quot;</span>
-    <span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;-p&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;--project&quot;</span><span class="p">,</span>
-        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;project_dir&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Directory of the project to validate (default: current dir)&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;extra_args&quot;</span><span class="p">,</span>
@@ -435,7 +420,7 @@ document.write(`
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.commands.validate.html#datumaro.cli.commands.validate.get_sensitive_args">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_sensitive_args</span><span class="p">():</span>
     <span class="k">return</span> <span class="p">{</span>
-        <span class="n">validate_command</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="s2">&quot;project_dir&quot;</span><span class="p">,</span> <span class="s2">&quot;subset_name&quot;</span><span class="p">,</span> <span class="s2">&quot;extra_args&quot;</span><span class="p">],</span>
+        <span class="n">validate_command</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="s2">&quot;subset_name&quot;</span><span class="p">,</span> <span class="s2">&quot;extra_args&quot;</span><span class="p">],</span>
     <span class="p">}</span></div>
 
 
@@ -444,63 +429,29 @@ document.write(`
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.commands.validate.html#datumaro.cli.commands.validate.validate_command">[docs]</a>
 <span class="nd">@scoped</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">validate_command</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
-    <span class="n">has_sep</span> <span class="o">=</span> <span class="s2">&quot;--&quot;</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">_positionals</span>
-    <span class="k">if</span> <span class="n">has_sep</span><span class="p">:</span>
-        <span class="n">pos</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">_positionals</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="n">pos</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentError</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Expected no more than 1 target argument&quot;</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">pos</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="n">args</span><span class="o">.</span><span class="n">target</span> <span class="o">=</span> <span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">_positionals</span><span class="p">[:</span><span class="n">pos</span><span class="p">]</span> <span class="ow">or</span> <span class="p">[</span><span class="s2">&quot;project&quot;</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="n">args</span><span class="o">.</span><span class="n">extra_args</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">_positionals</span><span class="p">[</span><span class="n">pos</span> <span class="o">+</span> <span class="n">has_sep</span> <span class="p">:]</span>
-
-    <span class="n">show_plugin_help</span> <span class="o">=</span> <span class="s2">&quot;-h&quot;</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">extra_args</span> <span class="ow">or</span> <span class="s2">&quot;--help&quot;</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">extra_args</span>
-
-    <span class="n">project</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">project</span> <span class="o">=</span> <span class="n">scope_add</span><span class="p">(</span><span class="n">load_project</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">project_dir</span><span class="p">))</span>
-    <span class="k">except</span> <span class="n">ProjectNotFoundError</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">show_plugin_help</span> <span class="ow">and</span> <span class="n">args</span><span class="o">.</span><span class="n">project_dir</span><span class="p">:</span>
-            <span class="k">raise</span>
-
-    <span class="k">if</span> <span class="n">project</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">env</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">env</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">env</span> <span class="o">=</span> <span class="n">DEFAULT_ENVIRONMENT</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">DEFAULT_ENVIRONMENT</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">validator_type</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">validators</span><span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">task</span><span class="p">]</span>
     <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">CliException</span><span class="p">(</span><span class="s2">&quot;Validator type &#39;</span><span class="si">%s</span><span class="s2">&#39; is not found&quot;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">task</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">CliException</span><span class="p">(</span><span class="s2">&quot;Validator for &#39;</span><span class="si">%s</span><span class="s2">&#39; task is not found&quot;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">task</span><span class="p">)</span>
 
     <span class="n">extra_args</span> <span class="o">=</span> <span class="n">validator_type</span><span class="o">.</span><span class="n">parse_cmdline</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">extra_args</span><span class="p">)</span>
 
-    <span class="n">dataset</span><span class="p">,</span> <span class="n">target_project</span> <span class="o">=</span> <span class="n">parse_full_revpath</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">project</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">target_project</span><span class="p">:</span>
-        <span class="n">scope_add</span><span class="p">(</span><span class="n">target_project</span><span class="p">)</span>
+    <span class="c1"># Parse target dataset</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">parse_dataset_pathspec</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">target</span><span class="p">,</span> <span class="n">env</span><span class="p">)</span>
 
-    <span class="n">dst_file_name</span> <span class="o">=</span> <span class="s2">&quot;validation-report&quot;</span>
-    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">subset_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">subset_name</span><span class="p">:</span>
         <span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">get_subset</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">subset_name</span><span class="p">)</span>
-        <span class="n">dst_file_name</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;-</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">subset_name</span><span class="si">}</span><span class="s2">&quot;</span>
 
+    <span class="c1"># Validate the dataset</span>
     <span class="n">validator</span> <span class="o">=</span> <span class="n">validator_type</span><span class="p">(</span><span class="o">**</span><span class="n">extra_args</span><span class="p">)</span>
-    <span class="n">report</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+    <span class="n">reports</span> <span class="o">=</span> <span class="n">validator</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_make_serializable</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
-            <span class="c1"># tuple key to str</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-                <span class="n">d</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)]</span> <span class="o">=</span> <span class="n">val</span>
-                <span class="n">d</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-                <span class="n">_make_serializable</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
-
-    <span class="n">_make_serializable</span><span class="p">(</span><span class="n">report</span><span class="p">)</span>
-
-    <span class="n">dst_file</span> <span class="o">=</span> <span class="n">generate_next_file_name</span><span class="p">(</span><span class="n">dst_file_name</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s2">&quot;.json&quot;</span><span class="p">)</span>
-    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Writing project validation results to &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="n">dst_file</span><span class="p">)</span>
-    <span class="n">dump_json_file</span><span class="p">(</span><span class="n">dst_file</span><span class="p">,</span> <span class="n">report</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">allow_numpy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+    <span class="c1"># Save the validation report</span>
+    <span class="n">dst_file</span> <span class="o">=</span> <span class="n">generate_next_file_name</span><span class="p">(</span><span class="s2">&quot;validation_report&quot;</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="s2">&quot;.json&quot;</span><span class="p">)</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Writing validation report to &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="n">dst_file</span><span class="p">)</span>
+    <span class="n">dump_json_file</span><span class="p">(</span><span class="n">dst_file</span><span class="p">,</span> <span class="n">reports</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 </pre></div>
 

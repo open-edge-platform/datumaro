@@ -354,7 +354,7 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.cli</span><span class="w"> </span><span class="kn">import</span> <span class="n">commands</span><span class="p">,</span> <span class="n">contexts</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.cli</span><span class="w"> </span><span class="kn">import</span> <span class="n">commands</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">telemetry_stub</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.os_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_subpath</span>
 
@@ -368,54 +368,24 @@ document.write(`
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_get_action_name</span><span class="p">(</span><span class="n">command</span><span class="p">):</span>
     <span class="c1"># TODO: We should clean these nonsense if-else branches.</span>
-    <span class="k">if</span> <span class="n">command</span> <span class="ow">is</span> <span class="n">commands</span><span class="o">.</span><span class="n">require_project</span><span class="o">.</span><span class="n">versioning</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">info_command</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;project_info_result&quot;</span>
-    <span class="k">elif</span> <span class="n">command</span> <span class="ow">is</span> <span class="n">commands</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">stats_command</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">command</span> <span class="ow">is</span> <span class="n">commands</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">stats_command</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;project_stats_result&quot;</span>
-    <span class="k">elif</span> <span class="n">command</span> <span class="ow">is</span> <span class="n">contexts</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">migrate_command</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;project_migrate_result&quot;</span>
-    <span class="k">elif</span> <span class="n">command</span> <span class="ow">is</span> <span class="n">commands</span><span class="o">.</span><span class="n">require_project</span><span class="o">.</span><span class="n">modification</span><span class="o">.</span><span class="n">export</span><span class="o">.</span><span class="n">export_command</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;project_export_result&quot;</span>
     <span class="k">elif</span> <span class="n">command</span> <span class="ow">is</span> <span class="n">commands</span><span class="o">.</span><span class="n">validate</span><span class="o">.</span><span class="n">validate_command</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;project_validate_result&quot;</span>
     <span class="k">elif</span> <span class="n">command</span> <span class="ow">is</span> <span class="n">commands</span><span class="o">.</span><span class="n">filter</span><span class="o">.</span><span class="n">filter_command</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;project_filter_result&quot;</span>
     <span class="k">elif</span> <span class="n">command</span> <span class="ow">is</span> <span class="n">commands</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">transform_command</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;project_transform_result&quot;</span>
-    <span class="k">elif</span> <span class="n">command</span> <span class="ow">is</span> <span class="n">commands</span><span class="o">.</span><span class="n">require_project</span><span class="o">.</span><span class="n">modification</span><span class="o">.</span><span class="n">import_</span><span class="o">.</span><span class="n">import_command</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;source_add_result&quot;</span>
-    <span class="k">elif</span> <span class="n">command</span> <span class="ow">is</span> <span class="n">commands</span><span class="o">.</span><span class="n">require_project</span><span class="o">.</span><span class="n">modification</span><span class="o">.</span><span class="n">remove</span><span class="o">.</span><span class="n">remove_command</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;source_remove_result&quot;</span>
-    <span class="k">elif</span> <span class="n">command</span> <span class="ow">is</span> <span class="n">contexts</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">info_command</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;source_info_result&quot;</span>
-    <span class="k">elif</span> <span class="n">command</span> <span class="ow">is</span> <span class="n">contexts</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">add_command</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;model_add_result&quot;</span>
-    <span class="k">elif</span> <span class="n">command</span> <span class="ow">is</span> <span class="n">contexts</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">remove_command</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;model_remove_result&quot;</span>
-    <span class="k">elif</span> <span class="n">command</span> <span class="ow">is</span> <span class="n">contexts</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">run_command</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;model_run_result&quot;</span>
-    <span class="k">elif</span> <span class="n">command</span> <span class="ow">is</span> <span class="n">contexts</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">info_command</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;model_info_result&quot;</span>
-    <span class="k">elif</span> <span class="n">command</span> <span class="ow">is</span> <span class="n">commands</span><span class="o">.</span><span class="n">require_project</span><span class="o">.</span><span class="n">versioning</span><span class="o">.</span><span class="n">checkout</span><span class="o">.</span><span class="n">checkout_command</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;checkout_result&quot;</span>
-    <span class="k">elif</span> <span class="n">command</span> <span class="ow">is</span> <span class="n">commands</span><span class="o">.</span><span class="n">require_project</span><span class="o">.</span><span class="n">versioning</span><span class="o">.</span><span class="n">commit</span><span class="o">.</span><span class="n">commit_command</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;commit_result&quot;</span>
     <span class="k">elif</span> <span class="n">command</span> <span class="ow">is</span> <span class="n">commands</span><span class="o">.</span><span class="n">convert</span><span class="o">.</span><span class="n">convert_command</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;convert_result&quot;</span>
-    <span class="k">elif</span> <span class="n">command</span> <span class="ow">is</span> <span class="n">commands</span><span class="o">.</span><span class="n">require_project</span><span class="o">.</span><span class="n">modification</span><span class="o">.</span><span class="n">create</span><span class="o">.</span><span class="n">create_command</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;create_result&quot;</span>
     <span class="k">elif</span> <span class="n">command</span> <span class="ow">is</span> <span class="n">commands</span><span class="o">.</span><span class="n">compare</span><span class="o">.</span><span class="n">compare_command</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;diff_result&quot;</span>
     <span class="k">elif</span> <span class="n">command</span> <span class="ow">is</span> <span class="n">commands</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">info_command</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;info_result&quot;</span>
-    <span class="k">elif</span> <span class="n">command</span> <span class="ow">is</span> <span class="n">commands</span><span class="o">.</span><span class="n">require_project</span><span class="o">.</span><span class="n">versioning</span><span class="o">.</span><span class="n">log</span><span class="o">.</span><span class="n">log_command</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;log_result&quot;</span>
     <span class="k">elif</span> <span class="n">command</span> <span class="ow">is</span> <span class="n">commands</span><span class="o">.</span><span class="n">merge</span><span class="o">.</span><span class="n">merge_command</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;merge_result&quot;</span>
     <span class="k">elif</span> <span class="n">command</span> <span class="ow">is</span> <span class="n">commands</span><span class="o">.</span><span class="n">patch</span><span class="o">.</span><span class="n">patch_command</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;patch_result&quot;</span>
-    <span class="k">elif</span> <span class="n">command</span> <span class="ow">is</span> <span class="n">commands</span><span class="o">.</span><span class="n">require_project</span><span class="o">.</span><span class="n">versioning</span><span class="o">.</span><span class="n">status</span><span class="o">.</span><span class="n">status_command</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s2">&quot;status_result&quot;</span>
 
     <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">command</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">_result&quot;</span>
 
