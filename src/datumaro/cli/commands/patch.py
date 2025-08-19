@@ -84,12 +84,6 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
     return parser
 
 
-def get_sensitive_args():
-    return {
-        patch_command: ["target", "patch", "dst_dir", "extra_args"],
-    }
-
-
 @scoped
 def patch_command(args):
     env = DEFAULT_ENVIRONMENT

@@ -154,12 +154,6 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
     return parser
 
 
-def get_sensitive_args():
-    return {
-        merge_command: ["targets", "dst_dir", "groups"],
-    }
-
-
 def merge_command(args):
     # Workaround. Required positionals consume positionals from the end
     args._positionals += join_cli_args(args, "targets", "extra_args")

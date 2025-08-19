@@ -14,7 +14,6 @@ from ..util.dataset_utils import generate_next_file_name, parse_dataset_pathspec
 
 __all__ = [
     "build_parser",
-    "get_sensitive_args",
 ]
 
 
@@ -53,12 +52,6 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
     parser.set_defaults(command=stats_command)
 
     return parser
-
-
-def get_sensitive_args():
-    return {
-        stats_command: ["target"],
-    }
 
 
 @scoped
