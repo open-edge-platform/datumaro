@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: MIT
 """Transforms using Segment Anything Model"""
-from .automatic_mask_gen import SAMAutomaticMaskGeneration
-from .bbox_to_inst_mask import SAMBboxToInstanceMask
 
-__all__ = ["SAMBboxToInstanceMask", "SAMAutomaticMaskGeneration"]
+# Note: SAM transforms have been removed as they depended on the deprecated ModelTransform class
+__all__ = []
