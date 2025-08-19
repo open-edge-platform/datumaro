@@ -10,7 +10,6 @@ from typing import Any
 import pytest
 
 from datumaro.components.annotation import Annotation
-from datumaro.components.crypter import Crypter
 from datumaro.plugins.data_formats.datumaro_binary import (
     DatumaroBinaryExporter,
     DatumaroBinaryImporter,
@@ -28,8 +27,6 @@ from datumaro.plugins.data_formats.datumaro_binary.mapper.annotation import Anno
 from .test_datumaro_format import DatumaroFormatTest as TestBase
 
 from tests.utils.test_utils import compare_datasets_strict
-
-ENCRYPTION_KEY = Crypter.gen_key()
 
 
 class DatumaroBinaryFormatTest(TestBase):
@@ -50,34 +47,20 @@ class DatumaroBinaryFormatTest(TestBase):
                 True,
                 {},
                 {},
-                id="test_no_encryption",
+                id="test_default",
             ),
             pytest.param(
                 compare_datasets_strict,
                 True,
-                {"encryption_key": ENCRYPTION_KEY},
-                {"encryption_key": ENCRYPTION_KEY},
-                id="test_with_encryption",
-            ),
-            pytest.param(
-                compare_datasets_strict,
-                True,
-                {"encryption_key": ENCRYPTION_KEY},
-                {"encryption_key": ENCRYPTION_KEY, "no_media_encryption": True},
-                id="test_no_media_encryption",
-            ),
-            pytest.param(
-                compare_datasets_strict,
-                True,
-                {"encryption_key": ENCRYPTION_KEY},
-                {"encryption_key": ENCRYPTION_KEY, "max_blob_size": 1},  # 1 byte
+                {},
+                {"max_blob_size": 1},  # 1 byte
                 id="test_multi_blobs",
             ),
             pytest.param(
                 compare_datasets_strict,
                 True,
-                {"encryption_key": ENCRYPTION_KEY, "num_workers": 2},
-                {"encryption_key": ENCRYPTION_KEY, "num_workers": 2},
+                {"num_workers": 2},
+                {"num_workers": 2},
                 id="test_multi_processing",
             ),
         ],
@@ -178,14 +161,3 @@ class MapperTest:
             for ann in item.annotations:
                 mapper = self._get_ann_mapper(ann)
                 self._test(mapper, ann)
-
-
-class EncryptActionTest:
-    @pytest.mark.parametrize(
-        "args,flag", [(["--encryption"], True), ([], False)], ids=["on", "off"]
-    )
-    def test_action(self, args, flag):
-        parser = DatumaroBinaryExporter.build_cmdline_parser()
-        args = parser.parse_args(args)
-
-        assert hasattr(args, "encryption_key") == flag
