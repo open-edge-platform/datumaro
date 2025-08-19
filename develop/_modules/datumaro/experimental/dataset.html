@@ -346,14 +346,30 @@ document.write(`
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">cache</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">cast</span><span class="p">,</span> <span class="n">get_args</span><span class="p">,</span> <span class="n">get_origin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">TYPE_CHECKING</span><span class="p">,</span>
+    <span class="n">Any</span><span class="p">,</span>
+    <span class="n">Dict</span><span class="p">,</span>
+    <span class="n">Generic</span><span class="p">,</span>
+    <span class="n">List</span><span class="p">,</span>
+    <span class="n">Sequence</span><span class="p">,</span>
+    <span class="n">Type</span><span class="p">,</span>
+    <span class="n">Union</span><span class="p">,</span>
+    <span class="n">cast</span><span class="p">,</span>
+    <span class="n">get_args</span><span class="p">,</span>
+    <span class="n">get_origin</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">polars</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span><span class="p">,</span> <span class="n">TypeGuard</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">dataclass_transform</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.converter_registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">Converter</span><span class="p">,</span> <span class="n">find_conversion_path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">AttributeInfo</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> <span class="n">Schema</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.categories</span><span class="w"> </span><span class="kn">import</span> <span class="n">Categories</span>
 
 
 <div class="viewcode-block" id="Sample">
@@ -433,12 +449,17 @@ document.write(`
 <span class="sd">        DType: The sample type this dataset contains</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype_or_schema</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Schema</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">DType</span><span class="p">]]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">dtype_or_schema</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Schema</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">DType</span><span class="p">]],</span>
+        <span class="n">categories</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;Categories&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize dataset with either a schema or sample type.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            dtype_or_schema: Either a Schema instance or a Sample class type</span>
+<span class="sd">            categories: Optional dictionary mapping attribute names to categories</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dtype_or_schema</span><span class="p">,</span> <span class="n">Schema</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_schema</span> <span class="o">=</span> <span class="n">dtype_or_schema</span>
@@ -446,6 +467,10 @@ document.write(`
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_schema</span> <span class="o">=</span> <span class="n">dtype_or_schema</span><span class="o">.</span><span class="n">infer_schema</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span> <span class="o">=</span> <span class="n">dtype_or_schema</span>
+
+        <span class="c1"># Apply categories if provided</span>
+        <span class="k">if</span> <span class="n">categories</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_schema</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_schema</span><span class="o">.</span><span class="n">with_categories</span><span class="p">(</span><span class="n">categories</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">schema</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_generate_polars_schema</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lazy_converters</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Converter</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -458,6 +483,7 @@ document.write(`
         <span class="n">df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
         <span class="n">dtype_or_schema</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Schema</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">DTargetType</span><span class="p">]],</span>
         <span class="n">lazy_converters</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Converter</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">categories</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;Categories&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Dataset[DTargetType]&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a Dataset from an existing DataFrame and lazy converters.</span>
@@ -466,11 +492,12 @@ document.write(`
 <span class="sd">            df: The Polars DataFrame containing the data</span>
 <span class="sd">            dtype_or_schema: Either a Schema instance or a Sample class type</span>
 <span class="sd">            lazy_converters: Optional list of lazy converters to apply during sample access</span>
+<span class="sd">            categories: Optional dictionary mapping attribute names to categories</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A new Dataset instance with the provided DataFrame and converters</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">dtype_or_schema</span><span class="p">)</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">dtype_or_schema</span><span class="p">,</span> <span class="n">categories</span><span class="p">)</span>
         <span class="n">dataset</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span>
         <span class="n">dataset</span><span class="o">.</span><span class="n">_lazy_converters</span> <span class="o">=</span> <span class="n">lazy_converters</span> <span class="ow">or</span> <span class="p">[]</span>
         <span class="k">return</span> <span class="n">dataset</span></div>
