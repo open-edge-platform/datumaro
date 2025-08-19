@@ -7,9 +7,9 @@ from typing import Dict
 from unittest import TestCase, skipIf
 
 from datumaro.components.annotation import AnnotationType, Label, LabelCategories
+from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image
-from datumaro.components.project import Dataset
 from datumaro.plugins.sampler.random_sampler import LabelRandomSampler, RandomSampler
 
 from tests.utils.test_utils import compare_datasets, compare_datasets_strict

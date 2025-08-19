@@ -4,10 +4,10 @@ from unittest import TestCase
 import numpy as np
 
 from datumaro.components.annotation import AnnotationType, Bbox, LabelCategories
+from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.environment import Environment
 from datumaro.components.media import Image, PointCloud
-from datumaro.components.project import Dataset
 from datumaro.plugins.data_formats.kitti_3d.importer import Kitti3dImporter
 
 from tests.requirements import Requirements, mark_requirement

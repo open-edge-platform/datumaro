@@ -6,7 +6,6 @@ import warnings
 
 from . import errors as errors
 from . import ops as ops
-from . import project as project
 from .components.algorithms import LossDynamicsAnalyzer
 from .components.annotation import (
     NO_GROUP,
