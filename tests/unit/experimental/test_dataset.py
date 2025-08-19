@@ -8,6 +8,7 @@ import numpy as np
 import polars as pl
 import pytest
 
+from datumaro.experimental.categories import LabelCategories, MaskCategories
 from datumaro.experimental.dataset import (
     AttributeInfo,
     Dataset,
@@ -500,3 +501,101 @@ def test_dataset_delitem():
 
     with pytest.raises(IndexError, match="Row index out of bounds"):
         del dataset[-1]  # Negative indices not supported
+
+
+def test_dataset_with_categories():
+    """Test Dataset creation and usage with categories."""
+
+    class TestSample(Sample):
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image_info: ImageInfo = image_info_field()
+
+    # Create label categories
+    label_categories = LabelCategories()
+    label_categories.add("person")
+    label_categories.add("car")
+
+    # Create mask categories
+    mask_categories = MaskCategories()
+    mask_categories.colormap[0] = (0, 0, 0)
+    mask_categories.colormap[1] = (255, 0, 0)
+
+    # Create dataset with categories dictionary mapping attributes to categories
+    categories = {
+        "bbox": label_categories,  # bbox field gets label categories
+        "image": mask_categories,  # image field gets mask categories
+    }
+    dataset = Dataset(TestSample, categories=categories)
+
+    # Test categories are stored correctly in schema AttributeInfo
+    schema = dataset.schema
+    assert schema.attributes["bbox"].categories is not None
+    assert schema.attributes["image"].categories is not None
+    assert isinstance(schema.attributes["bbox"].categories, LabelCategories)
+    assert isinstance(schema.attributes["image"].categories, MaskCategories)
+
+    # Test label categories
+    labels = schema.attributes["bbox"].categories
+    assert len(labels) == 2
+    assert "person" in labels
+    assert "car" in labels
+
+    # Test mask categories
+    masks = schema.attributes["image"].categories
+    assert len(masks.colormap) == 2
+    assert masks.colormap[0] == (0, 0, 0)
+    assert masks.colormap[1] == (255, 0, 0)
+
+
+def test_schema_copy_independence():
+    """Test that schema modifications don't affect the original cached schema."""
+
+    class TestSample(Sample):
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+
+    # Create categories
+    label_categories = LabelCategories()
+    label_categories.add("person")
+
+    # Create first dataset with categories
+    dataset1 = Dataset(TestSample, categories={"bbox": label_categories})
+
+    # Create second dataset without categories
+    dataset2 = Dataset(TestSample)
+
+    # Verify that the second dataset doesn't have categories from the first
+    schema1 = dataset1.schema
+    schema2 = dataset2.schema
+    assert schema1.attributes["bbox"].categories is not None
+    assert schema2.attributes["bbox"].categories is None
+
+    # Verify that the cached schema from TestSample.infer_schema() is not modified
+    original_schema = TestSample.infer_schema()
+    assert original_schema.attributes["bbox"].categories is None
+    assert original_schema.attributes["image"].categories is None
+
+    # Create third dataset with different categories
+    label_categories2 = LabelCategories()
+    label_categories2.add("car")
+    label_categories2.add("truck")
+
+    dataset3 = Dataset(TestSample, categories={"image": label_categories2})
+
+    # Verify independence through schema AttributeInfo
+    schema1 = dataset1.schema
+    schema2 = dataset2.schema
+    schema3 = dataset3.schema
+
+    assert schema1.attributes["bbox"].categories is not None
+    assert schema2.attributes["bbox"].categories is None
+    assert schema2.attributes["image"].categories is None
+    assert schema3.attributes["bbox"].categories is None
+    assert schema3.attributes["image"].categories is not None
+
+    assert isinstance(schema1.attributes["bbox"].categories, LabelCategories)
+    assert isinstance(schema3.attributes["image"].categories, LabelCategories)
+
+    assert len(schema3.attributes["image"].categories) == 2  # car, truck
+    assert len(schema1.attributes["bbox"].categories) == 1  # person

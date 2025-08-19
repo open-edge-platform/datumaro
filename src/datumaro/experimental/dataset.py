@@ -4,14 +4,30 @@
 
 from __future__ import annotations
 
+import copy
 from functools import cache
-from typing import Any, Generic, List, Sequence, Type, Union, cast, get_args, get_origin
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    Generic,
+    List,
+    Sequence,
+    Type,
+    Union,
+    cast,
+    get_args,
+    get_origin,
+)
 
 import polars as pl
 from typing_extensions import Annotated, TypeGuard, TypeVar, dataclass_transform
 
 from .converter_registry import Converter, find_conversion_path
 from .schema import AttributeInfo, Field, Schema
+
+if TYPE_CHECKING:
+    from .categories import Categories
 
 
 @dataclass_transform()
@@ -83,12 +99,17 @@ class Dataset(Generic[DType]):
         DType: The sample type this dataset contains
     """
 
-    def __init__(self, dtype_or_schema: Union[Schema, Type[DType]]):
+    def __init__(
+        self,
+        dtype_or_schema: Union[Schema, Type[DType]],
+        categories: Dict[str, "Categories"] = None,
+    ):
         """
         Initialize dataset with either a schema or sample type.
 
         Args:
             dtype_or_schema: Either a Schema instance or a Sample class type
+            categories: Optional dictionary mapping attribute names to categories
         """
         if isinstance(dtype_or_schema, Schema):
             self._schema = dtype_or_schema
@@ -96,6 +117,10 @@ class Dataset(Generic[DType]):
         else:
             self._schema = dtype_or_schema.infer_schema()
             self._dtype = dtype_or_schema
+
+        # Apply categories if provided
+        if categories is not None:
+            self._schema = self._schema.with_categories(categories)
 
         self.df = pl.DataFrame(schema=self._generate_polars_schema())
         self._lazy_converters: List[Converter] = []
@@ -106,6 +131,7 @@ class Dataset(Generic[DType]):
         df: pl.DataFrame,
         dtype_or_schema: Union[Schema, Type[DTargetType]],
         lazy_converters: List[Converter] | None = None,
+        categories: Dict[str, "Categories"] = None,
     ) -> "Dataset[DTargetType]":
         """
         Create a Dataset from an existing DataFrame and lazy converters.
@@ -114,11 +140,12 @@ class Dataset(Generic[DType]):
             df: The Polars DataFrame containing the data
             dtype_or_schema: Either a Schema instance or a Sample class type
             lazy_converters: Optional list of lazy converters to apply during sample access
+            categories: Optional dictionary mapping attribute names to categories
 
         Returns:
             A new Dataset instance with the provided DataFrame and converters
         """
-        dataset = Dataset(dtype_or_schema)
+        dataset = Dataset(dtype_or_schema, categories)
         dataset.df = df
         dataset._lazy_converters = lazy_converters or []
         return dataset
