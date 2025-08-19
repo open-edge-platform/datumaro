@@ -103,16 +103,7 @@ Secondly, the "Mid-level comparison" displays image means, standard deviations, 
 +--------------------------+--------------------------+--------------------------+
 ```
 
-Lastly, the "Low-level comparison" uses ShiftAnalyzer to show Covariate shift and Label shift between the two datasets. For example:
-```bash
-+-----------------+---------+
-| Field           |   Value |
-+=================+=========+
-| Covariate shift |       0 |
-+-----------------+---------+
-| Label shift     |     nan |
-+-----------------+---------+
-```
+The "Low-level comparison" provides additional analysis information.
 The results are stored in the formats of `table_compare.json` and `table_compare.txt`.
 
 - Compare the current working tree with a dataset in COCO data format to create the tabular report
