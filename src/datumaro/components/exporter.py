@@ -12,7 +12,6 @@ from typing import NoReturn, Optional, Tuple, TypeVar, Union
 import attr
 from attrs import define, field
 
-from datumaro.components.annotation import HashKey
 from datumaro.components.cli_plugin import CliPlugin
 from datumaro.components.crypter import NULL_CRYPTER, Crypter
 from datumaro.components.dataset_base import DatasetItem, IDataset
@@ -24,7 +23,7 @@ from datumaro.components.errors import (
 )
 from datumaro.components.media import Image, PointCloud, Video, VideoFrame
 from datumaro.components.progress_reporting import NullProgressReporter, ProgressReporter
-from datumaro.util.meta_file_util import save_hashkey_file, save_meta_file
+from datumaro.util.meta_file_util import save_meta_file
 from datumaro.util.os_util import rmtree
 from datumaro.util.scope import on_error_do, scoped
 
@@ -154,8 +153,6 @@ class Exporter(CliPlugin):
 
     def apply(self):
         """Execute the data-format conversion"""
-        if self._save_hashkey_meta:
-            self._save_hashkey_file(self._save_dir)
         return self._apply_impl()
 
     def _apply_impl(self):
@@ -170,7 +167,6 @@ class Exporter(CliPlugin):
         image_ext: Optional[str] = None,
         default_image_ext: Optional[str] = None,
         save_dataset_meta: bool = False,
-        save_hashkey_meta: bool = False,
         stream: bool = False,
         ctx: Optional[ExportContext] = None,
     ):
@@ -185,7 +181,6 @@ class Exporter(CliPlugin):
         self._save_dir = save_dir
 
         self._save_dataset_meta = save_dataset_meta
-        self._save_hashkey_meta = save_hashkey_meta
 
         # TODO: refactor this variable.
         # Can be used by a subclass to store the current patch info
@@ -267,17 +262,6 @@ class Exporter(CliPlugin):
 
     def _save_meta_file(self, path):
         save_meta_file(path, self._extractor.categories())
-
-    def _save_hashkey_file(self, path):
-        save_hashkey_file(path, self._extractor)
-
-    def _check_hash_key_existence(self, item):
-        if self._save_hashkey_meta:
-            return
-        for annotation in item.annotations:
-            if isinstance(annotation, HashKey):
-                self._save_hashkey_meta = True
-                return
 
     @property
     def can_stream(self) -> bool:

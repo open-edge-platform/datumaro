@@ -66,7 +66,6 @@ from datumaro.components.merge import DEFAULT_MERGE_POLICY
 from datumaro.components.progress_reporting import NullProgressReporter, ProgressReporter
 from datumaro.components.transformer import ItemTransform, ModelTransform, Transform
 from datumaro.util.log_utils import logging_disabled
-from datumaro.util.meta_file_util import load_hash_key
 from datumaro.util.os_util import rmtree
 from datumaro.util.scope import on_error_do, scoped
 
@@ -907,7 +906,6 @@ class Dataset(IDataset):
         dataset._source_path = path
         dataset._format = format
 
-        dataset = load_hash_key(path, dataset)
         return dataset
 
     @staticmethod

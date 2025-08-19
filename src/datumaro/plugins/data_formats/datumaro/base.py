@@ -382,8 +382,6 @@ class JsonReader:
                         )
                     )
 
-                elif ann_type == AnnotationType.hash_key:
-                    continue
                 elif ann_type == AnnotationType.cuboid_2d:
                     loaded.append(
                         Cuboid2D(

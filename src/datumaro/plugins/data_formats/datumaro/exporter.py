@@ -23,7 +23,6 @@ from datumaro.components.annotation import (
     Cuboid2D,
     Cuboid3d,
     Ellipse,
-    HashKey,
     Label,
     LabelCategories,
     Mask,
@@ -319,8 +318,6 @@ class _SubsetWriter:
                 converted_ann = self._convert_cuboid_3d_object(ann)
             elif isinstance(ann, Ellipse):
                 converted_ann = self._convert_ellipse_object(ann)
-            elif isinstance(ann, HashKey):
-                continue
             elif isinstance(ann, Cuboid2D):
                 converted_ann = self._convert_cuboid_2d_object(ann)
             else:
@@ -583,9 +580,6 @@ class DatumaroExporter(Exporter):
                 continue
 
             writer.write(pool)
-
-        if self._save_hashkey_meta:
-            self._save_hashkey_file(self._save_dir)
 
     @classmethod
     def patch(cls, dataset, patch, save_dir, **kwargs):

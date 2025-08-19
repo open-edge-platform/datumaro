@@ -15,7 +15,6 @@ from .matcher import (
     Cuboid2DMatcher,
     Cuboid3dMatcher,
     FeatureVectorMatcher,
-    HashKeyMatcher,
     ImageAnnotationMatcher,
     LabelMatcher,
     LineMatcher,
@@ -40,7 +39,6 @@ __all__ = [
     "Cuboid3dMerger",
     "ImageAnnotationMerger",
     "EllipseMerger",
-    "HashKeyMerger",
     "FeatureVectorMerger",
 ]
 
@@ -190,11 +188,6 @@ class ImageAnnotationMerger(AnnotationMerger, ImageAnnotationMatcher):
 
 @attrs
 class EllipseMerger(_ShapeMerger, ShapeMatcher):
-    pass
-
-
-@attrs
-class HashKeyMerger(AnnotationMerger, HashKeyMatcher):
     pass
 
 

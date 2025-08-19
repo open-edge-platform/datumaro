@@ -241,8 +241,6 @@ class DatasetStorage(IDataset):
 
         def _add_ann_types(item: DatasetItem):
             for ann in item.annotations:
-                if ann.type == AnnotationType.hash_key:
-                    continue
                 self._ann_types.add(ann.type)
 
         media_type = self._media_type
@@ -443,10 +441,6 @@ class DatasetStorage(IDataset):
                 "Mismatching item media type '%s', "
                 "the dataset contains '%s' items." % (type(item.media), self._media_type)
             )
-
-        ann_types = set([ann.type for ann in item.annotations])
-        # hash_key can be included any task
-        ann_types.discard(AnnotationType.hash_key)
 
         is_new = self._storage.put(item)
 
@@ -691,8 +685,6 @@ class StreamDatasetStorage(DatasetStorage):
             yield item
 
             for ann in item.annotations:
-                if ann.type == AnnotationType.hash_key:
-                    continue
                 self._ann_types.add(ann.type)
 
     def __len__(self) -> int:
