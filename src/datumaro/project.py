@@ -2,20 +2,8 @@
 #
 # SPDX-License-Identifier: MIT
 
-# ruff: noqa: F401
+# Project functionality has been removed as of version 1.12
+# This module is kept for backward compatibility but all exports have been removed
 
-# This module is a usability proxy for components.project
-
-from .components.project import (
-    BuildStageType,
-    DiffStatus,
-    IgnoreMode,
-    ObjectId,
-    Pipeline,
-    Project,
-    ProjectBuilder,
-    ProjectBuildTargets,
-    ProjectSourceDataset,
-    Revision,
-    Tree,
-)
+# All project-related functionality has been deprecated and removed.
+# For dataset operations, use datumaro.components.dataset.Dataset directly.

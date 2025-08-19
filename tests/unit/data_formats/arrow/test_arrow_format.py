@@ -8,10 +8,10 @@ from functools import partial
 import numpy as np
 import pytest
 
+from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.environment import Environment
 from datumaro.components.media import FromFileMixin, Image
-from datumaro.components.project import Dataset
 from datumaro.plugins.data_formats.arrow import ArrowExporter, ArrowImporter
 from datumaro.plugins.transforms import Sort
 

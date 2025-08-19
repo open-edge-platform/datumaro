@@ -28,9 +28,9 @@ from datumaro.components.annotation import (
     PolyLine,
     RleMask,
 )
+from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image, MediaElement, PointCloud, Video, VideoFrame
-from datumaro.components.project import Dataset
 from datumaro.plugins.data_formats.datumaro.format import DatumaroPath
 from datumaro.util.mask_tools import generate_colormap
 

@@ -4,7 +4,6 @@ import pytest
 from datumaro.components.dataset import Dataset, StreamDataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image
-from datumaro.components.project import Dataset
 from datumaro.plugins.data_formats.image_dir import ImageDirExporter
 
 from ..requirements import Requirements, mark_requirement

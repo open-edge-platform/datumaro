@@ -10,9 +10,9 @@ import pytest
 
 import datumaro.plugins.data_formats.voc.format as VOC
 from datumaro.components.annotation import AnnotationType, Bbox, LabelCategories, MaskCategories
+from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image
-from datumaro.components.project import Dataset
 
 from ...requirements import Requirements, mark_requirement
 

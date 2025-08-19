@@ -12,9 +12,9 @@ import pytest
 from datumaro.cli.util.compare import DistanceCompareVisualizer
 from datumaro.components.annotation import Bbox, Caption, Label, Mask, Points
 from datumaro.components.comparator import DistanceComparator, EqualityComparator, TableComparator
+from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DEFAULT_SUBSET_NAME, DatasetItem
 from datumaro.components.media import Image
-from datumaro.components.project import Dataset
 
 from ..requirements import Requirements, mark_requirement
 

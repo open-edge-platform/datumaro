@@ -11,10 +11,10 @@ from datumaro.components.annotation import (
     Mask,
     Polygon,
 )
+from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image
 from datumaro.components.operations import compute_ann_statistics
-from datumaro.components.project import Dataset
 
 from ..requirements import Requirements, mark_requirement
 

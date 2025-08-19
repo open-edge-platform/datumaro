@@ -15,7 +15,6 @@ from datumaro.components.annotation import Bbox, Label
 from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image, Video, VideoFrame
-from datumaro.components.project import Project
 from datumaro.util.scope import Scope, on_exit_do, scope_add, scoped
 
 from ..requirements import Requirements, mark_requirement
@@ -223,89 +222,6 @@ class VideoExtractorTest:
 
         actual = Dataset.import_from(dataset_dir, "image_dir")
         compare_datasets(TestCase(), expected, actual)
-
-
-class ProjectTest:
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
-    def test_can_release_resources_on_exit(self, test_dir):
-        video_path = _make_sample_video(test_dir)
-        with Scope() as scope:
-            project_dir = scope.add(TestDir())
-
-            project = scope.add(Project.init(project_dir))
-
-            project.import_source(
-                "src",
-                osp.dirname(video_path),
-                "video_frames",
-                rpath=osp.basename(video_path),
-            )
-
-            assert len(project.working_tree.make_dataset()) == 4
-        assert not osp.exists(project_dir)
-
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
-    @scoped
-    def test_can_release_resources_on_remove(self, test_dir):
-        video_path = _make_sample_video(test_dir)
-        project_dir = scope_add(TestDir())
-
-        project = scope_add(Project.init(project_dir))
-
-        project.import_source(
-            "src",
-            osp.dirname(video_path),
-            "video_frames",
-            rpath=osp.basename(video_path),
-        )
-        project.commit("commit 1")
-
-        assert len(project.working_tree.make_dataset()) == 4
-        assert osp.isdir(osp.join(project_dir, "src"))
-
-        project.remove_source("src", keep_data=False)
-
-        assert not osp.exists(osp.join(project_dir, "src"))
-
-    @pytest.mark.xfail(
-        sys.platform == "win32",
-        reason="failing due to a file because it is being used by another process",
-    )
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
-    @scoped
-    def test_can_release_resources_on_checkout(self, test_dir):
-        video_path = _make_sample_video(test_dir)
-        project_dir = scope_add(TestDir())
-
-        project = scope_add(Project.init(project_dir))
-
-        src_url = osp.join(project_dir, "src")
-        src = Dataset.from_iterable(
-            [
-                DatasetItem(1),
-            ],
-            categories=["a"],
-        )
-        src.save(src_url)
-        project.add_source(src_url, "datumaro")
-        project.commit("commit 1")
-
-        project.remove_source("src", keep_data=False)
-
-        project.import_source(
-            "src",
-            osp.dirname(video_path),
-            "video_frames",
-            rpath=osp.basename(video_path),
-        )
-        project.commit("commit 2")
-
-        assert len(project.working_tree.make_dataset()) == 4
-        assert osp.isdir(osp.join(project_dir, "src"))
-
-        project.checkout("HEAD~1")
-
-        assert len(project.working_tree.make_dataset()) == 1
 
 
 @pytest.mark.new
