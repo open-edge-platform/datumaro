@@ -23,7 +23,6 @@ from datumaro.components.annotations.merger import (
     Cuboid3dMerger,
     EllipseMerger,
     FeatureVectorMerger,
-    HashKeyMerger,
     ImageAnnotationMerger,
     LabelMerger,
     LineMerger,
@@ -448,8 +447,6 @@ class IntersectMerge(Merger):
                 return _make(ImageAnnotationMerger, **kwargs)
             elif t is AnnotationType.ellipse:
                 return _make(EllipseMerger, **kwargs)
-            elif t is AnnotationType.hash_key:
-                return _make(HashKeyMerger, **kwargs)
             elif t is AnnotationType.feature_vector:
                 return _make(FeatureVectorMerger, **kwargs)
             elif t is AnnotationType.tabular:

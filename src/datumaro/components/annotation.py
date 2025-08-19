@@ -50,11 +50,10 @@ class AnnotationType(IntEnum):
     super_resolution_annotation = 9
     depth_annotation = 10
     ellipse = 11
-    hash_key = 12
-    feature_vector = 13
-    tabular = 14
-    rotated_bbox = 15
-    cuboid_2d = 16
+    feature_vector = 12
+    tabular = 13
+    rotated_bbox = 14
+    cuboid_2d = 15
 
 
 COORDINATE_ROUNDING_DIGITS = 2
@@ -259,24 +258,6 @@ class Label(Annotation):
 
 
 @deprecated(deprecated_version="1.11", removed_version="1.12")
-@attrs(slots=True, eq=False, order=False)
-class HashKey(Annotation):
-    _type = AnnotationType.hash_key
-    hash_key: np.ndarray = field(validator=attr.validators.instance_of(np.ndarray))
-
-    @hash_key.validator
-    def _validate(self, attribute, value: np.ndarray):
-        """Check whether value is a 1D Numpy array having 96 np.uint8 values"""
-        if value.ndim != 1 or value.shape[0] != 96 or value.dtype != np.uint8:
-            raise ValueError(value)
-
-    def __eq__(self, other):
-        if not isinstance(other, __class__):
-            return False
-        return np.array_equal(self.hash_key, other.hash_key)
-
-
-@deprecated(deprecated_version="1.11", removed_version="1.12")
 @attrs(eq=False, order=False)
 class FeatureVector(Annotation):
     _type = AnnotationType.feature_vector
@@ -285,7 +266,7 @@ class FeatureVector(Annotation):
     def __eq__(self, other):
         if not isinstance(other, __class__):
             return False
-        return np.array_equal(self.hash_key, other.hash_key)
+        return np.array_equal(self.vector, other.vector)
 
 
 RgbColor = Tuple[int, int, int]

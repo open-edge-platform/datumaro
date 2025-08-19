@@ -15,7 +15,6 @@ from datumaro.components.annotation import (
     Bbox,
     Caption,
     Ellipse,
-    HashKey,
     Label,
     Mask,
     Points,
@@ -260,8 +259,6 @@ class DatasetItemEncoder:
             return cls.encode_caption_object(o)
         if isinstance(o, Ellipse):
             return cls.encode_ellipse_object(o, categories)
-        if isinstance(o, HashKey):
-            return cls.encode_annotation_base(o)
 
         raise NotImplementedError("Unexpected annotation object passed: %s" % o)
 

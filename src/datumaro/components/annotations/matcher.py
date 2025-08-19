@@ -33,7 +33,6 @@ __all__ = [
     "CaptionsMatcher",
     "Cuboid3dMatcher",
     "ImageAnnotationMatcher",
-    "HashKeyMatcher",
     "FeatureVectorMatcher",
     "Cuboid2DMatcher",
 ]
@@ -353,11 +352,6 @@ class ImageAnnotationMatcher(AnnotationMatcher):
 
 
 @attrs
-class HashKeyMatcher(AnnotationMatcher):
-    def match_annotations(self, sources):
-        raise NotImplementedError()
-
-
 @attrs
 class FeatureVectorMatcher(AnnotationMatcher):
     def match_annotations(self, sources):

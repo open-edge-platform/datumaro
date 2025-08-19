@@ -14,7 +14,6 @@ from datumaro.components.annotation import (
     Caption,
     DepthAnnotation,
     Ellipse,
-    HashKey,
     Label,
     Mask,
     Points,
@@ -466,16 +465,3 @@ class EllipseVisualizerTest(TestCaseClosePltFigure, VisualizerTestBase):
     @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_vis_gallery(self):
         self._test_vis_gallery(self.DEFAULT_GRID_SIZE_TEST_CASES)
-
-
-class UnsupportedTypeTest(LabelVisualizerTest):
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-
-        for item in cls.dataset:
-            item.annotations.append(HashKey(np.ones(96).astype(np.uint8)))
-
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
-    def test_vis_one_sample(self):
-        self._test_vis_one_sample("_draw", check_z_order=False)
