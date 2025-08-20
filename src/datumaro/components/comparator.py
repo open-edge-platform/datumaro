@@ -29,7 +29,6 @@ from datumaro.components.operations import (
     match_items_by_id,
     match_items_by_image_hash,
 )
-from datumaro.components.shift_analyzer import ShiftAnalyzer
 from datumaro.util import dump_json_file, filter_dict, find
 from datumaro.util.annotation_util import find_instances, max_bbox
 from datumaro.util.attrs_util import default_if_none
@@ -587,6 +586,8 @@ class TableComparator:
     ) -> Tuple[str, Dict]:
         """Generates a low-level comparison table.
 
+        Note: Shift analysis functionality has been removed.
+
         Args:
             first_dataset: The first dataset to compare.
             second_dataset: The second dataset to compare.
@@ -595,15 +596,10 @@ class TableComparator:
             A tuple containing the table as a string and a dictionary representing the data
             of the table.
         """
-        shift_analyzer = ShiftAnalyzer()
-        cov_shift = shift_analyzer.compute_covariate_shift([first_dataset, second_dataset])
-        label_shift = shift_analyzer.compute_label_shift([first_dataset, second_dataset])
-
         headers = ["Field", "Value"]
 
         rows = [
-            ["Covariate shift", str(cov_shift)],
-            ["Label shift", str(label_shift)],
+            ["Note", "Shift analysis functionality has been removed"],
         ]
 
         table = self._create_table(headers, rows)
