@@ -43,11 +43,11 @@ class Points:
 
     points: list
     visibility: list
-    label: int = None
+    label: int | None = None
     group: int = 0
     object_id: int = 0
     z_order: int = 0
-    attributes: dict = None
+    attributes: dict | None = None
 
     # Add Visibility as a class attribute for compatibility
     Visibility = PointsVisibility
@@ -62,11 +62,11 @@ class Polygon:
     """Minimal Polygon annotation class."""
 
     points: list
-    label: int = None
+    label: int | None = None
     group: int = 0
     object_id: int = 0
     z_order: int = 0
-    attributes: dict = None
+    attributes: dict | None = None
 
     def __post_init__(self):
         if self.attributes is None:
@@ -78,11 +78,11 @@ class Ellipse:
     """Minimal Ellipse annotation class."""
 
     points: list
-    label: int = None
+    label: int | None = None
     group: int = 0
     object_id: int = 0
     z_order: int = 0
-    attributes: dict = None
+    attributes: dict | None = None
 
     def __post_init__(self):
         if self.attributes is None:
@@ -94,11 +94,11 @@ class RotatedBbox:
     """Minimal RotatedBbox annotation class."""
 
     points: list
-    label: int = None
+    label: int | None = None
     group: int = 0
     object_id: int = 0
     z_order: int = 0
-    attributes: dict = None
+    attributes: dict | None = None
 
     def __post_init__(self):
         if self.attributes is None:
