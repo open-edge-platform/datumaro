@@ -6,10 +6,10 @@ import argparse
 import logging as log
 import os
 import os.path as osp
+import shutil
 from enum import Enum, auto
 
 from datumaro.components.comparator import DistanceComparator, EqualityComparator, TableComparator
-from datumaro.util.os_util import rmtree
 from datumaro.util.scope import on_error_do, scoped
 
 from ..util import MultilineFormatter
@@ -152,7 +152,7 @@ def compare_command(args):
     dst_dir = osp.abspath(dst_dir)
 
     if not osp.exists(dst_dir):
-        on_error_do(rmtree, dst_dir, ignore_errors=True)
+        on_error_do(shutil.rmtree, dst_dir, ignore_errors=True)
         os.makedirs(dst_dir)
 
     try:

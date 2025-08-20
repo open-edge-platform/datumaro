@@ -8,6 +8,7 @@ import inspect
 import logging as log
 import os
 import os.path as osp
+import shutil
 import warnings
 from contextlib import contextmanager
 from copy import copy, deepcopy
@@ -65,7 +66,6 @@ from datumaro.components.merge import DEFAULT_MERGE_POLICY
 from datumaro.components.progress_reporting import NullProgressReporter, ProgressReporter
 from datumaro.components.transformer import ItemTransform, Transform
 from datumaro.util.log_utils import logging_disabled
-from datumaro.util.os_util import rmtree
 from datumaro.util.scope import on_error_do, scoped
 
 DEFAULT_FORMAT = "datumaro"
@@ -671,7 +671,7 @@ class Dataset(IDataset):
 
         save_dir = osp.abspath(save_dir)
         if not osp.exists(save_dir):
-            on_error_do(rmtree, save_dir, ignore_errors=True)
+            on_error_do(shutil.rmtree, save_dir, ignore_errors=True)
             inplace = False
         os.makedirs(save_dir, exist_ok=True)
 

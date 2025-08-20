@@ -48,8 +48,6 @@ class _LogManager:
 
         # Suppress own deprecation warnings
         warnings.filterwarnings("ignore", category=DeprecationWarning, module=r"datumaro\..*")
-        # We don't use sklearn directly, but it yells out too much about its deprecations.
-        warnings.filterwarnings("ignore", category=DeprecationWarning, module=r"sklearn\..*")
 
     @staticmethod
     def _define_loglevel_option(parser):

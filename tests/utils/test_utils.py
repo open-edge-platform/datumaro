@@ -23,7 +23,6 @@ from datumaro.components.dataset import Dataset, StreamDataset
 from datumaro.components.dataset_base import IDataset
 from datumaro.components.media import Image, MultiframeImage, PointCloud, Video, VideoFrame
 from datumaro.util import filter_dict, find
-from datumaro.util.os_util import rmfile, rmtree
 
 
 class Dimensions(Enum):
@@ -47,13 +46,13 @@ class FileRemover:
         for _ in range(10):
             if self.is_dir:
                 try:
-                    rmtree(self.path)
+                    shutil.rmtree(self.path)
                 except unittest.SkipTest:
-                    # Suppress skip test errors from git.util.rmtree
+                    # Suppress skip test errors from rmtree
                     if not exc_type:
                         raise
             else:
-                rmfile(self.path)
+                os.remove(self.path)
 
             if not os.path.exists(self.path):
                 return

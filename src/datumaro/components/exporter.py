@@ -23,7 +23,6 @@ from datumaro.components.errors import (
 from datumaro.components.media import Image, PointCloud, Video, VideoFrame
 from datumaro.components.progress_reporting import NullProgressReporter, ProgressReporter
 from datumaro.util.meta_file_util import save_meta_file
-from datumaro.util.os_util import rmtree
 from datumaro.util.scope import on_error_do, scoped
 
 T = TypeVar("T")
@@ -140,12 +139,12 @@ class Exporter(CliPlugin):
             return cls.convert(dataset, save_dir, **options)
 
         tmpdir = mkdtemp(dir=osp.dirname(save_dir), prefix=osp.basename(save_dir), suffix=".tmp")
-        on_error_do(rmtree, tmpdir, ignore_errors=True)
+        on_error_do(shutil.rmtree, tmpdir, ignore_errors=True)
         shutil.copymode(save_dir, tmpdir)
 
         retval = cls.convert(dataset, tmpdir, **options)
 
-        rmtree(save_dir)
+        shutil.rmtree(save_dir)
         os.replace(tmpdir, save_dir)
 
         return retval

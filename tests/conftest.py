@@ -2,11 +2,10 @@
 #
 # SPDX-License-Identifier: MIT
 
+import shutil
 from time import sleep
 
 import pytest
-
-from datumaro.util.os_util import rmtree
 
 from tests.utils.test_utils import TestCaseHelper, TestDir
 

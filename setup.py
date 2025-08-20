@@ -36,7 +36,6 @@ def find_version(project_dir=None):
 
 
 CORE_REQUIREMENTS_FILE = "requirements-core.txt"
-DEFAULT_REQUIREMENTS_FILE = "requirements-default.txt"
 
 
 def parse_requirements(filename=CORE_REQUIREMENTS_FILE):
@@ -50,7 +49,6 @@ if strtobool(os.getenv("DATUMARO_HEADLESS", "0").lower()):
 else:
     CORE_REQUIREMENTS.append("opencv-python")
 
-DEFAULT_REQUIREMENTS = parse_requirements(DEFAULT_REQUIREMENTS_FILE)
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
@@ -86,7 +84,6 @@ setuptools.setup(
         "tf": ["tensorflow"],
         "tfds": ["tensorflow-datasets<4.9.3", "absl-py>=0.12.0"],
         "torch": ["torch", "torchvision"],
-        "default": DEFAULT_REQUIREMENTS,
     },
     ext_modules=ext_modules,
     entry_points={
