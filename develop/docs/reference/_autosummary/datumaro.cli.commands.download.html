@@ -342,7 +342,6 @@ document.write(`
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../jupyter_notebook_examples/dataset_IO.html">Dataset I/O</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/14_import_export_det_data.html">Import and Export Public Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/15_import_export_seg_data.html">Import and Export Public Semantic Segmentation Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../jupyter_notebook_examples/notebooks/09_encrypt_dataset.html">Encrypt Your Dataset</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../jupyter_notebook_examples/manipulate.html">Manipulate</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -428,7 +427,6 @@ document.write(`
 <li class="toctree-l4"><a class="reference internal" href="datumaro.components.config.html">datumaro.components.config</a></li>
 <li class="toctree-l4"><a class="reference internal" href="datumaro.components.config_model.html">datumaro.components.config_model</a></li>
 <li class="toctree-l4"><a class="reference internal" href="datumaro.components.contexts.html">datumaro.components.contexts</a></li>
-<li class="toctree-l4"><a class="reference internal" href="datumaro.components.crypter.html">datumaro.components.crypter</a></li>
 <li class="toctree-l4"><a class="reference internal" href="datumaro.components.dataset.html">datumaro.components.dataset</a></li>
 <li class="toctree-l4"><a class="reference internal" href="datumaro.components.dataset_base.html">datumaro.components.dataset_base</a></li>
 <li class="toctree-l4"><a class="reference internal" href="datumaro.components.dataset_item_storage.html">datumaro.components.dataset_item_storage</a></li>
@@ -506,8 +504,6 @@ document.write(`
 <li class="toctree-l4"><a class="reference internal" href="datumaro.util.samples.html">datumaro.util.samples</a></li>
 <li class="toctree-l4"><a class="reference internal" href="datumaro.util.scope.html">datumaro.util.scope</a></li>
 <li class="toctree-l4"><a class="reference internal" href="datumaro.util.tabular_util.html">datumaro.util.tabular_util</a></li>
-<li class="toctree-l4"><a class="reference internal" href="datumaro.util.telemetry_stub.html">datumaro.util.telemetry_stub</a></li>
-<li class="toctree-l4"><a class="reference internal" href="datumaro.util.telemetry_utils.html">datumaro.util.telemetry_utils</a></li>
 <li class="toctree-l4"><a class="reference internal" href="datumaro.util.tf_util.html">datumaro.util.tf_util</a></li>
 </ul>
 </li>
@@ -533,7 +529,6 @@ document.write(`
 <li class="toctree-l1"><a class="reference internal" href="../../user-manual/how_to_use_datumaro.html">How to use Datumaro</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../user-manual/model_preparation.html">Model Preparation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../user-manual/extending.html">Extending</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../user-manual/how_to_control_tm_data_collection.html">How to control telemetry data collection</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Release Notes</span></p>
 <ul class="nav bd-sidenav">
@@ -625,9 +620,6 @@ document.write(`
 <tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.cli.commands.download.download_command" title="datumaro.cli.commands.download.download_command"><code class="xref py py-obj docutils literal notranslate"><span class="pre">download_command</span></code></a>(args)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.cli.commands.download.get_sensitive_args" title="datumaro.cli.commands.download.get_sensitive_args"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_sensitive_args</span></code></a>()</p></td>
-<td><p></p></td>
-</tr>
 </tbody>
 </table>
 <dl class="py function">
@@ -643,11 +635,6 @@ document.write(`
 <dl class="py function">
 <dt class="sig sig-object py" id="datumaro.cli.commands.download.build_describe_subparser">
 <span class="sig-prename descclassname"><span class="pre">datumaro.cli.commands.download.</span></span><span class="sig-name descname"><span class="pre">build_describe_subparser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subparsers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_SubParsersAction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">downloader</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.cli.commands.downloaders.downloader.html#datumaro.cli.commands.downloaders.downloader.IDatasetDownloader" title="datumaro.cli.commands.downloaders.downloader.IDatasetDownloader"><span class="pre">IDatasetDownloader</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/datumaro/cli/commands/download.html#build_describe_subparser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.cli.commands.download.build_describe_subparser" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="datumaro.cli.commands.download.get_sensitive_args">
-<span class="sig-prename descclassname"><span class="pre">datumaro.cli.commands.download.</span></span><span class="sig-name descname"><span class="pre">get_sensitive_args</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/datumaro/cli/commands/download.html#get_sensitive_args"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.cli.commands.download.get_sensitive_args" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
@@ -711,7 +698,6 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.commands.download.build_parser"><code class="docutils literal notranslate"><span class="pre">build_parser()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.commands.download.build_get_subparser"><code class="docutils literal notranslate"><span class="pre">build_get_subparser()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.commands.download.build_describe_subparser"><code class="docutils literal notranslate"><span class="pre">build_describe_subparser()</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.commands.download.get_sensitive_args"><code class="docutils literal notranslate"><span class="pre">get_sensitive_args()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.commands.download.download_command"><code class="docutils literal notranslate"><span class="pre">download_command()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.cli.commands.download.describe_downloads_command"><code class="docutils literal notranslate"><span class="pre">describe_downloads_command()</span></code></a></li>
 </ul>
