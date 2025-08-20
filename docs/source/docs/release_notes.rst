@@ -376,7 +376,6 @@ v1.2.0 (2023.04)
 New features
 ^^^^^^^^^^^^
 - Add Skill Up section to documentation
-- Add LossDynamicsAnalyzer for noisy label detection
 - Add Apache Arrow format support
 - Add sort transform
 
