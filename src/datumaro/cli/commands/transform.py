@@ -77,12 +77,6 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
     return parser
 
 
-def get_sensitive_args():
-    return {
-        transform_command: ["target", "dst_dir", "extra_args"],
-    }
-
-
 @scoped
 def transform_command(args):
     env = DEFAULT_ENVIRONMENT

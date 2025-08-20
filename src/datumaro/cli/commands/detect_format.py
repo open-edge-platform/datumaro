@@ -57,12 +57,6 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
     return parser
 
 
-def get_sensitive_args():
-    return {
-        detect_format_command: ["url"],
-    }
-
-
 @scoped
 def detect_format_command(args):
     env = DEFAULT_ENVIRONMENT

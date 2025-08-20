@@ -139,16 +139,6 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
     return parser
 
 
-def get_sensitive_args():
-    return {
-        compare_command: [
-            "first_target",
-            "second_target",
-            "dst_dir",
-        ],
-    }
-
-
 @scoped
 def compare_command(args):
     dst_dir = args.dst_dir

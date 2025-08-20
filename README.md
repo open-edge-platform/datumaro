@@ -102,11 +102,3 @@ Feel free to
 think something needs to be changed. You are welcome to participate in
 development, instructions are available in our
 [contribution guide](https://github.com/open-edge-platform/datumaro/blob/develop/contributing.md).
-
-## Telemetry data collection note
-
-The [OpenVINO™ telemetry library](https://github.com/open-edge-platform/telemetry/)
-is used to collect basic information about Datumaro usage.
-
-To enable/disable telemetry data collection please see the
-[guide](https://open-edge-platform.github.io/datumaro/latest/docs/user-manual/how_to_control_tm_data_collection).
