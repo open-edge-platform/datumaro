@@ -23,7 +23,7 @@ from datumaro.components.filter import (
 )
 from datumaro.components.launcher import Launcher
 from datumaro.components.merge import DEFAULT_MERGE_POLICY, get_merger
-from datumaro.components.transformer import ModelTransform, Transform
+from datumaro.components.transformer import Transform
 from datumaro.components.validator import TaskType, Validator
 from datumaro.util import parse_str_enum_value
 from datumaro.util.deprecation import deprecated
@@ -297,56 +297,6 @@ class HLOps:
         return Dataset(source=merged, env=env)
 
     @staticmethod
-    @deprecated(deprecated_version="1.11", removed_version="1.12")
-    def run_model(
-        dataset: IDataset,
-        model: Union[Launcher, Type[ModelTransform]],
-        *,
-        batch_size: int = 1,
-        append_annotation: bool = False,
-        num_workers: int = 0,
-        **kwargs,
-    ) -> IDataset:
-        """
-        Run the model on the dataset item media entities, such as images,
-        to obtain pseudo labels and add them as dataset annotations.
-
-        Args:
-            dataset: The dataset to be transformed
-            model: The model to be applied to the dataset
-            batch_size: The number of dataset items processed
-                simultaneously by the model
-            append_annotation: Whether append new annotation to existed annotations
-            num_workers: The number of worker threads to use for parallel inference.
-                Set to 0 for single-process mode. Default is 0.
-            **kwargs: Parameters for the model
-
-        Returns: a wrapper around the input dataset, which is computed lazily
-            during iteration
-        """
-
-        if isinstance(model, Launcher):
-            return HLOps.transform(
-                dataset,
-                ModelTransform,
-                launcher=model,
-                batch_size=batch_size,
-                append_annotation=append_annotation,
-                num_workers=num_workers,
-                **kwargs,
-            )
-        elif inspect.isclass(model) and issubclass(model, ModelTransform):
-            return HLOps.transform(
-                dataset,
-                model,
-                batch_size=batch_size,
-                append_annotation=append_annotation,
-                num_workers=num_workers,
-                **kwargs,
-            )
-        else:
-            raise TypeError(f"Unexpected model argument type: {type(model)}")
-
     @staticmethod
     @scoped
     def export(

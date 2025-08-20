@@ -68,12 +68,6 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
     return parser
 
 
-def get_sensitive_args():
-    return {
-        validate_command: ["target", "subset_name", "extra_args"],
-    }
-
-
 @scoped
 def validate_command(args):
     env = DEFAULT_ENVIRONMENT

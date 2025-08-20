@@ -96,13 +96,6 @@ def build_describe_subparser(
     return parser
 
 
-def get_sensitive_args():
-    return {
-        download_command: ["dst_dir", "extra_args"],
-        describe_downloads_command: ["report-file"],
-    }
-
-
 DOWNLOADERS: Dict[str, IDatasetDownloader] = {
     "tfds": TfdsDatasetDownloader,
     "kaggle": KaggleDatasetDownloader,

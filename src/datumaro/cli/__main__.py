@@ -8,13 +8,6 @@ import os.path as osp
 import sys
 import warnings
 
-from ..util.telemetry_utils import (
-    close_telemetry_session,
-    init_telemetry_session,
-    send_command_exception_info,
-    send_command_failure_info,
-    send_command_success_info,
-)
 from ..version import __version__
 from . import contexts, helpers
 from .commands import get_non_project_commands
@@ -90,18 +83,6 @@ def _get_helper_commands():
     ]
 
 
-def _get_sensitive_args():
-    known_contexts = _get_known_contexts()
-    known_commands = get_non_project_commands() + _get_helper_commands()
-
-    res = {}
-    for _, command, _ in known_contexts + known_commands:
-        if command is not None:
-            res.update(command.get_sensitive_args())
-
-    return res
-
-
 def make_parser():
     parser = argparse.ArgumentParser(
         description="Dataset Framework", formatter_class=argparse.RawDescriptionHelpFormatter
@@ -159,29 +140,18 @@ def main(args=None):
         parser.print_help()
         return 1
 
-    sensitive_args = _get_sensitive_args()
-    telemetry = init_telemetry_session(app_name="Datumaro", app_version=__version__)
-
     try:
         retcode = args.command(args)
         if retcode is None:
             retcode = 0
     except CliException as e:
         log.error(e)
-        send_command_exception_info(telemetry, args, sensitive_args=sensitive_args[args.command])
         return 1
     except Exception as e:
         log.error(e)
-        send_command_exception_info(telemetry, args, sensitive_args=sensitive_args[args.command])
         raise
     else:
-        if retcode:
-            send_command_failure_info(telemetry, args, sensitive_args=sensitive_args[args.command])
-        else:
-            send_command_success_info(telemetry, args, sensitive_args=sensitive_args[args.command])
         return retcode
-    finally:
-        close_telemetry_session(telemetry)
 
 
 if __name__ == "__main__":

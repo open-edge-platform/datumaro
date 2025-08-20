@@ -98,15 +98,6 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
     return parser
 
 
-def get_sensitive_args():
-    return {
-        filter_command: [
-            "target",
-            "dst_dir",
-        ],
-    }
-
-
 @scoped
 def filter_command(args):
     filter_args = FilterModes.make_filter_args(args.mode)
