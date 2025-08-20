@@ -30,16 +30,6 @@ from .schema import AttributeInfo, Field, Schema
 if TYPE_CHECKING:
     from .categories import Categories
 
-    try:
-        from PIL import Image as PILImage
-    except ImportError:
-        PILImage = None
-
-    try:
-        import torch
-    except ImportError:
-        torch = None
-
 
 @dataclass_transform()
 class Sample:
