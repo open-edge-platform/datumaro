@@ -32,7 +32,6 @@ import cv2
 import imagesize
 import numpy as np
 
-from datumaro.components.crypter import NULL_CRYPTER, Crypter
 from datumaro.components.errors import DatumaroError, MediaShapeError
 from datumaro.util.definitions import BboxIntCoords
 from datumaro.util.image import (
@@ -96,8 +95,8 @@ class MediaType(IntEnum):
 class MediaElement(Generic[AnyData]):
     _type = MediaType.MEDIA_ELEMENT
 
-    def __init__(self, crypter: Crypter = NULL_CRYPTER, *args, **kwargs) -> None:
-        self._crypter = crypter
+    def __init__(self, *args, **kwargs) -> None:
+        pass
 
     def as_dict(self) -> Dict[str, Any]:
         # NOTE:
@@ -115,13 +114,6 @@ class MediaElement(Generic[AnyData]):
         attrs = deepcopy(self.as_dict())
         attrs.update(kwargs)
         return self.__class__(**attrs)
-
-    @property
-    def is_encrypted(self) -> bool:
-        return not self._crypter.is_null_crypter
-
-    def set_crypter(self, crypter: Crypter):
-        self._crypter = crypter
 
     @property
     def type(self) -> MediaType:
@@ -148,7 +140,6 @@ class MediaElement(Generic[AnyData]):
     def save(
         self,
         fp: Union[str, io.IOBase],
-        crypter: Crypter = NULL_CRYPTER,
     ):
         raise NotImplementedError
 
@@ -301,9 +292,6 @@ class Image(MediaElement[np.ndarray]):
             return False
         return (np.array_equal(self.size, other.size)) and (np.array_equal(self.data, other.data))
 
-    def set_crypter(self, crypter: Crypter):
-        super().set_crypter(crypter)
-
 
 class ImageFromFile(FromFileMixin, Image):
     def __init__(
@@ -313,7 +301,7 @@ class ImageFromFile(FromFileMixin, Image):
         **kwargs,
     ) -> None:
         super().__init__(path, *args, **kwargs)
-        self.__data = lazy_image(self.path, crypter=self._crypter)
+        self.__data = lazy_image(self.path)
 
         # extension from file name and real extension can be differ
         self._ext = self._ext if self._ext else osp.splitext(osp.basename(path))[1]
@@ -352,7 +340,6 @@ class ImageFromFile(FromFileMixin, Image):
         self,
         fp: Union[str, io.IOBase],
         ext: Optional[str] = None,
-        crypter: Crypter = NULL_CRYPTER,
     ):
         cur_path = osp.abspath(self.path) if self.path else None
         cur_ext = self.ext
@@ -362,16 +349,11 @@ class ImageFromFile(FromFileMixin, Image):
 
         if cur_path is not None and osp.isfile(cur_path):
             if cur_ext == new_ext:
-                copyto_image(src=cur_path, dst=fp, src_crypter=self._crypter, dst_crypter=crypter)
+                copyto_image(src=cur_path, dst=fp)
             else:
-                save_image(fp, self.data, ext=new_ext, crypter=crypter)
+                save_image(fp, self.data, ext=new_ext)
         else:
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), cur_path)
-
-    def set_crypter(self, crypter: Crypter):
-        super().set_crypter(crypter)
-        if isinstance(self.__data, lazy_image):
-            self.__data._crypter = crypter
 
     def get_data_as_dtype(self, dtype: Optional[np.dtype] = np.uint8) -> Optional[np.ndarray]:
         """Get image data with a specific data type"""
@@ -384,7 +366,6 @@ class ImageFromData(FromDataMixin, Image):
         self,
         fp: Union[str, io.IOBase],
         ext: Optional[str] = None,
-        crypter: Crypter = NULL_CRYPTER,
     ):
         data = self.data
         if data is None:
@@ -392,7 +373,7 @@ class ImageFromData(FromDataMixin, Image):
         new_ext = self._get_ext_to_save(fp, ext)
         if isinstance(fp, str):
             os.makedirs(osp.dirname(fp), exist_ok=True)
-        save_image(fp, data, ext=new_ext, crypter=crypter)
+        save_image(fp, data, ext=new_ext)
 
 
 class ImageFromNumpy(ImageFromData):
@@ -836,7 +817,6 @@ class Video(MediaElement, Iterable[VideoFrame]):
     def save(
         self,
         fp: Union[str, io.IOBase],
-        crypter: Crypter = NULL_CRYPTER,
     ):
         if isinstance(fp, str):
             os.makedirs(osp.dirname(fp), exist_ok=True)
@@ -896,12 +876,10 @@ class PointCloud(MediaElement[bytes]):
     def _save_extra_images(
         self,
         fn: Callable[[int, Image], Dict[str, Any]],
-        crypter: Optional[Crypter] = None,
     ):
-        crypter = crypter if crypter else self._crypter
         for i, img in enumerate(self.extra_images):
             if img.has_data:
-                kwargs: Dict[str, Any] = {"crypter": crypter}
+                kwargs: Dict[str, Any] = {}
                 kwargs.update(fn(i, img))
                 img.save(**kwargs)
 
@@ -926,13 +904,7 @@ class PointCloudFromFile(FromFileMixin, PointCloud):
         self,
         fp: Union[str, io.IOBase],
         extra_images_fn: Optional[Callable[[int, Image], Dict[str, Any]]] = None,
-        crypter: Crypter = NULL_CRYPTER,
     ):
-        if not crypter.is_null_crypter:
-            raise NotImplementedError(
-                f"{self.__class__.__name__} does not implement save() with non NullCrypter."
-            )
-
         cur_path = osp.abspath(self.path) if self.path else None
 
         if cur_path is not None and osp.isfile(cur_path):
@@ -948,7 +920,7 @@ class PointCloudFromFile(FromFileMixin, PointCloud):
             raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), cur_path)
 
         if extra_images_fn is not None:
-            self._save_extra_images(extra_images_fn, crypter)
+            self._save_extra_images(extra_images_fn)
 
 
 class PointCloudFromData(FromDataMixin, PointCloud):
@@ -956,13 +928,7 @@ class PointCloudFromData(FromDataMixin, PointCloud):
         self,
         fp: Union[str, io.IOBase],
         extra_images_fn: Optional[Callable[[int, Image], Dict[str, Any]]] = None,
-        crypter: Crypter = NULL_CRYPTER,
     ):
-        if not crypter.is_null_crypter:
-            raise NotImplementedError(
-                f"{self.__class__.__name__} does not implement save() with non NullCrypter."
-            )
-
         _bytes = self.data
         if _bytes is None:
             raise ValueError(f"{self.__class__.__name__} is empty.")
@@ -974,7 +940,7 @@ class PointCloudFromData(FromDataMixin, PointCloud):
             fp.write(_bytes)
 
         if extra_images_fn is not None:
-            self._save_extra_images(extra_images_fn, crypter)
+            self._save_extra_images(extra_images_fn)
 
 
 class PointCloudFromBytes(PointCloudFromData):
@@ -1086,19 +1052,14 @@ class RoIImage(Image):
         self,
         fp: Union[str, io.IOBase],
         ext: Optional[str] = None,
-        crypter: Crypter = NULL_CRYPTER,
     ):
-        if not crypter.is_null_crypter:
-            raise NotImplementedError(
-                f"{self.__class__.__name__} does not implement save() with non NullCrypter."
-            )
         data = self.data
         if data is None:
             raise ValueError(f"{self.__class__.__name__} is empty.")
         new_ext = self._get_ext_to_save(fp, ext)
         if isinstance(fp, str):
             os.makedirs(osp.dirname(fp), exist_ok=True)
-        save_image(fp, data, ext=new_ext, crypter=crypter)
+        save_image(fp, data, ext=new_ext)
 
 
 class RoIImageFromFile(FromFileMixin, RoIImage):
@@ -1110,7 +1071,7 @@ class RoIImageFromFile(FromFileMixin, RoIImage):
         **kwargs,
     ) -> None:
         super().__init__(path, roi, *args, **kwargs)
-        self.__data = lazy_image(self.path, crypter=self._crypter)
+        self.__data = lazy_image(self.path)
 
     @property
     def data(self) -> Optional[np.ndarray]:
@@ -1204,19 +1165,14 @@ class MosaicImageFromData(FromDataMixin, MosaicImage):
         self,
         fp: Union[str, io.IOBase],
         ext: Optional[str] = None,
-        crypter: Crypter = NULL_CRYPTER,
     ):
-        if not crypter.is_null_crypter:
-            raise NotImplementedError(
-                f"{self.__class__.__name__} does not implement save() with non NullCrypter."
-            )
         data = self.data
         if data is None:
             raise ValueError(f"{self.__class__.__name__} is empty.")
         new_ext = self._get_ext_to_save(fp, ext)
         if isinstance(fp, str):
             os.makedirs(osp.dirname(fp), exist_ok=True)
-        save_image(fp, data, ext=new_ext, crypter=crypter)
+        save_image(fp, data, ext=new_ext)
 
 
 class MosaicImageFromImageRoIPairs(MosaicImageFromData):

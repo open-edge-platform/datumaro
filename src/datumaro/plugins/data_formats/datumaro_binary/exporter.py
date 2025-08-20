@@ -4,8 +4,6 @@
 
 # pylint: disable=no-self-use
 
-import argparse
-import logging as log
 import os.path as osp
 import struct
 import warnings
@@ -13,7 +11,6 @@ from io import BufferedWriter
 from multiprocessing.pool import ApplyResult, Pool
 from typing import Any, List, Optional, Union
 
-from datumaro.components.crypter import NULL_CRYPTER, Crypter
 from datumaro.components.dataset_base import DatasetItem, IDataset
 from datumaro.components.errors import DatumaroError, PathSeparatorInSubsetNameError
 from datumaro.components.exporter import ExportContext, ExportContextComponent, Exporter
@@ -36,13 +33,9 @@ class _SubsetWriter(__SubsetWriter):
         subset: str,
         ann_file: str,
         export_context: ExportContextComponent,
-        secret_key_file: str,
-        no_media_encryption: bool = False,
         max_blob_size: int = DatumaroBinaryPath.MAX_BLOB_SIZE,
     ):
         super().__init__(context, subset, ann_file, export_context)
-        self._crypter = self.export_context.crypter
-        self.secret_key_file = secret_key_file
 
         self._fp: Optional[BufferedWriter] = None
         self._data["items"]: List[Union[bytes, ApplyResult]] = []
@@ -50,8 +43,6 @@ class _SubsetWriter(__SubsetWriter):
         self._item_cnt = 0
         media_type = context._extractor.media_type()
         self._media_type = {"media_type": media_type._type}
-
-        self._media_encryption = not no_media_encryption
 
         if max_blob_size != DatumaroBinaryPath.MAX_BLOB_SIZE:
             warnings.warn(
@@ -65,19 +56,13 @@ class _SubsetWriter(__SubsetWriter):
         self._fp.write(DatumaroBinaryPath.SIGNATURE.encode())
 
     def _dump_encryption_field(self) -> int:
-        if self._crypter.key is None:
-            msg = b""
-        else:
-            msg = self._crypter.key
-            msg = self._crypter.encrypt(msg)
+        # Encrypted files are no longer supported in this version of Datumaro.
+        msg = b""
 
         return self._fp.write(struct.pack(f"I{len(msg)}s", len(msg), msg))
 
-    def _dump_header(self, header: Any, use_crypter: bool = True):
+    def _dump_header(self, header: Any):
         msg = DictMapper.forward(header)
-
-        if use_crypter and self._crypter.key is not None:
-            msg = self._crypter.encrypt(msg)
 
         length = struct.pack("I", len(msg))
         return self._fp.write(length + msg)
@@ -86,9 +71,8 @@ class _SubsetWriter(__SubsetWriter):
         self._dump_header(
             {
                 "dm_format_version": DATUMARO_FORMAT_VERSION,
-                "media_encryption": self._media_encryption,
+                "media_encryption": False,
             },
-            use_crypter=False,
         )
 
     def _dump_info(self):
@@ -108,22 +92,20 @@ class _SubsetWriter(__SubsetWriter):
                     (
                         item,
                         self.export_context,
-                        self._media_encryption,
                     ),
                 )
             )
         else:
-            self._bytes.append(
-                self.add_item_impl(item, self.export_context, self._media_encryption)
-            )
+            self._bytes.append(self.add_item_impl(item, self.export_context))
 
         self._item_cnt += 1
 
     @staticmethod
     def add_item_impl(
-        item: DatasetItem, context: ExportContextComponent, media_encryption: bool
+        item: DatasetItem,
+        context: ExportContextComponent,
     ) -> bytes:
-        with _SubsetWriter.context_save_media(item, context=context, encryption=media_encryption):
+        with _SubsetWriter.context_save_media(item, context=context):
             return DatasetItemMapper.forward(item)
 
     def _dump_items(self, pool: Optional[Pool] = None):
@@ -146,11 +128,10 @@ class _SubsetWriter(__SubsetWriter):
                 cur_blob = blobs[-1]
 
         # Encrypt blobs
-        blobs = [self._crypter.encrypt(bytes(blob)) for blob in blobs if len(blob) > 0]
+        blobs = [bytes(blob) for blob in blobs if len(blob) > 0]
 
         # Dump blob sizes first
         blob_sizes = IntListMapper.forward([len(blob) for blob in blobs])
-        blob_sizes = self._crypter.encrypt(blob_sizes)
         n_blob_sizes = len(blob_sizes)
         self._fp.write(struct.pack(f"<I{n_blob_sizes}s", n_blob_sizes, blob_sizes))
 
@@ -162,17 +143,6 @@ class _SubsetWriter(__SubsetWriter):
 
     def write(self, pool: Optional[Pool] = None, *args, **kwargs):
         try:
-            if not self._crypter.is_null_crypter:
-                log.info(
-                    "Please see the generated encryption secret key file in the following path.\n"
-                    f"{self.secret_key_file}\n"
-                    "It must be kept it separate from the dataset to protect your dataset safely. "
-                    "You also need it to import the encrpted dataset in later, so that be careful not to lose."
-                )
-
-                with open(self.secret_key_file, "w") as fp:
-                    fp.write(self._crypter.key.decode())
-
             with open(self.ann_file, "wb") as fp:
                 self._fp = fp
                 self._sign()
@@ -186,21 +156,6 @@ class _SubsetWriter(__SubsetWriter):
             self._fp = None
 
 
-class EncryptionAction(argparse.Action):
-    def __init__(self, option_strings, dest, **kwargs):
-        super().__init__(option_strings, dest, nargs=0, **kwargs)
-
-    def __call__(self, parser, namespace, values, option_string=None):
-        encryption = True if option_string in self.option_strings else False
-        if encryption:
-            key = Crypter.gen_key()
-        else:
-            key = None
-
-        setattr(namespace, "encryption_key", key)
-        delattr(namespace, self.dest)
-
-
 class DatumaroBinaryExporter(DatumaroExporter):
     DEFAULT_IMAGE_EXT = DatumaroBinaryPath.IMAGE_EXT
     PATH_CLS = DatumaroBinaryPath
@@ -208,20 +163,6 @@ class DatumaroBinaryExporter(DatumaroExporter):
     @classmethod
     def build_cmdline_parser(cls, **kwargs):
         parser = super().build_cmdline_parser(**kwargs)
-
-        parser.add_argument(
-            "--encryption",
-            action=EncryptionAction,
-            default=False,
-            help="Encrypt your dataset with the auto-generated secret key.",
-        )
-
-        parser.add_argument(
-            "--no-media-encryption",
-            action="store_true",
-            help="Only encrypt the annotation file, not media files. "
-            'This option is effective only if "--encryption" is enabled.',
-        )
 
         parser.add_argument(
             "--num-workers",
@@ -243,9 +184,6 @@ class DatumaroBinaryExporter(DatumaroExporter):
         default_image_ext: Optional[str] = None,
         save_dataset_meta: bool = False,
         ctx: Optional[ExportContext] = None,
-        encryption_key: Optional[bytes] = None,
-        no_media_encryption: bool = False,
-        encryption: bool = False,
         num_workers: int = 0,
         max_blob_size: int = DatumaroBinaryPath.MAX_BLOB_SIZE,
         **kwargs,
@@ -253,27 +191,11 @@ class DatumaroBinaryExporter(DatumaroExporter):
         """
         Parameters
         ----------
-        encryption_key
-            If provided, the dataset is encrypted with this key for export.
-        no_media_encryption
-            If true and encryption is enabled, do not encrypt media files and only encrypt annotation files.
-        encryption
-            If true and encryption_key is None, generate a random secret key.
         num_workers
             The number of multi-processing workers for export. If num_workers = 0, do not use multiprocessing.
         max_blob_size
             The maximum size of DatasetItem serialization blob. Changing from the default is not recommended.
         """
-
-        if encryption and encryption_key is None:
-            encryption_key = Crypter.gen_key()
-
-        self._encryption_key = encryption_key
-
-        if not save_media:
-            no_media_encryption = True
-
-        self._no_media_encryption = no_media_encryption
 
         if num_workers < 0:
             raise DatumaroError(
@@ -282,8 +204,6 @@ class DatumaroBinaryExporter(DatumaroExporter):
         self._num_workers = num_workers
 
         self._max_blob_size = max_blob_size
-
-        self._crypter = Crypter(encryption_key) if encryption_key is not None else NULL_CRYPTER
 
         super().__init__(
             extractor,
@@ -304,7 +224,6 @@ class DatumaroBinaryExporter(DatumaroExporter):
             images_dir=images_dir,
             pcd_dir=pcd_dir,
             video_dir=video_dir,
-            crypter=self._crypter,
             image_ext=self._image_ext,
             default_image_ext=self._default_image_ext,
         )
@@ -317,8 +236,6 @@ class DatumaroBinaryExporter(DatumaroExporter):
             subset=subset,
             ann_file=osp.join(self._annotations_dir, subset + self.PATH_CLS.ANNOTATION_EXT),
             export_context=export_context,
-            secret_key_file=osp.join(self._save_dir, self.PATH_CLS.SECRET_KEY_FILE),
-            no_media_encryption=self._no_media_encryption,
             max_blob_size=self._max_blob_size,
         )
 

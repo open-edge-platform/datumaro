@@ -16,9 +16,6 @@ from typing import TYPE_CHECKING, Any, Callable, Dict, Iterable, Iterator, Optio
 
 import numpy as np
 
-from datumaro.components.crypter import NULL_CRYPTER, Crypter
-from datumaro.components.errors import DatumaroError
-
 if TYPE_CHECKING:
     try:
         # Introduced in 1.20
@@ -128,7 +125,7 @@ def decode_image_context(image_backend: ImageBackend, image_color_channel: Image
     IMAGE_COLOR_CHANNEL.set(curr_ctx[1])
 
 
-def load_image(path: str, dtype: DTypeLike = np.uint8, crypter: Crypter = NULL_CRYPTER):
+def load_image(path: str, dtype: DTypeLike = np.uint8):
     """
     Reads an image in the HWC Grayscale/BGR(A) [0; 255] format (default dtype is uint8).
     """
@@ -139,22 +136,20 @@ def load_image(path: str, dtype: DTypeLike = np.uint8, crypter: Crypter = NULL_C
         # ourselves.
 
         with open(path, "rb") as f:
-            image_bytes = crypter.decrypt(f.read())
+            image_bytes = f.read()
 
         return decode_image(image_bytes, dtype=dtype)
     elif IMAGE_BACKEND.get() == ImageBackend.PIL:
         with open(path, "rb") as f:
-            image_bytes = crypter.decrypt(f.read())
+            image_bytes = f.read()
 
         return decode_image(image_bytes, dtype=dtype)
 
     raise NotImplementedError(IMAGE_BACKEND)
 
 
-def copyto_image(
-    src: Union[str, IOBase], dst: Union[str, IOBase], src_crypter: Crypter, dst_crypter: Crypter
-) -> None:
-    if src_crypter == dst_crypter and src == dst:
+def copyto_image(src: Union[str, IOBase], dst: Union[str, IOBase]) -> None:
+    if src == dst:
         return
 
     @contextmanager
@@ -168,10 +163,10 @@ def copyto_image(
             fp.close()
 
     with _open(src, "rb") as src_fp:
-        _bytes = src_crypter.decrypt(src_fp.read())
+        _bytes = src_fp.read()
 
     with _open(dst, "wb") as dst_fp:
-        dst_fp.write(dst_crypter.encrypt(_bytes))
+        dst_fp.write(_bytes)
 
 
 def save_image(
@@ -180,7 +175,6 @@ def save_image(
     ext: Optional[str] = None,
     create_dir: bool = False,
     dtype: DTypeLike = np.uint8,
-    crypter: Crypter = NULL_CRYPTER,
     **kwargs,
 ) -> None:
     # NOTE: Check destination path for existence
@@ -215,17 +209,14 @@ def save_image(
 
         if isinstance(dst, str):
             with open(dst, "wb") as f:
-                f.write(crypter.encrypt(image_bytes))
+                f.write(image_bytes)
         else:
-            dst.write(crypter.encrypt(image_bytes))
+            dst.write(image_bytes)
     elif backend == ImageBackend.PIL:
         from PIL import Image
 
         if ext.startswith("."):
             ext = ext[1:]
-
-        if not crypter.is_null_crypter:
-            raise DatumaroError("PIL backend should have crypter=NullCrypter.")
 
         params = {}
         params["quality"] = kwargs.get("jpeg_quality")
@@ -365,7 +356,6 @@ class lazy_image:
         path: str,
         loader: Callable[[str], np.ndarray] = None,
         cache: Union[bool, ImageCache] = True,
-        crypter: Crypter = NULL_CRYPTER,
         dtype: Optional[DTypeLike] = None,
     ) -> None:
         """
@@ -386,7 +376,6 @@ class lazy_image:
 
         assert isinstance(cache, (ImageCache, bool))
         self._cache = cache
-        self._crypter = crypter
         self._dtype = dtype
 
     def __call__(self) -> np.ndarray:
@@ -398,11 +387,7 @@ class lazy_image:
             image = cache.get(cache_key)
 
         if image is None:
-            image = (
-                self._loader(self._path)
-                if self._custom_loader
-                else self._loader(self._path, crypter=self._crypter)
-            )
+            image = self._loader(self._path)
             if cache is not None:
                 cache.push(cache_key, image)
         return image

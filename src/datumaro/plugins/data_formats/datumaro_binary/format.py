@@ -20,8 +20,6 @@ class DatumaroBinaryPath:
     SIGNATURE = _SIGNATURE
     SIGNATURE_LEN = len(_SIGNATURE)
 
-    SECRET_KEY_FILE = "secret_key.txt"
-
     MAX_BLOB_SIZE = 2**20  # 1 Mega bytes
     MP_TIMEOUT = 300.0  # 5 minutes
 
