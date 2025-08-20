@@ -599,3 +599,28 @@ def test_schema_copy_independence():
 
     assert len(schema3.attributes["image"].categories) == 2  # car, truck
     assert len(schema1.attributes["bbox"].categories) == 1  # person
+
+
+def test_union_type_handling():
+    """Test Union type handling with both modern (A | B) and typing.Union syntax."""
+    try:
+        import torch
+    except ImportError:
+        pytest.skip("PyTorch not available")
+
+    from typing import Union
+
+    from datumaro.experimental.type_registry import from_polars_data
+
+    # Modern syntax
+    union_type_modern = torch.Tensor | np.ndarray
+    polars_data = [1.0, 2.0, 3.0]
+    result = from_polars_data(polars_data, union_type_modern)
+    assert isinstance(result, torch.Tensor)
+    assert result.tolist() == [1.0, 2.0, 3.0]
+
+    # typing.Union syntax
+    union_type_typing = Union[torch.Tensor, np.ndarray]
+    result2 = from_polars_data(polars_data, union_type_typing)
+    assert isinstance(result2, torch.Tensor)
+    assert result2.tolist() == [1.0, 2.0, 3.0]

@@ -185,7 +185,7 @@ def analyze_legacy_dataset(legacy_dataset: LegacyDataset) -> AnalysisResult:
     ann_types = legacy_dataset.ann_types()
 
     attributes: dict[str, AttributeInfo] = {}
-    media_converter: ForwardMediaConverter | None = None
+    media_converter: ForwardMediaConverter | None
     ann_converters: dict[AnnotationType, ForwardAnnotationConverter] = {}
 
     # Get media attributes from converter

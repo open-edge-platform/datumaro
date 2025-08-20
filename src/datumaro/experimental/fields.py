@@ -10,6 +10,7 @@ learning and computer vision applications.
 """
 
 from dataclasses import dataclass
+from enum import IntEnum
 from typing import Any, TypeVar
 
 import numpy as np
@@ -19,6 +20,89 @@ from .schema import Field, Semantic
 from .type_registry import from_polars_data, to_numpy
 
 T = TypeVar("T")
+
+
+@dataclass
+class Label:
+    """Minimal Label annotation class."""
+
+    label: Any  # Can be int, str, or other types for flexibility
+
+
+class PointsVisibility(IntEnum):
+    """Point visibility enumeration."""
+
+    HIDDEN = 0
+    VISIBLE = 1
+    ABSENT = 2
+
+
+@dataclass
+class Points:
+    """Minimal Points annotation class."""
+
+    points: list
+    visibility: list
+    label: int = None
+    group: int = 0
+    object_id: int = 0
+    z_order: int = 0
+    attributes: dict = None
+
+    # Add Visibility as a class attribute for compatibility
+    Visibility = PointsVisibility
+
+    def __post_init__(self):
+        if self.attributes is None:
+            self.attributes = {}
+
+
+@dataclass
+class Polygon:
+    """Minimal Polygon annotation class."""
+
+    points: list
+    label: int = None
+    group: int = 0
+    object_id: int = 0
+    z_order: int = 0
+    attributes: dict = None
+
+    def __post_init__(self):
+        if self.attributes is None:
+            self.attributes = {}
+
+
+@dataclass
+class Ellipse:
+    """Minimal Ellipse annotation class."""
+
+    points: list
+    label: int = None
+    group: int = 0
+    object_id: int = 0
+    z_order: int = 0
+    attributes: dict = None
+
+    def __post_init__(self):
+        if self.attributes is None:
+            self.attributes = {}
+
+
+@dataclass
+class RotatedBbox:
+    """Minimal RotatedBbox annotation class."""
+
+    points: list
+    label: int = None
+    group: int = 0
+    object_id: int = 0
+    z_order: int = 0
+    attributes: dict = None
+
+    def __post_init__(self):
+        if self.attributes is None:
+            self.attributes = {}
 
 
 @dataclass(frozen=True)
@@ -246,3 +330,405 @@ def image_path_field(semantic: Semantic = Semantic.Default) -> Any:
         ImagePathField instance configured with the given semantic tags
     """
     return ImagePathField(semantic=semantic)
+
+
+@dataclass(frozen=True)
+class LabelField(Field):
+    """
+    Represents a unified label annotation field that supports both single and multi-label scenarios.
+
+    This field automatically detects whether the input is a single label or multiple labels
+    and handles the conversion accordingly:
+    - Single labels: stored as Int32
+    - Multi-labels: stored as List(Int32)
+    """
+
+    semantic: Semantic
+    dtype: Any
+    multi_label: bool = False  # Flag to indicate if this field should handle multi-labels
+
+    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+        """Generate schema based on whether this is single or multi-label."""
+        if self.multi_label:
+            return {name: pl.List(self.dtype)}
+        else:
+            return {name: self.dtype}
+
+    def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
+        """Convert label(s) to Polars format, handling both single and multi-label cases."""
+        if value is None:
+            return {name: pl.Series(name, [None], dtype=self.dtype)}
+
+        # Handle single Label object
+        if hasattr(value, "label"):
+            return {name: pl.Series(name, [value.label], dtype=self.dtype)}
+
+        # Handle numpy array or list (multi-label)
+        elif isinstance(value, (np.ndarray, list)):
+            if isinstance(value, np.ndarray):
+                value_list = value.tolist()
+            else:
+                value_list = value
+            return {name: pl.Series(name, [value_list], dtype=pl.List(self.dtype))}
+
+        # Handle single integer value
+        elif isinstance(value, (int, np.integer)):
+            return {name: pl.Series(name, [value], dtype=self.dtype)}
+
+        else:
+            raise ValueError(f"Unsupported label value type: {type(value)}")
+
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+        """Reconstruct label(s) from Polars data."""
+        data = df[name][row_index]
+
+        # If data is a list, it's multi-label
+        if isinstance(data, list):
+            if target_type == np.ndarray or target_type is np.ndarray:
+                return np.array(data, dtype=np.int64)
+            elif target_type is list:
+                return data
+            else:
+                # Try to create target_type with the array/list
+                return target_type(data)
+
+        # Single label case
+        else:
+            if hasattr(target_type, "__annotations__") and "label" in target_type.__annotations__:
+                return target_type(label=data)
+            else:
+                return target_type(data)
+
+
+def label_field(
+    dtype: Any = pl.Int32(), semantic: Semantic = Semantic.Default, multi_label: bool = False
+) -> Any:
+    """
+    Create a LabelField instance with the specified parameters.
+
+    Args:
+        dtype: Polars data type for label values (defaults to pl.Int32())
+        semantic: Semantic tags describing the label purpose (optional)
+        multi_label: Whether this field should handle multiple labels (defaults to False)
+
+    Returns:
+        LabelField instance configured with the given parameters
+    """
+    return LabelField(semantic=semantic, dtype=dtype, multi_label=multi_label)
+
+
+@dataclass(frozen=True)
+class SubsetField(Field):
+    """
+    Represents a dataset subset field for train/validation/test splits.
+    """
+
+    semantic: Semantic
+    dtype: Any
+
+    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+        """Generate schema for subset as string."""
+        return {name: pl.String()}
+
+    def to_polars(self, name: str, value: str) -> dict[str, pl.Series]:
+        """Convert subset to Polars format."""
+        return {name: pl.Series(name, [value], dtype=pl.String())}
+
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+        """Reconstruct subset from Polars data."""
+        subset_value = df[name][row_index]
+        if target_type is str:
+            return subset_value
+        return target_type(subset_value)
+
+
+def subset_field(dtype: Any = pl.String(), semantic: Semantic = Semantic.Default) -> Any:
+    """
+    Create a SubsetField instance with the specified parameters.
+
+    Args:
+        dtype: Polars data type for subset values (defaults to pl.String())
+        semantic: Semantic tags describing the subset purpose (optional)
+
+    Returns:
+        SubsetField instance configured with the given parameters
+    """
+    return SubsetField(semantic=semantic, dtype=dtype)
+
+
+@dataclass(frozen=True)
+class PolygonField(Field):
+    """
+    Represents a polygon annotation field.
+    """
+
+    semantic: Semantic
+    dtype: Any
+
+    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+        """Generate schema for polygon as list of coordinates."""
+        return {
+            f"{name}_points": pl.List(pl.Float32()),
+            f"{name}_label": pl.Int32(),
+            f"{name}_group": pl.Int32(),
+            f"{name}_object_id": pl.Int32(),
+            f"{name}_z_order": pl.Int32(),
+            f"{name}_attributes": pl.Struct([]),
+        }
+
+    def to_polars(self, name: str, value: Polygon) -> dict[str, pl.Series]:
+        """Convert polygon to Polars format."""
+        return {
+            f"{name}_points": pl.Series(
+                f"{name}_points", [value.points], dtype=pl.List(pl.Float32())
+            ),
+            f"{name}_label": pl.Series(
+                f"{name}_label", [value.label if value.label is not None else -1], dtype=pl.Int32()
+            ),
+            f"{name}_group": pl.Series(f"{name}_group", [value.group], dtype=pl.Int32()),
+            f"{name}_object_id": pl.Series(
+                f"{name}_object_id", [value.object_id], dtype=pl.Int32()
+            ),
+            f"{name}_z_order": pl.Series(f"{name}_z_order", [value.z_order], dtype=pl.Int32()),
+            f"{name}_attributes": pl.Series(
+                f"{name}_attributes", [value.attributes], dtype=pl.Struct([])
+            ),
+        }
+
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+        """Reconstruct polygon from Polars data."""
+        points = df[f"{name}_points"][row_index]
+        label = df[f"{name}_label"][row_index]
+        group = df[f"{name}_group"][row_index]
+        object_id = df[f"{name}_object_id"][row_index]
+        z_order = df[f"{name}_z_order"][row_index]
+        attributes = df[f"{name}_attributes"][row_index]
+
+        return target_type(
+            points=points,
+            label=None if label == -1 else label,
+            group=group,
+            object_id=object_id,
+            z_order=z_order,
+            attributes=attributes,
+        )
+
+
+def polygon_field(dtype: Any = pl.Float32(), semantic: Semantic = Semantic.Default) -> Any:
+    """
+    Create a PolygonField instance with the specified parameters.
+
+    Args:
+        dtype: Polars data type for polygon coordinate values (defaults to pl.Float32())
+        semantic: Semantic tags describing the polygon purpose (optional)
+
+    Returns:
+        PolygonField instance configured with the given parameters
+    """
+    return PolygonField(semantic=semantic, dtype=dtype)
+
+
+@dataclass(frozen=True)
+class EllipseField(Field):
+    """
+    Represents an ellipse annotation field.
+    """
+
+    semantic: Semantic
+    dtype: Any
+
+    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+        """Generate schema for ellipse as list of coordinates."""
+        return {
+            f"{name}_points": pl.List(pl.Float32()),
+            f"{name}_label": pl.Int32(),
+            f"{name}_group": pl.Int32(),
+            f"{name}_object_id": pl.Int32(),
+            f"{name}_z_order": pl.Int32(),
+            f"{name}_attributes": pl.Struct([]),
+        }
+
+    def to_polars(self, name: str, value: Ellipse) -> dict[str, pl.Series]:
+        """Convert ellipse to Polars format."""
+        return {
+            f"{name}_points": pl.Series(
+                f"{name}_points", [value.points], dtype=pl.List(pl.Float32())
+            ),
+            f"{name}_label": pl.Series(
+                f"{name}_label", [value.label if value.label is not None else -1], dtype=pl.Int32()
+            ),
+            f"{name}_group": pl.Series(f"{name}_group", [value.group], dtype=pl.Int32()),
+            f"{name}_object_id": pl.Series(
+                f"{name}_object_id", [value.object_id], dtype=pl.Int32()
+            ),
+            f"{name}_z_order": pl.Series(f"{name}_z_order", [value.z_order], dtype=pl.Int32()),
+            f"{name}_attributes": pl.Series(
+                f"{name}_attributes", [value.attributes], dtype=pl.Struct([])
+            ),
+        }
+
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+        """Reconstruct ellipse from Polars data."""
+        points = df[f"{name}_points"][row_index]
+        label = df[f"{name}_label"][row_index]
+        group = df[f"{name}_group"][row_index]
+        object_id = df[f"{name}_object_id"][row_index]
+        z_order = df[f"{name}_z_order"][row_index]
+        attributes = df[f"{name}_attributes"][row_index]
+
+        # Extract ellipse parameters from points
+        x1, y1, x2, y2 = points
+
+        return target_type(
+            x1=x1,
+            y1=y1,
+            x2=x2,
+            y2=y2,
+            label=None if label == -1 else label,
+            group=group,
+            object_id=object_id,
+            z_order=z_order,
+            attributes=attributes,
+        )
+
+
+def ellipse_field(dtype: Any = pl.Float32(), semantic: Semantic = Semantic.Default) -> Any:
+    """
+    Create an EllipseField instance with the specified parameters.
+
+    Args:
+        dtype: Polars data type for ellipse coordinate values (defaults to pl.Float32())
+        semantic: Semantic tags describing the ellipse purpose (optional)
+
+    Returns:
+        EllipseField instance configured with the given parameters
+    """
+    return EllipseField(semantic=semantic, dtype=dtype)
+
+
+@dataclass(frozen=True)
+class RotatedBboxField(Field):
+    """
+    Represents a rotated bounding box annotation field.
+    """
+
+    semantic: Semantic
+    dtype: Any
+
+    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+        """Generate schema for rotated bounding box as list of parameters."""
+        return {
+            f"{name}_points": pl.List(pl.Float32()),
+            f"{name}_label": pl.Int32(),
+            f"{name}_group": pl.Int32(),
+            f"{name}_object_id": pl.Int32(),
+            f"{name}_z_order": pl.Int32(),
+            f"{name}_attributes": pl.Struct([]),
+        }
+
+    def to_polars(self, name: str, value: RotatedBbox) -> dict[str, pl.Series]:
+        """Convert rotated bounding box to Polars format."""
+        return {
+            f"{name}_points": pl.Series(
+                f"{name}_points", [value.points], dtype=pl.List(pl.Float32())
+            ),
+            f"{name}_label": pl.Series(
+                f"{name}_label", [value.label if value.label is not None else -1], dtype=pl.Int32()
+            ),
+            f"{name}_group": pl.Series(f"{name}_group", [value.group], dtype=pl.Int32()),
+            f"{name}_object_id": pl.Series(
+                f"{name}_object_id", [value.object_id], dtype=pl.Int32()
+            ),
+            f"{name}_z_order": pl.Series(f"{name}_z_order", [value.z_order], dtype=pl.Int32()),
+            f"{name}_attributes": pl.Series(
+                f"{name}_attributes", [value.attributes], dtype=pl.Struct([])
+            ),
+        }
+
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+        """Reconstruct rotated bounding box from Polars data."""
+        points = df[f"{name}_points"][row_index]
+        label = df[f"{name}_label"][row_index]
+        group = df[f"{name}_group"][row_index]
+        object_id = df[f"{name}_object_id"][row_index]
+        z_order = df[f"{name}_z_order"][row_index]
+        attributes = df[f"{name}_attributes"][row_index]
+
+        # Extract rotated bbox parameters from points
+        cx, cy, w, h, r = points
+
+        return target_type(
+            cx=cx,
+            cy=cy,
+            w=w,
+            h=h,
+            r=r,
+            label=None if label == -1 else label,
+            group=group,
+            object_id=object_id,
+            z_order=z_order,
+            attributes=attributes,
+        )
+
+
+def rotated_bbox_field(dtype: Any = pl.Float32(), semantic: Semantic = Semantic.Default) -> Any:
+    """
+    Create a RotatedBboxField instance with the specified parameters.
+
+    Args:
+        dtype: Polars data type for rotated bbox coordinate values (defaults to pl.Float32())
+        semantic: Semantic tags describing the rotated bbox purpose (optional)
+
+    Returns:
+        RotatedBboxField instance configured with the given parameters
+    """
+    return RotatedBboxField(semantic=semantic, dtype=dtype)
+
+
+# Generic object-carrying fields for media and annotations
+@dataclass(frozen=True)
+class MediaField(Field):
+    """
+    Field for storing an arbitrary Datumaro media object (Image, Video, PointCloud, ...).
+    Stored as a Python object using Polars Object dtype.
+    """
+
+    semantic: Semantic
+
+    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+        return {name: pl.Object()}
+
+    def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
+        return {name: pl.Series(name, [value], dtype=pl.Object())}
+
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> Any:
+        # Return the stored object as-is to preserve original media type
+        return df[name][row_index]
+
+
+def media_field(semantic: Semantic = Semantic.Default) -> Any:
+    return MediaField(semantic=semantic)
+
+
+@dataclass(frozen=True)
+class AnnotationField(Field):
+    """
+    Field for storing a Datumaro Annotation object.
+    Stored as a Python object using Polars Object dtype.
+    """
+
+    semantic: Semantic
+
+    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+        return {name: pl.Object()}
+
+    def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
+        return {name: pl.Series(name, [value], dtype=pl.Object())}
+
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> Any:
+        # Return the stored object as-is to preserve original annotation type
+        return df[name][row_index]
+
+
+def annotation_field(semantic: Semantic = Semantic.Default) -> Any:
+    return AnnotationField(semantic=semantic)
