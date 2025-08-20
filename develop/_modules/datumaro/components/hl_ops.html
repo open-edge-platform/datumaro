@@ -365,7 +365,7 @@ document.write(`
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.launcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">Launcher</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.merge</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_MERGE_POLICY</span><span class="p">,</span> <span class="n">get_merger</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelTransform</span><span class="p">,</span> <span class="n">Transform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transform</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.validator</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskType</span><span class="p">,</span> <span class="n">Validator</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_str_enum_value</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.deprecation</span><span class="w"> </span><span class="kn">import</span> <span class="n">deprecated</span>
@@ -652,62 +652,9 @@ document.write(`
         <span class="k">return</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="n">merged</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="HLOps.run_model">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.hl_ops.HLOps.run_model">[docs]</a>
-    <span class="nd">@staticmethod</span>
-    <span class="nd">@deprecated</span><span class="p">(</span><span class="n">deprecated_version</span><span class="o">=</span><span class="s2">&quot;1.11&quot;</span><span class="p">,</span> <span class="n">removed_version</span><span class="o">=</span><span class="s2">&quot;1.12&quot;</span><span class="p">)</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">run_model</span><span class="p">(</span>
-        <span class="n">dataset</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">,</span>
-        <span class="n">model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Launcher</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">ModelTransform</span><span class="p">]],</span>
-        <span class="o">*</span><span class="p">,</span>
-        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="n">append_annotation</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IDataset</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Run the model on the dataset item media entities, such as images,</span>
-<span class="sd">        to obtain pseudo labels and add them as dataset annotations.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            dataset: The dataset to be transformed</span>
-<span class="sd">            model: The model to be applied to the dataset</span>
-<span class="sd">            batch_size: The number of dataset items processed</span>
-<span class="sd">                simultaneously by the model</span>
-<span class="sd">            append_annotation: Whether append new annotation to existed annotations</span>
-<span class="sd">            num_workers: The number of worker threads to use for parallel inference.</span>
-<span class="sd">                Set to 0 for single-process mode. Default is 0.</span>
-<span class="sd">            **kwargs: Parameters for the model</span>
-
-<span class="sd">        Returns: a wrapper around the input dataset, which is computed lazily</span>
-<span class="sd">            during iteration</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">Launcher</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">HLOps</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span>
-                <span class="n">dataset</span><span class="p">,</span>
-                <span class="n">ModelTransform</span><span class="p">,</span>
-                <span class="n">launcher</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
-                <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
-                <span class="n">append_annotation</span><span class="o">=</span><span class="n">append_annotation</span><span class="p">,</span>
-                <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span>
-                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="k">elif</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">model</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">ModelTransform</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">HLOps</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span>
-                <span class="n">dataset</span><span class="p">,</span>
-                <span class="n">model</span><span class="p">,</span>
-                <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
-                <span class="n">append_annotation</span><span class="o">=</span><span class="n">append_annotation</span><span class="p">,</span>
-                <span class="n">num_workers</span><span class="o">=</span><span class="n">num_workers</span><span class="p">,</span>
-                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unexpected model argument type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
-
-
 <div class="viewcode-block" id="HLOps.export">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.hl_ops.HLOps.export">[docs]</a>
+    <span class="nd">@staticmethod</span>
     <span class="nd">@staticmethod</span>
     <span class="nd">@scoped</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">export</span><span class="p">(</span>

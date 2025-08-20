@@ -346,14 +346,9 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing.pool</span><span class="w"> </span><span class="kn">import</span> <span class="n">ThreadPool</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotation</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">LabelCategories</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.cli_plugin</span><span class="w"> </span><span class="kn">import</span> <span class="n">CliPlugin</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetBase</span><span class="p">,</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">IDataset</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.launcher</span><span class="w"> </span><span class="kn">import</span> <span class="n">Launcher</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_method_redefined</span><span class="p">,</span> <span class="n">take_by</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.deprecation</span><span class="w"> </span><span class="kn">import</span> <span class="n">deprecated</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.multi_procs_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">consumer_generator</span>
 
 
@@ -516,141 +511,6 @@ document.write(`
         <span class="n">results</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">transform_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="n">results</span></div>
-
-
-
-<div class="viewcode-block" id="ModelTransform">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.dataset.ModelTransform">[docs]</a>
-<span class="nd">@deprecated</span><span class="p">(</span><span class="n">deprecated_version</span><span class="o">=</span><span class="s2">&quot;1.11&quot;</span><span class="p">,</span> <span class="n">removed_version</span><span class="o">=</span><span class="s2">&quot;1.12&quot;</span><span class="p">)</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">ModelTransform</span><span class="p">(</span><span class="n">Transform</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A transformation class for applying a model&#39;s inference to dataset items.</span>
-
-<span class="sd">    This class takes an dataset, a launcher, and other optional parameters</span>
-<span class="sd">    to transform the dataset item from the model outputs by the launcher.</span>
-<span class="sd">    It can process items using multiple processes if specified, making it suitable for</span>
-<span class="sd">    parallelized inference tasks.</span>
-
-<span class="sd">    Parameters:</span>
-<span class="sd">        extractor: The dataset extractor to obtain items from.</span>
-<span class="sd">        launcher: The launcher responsible for model inference.</span>
-<span class="sd">        batch_size: The batch size for processing items. Default is 1.</span>
-<span class="sd">        append_annotation: Whether to append inference annotations to existing annotations.</span>
-<span class="sd">            Default is False.</span>
-<span class="sd">        num_workers: The number of worker threads to use for parallel inference.</span>
-<span class="sd">            Set to 0 for single-process mode. Default is 0.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">extractor</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">,</span>
-        <span class="n">launcher</span><span class="p">:</span> <span class="n">Launcher</span><span class="p">,</span>
-        <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="n">append_annotation</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">extractor</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_launcher</span> <span class="o">=</span> <span class="n">launcher</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_append_annotation</span> <span class="o">=</span> <span class="n">append_annotation</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">num_workers</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">num_workers</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;num_workers should be a non negative integer, but it is </span><span class="si">{</span><span class="n">num_workers</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span> <span class="o">=</span> <span class="n">num_workers</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter_single_proc</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter_multi_procs</span><span class="p">()</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_iter_multi_procs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">with</span> <span class="n">ThreadPool</span><span class="p">(</span><span class="n">processes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span><span class="p">)</span> <span class="k">as</span> <span class="n">pool</span><span class="p">:</span>
-
-            <span class="k">def</span><span class="w"> </span><span class="nf">_producer_gen</span><span class="p">():</span>
-                <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">take_by</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span><span class="p">):</span>
-                    <span class="n">future</span> <span class="o">=</span> <span class="n">pool</span><span class="o">.</span><span class="n">apply_async</span><span class="p">(</span>
-                        <span class="n">func</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_process_batch</span><span class="p">,</span>
-                        <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">batch</span><span class="p">,),</span>
-                    <span class="p">)</span>
-                    <span class="k">yield</span> <span class="n">future</span>
-
-            <span class="k">with</span> <span class="n">consumer_generator</span><span class="p">(</span><span class="n">producer_generator</span><span class="o">=</span><span class="n">_producer_gen</span><span class="p">())</span> <span class="k">as</span> <span class="n">consumer_gen</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">future</span> <span class="ow">in</span> <span class="n">consumer_gen</span><span class="p">:</span>
-                    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">future</span><span class="o">.</span><span class="n">get</span><span class="p">():</span>
-                        <span class="k">yield</span> <span class="n">item</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_iter_single_proc</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
-        <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">take_by</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_batch</span><span class="p">(</span><span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">):</span>
-                <span class="k">yield</span> <span class="n">item</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_process_batch</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">batch</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">],</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
-        <span class="n">inference</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_launcher</span><span class="o">.</span><span class="n">launch</span><span class="p">(</span>
-            <span class="n">batch</span><span class="o">=</span><span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">batch</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_launcher</span><span class="o">.</span><span class="n">type_check</span><span class="p">(</span><span class="n">item</span><span class="p">)]</span>
-        <span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">annotations</span> <span class="ow">in</span> <span class="n">inference</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_check_annotations</span><span class="p">(</span><span class="n">annotations</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="p">[</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">wrap_item</span><span class="p">(</span>
-                <span class="n">item</span><span class="p">,</span>
-                <span class="n">annotations</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="n">annotations</span> <span class="o">+</span> <span class="n">annotations</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_append_annotation</span>
-                <span class="k">else</span> <span class="n">annotations</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="k">for</span> <span class="n">item</span><span class="p">,</span> <span class="n">annotations</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">inference</span><span class="p">)</span>
-        <span class="p">]</span>
-
-<div class="viewcode-block" id="ModelTransform.get_subset">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.dataset.ModelTransform.get_subset">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
-        <span class="n">subset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">get_subset</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-        <span class="k">return</span> <span class="vm">__class__</span><span class="p">(</span><span class="n">subset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_launcher</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="ModelTransform.infos">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.dataset.ModelTransform.infos">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">infos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">launcher_override</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_launcher</span><span class="o">.</span><span class="n">infos</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">launcher_override</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">launcher_override</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">infos</span><span class="p">()</span></div>
-
-
-<div class="viewcode-block" id="ModelTransform.categories">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.dataset.ModelTransform.categories">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">launcher_override</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_launcher</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">launcher_override</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">launcher_override</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span></div>
-
-
-<div class="viewcode-block" id="ModelTransform.transform_item">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.dataset.ModelTransform.transform_item">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">transform_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
-        <span class="n">inputs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">annotations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_launcher</span><span class="o">.</span><span class="n">launch</span><span class="p">(</span><span class="n">inputs</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wrap_item</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">annotations</span><span class="o">=</span><span class="n">annotations</span><span class="p">)</span></div>
-
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_check_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]):</span>
-        <span class="n">labels_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">())</span><span class="o">.</span><span class="n">items</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">annotations</span><span class="p">:</span>
-            <span class="n">label</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">continue</span>
-
-            <span class="k">if</span> <span class="n">label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">labels_count</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                    <span class="s2">&quot;Annotation has unexpected label id </span><span class="si">%s</span><span class="s2">, &quot;</span>
-                    <span class="s2">&quot;while there is only </span><span class="si">%s</span><span class="s2"> defined labels.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">labels_count</span><span class="p">)</span>
-                <span class="p">)</span></div>
 
 </pre></div>
 

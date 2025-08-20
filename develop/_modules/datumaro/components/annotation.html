@@ -394,11 +394,10 @@ document.write(`
     <span class="n">super_resolution_annotation</span> <span class="o">=</span> <span class="mi">9</span>
     <span class="n">depth_annotation</span> <span class="o">=</span> <span class="mi">10</span>
     <span class="n">ellipse</span> <span class="o">=</span> <span class="mi">11</span>
-    <span class="n">hash_key</span> <span class="o">=</span> <span class="mi">12</span>
-    <span class="n">feature_vector</span> <span class="o">=</span> <span class="mi">13</span>
-    <span class="n">tabular</span> <span class="o">=</span> <span class="mi">14</span>
-    <span class="n">rotated_bbox</span> <span class="o">=</span> <span class="mi">15</span>
-    <span class="n">cuboid_2d</span> <span class="o">=</span> <span class="mi">16</span></div>
+    <span class="n">feature_vector</span> <span class="o">=</span> <span class="mi">12</span>
+    <span class="n">tabular</span> <span class="o">=</span> <span class="mi">13</span>
+    <span class="n">rotated_bbox</span> <span class="o">=</span> <span class="mi">14</span>
+    <span class="n">cuboid_2d</span> <span class="o">=</span> <span class="mi">15</span></div>
 
 
 
@@ -648,27 +647,6 @@ document.write(`
 
 
 
-<div class="viewcode-block" id="HashKey">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.filter.html#datumaro.components.abstracts.merger.HashKey">[docs]</a>
-<span class="nd">@deprecated</span><span class="p">(</span><span class="n">deprecated_version</span><span class="o">=</span><span class="s2">&quot;1.11&quot;</span><span class="p">,</span> <span class="n">removed_version</span><span class="o">=</span><span class="s2">&quot;1.12&quot;</span><span class="p">)</span>
-<span class="nd">@attrs</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">HashKey</span><span class="p">(</span><span class="n">Annotation</span><span class="p">):</span>
-    <span class="n">_type</span> <span class="o">=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">hash_key</span>
-    <span class="n">hash_key</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">validator</span><span class="o">=</span><span class="n">attr</span><span class="o">.</span><span class="n">validators</span><span class="o">.</span><span class="n">instance_of</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">))</span>
-
-    <span class="nd">@hash_key</span><span class="o">.</span><span class="n">validator</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check whether value is a 1D Numpy array having 96 np.uint8 values&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">value</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">96</span> <span class="ow">or</span> <span class="n">value</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="vm">__class__</span><span class="p">):</span>
-            <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hash_key</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">hash_key</span><span class="p">)</span></div>
-
-
-
 <div class="viewcode-block" id="FeatureVector">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.annotation.html#datumaro.components.abstracts.merger.FeatureVector">[docs]</a>
 <span class="nd">@deprecated</span><span class="p">(</span><span class="n">deprecated_version</span><span class="o">=</span><span class="s2">&quot;1.11&quot;</span><span class="p">,</span> <span class="n">removed_version</span><span class="o">=</span><span class="s2">&quot;1.12&quot;</span><span class="p">)</span>
@@ -680,7 +658,7 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="vm">__class__</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hash_key</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">hash_key</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vector</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span></div>
 
 
 
@@ -754,7 +732,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="Mask">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.abstracts.merger.Mask">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Mask">[docs]</a>
 <span class="nd">@attrs</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Mask</span><span class="p">(</span><span class="n">Annotation</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -780,7 +758,7 @@ document.write(`
         <span class="k">return</span> <span class="n">image</span>
 
 <div class="viewcode-block" id="Mask.as_class_mask">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.abstracts.merger.Mask.as_class_mask">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Mask.as_class_mask">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">as_class_mask</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">label_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -810,7 +788,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="Mask.as_instance_mask">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.abstracts.merger.Mask.as_instance_mask">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Mask.as_instance_mask">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">as_instance_mask</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">instance_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -839,13 +817,13 @@ document.write(`
 
 
 <div class="viewcode-block" id="Mask.get_area">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.abstracts.merger.Mask.get_area">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Mask.get_area">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_area</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">count_nonzero</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Mask.get_bbox">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.abstracts.merger.Mask.get_bbox">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Mask.get_bbox">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_bbox</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the bounding box of the mask.</span>
@@ -858,7 +836,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="Mask.paint">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.abstracts.merger.Mask.paint">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Mask.paint">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">paint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">colormap</span><span class="p">:</span> <span class="n">Colormap</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Applies a colormap to the mask and produces the resulting image.</span>
@@ -1379,7 +1357,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="Polygon">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.abstracts.merger.Polygon">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Polygon">[docs]</a>
 <span class="nd">@attrs</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Polygon</span><span class="p">(</span><span class="n">Shape</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1399,7 +1377,7 @@ document.write(`
     <span class="n">_type</span> <span class="o">=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">polygon</span>
 
 <div class="viewcode-block" id="Polygon.__attrs_post_init__">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.abstracts.merger.Polygon.__attrs_post_init__">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Polygon.__attrs_post_init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">__attrs_post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Validate the points to ensure they form a valid polygon.</span>
@@ -1414,7 +1392,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="Polygon.get_area">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.abstracts.merger.Polygon.get_area">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Polygon.get_area">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_area</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the area of the polygon using the shoelace formula.</span>
@@ -1432,7 +1410,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="Polygon.as_polygon">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.abstracts.merger.Polygon.as_polygon">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Polygon.as_polygon">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">as_polygon</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the points of the polygon.</span>
@@ -1444,7 +1422,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="Polygon.__eq__">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.abstracts.merger.Polygon.__eq__">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Polygon.__eq__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Compare this polygon with another for equality.</span>
@@ -1476,7 +1454,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="Polygon._get_shoelace_area">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.abstracts.merger.Polygon._get_shoelace_area">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.abstracts.merger.Polygon._get_shoelace_area">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">_get_shoelace_area</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the area of the polygon using the shoelace formula.</span>
@@ -1502,7 +1480,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="Bbox">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.abstracts.merger.Bbox">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.components.abstracts.merger.Bbox">[docs]</a>
 <span class="nd">@attrs</span><span class="p">(</span><span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Bbox</span><span class="p">(</span><span class="n">Shape</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1528,7 +1506,7 @@ document.write(`
     <span class="n">_type</span> <span class="o">=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span>
 
 <div class="viewcode-block" id="Bbox.__init__">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.abstracts.merger.Bbox.__init__">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.components.abstracts.merger.Bbox.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize the Bbox with its top-left corner (x, y) and its width and height (w, h).</span>
@@ -1584,7 +1562,7 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
 <div class="viewcode-block" id="Bbox.get_area">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.abstracts.merger.Bbox.get_area">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.components.abstracts.merger.Bbox.get_area">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_area</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the area of the bounding box.</span>
@@ -1596,7 +1574,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="Bbox.get_bbox">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.abstracts.merger.Bbox.get_bbox">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.components.abstracts.merger.Bbox.get_bbox">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_bbox</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the bounding box coordinates and dimensions.</span>
@@ -1608,7 +1586,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="Bbox.as_polygon">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.abstracts.merger.Bbox.as_polygon">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.components.abstracts.merger.Bbox.as_polygon">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">as_polygon</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert the bounding box into a polygon representation.</span>
@@ -1621,7 +1599,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="Bbox.iou">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.abstracts.merger.Bbox.iou">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.components.abstracts.merger.Bbox.iou">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">iou</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Shape</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">Literal</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate the Intersection over Union (IoU) with another shape.</span>
@@ -1638,7 +1616,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="Bbox.wrap">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.abstracts.merger.Bbox.wrap">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.components.abstracts.merger.Bbox.wrap">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">wrap</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a new Bbox instance with updated attributes.</span>

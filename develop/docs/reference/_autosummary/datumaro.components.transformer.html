@@ -474,7 +474,6 @@ document.write(`
 <li class="toctree-l4"><a class="reference internal" href="datumaro.plugins.data_formats.html">datumaro.plugins.data_formats</a></li>
 <li class="toctree-l4"><a class="reference internal" href="datumaro.plugins.framework_converter.html">datumaro.plugins.framework_converter</a></li>
 <li class="toctree-l4"><a class="reference internal" href="datumaro.plugins.inference_server_plugin.html">datumaro.plugins.inference_server_plugin</a></li>
-<li class="toctree-l4"><a class="reference internal" href="datumaro.plugins.missing_annotation_detection.html">datumaro.plugins.missing_annotation_detection</a></li>
 <li class="toctree-l4"><a class="reference internal" href="datumaro.plugins.ndr.html">datumaro.plugins.ndr</a></li>
 <li class="toctree-l4"><a class="reference internal" href="datumaro.plugins.openvino_plugin.html">datumaro.plugins.openvino_plugin</a></li>
 <li class="toctree-l4"><a class="reference internal" href="datumaro.plugins.sam_transforms.html">datumaro.plugins.sam_transforms</a></li>
@@ -614,13 +613,10 @@ document.write(`
 <tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.components.transformer.ItemTransform" title="datumaro.components.transformer.ItemTransform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ItemTransform</span></code></a>(extractor)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.components.transformer.ModelTransform" title="datumaro.components.transformer.ModelTransform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ModelTransform</span></code></a>(extractor, launcher[, ...])</p></td>
-<td><p>A transformation class for applying a model's inference to dataset items.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.components.transformer.TabularTransform" title="datumaro.components.transformer.TabularTransform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TabularTransform</span></code></a>(extractor[, batch_size, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.components.transformer.TabularTransform" title="datumaro.components.transformer.TabularTransform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TabularTransform</span></code></a>(extractor[, batch_size, ...])</p></td>
 <td><p>A transformation class for processing dataset items in batches with optional parallelism.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.components.transformer.Transform" title="datumaro.components.transformer.Transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Transform</span></code></a>(extractor)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.components.transformer.Transform" title="datumaro.components.transformer.Transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Transform</span></code></a>(extractor)</p></td>
 <td><p>A base class for dataset transformations that change dataset items or their annotations.</p></td>
 </tr>
 </tbody>
@@ -708,52 +704,6 @@ unexpected problems. Use wrap_item() or item.wrap() to simplify copying.</p>
 
 </dd></dl>
 
-<dl class="py class">
-<dt class="sig sig-object py" id="datumaro.components.transformer.ModelTransform">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datumaro.components.transformer.</span></span><span class="sig-name descname"><span class="pre">ModelTransform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extractor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.components.dataset_base.html#datumaro.components.dataset_base.IDataset" title="datumaro.components.dataset_base.IDataset"><span class="pre">IDataset</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">launcher</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.components.launcher.html#datumaro.components.launcher.Launcher" title="datumaro.components.launcher.Launcher"><span class="pre">Launcher</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append_annotation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/datumaro/components/transformer.html#ModelTransform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.components.transformer.ModelTransform" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#datumaro.components.transformer.Transform" title="datumaro.components.transformer.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transform</span></code></a></p>
-<p>A transformation class for applying a model’s inference to dataset items.</p>
-<p>This class takes an dataset, a launcher, and other optional parameters
-to transform the dataset item from the model outputs by the launcher.
-It can process items using multiple processes if specified, making it suitable for
-parallelized inference tasks.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>extractor</strong> – The dataset extractor to obtain items from.</p></li>
-<li><p><strong>launcher</strong> – The launcher responsible for model inference.</p></li>
-<li><p><strong>batch_size</strong> – The batch size for processing items. Default is 1.</p></li>
-<li><p><strong>append_annotation</strong> – Whether to append inference annotations to existing annotations.
-Default is False.</p></li>
-<li><p><strong>num_workers</strong> – The number of worker threads to use for parallel inference.
-Set to 0 for single-process mode. Default is 0.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="datumaro.components.transformer.ModelTransform.get_subset">
-<span class="sig-name descname"><span class="pre">get_subset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/datumaro/components/transformer.html#ModelTransform.get_subset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.components.transformer.ModelTransform.get_subset" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="datumaro.components.transformer.ModelTransform.infos">
-<span class="sig-name descname"><span class="pre">infos</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/datumaro/components/transformer.html#ModelTransform.infos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.components.transformer.ModelTransform.infos" title="Link to this definition">#</a></dt>
-<dd><p>Returns meta-info of dataset.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="datumaro.components.transformer.ModelTransform.categories">
-<span class="sig-name descname"><span class="pre">categories</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/datumaro/components/transformer.html#ModelTransform.categories"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.components.transformer.ModelTransform.categories" title="Link to this definition">#</a></dt>
-<dd><p>Returns metainfo about dataset labels.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="datumaro.components.transformer.ModelTransform.transform_item">
-<span class="sig-name descname"><span class="pre">transform_item</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/datumaro/components/transformer.html#ModelTransform.transform_item"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.components.transformer.ModelTransform.transform_item" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
 </section>
 
 
@@ -816,13 +766,6 @@ Set to 0 for single-process mode. Default is 0.</p></li>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.components.transformer.TabularTransform"><code class="docutils literal notranslate"><span class="pre">TabularTransform</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.components.transformer.TabularTransform.transform_item"><code class="docutils literal notranslate"><span class="pre">TabularTransform.transform_item()</span></code></a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.components.transformer.ModelTransform"><code class="docutils literal notranslate"><span class="pre">ModelTransform</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.components.transformer.ModelTransform.get_subset"><code class="docutils literal notranslate"><span class="pre">ModelTransform.get_subset()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.components.transformer.ModelTransform.infos"><code class="docutils literal notranslate"><span class="pre">ModelTransform.infos()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.components.transformer.ModelTransform.categories"><code class="docutils literal notranslate"><span class="pre">ModelTransform.categories()</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.components.transformer.ModelTransform.transform_item"><code class="docutils literal notranslate"><span class="pre">ModelTransform.transform_item()</span></code></a></li>
 </ul>
 </li>
 </ul>

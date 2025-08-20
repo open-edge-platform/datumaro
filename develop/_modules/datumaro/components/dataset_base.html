@@ -362,7 +362,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="DatasetItem">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.abstracts.merger.DatasetItem">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.openvino_plugin.samples.otx_custom_object_detection_yolox_interp.html#datumaro.components.abstracts.merger.DatasetItem">[docs]</a>
 <span class="nd">@attrs</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">slots</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">DatasetItem</span><span class="p">:</span>
     <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;/&quot;</span><span class="p">),</span> <span class="n">validator</span><span class="o">=</span><span class="n">not_empty</span><span class="p">)</span>
@@ -378,13 +378,13 @@ document.write(`
     <span class="n">attributes</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">,</span> <span class="n">validator</span><span class="o">=</span><span class="n">default_if_none</span><span class="p">(</span><span class="nb">dict</span><span class="p">))</span>
 
 <div class="viewcode-block" id="DatasetItem.wrap">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.abstracts.merger.DatasetItem.wrap">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.openvino_plugin.samples.otx_custom_object_detection_yolox_interp.html#datumaro.components.abstracts.merger.DatasetItem.wrap">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">wrap</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">attr</span><span class="o">.</span><span class="n">evolve</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="DatasetItem.media_as">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.abstracts.merger.DatasetItem.media_as">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.openvino_plugin.samples.otx_custom_object_detection_yolox_interp.html#datumaro.components.abstracts.merger.DatasetItem.media_as">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">media_as</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
         <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">MediaElement</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">media</span><span class="p">)</span></div>
@@ -410,7 +410,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="IDataset">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.abstracts.merger.IDataset">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.union_merge.html#datumaro.components.abstracts.merger.IDataset">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">IDataset</span><span class="p">:</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -425,7 +425,7 @@ document.write(`
         <span class="k">return</span> <span class="kc">True</span>
 
 <div class="viewcode-block" id="IDataset.subsets">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.abstracts.merger.IDataset.subsets">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.union_merge.html#datumaro.components.abstracts.merger.IDataset.subsets">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">subsets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">IDataset</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Enumerates subsets in the dataset. Each subset can be a dataset itself.</span>
@@ -434,13 +434,13 @@ document.write(`
 
 
 <div class="viewcode-block" id="IDataset.get_subset">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.abstracts.merger.IDataset.get_subset">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.union_merge.html#datumaro.components.abstracts.merger.IDataset.get_subset">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IDataset</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="IDataset.infos">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.abstracts.merger.IDataset.infos">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.union_merge.html#datumaro.components.abstracts.merger.IDataset.infos">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">infos</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DatasetInfo</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns meta-info of dataset.</span>
@@ -449,7 +449,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="IDataset.categories">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.abstracts.merger.IDataset.categories">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.union_merge.html#datumaro.components.abstracts.merger.IDataset.categories">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CategoriesInfo</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns metainfo about dataset labels.</span>
@@ -458,7 +458,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="IDataset.get">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.abstracts.merger.IDataset.get">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.union_merge.html#datumaro.components.abstracts.merger.IDataset.get">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Provides random access to dataset items.</span>
@@ -467,7 +467,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="IDataset.media_type">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.abstracts.merger.IDataset.media_type">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.union_merge.html#datumaro.components.abstracts.merger.IDataset.media_type">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">media_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">MediaElement</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns media type of the dataset items.</span>
@@ -480,7 +480,7 @@ document.write(`
 
 
 <div class="viewcode-block" id="IDataset.ann_types">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.abstracts.merger.IDataset.ann_types">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.union_merge.html#datumaro.components.abstracts.merger.IDataset.ann_types">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">ann_types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">AnnotationType</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns available task type from dataset annotation types.</span>

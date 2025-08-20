@@ -49,7 +49,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'docs/reference/_autosummary/datumaro.plugins.sam_transforms';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="datumaro.plugins.sam_transforms.automatic_mask_gen" href="datumaro.plugins.sam_transforms.automatic_mask_gen.html" />
+    <link rel="next" title="datumaro.plugins.sam_transforms.interpreters" href="datumaro.plugins.sam_transforms.interpreters.html" />
     <link rel="prev" title="datumaro.plugins.openvino_plugin.shift_launcher" href="datumaro.plugins.openvino_plugin.shift_launcher.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -474,7 +474,6 @@ document.write(`
 <li class="toctree-l4"><a class="reference internal" href="datumaro.plugins.data_formats.html">datumaro.plugins.data_formats</a></li>
 <li class="toctree-l4"><a class="reference internal" href="datumaro.plugins.framework_converter.html">datumaro.plugins.framework_converter</a></li>
 <li class="toctree-l4"><a class="reference internal" href="datumaro.plugins.inference_server_plugin.html">datumaro.plugins.inference_server_plugin</a></li>
-<li class="toctree-l4"><a class="reference internal" href="datumaro.plugins.missing_annotation_detection.html">datumaro.plugins.missing_annotation_detection</a></li>
 <li class="toctree-l4"><a class="reference internal" href="datumaro.plugins.ndr.html">datumaro.plugins.ndr</a></li>
 <li class="toctree-l4"><a class="reference internal" href="datumaro.plugins.openvino_plugin.html">datumaro.plugins.openvino_plugin</a></li>
 <li class="toctree-l4 current active"><a class="current reference internal" href="#">datumaro.plugins.sam_transforms</a></li>
@@ -609,97 +608,9 @@ document.write(`
   <section id="module-datumaro.plugins.sam_transforms">
 <span id="datumaro-plugins-sam-transforms"></span><h1>datumaro.plugins.sam_transforms<a class="headerlink" href="#module-datumaro.plugins.sam_transforms" title="Link to this heading">#</a></h1>
 <p>Transforms using Segment Anything Model</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="datumaro.plugins.sam_transforms.SAMBboxToInstanceMask">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datumaro.plugins.sam_transforms.</span></span><span class="sig-name descname"><span class="pre">SAMBboxToInstanceMask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extractor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.components.dataset_base.html#datumaro.components.dataset_base.IDataset" title="datumaro.components.dataset_base.IDataset"><span class="pre">IDataset</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">inference_server_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.plugins.inference_server_plugin.base.html#datumaro.plugins.inference_server_plugin.base.InferenceServerType" title="datumaro.plugins.inference_server_plugin.base.InferenceServerType"><span class="pre">InferenceServerType</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">InferenceServerType.ovms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'localhost'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">9000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tls_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.plugins.inference_server_plugin.base.html#datumaro.plugins.inference_server_plugin.base.TLSConfig" title="datumaro.plugins.inference_server_plugin.base.TLSConfig"><span class="pre">TLSConfig</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">protocol_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.plugins.inference_server_plugin.base.html#datumaro.plugins.inference_server_plugin.base.ProtocolType" title="datumaro.plugins.inference_server_plugin.base.ProtocolType"><span class="pre">ProtocolType</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">ProtocolType.grpc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_polygon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/datumaro/plugins/sam_transforms/bbox_to_inst_mask.html#SAMBboxToInstanceMask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.plugins.sam_transforms.SAMBboxToInstanceMask" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="datumaro.components.transformer.html#datumaro.components.transformer.ModelTransform" title="datumaro.components.transformer.ModelTransform"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelTransform</span></code></a>, <a class="reference internal" href="datumaro.components.cli_plugin.html#datumaro.components.cli_plugin.CliPlugin" title="datumaro.components.cli_plugin.CliPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">CliPlugin</span></code></a></p>
-<p>Convert bounding boxes to instance mask using Segment Anything Model.</p>
-<p>This transform convert all the <cite>Bbox</cite> annotations in the dataset item to
-<cite>Mask</cite> or <cite>Polygon</cite> annotations (<cite>Mask</cite> is default).
-It uses the Segment Anything Model deployed in the OpenVINO™ Model Server
-or NVIDIA Triton™ Inference Server instance. To launch the server instance,
-please see the guide in this link:
-<a class="github reference external" href="https://github.com/open-edge-platform/datumaro/tree/develop/docker/segment-anything/README.md">open-edge-platform/datumaro</a></p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>extractor</strong> – Dataset to transform</p></li>
-<li><p><strong>inference_server_type</strong> – Inference server type:
-<cite>InferenceServerType.ovms</cite> or <cite>InferenceServerType.triton</cite></p></li>
-<li><p><strong>host</strong> – Host address of the server instance</p></li>
-<li><p><strong>port</strong> – Port number of the server instance</p></li>
-<li><p><strong>timeout</strong> – Timeout limit during communication between the client and the server instance</p></li>
-<li><p><strong>tls_config</strong> – Configuration required if the server instance is in the secure mode</p></li>
-<li><p><strong>protocol_type</strong> – Communication protocol type with the server instance</p></li>
-<li><p><strong>to_polygon</strong> – If true, the output <cite>Mask</cite> annotations will be converted to <cite>Polygon</cite> annotations.</p></li>
-<li><p><strong>num_workers</strong> – The number of worker threads to use for parallel inference.
-Set to 0 for single-process mode. Default is 0.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="datumaro.plugins.sam_transforms.SAMAutomaticMaskGeneration">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datumaro.plugins.sam_transforms.</span></span><span class="sig-name descname"><span class="pre">SAMAutomaticMaskGeneration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">extractor</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.components.dataset_base.html#datumaro.components.dataset_base.IDataset" title="datumaro.components.dataset_base.IDataset"><span class="pre">IDataset</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">inference_server_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.plugins.inference_server_plugin.base.html#datumaro.plugins.inference_server_plugin.base.InferenceServerType" title="datumaro.plugins.inference_server_plugin.base.InferenceServerType"><span class="pre">InferenceServerType</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">InferenceServerType.ovms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'localhost'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">port</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">9000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tls_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.plugins.inference_server_plugin.base.html#datumaro.plugins.inference_server_plugin.base.TLSConfig" title="datumaro.plugins.inference_server_plugin.base.TLSConfig"><span class="pre">TLSConfig</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">protocol_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.plugins.inference_server_plugin.base.html#datumaro.plugins.inference_server_plugin.base.ProtocolType" title="datumaro.plugins.inference_server_plugin.base.ProtocolType"><span class="pre">ProtocolType</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">ProtocolType.grpc</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points_per_side</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">points_per_batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">128</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pred_iou_thresh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.88</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stability_score_thresh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.95</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stability_score_offset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">box_nms_thresh</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_mask_region_area</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/datumaro/plugins/sam_transforms/automatic_mask_gen.html#SAMAutomaticMaskGeneration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.plugins.sam_transforms.SAMAutomaticMaskGeneration" title="Link to this definition">#</a></dt>
-<dd><p>Bases: <a class="reference internal" href="datumaro.components.transformer.html#datumaro.components.transformer.ModelTransform" title="datumaro.components.transformer.ModelTransform"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelTransform</span></code></a>, <a class="reference internal" href="datumaro.components.cli_plugin.html#datumaro.components.cli_plugin.CliPlugin" title="datumaro.components.cli_plugin.CliPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">CliPlugin</span></code></a></p>
-<p>Produce instance segmentation masks automatically using Segment Anything Model (SAM).</p>
-<p>This transform can produce instance segmentation mask annotations for each given image.
-It samples single-point input prompts on a uniform 2D grid over the image.
-For each prompt, SAM can predict multiple masks. After obtaining the mask candidates,
-it post-processes them using the given parameters to improve quality and remove duplicates.</p>
-<p>It uses the Segment Anything Model deployed in the OpenVINO™ Model Server
-or NVIDIA Triton™ Inference Server instance. To launch the server instance,
-please see the guide in this link:
-<a class="github reference external" href="https://github.com/open-edge-platform/datumaro/tree/develop/docker/segment-anything/README.md">open-edge-platform/datumaro</a></p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>extractor</strong> – Dataset to transform</p></li>
-<li><p><strong>inference_server_type</strong> – Inference server type:
-<cite>InferenceServerType.ovms</cite> or <cite>InferenceServerType.triton</cite></p></li>
-<li><p><strong>host</strong> – Host address of the server instance</p></li>
-<li><p><strong>port</strong> – Port number of the server instance</p></li>
-<li><p><strong>timeout</strong> – Timeout limit during communication between the client and the server instance</p></li>
-<li><p><strong>tls_config</strong> – Configuration required if the server instance is in the secure mode</p></li>
-<li><p><strong>protocol_type</strong> – Communication protocol type with the server instance</p></li>
-<li><p><strong>num_workers</strong> – The number of worker threads to use for parallel inference.
-Set to 0 for single-process mode. Default is 0.</p></li>
-<li><p><strong>points_per_side</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The number of points to be sampled
-along one side of the image. The total number of points is
-points_per_side**2 on a uniform 2d grid.</p></li>
-<li><p><strong>points_per_batch</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Sets the number of points run simultaneously
-by the model. Higher numbers may be faster but use more GPU memory.</p></li>
-<li><p><strong>pred_iou_thresh</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – A filtering threshold in [0,1], using the
-model’s predicted mask quality.</p></li>
-<li><p><strong>stability_score_thresh</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – A filtering threshold in [0,1], using
-the stability of the mask under changes to the cutoff used to binarize
-the model’s mask predictions.</p></li>
-<li><p><strong>stability_score_offset</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The amount to shift the cutoff when
-calculated the stability score.</p></li>
-<li><p><strong>box_nms_thresh</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The box IoU cutoff used by non-maximal
-suppression to filter duplicate masks.</p></li>
-<li><p><strong>min_mask_region_area</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – If &gt;0, postprocessing will be applied
-to remove the binary mask which has the number of 1s less than min_mask_region_area.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py property">
-<dt class="sig sig-object py" id="datumaro.plugins.sam_transforms.SAMAutomaticMaskGeneration.points_per_side">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">points_per_side</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></em><a class="headerlink" href="#datumaro.plugins.sam_transforms.SAMAutomaticMaskGeneration.points_per_side" title="Link to this definition">#</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
 <p class="rubric">Modules</p>
 <table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="datumaro.plugins.sam_transforms.automatic_mask_gen.html#module-datumaro.plugins.sam_transforms.automatic_mask_gen" title="datumaro.plugins.sam_transforms.automatic_mask_gen"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datumaro.plugins.sam_transforms.automatic_mask_gen</span></code></a></p></td>
-<td><p>Automatic mask generation using Segment Anything Model</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#module-datumaro.plugins.sam_transforms.bbox_to_inst_mask" title="datumaro.plugins.sam_transforms.bbox_to_inst_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datumaro.plugins.sam_transforms.bbox_to_inst_mask</span></code></a></p></td>
-<td><p>Bbox-to-instance mask transform using Segment Anything Model</p></td>
-</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="datumaro.plugins.sam_transforms.interpreters.html#module-datumaro.plugins.sam_transforms.interpreters" title="datumaro.plugins.sam_transforms.interpreters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">datumaro.plugins.sam_transforms.interpreters</span></code></a></p></td>
 <td><p>Segment Anything Model interpreters</p></td>
 </tr>
@@ -727,11 +638,11 @@ to remove the binary mask which has the number of 1s less than min_mask_region_a
       </div>
     </a>
     <a class="right-next"
-       href="datumaro.plugins.sam_transforms.automatic_mask_gen.html"
+       href="datumaro.plugins.sam_transforms.interpreters.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">datumaro.plugins.sam_transforms.automatic_mask_gen</p>
+        <p class="prev-next-title">datumaro.plugins.sam_transforms.interpreters</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -744,22 +655,6 @@ to remove the binary mask which has the number of 1s less than min_mask_region_a
               
                 <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
-
-  <div class="sidebar-secondary-item">
-<div
-    id="pst-page-navigation-heading-2"
-    class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> On this page
-  </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.plugins.sam_transforms.SAMBboxToInstanceMask"><code class="docutils literal notranslate"><span class="pre">SAMBboxToInstanceMask</span></code></a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.plugins.sam_transforms.SAMAutomaticMaskGeneration"><code class="docutils literal notranslate"><span class="pre">SAMAutomaticMaskGeneration</span></code></a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.plugins.sam_transforms.SAMAutomaticMaskGeneration.points_per_side"><code class="docutils literal notranslate"><span class="pre">SAMAutomaticMaskGeneration.points_per_side</span></code></a></li>
-</ul>
-</li>
-</ul>
-  </nav></div>
 
   <div class="sidebar-secondary-item">
 
