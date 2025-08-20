@@ -167,7 +167,6 @@ def replace(app, what, name, obj, options, lines):
         "transform",
         "extractor",
         "converter",
-        "launcher",
         "importer",
         "validator",
     ]

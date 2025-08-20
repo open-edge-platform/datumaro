@@ -13,7 +13,6 @@ from datumaro.components.errors import DatumaroError
 from datumaro.components.exporter import Exporter
 from datumaro.components.generator import DatasetGenerator
 from datumaro.components.importer import Importer
-from datumaro.components.launcher import Launcher
 from datumaro.components.transformer import Transform
 from datumaro.components.validator import Validator
 
@@ -24,7 +23,6 @@ _PLUGIN_TYPES = Union[
     Exporter,
     DatasetGenerator,
     Importer,
-    Launcher,
     Validator,
     DatasetBase,
 ]
@@ -36,7 +34,6 @@ STR_TO_PLUGIN_TYPES = {
         Exporter,
         DatasetGenerator,
         Importer,
-        Launcher,
         Validator,
         DatasetBase,
     ]
