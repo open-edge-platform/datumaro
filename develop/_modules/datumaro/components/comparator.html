@@ -374,7 +374,6 @@ document.write(`
     <span class="n">match_items_by_id</span><span class="p">,</span>
     <span class="n">match_items_by_image_hash</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.shift_analyzer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShiftAnalyzer</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">dump_json_file</span><span class="p">,</span> <span class="n">filter_dict</span><span class="p">,</span> <span class="n">find</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.annotation_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_instances</span><span class="p">,</span> <span class="n">max_bbox</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.attrs_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">default_if_none</span>
@@ -967,6 +966,8 @@ document.write(`
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates a low-level comparison table.</span>
 
+<span class="sd">        Note: Shift analysis functionality has been removed.</span>
+
 <span class="sd">        Args:</span>
 <span class="sd">            first_dataset: The first dataset to compare.</span>
 <span class="sd">            second_dataset: The second dataset to compare.</span>
@@ -975,15 +976,10 @@ document.write(`
 <span class="sd">            A tuple containing the table as a string and a dictionary representing the data</span>
 <span class="sd">            of the table.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">shift_analyzer</span> <span class="o">=</span> <span class="n">ShiftAnalyzer</span><span class="p">()</span>
-        <span class="n">cov_shift</span> <span class="o">=</span> <span class="n">shift_analyzer</span><span class="o">.</span><span class="n">compute_covariate_shift</span><span class="p">([</span><span class="n">first_dataset</span><span class="p">,</span> <span class="n">second_dataset</span><span class="p">])</span>
-        <span class="n">label_shift</span> <span class="o">=</span> <span class="n">shift_analyzer</span><span class="o">.</span><span class="n">compute_label_shift</span><span class="p">([</span><span class="n">first_dataset</span><span class="p">,</span> <span class="n">second_dataset</span><span class="p">])</span>
-
         <span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Field&quot;</span><span class="p">,</span> <span class="s2">&quot;Value&quot;</span><span class="p">]</span>
 
         <span class="n">rows</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">[</span><span class="s2">&quot;Covariate shift&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">cov_shift</span><span class="p">)],</span>
-            <span class="p">[</span><span class="s2">&quot;Label shift&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">label_shift</span><span class="p">)],</span>
+            <span class="p">[</span><span class="s2">&quot;Note&quot;</span><span class="p">,</span> <span class="s2">&quot;Shift analysis functionality has been removed&quot;</span><span class="p">],</span>
         <span class="p">]</span>
 
         <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_table</span><span class="p">(</span><span class="n">headers</span><span class="p">,</span> <span class="n">rows</span><span class="p">)</span>
