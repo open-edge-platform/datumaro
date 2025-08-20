@@ -60,11 +60,10 @@ from datumaro.components.filter import (
     XPathDatasetFilter,
 )
 from datumaro.components.importer import ImportContext, ImportErrorPolicy, _ImportFail
-from datumaro.components.launcher import Launcher
 from datumaro.components.media import Image, MediaElement
 from datumaro.components.merge import DEFAULT_MERGE_POLICY
 from datumaro.components.progress_reporting import NullProgressReporter, ProgressReporter
-from datumaro.components.transformer import ItemTransform, ModelTransform, Transform
+from datumaro.components.transformer import ItemTransform, Transform
 from datumaro.util.log_utils import logging_disabled
 from datumaro.util.os_util import rmtree
 from datumaro.util.scope import on_error_do, scoped
@@ -569,51 +568,6 @@ class Dataset(IDataset):
             self.init_cache()
 
         return self
-
-    def run_model(
-        self,
-        model: Union[Launcher, Type[ModelTransform]],
-        *,
-        batch_size: int = 1,
-        append_annotation: bool = False,
-        num_workers: int = 0,
-        **kwargs,
-    ) -> Dataset:
-        """
-        Applies a model to dataset items' media and produces a dataset with
-        media and annotations.
-
-        Args:
-            model: The model to be applied to the dataset
-            batch_size: The number of dataset items processed
-                simultaneously by the model
-            append_annotation: Whether append new annotation to existed annotations
-            num_workers: The number of worker threads to use for parallel inference.
-                Set to 0 for single-process mode. Default is 0.
-            **kwargs: Parameters for the model
-
-        Returns: self
-        """
-
-        if isinstance(model, Launcher):
-            return self.transform(
-                ModelTransform,
-                launcher=model,
-                batch_size=batch_size,
-                append_annotation=append_annotation,
-                num_workers=num_workers,
-                **kwargs,
-            )
-        elif inspect.isclass(model) and isinstance(model, ModelTransform):
-            return self.transform(
-                model,
-                batch_size=batch_size,
-                append_annotation=append_annotation,
-                num_workers=num_workers,
-                **kwargs,
-            )
-        else:
-            raise TypeError("Unexpected 'model' argument type: %s" % type(model))
 
     def select(self, pred: Callable[[DatasetItem], bool]) -> Dataset:
         class _DatasetFilter(ItemTransform):

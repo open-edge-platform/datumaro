@@ -11,7 +11,7 @@ from datumaro.components.annotation import Annotation
 from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.launcher import Launcher
-from datumaro.components.transformer import ModelTransform, TabularTransform
+from datumaro.components.transformer import TabularTransform
 
 
 class MockLauncher(Launcher):
@@ -23,47 +23,6 @@ class MockLauncher(Launcher):
 
     def postprocess(self, pred: ModelPred, info: PrepInfo) -> List[Annotation]:
         return pred
-
-
-@pytest.mark.new
-class ModelTransformTest:
-    @pytest.fixture
-    def fxt_dataset(self):
-        return Dataset.from_iterable(
-            [
-                DatasetItem(
-                    id=f"item_{i}",
-                    annotations=[Annotation(id=0)],
-                )
-                for i in range(10)
-            ]
-        )
-
-    @pytest.mark.parametrize("batch_size", [1, 10])
-    @pytest.mark.parametrize("append_annotation", [True, False])
-    @pytest.mark.parametrize("num_workers", [0, 2])
-    def test_model_transform(
-        self,
-        fxt_dataset: Dataset,
-        batch_size,
-        append_annotation,
-        num_workers,
-    ):
-        transform = ModelTransform(
-            extractor=fxt_dataset,
-            launcher=MockLauncher(),
-            batch_size=batch_size,
-            append_annotation=append_annotation,
-            num_workers=num_workers,
-        )
-
-        for idx, item in enumerate(transform):
-            assert item.id == f"item_{idx}"
-
-            if append_annotation:
-                assert item.annotations == [Annotation(id=0), Annotation(id=1)]
-            else:
-                assert item.annotations == [Annotation(id=1)]
 
 
 class TabularTransformTest:
