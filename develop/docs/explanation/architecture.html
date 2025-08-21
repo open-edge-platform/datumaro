@@ -364,7 +364,6 @@ document.write(`
 <li class="toctree-l2"><a class="reference internal" href="../jupyter_notebook_examples/notebooks/08_e2e_example_yolo_ultralytics_trainer.html">Train Your OpenVINO™ Model Using YoloV8 Trainer For Any Dataset Format</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../jupyter_notebook_examples/notebooks/10_noisy_label_detection_cls.html">Noisy label detection for classification tasks from training loss dynamics statistics</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../jupyter_notebook_examples/notebooks/13_noisy_label_detection_det.html">Noisy label detection for detection tasks from training loss dynamics statistics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../jupyter_notebook_examples/notebooks/16_missing_annotation_detection.html">Missing Annotation Detection</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../jupyter_notebook_examples/notebooks/22_framework_converter.html">Data Framework Convert</a></li>
 </ul>
 </li>
@@ -438,7 +437,6 @@ document.write(`
 <li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.generator.html">datumaro.components.generator</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.hl_ops.html">datumaro.components.hl_ops</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.importer.html">datumaro.components.importer</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.launcher.html">datumaro.components.launcher</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.lazy_plugin.html">datumaro.components.lazy_plugin</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.media.html">datumaro.components.media</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.components.merge.html">datumaro.components.merge</a></li>
@@ -468,10 +466,7 @@ document.write(`
 <li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.plugins.configurable_validator.html">datumaro.plugins.configurable_validator</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.plugins.data_formats.html">datumaro.plugins.data_formats</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.plugins.framework_converter.html">datumaro.plugins.framework_converter</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.plugins.inference_server_plugin.html">datumaro.plugins.inference_server_plugin</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.plugins.ndr.html">datumaro.plugins.ndr</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.plugins.openvino_plugin.html">datumaro.plugins.openvino_plugin</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.plugins.sam_transforms.html">datumaro.plugins.sam_transforms</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.plugins.sampler.html">datumaro.plugins.sampler</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.plugins.specs.html">datumaro.plugins.specs</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../reference/_autosummary/datumaro.plugins.splitter.html">datumaro.plugins.splitter</a></li>
@@ -831,11 +826,6 @@ It can update dataset items, annotations, classes, and other properties.
 A list of available transforms for dataset conversions can be extended by
 adding a <code class="xref py py-mod docutils literal notranslate"><span class="pre">Transform</span></code> implementation script into a plugin directory.</p>
 </section>
-<section id="model-launchers">
-<h3>Model launchers<a class="headerlink" href="#model-launchers" title="Link to this heading">#</a></h3>
-<p>A list of available launchers for model execution can be extended by
-adding a <a class="reference internal" href="../reference/_autosummary/datumaro.components.launcher.html#datumaro.components.launcher.Launcher" title="datumaro.components.launcher.Launcher"><code class="xref py py-mod docutils literal notranslate"><span class="pre">Launcher</span></code></a> implementation script into a plugin directory.</p>
-</section>
 </section>
 <section id="plugins">
 <h2>Plugins<a class="headerlink" href="#plugins" title="Link to this heading">#</a></h2>
@@ -848,7 +838,6 @@ In Datumaro there are several types of plugins, which include:</p>
 <li><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">Importer</span></code> - recognizes dataset type and creates project</p></li>
 <li><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">Converter</span></code> - exports dataset to a specific format</p></li>
 <li><p><a class="reference internal" href="../reference/_autosummary/datumaro.plugins.transforms.html#module-datumaro.plugins.transforms" title="datumaro.plugins.transforms"><code class="xref py py-mod docutils literal notranslate"><span class="pre">transformation</span></code></a> - modifies dataset items or other properties</p></li>
-<li><p><a class="reference internal" href="../reference/_autosummary/datumaro.components.launcher.html#module-datumaro.components.launcher" title="datumaro.components.launcher"><code class="xref py py-mod docutils literal notranslate"><span class="pre">launcher</span></code></a> - executes models</p></li>
 </ul>
 <p>A plugin is a regular Python module. It must be present in a plugin directory:</p>
 <ul class="simple">
@@ -878,7 +867,7 @@ or by regular module importing:</p>
 <p>A plugin is a Python module with any name, which exports some symbols. Symbols,
 starting with <code class="docutils literal notranslate"><span class="pre">_</span></code> are not exported by default. To export a symbol,
 inherit it from one of the special classes:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="kn">import</span> <span class="n">Importer</span><span class="p">,</span> <span class="n">Extractor</span><span class="p">,</span> <span class="n">Transform</span><span class="p">,</span> <span class="n">Launcher</span><span class="p">,</span> <span class="n">Converter</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="kn">import</span> <span class="n">Importer</span><span class="p">,</span> <span class="n">Extractor</span><span class="p">,</span> <span class="n">Transform</span><span class="p">,</span> <span class="n">Converter</span>
 </pre></div>
 </div>
 <p>The <cite>exports</cite> list of the module can be used to override default behavior:</p>
@@ -1109,7 +1098,6 @@ and also special commands, which are hard to be put into any specific context.
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#library-contents">Library contents</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dataset-formats">Dataset Formats</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dataset-conversions-transforms">Dataset Conversions (“Transforms”)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model-launchers">Model launchers</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#plugins">Plugins</a><ul class="nav section-nav flex-column">

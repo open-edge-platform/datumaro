@@ -364,7 +364,6 @@ document.write(`
     <span class="n">ExporterRegistry</span><span class="p">,</span>
     <span class="n">GeneratorRegistry</span><span class="p">,</span>
     <span class="n">ImporterRegistry</span><span class="p">,</span>
-    <span class="n">LauncherRegistry</span><span class="p">,</span>
     <span class="n">PluginRegistry</span><span class="p">,</span>
     <span class="n">TransformRegistry</span><span class="p">,</span>
     <span class="n">ValidatorRegistry</span><span class="p">,</span>
@@ -380,7 +379,6 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">use_lazy_import</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_extractors</span> <span class="o">=</span> <span class="n">DatasetBaseRegistry</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_importers</span> <span class="o">=</span> <span class="n">ImporterRegistry</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_launchers</span> <span class="o">=</span> <span class="n">LauncherRegistry</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_exporters</span> <span class="o">=</span> <span class="n">ExporterRegistry</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_generators</span> <span class="o">=</span> <span class="n">GeneratorRegistry</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_transforms</span> <span class="o">=</span> <span class="n">TransformRegistry</span><span class="p">()</span>
@@ -401,10 +399,6 @@ document.write(`
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">importers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ImporterRegistry</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_plugin_registry</span><span class="p">(</span><span class="s2">&quot;_importers&quot;</span><span class="p">)</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">launchers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LauncherRegistry</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_plugin_registry</span><span class="p">(</span><span class="s2">&quot;_launchers&quot;</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">exporters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ExporterRegistry</span><span class="p">:</span>
@@ -545,7 +539,6 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="nf">register_plugins</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plugins</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">extractors</span><span class="o">.</span><span class="n">batch_register</span><span class="p">(</span><span class="n">plugins</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">importers</span><span class="o">.</span><span class="n">batch_register</span><span class="p">(</span><span class="n">plugins</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">launchers</span><span class="o">.</span><span class="n">batch_register</span><span class="p">(</span><span class="n">plugins</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">exporters</span><span class="o">.</span><span class="n">batch_register</span><span class="p">(</span><span class="n">plugins</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">generators</span><span class="o">.</span><span class="n">batch_register</span><span class="p">(</span><span class="n">plugins</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">batch_register</span><span class="p">(</span><span class="n">plugins</span><span class="p">)</span>
@@ -562,12 +555,6 @@ document.write(`
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.dataset.Environment.make_importer">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">make_importer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">importers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="Environment.make_launcher">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.dataset.Environment.make_launcher">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">make_launcher</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">launchers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Environment.make_exporter">
@@ -653,7 +640,6 @@ document.write(`
         <span class="k">for</span> <span class="n">env</span> <span class="ow">in</span> <span class="n">envs</span><span class="p">:</span>
             <span class="n">_register</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">extractors</span><span class="p">)</span>
             <span class="n">_register</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">importers</span><span class="p">)</span>
-            <span class="n">_register</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">launchers</span><span class="p">)</span>
             <span class="n">_register</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">exporters</span><span class="p">)</span>
             <span class="n">_register</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">generators</span><span class="p">)</span>
             <span class="n">_register</span><span class="p">(</span><span class="n">env</span><span class="o">.</span><span class="n">transforms</span><span class="p">)</span>
