@@ -106,8 +106,8 @@ class Sample:
         return Schema(attributes=attributes)
 
 
-DType = TypeVar("DType", bound=Sample)
-DTargetType = TypeVar("DTargetType", bound=Sample)
+DType = TypeVar("DType")
+DTargetType = TypeVar("DTargetType")
 
 
 class Dataset(Generic[DType]):
