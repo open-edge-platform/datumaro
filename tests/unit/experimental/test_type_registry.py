@@ -68,7 +68,7 @@ def test_union_type_fallback_behavior():
     # Create custom types for testing fallback
     class FailingConverter:
         def __init__(self, data):
-            raise ValueError("This converter always fails")
+            raise KeyError("This converter always fails")
 
     class WorkingConverter:
         def __init__(self, data):
