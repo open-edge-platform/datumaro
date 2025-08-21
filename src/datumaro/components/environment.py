@@ -22,7 +22,6 @@ from datumaro.components.registry import (
     ExporterRegistry,
     GeneratorRegistry,
     ImporterRegistry,
-    LauncherRegistry,
     PluginRegistry,
     TransformRegistry,
     ValidatorRegistry,
@@ -36,7 +35,6 @@ class Environment:
     def __init__(self, use_lazy_import: bool = True):
         self._extractors = DatasetBaseRegistry()
         self._importers = ImporterRegistry()
-        self._launchers = LauncherRegistry()
         self._exporters = ExporterRegistry()
         self._generators = GeneratorRegistry()
         self._transforms = TransformRegistry()
@@ -57,10 +55,6 @@ class Environment:
     @property
     def importers(self) -> ImporterRegistry:
         return self._get_plugin_registry("_importers")
-
-    @property
-    def launchers(self) -> LauncherRegistry:
-        return self._get_plugin_registry("_launchers")
 
     @property
     def exporters(self) -> ExporterRegistry:
@@ -196,7 +190,6 @@ class Environment:
     def register_plugins(self, plugins):
         self.extractors.batch_register(plugins)
         self.importers.batch_register(plugins)
-        self.launchers.batch_register(plugins)
         self.exporters.batch_register(plugins)
         self.generators.batch_register(plugins)
         self.transforms.batch_register(plugins)
@@ -207,9 +200,6 @@ class Environment:
 
     def make_importer(self, name, *args, **kwargs):
         return self.importers.get(name)(*args, **kwargs)
-
-    def make_launcher(self, name, *args, **kwargs):
-        return self.launchers.get(name)(*args, **kwargs)
 
     def make_exporter(self, name, *args, **kwargs):
         result = self.exporters.get(name)
@@ -280,7 +270,6 @@ class Environment:
         for env in envs:
             _register(env.extractors)
             _register(env.importers)
-            _register(env.launchers)
             _register(env.exporters)
             _register(env.generators)
             _register(env.transforms)

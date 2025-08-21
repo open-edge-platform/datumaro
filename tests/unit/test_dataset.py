@@ -54,7 +54,6 @@ from datumaro.components.filter import (
     XPathDatasetFilter,
 )
 from datumaro.components.importer import FailingImportErrorPolicy, ImportErrorPolicy
-from datumaro.components.launcher import Launcher
 from datumaro.components.media import Image, MediaElement, Video
 from datumaro.components.merge.intersect_merge import IntersectMerge
 from datumaro.components.progress_reporting import NullProgressReporter, ProgressReporter

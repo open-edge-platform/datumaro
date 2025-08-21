@@ -6,23 +6,10 @@ from typing import List, Optional, Tuple
 
 import pytest
 
-from datumaro.components.abstracts.model_interpreter import LauncherInputType, ModelPred, PrepInfo
 from datumaro.components.annotation import Annotation
 from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
-from datumaro.components.launcher import Launcher
 from datumaro.components.transformer import TabularTransform
-
-
-class MockLauncher(Launcher):
-    def preprocess(self, item: DatasetItem) -> Tuple[LauncherInputType, PrepInfo]:
-        return {"item": item}, None
-
-    def infer(self, inputs: LauncherInputType) -> List[ModelPred]:
-        return [[Annotation(id=1)] for _ in inputs["item"]]
-
-    def postprocess(self, pred: ModelPred, info: PrepInfo) -> List[Annotation]:
-        return pred
 
 
 class TabularTransformTest:

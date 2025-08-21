@@ -22,7 +22,6 @@ from datumaro.components.dataset_base import DatasetBase, SubsetBase
 from datumaro.components.exporter import Exporter
 from datumaro.components.generator import DatasetGenerator
 from datumaro.components.importer import Importer
-from datumaro.components.launcher import Launcher
 from datumaro.components.lazy_plugin import LazyPlugin
 from datumaro.components.transformer import ItemTransform, Transform
 from datumaro.components.validator import Validator
@@ -124,10 +123,6 @@ class ImporterRegistry(PluginRegistry):
         for extension in file_extensions:
             self.extension_groups[extension].append((name, value))
         return value
-
-
-class LauncherRegistry(PluginRegistry):
-    _ACCEPT = Launcher
 
 
 class ExporterRegistry(PluginRegistry):

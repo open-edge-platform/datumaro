@@ -41,7 +41,6 @@ class EnvironmentTest:
     def test_equivalance(self, fxt_lazy_import: Environment, fxt_no_lazy_import: Environment):
         self._test_equivalance(fxt_lazy_import.extractors, fxt_no_lazy_import.extractors)
         self._test_equivalance(fxt_lazy_import.importers, fxt_no_lazy_import.importers)
-        self._test_equivalance(fxt_lazy_import.launchers, fxt_no_lazy_import.launchers)
         self._test_equivalance(fxt_lazy_import.exporters, fxt_no_lazy_import.exporters)
         self._test_equivalance(fxt_lazy_import.generators, fxt_no_lazy_import.generators)
         self._test_equivalance(fxt_lazy_import.transforms, fxt_no_lazy_import.transforms)
@@ -70,7 +69,6 @@ class EnvironmentTest:
         loaded_plugin_names = set(
             sorted(env.extractors)
             + sorted(env.importers)
-            + sorted(env.launchers)
             + sorted(env.exporters)
             + sorted(env.generators)
             + sorted(env.transforms)

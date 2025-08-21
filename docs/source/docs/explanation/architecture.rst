@@ -273,12 +273,6 @@ It can update dataset items, annotations, classes, and other properties.
 A list of available transforms for dataset conversions can be extended by
 adding a :mod:`Transform <datumaro.components.extractor.Transform>` implementation script into a plugin directory.
 
-Model launchers
-^^^^^^^^^^^^^^^
-
-A list of available launchers for model execution can be extended by
-adding a :mod:`Launcher <datumaro.components.launcher.Launcher>` implementation script into a plugin directory.
-
 Plugins
 -------
 
@@ -292,7 +286,6 @@ In Datumaro there are several types of plugins, which include:
 * :mod:`Importer <datumaro.plugins.coco_format.importer>` - recognizes dataset type and creates project
 * :mod:`Converter <datumaro.components.converter.Converter>` - exports dataset to a specific format
 * :mod:`transformation <datumaro.plugins.transforms>` - modifies dataset items or other properties
-* :mod:`launcher <datumaro.components.launcher>` - executes models
 
 A plugin is a regular Python module. It must be present in a plugin directory:
 
@@ -330,7 +323,7 @@ inherit it from one of the special classes:
 
 .. code-block:: python
 
-   from datumaro import Importer, Extractor, Transform, Launcher, Converter
+   from datumaro import Importer, Extractor, Transform, Converter
 
 The `exports` list of the module can be used to override default behavior:
 

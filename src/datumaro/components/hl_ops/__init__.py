@@ -21,7 +21,6 @@ from datumaro.components.filter import (
     XPathAnnotationsFilter,
     XPathDatasetFilter,
 )
-from datumaro.components.launcher import Launcher
 from datumaro.components.merge import DEFAULT_MERGE_POLICY, get_merger
 from datumaro.components.transformer import Transform
 from datumaro.components.validator import TaskType, Validator

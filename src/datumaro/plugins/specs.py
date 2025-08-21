@@ -58,7 +58,6 @@ if __name__ == "__main__":
 
     _enroll_to_plugin_specs(env.extractors, "DatasetBase")
     _enroll_to_plugin_specs(env.importers, "Importer")
-    _enroll_to_plugin_specs(env.launchers, "Launcher")
     _enroll_to_plugin_specs(env.exporters, "Exporter")
     _enroll_to_plugin_specs(env.generators, "DatasetGenerator")
     _enroll_to_plugin_specs(env.transforms, "Transform")

@@ -27,7 +27,7 @@ class Source(Config):
         return not self.url
 
 
-MODEL_SCHEMA = _SchemaBuilder().add("launcher", str).add("options", dict).build()
+MODEL_SCHEMA = _SchemaBuilder().add("options", dict).build()
 
 
 class Model(Config):
