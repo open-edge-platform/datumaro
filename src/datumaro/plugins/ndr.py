@@ -13,7 +13,6 @@ from datumaro.components.cli_plugin import CliPlugin
 from datumaro.components.dataset_base import DEFAULT_SUBSET_NAME
 from datumaro.components.transformer import Transform
 from datumaro.util import parse_str_enum_value
-from datumaro.util.deprecation import deprecated
 
 
 class Algorithm(Enum):
@@ -31,7 +30,6 @@ class UnderSamplingMethod(Enum):
     inverse = auto()
 
 
-@deprecated(deprecated_version="1.11", removed_version="1.12")
 class NDR(Transform, CliPlugin):
     """
     Removes near-duplicated images in subset|n
