@@ -4,6 +4,8 @@
 
 from __future__ import annotations
 
+import sys
+import types
 from functools import cache
 from typing import (
     TYPE_CHECKING,
@@ -62,7 +64,6 @@ class Sample:
         Raises:
             TypeError: If attributes don't have proper Field annotations
         """
-        import sys
 
         attributes: dict[str, AttributeInfo] = {}
         for name, annotation in cls.__annotations__.items():
@@ -92,7 +93,6 @@ class Sample:
 
             # Extract base class from generic types like MyClass[A, B, C] -> MyClass
             # Special handling for Union types - preserve the Union instance itself
-            import types
 
             type_origin = get_origin(annotation)
 
