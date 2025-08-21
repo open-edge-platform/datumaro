@@ -149,7 +149,7 @@ def from_polars_data(polars_data: Any, target_type: type) -> Any:
             if union_type in _from_polars_converters:
                 try:
                     return _from_polars_converters[union_type](polars_data)
-                except Exception:
+                except KeyError:
                     # If conversion fails, try the next type in the union
                     continue
     raise TypeError(f"No converter registered for type {target_type}")

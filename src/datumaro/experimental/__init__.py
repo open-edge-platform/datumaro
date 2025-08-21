@@ -3,6 +3,9 @@
 # SPDX-License-Identifier: MIT
 
 from .converter_registry import ConverterRegistry, converter, find_conversion_path
+
+# Import the converter implementations to register them
+from .converters import *
 from .dataset import Dataset, Sample
 from .fields import (
     BBoxField,

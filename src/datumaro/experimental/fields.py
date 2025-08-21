@@ -21,13 +21,6 @@ from .type_registry import from_polars_data, to_numpy
 T = TypeVar("T")
 
 
-@dataclass
-class Label:
-    """Minimal Label annotation class."""
-
-    label: Any  # Can be int, str, or other types for flexibility
-
-
 @dataclass(frozen=True)
 class TensorField(Field):
     """
@@ -282,16 +275,14 @@ class LabelField(Field):
         if value is None:
             return {name: pl.Series(name, [None], dtype=self.dtype)}
 
-        # Handle single Label object
-        if hasattr(value, "label"):
-            return {name: pl.Series(name, [value.label], dtype=self.dtype)}
-
         # Handle numpy array or list (multi-label)
-        elif isinstance(value, (np.ndarray, list)):
+        elif self.multi_label:
             if isinstance(value, np.ndarray):
                 value_list = value.tolist()
-            else:
+            elif isinstance(value, list):
                 value_list = value
+            else:
+                raise TypeError(f"Expected value to be a list or np.ndarray, got {type(value)}")
             return {name: pl.Series(name, [value_list], dtype=pl.List(self.dtype))}
 
         # Handle single integer value

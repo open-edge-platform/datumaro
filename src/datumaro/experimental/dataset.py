@@ -92,8 +92,6 @@ class Sample:
                 raise TypeError(f"Attribute '{name}' must have a Field annotation.")
 
             # Extract base class from generic types like MyClass[A, B, C] -> MyClass
-            # Special handling for Union types - preserve the Union instance itself
-
             type_origin = get_origin(annotation)
 
             # For Union types, keep the original annotation (the Union instance)
@@ -106,8 +104,8 @@ class Sample:
         return Schema(attributes=attributes)
 
 
-DType = TypeVar("DType")
-DTargetType = TypeVar("DTargetType")
+DType = TypeVar("DType", bound=Sample)
+DTargetType = TypeVar("DTargetType", bound=Sample)
 
 
 class Dataset(Generic[DType]):
