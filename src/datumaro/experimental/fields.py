@@ -271,47 +271,31 @@ class LabelField(Field):
             return {name: self.dtype}
 
     def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
-        """Convert label(s) to Polars format, handling both single and multi-label cases."""
+        """Convert label(s) to Polars format for single or multi-label cases."""
         if value is None:
             return {name: pl.Series(name, [None], dtype=self.dtype)}
 
-        # Handle numpy array or list (multi-label)
-        elif self.multi_label:
-            if isinstance(value, np.ndarray):
-                value_list = value.tolist()
-            elif isinstance(value, list):
-                value_list = value
-            else:
-                raise TypeError(f"Expected value to be a list or np.ndarray, got {type(value)}")
+        if self.multi_label:
+            value_list = (
+                value.tolist() if isinstance(value, np.ndarray) else to_numpy(value).tolist()
+            )
             return {name: pl.Series(name, [value_list], dtype=pl.List(self.dtype))}
 
-        # Handle single integer value
-        elif isinstance(value, (int, np.integer)):
-            return {name: pl.Series(name, [value], dtype=self.dtype)}
-
-        else:
-            raise ValueError(f"Unsupported label value type: {type(value)}")
+        return {name: pl.Series(name, [value], dtype=self.dtype)}
 
     def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
         """Reconstruct label(s) from Polars data."""
         data = df[name][row_index]
 
-        # If data is a list, it's multi-label
-        if isinstance(data, list):
-            if target_type == np.ndarray or target_type is np.ndarray:
-                return np.array(data, dtype=np.int64)
-            elif target_type is list:
-                return data
-            else:
-                # Try to create target_type with the array/list
-                return target_type(data)
+        if isinstance(data, list):  # Multi-label case
+            if target_type in {np.ndarray, list}:
+                return np.array(data, dtype=np.int64) if target_type is np.ndarray else data
+            return from_polars_data(data, target_type)
 
         # Single label case
-        else:
-            if hasattr(target_type, "__annotations__") and "label" in target_type.__annotations__:
-                return target_type(label=data)
-            else:
-                return target_type(data)
+        if hasattr(target_type, "__annotations__") and "label" in target_type.__annotations__:
+            return target_type(label=data)
+        return from_polars_data(data, target_type)
 
 
 def label_field(
