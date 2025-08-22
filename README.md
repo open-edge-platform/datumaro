@@ -68,11 +68,6 @@ CVAT annotations                             ---> Publication, statistics etc.
       - for detection task, based on bboxes
       - for re-identification task, based on labels,
         avoiding having same IDs in training and test splits
-  - Sampling a dataset
-    - analyzes inference result from the given dataset
-      and selects the ‘best’ and the ‘least amount of’ samples for annotation.
-    - Select the sample that best suits model training.
-      - sampling with Entropy based algorithm
 - Dataset quality checking
   - Simple checking for errors
   - Comparison with model inference
@@ -80,11 +75,6 @@ CVAT annotations                             ---> Publication, statistics etc.
   - Annotation validation based on the task type(classification, etc)
 - Dataset comparison
 - Dataset statistics (image mean and std, annotation statistics)
-- Model integration
-  - Inference (OpenVINO, Caffe, PyTorch, TensorFlow, MxNet, etc.)
-  - Explainable AI ([RISE algorithm](https://arxiv.org/abs/1806.07421))
-    - RISE for classification
-    - RISE for object detection
 
 > Check
   [the design document](https://open-edge-platform.github.io/datumaro/latest/docs/explanation/architecture)
