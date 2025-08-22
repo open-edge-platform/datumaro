@@ -255,7 +255,12 @@ def get_supported_image_types() -> list[type]:
 
             supported_types.append(Image.Image)
         except ImportError:
-            pass
+    try:
+        from PIL import Image
+        if Image.Image in _from_polars_converters:
+            supported_types.append(Image.Image)
+    except ImportError:
+        pass
 
     # Check for torch
     try:
