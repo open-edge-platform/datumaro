@@ -282,10 +282,6 @@ class LabelField(Field):
     def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
         """Reconstruct label(s) from Polars data."""
         data = df[name][row_index]
-
-        if self.multi_label:
-            return from_polars_data(data, target_type)
-
         return from_polars_data(data, target_type)
 
 
