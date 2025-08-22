@@ -7,6 +7,7 @@ import inspect
 import os
 import os.path as osp
 import shutil
+import sys
 import tempfile
 import unittest
 import unittest.mock
@@ -47,9 +48,11 @@ class FileRemover:
             if self.is_dir:
                 try:
                     shutil.rmtree(self.path)
-                except unittest.SkipTest:
-                    # Suppress skip test errors from rmtree
-                    if not exc_type:
+                except PermissionError:
+                    # Suppress permission errors from Windows
+                    # as files cannot be reliably deleted to this flaky error:
+                    # PermissionError: [WinError 32] The process cannot access the file because it is being used by another process
+                    if sys.platform != "win32":
                         raise
             else:
                 os.remove(self.path)
