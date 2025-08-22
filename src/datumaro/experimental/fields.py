@@ -276,9 +276,7 @@ class LabelField(Field):
             return {name: pl.Series(name, [None], dtype=self.dtype)}
 
         if self.multi_label:
-            value_list = (
-                value.tolist() if isinstance(value, np.ndarray) else to_numpy(value).tolist()
-            )
+            value_list = value if isinstance(value, np.ndarray) else to_numpy(value)
             return {name: pl.Series(name, [value_list], dtype=pl.List(self.dtype))}
 
         return {name: pl.Series(name, [value], dtype=self.dtype)}
