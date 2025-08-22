@@ -657,6 +657,75 @@ document.write(`
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">ImagePathField</span><span class="p">(</span><span class="n">semantic</span><span class="o">=</span><span class="n">semantic</span><span class="p">)</span></div>
 
+
+
+<div class="viewcode-block" id="LabelField">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.LabelField">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LabelField</span><span class="p">(</span><span class="n">Field</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a unified label annotation field that supports both single and multi-label scenarios.</span>
+
+<span class="sd">    This field automatically detects whether the input is a single label or multiple labels</span>
+<span class="sd">    and handles the conversion accordingly:</span>
+<span class="sd">    - Single labels: stored as Int32</span>
+<span class="sd">    - Multi-labels: stored as List(Int32)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">semantic</span><span class="p">:</span> <span class="n">Semantic</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="n">multi_label</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># Flag to indicate if this field should handle multi-labels</span>
+
+<div class="viewcode-block" id="LabelField.to_polars_schema">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.LabelField.to_polars_schema">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_polars_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataType</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate schema based on whether this is single or multi-label.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">multi_label</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)}</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="LabelField.to_polars">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.LabelField.to_polars">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_polars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert label(s) to Polars format for single or multi-label cases.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="kc">None</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)}</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">multi_label</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">value</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">pl</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">))}</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="n">value</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)}</span></div>
+
+
+<div class="viewcode-block" id="LabelField.from_polars">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.LabelField.from_polars">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_polars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">row_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">target_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reconstruct label(s) from Polars data.&quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="n">row_index</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">from_polars_data</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">target_type</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="label_field">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.label_field">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">label_field</span><span class="p">(</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">Int32</span><span class="p">(),</span> <span class="n">semantic</span><span class="p">:</span> <span class="n">Semantic</span> <span class="o">=</span> <span class="n">Semantic</span><span class="o">.</span><span class="n">Default</span><span class="p">,</span> <span class="n">multi_label</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a LabelField instance with the specified parameters.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dtype: Polars data type for label values (defaults to pl.Int32())</span>
+<span class="sd">        semantic: Semantic tags describing the label purpose (optional)</span>
+<span class="sd">        multi_label: Whether this field should handle multiple labels (defaults to False)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        LabelField instance configured with the given parameters</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">LabelField</span><span class="p">(</span><span class="n">semantic</span><span class="o">=</span><span class="n">semantic</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">multi_label</span><span class="o">=</span><span class="n">multi_label</span><span class="p">)</span></div>
+
 </pre></div>
 
                 </article>

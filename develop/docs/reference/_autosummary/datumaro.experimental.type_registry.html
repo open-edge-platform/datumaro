@@ -598,8 +598,14 @@ DataFrames. New types can be registered at runtime without modifying core code.<
 <p class="rubric">Functions</p>
 <table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.type_registry.from_polars_data" title="datumaro.experimental.type_registry.from_polars_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_polars_data</span></code></a>(polars_data, target_type)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.type_registry.convert_image_type" title="datumaro.experimental.type_registry.convert_image_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">convert_image_type</span></code></a>(image, target_type)</p></td>
+<td><p>Convert an image between different types (numpy, PIL, torch).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.experimental.type_registry.from_polars_data" title="datumaro.experimental.type_registry.from_polars_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_polars_data</span></code></a>(polars_data, target_type)</p></td>
 <td><p>Convert polars data to target type.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.type_registry.get_supported_image_types" title="datumaro.experimental.type_registry.get_supported_image_types"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_supported_image_types</span></code></a>()</p></td>
+<td><p>Get a list of all supported image types for conversion.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#datumaro.experimental.type_registry.register_from_polars_converter" title="datumaro.experimental.type_registry.register_from_polars_converter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_from_polars_converter</span></code></a>(target_type, ...)</p></td>
 <td><p>Register a converter function to convert from polars data to target_type.</p></td>
@@ -706,6 +712,44 @@ DataFrames. New types can be registered at runtime without modifying core code.<
 </div>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="datumaro.experimental.type_registry.convert_image_type">
+<span class="sig-prename descclassname"><span class="pre">datumaro.experimental.type_registry.</span></span><span class="sig-name descname"><span class="pre">convert_image_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Any" title="typing.Any"><span class="pre">Any</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><span class="pre">type</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Any" title="typing.Any"><span class="pre">Any</span></a></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/type_registry.html#convert_image_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.type_registry.convert_image_type" title="Link to this definition">#</a></dt>
+<dd><p>Convert an image between different types (numpy, PIL, torch).
+This function provides direct conversion between image types using
+the registered converters in the type registry.
+:param image: Source image (numpy.ndarray, PIL.Image.Image, or torch.Tensor)
+:param target_type: Target type to convert to</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Image converted to the target type</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.13)"><strong>TypeError</strong></a> – If source or target type is not supported</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Convert numpy array to PIL Image</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np_image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="p">(</span><span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pil_image</span> <span class="o">=</span> <span class="n">convert_image_type</span><span class="p">(</span><span class="n">np_image</span><span class="p">,</span> <span class="n">Image</span><span class="o">.</span><span class="n">Image</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Convert PIL Image to torch tensor</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">torch_image</span> <span class="o">=</span> <span class="n">convert_image_type</span><span class="p">(</span><span class="n">pil_image</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="datumaro.experimental.type_registry.get_supported_image_types">
+<span class="sig-prename descclassname"><span class="pre">datumaro.experimental.type_registry.</span></span><span class="sig-name descname"><span class="pre">get_supported_image_types</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><span class="pre">type</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/type_registry.html#get_supported_image_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.type_registry.get_supported_image_types" title="Link to this definition">#</a></dt>
+<dd><p>Get a list of all supported image types for conversion.
+:returns: List of supported image types</p>
+</dd></dl>
+
 </section>
 
 
@@ -758,6 +802,8 @@ DataFrames. New types can be registered at runtime without modifying core code.<
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.type_registry.register_from_polars_converter"><code class="docutils literal notranslate"><span class="pre">register_from_polars_converter()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.type_registry.to_numpy"><code class="docutils literal notranslate"><span class="pre">to_numpy()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.type_registry.from_polars_data"><code class="docutils literal notranslate"><span class="pre">from_polars_data()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.type_registry.convert_image_type"><code class="docutils literal notranslate"><span class="pre">convert_image_type()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.type_registry.get_supported_image_types"><code class="docutils literal notranslate"><span class="pre">get_supported_image_types()</span></code></a></li>
 </ul>
   </nav></div>
 

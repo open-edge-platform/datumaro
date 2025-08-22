@@ -346,10 +346,12 @@ document.write(`
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">types</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">cache</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">TYPE_CHECKING</span><span class="p">,</span>
+    <span class="n">Annotated</span><span class="p">,</span>
     <span class="n">Any</span><span class="p">,</span>
     <span class="n">Dict</span><span class="p">,</span>
     <span class="n">Generic</span><span class="p">,</span>
@@ -358,12 +360,13 @@ document.write(`
     <span class="n">Type</span><span class="p">,</span>
     <span class="n">Union</span><span class="p">,</span>
     <span class="n">cast</span><span class="p">,</span>
+    <span class="n">dataclass_transform</span><span class="p">,</span>
     <span class="n">get_args</span><span class="p">,</span>
     <span class="n">get_origin</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">polars</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotated</span><span class="p">,</span> <span class="n">TypeGuard</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">dataclass_transform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeGuard</span><span class="p">,</span> <span class="n">TypeVar</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.converter_registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">Converter</span><span class="p">,</span> <span class="n">find_conversion_path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">AttributeInfo</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> <span class="n">Schema</span>
@@ -407,8 +410,21 @@ document.write(`
 <span class="sd">        Raises:</span>
 <span class="sd">            TypeError: If attributes don&#39;t have proper Field annotations</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">attributes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AttributeInfo</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">annotation</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__annotations__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># Resolve string annotations to actual type objects</span>
+            <span class="c1"># This handles cases where `from __future__ import annotations` is used</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">annotation</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="c1"># Get the module where the class is defined to resolve annotations</span>
+                    <span class="n">module</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span><span class="p">]</span>
+                    <span class="n">annotation</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">annotation</span><span class="p">,</span> <span class="n">module</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Failed to resolve type annotation &#39;</span><span class="si">{</span><span class="n">annotation</span><span class="si">}</span><span class="s2">&#39; for attribute &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span>
+
             <span class="n">origin</span> <span class="o">=</span> <span class="n">get_origin</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">origin</span> <span class="ow">is</span> <span class="n">Annotated</span><span class="p">:</span>
                 <span class="c1"># Handle Annotated[Type, Field] approach</span>
@@ -424,15 +440,20 @@ document.write(`
             <span class="c1"># Extract base class from generic types like MyClass[A, B, C] -&gt; MyClass</span>
             <span class="n">type_origin</span> <span class="o">=</span> <span class="n">get_origin</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span>
 
-            <span class="n">final_type</span> <span class="o">=</span> <span class="n">type_origin</span> <span class="k">if</span> <span class="n">type_origin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">annotation</span>
+            <span class="c1"># For Union types, keep the original annotation (the Union instance)</span>
+            <span class="c1"># instead of the origin (which is just the UnionType class)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">annotation</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">UnionType</span><span class="p">)</span> <span class="ow">or</span> <span class="n">type_origin</span> <span class="ow">is</span> <span class="n">Union</span><span class="p">:</span>
+                <span class="n">final_type</span> <span class="o">=</span> <span class="n">annotation</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">final_type</span> <span class="o">=</span> <span class="n">type_origin</span> <span class="k">if</span> <span class="n">type_origin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">annotation</span>
             <span class="n">attributes</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">AttributeInfo</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">final_type</span><span class="p">,</span> <span class="n">annotation</span><span class="o">=</span><span class="n">field_annotation</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">Schema</span><span class="p">(</span><span class="n">attributes</span><span class="o">=</span><span class="n">attributes</span><span class="p">)</span></div>
 </div>
 
 
 
-<span class="n">DType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;DType&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Sample</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">Sample</span><span class="p">)</span>
-<span class="n">DTargetType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;DTargetType&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Sample</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">Sample</span><span class="p">)</span>
+<span class="n">DType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;DType&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Sample</span><span class="p">)</span>
+<span class="n">DTargetType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;DTargetType&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Sample</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="Dataset">
@@ -452,7 +473,7 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">dtype_or_schema</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Schema</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">DType</span><span class="p">]],</span>
-        <span class="n">categories</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;Categories&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">categories</span><span class="p">:</span> <span class="n">Categories</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize dataset with either a schema or sample type.</span>
@@ -483,7 +504,7 @@ document.write(`
         <span class="n">df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
         <span class="n">dtype_or_schema</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Schema</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">DTargetType</span><span class="p">]],</span>
         <span class="n">lazy_converters</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Converter</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">categories</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;Categories&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">categories</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Categories</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Dataset[DTargetType]&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a Dataset from an existing DataFrame and lazy converters.</span>
@@ -640,8 +661,7 @@ document.write(`
 <span class="sd">            A new Dataset instance with the converted schema</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Import the converter implementations to register them</span>
-        <span class="c1"># ruff: noqa: F401</span>
-        <span class="kn">import</span><span class="w"> </span><span class="nn">datumaro.experimental.converters</span>  <span class="c1"># pyright: ignore [reportUnusedImport, reportMissingImports]</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">datumaro.experimental.converters</span>  <span class="c1"># type: ignore[import]  # noqa: F401</span>
 
         <span class="c1"># Determine target schema</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target_dtype_or_schema</span><span class="p">,</span> <span class="n">Schema</span><span class="p">):</span>

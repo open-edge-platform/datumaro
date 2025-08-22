@@ -351,7 +351,8 @@ document.write(`
 <span class="sd">DataFrames. New types can be registered at runtime without modifying core code.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">types</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">polars</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
@@ -471,9 +472,39 @@ document.write(`
 <span class="sd">        &gt;&gt;&gt; isinstance(tensor, torch.Tensor)</span>
 <span class="sd">        True</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Handle direct type matches first</span>
     <span class="k">if</span> <span class="n">target_type</span> <span class="ow">in</span> <span class="n">_from_polars_converters</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">_from_polars_converters</span><span class="p">[</span><span class="n">target_type</span><span class="p">](</span><span class="n">polars_data</span><span class="p">)</span>
 
+    <span class="c1"># Handle Union types (e.g., torch.Tensor | np.ndarray)</span>
+    <span class="c1"># Check if target_type is a Union type (Python 3.10+ style or typing.Union)</span>
+    <span class="n">is_union</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">union_args</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># Check for types.UnionType (Python 3.10+ syntax: A | B)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target_type</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">UnionType</span><span class="p">):</span>
+        <span class="n">is_union</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">union_args</span> <span class="o">=</span> <span class="n">target_type</span><span class="o">.</span><span class="n">__args__</span>
+
+    <span class="c1"># Check for typing.Union (older syntax: Union[A, B])</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_args</span><span class="p">,</span> <span class="n">get_origin</span>
+
+        <span class="k">if</span> <span class="n">get_origin</span><span class="p">(</span><span class="n">target_type</span><span class="p">)</span> <span class="ow">is</span> <span class="n">Union</span><span class="p">:</span>
+            <span class="n">is_union</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">union_args</span> <span class="o">=</span> <span class="n">get_args</span><span class="p">(</span><span class="n">target_type</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">if</span> <span class="n">is_union</span> <span class="ow">and</span> <span class="n">union_args</span><span class="p">:</span>
+        <span class="c1"># Try each type in the union until one succeeds</span>
+        <span class="k">for</span> <span class="n">union_type</span> <span class="ow">in</span> <span class="n">union_args</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">union_type</span> <span class="ow">in</span> <span class="n">_from_polars_converters</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">_from_polars_converters</span><span class="p">[</span><span class="n">union_type</span><span class="p">](</span><span class="n">polars_data</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="c1"># If conversion fails, try the next type in the union</span>
+                    <span class="k">continue</span>
     <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No converter registered for type </span><span class="si">{</span><span class="n">target_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
@@ -490,6 +521,110 @@ document.write(`
     <span class="p">)</span>  <span class="c1"># pyright: ignore[reportUnknownMemberType, reportUnknownLambdaType, reportUnknownArgumentType]</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
+
+
+<span class="c1"># Register PIL Image converters if available</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+
+    <span class="n">register_numpy_converter</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">Image</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="n">register_from_polars_converter</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">Image</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="k">pass</span>
+
+
+<div class="viewcode-block" id="convert_image_type">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.type_registry.html#datumaro.experimental.type_registry.convert_image_type">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_image_type</span><span class="p">(</span><span class="n">image</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">target_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert an image between different types (numpy, PIL, torch).</span>
+<span class="sd">    This function provides direct conversion between image types using</span>
+<span class="sd">    the registered converters in the type registry.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        image: Source image (numpy.ndarray, PIL.Image.Image, or torch.Tensor)</span>
+<span class="sd">        target_type: Target type to convert to</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Image converted to the target type</span>
+<span class="sd">    Raises:</span>
+<span class="sd">        TypeError: If source or target type is not supported</span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">        &gt;&gt;&gt; from PIL import Image</span>
+<span class="sd">        &gt;&gt;&gt; import torch</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Convert numpy array to PIL Image</span>
+<span class="sd">        &gt;&gt;&gt; np_image = np.random.randint(0, 255, (224, 224, 3), dtype=np.uint8)</span>
+<span class="sd">        &gt;&gt;&gt; pil_image = convert_image_type(np_image, Image.Image)</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; # Convert PIL Image to torch tensor</span>
+<span class="sd">        &gt;&gt;&gt; torch_image = convert_image_type(pil_image, torch.Tensor)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">current_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+
+    <span class="c1"># Define supported image types - only numpy, PIL Image, and torch Tensor</span>
+    <span class="n">supported_image_types</span> <span class="o">=</span> <span class="n">get_supported_image_types</span><span class="p">()</span>
+
+    <span class="c1"># Validate that target_type is a supported image type</span>
+    <span class="k">if</span> <span class="n">target_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">supported_image_types</span><span class="p">:</span>
+        <span class="n">supported_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">supported_image_types</span><span class="p">]</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Target type </span><span class="si">{</span><span class="n">target_type</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> not supported. Supported image types: </span><span class="si">{</span><span class="n">supported_names</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="c1"># If already the target type, return as-is</span>
+    <span class="k">if</span> <span class="n">current_type</span> <span class="o">==</span> <span class="n">target_type</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">image</span>
+
+    <span class="c1"># Convert via numpy as intermediate format</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># First convert to numpy if not already</span>
+        <span class="k">if</span> <span class="n">current_type</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+            <span class="n">numpy_image</span> <span class="o">=</span> <span class="n">image</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">numpy_image</span> <span class="o">=</span> <span class="n">to_numpy</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+
+        <span class="c1"># Then convert from numpy to target type</span>
+        <span class="k">if</span> <span class="n">target_type</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">numpy_image</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Convert numpy to target via polars-style conversion</span>
+            <span class="k">return</span> <span class="n">_from_polars_converters</span><span class="p">[</span><span class="n">target_type</span><span class="p">](</span><span class="n">numpy_image</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cannot convert from </span><span class="si">{</span><span class="n">current_type</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">target_type</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_supported_image_types">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.type_registry.html#datumaro.experimental.type_registry.get_supported_image_types">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_supported_image_types</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">type</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get a list of all supported image types for conversion.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        List of supported image types</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">supported_types</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>  <span class="c1"># numpy is always supported</span>
+
+    <span class="c1"># Add conditionally available types</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+
+        <span class="k">if</span> <span class="n">Image</span><span class="o">.</span><span class="n">Image</span> <span class="ow">in</span> <span class="n">_from_polars_converters</span><span class="p">:</span>
+            <span class="n">supported_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">Image</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="c1"># Check for torch</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+        <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="ow">in</span> <span class="n">_from_polars_converters</span><span class="p">:</span>
+            <span class="n">supported_types</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">return</span> <span class="n">supported_types</span></div>
+
 </pre></div>
 
                 </article>

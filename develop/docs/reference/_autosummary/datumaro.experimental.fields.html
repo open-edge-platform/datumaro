@@ -610,7 +610,10 @@ learning and computer vision applications.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#datumaro.experimental.fields.image_path_field" title="datumaro.experimental.fields.image_path_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">image_path_field</span></code></a>([semantic])</p></td>
 <td><p>Create an ImagePathField instance with the specified semantic tags.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.fields.tensor_field" title="datumaro.experimental.fields.tensor_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tensor_field</span></code></a>(dtype[, semantic])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.fields.label_field" title="datumaro.experimental.fields.label_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">label_field</span></code></a>([dtype, semantic, multi_label])</p></td>
+<td><p>Create a LabelField instance with the specified parameters.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.experimental.fields.tensor_field" title="datumaro.experimental.fields.tensor_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tensor_field</span></code></a>(dtype[, semantic])</p></td>
 <td><p>Create a TensorField instance with the specified semantic tags and data type.</p></td>
 </tr>
 </tbody>
@@ -633,7 +636,10 @@ learning and computer vision applications.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.fields.ImagePathField" title="datumaro.experimental.fields.ImagePathField"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ImagePathField</span></code></a>(semantic)</p></td>
 <td><p>Represents a field containing the file path to an image on disk.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.experimental.fields.TensorField" title="datumaro.experimental.fields.TensorField"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TensorField</span></code></a>(semantic, dtype)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.experimental.fields.LabelField" title="datumaro.experimental.fields.LabelField"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LabelField</span></code></a>(semantic, dtype[, multi_label])</p></td>
+<td><p>Represents a unified label annotation field that supports both single and multi-label scenarios.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.fields.TensorField" title="datumaro.experimental.fields.TensorField"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TensorField</span></code></a>(semantic, dtype)</p></td>
 <td><p>Represents a tensor field with semantic tags and data type information.</p></td>
 </tr>
 </tbody>
@@ -1020,6 +1026,68 @@ as input for lazy loading operations where images are loaded on-demand.</p>
 </dl>
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="datumaro.experimental.fields.LabelField">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datumaro.experimental.fields.</span></span><span class="sig-name descname"><span class="pre">LabelField</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">semantic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.experimental.schema.html#datumaro.experimental.schema.Semantic" title="datumaro.experimental.schema.Semantic"><span class="pre">Semantic</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Any" title="typing.Any"><span class="pre">Any</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/datumaro/experimental/fields.html#LabelField"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.fields.LabelField" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="datumaro.experimental.schema.html#datumaro.experimental.schema.Field" title="datumaro.experimental.schema.Field"><code class="xref py py-class docutils literal notranslate"><span class="pre">Field</span></code></a></p>
+<p>Represents a unified label annotation field that supports both single and multi-label scenarios.</p>
+<p>This field automatically detects whether the input is a single label or multiple labels
+and handles the conversion accordingly:
+- Single labels: stored as Int32
+- Multi-labels: stored as List(Int32)</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="datumaro.experimental.fields.LabelField.semantic">
+<span class="sig-name descname"><span class="pre">semantic</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="datumaro.experimental.schema.html#datumaro.experimental.schema.Semantic" title="datumaro.experimental.schema.Semantic"><span class="pre">Semantic</span></a></em><a class="headerlink" href="#datumaro.experimental.fields.LabelField.semantic" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="datumaro.experimental.fields.LabelField.dtype">
+<span class="sig-name descname"><span class="pre">dtype</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Any" title="typing.Any"><span class="pre">Any</span></a></em><a class="headerlink" href="#datumaro.experimental.fields.LabelField.dtype" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="datumaro.experimental.fields.LabelField.multi_label">
+<span class="sig-name descname"><span class="pre">multi_label</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#datumaro.experimental.fields.LabelField.multi_label" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.experimental.fields.LabelField.to_polars_schema">
+<span class="sig-name descname"><span class="pre">to_polars_schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">DataType</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/fields.html#LabelField.to_polars_schema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.fields.LabelField.to_polars_schema" title="Link to this definition">#</a></dt>
+<dd><p>Generate schema based on whether this is single or multi-label.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.experimental.fields.LabelField.to_polars">
+<span class="sig-name descname"><span class="pre">to_polars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Any" title="typing.Any"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Series</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/fields.html#LabelField.to_polars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.fields.LabelField.to_polars" title="Link to this definition">#</a></dt>
+<dd><p>Convert label(s) to Polars format for single or multi-label cases.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.experimental.fields.LabelField.from_polars">
+<span class="sig-name descname"><span class="pre">from_polars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">row_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><span class="pre">type</span></a><span class="p"><span class="pre">[</span></span><span class="pre">T</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">T</span></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/fields.html#LabelField.from_polars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.fields.LabelField.from_polars" title="Link to this definition">#</a></dt>
+<dd><p>Reconstruct label(s) from Polars data.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="datumaro.experimental.fields.label_field">
+<span class="sig-prename descclassname"><span class="pre">datumaro.experimental.fields.</span></span><span class="sig-name descname"><span class="pre">label_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Any" title="typing.Any"><span class="pre">Any</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Int32</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">semantic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.experimental.schema.html#datumaro.experimental.schema.Semantic" title="datumaro.experimental.schema.Semantic"><span class="pre">Semantic</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Semantic.Default</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">multi_label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Any" title="typing.Any"><span class="pre">Any</span></a></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/fields.html#label_field"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.fields.label_field" title="Link to this definition">#</a></dt>
+<dd><p>Create a LabelField instance with the specified parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dtype</strong> – Polars data type for label values (defaults to pl.Int32())</p></li>
+<li><p><strong>semantic</strong> – Semantic tags describing the label purpose (optional)</p></li>
+<li><p><strong>multi_label</strong> – Whether this field should handle multiple labels (defaults to False)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>LabelField instance configured with the given parameters</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -1122,6 +1190,16 @@ as input for lazy loading operations where images are loaded on-demand.</p>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.fields.image_path_field"><code class="docutils literal notranslate"><span class="pre">image_path_field()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.fields.LabelField"><code class="docutils literal notranslate"><span class="pre">LabelField</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.fields.LabelField.semantic"><code class="docutils literal notranslate"><span class="pre">LabelField.semantic</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.fields.LabelField.dtype"><code class="docutils literal notranslate"><span class="pre">LabelField.dtype</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.fields.LabelField.multi_label"><code class="docutils literal notranslate"><span class="pre">LabelField.multi_label</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.fields.LabelField.to_polars_schema"><code class="docutils literal notranslate"><span class="pre">LabelField.to_polars_schema()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.fields.LabelField.to_polars"><code class="docutils literal notranslate"><span class="pre">LabelField.to_polars()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.fields.LabelField.from_polars"><code class="docutils literal notranslate"><span class="pre">LabelField.from_polars()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.fields.label_field"><code class="docutils literal notranslate"><span class="pre">label_field()</span></code></a></li>
 </ul>
   </nav></div>
 
