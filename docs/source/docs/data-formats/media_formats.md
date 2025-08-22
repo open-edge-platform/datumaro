@@ -17,23 +17,11 @@ datum project import -f image_dir </path/to/directory/containing/images>
 
 or, if you work with Datumaro API:
 
-- for using with a project:
+```python
+from datumaro import Dataset
 
-  ```python
-  from datumaro.project import Project
-
-  project = Project.init('/path/to/project')
-  project.import_source('source1', format='image_dir', url='/path/to/directory/containing/images')
-  dataset = project.working_tree.make_dataset()
-  ```
-
-- for using as a dataset:
-
-  ```python
-  from datumaro import Dataset
-
-  dataset = Dataset.import_from('/path/to/directory/containing/images', 'image_dir')
-  ```
+dataset = Dataset.import_from('/path/to/directory/containing/images', 'image_dir')
+```
 
 This will search for images in the directory recursively and add
 them as dataset entries with names like `<subdir1>/<subsubdir1>/<image_name1>`.
