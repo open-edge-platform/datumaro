@@ -47,7 +47,6 @@ Docs
 
   command-reference/overview
   command-reference/context_free/index
-  command-reference/context/index
   command-reference/helper/index
 
 .. toctree::
@@ -65,7 +64,6 @@ Docs
 
   explanation/concept
   explanation/architecture
-  explanation/project
   explanation/plugins/index
 
 .. toctree::

@@ -20,21 +20,15 @@ The validation result contains
 Usage:
 
 ```console
-datum validate [-h] -t TASK [-s SUBSET_NAME] [-p PROJECT_DIR]
-               [target] [-- EXTRA_ARGS]
+datumaro validate [-h] -t TASK [-s SUBSET_NAME] target [-- EXTRA_ARGS]
 ```
 
 Parameters:
-- `<target>` (string) - Target
-  [dataset revpath](../../user-manual/how_to_use_datumaro.md#dataset-path-concepts).
-  By default, validates the current project.
-- `-t, --task-type` (string) - Task type for validation
-- `-s, --subset` (string) - Dataset subset to be validated
-- `-p, --project` (string) - Directory of the project to operate on
-  (default: current directory).
-- `-h, --help` - Print the help message and exit.
-- `<extra args>` - The list of extra validation parameters. Should be passed
-  after the `--` separator after the main command arguments:
+- `target` (string) - Target dataset path (path to dataset directory, optionally with format specification)
+- `-t, --task` (string) - Task type for validation, one of classification, detection, segmentation, tabular
+- `-s, --subset` (string) - Subset to validate (default: whole dataset)
+- `-h, --help` - Print the help message and exit
+- `extra_args` - Optional arguments for validator (pass '-- -h' for help). Should be passed after the `--` separator:
   - `-fs, --few-samples-thr` (number) - The threshold for giving a warning
     for minimum number of samples per class
   - `-ir, --imbalance-ratio-thr` (number) - The threshold for giving
@@ -47,15 +41,14 @@ Parameters:
     number of data to total bins in the histogram
 
 Examples:
-- Validate a project's subset as a classification dataset
+- Validate a dataset as a classification dataset
   ```console
-  datum validate -t classification -s subset
+  datumaro validate /path/to/dataset:coco -t classification
   ```
 
-- Give warning when imbalance ratio of data with classification task
-  over 40
+- Validate with custom imbalance ratio threshold
   ```console
-  datum validate -p <path/to/project/> -t classification -- -ir 40
+  datumaro validate /path/to/dataset -t classification -- -ir 40
   ```
 
 ### List of validation items (anomaly types)

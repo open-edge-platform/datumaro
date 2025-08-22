@@ -6,24 +6,12 @@ Basic Skills
    :maxdepth: 1
    :hidden:
 
-   01_project_manipulation
    02_dataset_download
    03_dataset_import_export
    04_detect_data_format
 
 .. grid:: 1 2 2 2
    :gutter: 2
-
-   .. grid-item-card::
-
-      .. button-ref:: 01_project_manipulation
-         :color: primary
-         :outline:
-         :expand:
-
-         Level 1: Project Manipulation
-
-      :bdg-success:`ProjectCLI`
 
    .. grid-item-card::
 
@@ -47,7 +35,6 @@ Basic Skills
 
       :bdg-info:`CLI`
       :bdg-warning:`Python`
-      :bdg-success:`ProjectCLI`
 
    .. grid-item-card::
 

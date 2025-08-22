@@ -5,8 +5,8 @@
 ### Split video into frames
 
 Splits a video into separate frames and saves them in a directory.
-After the splitting, the images can be added into a project using
-the [`import` command](./sources.md#import-dataset) and the `image_dir` format.
+After the splitting, the images can be converted to various dataset formats using
+the [`convert` command](../context_free/convert.md) and the `image_dir` format.
 
 This command is useful for making a dataset from a video file.
 Unlike direct video reading during model training, which can produce
@@ -19,11 +19,11 @@ This command provides different options like setting the frame step
 starting (`-b/--start-frame`) and finishing (`-e/--end-frame`) frame etc.
 Note that starting and finishing frames denote a closed interval [`start-frame`, `end-frame`].
 
-Note that this command is equivalent to the following commands:
+Note that this command is equivalent to the following workflow:
 ```bash
-datum project create -o proj
-datum project import -p proj -f video_frames video.mp4 -- <params>
-datum project export -p proj -f image_dir -- <params>
+# Split video, then convert to desired format
+datumaro util split_video video.mp4 -o frames_dir -- <params>
+datumaro convert -i frames_dir -if image_dir -f <desired_format> -o <output_dir>
 ```
 
 Usage:
@@ -59,9 +59,6 @@ datum util split_video -i video.mp4 --image-ext=.png --name-pattern='frame_%%06d
 
 Example: split a video, add frames and annotations into dataset, export as YOLO:
 ```bash
-datum util split_video -i video.avi -o video-frames
-datum project create -o proj
-datum project import -p proj -f image_dir video-frames
-datum project import -p proj -f coco_instances annotations.json
-datum project export -p proj -f yolo -- --save-media
+datumaro util split_video -i video.avi -o video-frames
+datumaro merge video-frames:image_dir annotations.json:coco_instances -f yolo -o output_dataset -- --save-media
 ```

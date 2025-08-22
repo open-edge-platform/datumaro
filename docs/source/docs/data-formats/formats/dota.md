@@ -3,12 +3,11 @@
 [DOTA](https://captain-whu.github.io/DOTA/dataset.html) is a collection of 2K aerial images for a rotated object detection task.
 Each objects are annotated with 4 coordinates for representing oriented bounding boxes, a label among 15 classes (baseball-diamond, basketball-court, bridge, ground-track-field, harbor, helicopter, large-vehicle, plane, roundabout, ship, small-vehicle, soccer-ball-field, storage-tank, swimming-pool, tennis-court) and a difficulty.
 
-## Import DOTA dataset
-A Datumaro project with a DOTA source can be created in the following way:
+## Convert DOTA dataset
+A Datumaro dataset can be converted in the following way:
 
 ```bash
-datum project create
-datum project import --format dota <path/to/dataset>
+datum convert -if dota -i <path/to/dataset> -o <output/dir>
 ```
 
 Or, using Python API:

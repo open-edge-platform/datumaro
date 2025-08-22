@@ -26,8 +26,6 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         help="Convert an existing dataset to another format",
         description="""
         Converts a dataset from one format to another.
-        You can add your own formats and do many more by creating a
-        Datumaro project.|n
         |n
         This command serves as an alias for the "create", "import", and
         "export" commands, allowing to obtain the same results simpler

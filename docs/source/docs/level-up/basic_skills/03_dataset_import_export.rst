@@ -28,7 +28,7 @@ Let's convert the Cityscapes data into the MS-COCO format, which is described in
 
   .. tab-item:: CLI
 
-    Without creation of a project, we can achieve this with a single line command ``convert`` in Datumaro
+    We can achieve this with a single line command ``convert`` in Datumaro
 
     .. code-block:: bash
 
@@ -54,39 +54,5 @@ Let's convert the Cityscapes data into the MS-COCO format, which is described in
         output_path = '/path/to/output'
 
         dataset.export(output_path, format='coco_panoptic')
-
-  .. tab-item:: ProjectCLI
-
-    With the project-based CLI, we first require to ``create`` a project by
-
-    .. code-block:: bash
-
-        datum project create -o <path/to/project>
-
-    We now ``import`` Cityscapes data into the project through
-
-    .. code-block:: bash
-
-        datum project import --format cityscapes -p <path/to/project> <path/to/cityscapes>
-
-    (Optional) When we import a data, the change is automatically commited in the project.
-    This can be shown through ``log`` as
-
-    .. code-block:: bash
-
-        datum project log -p <path/to/project>
-
-    (Optional) We can check the imported dataset information such as subsets, number of data, or
-    categories through ``info``.
-
-    .. code-block:: bash
-
-        datum project info -p <path/to/project>
-
-    Finally, we ``export`` the data within the project with MS-COCO format as
-
-    .. code-block:: bash
-
-        datum project export --format coco -p <path/to/project> -o <path/to/save> -- --save-media
 
 Even if you are not sure about the format of the dataset, there's no need to worry. You can easily detect the format in the next level, which is described in the :ref:`next level <Level 4: Detect Data Format from an Unknown Dataset>`!

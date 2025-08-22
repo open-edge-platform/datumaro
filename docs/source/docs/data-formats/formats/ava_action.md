@@ -17,20 +17,17 @@ Supported task / format:
 Supported annotation types:
 - `Bbox` (detection)
 
-## Import AVA action dataset
+## Convert AVA action dataset
 
 The AVA action dataset is available for free download
 [here](https://research.google.com/ava/download.html#ava_actions_download).
 
-A Datumaro project with a AVA action source can be created in the following way:
+An AVA action dataset can be converted in the following way:
 
 ``` bash
-datum project create
-datum project import --format ava <path/to/dataset>
+datum convert --input-format ava --input-path <path/to/dataset> \
+    --output-format <desired_format> --output-dir <output/dir>
 ```
-
-It is possible to specify project name and project directory. Run
-`datum project create --help` for more information.
 
 The AVA action dataset directory should have the following structure:
 
@@ -55,9 +52,6 @@ The AVA action dataset directory should have the following structure:
        └── ...
 ```
 
-To make sure that the selected dataset has been added to the project, you
-can run `datum project info`, which will display the project information.
-
 ## Export to other formats
 
 Datumaro can convert a AVA action dataset into any other format
@@ -70,13 +64,8 @@ e.g., AVA action annotations can be converted to `COCO detection`.
 There are several ways to convert a AVA action dataset to other dataset formats:
 
 ``` bash
-datum project create
-datum project import -f ava <path/to/ava>
-datum project export -f coco -o <output/dir>
-```
-or
-``` bash
-datum convert -if ava -i <path/to/ava> -f coco -o <output/dir>
+datum convert --input-format ava --input-path <path/to/ava> \
+    --output-format coco --output-dir <output/dir>
 ```
 
 Or, using Python API:
@@ -93,13 +82,9 @@ dataset.export('save_dir', 'coco', save_media=True)
 There are several ways to convert an existing dataset to AVA action format:
 
 ``` bash
-# export dataset into AVA action format (detection) from existing project
-datum project export -p <path/to/project> -f ava -o <output/dir> --
-```
-``` bash
 # converting to AVA action format from other format
-datum convert -if imagenet -i <path/to/dataset> \
-    -f ava -o <output/dir> \
+datum convert --input-format imagenet --input-path <path/to/dataset> \
+    --output-format ava --output-dir <output/dir> \
     -- \
     --save-media
 ```
@@ -107,10 +92,6 @@ datum convert -if imagenet -i <path/to/dataset> \
 Extra options for exporting to AVA action format:
 - `--save-media` - allow to export dataset with saving media files
   (by default `False`).
-
-```bash
-datum project export -f ava -- --extra-option-1 --extra-option-2 ...
-```
 
 ## Examples
 

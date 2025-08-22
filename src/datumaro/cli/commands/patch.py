@@ -27,7 +27,7 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         '--save-media' export option (in-place updates fail by default
         to prevent data loss).|n
         |n
-        Unlike the regular project data source joining, the datasets are not
+        The datasets are not
         required to have the same labels. The labels from the "patch"
         dataset are projected onto the labels of the patched dataset,
         so only the annotations with the matching labels are used, i.e.

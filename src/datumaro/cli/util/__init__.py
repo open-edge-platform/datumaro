@@ -100,17 +100,6 @@ def join_cli_args(args: argparse.Namespace, *names: Iterable[str]) -> List:
     return joined
 
 
-def show_video_import_warning():
-    log.warning(
-        "Using 'video_frames' in a project may lead "
-        "to different results across multiple runs, if the "
-        "system setup changes (library version, OS, etc.). "
-        "If you need stable results, consider splitting the video "
-        "manually using instructions at: "
-        "https://open-edge-platform.github.io/datumaro/latest/docs/data-formats/media_formats"
-    )
-
-
 def make_subcommands_help(commands, help_line_start=0):
     desc = ""
     for command_name, command_type, command_help in commands:

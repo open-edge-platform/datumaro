@@ -39,7 +39,7 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         |s|s- <dataset path>[ :<format> ]|n
         |n
         Annotations can be matched 3 ways:|n
-        - by comparision table|n
+        - by comparison table|n
         - by equality checking|n
         - by distance computation|n
         |n

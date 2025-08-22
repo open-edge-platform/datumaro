@@ -67,7 +67,7 @@ class Merger(IMergerContext, CliPlugin):
                 if not issubclass(s.media_type(), media_type) or not issubclass(
                     media_type, s.media_type()
                 ):
-                    # Symmetric comparision is needed in the case of subclasses:
+                    # Symmetric comparison is needed in the case of subclasses:
                     # eg. Image and RoIImage
                     raise MediaTypeError("Datasets have different media types")
             return media_type

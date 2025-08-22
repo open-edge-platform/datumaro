@@ -10,21 +10,18 @@ To create an unlabelled dataset from an arbitrary directory with images use
 `image_dir` and `image_zip` formats:
 
 ``` bash
-cd </path/to/project>
-datum project create
-datum project import -f image_dir </path/to/directory/containing/images>
+# Convert directory with images to a dataset format
+datumaro convert -i </path/to/directory/containing/images> -if image_dir -f datumaro -o <output_dir>
 ```
 
 or, if you work with Datumaro API:
 
-- for using with a project:
+- for using with the API:
 
   ```python
-  from datumaro.project import Project
+  from datumaro import Dataset
 
-  project = Project.init('/path/to/project')
-  project.import_source('source1', format='image_dir', url='/path/to/directory/containing/images')
-  dataset = project.working_tree.make_dataset()
+  dataset = Dataset.import_from('/path/to/directory/containing/images', 'image_dir')
   ```
 
 - for using as a dataset:
@@ -59,9 +56,8 @@ Alternatively, you can use the `video_frames` format directly:
 > splitting the video into frames by any method.
 
 ``` bash
-cd </path/to/project>
-datum project create
-datum project import -f video_frames </path/to/video>
+# Convert video frames to a dataset format
+datumaro convert -i </path/to/video> -if video_frames -f datumaro -o <output_dir>
 ```
 
 ```python
@@ -81,9 +77,8 @@ Also, Daturamo supports a tabular format.
 A tabular dataset can be a single `.csv` file or a folder contains `.csv` files.
 
 ``` bash
-cd </path/to/project>
-datum project create
-datum project import -f tabular </path/to/tabular>
+# Convert tabular data to a dataset format
+datumaro convert -i </path/to/tabular> -if tabular -f datumaro -o <output_dir>
 ```
 
 ```python

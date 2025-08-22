@@ -24,14 +24,7 @@ Install:
 
     .. code-block::
 
-        pip install datumaro[default]
-
-
-    Alternatively, for zsh users:
-
-    .. code-block::
-
-        pip install 'datumaro[default]'
+        pip install datumaro
 
 
 2. From the GitHub repository (**not recommended, for advanced users**)
@@ -49,7 +42,7 @@ Install:
         curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
         # Install from the GitHub repository
-        pip install 'datumaro[default] @ git+https://github.com/open-edge-platform/datumaro'
+        pip install 'datumaro @ git+https://github.com/open-edge-platform/datumaro'
 
 
 Plugins
@@ -63,7 +56,6 @@ plugin dependencies in the [plugins](/docs/user-manual/extending) section.
 ``Optional dependencies``
 These components are only required for plugins and not installed by default:
 
-- OpenVINO
 - TensorFlow
 - PyTorch
 - MxNet
@@ -73,17 +65,6 @@ Customizing installation
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 - Datumaro has the following installation options:
-
-  - ``pip install datumaro`` - for core library functionality
-  - ``pip install datumaro[default]`` - for normal CLI experience
-
-  In restricted installation environments, where some dependencies are
-  not available, or if you need only the core library functionality,
-  you can install Datumaro without extra plugins.
-
-  The CLI variant (``datumaro[default]``) requires Git to be installed and
-  available to work with Datumaro projects and dataset versioning features.
-  You can find installation instructions for your platform `here <https://git-scm.com/downloads>`_.
 
   In some cases, installing just the core library may be not enough,
   because there can be limited options of installing graphical libraries

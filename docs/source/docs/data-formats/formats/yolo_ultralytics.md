@@ -12,16 +12,15 @@ YOLO-Ultralytics format doesn't support attributes for annotations.
 The format only supports three subset names: `train`, `val`, and `test` (optional).
 
 > Note, the YOLO-Ultralytics trainer does not expect any subset names,
-  except `train`, `val`, and `test` (optional). If there is any other subset name in your project,
+  except `train`, `val`, and `test` (optional). If there is any other subset name,
   Datumaro raises an exception when you export the dataset to the YOLO-Ultralytics format.
 
-## Import YOLO dataset
+## Convert YOLO dataset
 
-A Datumaro project with a YOLO source can be created in the following way:
+A Datumaro dataset can be converted in the following way:
 
 ```bash
-datum project create
-datum project import --format yolo <path/to/dataset>
+datum convert -if yolo -i <path/to/dataset> -o <output/dir>
 ```
 
 ### Directory structure
@@ -99,12 +98,6 @@ After the successful conversion, you can train your own detector with the export
 
 There are several ways to convert other dataset formats to the YOLO-Ultralytics format:
 
-```bash
-datum project create
-datum project add -f <any-other-dataset-format> <path/to/dataset/>
-datum project export -f yolo_ultralytics -o <output/dir> -- --save-media
-```
-or
 ```bash
 datum convert -if <any-other-dataset-format> -i <path/to/dataset> \
               -f yolo_ultralytics -o <output/dir> -- --save-media

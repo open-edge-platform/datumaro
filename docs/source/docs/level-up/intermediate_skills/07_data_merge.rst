@@ -33,7 +33,7 @@ Merge datasets
 
   .. tab-item:: CLI
 
-    Without the project declaration, we can simply merge multiple datasets by
+    We can merge multiple datasets by
 
     .. code-block:: bash
 
@@ -56,30 +56,3 @@ Merge datasets
         from datumaro.components.hl_ops import HLOps
 
         merged = HLOps.merge(eurosat, uc_merced, merge_policy='union')
-
-  .. tab-item:: ProjectCLI
-
-    With the project-based CLI, we first create two project and import datasets into each project
-
-    .. code-block:: bash
-
-      datum project create --output-dir <path/to/project1>
-      datum project import --format imagenet --project <path/to/project1> <path/to/eurosat>
-
-      datum project create --output-dir <path/to/project2>
-      datum project import --format imagenet --project <path/to/project2> <path/to/uc_merced>
-
-    We merge two projects through
-
-    .. code-block:: bash
-
-      datum merge --merge-policy union --format imagenet --output-dir <path/to/output> <path/to/project1> <path/to/project2> -- --save-media
-
-    Similar to merge without projects, we have the merge report named by ``merge_report.json`` inside the output directory.
-    Finally, we import the merged data (``<path/to/output>``) into a project.
-    In this tutorial, we create another project and import this into the project.
-
-    .. code-block:: bash
-
-      datum project create --output-dir <path/to/project3>
-      datum project import --format imagenet --project <path/to/project3> <path/to/output>

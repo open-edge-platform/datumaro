@@ -14,15 +14,15 @@ Supported annotation attributes:
   distinguish between different instances.
   If `False`, the annotation `id` field encodes the instance id.
 
-## Import Cityscapes dataset
+## Convert Cityscapes dataset
 
 The Cityscapes dataset is available for free [download](https://www.cityscapes-dataset.com/downloads/).
 
-A Datumaro project with a Cityscapes source can be created in the following way:
+A Cityscapes dataset can be converted in the following way:
 
 ``` bash
-datum project create
-datum project import --format cityscapes <path/to/dataset>
+datum convert --input-format cityscapes --input-path <path/to/dataset> \
+    --output-format <desired_format> --output-dir <output/dir>
 ```
 
 Cityscapes dataset directory should have the following structure:
@@ -74,9 +74,6 @@ for example:
 0 124 134 elephant
 ```
 
-To make sure that the selected dataset has been added to the project, you can
-run `datum project info`, which will display the project information.
-
 ## Export to other formats
 
 Datumaro can convert a Cityscapes dataset into any other format [Datumaro supports](/docs/data-formats/formats/index.rst).
@@ -87,14 +84,8 @@ There are several ways to convert a Cityscapes dataset to other dataset
 formats using CLI:
 
 ``` bash
-datum project create
-datum project import -f cityscapes <path/to/cityscapes>
-datum project export -f voc -o <output/dir>
-```
-or
-``` bash
-datum convert -if cityscapes -i <path/to/cityscapes> \
-    -f voc -o <output/dir> -- --save-media
+datum convert --input-format cityscapes --input-path <path/to/cityscapes> \
+    --output-format voc --output-dir <output/dir> -- --save-media
 ```
 
 Or, using Python API:
@@ -111,14 +102,9 @@ dataset.export('save_dir', 'voc', save_media=True)
 There are several ways to convert a dataset to Cityscapes format:
 
 ``` bash
-# export dataset into Cityscapes format from existing project
-datum project export -p <path/to/project> -f cityscapes -o <output/dir> \
-    -- --save-media
-```
-``` bash
 # converting to Cityscapes format from other format
-datum convert -if voc -i <path/to/dataset> \
-    -f cityscapes -o <output/dir> -- --save-media
+datum convert --input-format voc --input-path <path/to/dataset> \
+    --output-format cityscapes --output-dir <output/dir> -- --save-media
 ```
 
 Extra options for exporting to Cityscapes format:
@@ -135,11 +121,13 @@ Extra options for exporting to Cityscapes format:
 # 0 0 255 sky
 # 255 0 0 person
 #...
-datum project export -f cityscapes -- --label-map mycolormap.txt
+datum convert --input-format <source-format> --input-path <path/to/dataset> \
+    --output-format cityscapes --output-dir <output/dir> -- --label-map mycolormap.txt
 ```
 or you can use original cityscapes colormap:
 ``` bash
-datum project export -f cityscapes -- --label-map cityscapes
+datum convert --input-format <source-format> --input-path <path/to/dataset> \
+    --output-format cityscapes --output-dir <output/dir> -- --label-map cityscapes
 ```
 
 ## Examples
@@ -155,10 +143,8 @@ particular problems with a Cityscapes dataset:
 ### Example 1. Load the original Cityscapes dataset and convert to Pascal VOC
 
 ```bash
-datum project create -o project
-datum project import -p project -f cityscapes ./Cityscapes/
-datum stats -p project
-datum project export -p project -o dataset/ -f voc -- --save-media
+datum convert --input-format cityscapes --input-path ./Cityscapes/ \
+    --output-format voc --output-dir dataset/ -- --save-media
 ```
 
 ### Example 2. Create a custom Cityscapes-like dataset

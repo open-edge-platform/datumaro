@@ -36,38 +36,12 @@ The Python example for the usage of validator is described in this :doc:`noteboo
 
         reports = validator.validate(dataset)
 
-  .. tab-item:: ProjectCLI
+  .. tab-item:: CLI
 
-    With the project-based CLI, we first require to ``create`` a project by
-
-    .. code-block:: bash
-
-      datum project create -o <path/to/project>
-
-    We now ``import`` MS-COCO validation data into the project through
+    You can validate a dataset directly using the context-free CLI:
 
     .. code-block:: bash
 
-      datum project import --format coco_instances -p <path/to/project> <path/to/data>
+      datum validate --task-type <classification/detection/segmentation> --input-format coco_instances --input-path <path/to/data>
 
-    (Optional) When we import a data, the change is automatically commited in the project.
-    This can be shown through ``log`` as
-
-    .. code-block:: bash
-
-      datum project log -p <path/to/project>
-
-    (Optional) We can check the imported dataset information such as subsets, number of data, or
-    categories through ``info``.
-
-    .. code-block:: bash
-
-      datum dinfo -p <path/to/project>
-
-    Finally, we ``validate`` the data within the project as
-
-    .. code-block:: bash
-
-      datum validate --task-type <classification/detection/segmentation> --subset <subset_name> -p <path/to/project>
-
-    We now have the validation report named by ``validation-report-<subset_name>.json``.
+    The validation report will be saved as ``validation-report.json``.

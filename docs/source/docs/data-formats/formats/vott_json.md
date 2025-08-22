@@ -10,16 +10,15 @@ when the user exports a project and selects "VoTT JSON" as the export format.
 Supported annotation types:
 - `Bbox`
 
-## Import VoTT dataset
+## Convert VoTT dataset
 
-A Datumaro project with a VoTT JSON source can be created in the following way:
+A Datumaro dataset can be converted in the following way:
 
 ```bash
-datum project create
-datum project import --format vott_json <path/to/dataset>
+datum convert -if vott_json -i <path/to/dataset> -o <output/dir>
 ```
 
-It is also possible to import the dataset using Python API:
+It is also possible to convert the dataset using Python API:
 
 ```python
 import datumaro as dm
@@ -55,12 +54,6 @@ There are several ways to convert a VoTT JSON dataset to other dataset
 formats using CLI:
 
 ```bash
-datum project create
-datum project import -f vott_json <path/to/dataset>
-datum project export -f voc -o ./save_dir -- --save-media
-```
-or
-``` bash
 datum convert -if vott_json -i <path/to/dataset> \
     -f voc -o <output/dir> -- --save-media
 ```

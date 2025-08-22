@@ -28,8 +28,7 @@ MMDetection COCO dataset directory should have the following structure:
 ### Import using CLI
 
 ``` bash
-datum project create
-datum project import --format mmdet_coco <path/to/dataset>
+datum convert -i <path/to/dataset> -if mmdet_coco -f datumaro -o <output_dir>
 ```
 
 ### Import using Python API

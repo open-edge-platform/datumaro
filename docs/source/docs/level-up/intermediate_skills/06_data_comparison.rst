@@ -16,7 +16,7 @@ Comparing Datasets
 
     .. tab-item:: CLI
 
-        Without the project declaration, you can simply compare multiple datasets using the following command:
+        You can compare multiple datasets using the following command:
 
         .. code-block:: bash
 
@@ -32,24 +32,10 @@ Comparing Datasets
 
         You will have the comparison report named ``equality_compare.json`` inside the output directory.
 
-        To compare a dataset from another project with a distance metric, use:
+        To compare datasets with a distance metric, use:
 
         .. code-block:: bash
 
-            datum compare <path/to/other/project/> -m distance -o result
+            datum compare <path/to/dataset1> <path/to/dataset2> -m distance -o result
 
         You will have the comparison report named ``<annotation_type>_confusion.png`` inside the output directory. If there is a label difference, then a ``label_confusion`` result will be created. This supports ``label``, ``bbox``, ``polygon``, and ``mask`` annotation types.
-
-    .. tab-item:: PythonCLI
-
-        With the project-based CLI, you can compare the current project's main target (project) in the working tree with the specified dataset using the following command:
-
-        .. code-block:: bash
-
-            datum compare <path/to/specified/dataset>
-
-        You can also simply compare multiple datasets by using:
-
-        .. code-block:: bash
-
-            datum compare <path/to/dataset1> <path/to/dataset2>

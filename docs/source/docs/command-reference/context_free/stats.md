@@ -1,8 +1,8 @@
 # Stats
 
-## Get Project Statistics
+## Get Dataset Statistics
 
-This command computes various project statistics, such as:
+This command computes various dataset statistics, such as:
 - image mean and std. dev. (RGB)
 - class and attribute balance
 - mask pixel balance
@@ -11,24 +11,20 @@ This command computes various project statistics, such as:
 Usage:
 
 ```console
-datum stats [-h] [-s SUBSET] [--image-stats IMAGE_STATS] [--ann-stats ANN_STATS] [-p PROJECT_DIR] [target]
+datumaro stats [-h] [-s SUBSET] [--image-stats IMAGE_STATS] [--ann-stats ANN_STATS] target
 ```
 
 Parameters:
-- `<target>` (string) - Target
-  [source revpath](../../user-manual/how_to_use_datumaro.md#dataset-path-concepts).
-  By default, computes statistics of the merged dataset.
+- `target` (string) - Target dataset path (path to dataset directory, optionally with format specification)
 - `-s, --subset` (string) - Compute stats only for a specific subset
-- `--image-stats` (bool) - Compute image mean and std (RGB) (default: `True`)
-- `--ann-stats` (bool) - Compute annotation statistics (default: `True`)
-- `-p, --project` (string) - Directory of the project to operate on
-  (default: current directory).
-- `-h, --help` - Print the help message and exit.
+- `--image-stats` (bool) - Compute image mean and std (RGB) (default: True)
+- `--ann-stats` (bool) - Compute annotation statistics (default: True)
+- `-h, --help` - Print the help message and exit
 
 Example:
-- Compute project statistics
+- Compute dataset statistics
   ```console
-  datum stats -p <path/to/project/>
+  datumaro stats /path/to/dataset:coco
   ```
 
 Sample output:

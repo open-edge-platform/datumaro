@@ -14,17 +14,16 @@ Supported attributes:
   of the object)
 - `scale` (float)
 
-## Import MPII Human Pose Dataset (JSON)
+## Convert MPII Human Pose Dataset (JSON)
 
-A Datumaro project with an MPII Human Pose Dataset (JSON) source can be
-created in the following way:
+An MPII Human Pose Dataset (JSON) can be converted in the following way:
 
 ```bash
-datum project create
-datum project import --format mpii_json <path/to/dataset>
+datum convert --input-format mpii_json --input-path <path/to/dataset> \
+    --output-format <desired_format> --output-dir <output/dir>
 ```
 
-It is also possible to import the dataset using Python API:
+It is also possible to convert the dataset using Python API:
 
 ```python
 import datumaro as dm
@@ -57,12 +56,6 @@ that supports bounding boxes or points.
 There are several ways to convert an MPII Human Pose Dataset (JSON)
 to other dataset formats using CLI:
 
-```bash
-datum project create
-datum project import -f mpii_json <path/to/dataset>
-datum project export -f voc -o ./save_dir -- --save-media
-```
-or
 ``` bash
 datum convert -if mpii_json -i <path/to/dataset> \
     -f voc -o <output/dir> -- --save-media

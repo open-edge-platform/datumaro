@@ -38,7 +38,6 @@ Intermediate Skills
          Level 06: Dataset Comparison
 
       :bdg-info:`CLI`
-      :bdg-success:`ProjectCLI`
 
    .. grid-item-card::
 
@@ -51,7 +50,6 @@ Intermediate Skills
 
       :bdg-info:`CLI`
       :bdg-warning:`Python`
-      :bdg-success:`ProjectCLI`
 
    .. grid-item-card::
 
@@ -63,7 +61,6 @@ Intermediate Skills
          Level 08: Dataset Validate
 
       :bdg-warning:`Python`
-      :bdg-success:`ProjectCLI`
 
    .. grid-item-card::
 
@@ -74,7 +71,6 @@ Intermediate Skills
 
          Level 09: Data Filtering
 
-      :bdg-success:`ProjectCLI`
       :bdg-info:`CLI`
       :bdg-warning:`Python`
 

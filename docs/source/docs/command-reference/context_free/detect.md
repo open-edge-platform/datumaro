@@ -55,9 +55,6 @@ datum detect [-h] [-p PROJECT_DIR] [--show-rejections]
 Parameters:
 
 - `<url>` - Path to the dataset to analyse.
-- `-p, --project` (string) - Directory of the project to operate on
-  (default: current directory). The project might contain local plugins with
-  custom formats, which will be used for detection.
 - `--show-rejections` - Describe why each supported format that wasn't
   detected was rejected. This only affects the human-readable output; the
   machine-readable report always includes rejection information.

@@ -44,16 +44,16 @@ A tabular dataset can be one of the following:
 Supported annotation types:
 - `Tabular`
 
-## Import tabular dataset
+## Convert tabular dataset
 
-A Datumaro project with a tabular source can be created in the following way:
+A tabular dataset can be converted in the following way:
 
 ```bash
-datum project create
-datum project import --format tabular <path/to/dataset>
+datum convert --input-format tabular --input-path <path/to/dataset> \
+    --output-format <desired_format> --output-dir <output/dir>
 ```
 
-It is also possible to import the dataset using Python API:
+It is also possible to convert the dataset using Python API:
 
 ```python
 import datumaro as dm
@@ -62,12 +62,14 @@ dataset = dm.Dataset.import_from('<path/to/dataset>', 'tabular')
 
 Datumaro stores the imported table as media (a list of `TableRow`) and annotates the target columns.
 The last column is regarded as the target column,
-which can be specified by the user when importing the dataset as shown below.
+which can be specified by the user when converting the dataset as shown below.
 
 ```bash
-datum project create
-datum project import --format tabular <path/to/buddy/dataset> -- --target input:length(m),output:breed_category,pet_category
-datum project import --format tabular <path/to/electricity/dataset>
+datum convert --input-format tabular --input-path <path/to/buddy/dataset> \
+    --output-format <desired_format> --output-dir <output/dir> \
+    -- --target input:length(m),output:breed_category,pet_category
+datum convert --input-format tabular --input-path <path/to/electricity/dataset> \
+    --output-format <desired_format> --output-dir <output/dir>
 ```
 
 ```python
@@ -86,9 +88,7 @@ Datumaro supports exporting a tabular dataset using CLI or python API.
 Each subset will be saved to a separate `.csv` file.
 
 ```bash
-datum project create
-datum project import -f tabular <path/to/dataset>
-datum project export -f tabular -o <output/dir>
+datum convert -if tabular -i <path/to/dataset> -f tabular -o <output/dir>
 ```
 
 ```python

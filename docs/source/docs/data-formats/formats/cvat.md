@@ -27,17 +27,14 @@ Supported annotation types:
 Supported annotation attributes:
 - It supports any arbitrary boolean, floating number, or string attribute.
 
-## Import CVAT dataset
+## Convert CVAT dataset
 
-A Datumaro project with a CVAT source can be created in the following way:
+A CVAT dataset can be converted in the following way:
 
 ``` bash
-datum project create
-datum project import --format cvat <path/to/dataset>
+datum convert --input-format cvat --input-path <path/to/dataset> \
+    --output-format <desired_format> --output-dir <output/dir>
 ```
-
-It is possible to specify project name and project directory. Run
-`datum project create --help` for more information.
 
 A CVAT dataset directory should have the following structure:
 
@@ -78,9 +75,6 @@ However, this is only provided if the dataset is exported from the CVAT project.
 If the dataset is exported from the CVAT task, all images are directly under the `images` directory without subset information.
 To add custom classes, you can use [`dataset_meta.json`](/docs/data-formats/formats/index.rst#dataset-meta-info-file).
 
-To make sure that the selected dataset has been added to the project, you can
-run `datum project info`, which will display the project information.
-
 ## Export to other formats
 
 Datumaro can convert CVAT dataset into any other format [Datumaro supports](/docs/data-formats/formats/index.rst).
@@ -91,13 +85,8 @@ There are several ways to convert a CVAT dataset to other dataset formats
 using CLI:
 
 ``` bash
-datum project create
-datum project import -f cvat <path/to/dataset>
-datum project export -f voc -o <output/dir>
-```
-or
-``` bash
-datum convert -if cvat -i <path/to/dataset> -f voc -o <output/dir>
+datum convert --input-format cvat --input-path <path/to/dataset> \
+    --output-format voc --output-dir <output/dir>
 ```
 
 Or, using Python API:
@@ -114,14 +103,9 @@ dataset.export('save_dir', 'voc', save_media=True)
 There are several ways to convert a dataset to CVAT format:
 
 ``` bash
-# export dataset into CVAT format from existing project
-datum project export -p <path/to/project> -f cvat -o <output/dir> \
-    -- --save-media
-```
-``` bash
 # converting to CVAT format from other format
-datum convert -if voc -i <path/to/dataset> \
-    -f cvat -o <output/dir> -- --save-media
+datum convert --input-format voc --input-path <path/to/dataset> \
+    --output-format cvat --output-dir <output/dir> -- --save-media
 ```
 
 Extra options for exporting to CVAT format:
@@ -138,9 +122,10 @@ When performing `convert` to CVAT format, you may encounter a warning message li
 ```bash
 skipping undeclared attribute 'is_crowd' for label '<label>' (allow with --allow-undeclared-attrs option)
 ```
-In such cases, you can bypass this warning by using the `export` command as follows:
+In such cases, you can bypass this warning by using the `--allow-undeclared-attrs` option as follows:
 ```bash
-datum project export -o <output/dir> -p <path/to/project> -f cvat -- --allow-undeclared-attrs
+datum convert --input-format <source-format> --input-path <path/to/dataset> \
+    --output-format cvat --output-dir <output/dir> -- --allow-undeclared-attrs
 ```
 This allows you to proceed with the export while bypassing the warning.
 

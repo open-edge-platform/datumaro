@@ -190,8 +190,7 @@ finds equal annotations and leaves only the unique set of annotations.
 This approach requires all the inputs to have categories with the same
 labels (or no labels) in the same order.
 
-This algorithm is applied automatically in :mod:`Dataset.from_extractors() <datumaro.components.dataset.Dataset.from_extractors>`
-and when the build targets are merged in the :mod:`Project.Tree.make_dataset() <datumaro.components.project.Tree.make_dataset>`.
+This algorithm is applied automatically in :mod:`Dataset.from_extractors() <datumaro.components.dataset.Dataset.from_extractors>`.
 
 The complex merging
 ~~~~~~~~~~~~~~~~~~~
@@ -213,27 +212,6 @@ The complex algorithm is available in the :mod:`IntersectMerge <datumaro.compone
 from :mod:`datumaro.components.operations`. It must be used explicitly.
 This class also allows to check the inputs and the output dataset
 for errors and problems.
-
-Projects
-^^^^^^^^
-
-Projects are intended for complex use of Datumaro. They provide means of
-persistence, versioning, high-level operations for datasets and also
-allow to extend Datumaro via :ref:`Plugins`. A project provides
-access to build trees and revisions, data sources, models, configuration,
-plugins and cache. Projects can have multiple data sources, which are
-`joined <#dataset-merging>`_ on dataset creation. Project configuration is available
-in :mod:`project.config <datumaro.components.project.Project.config>`. To add a data source into a :mod:`Project <datumaro.components.project.Project>` , use
-the :mod:`import_source() <datumaro.components.project.Project.import_source>` method. The build tree of the current working
-directory can be converted to a :mod:`Dataset <datumaro.components.dataset.Dataset>` with
-:mod:`project.working_tree.make_dataset() <datumaro.components.project.Project.working_tree>`.
-
-The :mod:`Environment <datumaro.components.environment>` class is responsible for accessing built-in and
-project-specific plugins. For a :mod:`Project <datumaro.components.project.Project>` object, there is an instance of
-related :mod:`Environment <datumaro.components.environment>` in :mod:`project.env <datumaro.components.project.Project.env>`.
-
-Check the :ref:`Data Model section of the User Manual <Project data model>`:
-for more info about Project behavior and high-level details.
 
 Library contents
 ----------------
@@ -283,14 +261,13 @@ In Datumaro there are several types of plugins, which include:
 
 
 * :mod:`Extractor <datumaro.components.extractor>` - produces dataset items from data source
-* :mod:`Importer <datumaro.plugins.coco_format.importer>` - recognizes dataset type and creates project
+* :mod:`Importer <datumaro.plugins.coco_format.importer>` - recognizes dataset type
 * :mod:`Converter <datumaro.components.converter.Converter>` - exports dataset to a specific format
 * :mod:`transformation <datumaro.plugins.transforms>` - modifies dataset items or other properties
 
 A plugin is a regular Python module. It must be present in a plugin directory:
 
 
-* ``<project_dir>/.datumaro/plugins`` for project-specific plugins
 * ``<datumaro_dir>/plugins`` for global plugins
 
 A plugin can be used either via the :mod:`Environment <datumaro.components.environment>` class instance,
@@ -303,10 +280,6 @@ or by regular module importing:
 
    # Import a dataset
    dataset = dm.Dataset.import_from(src_dir, 'voc')
-
-   # Load an existing project, save the dataset in some project-specific format
-   project = dm.project.Project('project/')
-   project.env.converters['custom_format'].convert(dataset, save_dir=dst_dir)
 
    # Save the dataset in some built-in format
    dm.Environment().converters['yolo'].convert(dataset, save_dir=dst_dir)

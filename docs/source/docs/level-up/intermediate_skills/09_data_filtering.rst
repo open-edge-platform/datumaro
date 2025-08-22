@@ -14,7 +14,7 @@ to extract meaningful insights or use it effectively for decision-making purpose
 In this tutorial, we provide the simple example of filtering dataset items and annotations.
 To set the filtering condition, we can use
 
-1) [**ProjectCLI**, **CLI**, **Python**] `XPATH <https://devhints.io/xpath>`_ query,
+1) [**CLI**, **Python**] `XPATH <https://devhints.io/xpath>`_ query,
 2) [**Python**] User-provided Python function query.
 
 The detailed description for the `XPATH <https://devhints.io/xpath>`_ query is given by :doc:`this page <../../command-reference/context_free/filter>`.
@@ -22,34 +22,17 @@ The more advanced Python example is given :doc:`this notebook <../../jupyter_not
 
 .. tab-set::
 
-    .. tab-item:: ProjectCLI
-
-        With the project-based CLI, we first create project and import datasets into the project
-
-        .. code-block:: bash
-
-            datum project create --output-dir <path/to/project>
-            datum project import --format datumaro --project <path/to/project> <path/to/data>
-
-        We filter dataset through
-
-        .. code-block:: bash
-
-            datum filter -e <how/to/filter/dataset> --project <path/to/project>
-
-        We can set ``<how/to/filter/dataset>`` as your own filter like ``'/item/annotation[label="cat" and area > 85]'``.
-        This example command will filter only items through the bbox annotations which have `cat` label and bbox area (`w * h`) more than 85.
-
     .. tab-item:: CLI
 
-        Without the project declaration, we can simply filter dataset by
+        You can filter dataset by
 
         .. code-block:: bash
 
-            datum filter <target> -e <how/to/filter/dataset> --output-dir <path/to/output>
+            datum filter --input-format <input_format> --input-path <target> \
+                --expression <how/to/filter/dataset> --output-dir <path/to/output>
 
-        We could use ``--overwrite`` instead of setting ``--output-dir``.
-        And we can set ``<how/to/filter/dataset>`` as our own filter like ``'/item[subset="test"]'``
+        You could use ``--overwrite`` instead of setting ``--output-dir``.
+        And you can set ``<how/to/filter/dataset>`` as your own filter like ``'/item[subset="test"]'``
         to filter only items whose `subset` is `test`.
 
     .. tab-item:: Python

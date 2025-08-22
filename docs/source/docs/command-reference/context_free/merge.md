@@ -49,20 +49,14 @@ in the same group. It can be particularly useful to check if separate
 keypoints are grouped and all the necessary object components in the same
 group.
 
-This command has multiple forms:
+This command has the following form:
 ```console
-1) datum merge <revpath>
-2) datum merge <revpath> <revpath> ...
+datumaro merge <dataset_path> ...
 ```
 
-\<revpath\> - either [a dataset path or a revision path](../../user-manual/how_to_use_datumaro.md#dataset-path-concepts).
+\<dataset_path\> - A dataset path, optionally with format specification (e.g., `path/to/dataset:coco`).
 
-1 - Merges the current project's main target ("project")
-  in the working tree with the specified dataset.
-
-2 - Merges the specified datasets.
-  Note that the current project is not included in the list of merged
-  sources automatically.
+Merges the specified datasets.
 
 The command supports passing extra exporting options for the output
 dataset. The format can be specified with the `-f/--format` option.
@@ -72,26 +66,20 @@ images in the output dataset with `--save-media`.
 
 Usage:
 ```console
-datum merge [-h] [-m MERGE_POLICY] [-o DST_DIR] [--overwrite] [-f FORMAT] [-p PROJECT_DIR]
+datumaro merge [-h] [-m MERGE_POLICY] [-o DST_DIR] [--overwrite] [-f FORMAT]
             [-iou IOU_THRESH] [-oconf OUTPUT_CONF_THRESH] [--quorum QUORUM] [-g GROUPS]
-            target [target ...] [-- EXTRA_FORMAT_ARGS]
+            targets [targets ...] [-- EXTRA_FORMAT_ARGS]
 ```
 
 Parameters:
-- `<target>` (string) - Target [dataset revpaths](../../user-manual/how_to_use_datumaro.md#dataset-path-concepts)
-  (repeatable)
+- `targets` (string) - Target dataset paths (path to dataset directory, optionally with format specification) (repeatable)
 - `-m`, `--merge-policy` (string) - Policy for how to merge datasets.
   Supported policies are union, intersect, exact. (default: union)
-- `-o, --output-dir` (string) - Output directory. By default, a new directory
-  is created in the current directory.
-- `--overwrite` - Allows to overwrite existing files in the output directory,
-  when it is specified and is not empty.
-- `-f, --format` (string) - Output format. The default format is `datumaro`.
-- `-p, --project` (string) - Directory of the project to operate on
-  (default: current directory).
-- `-h, --help` - Print the help message and exit.
-- `-- <extra format args>` - Additional arguments for the format writer
-  (use `-- -h` for help). Must be specified after the main command arguments.
+- `-o, --output-dir` (string) - Output directory (default: generate a new one)
+- `--overwrite` - Overwrite existing files in the save directory
+- `-f, --format` (string) - Output format (default: datumaro)
+- `-h, --help` - Print the help message and exit
+- `extra_args` - Additional arguments for exporter (pass '-- -h' for help). Must be specified after the main command arguments and after the '--' separator
 - intersect merge policy options:
   - `-iou`, `--iou-thresh` (number) - IoU matching threshold for spatial
     annotations (both maximum inter-cluster and pairwise). Default is 0.25.
@@ -104,14 +92,14 @@ Parameters:
     make it optional in the group (repeatable)
 
 Examples:
-- Merge 4 (partially-)intersecting projects,
+- Merge 4 datasets with intersect policy,
   - consider voting successful when there are no less than 3 same votes
   - consider shapes intersecting when IoU >= 0.6
   - check annotation groups to have `person`, `hand`, `head` and `foot`
   (`?` is used for optional parts)
 
   ```console
-  datum merge <path/to/project1/> <path/to/project2/> <path/to/project3/> <path/to/project4/> \
+  datumaro merge dataset1/ dataset2/ dataset3/ dataset4/ \
     -m intersect \
     --quorum 3 \
     -iou 0.6 \
@@ -120,31 +108,21 @@ Examples:
 
 - Merge images and annotations from 2 datasets in COCO format
   ```console
-  datum merge <path/to/dataset1/>:image_dir <path/to/dataset2/>:coco <path/to/dataset3/>:coco
+  datumaro merge dataset1/:image_dir dataset2/:coco dataset3/:coco
   ```
 
 - Check groups of the merged dataset for consistency
   look for groups consisting of `person`, `hand` `head`, `foot`
   ```console
-  datum merge <path/to/project1/> <path/to/project2/> -m intersect -g 'person,hand?,head,foot?'
+  datumaro merge dataset1/ dataset2/ -m intersect -g 'person,hand?,head,foot?'
   ```
 
 - Merge two datasets, specify formats
   ```console
-  datum merge <path/to/dataset1/>:voc <path/to/dataset2/>:coco
-  ```
-
-- Merge the current working tree and a dataset
-  ```console
-  datum merge <path/to/dataset/>:coco
-  ```
-
-- Merge a source from a previous revision and a dataset
-  ```console
-  datum merge HEAD~2:source-2 <path/to/dataset/>:yolo
+  datumaro merge dataset1/:voc dataset2/:coco
   ```
 
 - Merge datasets and save in different format
   ```console
-  datum merge -f voc <path/to/dataset1/>:yolo <path/to/dataset2/>:coco -- --save-media
+  datumaro merge -f voc dataset1/:yolo dataset2/:coco -- --save-media
   ```

@@ -13,19 +13,14 @@ Supported types of annotations:
 
 Format doesn't support any attributes for annotations objects.
 
-## Import Vgg Face2 dataset
+## Convert Vgg Face2 dataset
 
-A Datumaro project with a Vgg Face 2 dataset can be created
+A Vgg Face 2 dataset can be converted
 in the following way:
 
+```bash
+datum convert -i <path_to_dataset> -if vgg_face2 -f datumaro -o <output_dir>
 ```
-datum project create
-datum project import -f vgg_face2 <path_to_dataset>
-```
-
-> Note: if you use `datum project import` then <path_to_dataset> should not be a
-> subdirectory of directory with Datumaro project, see more information about
-> it in the [docs](../../command-reference/context/sources.md#add-dataset).
 
 And you can also load Vgg Face 2 through the Python API:
 
@@ -35,7 +30,7 @@ import datumaro as dm
 dataset = dm.Dataset.import_from('<path_to_dataset>', format='vgg_face2')
 ```
 
-For successful importing of Vgg Face2 face the input directory with dataset
+For successful conversion of Vgg Face2 face the input directory with dataset
 should has the following structure:
 
 ```
@@ -78,11 +73,6 @@ There is few examples how to do it:
 # Using `convert` command
 datum convert -if vgg_face2 -i <path_to_vgg_face2> \
     -f voc -o <output_dir> -- --save-media
-
-# Using Datumaro project
-datum project create
-datum project import -f vgg_face2 <path_to_vgg_face2>
-datum project export -f yolo -o <output_dir>
 ```
 
 > Note: to get the expected result from the conversion, the output format
@@ -113,11 +103,6 @@ There is few examples:
 # Using convert command
 datum convert -if wider_face -i <path_to_wider> \
     -f vgg_face2 -o <output_dir>
-
-# Using Datumaro project
-datum project create
-datum project import -f wider_face <path_to_wider>
-datum project export -f vgg_face2 -o <output_dir> -- --save-media --image-ext '.png'
 ```
 
 > Note: `vgg_face2` format supports only one `Bbox` per image

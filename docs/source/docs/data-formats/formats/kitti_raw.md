@@ -25,11 +25,18 @@ Supported annotation attributes:
 Supported image attributes:
 - `frame` (read/write, integer). Indicates frame number of the image.
 
-## Import KITTI Raw dataset
+## Convert KITTI Raw dataset
 
 The velodyne points/KITTI Raw dataset is available for download
 [here](http://www.cvlibs.net/datasets/kitti/raw_data.php) and
 [here](https://cloud.enterprise.deepsystems.io/s/YcyfIf5zrS7NZcI/download).
+
+A KITTI Raw dataset can be converted in the following way:
+
+```bash
+datum convert --input-format kitti_raw --input-path <path/to/dataset> \
+    --output-format <desired_format> --output-dir <output/dir>
+```
 
 KITTI Raw dataset directory should have the following structure:
 
@@ -68,17 +75,6 @@ provides an option to use a special index file to allow this.
 
 To add custom classes, you can use [`dataset_meta.json`](/docs/data-formats/formats/index.rst#dataset-meta-info-file).
 
-A Datumaro project with a KITTI source can be created in the following way:
-
-```bash
-datum project create
-datum project import --format kitti_raw <path/to/dataset>
-```
-
-To make sure that the selected dataset has been added to the project,
-you can run `datum project info`, which will display the project and dataset
-information.
-
 ## Export to other formats
 
 Datumaro can convert a KITTI Raw dataset into any other
@@ -92,13 +88,8 @@ but not in COCO keypoints.
 There are several ways to convert a KITTI Raw dataset to other dataset formats:
 
 ``` bash
-datum project create
-datum project import -f kitti_raw <path/to/kitti_raw>
-datum project export -f sly_pointcloud -o <output/dir>
-```
-or
-``` bash
-datum convert -if kitti_raw -i <path/to/kitti_raw> -f sly_pointcloud
+datum convert --input-format kitti_raw --input-path <path/to/kitti_raw> \
+    --output-format sly_pointcloud --output-dir <output/dir>
 ```
 
 Or, using Python API:
@@ -115,14 +106,9 @@ dataset.export('save_dir', 'sly_pointcloud', save_media=True)
 There are several ways to convert a dataset to KITTI Raw format:
 
 ``` bash
-# export dataset into KITTI Raw format from existing project
-datum project export -p <path/to/project> -f kitti_raw -o <output/dir> \
-    -- --save-media
-```
-``` bash
 # converting to KITTI Raw format from other format
-datum convert -if sly_pointcloud -i <path/to/dataset> \
-    -f kitti_raw -o <output/dir> -- --save-media --reindex
+datum convert --input-format sly_pointcloud --input-path <path/to/dataset> \
+    --output-format kitti_raw --output-dir <output/dir> -- --save-media --reindex
 ```
 
 Extra options for exporting to KITTI Raw format:
@@ -138,19 +124,19 @@ Extra options for exporting to KITTI Raw format:
 
 ## Examples
 
-### Example 1. Import dataset, compute statistics
+### Example 1. Convert dataset and compute statistics
 
 ```bash
-datum project create -o project
-datum project import -p project -f kitti_raw ../kitti_raw/
-datum stats -p project
+datum convert --input-format kitti_raw --input-path ../kitti_raw/ \
+    --output-format datumaro --output-dir ./output_project
+datum stats --input-path ./output_project
 ```
 
 ### Example 2. Convert Supervisely Pointclouds to KITTI Raw
 
 ``` bash
-datum convert -if sly_pointcloud -i ../sly_pcd/ \
-    -f kitti_raw -o my_kitti/ -- --save-media --allow-attrs
+datum convert --input-format sly_pointcloud --input-path ../sly_pcd/ \
+    --output-format kitti_raw --output-dir my_kitti/ -- --save-media --allow-attrs
 ```
 
 ### Example 3. Create a custom dataset
