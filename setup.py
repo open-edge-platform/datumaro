@@ -92,10 +92,6 @@ setuptools.setup(
         ],
     },
     cmdclass={"build_ext": build_ext},
-    package_data={
-        "datumaro.plugins.synthetic_data": ["background_colors.txt"],
-        "datumaro.plugins.openvino_plugin.samples": ["coco.class", "imagenet.class"],
-    },
     include_package_data=True,
     rust_extensions=[
         RustExtension(
