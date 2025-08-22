@@ -4,10 +4,12 @@
 
 from __future__ import annotations
 
-import copy
+import sys
+import types
 from functools import cache
 from typing import (
     TYPE_CHECKING,
+    Annotated,
     Any,
     Dict,
     Generic,
@@ -16,12 +18,13 @@ from typing import (
     Type,
     Union,
     cast,
+    dataclass_transform,
     get_args,
     get_origin,
 )
 
 import polars as pl
-from typing_extensions import Annotated, TypeGuard, TypeVar, dataclass_transform
+from typing_extensions import TypeGuard, TypeVar
 
 from .converter_registry import Converter, find_conversion_path
 from .schema import AttributeInfo, Field, Schema
@@ -61,8 +64,21 @@ class Sample:
         Raises:
             TypeError: If attributes don't have proper Field annotations
         """
+
         attributes: dict[str, AttributeInfo] = {}
         for name, annotation in cls.__annotations__.items():
+            # Resolve string annotations to actual type objects
+            # This handles cases where `from __future__ import annotations` is used
+            if isinstance(annotation, str):
+                try:
+                    # Get the module where the class is defined to resolve annotations
+                    module = sys.modules[cls.__module__]
+                    annotation = eval(annotation, module.__dict__)
+                except Exception as e:
+                    raise TypeError(
+                        f"Failed to resolve type annotation '{annotation}' for attribute '{name}': {e}"
+                    )
+
             origin = get_origin(annotation)
             if origin is Annotated:
                 # Handle Annotated[Type, Field] approach
@@ -78,13 +94,18 @@ class Sample:
             # Extract base class from generic types like MyClass[A, B, C] -> MyClass
             type_origin = get_origin(annotation)
 
-            final_type = type_origin if type_origin is not None else annotation
+            # For Union types, keep the original annotation (the Union instance)
+            # instead of the origin (which is just the UnionType class)
+            if isinstance(annotation, types.UnionType) or type_origin is Union:
+                final_type = annotation
+            else:
+                final_type = type_origin if type_origin is not None else annotation
             attributes[name] = AttributeInfo(type=final_type, annotation=field_annotation)
         return Schema(attributes=attributes)
 
 
-DType = TypeVar("DType", bound=Sample, default=Sample)
-DTargetType = TypeVar("DTargetType", bound=Sample, default=Sample)
+DType = TypeVar("DType", bound=Sample)
+DTargetType = TypeVar("DTargetType", bound=Sample)
 
 
 class Dataset(Generic[DType]):
@@ -102,7 +123,7 @@ class Dataset(Generic[DType]):
     def __init__(
         self,
         dtype_or_schema: Union[Schema, Type[DType]],
-        categories: Dict[str, "Categories"] = None,
+        categories: Categories = None,
     ):
         """
         Initialize dataset with either a schema or sample type.
@@ -131,7 +152,7 @@ class Dataset(Generic[DType]):
         df: pl.DataFrame,
         dtype_or_schema: Union[Schema, Type[DTargetType]],
         lazy_converters: List[Converter] | None = None,
-        categories: Dict[str, "Categories"] = None,
+        categories: Dict[str, Categories] = None,
     ) -> "Dataset[DTargetType]":
         """
         Create a Dataset from an existing DataFrame and lazy converters.
@@ -282,8 +303,7 @@ class Dataset(Generic[DType]):
             A new Dataset instance with the converted schema
         """
         # Import the converter implementations to register them
-        # ruff: noqa: F401
-        import datumaro.experimental.converters  # pyright: ignore [reportUnusedImport, reportMissingImports]
+        import datumaro.experimental.converters  # type: ignore[import]  # noqa: F401
 
         # Determine target schema
         if isinstance(target_dtype_or_schema, Schema):

@@ -246,3 +246,57 @@ def image_path_field(semantic: Semantic = Semantic.Default) -> Any:
         ImagePathField instance configured with the given semantic tags
     """
     return ImagePathField(semantic=semantic)
+
+
+@dataclass(frozen=True)
+class LabelField(Field):
+    """
+    Represents a unified label annotation field that supports both single and multi-label scenarios.
+
+    This field automatically detects whether the input is a single label or multiple labels
+    and handles the conversion accordingly:
+    - Single labels: stored as Int32
+    - Multi-labels: stored as List(Int32)
+    """
+
+    semantic: Semantic
+    dtype: Any
+    multi_label: bool = False  # Flag to indicate if this field should handle multi-labels
+
+    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+        """Generate schema based on whether this is single or multi-label."""
+        if self.multi_label:
+            return {name: pl.List(self.dtype)}
+        return {name: self.dtype}
+
+    def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
+        """Convert label(s) to Polars format for single or multi-label cases."""
+        if value is None:
+            return {name: pl.Series(name, [None], dtype=self.dtype)}
+
+        if self.multi_label:
+            return {name: pl.Series(name, [to_numpy(value)], dtype=pl.List(self.dtype))}
+
+        return {name: pl.Series(name, [value], dtype=self.dtype)}
+
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+        """Reconstruct label(s) from Polars data."""
+        data = df[name][row_index]
+        return from_polars_data(data, target_type)
+
+
+def label_field(
+    dtype: Any = pl.Int32(), semantic: Semantic = Semantic.Default, multi_label: bool = False
+) -> Any:
+    """
+    Create a LabelField instance with the specified parameters.
+
+    Args:
+        dtype: Polars data type for label values (defaults to pl.Int32())
+        semantic: Semantic tags describing the label purpose (optional)
+        multi_label: Whether this field should handle multiple labels (defaults to False)
+
+    Returns:
+        LabelField instance configured with the given parameters
+    """
+    return LabelField(semantic=semantic, dtype=dtype, multi_label=multi_label)

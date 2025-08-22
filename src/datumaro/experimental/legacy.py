@@ -194,7 +194,7 @@ def analyze_legacy_dataset(legacy_dataset: LegacyDataset) -> AnalysisResult:
         attributes.update(media_converter.get_schema_attributes())
     except ValueError:
         # No converter for this media type - skip
-        media_converter = None
+        pass
 
     # Get annotation attributes from converters
     for ann_type in ann_types:

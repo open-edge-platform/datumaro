@@ -9,7 +9,8 @@ different tensor libraries (PyTorch, NumPy, JAX, TensorFlow, etc.) and Polars
 DataFrames. New types can be registered at runtime without modifying core code.
 """
 
-from typing import Any, Callable
+import types
+from typing import Any, Callable, Union
 
 import numpy as np
 import polars as pl
@@ -118,9 +119,39 @@ def from_polars_data(polars_data: Any, target_type: type) -> Any:
         >>> isinstance(tensor, torch.Tensor)
         True
     """
+    # Handle direct type matches first
     if target_type in _from_polars_converters:
         return _from_polars_converters[target_type](polars_data)
 
+    # Handle Union types (e.g., torch.Tensor | np.ndarray)
+    # Check if target_type is a Union type (Python 3.10+ style or typing.Union)
+    is_union = False
+    union_args = None
+
+    # Check for types.UnionType (Python 3.10+ syntax: A | B)
+    if isinstance(target_type, types.UnionType):
+        is_union = True
+        union_args = target_type.__args__
+
+    # Check for typing.Union (older syntax: Union[A, B])
+    try:
+        from typing import get_args, get_origin
+
+        if get_origin(target_type) is Union:
+            is_union = True
+            union_args = get_args(target_type)
+    except Exception:
+        pass
+
+    if is_union and union_args:
+        # Try each type in the union until one succeeds
+        for union_type in union_args:
+            if union_type in _from_polars_converters:
+                try:
+                    return _from_polars_converters[union_type](polars_data)
+                except KeyError:
+                    # If conversion fails, try the next type in the union
+                    continue
     raise TypeError(f"No converter registered for type {target_type}")
 
 
@@ -136,3 +167,101 @@ try:
     )  # pyright: ignore[reportUnknownMemberType, reportUnknownLambdaType, reportUnknownArgumentType]
 except ImportError:
     pass
+
+
+# Register PIL Image converters if available
+try:
+    from PIL import Image
+
+    register_numpy_converter(Image.Image, lambda x: np.array(x))
+    register_from_polars_converter(Image.Image, lambda x: Image.fromarray(np.array(x)))
+except ImportError:
+    pass
+
+
+def convert_image_type(image: Any, target_type: type) -> Any:
+    """
+    Convert an image between different types (numpy, PIL, torch).
+    This function provides direct conversion between image types using
+    the registered converters in the type registry.
+    Args:
+        image: Source image (numpy.ndarray, PIL.Image.Image, or torch.Tensor)
+        target_type: Target type to convert to
+    Returns:
+        Image converted to the target type
+    Raises:
+        TypeError: If source or target type is not supported
+    Example:
+        >>> import numpy as np
+        >>> from PIL import Image
+        >>> import torch
+        >>>
+        >>> # Convert numpy array to PIL Image
+        >>> np_image = np.random.randint(0, 255, (224, 224, 3), dtype=np.uint8)
+        >>> pil_image = convert_image_type(np_image, Image.Image)
+        >>>
+        >>> # Convert PIL Image to torch tensor
+        >>> torch_image = convert_image_type(pil_image, torch.Tensor)
+    """
+    current_type = type(image)
+
+    # Define supported image types - only numpy, PIL Image, and torch Tensor
+    supported_image_types = get_supported_image_types()
+
+    # Validate that target_type is a supported image type
+    if target_type not in supported_image_types:
+        supported_names = [t.__name__ for t in supported_image_types]
+        raise TypeError(
+            f"Target type {target_type.__name__} not supported. Supported image types: {supported_names}"
+        )
+
+    # If already the target type, return as-is
+    if current_type == target_type:
+        return image
+
+    # Convert via numpy as intermediate format
+    try:
+        # First convert to numpy if not already
+        if current_type == np.ndarray:
+            numpy_image = image
+        else:
+            numpy_image = to_numpy(image)
+
+        # Then convert from numpy to target type
+        if target_type == np.ndarray:
+            return numpy_image
+        else:
+            # Convert numpy to target via polars-style conversion
+            return _from_polars_converters[target_type](numpy_image)
+
+    except Exception as e:
+        raise TypeError(f"Cannot convert from {current_type} to {target_type}: {e}")
+
+
+def get_supported_image_types() -> list[type]:
+    """
+    Get a list of all supported image types for conversion.
+    Returns:
+        List of supported image types
+    """
+    supported_types = [np.ndarray]  # numpy is always supported
+
+    # Add conditionally available types
+    try:
+        from PIL import Image
+
+        if Image.Image in _from_polars_converters:
+            supported_types.append(Image.Image)
+    except ImportError:
+        pass
+
+    # Check for torch
+    try:
+        import torch
+
+        if torch.Tensor in _from_polars_converters:
+            supported_types.append(torch.Tensor)
+    except ImportError:
+        pass
+
+    return supported_types
