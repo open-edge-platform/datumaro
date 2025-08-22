@@ -267,8 +267,7 @@ class LabelField(Field):
         """Generate schema based on whether this is single or multi-label."""
         if self.multi_label:
             return {name: pl.List(self.dtype)}
-        else:
-            return {name: self.dtype}
+        return {name: self.dtype}
 
     def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
         """Convert label(s) to Polars format for single or multi-label cases."""
@@ -276,8 +275,7 @@ class LabelField(Field):
             return {name: pl.Series(name, [None], dtype=self.dtype)}
 
         if self.multi_label:
-            value_list = value if isinstance(value, np.ndarray) else to_numpy(value)
-            return {name: pl.Series(name, [value_list], dtype=pl.List(self.dtype))}
+            return {name: pl.Series(name, [to_numpy(value)], dtype=pl.List(self.dtype))}
 
         return {name: pl.Series(name, [value], dtype=self.dtype)}
 
@@ -285,14 +283,9 @@ class LabelField(Field):
         """Reconstruct label(s) from Polars data."""
         data = df[name][row_index]
 
-        if isinstance(data, list):  # Multi-label case
-            if target_type in {np.ndarray, list}:
-                return np.array(data, dtype=np.int64) if target_type is np.ndarray else data
+        if self.multi_label:
             return from_polars_data(data, target_type)
 
-        # Single label case
-        if hasattr(target_type, "__annotations__") and "label" in target_type.__annotations__:
-            return target_type(label=data)
         return from_polars_data(data, target_type)
 
 
