@@ -174,9 +174,7 @@ try:
     from PIL import Image
 
     register_numpy_converter(Image.Image, lambda x: np.array(x))
-    register_from_polars_converter(
-        Image.Image, lambda x: Image.fromarray(np.array(x).astype(np.uint8))
-    )
+    register_from_polars_converter(Image.Image, lambda x: Image.fromarray(np.array(x)))
 except ImportError:
     pass
 
@@ -249,14 +247,9 @@ def get_supported_image_types() -> list[type]:
     supported_types = [np.ndarray]  # numpy is always supported
 
     # Add conditionally available types
-    if "PIL.Image" in str(_from_polars_converters.keys()):
-        try:
-            from PIL import Image
-
-            supported_types.append(Image.Image)
-        except ImportError:
     try:
         from PIL import Image
+
         if Image.Image in _from_polars_converters:
             supported_types.append(Image.Image)
     except ImportError:
