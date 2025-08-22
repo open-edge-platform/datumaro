@@ -15,17 +15,6 @@ from contextlib import ExitStack, contextmanager, redirect_stderr, redirect_stdo
 from io import StringIO
 from typing import Iterable, Iterator, List, Optional, Set, Union
 
-try:
-    # Declare functions to remove files and directories.
-    #
-    # Use rmtree from GitPython to avoid the problem with removal of
-    # readonly files on Windows, which Git uses extensively
-    # It double checks if a file cannot be removed because of readonly flag
-    from git.util import rmfile, rmtree  # noqa: F401
-except (ModuleNotFoundError, ImportError):
-    from os import remove as rmfile  # noqa: F401
-    from shutil import rmtree as rmtree  # noqa: F401
-
 from . import cast
 from .definitions import DEFAULT_SUBSET_NAME
 
