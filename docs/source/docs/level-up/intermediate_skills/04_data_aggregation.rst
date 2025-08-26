@@ -1,5 +1,5 @@
 ================================
-Level 5: Data Subset Aggregation
+Level 4: Data Subset Aggregation
 ================================
 
 
@@ -11,7 +11,7 @@ we will show an example of dataset aggregation and reorganization to address thi
 Prepare datasets
 ================
 
-As we did in :ref:`level 3 <Level 3: Data Import and Export>`, we use the Cityscapes dataset.
+As we did in :ref:`level 2 <Level 2: Data Import and Export>`, we use the Cityscapes dataset.
 The Cityscapes dataset is divided into train, validation, and test subsets with the number of 2975,
 500, and 1525 samples, respectively.
 

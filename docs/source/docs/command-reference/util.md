@@ -22,11 +22,11 @@ Note that starting and finishing frames denote a closed interval [`start-frame`,
 Note that this command is equivalent to the following workflow:
 ```bash
 # Split video, then convert to desired format
-datumaro util split_video video.mp4 -o frames_dir -- <params>
-datumaro convert -i frames_dir -if image_dir -f <desired_format> -o <output_dir>
+datum util split_video video.mp4 -o frames_dir -- <params>
+datum convert -i frames_dir -if image_dir -f <desired_format> -o <output_dir>
 ```
 
-Usage:
+### Usage
 
 ``` bash
 datum util split_video [-h] -i SRC_PATH [-o DST_DIR] [--overwrite]
@@ -47,18 +47,20 @@ Parameters:
 - `-x, --image-ext` (string) Output image extension (default: `.jpg`)
 - `-h, --help` - Print the help message and exit
 
-Example: split a video into frames, use each 30-rd frame:
-```bash
-datum util split_video -i video.mp4 -o video.mp4-frames --step 30
-```
+### Examples
 
-Example: split a video into frames, save as 'frame_xxxxxx.png' files:
-```bash
-datum util split_video -i video.mp4 --image-ext=.png --name-pattern='frame_%%06d'
-```
+- Split a video into frames, use each 30-rd frame:
+  ```bash
+  datum util split_video -i video.mp4 -o video.mp4-frames --step 30
+  ```
 
-Example: split a video, add frames and annotations into dataset, export as YOLO:
-```bash
-datumaro util split_video -i video.avi -o video-frames
-datumaro merge video-frames:image_dir annotations.json:coco_instances -f yolo -o output_dataset -- --save-media
-```
+- Split a video into frames, save as 'frame_xxxxxx.png' files:
+  ```bash
+  datum util split_video -i video.mp4 --image-ext=.png --name-pattern='frame_%%06d'
+  ```
+
+- Split a video, add frames and annotations into dataset, export as YOLO:
+  ```bash
+  datum util split_video -i video.avi -o video-frames
+  datum merge video-frames:image_dir annotations.json:coco_instances -f yolo -o output_dataset -- --save-media
+  ```

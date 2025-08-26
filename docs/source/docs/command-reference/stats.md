@@ -8,7 +8,7 @@ This command computes various dataset statistics, such as:
 - mask pixel balance
 - segment area distribution
 
-Usage:
+## Usage
 
 ```console
 datumaro stats [-h] [-s SUBSET] [--image-stats IMAGE_STATS] [--ann-stats ANN_STATS] target
@@ -21,7 +21,7 @@ Parameters:
 - `--ann-stats` (bool) - Compute annotation statistics (default: True)
 - `-h, --help` - Print the help message and exit
 
-Example:
+## Example
 - Compute dataset statistics
   ```console
   datumaro stats /path/to/dataset:coco
@@ -30,6 +30,10 @@ Example:
 Sample output:
 
 <details>
+
+<summary>
+Show/hide Code
+</summary>
 
 ``` json
 {

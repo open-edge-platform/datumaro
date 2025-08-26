@@ -5,10 +5,10 @@
 This command outputs high level dataset information such as sample count,
 categories and subsets.
 
-Usage:
+## Usage
 
 ```console
-datumaro dinfo [-h] [--all] dataset_path
+datum dinfo [-h] [--all] dataset_path
 ```
 
 Parameters:
@@ -16,15 +16,15 @@ Parameters:
 - `--all` - Print all information
 - `-h, --help` - Print the help message and exit
 
-Examples:
+## Examples
 - Print dataset info for a path and a format name
   ```console
-  datumaro dinfo path/to/dataset:voc
+  datum dinfo path/to/dataset:voc
   ```
 
 - Print dataset info for a COCO-like dataset
   ```console
-  datumaro dinfo path/to/dataset:coco
+  datum dinfo path/to/dataset:coco
   ```
 
 Sample output:

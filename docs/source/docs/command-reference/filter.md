@@ -58,10 +58,10 @@ Item representations can be printed with the `--dry-run` parameter:
 </item>
 ```
 
-Usage:
+## Usage
 
 ```console
-datumaro filter [-h] [-e FILTER] [-m MODE] [--dry-run] [-o DST_DIR] [--overwrite] target
+datum filter [-h] [-e FILTER] [-m MODE] [--dry-run] [-o DST_DIR] [--overwrite] target
 ```
 
 Parameters:
@@ -73,30 +73,30 @@ Parameters:
 - `--overwrite` - Overwrite existing files in the save directory
 - `-h, --help` - Print the help message and exit
 
-Examples:
+## Examples
 - Extract a dataset with images with `width` < `height`
   ```console
-  datumaro filter -e '/item[image/width < image/height]' dataset/
+  datum filter -e '/item[image/width < image/height]' dataset/
   ```
 
 - Extract a dataset with images of the `train` subset
   ```console
-  datumaro filter -e '/item[subset="train"]' dataset/
+  datum filter -e '/item[subset="train"]' dataset/
   ```
 
 - Extract a dataset with only large annotations of the `cat` class and any non-`persons`
   ```console
-  datumaro filter --mode annotations \
+  datum filter --mode annotations \
     -e '/item/annotation[(label="cat" and area > 99.5) or label!="person"]' dataset/
   ```
 
 - Extract a dataset with non-occluded annotations, remove empty images
   ```console
-  datumaro filter -m i+a -e '/item/annotation[occluded="False"]' dataset/ -o output_dir
+  datum filter -m i+a -e '/item/annotation[occluded="False"]' dataset/ -o output_dir
   ```
 
 - Extract a dataset composed solely of items containing annotations
   ```console
-  datumaro filter -e '/item[annotation]' dataset/
+  datum filter -e '/item[annotation]' dataset/
   ```
   The `item[annotation]` checks if there is a child named `annotation` within the `item` node.

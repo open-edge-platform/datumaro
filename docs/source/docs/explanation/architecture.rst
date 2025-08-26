@@ -374,21 +374,3 @@ Plugin example
 
    exports = [MyFormat] # explicit exports declaration
    # MyFormatExtractor and _MyFormatConverter won't be exported
-
-Command-line
-------------
-
-Basically, the interface is divided on contexts and single commands.
-Contexts are semantically grouped commands, related to a single topic or target.
-Single commands are handy shorter alternatives for the most used commands
-and also special commands, which are hard to be put into any specific context.
-`Docker <https://www.docker.com/>`_ is an example of similar approach.
-
-.. graphviz:: command_line.dot
-
-:ref:`List of plugins available through the CLI <Supported Plugins>`
-
-Model-View-ViewModel (MVVM) UI pattern is used.
-
-.. raw:: html
-   :file: ../../../images/command_diag2.svg

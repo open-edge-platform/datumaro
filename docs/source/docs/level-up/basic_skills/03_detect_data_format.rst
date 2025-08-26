@@ -1,5 +1,5 @@
 ===================================================
-Level 4: Detect Data Format from an Unknown Dataset
+Level 3: Detect Data Format from an Unknown Dataset
 ===================================================
 
 Datumaro has a built-in function that allows users to detect the format of a dataset.
@@ -18,7 +18,7 @@ Detect data format
       datum detect <path/to/data>
 
     The printed format can be utilized as ``format`` argument when importing a dataset as following the
-    :ref:`previous level <Level 3: Data Import and Export>`.
+    :ref:`previous level <Level 4: Data Import and Export>`.
 
   .. tab-item:: Python
 

@@ -49,12 +49,14 @@ in the same group. It can be particularly useful to check if separate
 keypoints are grouped and all the necessary object components in the same
 group.
 
-This command has the following form:
+## Usage
 ```console
-datumaro merge <dataset_path> ...
+datum merge [-h] [-m MERGE_POLICY] [-o DST_DIR] [--overwrite] [-f FORMAT]
+            [-iou IOU_THRESH] [-oconf OUTPUT_CONF_THRESH] [--quorum QUORUM] [-g GROUPS]
+            targets [targets ...] [-- EXTRA_FORMAT_ARGS]
 ```
 
-\<dataset_path\> - A dataset path, optionally with format specification (e.g., `path/to/dataset:coco`).
+\<target\> - A dataset path, optionally with format specification (e.g., `path/to/dataset:coco`).
 
 Merges the specified datasets.
 
@@ -63,13 +65,6 @@ dataset. The format can be specified with the `-f/--format` option.
 Extra options should be passed after the main arguments
 and after the `--` separator. Particularly, this is useful to include
 images in the output dataset with `--save-media`.
-
-Usage:
-```console
-datumaro merge [-h] [-m MERGE_POLICY] [-o DST_DIR] [--overwrite] [-f FORMAT]
-            [-iou IOU_THRESH] [-oconf OUTPUT_CONF_THRESH] [--quorum QUORUM] [-g GROUPS]
-            targets [targets ...] [-- EXTRA_FORMAT_ARGS]
-```
 
 Parameters:
 - `targets` (string) - Target dataset paths (path to dataset directory, optionally with format specification) (repeatable)
@@ -91,7 +86,7 @@ Parameters:
     annotation groups to check. The `?` postfix can be added to a label to
     make it optional in the group (repeatable)
 
-Examples:
+## Examples
 - Merge 4 datasets with intersect policy,
   - consider voting successful when there are no less than 3 same votes
   - consider shapes intersecting when IoU >= 0.6
@@ -99,7 +94,7 @@ Examples:
   (`?` is used for optional parts)
 
   ```console
-  datumaro merge dataset1/ dataset2/ dataset3/ dataset4/ \
+  datum merge dataset1/ dataset2/ dataset3/ dataset4/ \
     -m intersect \
     --quorum 3 \
     -iou 0.6 \
@@ -108,21 +103,21 @@ Examples:
 
 - Merge images and annotations from 2 datasets in COCO format
   ```console
-  datumaro merge dataset1/:image_dir dataset2/:coco dataset3/:coco
+  datum merge dataset1/:image_dir dataset2/:coco dataset3/:coco
   ```
 
 - Check groups of the merged dataset for consistency
   look for groups consisting of `person`, `hand` `head`, `foot`
   ```console
-  datumaro merge dataset1/ dataset2/ -m intersect -g 'person,hand?,head,foot?'
+  datum merge dataset1/ dataset2/ -m intersect -g 'person,hand?,head,foot?'
   ```
 
 - Merge two datasets, specify formats
   ```console
-  datumaro merge dataset1/:voc dataset2/:coco
+  datum merge dataset1/:voc dataset2/:coco
   ```
 
 - Merge datasets and save in different format
   ```console
-  datumaro merge -f voc dataset1/:yolo dataset2/:coco -- --save-media
+  datum merge -f voc dataset1/:yolo dataset2/:coco -- --save-media
   ```

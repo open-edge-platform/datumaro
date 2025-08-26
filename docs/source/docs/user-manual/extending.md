@@ -36,15 +36,6 @@ or
 pip install datumaro[tf-gpu]
 ```
 
-### OpenVINO™
-
-This plugin provides support for model inference with [OpenVINO™](https://01.org/openvinotoolkit).
-
-**Dependencies**
-
-The plugin depends on the OpenVINO™ Toolkit, which can be installed by
-following [these instructions](https://docs.openvino.ai/latest/openvino_docs_install_guides_install_runtime.html)
-
 ## Dataset Formats
 
 Dataset reading is supported by Extractors and Importers.
@@ -64,8 +55,3 @@ A Transform is a function for altering a dataset and producing a new one.
 It can update dataset items, annotations, classes, and other properties.
 A list of available transforms for dataset conversions can be extended by
 adding a Transform implementation script into a plugin directory.
-
-## Model launchers
-
-A list of available launchers for model execution can be extended by adding
-a Launcher implementation script into a plugin directory.

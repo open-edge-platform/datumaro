@@ -45,7 +45,7 @@ The `<reason-code>` can be one of:
 
 Other reason codes may be defined in the future.
 
-Usage:
+## Usage
 
 ```console
 datum detect [-h] [-p PROJECT_DIR] [--show-rejections]
@@ -63,7 +63,7 @@ Parameters:
 - `--depth` (int) - The maximum depth for recursive search. (default: 2)
 - `-h`, `--help` - Print the help message and exit.
 
-Examples:
+## Examples
 - Detect the format of a dataset in a given directory,
   showing rejection information
   ```console

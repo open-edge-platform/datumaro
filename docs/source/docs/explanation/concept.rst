@@ -27,4 +27,4 @@ Others
 
 - Transform - A transformation operation over dataset elements. Examples
   are image renaming, image flipping, image and subset renaming, label remapping, etc.
-  Corresponds to the `transform <../command-reference/context_free/transform>`_.
+  Corresponds to the `transform <../command-reference/transform.md>`_.

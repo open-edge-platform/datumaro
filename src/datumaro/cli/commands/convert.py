@@ -27,10 +27,6 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         description="""
         Converts a dataset from one format to another.
         |n
-        This command serves as an alias for the "create", "import", and
-        "export" commands, allowing to obtain the same results simpler
-        and faster. Check descriptions of these commands for more info.|n
-        |n
         Supported input formats: {}|n
         |n
         Supported output formats: {}|n

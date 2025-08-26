@@ -1,5 +1,5 @@
 =========================
-Level 2: Dataset download
+Level 1: Dataset download
 =========================
 
 Datumaro supports downloading public datasets from multiple sources: `TensorFlow Datasets <https://www.tensorflow.org/datasets>`_ and `Kaggle Datasets <https://www.kaggle.com/datasets>`_
@@ -72,4 +72,4 @@ How can we download datasets?
       We recommand you to run this command with ``--save-media`` option to export the media files as well,
       for example, ``datum download kaggle get -i tfds:mnist -- --save-media``.
 
-In the :ref:`next level <Level 3: Data Import and Export>`, we will look into how to import and export the dataset using Datumaro!
+In the :ref:`next level <Level 2: Data Import and Export>`, we will look into how to import and export the dataset using Datumaro!

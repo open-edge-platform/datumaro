@@ -6,7 +6,7 @@ Often datasets Examples:
 
 - Split a VOC-like dataset randomly
   ```console
-  datumaro transform --overwrite path/to/dataset:voc -t random_split
+  datum transform --overwrite path/to/dataset:voc -t random_split
   ```
 
 - Rename images in a dataset by a regex from `frame_XXX` to `XXX`
@@ -14,29 +14,29 @@ Often datasets Examples:
   **NOTE:** Please use double quotes (`"`) for regex representation. Check [Reason to use double quotes](https://stackoverflow.com/questions/51080215/differences-between-single-and-double-quotes-in-cmd).
 
   ```console
-  datumaro transform path/to/dataset -t rename -o output_dir -- -e "|^frame_||"
+  datum transform path/to/dataset -t rename -o output_dir -- -e "|^frame_||"
   ```ified during preparation for model training and
 experimenting. In trivial cases it can be done manually - e.g. image renaming
 or label renaming. However, in more complex cases even simple modifications
 can require too much efforts, distracting the user from the real work.
-Datumaro provides the `datumaro transform` command to help in such cases.
+Datumaro provides the `datum transform` command to help in such cases.
 
 This command allows to modify dataset images or annotations all at once.
 
 > This command is designed for batch dataset processing, so if you only
 > need to modify few elements of a dataset, you might want to use
 > other approaches for better performance. A possible solution can be
-> a simple script, which uses [Datumaro API](../../explanation/architecture).
+> a simple script, which uses [Datumaro API](../explanation/architecture).
 
 By default, datasets are updated in-place. The `-o/--output-dir`
 option can be used to specify another output directory. When
 updating in-place, use the `--overwrite` parameter (in-place
 updates fail by default to prevent data loss).
 
-Usage:
+## Usage
 
 ```console
-datumaro transform [-h] -t TRANSFORM [-o DST_DIR] [--overwrite] target ...
+datum transform [-h] -t TRANSFORM [-o DST_DIR] [--overwrite] target ...
 ```
 
 Parameters:
@@ -51,11 +51,11 @@ Parameters:
   transform descriptions for info about extra parameters. Use the `--help`
   option to print parameter info.
 
-Examples:
+## Examples
 
 - Split a VOC-like dataset randomly
   ```console
-  datumaro transform --overwrite path/to/dataset:voc -t random_split
+  datum transform --overwrite path/to/dataset:voc -t random_split
   ```
 
 - Rename images in a dataset by a regex from `frame_XXX` to `XXX`
@@ -63,7 +63,7 @@ Examples:
   **NOTE:** Please use double quotes (`"`) for regex representation. Check [Reason to use double quotes](https://stackoverflow.com/questions/51080215/differences-between-single-and-double-quotes-in-cmd).
 
   ```console
-  datumaro transform path/to/dataset -t rename -o output_dir -- -e "|^frame_||"
+  datum transform path/to/dataset -t rename -o output_dir -- -e "|^frame_||"
   ```
 
 ### Built-in transforms
@@ -141,22 +141,22 @@ Optional arguments:
 Examples:
 - Replace 'pattern' with 'replacement'
   ```console
-  datumaro transform -t rename -- -e "|pattern|replacement|"
+  datum transform -t rename -- -e "|pattern|replacement|"
   ```
 
 - Remove the `frame_` prefix from item ids
   ```console
-  datumaro transform -t rename -- -e "|^frame_|"
+  datum transform -t rename -- -e "|^frame_|"
   ```
 
 - Collect images from subdirectories into the base image directory using regex
   ```console
-  datumaro transform -t rename -- -e "|^((.+[/\\])*)?(.+)$|\2|"
+  datum transform -t rename -- -e "|^((.+[/\\])*)?(.+)$|\2|"
   ```
 
 - Add subset prefix to images
   ```console
-  datumaro transform -t rename -- -e "|(.*)|{item.subset}_\1|"
+  datum transform -t rename -- -e "|(.*)|{item.subset}_\1|"
   ```
 
 #### `id_from_image_name`
@@ -179,17 +179,17 @@ Optional arguments:
 Examples:
 - Renames items without duplication check
   ```console
-  datumaro transform -t id_from_image_name
+  datum transform -t id_from_image_name
   ```
 
 - Renames items with duplication check
   ```console
-  datumaro transform -t id_from_image_name -- --ensure_unique
+  datum transform -t id_from_image_name -- --ensure_unique
   ```
 
 - Renames items with duplication check and alters the suffix length(default: 3)
   ```console
-  datumaro transform -t id_from_image_name -- --ensure_unique --suffix_length 2
+  datum transform -t id_from_image_name -- --ensure_unique --suffix_length 2
   ```
 
 #### `reindex`
@@ -221,7 +221,7 @@ Optional arguments:
 Examples:
 - Sort by id converted into integer
   ```console
-  datumaro transform -t ndr -- --key "lambda item: int(item.id)"
+  datum transform -t ndr -- --key "lambda item: int(item.id)"
   ```
 
 #### `ndr`
@@ -264,7 +264,7 @@ Optional arguments:
 Examples:
 - Apply NDR, return no more than 100 images
   ```console
-  datumaro transform -t ndr -- \
+  datum transform -t ndr -- \
     --working_subset train
     --algorithm gradient
     --num_cut 100
@@ -325,7 +325,7 @@ Examples:
   as input. The dataset **must** contain model confidence values in the `scores`
   attributes of annotations.
   ```console
-  datumaro transform -t relevancy_sampler -- \
+  datum transform -t relevancy_sampler -- \
     --algorithm entropy \
     --subset_name train \
     --sample_name sample \
@@ -358,12 +358,12 @@ Optional arguments:
 Examples:
 - Select subset of 20 images randomly
   ```console
-  datumaro transform -t random_sampler -- -k 20
+  datum transform -t random_sampler -- -k 20
   ```
 
 - Select subset of 20 images, modify only `train` subset
   ```console
-  datumaro transform -t random_sampler -- -k 20 -s train
+  datum transform -t random_sampler -- -k 20 -s train
   ```
 
 #### `random_label_sampler`
@@ -401,13 +401,13 @@ Optional arguments:
 Examples:
 - Select a dataset with at least 10 images of each class
   ```console
-  datumaro transform -t label_random_sampler -- -k 10
+  datum transform -t label_random_sampler -- -k 10
   ```
 
 - Select a dataset with at least 20 `cat` images, 5 `dog`, 0 `car` and 10 of each
   unmentioned class
   ```console
-  datumaro transform -t label_random_sampler -- \
+  datum transform -t label_random_sampler -- \
     -l cat:20 \ # keep 20 images with cats
     -l dog:5 \ # keep 5 images with dogs
     -l car:0 \ # remove car annotations
@@ -432,7 +432,7 @@ Optional arguments:
 Examples:
 - Resize all images to 256x256 size
   ```
-  datumaro transform -t resize -- -dw 256 -dh 256
+  datum transform -t resize -- -dw 256 -dh 256
   ```
 
 #### `remove_images`
@@ -451,7 +451,7 @@ Optional arguments:
 Examples:
 - Remove specific images from the dataset
   ```console
-  datumaro transform -t remove_images -- --id 'image1:train' --id 'image2:test'
+  datum transform -t remove_images -- --id 'image1:train' --id 'image2:test'
   ```
 
 #### `remove_annotations`
@@ -473,7 +473,7 @@ Optional arguments:
 Examples:
 - Remove annotations from specific items in the dataset
   ```console
-  datumaro transform -t remove_annotations -- --id 'image1:train' --id 'image2:test'
+  datum transform -t remove_annotations -- --id 'image1:train' --id 'image2:test'
   ```
 
 #### `remove_attributes`
@@ -497,14 +497,14 @@ Optional arguments:
 Examples:
 - Remove the `is_crowd` attribute from dataset
   ```console
-  datumaro transform -t remove_attributes -- \
+  datum transform -t remove_attributes -- \
     --attr 'is_crowd'
   ```
 
 - Remove the `occluded` attribute from annotations of
   the `2010_001705` item in the `train` subset
   ```console
-  datumaro transform -t remove_attributes -- \
+  datum transform -t remove_attributes -- \
     --id '2010_001705:train' --attr 'occluded'
   ```
 
@@ -529,7 +529,7 @@ Optional arguments:
 Examples:
 - Convert type of `title` and `rating` annotation
   ```console
-  datumaro transform -t astype_annotations -- \
+  datum transform -t astype_annotations -- \
     --mapping 'title:text,rating:label'
   ```
 
@@ -552,7 +552,7 @@ Optional arguments:
 Examples:
 - Split a dataset randomly to `train` and `test` subsets, ratio is 2:1
   ```console
-  datumaro transform -t random_split -- --subset train:.67 --subset test:.33
+  datum transform -t random_split -- --subset train:.67 --subset test:.33
   ```
 
 #### `split`
@@ -615,22 +615,22 @@ Optional arguments:
 Examples:
 - Split by ratio
   ```
-  datumaro transform -t split -- -t classification \
+  datum transform -t split -- -t classification \
     --subset train:.5 --subset val:.2 --subset test:.3
 
-  datumaro transform -t split -- -t detection \
+  datum transform -t split -- -t detection \
     --subset train:.5 --subset val:.2 --subset test:.3
 
-  datumaro transform -t split -- -t segmentation \
+  datum transform -t split -- -t segmentation \
     --subset train:.5 --subset val:.2 --subset test:.3
 
-  datumaro transform -t split -- -t reid \
+  datum transform -t split -- -t reid \
     --subset train:.5 --subset val:.2 --subset test:.3 --query .5
   ```
 
 - Use `person_id` attribute for splitting
   ```console
-  datumaro transform -t split -- -t detection --attr person_id
+  datum transform -t split -- -t detection --attr person_id
   ```
 
 #### `map_subsets`
@@ -674,20 +674,20 @@ Optional arguments:
 Examples:
 - Remove the `person` label (and corresponding annotations)
   ```console
-  datumaro transform -t remap_labels -- -l person: --default keep
+  datum transform -t remap_labels -- -l person: --default keep
   ```
 
 - Rename `person` to `pedestrian` and `human` to `pedestrian`, join annotations
   that had different classes under the same class id for `pedestrian`,
   don't touch other classes
   ```console
-  datumaro transform -t remap_labels -- \
+  datum transform -t remap_labels -- \
     -l person:pedestrian -l human:pedestrian --default keep
   ```
 
 - Rename `person` to `car` and `cat` to `dog`, keep `bus`, remove others
   ```console
-  datumaro transform -t remap_labels -- \
+  datum transform -t remap_labels -- \
     -l person:car -l bus:bus -l cat:dog --default delete
   ```
 
@@ -718,7 +718,7 @@ Examples:
   Original labels (for example): `cat`, `dog`, `elephant`, `human`.
   New labels: `person` (added), `cat` (kept), `dog` (kept).
   ```console
-  datumaro transform dataset_path -t project_labels -- -l person -l cat -l dog
+  datum transform dataset_path -t project_labels -- -l person -l cat -l dog
   ```
 
 #### `shapes_to_boxes`
@@ -737,10 +737,10 @@ Optional arguments:
 Examples:
 - Convert spatial annotations between each other
   ```console
-  datumaro transform -t boxes_to_masks
-  datumaro transform -t masks_to_polygons
-  datumaro transform -t polygons_to_masks
-  datumaro transform -t shapes_to_boxes
+  datum transform -t boxes_to_masks
+  datum transform -t masks_to_polygons
+  datum transform -t polygons_to_masks
+  datum transform -t shapes_to_boxes
   ```
 
 #### `boxes_to_masks`
@@ -861,7 +861,7 @@ Optional arguments:
 Examples:
 - Assign pseudo-labels based on predefined labels
   ```console
-  datumaro transform -t pseudo_labeling -- --labels 'label1,label2'
+  datum transform -t pseudo_labeling -- --labels 'label1,label2'
   ```
 
 #### `correct`
@@ -898,5 +898,5 @@ Optional arguments:
 Examples:
 - Clean and preprocess dataset items
   ```console
-  datumaro transform -t clean
+  datum transform -t clean
   ```

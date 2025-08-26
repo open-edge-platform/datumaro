@@ -24,14 +24,14 @@ images in the output dataset with `--save-media`.
 
 This command can be applied to arbitrary datasets.
 
-Usage:
+## Usage
 ```console
 datum patch [-h] [-o DST_DIR] [--overwrite]
                target patch
                [-- EXPORT_ARGS]
 ```
 
-\<dataset_path\> - A [dataset path](../../user-manual/how_to_use_datumaro.md#dataset-path-concepts), optionally with format specification (e.g., `path/to/dataset:coco`).
+\<dataset_path\> - A [dataset path](../explanation/concept.rst#dataset-path-concepts), optionally with format specification (e.g., `path/to/dataset:coco`).
 
 Parameters:
 - `target` (string) - Target dataset path (path to dataset directory, optionally with format specification)
@@ -41,7 +41,7 @@ Parameters:
 - `-h, --help` - Print the help message and exit
 - `extra_args` - Additional arguments for exporting (pass '-- -h' for help). Must be specified after the main command arguments and after the '--' separator
 
-Examples:
+## Examples
 - Update a VOC-like dataset with COCO-like annotations
   ```console
   datum patch --overwrite dataset1/:voc dataset2/:coco -- --save-media

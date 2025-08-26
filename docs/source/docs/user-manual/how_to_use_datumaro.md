@@ -27,14 +27,14 @@ Example: convert dataset, transform and filter data
 
 ``` bash
 # Convert a COCO dataset to VOC format
-datumaro convert -i <path/to/dataset> -if coco -f voc -o <output_dir> -- --save-media
+datum convert -i <path/to/dataset> -if coco -f voc -o <output_dir> -- --save-media
 
 # Transform dataset (e.g., convert shapes to bounding boxes)
-datumaro transform -i <path/to/dataset> -t shapes_to_boxes -o <output_dir>
+datum transform -i <path/to/dataset> -t shapes_to_boxes -o <output_dir>
 
 # Filter dataset items (keep only items with cat or dog annotations)
-datumaro filter -e '/item/annotation[label="cat" or label="dog"]' -m i+a <path/to/dataset> -o <output_dir>
+datum filter -e '/item/annotation[label="cat" or label="dog"]' -m i+a <path/to/dataset> -o <output_dir>
 
 # Merge multiple datasets
-datumaro merge <path/to/dataset1> <path/to/dataset2> -f voc -o <output_dir> -- --save-media
+datum merge <path/to/dataset1> <path/to/dataset2> -f voc -o <output_dir> -- --save-media
 ```

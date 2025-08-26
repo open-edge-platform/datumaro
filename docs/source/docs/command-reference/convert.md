@@ -4,7 +4,7 @@
 
 This command allows to convert a dataset from one format to another.
 
-Usage:
+## Usage
 
 ```console
 datum convert [-h] [-i SOURCE] [-if INPUT_FORMAT] -f OUTPUT_FORMAT
@@ -26,7 +26,7 @@ Parameters:
 - `-- <extra export args>` - Additional arguments for the format writer
   (use `-- -h` for help). Must be specified after the main command arguments.
 
-Examples:
+## Examples
 - Convert a VOC-like dataset to a COCO-like one
   ```console
   datum convert --input-format voc --input-path <path/to/voc-like/dataset/> \

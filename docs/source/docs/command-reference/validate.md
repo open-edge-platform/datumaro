@@ -17,10 +17,10 @@ The validation result contains
   - too small or large values
 - `summary`
 
-Usage:
+## Usage
 
 ```console
-datumaro validate [-h] -t TASK [-s SUBSET_NAME] target [-- EXTRA_ARGS]
+datum validate [-h] -t TASK [-s SUBSET_NAME] target [-- EXTRA_ARGS]
 ```
 
 Parameters:
@@ -40,15 +40,15 @@ Parameters:
   - `-k, --topk-bins` (number) - The ratio of bins with the highest
     number of data to total bins in the histogram
 
-Examples:
+## Examples
 - Validate a dataset as a classification dataset
   ```console
-  datumaro validate /path/to/dataset:coco -t classification
+  datum validate /path/to/dataset:coco -t classification
   ```
 
 - Validate with custom imbalance ratio threshold
   ```console
-  datumaro validate /path/to/dataset -t classification -- -ir 40
+  datum validate /path/to/dataset -t classification -- -ir 40
   ```
 
 ### List of validation items (anomaly types)
@@ -88,6 +88,9 @@ Examples:
 Validation Result Format:
 
 <details>
+<summary>
+Show/hide Code
+</summary>
 
 ```console
 {

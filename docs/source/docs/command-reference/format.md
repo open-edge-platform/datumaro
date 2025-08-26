@@ -3,9 +3,9 @@
 ## List Supported Data Formats
 
 This command shows a list of supported import/export data formats in Datumaro.
-It is useful on a quick reference of data format name used for other CLI command such as [convert](../context_free/convert.md). For more detailed guides on each data format, please visit [our Data Formats section](../../data-formats/formats/index.rst).
+It is useful on a quick reference of data format name used for other CLI command such as [convert](convert.md). For more detailed guides on each data format, please visit [our Data Formats section](../data-formats/formats/index.rst).
 
-Usage:
+## Usage
 
 ```console
 usage: datum format [-h] [-li | -le] [-d DELIMITER]

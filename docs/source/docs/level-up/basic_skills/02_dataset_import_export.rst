@@ -1,5 +1,5 @@
 ===============================
-Level 3: Data Import and Export
+Level 2: Data Import and Export
 ===============================
 
 Datumaro is a tool that supports public data formats across a wide range of tasks such as
@@ -55,4 +55,4 @@ Let's convert the Cityscapes data into the MS-COCO format, which is described in
 
         dataset.export(output_path, format='coco_panoptic')
 
-Even if you are not sure about the format of the dataset, there's no need to worry. You can easily detect the format in the next level, which is described in the :ref:`next level <Level 4: Detect Data Format from an Unknown Dataset>`!
+Even if you are not sure about the format of the dataset, there's no need to worry. You can easily detect the format in the next level, which is described in the :ref:`next level <Level 3: Detect Data Format from an Unknown Dataset>`!

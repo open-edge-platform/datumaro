@@ -9,26 +9,21 @@ Datasets can be compared using different methods:
 - [`equality`](#equality) - Annotations are compared to be equal
 - [`distance`](#distance) - A distance metric is used
 
-Usage:
-```console
-datumaro compare <dataset1> <dataset2>
-```
-
-Compares two specified datasets.
-
-\<dataset\> - [a dataset path](../user-manual/how_to_use_datumaro.md#dataset-path-concepts) with optional format specification.
-
-Usage:
+## Usage
 ```console
 datum compare [-h] [-o DST_DIR] [-m METHOD] [--overwrite] [--iou-thresh IOU_THRESH]
                 [-f FORMAT] [-iia IGNORE_ITEM_ATTR] [-ia IGNORE_ATTR] [-if IGNORE_FIELD]
                 [--match-images] [--all]
-                first_target second_target
+                <dataset1> <dataset2>
 ```
 
+Compares two datasets by specifying their paths.
+
+\<dataset\> - [a dataset path](../explanation/concept.rst#dataset-path-concepts) with optional format specification.
+
 Parameters:
-- `first_target` (string) - The first dataset path to be compared
-- `second_target` (string) - The second dataset path to be compared
+- `<dataset1>` (string) - The first dataset path to be compared
+- `<dataset2>` (string) - The second dataset path to be compared
 - `-m, --method` (string) - Comparison method, one of table, equality, distance (default: table)
 - `-o, --output-dir` (string) - Directory to save comparison results (default: generate automatically)
 - `--overwrite` - Overwrite existing files in the save directory
@@ -49,7 +44,7 @@ Parameters:
   - `--all` - Include matches in the output. By default, only differences are
     printed.
 
-### Support methods
+### Supported methods
 #### `table`
 This method allows comparing datasets based on dataset statistics and provides the results in a tabular format. The result report is saved in the formats of `table_compare.json` and `table_compare.txt`, each containing information for "High-level comparison," "Mid-level comparison," and "Low-level comparison."
 

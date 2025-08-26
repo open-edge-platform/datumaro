@@ -1,5 +1,5 @@
 =========================================
-Level 7: Merge Two Heterogeneous Datasets
+Level 6: Merge Two Heterogeneous Datasets
 =========================================
 
 
