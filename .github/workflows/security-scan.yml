@@ -19,6 +19,10 @@ jobs:
       contents: read
       security-events: write # Needed to upload the results to code-scanning dashboard
     steps:
+      - name: Harden the runner (audit all outbound calls)
+        uses: step-security/harden-runner@ec9f2d5744a09debf3a187a3f4f675c53b671911 # v2.13.0
+        with:
+          egress-policy: audit
       - name: Checkout code
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
@@ -37,6 +41,10 @@ jobs:
       contents: read
       security-events: write # Needed to upload the results to code-scanning dashboard
     steps:
+      - name: Harden the runner (audit all outbound calls)
+        uses: step-security/harden-runner@ec9f2d5744a09debf3a187a3f4f675c53b671911 # v2.13.0
+        with:
+          egress-policy: audit
       - name: Checkout code
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
@@ -56,6 +64,10 @@ jobs:
       contents: read
       security-events: write # Needed to upload the results to code-scanning dashboard
     steps:
+      - name: Harden the runner (audit all outbound calls)
+        uses: step-security/harden-runner@ec9f2d5744a09debf3a187a3f4f675c53b671911 # v2.13.0
+        with:
+          egress-policy: audit
       - name: Checkout code
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
