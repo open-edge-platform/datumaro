@@ -6,7 +6,7 @@
 
 Splits a video into separate frames and saves them in a directory.
 After the splitting, the images can be converted to various dataset formats using
-the [`convert` command](../context_free/convert.md) and the `image_dir` format.
+the [`convert` command](convert.md) and the `image_dir` format.
 
 This command is useful for making a dataset from a video file.
 Unlike direct video reading during model training, which can produce

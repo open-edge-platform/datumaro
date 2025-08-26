@@ -16,7 +16,7 @@ datumaro compare <dataset1> <dataset2>
 
 Compares two specified datasets.
 
-\<dataset\> - [a dataset path](../../user-manual/how_to_use_datumaro.md#dataset-path-concepts) with optional format specification.
+\<dataset\> - [a dataset path](../user-manual/how_to_use_datumaro.md#dataset-path-concepts) with optional format specification.
 
 Usage:
 ```console

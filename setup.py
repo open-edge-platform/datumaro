@@ -84,6 +84,7 @@ setuptools.setup(
         "tf": ["tensorflow"],
         "tfds": ["tensorflow-datasets<4.9.3", "absl-py>=0.12.0"],
         "torch": ["torch", "torchvision"],
+        "kaggle": ["kaggle"],
     },
     ext_modules=ext_modules,
     entry_points={

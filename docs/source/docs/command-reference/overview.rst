@@ -2,14 +2,10 @@
 Overview
 ========
 
-========
-Overview
-========
-
 .. note::
 
     **Note**: command behavior is subject to change, so this text might be outdated,
-    **always check the ``--help`` output of the specific command**
+    always check the output of ``--help`` of the specific command.
 
 .. note::
 
