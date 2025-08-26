@@ -51,7 +51,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Installing Rust toolchain
-        uses: dtolnay/rust-toolchain@b3b07ba8b418998c39fb20f53e8b695cdcc8de1b
+        uses: dtolnay/rust-toolchain@e97e2d8cc328f1b50210efc529dca0028893a2d9
         with:
           toolchain: stable
       - name: Installing python
@@ -68,6 +68,6 @@ jobs:
         run: |
           tox -vvv -e tests-py${{ matrix.tox-env-py }}-${{ matrix.tox-env-os }} -- tests/integration
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # v5.4.3
+        uses: codecov/codecov-action@fdcc8476540edceab3de004e990f80d881c6cc00 # v5.5.0
         with:
           flags: ${{ matrix.os }}_Python-${{ matrix.python-version }}
