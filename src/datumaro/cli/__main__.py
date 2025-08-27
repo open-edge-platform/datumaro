@@ -61,9 +61,6 @@ class _LogManager:
         return parser
 
 
-deprecated = "[DEPRECATED, will be removed in 1.12]"
-
-
 # TODO: revisit during CLI refactoring
 def _get_known_contexts():
     return [
