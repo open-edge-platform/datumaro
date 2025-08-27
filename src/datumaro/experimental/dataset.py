@@ -18,13 +18,12 @@ from typing import (
     Type,
     Union,
     cast,
-    dataclass_transform,
     get_args,
     get_origin,
 )
 
 import polars as pl
-from typing_extensions import TypeGuard, TypeVar
+from typing_extensions import TypeGuard, TypeVar, dataclass_transform
 
 from .converter_registry import Converter, find_conversion_path
 from .schema import AttributeInfo, Field, Schema
@@ -96,7 +95,9 @@ class Sample:
 
             # For Union types, keep the original annotation (the Union instance)
             # instead of the origin (which is just the UnionType class)
-            if isinstance(annotation, types.UnionType) or type_origin is Union:
+            if (
+                sys.version_info >= (3, 10) and isinstance(annotation, types.UnionType)
+            ) or type_origin is Union:
                 final_type = annotation
             else:
                 final_type = type_origin if type_origin is not None else annotation
