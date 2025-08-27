@@ -33,7 +33,6 @@ from typing_extensions import Literal
 
 from datumaro.components.media import Image
 from datumaro.util.attrs_util import default_if_none, not_empty
-from datumaro.util.deprecation import deprecated
 from datumaro.util.points_util import normalize_points
 
 
@@ -50,7 +49,6 @@ class AnnotationType(IntEnum):
     super_resolution_annotation = 9
     depth_annotation = 10
     ellipse = 11
-    feature_vector = 12
     tabular = 13
     rotated_bbox = 14
     cuboid_2d = 15
@@ -255,18 +253,6 @@ class LabelCategories(Categories):
 class Label(Annotation):
     _type = AnnotationType.label
     label: int = field(converter=int)
-
-
-@deprecated(deprecated_version="1.11", removed_version="1.12")
-@attrs(eq=False, order=False)
-class FeatureVector(Annotation):
-    _type = AnnotationType.feature_vector
-    vector: np.ndarray = field(validator=attr.validators.instance_of(np.ndarray))
-
-    def __eq__(self, other):
-        if not isinstance(other, __class__):
-            return False
-        return np.array_equal(self.vector, other.vector)
 
 
 RgbColor = Tuple[int, int, int]
