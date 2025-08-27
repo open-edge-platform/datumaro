@@ -1,15 +1,58 @@
-# Contribution Guide
+# Contributing to Datumaro
+
+## Welcome! 🌟
 
 We appreciate any contribution to [Datumaro](https://github.com/open-edge-platform/datumaro),
 whether it's in the form of a Pull Request, Feature Request or general comments/issue that you found.
 For feature requests and issues, please feel free to create a GitHub Issue in this repository.
 
-## Related sections
+## Table of Contents
 
-- [Design document](https://open-edge-platform.github.io/datumaro/latest/docs/explanation/architecture)
-- [Developer manual](https://open-edge-platform.github.io/datumaro/latest/docs/reference/datumaro_module)
+- [Security](#security)
+- [How to Contribute](#how-to-contribute)
+- [Development Guidelines](#development-guidelines)
+- [Sign your work](#sign-your-work)
+- [License](#license)
 
-## Development and pull requests
+## Security
+
+Read the [`Security Policy`](security.md)
+
+## How to Contribute
+
+### Contribute Code Changes
+
+If you'd like to help improve Datumaro, pick one of the issues listed in [GitHub
+Issues](https://github.com/open-edge-platform/datumaro/issues) and submit
+a [Pull Request](https://github.com/open-edge-platform/datumaro/pulls) to address it.
+Note: Before you start working on it, please make sure the change hasn’t already been implemented.
+
+### Report Bugs
+
+If you encounter a bug, please open an issue in [`Github Issues`](https://github.com/open-edge-platform/datumaro/issues).
+Be sure to include all the information requested in the bug report template to help us understand and resolve the issue
+quickly.
+
+### Suggest Enhancements
+
+Intel welcomes suggestions for new features and improvements. Follow these steps to make a suggestion:
+
+- Check if there's already a similar suggestion in [`Github Issues`](https://github.com/open-edge-platform/datumaro/issues).
+- If not, please open a new issue and provide the information requested in the feature request template.
+
+### Submit Pull Requests
+
+Before submitting a pull request, ensure you follow these guidelines:
+
+- Fork the repository and create your branch from `develop`.
+- Follow the [`Development Guidelines`](#development-guidelines) in this document.
+- Test your changes thoroughly.
+- Document your changes (in code, readme, etc.).
+- Submit your pull request, detailing the changes and linking to any relevant issues.
+- Wait for a review. Intel will review your pull request as soon as possible and provide you with feedback.
+  You can expect a merge once your changes are validated with automatic tests and approved by maintainers.
+
+## Development Guidelines
 
 ### Prerequisites
 - Python (3.9+)
@@ -20,7 +63,7 @@ To set up your development environment, please follow the steps below.
 
 1. Fork the [repo](https://github.com/open-edge-platform/datumaro).
 
-2. clone the forked repo.
+2. Clone the forked repo.
     ``` bash
     git clone <forked_repo>
     ```
@@ -64,30 +107,7 @@ To set up your development environment, please follow the steps below.
 
 Now you are ready to create a PR(Pull Request) and get review.
 
-## Optional dependencies
-
-Developer should install the following optional components for running our tests:
-
-- OpenVINO
-- TensorFlow
-- PyTorch
-- MxNet
-- Caffe
-
-## Usage
-
-``` bash
-datum --help
-python -m datumaro --help
-python datumaro/ --help
-python datum.py --help
-```
-
-``` python
-import datumaro
-```
-
-## Code style
+### Code style
 
 Try to be readable and consistent with the existing codebase.
 
@@ -97,12 +117,7 @@ No trailing whitespaces, at most 100 characters per line.
 
 Datumaro includes a Git pre-commit hook, `.pre-commit-config.yaml` that can help you follow the style requirements. To install, make sure isort and black are installed on your system, then run `pre-commit run`.
 
-## Environment
-
-The recommended editor is VS Code with the Python language plugin.
-
-<a id="testing"></a>
-## Testing
+### Testing
 
 It is expected that all Datumaro functionality is covered and checked by
 unit tests. Tests are placed in the `tests/unit/` directory. Additional
@@ -122,125 +137,62 @@ or
 python -m pytest -v
 ```
 
-<a id="Test_case_description"></a>
-### Test cases
+## Sign your work
 
-<a id="Test_marking"></a>
-### Test marking
+Please use the sign-off line at the end of the patch. Your signature certifies that you wrote the patch or otherwise
+have the right to pass it on as an open-source patch. The rules are pretty simple: if you can certify
+the below (from [developercertificate.org](http://developercertificate.org/)):
 
-For better integration with CI and requirements tracking,
-we use special annotations for tests.
+```
+Developer Certificate of Origin
+Version 1.1
 
-A test needs to linked with a requirement it is related to. To link a
-test, use:
+Copyright (C) 2004, 2006 The Linux Foundation and its contributors.
+660 York Street, Suite 102,
+San Francisco, CA 94110 USA
 
-```python
-from unittest import TestCase
-from .requirements import Requirements, mark_requirement
+Everyone is permitted to copy and distribute verbatim copies of this
+license document, but changing it is not allowed.
 
-class MyTests(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
-    def test_my_requirement(self):
-        ... do stuff ...
+Developer's Certificate of Origin 1.1
+
+By making a contribution to this project, I certify that:
+
+(a) The contribution was created in whole or in part by me and I
+    have the right to submit it under the open source license
+    indicated in the file; or
+
+(b) The contribution is based upon previous work that, to the best
+    of my knowledge, is covered under an appropriate open source
+    license and I have the right under that license to submit that
+    work with modifications, whether created in whole or in part
+    by me, under the same open source license (unless I am
+    permitted to submit under a different license), as indicated
+    in the file; or
+
+(c) The contribution was provided directly to me by some other
+    person who certified (a), (b) or (c) and I have not modified
+    it.
+
+(d) I understand and agree that this project and the contribution
+    are public and that a record of the contribution (including all
+    personal information I submit with it, including my sign-off) is
+    maintained indefinitely and may be redistributed consistent with
+    this project or the open source license(s) involved.
 ```
 
-Such marking will apply markings from the requirement specified.
-They can be overridden for a specific test:
+Then you just add a line to every git commit message:
 
-```python
-import pytest
-
-class MyTests(TestCase):
-    @pytest.mark.priority_low
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
-    def test_my_requirement(self):
-        ... do stuff ...
+```
+Signed-off-by: Joe Smith <joe.smith@email.com>
 ```
 
-<a id="Requirements"></a>
-#### Requirements
+Use your real name (sorry, no pseudonyms or anonymous contributions.)
 
-Requirements and other links need to be added to [`tests/requirements.py`](https://github.com/open-edge-platform/datumaro/tree/develop/tests/requirements.py):
+If you set your `user.name` and `user.email` git configs, you can sign your
+commit automatically with `git commit -s`.
 
-```python
-DATUM_244 = "Add Snyk integration"
-DATUM_BUG_219 = "Return format is not uniform"
-```
+## License
 
-```python
-# Fully defined in GitHub issues:
-@pytest.mark.reqids(Requirements.DATUM_244, Requirements.DATUM_333)
-
-# And defined any other way:
-@pytest.mark.reqids(Requirements.DATUM_GENERAL_REQ)
-```
-
-##### Available annotations for tests and requirements
-
-Markings are defined in [`tests/conftest.py`](https://github.com/open-edge-platform/datumaro/tree/develop/tests/conftest.py).
-
-**A list of requirements and bugs**
-```python
-@pytest.mark.requids(Requirements.DATUM_123)
-@pytest.mark.bugs(Requirements.DATUM_BUG_456)
-```
-
-**A priority**
-```python
-@pytest.mark.priority_low
-@pytest.mark.priority_medium
-@pytest.mark.priority_high
-```
-
-**Component**
-The marking used for indication of different system components
-
-```python
-@pytest.mark.components(DatumaroComponent.Datumaro)
-```
-
-**Skipping tests**
-
-```python
-@pytest.mark.skip(SkipMessages.NOT_IMPLEMENTED)
-```
-
-**Parametrized runs**
-
-Parameters are used for running the same test with different parameters e.g.
-
-```python
-@pytest.mark.parametrize("numpy_array, batch_size", [
-    (np.zeros([2]), 0),
-    (np.zeros([2]), 1),
-    (np.zeros([2]), 2),
-    (np.zeros([2]), 5),
-    (np.zeros([5]), 2),
-])
-```
-
-<a id="TestDoc"></a>
-### Test documentation
-
-Tests are documented with docs strings. Test descriptions must contain
-the following: sections: `Description`, `Expected results` and `Steps`.
-
-```python
-def test_can_convert_polygons_to_mask(self):
-    """
-    <b>Description:</b>
-    Ensure that the dataset polygon annotation can be properly converted
-    into dataset segmentation mask.
-
-    <b>Expected results:</b>
-    Dataset segmentation mask converted from dataset polygon annotation
-    is equal to an expected mask.
-
-    <b>Steps:</b>
-    1. Prepare dataset with polygon annotation
-    2. Prepare dataset with expected mask segmentation mode
-    3. Convert source dataset to target, with conversion of annotation
-      from polygon to mask.
-    4. Verify that resulting segmentation mask is equal to the expected mask.
-    """
-```
+Datumaro is licensed under the terms in [LICENSE](LICENSE). By contributing to the project, you agree
+to the license and copyright terms therein and release your contribution under these terms.
