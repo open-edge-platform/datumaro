@@ -9,7 +9,6 @@ import os.path as osp
 import shutil
 from typing import TYPE_CHECKING, Callable, Dict, Iterable, Optional, Type, Union, overload
 
-from datumaro.cli.util.compare import DistanceCompareVisualizer
 from datumaro.components.comparator import DistanceComparator, EqualityComparator, TableComparator
 from datumaro.components.dataset import Dataset, IDataset
 from datumaro.components.environment import Environment
@@ -88,6 +87,8 @@ class HLOps:
                 )
             output_format = kwargs.pop("output_format", "simple")
             comparator = DistanceComparator(**kwargs)
+            from datumaro.cli.util.compare import DistanceCompareVisualizer
+
             with DistanceCompareVisualizer(
                 save_dir=report_dir,
                 comparator=comparator,

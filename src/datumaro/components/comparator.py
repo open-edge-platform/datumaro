@@ -10,7 +10,6 @@ from typing import Dict, List, Set, Tuple
 from unittest import TestCase
 
 from attr import attrib, attrs
-from tabulate import tabulate
 
 from datumaro.components.annotation import AnnotationType, LabelCategories
 from datumaro.util.os_util import generate_next_name
@@ -421,6 +420,8 @@ class TableComparator:
         for row in rows:
             new_row = [wrapfunc(item) for item in row]
             wrapped_rows.append(new_row)
+
+        from tabulate import tabulate
 
         return tabulate(wrapped_rows, headers, tablefmt="grid")
 
