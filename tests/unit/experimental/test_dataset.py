@@ -2,6 +2,7 @@
 Unit tests for Dataset class.
 """
 
+import sys
 from typing import Any
 
 import numpy as np
@@ -612,12 +613,14 @@ def test_union_type_handling():
 
     from datumaro.experimental.type_registry import from_polars_data
 
-    # Modern syntax
-    union_type_modern = torch.Tensor | np.ndarray
     polars_data = [1.0, 2.0, 3.0]
-    result = from_polars_data(polars_data, union_type_modern)
-    assert isinstance(result, torch.Tensor)
-    assert result.tolist() == [1.0, 2.0, 3.0]
+
+    # Modern syntax
+    if sys.version_info >= (3, 10):
+        union_type_modern = torch.Tensor | np.ndarray
+        result = from_polars_data(polars_data, union_type_modern)
+        assert isinstance(result, torch.Tensor)
+        assert result.tolist() == [1.0, 2.0, 3.0]
 
     # typing.Union syntax
     union_type_typing = Union[torch.Tensor, np.ndarray]

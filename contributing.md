@@ -74,16 +74,15 @@ To set up your development environment, please follow the steps below.
     . venv/bin/activate
     ```
 
-4. Install Datumaro with [optional dependencies](#optional-dependencies):
+4. Install Datumaro with the following optional dependencies:
     ``` bash
     cd /path/to/the/cloned/repo/
-    pip install -e .[tf,tfds,torch,default]
+    pip install -e .[tf,tfds,torch]
     ```
 
-5. Install dev & test dependencies:
+5. Install development dependencies:
     ``` bash
     pip install -r requirements-dev.txt
-    pip install -r tests/requirements.txt
     ```
 
 6. Set up pre-commit hooks in the repo. See [Code style](#code-style).

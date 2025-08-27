@@ -9,6 +9,7 @@ different tensor libraries (PyTorch, NumPy, JAX, TensorFlow, etc.) and Polars
 DataFrames. New types can be registered at runtime without modifying core code.
 """
 
+import sys
 import types
 from typing import Any, Callable, Union
 
@@ -129,7 +130,7 @@ def from_polars_data(polars_data: Any, target_type: type) -> Any:
     union_args = None
 
     # Check for types.UnionType (Python 3.10+ syntax: A | B)
-    if isinstance(target_type, types.UnionType):
+    if sys.version_info >= (3, 10) and isinstance(target_type, types.UnionType):
         is_union = True
         union_args = target_type.__args__
 

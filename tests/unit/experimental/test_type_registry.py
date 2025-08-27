@@ -4,6 +4,7 @@
 
 """Tests for the experimental type registry system."""
 
+import sys
 from typing import Union
 
 import numpy as np
@@ -56,10 +57,11 @@ def test_union_type_conversion():
     assert result.tolist() == [1.0, 2.0, 3.0]
 
     # Test modern syntax (Python 3.10+)
-    modern_union = torch.Tensor | np.ndarray
-    result = from_polars_data(data, modern_union)
-    assert isinstance(result, torch.Tensor)
-    assert result.tolist() == [1.0, 2.0, 3.0]
+    if sys.version_info >= (3, 10):
+        modern_union = torch.Tensor | np.ndarray
+        result = from_polars_data(data, modern_union)
+        assert isinstance(result, torch.Tensor)
+        assert result.tolist() == [1.0, 2.0, 3.0]
 
 
 def test_union_type_fallback_behavior():

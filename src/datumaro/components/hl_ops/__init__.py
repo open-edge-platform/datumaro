@@ -296,7 +296,6 @@ class HLOps:
         return Dataset(source=merged, env=env)
 
     @staticmethod
-    @staticmethod
     @scoped
     def export(
         dataset: IDataset,
