@@ -123,7 +123,7 @@ class Dataset(Generic[DType]):
     def __init__(
         self,
         dtype_or_schema: Union[Schema, Type[DType]],
-        categories: Categories = None,
+        categories: Dict[str, Categories] = None,
     ):
         """
         Initialize dataset with either a schema or sample type.
@@ -143,6 +143,7 @@ class Dataset(Generic[DType]):
         if categories is not None:
             self._schema = self._schema.with_categories(categories)
 
+        self.categories = categories
         self.df = pl.DataFrame(schema=self._generate_polars_schema())
         self._lazy_converters: List[Converter] = []
 
