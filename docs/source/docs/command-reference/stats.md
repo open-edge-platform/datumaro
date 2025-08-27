@@ -11,7 +11,7 @@ This command computes various dataset statistics, such as:
 ## Usage
 
 ```console
-datumaro stats [-h] [-s SUBSET] [--image-stats IMAGE_STATS] [--ann-stats ANN_STATS] target
+datum stats [-h] [-s SUBSET] [--image-stats IMAGE_STATS] [--ann-stats ANN_STATS] target
 ```
 
 Parameters:
@@ -24,7 +24,7 @@ Parameters:
 ## Example
 - Compute dataset statistics
   ```console
-  datumaro stats /path/to/dataset:coco
+  datum stats /path/to/dataset:coco
   ```
 
 Sample output:
