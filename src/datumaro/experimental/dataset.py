@@ -18,13 +18,12 @@ from typing import (
     Type,
     Union,
     cast,
-    dataclass_transform,
     get_args,
     get_origin,
 )
 
 import polars as pl
-from typing_extensions import TypeGuard, TypeVar
+from typing_extensions import TypeGuard, TypeVar, dataclass_transform
 
 from .converter_registry import Converter, find_conversion_path
 from .schema import AttributeInfo, Field, Schema
