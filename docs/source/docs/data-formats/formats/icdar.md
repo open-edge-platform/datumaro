@@ -32,15 +32,17 @@ Supported attributes:
   - `center`: coordinates of the center of text
     (two numbers separated by space).
 
-## Import ICDAR dataset
+## Convert ICDAR dataset
 
-There is few ways to import ICDAR dataset with Datumaro:
-- Through the Datumaro project
+There is few ways to convert ICDAR dataset with Datumaro:
+- With convert command
 ``` bash
-datum project create
-datum project import -f icdar_text_localization <text_localization_dataset>
-datum project import -f icdar_text_segmentation <text_segmentation_dataset>
-datum project import -f icdar_word_recognition <word_recognition_dataset>
+datum convert --input-format icdar_text_localization --input-path <text_localization_dataset> \
+    --output-format <desired_format> --output-dir <output/dir>
+datum convert --input-format icdar_text_segmentation --input-path <text_segmentation_dataset> \
+    --output-format <desired_format> --output-dir <output/dir>
+datum convert --input-format icdar_word_recognition --input-path <word_recognition_dataset> \
+    --output-format <desired_format> --output-dir <output/dir>
 ```
 - With Python API
 ```python
@@ -49,8 +51,6 @@ data1 = dm.Dataset.import_from('text_localization_path', 'icdar_text_localizatio
 data2 = dm.Dataset.import_from('text_segmentation_path', 'icdar_text_segmentation')
 data3 = dm.Dataset.import_from('word_recognition_path', 'icdar_word_recognition')
 ```
-Dataset with ICDAR dataset should have the following structure:
-
 For `icdar_word_recognition`
 ```
 <dataset_path>/
@@ -95,8 +95,6 @@ For `icdar_text_segmentation`
 │   ├── ...
 ├── ...
 ```
-See more information about adding datasets to the project in the
-[docs](../../command-reference/context/sources.md#add-dataset).
 
 ## Export to other formats
 Datumaro can convert ICDAR dataset into any other format
@@ -105,12 +103,6 @@ Datumaro can convert ICDAR dataset into any other format
 # converting ICDAR text segmentation dataset into the VOC with `convert` command
 datum convert -if icdar_text_segmentation -i source_dataset \
     -f voc -o export_dir -- --save-media
-```
-``` bash
-# converting ICDAR text localization into the LabelMe through Datumaro project
-datum project create
-datum project import -f icdar_text_localization source_dataset
-datum project export -f label_me -o ./export_dir -- --save-media
 ```
 > Note: some formats have extra export options. For particular format see the
 > [docs](/docs/data-formats/formats/index.rst) to get information about it.

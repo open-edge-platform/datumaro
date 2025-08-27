@@ -30,17 +30,14 @@ Supported annotation attributes:
 
 - No restrictions
 
-## Import Datumaro dataset
+## Convert Datumaro dataset
 
-A Datumaro project with a Datumaro source can be created in the following way:
+A Datumaro dataset can be converted in the following way:
 
 ```console
-datum project create
-datum project import --format datumaro <path/to/dataset>
+datum convert --input-format datumaro --input-path <path/to/dataset> \
+    --output-format <desired_format> --output-dir <output/dir>
 ```
-
-It is possible to specify project name and project directory. Run
-`datum project create --help` for more information.
 
 A Datumaro dataset directory should have the following structure:
 
@@ -75,13 +72,7 @@ A Datumaro dataset directory should have the following structure:
 
 Note that the subset name shouldn't contain path separators.
 
-If your dataset is not following the above directory structure,
-it cannot detect and import your dataset as the Datumaro format properly.
-
 To add custom classes, you can use [`dataset_meta.json`](/docs/data-formats/formats/index.rst#dataset-meta-info-file).
-
-To make sure that the selected dataset has been added to the project, you can
-run `datum project info`, which will display the project information.
 
 ## Export to other formats
 
@@ -92,18 +83,11 @@ that support the specified task (e.g. for panoptic segmentation - VOC, CamVID)
 There are several ways to convert a Datumaro dataset to other dataset formats
 using CLI:
 
-- Export a dataset from Datumaro format to VOC format:
+- Convert a dataset from Datumaro format to VOC format:
 
 ```console
-datum project create
-datum project import -f datumaro <path/to/dataset>
-datum project export -f voc -o <output/dir>
-```
-
-or
-
-```console
-datum convert -if datumaro -i <path/to/dataset> -f voc -o <output/dir>
+datum convert --input-format datumaro --input-path <path/to/dataset> \
+    --output-format voc --output-dir <output/dir>
 ```
 
 Or, using Python API:
@@ -119,18 +103,10 @@ dataset.export('save_dir', 'voc', save_media=True)
 
 There are several ways to convert a dataset to Datumaro format:
 
-- Export a dataset from an existing project to Datumaro format:
-```console
-# export dataset into Datumaro format from existing project
-datum project export -p <path/to/project> -f datumaro -o <output/dir> \
-    -- --save-media
-```
-
-- Convert a dataset from VOC format to Datumaro format:
 ```console
 # converting to Datumaro format from other format
-datum convert -if voc -i <path/to/dataset> \
-    -f datumaro -o <output/dir> -- --save-media
+datum convert --input-format voc --input-path <path/to/dataset> \
+    --output-format datumaro --output-dir <output/dir> -- --save-media
 ```
 
 Extra options for exporting to Datumaro format:

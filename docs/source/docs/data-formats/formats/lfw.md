@@ -23,24 +23,22 @@ Supported attributes:
 - `negative_pairs`: list with names of mismatched persons;
 - `positive_pairs`: list with names of matched persons;
 
-## Import LFW dataset
+## Convert LFW dataset
 
-Importing LFW dataset into the Datumaro project:
+Converting LFW dataset using Datumaro:
 ```
-datum project create
-datum project import -f lfw <path_to_lfw_dataset>
+datum convert --input-format lfw --input-path <path_to_lfw_dataset> \
+    --output-format <desired_format> --output-dir <output/dir>
 ```
-See more information about adding datasets to the project in the
-[docs](../../command-reference/context/sources.md#add-dataset).
 
-Also you can import LFW dataset from Python API:
+Also you can convert LFW dataset from Python API:
 ```python
 import datumaro as dm
 
 lfw_dataset = dm.Dataset.import_from('<path_to_lfw_dataset>', 'lfw')
 ```
 
-For successful importing the LFW dataset, the directory with it
+For successful conversion of the LFW dataset, the directory with it
 should has the following structure:
 
 ```
@@ -80,11 +78,6 @@ There is few ways to convert LFW dataset into other format:
 # Converting to ImageNet with `convert` command:
 datum convert -if lfw -i ./lfw_dataset \
     -f imagenet -o ./output_dir -- --save-media
-
-# Converting to VggFace2 through the Datumaro project:
-datum project create
-datum project add -f lfw ./lfw_dataset
-datum project export -f vgg_face2 -o ./output_dir2
 ```
 
 > Note: some formats have extra export options. For particular format see the
@@ -99,12 +92,6 @@ annotations to the LFW format, example:
 # Converting VGG Face2 dataset into the LFW format
 datum convert -if vgg_face2 -i ./voc_dataset \
     -f lfw -o ./output_dir
-
-
-# Export dataaset to the LFW format through the Datumaro project:
-datum project create
-datum project import -f voc_classification ../vgg_dataset
-datum project export -f lfw -o ./output_dir -- --save-media --image-ext png
 ```
 
 Available extra export options for LFW dataset format:

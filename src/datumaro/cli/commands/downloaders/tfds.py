@@ -44,7 +44,9 @@ class TfdsDatasetDownloader(IDatasetDownloader):
                     "You can install them with: pip install datumaro[tf,tfds]"
                 )
         else:
-            raise CliException(f"Unknown dataset ID TFDS dataset '{tfds_ds_name}'")
+            raise CliException(
+                f"Unknown dataset ID TFDS dataset '{dataset_id}': TFDS datasets must start with the prefix 'tfds:'"
+            )
 
     @staticmethod
     def _describe_txt(dataset_metas: Dict[str, TfdsDatasetRemoteMetadata], report_file=None):

@@ -26,8 +26,6 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         To see why other formats were rejected, use --show-rejections. To get
         machine-readable output, use --json-report.|n
         |n
-        The value of -p/--project is used as a context for plugins.|n
-        |n
         Example:|n
         |s|s%(prog)s --show-rejections path/to/dataset
         """,
@@ -35,12 +33,6 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
     )
 
     parser.add_argument("url", help="URL to the dataset; a path to a directory")
-    parser.add_argument(
-        "-p",
-        "--project",
-        dest="project_dir",
-        help="Directory of the project to use as the context " "(default: current dir)",
-    )
     parser.add_argument(
         "--show-rejections",
         action="store_true",

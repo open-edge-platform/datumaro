@@ -16,7 +16,6 @@ Docs
 
   level-up/basic_skills/index
   level-up/intermediate_skills/index
-  level-up/advanced_skills/index
 
 .. toctree::
   :maxdepth: 1
@@ -35,7 +34,6 @@ Docs
 
   jupyter_notebook_examples/dataset_IO
   jupyter_notebook_examples/manipulate
-  jupyter_notebook_examples/explore
   jupyter_notebook_examples/refine
   jupyter_notebook_examples/transform
   jupyter_notebook_examples/e2e_example
@@ -44,11 +42,10 @@ Docs
   :maxdepth: 1
   :hidden:
   :caption: Command Line Reference
+  :glob:
 
   command-reference/overview
-  command-reference/context_free/index
-  command-reference/context/index
-  command-reference/helper/index
+  command-reference/*
 
 .. toctree::
   :maxdepth: 1
@@ -65,8 +62,6 @@ Docs
 
   explanation/concept
   explanation/architecture
-  explanation/project
-  explanation/plugins/index
 
 .. toctree::
   :maxdepth: 1
@@ -76,7 +71,6 @@ Docs
   user-manual/how_to_use_datumaro
   user-manual/model_preparation
   user-manual/extending
-  user-manual/how_to_control_tm_data_collection
 
 .. toctree::
   :maxdepth: 1

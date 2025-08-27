@@ -84,7 +84,7 @@ class HLOps:
         elif method == "distance":
             if not report_dir:
                 raise ValueError(
-                    "Please specify report_dir to save comparision result for DistanceComparator."
+                    "Please specify report_dir to save comparison result for DistanceComparator."
                 )
             output_format = kwargs.pop("output_format", "simple")
             comparator = DistanceComparator(**kwargs)

@@ -133,6 +133,9 @@ html_css_files = [
 
 # -- Extension configuration -------------------------------------------------
 myst_heading_anchors = 4
+myst_enable_extensions = [
+    "colon_fence",
+]
 
 autodoc_docstring_signature = True
 autodoc_member_order = "bysource"

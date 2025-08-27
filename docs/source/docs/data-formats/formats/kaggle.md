@@ -13,7 +13,7 @@ Supported type of annotations:
 - `Bbox` (object detection)
 - `Mask` (segmentation)
 
-## Import Kaggle Image CSV dataset
+## Convert Kaggle Image CSV dataset
 
 Indeed, Kaggle doesn't have any specific directory structure, and Datumaro hence requires more user-aided arguments for importing.
 For `kaggle_image_csv` format, we want to have one `csv` file and `image_directory` as shown below.
@@ -35,7 +35,7 @@ media_name_in_image_directory,label,...
 ...
 ```
 
-A Datumaro dataset with a Kaggle dataset can be created in the following way in Python API:
+A Kaggle dataset can be converted in the following way in Python API:
 
 ```python
 import datumaro as dm
@@ -44,7 +44,7 @@ dataset = dm.Dataset.import_from('<path_to_image_directory>', format='kaggle_ima
 ```
 At this time, it's essential to specify the column names for media and label such as `dm.Dataset.import_from(..., columns={"media": "column_name_of_media", "label": "column_name_of_label"})`
 
-## Import Kaggle Image Txt dataset
+## Convert Kaggle Image Txt dataset
 
 Another `kaggle_image_txt` format replaces only `columns` with an order of information in `.txt`.
 For instance, dataset can be created by
@@ -53,14 +53,14 @@ For instance, dataset can be created by
 dataset = dm.Dataset.import_from('<path_to_image_directory>', format='kaggle_image_txt', ann_file='<path_to_txt_file>', columns={"media": 0, "label": 1})
 ```
 
-## Import Kaggle Image Mask dataset
+## Convert Kaggle Image Mask dataset
 
 For segmentation tasks, `kaggle_image_mask` requires to have a directory for mask images as following Python API.
 ```python
 dataset = dm.Dataset.import_from('<path_to_image_directory>', format='kaggle_image_mask', mask_path='<path_to_mask_directory>')
 ```
 
-## Import Kaggle VOC and Kaggle YOLO datasets
+## Convert Kaggle VOC and Kaggle YOLO datasets
 
 Sometimes, communities upload their annotation files for each images with VOC (`xml`) and YOLO (`txt`) formats thanks to its popularity.
 But, they violate the directory sturcture of the original Pascal-VOC and YOLO described in [VOC](./pascal_voc.md) and [YOLO](./yolo.md), respectively.

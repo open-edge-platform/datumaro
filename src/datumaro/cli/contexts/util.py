@@ -18,8 +18,6 @@ def build_split_video_parser(parser_ctor=argparse.ArgumentParser):
         help="Split video into frames",
         description="""
         Splits a video into separate frames and saves them in a directory.
-        After the splitting, the images can be added into a project
-        using the 'import' command and the 'image_dir' format.|n
         |n
         This command is useful for making a dataset from a video file.
         Unlike direct video reading during model training, which can produce

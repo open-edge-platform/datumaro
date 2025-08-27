@@ -17,16 +17,16 @@ The format supports arbitrary subset names, except `classes`, `names` and `backu
 
 > Note, that by default, the YOLO framework does not expect any subset names,
   except `train` and `valid`, Datumaro supports this as an extension.
-  If there is no subset separation in a project, the data
+  If there is no subset separation, the data
   will be saved in the `train` subset.
 
-## Import YOLO dataset
+## Convert YOLO dataset
 
-A Datumaro project with a YOLO source can be created in the following way:
+A YOLO dataset can be converted in the following way:
 
 ```bash
-datum project create
-datum project import --format yolo <path/to/dataset>
+datum convert --input-format yolo --input-path <path/to/dataset> \
+    --output-format <desired_format> --output-dir <output/dir>
 ```
 
 ### Directory structure
@@ -107,7 +107,7 @@ width and height. The `x_center` and `y_center` are center of rectangle
 
 To add custom classes, you can use [`dataset_meta.json`](/docs/data-formats/formats/index.rst#dataset-meta-info-file).
 
-## Import YOLO dataset with more loose format
+## Convert YOLO dataset with more loose format
 
 Because the original YOLO format is too strict and require many meta files,
 Datumaro supports to import more loose format for YOLO dataset.
@@ -175,14 +175,8 @@ object detection task (e.g. Pascal VOC, COCO, TF Detection API etc.)
 There are several ways to convert a YOLO dataset to other dataset formats:
 
 ```bash
-datum project create
-datum project add -f yolo <path/to/yolo/>
-datum project export -f voc -o <output/dir>
-```
-or
-``` bash
-datum convert -if yolo -i <path/to/dataset> \
-              -f coco_instances -o <path/to/dataset>
+datum convert --input-format yolo --input-path <path/to/dataset> \
+    --output-format coco_instances --output-dir <path/to/output>
 ```
 
 Or, using Python API:
@@ -202,9 +196,8 @@ if the dataset supports object detection task.
 Example:
 
 ```bash
-datum project create
-datum project import -f coco_instances <path/to/dataset>
-datum project export -f yolo -o <path/to/dataset> -- --save-media
+datum convert --input-format coco_instances --input-path <path/to/dataset> \
+    --output-format yolo --output-dir <path/to/output> -- --save-media
 ```
 
 Extra options for exporting to YOLO format:
@@ -220,22 +213,17 @@ Extra options for exporting to YOLO format:
 ### Example 1. Prepare PASCAL VOC dataset for exporting to YOLO format dataset
 
 ```bash
-datum project create -o project
-datum project import -p project -f voc ./VOC2012
-datum filter -p project -e '/item[subset="train" or subset="val"]'
-datum transform -p project -t map_subsets -- -s train:train -s val:valid
-datum project export -p project -f yolo -- --save-media
+datum convert --input-format voc --input-path ./VOC2012 \
+    --output-format yolo --output-dir ./yolo_output -- --save-media
 ```
 
 ### Example 2. Remove a class from YOLO dataset
 Delete all items, which contain `cat` objects and remove
 `cat` from list of classes:
 ```bash
-datum project create -o project
-datum project import -p project -f yolo ./yolo_dataset
-datum filter -p project -m i+a -e '/item/annotation[label!="cat"]'
-datum transform -p project -t remap_labels -- -l cat:
-datum project export -p project -f yolo -o ./yolo_without_cats
+datum filter --input-format yolo --input-path ./yolo_dataset \
+    --filter-mode i+a --expression '/item/annotation[label!="cat"]' \
+    --output-format yolo --output-dir ./yolo_without_cats
 ```
 
 ### Example 3. Create a custom dataset in YOLO format
@@ -280,7 +268,6 @@ for item in dataset:
 
 And If you want complete information about each item you can run:
 ```bash
-datum project create -o project
-datum project import -p project -f yolo ./yolo_dataset
-datum filter -p project --dry-run -e '/item'
+datum filter --input-format yolo --input-path ./yolo_dataset \
+    --dry-run --expression '/item'
 ```

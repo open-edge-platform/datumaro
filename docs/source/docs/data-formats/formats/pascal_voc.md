@@ -38,20 +38,16 @@ Supported annotation attributes:
   in the `attributes` section of the annotation `xml` file. Available for
   bbox annotations only.
 
-## Import Pascal VOC dataset
+## Convert Pascal VOC dataset
 
 The Pascal VOC dataset is available for free download
 [here](http://host.robots.ox.ac.uk/pascal/VOC/voc2012/index.html#devkit)
 
-A Datumaro project with a Pascal VOC source can be created in the following way:
+A Datumaro dataset can be converted in the following way:
 
 ``` bash
-datum project create
-datum project import --format voc <path/to/dataset>
+datum convert -if voc -i <path/to/dataset> -o <output/dir>
 ```
-
-It is possible to specify project name and project directory. Run
-`datum project create --help` for more information.
 
 Pascal VOC dataset directory should have the following structure:
 
@@ -141,11 +137,8 @@ of Pascal VOC dataset instead of the whole dataset,
 for example:
 
 ``` bash
-datum project import -f voc_detection -r ImageSets/Main/train.txt <path/to/dataset>
+datum convert -if voc_detection -i <path/to/dataset> -o <output/dir> -- -r ImageSets/Main/train.txt
 ```
-
-To make sure that the selected dataset has been added to the project, you
-can run `datum project info`, which will display the project information.
 
 ## Export to other formats
 
@@ -159,12 +152,6 @@ saved in `ImageNet` format, but not as `COCO keypoints`.
 
 There are several ways to convert a Pascal VOC dataset to other dataset formats:
 
-``` bash
-datum project create
-datum project import -f voc <path/to/voc>
-datum project export -f coco -o <output/dir>
-```
-or
 ``` bash
 datum convert -if voc -i <path/to/voc> -f coco -o <output/dir>
 ```
@@ -180,17 +167,13 @@ dataset.export('save_dir', 'coco', save_media=True)
 
 ## Export to Pascal VOC
 
-There are several ways to convert an existing dataset to Pascal VOC format:
+You can convert an existing dataset to Pascal VOC format using CLI:
 
-``` bash
-# export dataset into Pascal VOC format (classification) from existing project
-datum project export -p <path/to/project> -f voc -o <output/dir> -- --tasks classification
-```
 ``` bash
 # converting to Pascal VOC format from other format
 datum convert -if imagenet -i <path/to/dataset> \
     -f voc -o <output/dir> \
-    -- --label_map voc --save-media
+    -- --label_map voc --save-media --tasks classification
 ```
 
 Extra options for exporting to Pascal VOC format:
@@ -210,7 +193,7 @@ Extra options for exporting to Pascal VOC format:
   by default Datumaro uses all tasks. Example:
 
 ```bash
-datum project export -f voc -- --tasks detection,classification
+datum convert -if <input_format> -i <input_path> -f voc -o <output/dir> -- --tasks detection,classification
 ```
 
 - `--label_map PATH` - allows to define a custom colormap. Example:
@@ -219,11 +202,11 @@ datum project export -f voc -- --tasks detection,classification
 # mycolormap.txt [label : color_rgb : parts : actions]:
 # cat:0,0,255::
 # person:255,0,0:head:
-datum project export -f voc_segmentation -- --label-map mycolormap.txt
+datum convert -if <input_format> -i <input_path> -f voc_segmentation -o <output/dir> -- --label-map mycolormap.txt
 ```
 or you can use original voc colormap:
 ``` bash
-datum project export -f voc_segmentation -- --label-map voc
+datum convert -if <input_format> -i <input_path> -f voc_segmentation -o <output/dir> -- --label-map voc
 ```
 
 ## Examples
@@ -246,13 +229,11 @@ splitting into subsets,
 export the result to Pascal VOC format.
 
 ```bash
-datum project create -o project
-datum project import -p project -f voc_segmentation ./VOC2012/ImageSets/Segmentation/trainval.txt
-datum stats -p project # check statisctics.json -> repeated images
-datum transform -p project -t ndr -- -w trainval -k 2500
-datum filter -p project -e '/item[subset="trainval"]'
-datum transform -p project -t random_split -- -s train:.8 -s val:.2
-datum project export -p project -f voc -- --label-map voc --save-media
+datum stats ./VOC2012/ImageSets/Segmentation/trainval.txt # check statistics
+datum transform -t ndr -i ./VOC2012/ImageSets/Segmentation/trainval.txt -o transformed_dataset -- -w trainval -k 2500
+datum filter -e '/item[subset="trainval"]' -i transformed_dataset -o filtered_dataset
+datum transform -t random_split -i filtered_dataset -o split_dataset -- -s train:.8 -s val:.2
+datum convert -if datumaro -i split_dataset -f voc -o final_output -- --label-map voc --save-media
 ```
 
 ### Example 2. How to create a custom dataset

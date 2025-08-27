@@ -31,12 +31,13 @@ Supported attributes for bboxes:
   - 1 face with partial occlusion;
   - 2 face with heavy occlusion.
 
-## Import WIDER Face dataset
+## Convert WIDER Face dataset
 
-Importing of WIDER Face dataset into the Datumaro project:
+A WIDER Face dataset can be converted in the following way:
+
 ```
-datum project create
-datum project import -f wider_face <path_to_wider_face>
+datum convert --input-format wider_face --input-path <path_to_wider_face> \
+    --output-format <desired_format> --output-dir <output_dir>
 ```
 
 Directory with WIDER Face dataset should has the following structure:
@@ -69,26 +70,21 @@ about structure of `.txt` annotation files.
 Also example of WIDER Face dataset available in our
 [test assets](https://github.com/open-edge-platform/datumaro/tree/develop/tests/assets/widerface_dataset).
 
-## Export WIDER Face dataset
+## Export to other formats
 
 With Datumaro you can convert WIDER Face dataset into any other
 format [Datumaro supports](/docs/data-formats/formats/index.rst).
 Pay attention that this format should also support `Label` and/or `Bbox`
 annotation types.
 
-Few ways to export WIDER Face dataset using CLI:
+You can convert WIDER Face dataset using CLI:
 ```
 # Using `convert` command
-datum convert -if wider_face -i <path_to_wider_face> \
-    -f voc -o <output_dir> -- --save-media
-
-# Through the Datumaro project
-datum project create
-datum project import -f wider_face <path_to_wider_face>
-datum project export -f voc -o <output_dir> -- -save-media
+datum convert --input-format wider_face --input-path <path_to_wider_face> \
+    --output-format voc --output-dir <output_dir> -- --save-media
 ```
 
-Export WIDER Face dataset using Python API:
+Convert WIDER Face dataset using Python API:
 ```python
 import datumaro as dm
 
@@ -103,18 +99,17 @@ dataset.export('output_dir', 'open_images', save_media=True)
 > Note: some formats have extra export options. For particular format see the
 > [docs](/docs/data-formats/formats/index.rst) to get information about it.
 
-## Export to WIDER Face dataset
+## Export to WIDER Face format
 
 Using Datumaro you can convert your dataset into the WIDER Face format,
-but for succseful exporting your dataset should contain `Label` and/or `Bbox`.
+but for successful conversion your dataset should contain `Label` and/or `Bbox`.
 
-Here example of exporting VOC dataset (object detection task)
+Here example of converting VOC dataset (object detection task)
 into the WIDER Face format:
 
 ```
-datum project create
-datum project import -f voc_detection <path_to_voc>
-datum project export -f wider_face -o <output_dir> -- --save-media --image-ext='.png'
+datum convert --input-format voc_detection --input-path <path_to_voc> \
+    --output-format wider_face --output-dir <output_dir> -- --save-media --image-ext='.png'
 ```
 
 Available extra export options for WIDER Face dataset format:

@@ -10,13 +10,13 @@ when the user exports a project and selects "CSV" as the export format.
 Supported annotation types:
 - `Bbox`
 
-## Import VoTT dataset
+## Convert VoTT dataset
 
-A Datumaro project with a VoTT CSV source can be created in the following way:
+A VoTT CSV dataset can be converted in the following way:
 
 ```bash
-datum project create
-datum project import --format vott_csv <path/to/dataset>
+datum convert --input-format vott_csv --input-path <path/to/dataset> \
+    --output-format <desired_format> --output-dir <output_dir>
 ```
 
 It is also possible to import the dataset using Python API:
@@ -55,14 +55,8 @@ There are several ways to convert a VoTT CSV dataset to other dataset
 formats using CLI:
 
 ```bash
-datum project create
-datum project import -f vott_csv <path/to/dataset>
-datum project export -f voc -o ./save_dir -- --save-media
-```
-or
-``` bash
-datum convert -if vott_csv -i <path/to/dataset> \
-    -f voc -o <output/dir> -- --save-media
+datum convert --input-format vott_csv --input-path <path/to/dataset> \
+    --output-format voc --output-dir <output/dir> -- --save-media
 ```
 
 Or, using Python API:
