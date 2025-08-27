@@ -22,8 +22,6 @@ __all__ = [
     "get_non_project_commands",
 ]
 
-deprecated = "[DEPRECATED, will be removed in 1.12]"
-
 
 def get_non_project_commands():
     return [

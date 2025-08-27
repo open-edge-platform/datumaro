@@ -3,10 +3,12 @@
 [![Build status](https://github.com/open-edge-platform/datumaro/actions/workflows/health_check.yml/badge.svg)](https://github.com/open-edge-platform/datumaro/actions/workflows/health_check.yml)
 [![codecov](https://codecov.io/gh/open-edge-platform/datumaro/branch/develop/graph/badge.svg?token=FG25VU096Q)](https://codecov.io/gh/open-edge-platform/datumaro)
 [![Downloads](https://static.pepy.tech/badge/datumaro)](https://pepy.tech/project/datumaro)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/open-edge-platform/datumaro/badge)](https://scorecard.dev/viewer/?uri=github.com/open-edge-platform/datumaro)
 
 A framework and CLI tool to build, transform, and analyze datasets.
 
 <!--lint disable fenced-code-flag-->
+
 ```
 VOC dataset                                  ---> Annotation tool
      +                                     /
@@ -14,6 +16,7 @@ COCO dataset -----> Datumaro ---> dataset ------> Model training
      +                                     \
 CVAT annotations                             ---> Publication, statistics etc.
 ```
+
 <!--lint enable fenced-code-flag-->
 
 - [Getting started](https://open-edge-platform.github.io/datumaro/latest/docs/get-started/quick-start-guide)
@@ -28,6 +31,7 @@ CVAT annotations                             ---> Publication, statistics etc.
 [(Back to top)](#dataset-management-framework-datumaro)
 
 - Dataset reading, writing, conversion in any direction.
+
   - [CIFAR-10/100](https://www.cs.toronto.edu/~kriz/cifar.html) (`classification`)
   - [Cityscapes](https://www.cityscapes-dataset.com/)
   - [COCO](http://cocodataset.org/#format-data) (`image_info`, `instances`, `person_keypoints`,
@@ -48,6 +52,7 @@ CVAT annotations                             ---> Publication, statistics etc.
   - [YOLO](https://github.com/AlexeyAB/darknet#how-to-train-pascal-voc-data) (`bboxes`)
 
   Other formats and documentation for them can be found [here](https://open-edge-platform.github.io/datumaro/latest/docs/data-formats/formats).
+
 - Dataset building
   - Merging multiple datasets into one
   - Dataset filtering by a custom criteria:
@@ -77,11 +82,11 @@ CVAT annotations                             ---> Publication, statistics etc.
 - Dataset statistics (image mean and std, annotation statistics)
 
 > Check
-  [the design document](https://open-edge-platform.github.io/datumaro/latest/docs/explanation/architecture)
-  for a full list of features.
+> [the design document](https://open-edge-platform.github.io/datumaro/latest/docs/explanation/architecture)
+> for a full list of features.
 > Check
-  [the user manual](https://open-edge-platform.github.io/datumaro/latest/docs/user-manual/how_to_use_datumaro)
-  for usage instructions.
+> [the user manual](https://open-edge-platform.github.io/datumaro/latest/docs/user-manual/how_to_use_datumaro)
+> for usage instructions.
 
 ## Contributing
 
