@@ -351,6 +351,7 @@ document.write(`
 <span class="sd">DataFrames. New types can be registered at runtime without modifying core code.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">types</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span>
 
@@ -482,7 +483,7 @@ document.write(`
     <span class="n">union_args</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="c1"># Check for types.UnionType (Python 3.10+ syntax: A | B)</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target_type</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">UnionType</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target_type</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">UnionType</span><span class="p">):</span>
         <span class="n">is_union</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">union_args</span> <span class="o">=</span> <span class="n">target_type</span><span class="o">.</span><span class="n">__args__</span>
 

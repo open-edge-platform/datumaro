@@ -360,13 +360,12 @@ document.write(`
     <span class="n">Type</span><span class="p">,</span>
     <span class="n">Union</span><span class="p">,</span>
     <span class="n">cast</span><span class="p">,</span>
-    <span class="n">dataclass_transform</span><span class="p">,</span>
     <span class="n">get_args</span><span class="p">,</span>
     <span class="n">get_origin</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">polars</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeGuard</span><span class="p">,</span> <span class="n">TypeVar</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeGuard</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">dataclass_transform</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.converter_registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">Converter</span><span class="p">,</span> <span class="n">find_conversion_path</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">AttributeInfo</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> <span class="n">Schema</span>
@@ -442,7 +441,9 @@ document.write(`
 
             <span class="c1"># For Union types, keep the original annotation (the Union instance)</span>
             <span class="c1"># instead of the origin (which is just the UnionType class)</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">annotation</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">UnionType</span><span class="p">)</span> <span class="ow">or</span> <span class="n">type_origin</span> <span class="ow">is</span> <span class="n">Union</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">annotation</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">UnionType</span><span class="p">)</span>
+            <span class="p">)</span> <span class="ow">or</span> <span class="n">type_origin</span> <span class="ow">is</span> <span class="n">Union</span><span class="p">:</span>
                 <span class="n">final_type</span> <span class="o">=</span> <span class="n">annotation</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">final_type</span> <span class="o">=</span> <span class="n">type_origin</span> <span class="k">if</span> <span class="n">type_origin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">annotation</span>
