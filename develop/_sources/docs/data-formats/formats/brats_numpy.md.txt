@@ -9,17 +9,15 @@ Supported annotation types:
 - `Mask`
 - `Cuboid3d`
 
-## Import BraTS Numpy dataset
+## Convert BraTS Numpy dataset
 
-A Datumaro project with a BraTS Numpy source can be created
-in the following way:
+A Datumaro dataset can be converted in the following way:
 
 ```bash
-datum project create
-datum project import --format brats_numpy <path/to/dataset>
+datum convert -if brats_numpy -i <path/to/dataset> -o <output/dir>
 ```
 
-It is also possible to import the dataset using Python API:
+It is also possible to convert the dataset using Python API:
 
 ```python
 from datumaro.components.dataset import Dataset
@@ -56,12 +54,6 @@ There are several ways to convert a BraTS Numpy dataset to other dataset
 formats using CLI:
 
 ```bash
-datum project create
-datum project import -f brats_numpy <path/to/dataset>
-datum project export -f voc -o <output/dir> -- --save-media
-```
-or
-``` bash
 datum convert -if brats_numpy -i <path/to/dataset> \
     -f voc -o <output/dir> -- --save-media
 ```

@@ -11,14 +11,12 @@ successive frames as following [here](https://www.sciencedirect.com/science/arti
 Plus, Datumaro provides the options for choosing image extension and name patterns
 for efficient data management from multiple videos.
 
-## Import video
+## Convert video
 
-A Datumaro project with a video frames can be created
-in the following way:
+A Datumaro dataset can be converted from video in the following way:
 
 ```
-datum project create
-datum project import -f video_frames <path_to_video>
+datum convert -if video_frames -i <path_to_video> -o <output/dir>
 ```
 
 Load video through the Python API:
@@ -46,21 +44,21 @@ Note that a video has a closed interval of [`start-frame`, `end-frame`].
 Usage:
 
 ``` console
-datum project import -f video_frames [-h] [-n NAME] [-r RPATH] [-p PROJECT_DIR]
-  [--no-check] [-s STEP] [-b START_FRAME] [-e END_FRAME] url ...
+datum convert -if video_frames [-h] [-i INPUT] [-o OUTPUT]
+  [--step STEP] [--start-frame START_FRAME] [--end-frame END_FRAME]
 ```
 
-Example: import a video into frames, use each 30th frame:
+Example: convert a video into frames, use each 30th frame:
 ```console
-datum project import -f video_frames video.mp4 -o video-frames --step 30
+datum convert -if video_frames -i video.mp4 -o video-frames -- --step 30
 ```
 
-Example: import a video into frames, save as 'frame_xxxxxx.png' files:
+Example: convert a video into frames, save as 'frame_xxxxxx.png' files:
 ```console
-datum project import -f video_frames video.mp4 -o video-frames --image-ext=.png --name-pattern='frame_%%06d'
+datum convert -if video_frames -i video.mp4 -o video-frames -- --image-ext=.png --name-pattern='frame_%%06d'
 ```
 
-Example: import a video into keyframes:
+Example: convert a video into keyframes:
 ```console
-datum project import -f video_keyframes video.mp4 -o video-frames
+datum convert -if video_keyframes -i video.mp4 -o video-frames
 ```

@@ -16,45 +16,43 @@ Supported attributes:
     - `is_crowd`(boolean; on panoptic `mask`): Indicates that the annotation
     covers multiple instances of the same class.
 
-## Import Mapillary Vistas dataset
+## Convert Mapillary Vistas dataset
 
-Use these instructions to import Mapillary Vistas dataset into Datumaro project:
+Use these instructions to convert Mapillary Vistas dataset with Datumaro:
 
 ```bash
-datum project create
-datum project add -f mapillary_vistas ./dataset
+datum convert --input-format mapillary_vistas --input-path ./dataset \
+    --output-format <desired_format> --output-dir <output/dir>
 ```
-
-> Note: the directory with dataset should be subdirectory of the
-> project directory.
-<!-- markdownlint-disable-line MD028 -->
-> Note: there is no opportunity to import both instance and panoptic
-> masks for one dataset.
 
 Use one of subformats (`mapillary_vistas_instances`, `mapillary_vistas_panoptic`),
 if your dataset contains both panoptic and instance masks:
 ```bash
-datum project add -f mapillary_vistas_instances ./dataset
+datum convert --input-format mapillary_vistas_instances --input-path ./dataset \
+    --output-format <desired_format> --output-dir <output/dir>
 ```
 or
 ``` bash
-datum project add -f mapillary_vistas_panoptic ./dataset
+datum convert --input-format mapillary_vistas_panoptic --input-path ./dataset \
+    --output-format <desired_format> --output-dir <output/dir>
 ```
 
-Extra options for adding a source in the Mapillary Vistas format:
+Extra options for converting in the Mapillary Vistas format:
 
 - `--use-original-config`: Use original `config_*.json` file for your version of
-  Mapillary Vistas dataset. This options can helps to import dataset, in case
+  Mapillary Vistas dataset. This options can helps to convert dataset, in case
   when you don't have `config_*.json` file, but your dataset is using original
   categories of Mapillary Vistas dataset. The version of dataset will be detect
   by the name of annotation directory in your dataset (v1.2 or v2.0).
 - `--keep-original-category-ids`: Add dummy label categories so that
- category indexes in the imported data source correspond to the category IDs
+ category indexes in the converted data source correspond to the category IDs
  in the original annotation file.
 
 Example of using extra options:
 ```bash
-datum project add -f mapillary_vistas ./dataset -- --use-original-config
+datum convert --input-format mapillary_vistas --input-path ./dataset \
+    --output-format <desired_format> --output-dir <output/dir> \
+    -- --use-original-config
 ```
 Mapillary Vistas dataset has two versions: v1.2, v2.0.
 They differ in the number of classes, the name of the classes, supported types

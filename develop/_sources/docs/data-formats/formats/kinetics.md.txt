@@ -16,14 +16,14 @@ Supported attributes for labels:
 - `time_start` (integer) - time (in seconds) of the start of recognized action
 - `time_end` (integer) - time (in seconds) of the end of recognized action
 
-## Import Kinetics dataset
+## Convert Kinetics dataset
 
-A Datumaro project with a Kinetics dataset can be created
+A Kinetics dataset can be converted
 in the following way using CLI:
 
 ```
-datum project create
-datum project import -f kinetics <path_to_dataset>
+datum convert --input-format kinetics --input-path <path_to_dataset> \
+    --output-format <desired_format> --output-dir <output/dir>
 ```
 
 Or using Python API:

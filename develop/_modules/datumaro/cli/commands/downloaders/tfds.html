@@ -393,7 +393,9 @@ document.write(`
                     <span class="s2">&quot;You can install them with: pip install datumaro[tf,tfds]&quot;</span>
                 <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">CliException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown dataset ID TFDS dataset &#39;</span><span class="si">{</span><span class="n">tfds_ds_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="n">CliException</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unknown dataset ID TFDS dataset &#39;</span><span class="si">{</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2">&#39;: TFDS datasets must start with the prefix &#39;tfds:&#39;&quot;</span>
+            <span class="p">)</span></div>
 
 
     <span class="nd">@staticmethod</span>

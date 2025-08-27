@@ -6,23 +6,23 @@ The image zip format allows to export/import unannotated datasets
 with images to/from a zip archive. The format doesn't support any
 annotations or attributes.
 
-## Import Image zip dataset
+## Convert Image zip dataset
 
-There are several ways to import unannotated datasets to your Datumaro project:
+There are several ways to convert unannotated datasets with Datumaro:
 
 - From an existing archive:
 
 ```bash
-datum project create
-datum project import -f image_zip ./images.zip
+datum convert --input-format image_zip --input-path ./images.zip \
+    --output-format <desired_format> --output-dir <output/dir>
 ```
 
-- From a directory with zip archives. Datumaro will import images from
+- From a directory with zip archives. Datumaro will convert images from
   all zip files in the directory:
 
 ```bash
-datum project create
-datum project import -f image_zip ./foo
+datum convert --input-format image_zip --input-path ./foo \
+    --output-format <desired_format> --output-dir <output/dir>
 ```
 
 The directory with zip archives must have the following structure:
@@ -53,9 +53,7 @@ Datumaro can convert image zip dataset into any other format [Datumaro supports]
 For example:
 
 ```bash
-datum project create -o project
-datum project import -p project -f image_zip ./images.zip
-datum project export -p project -f coco -o ./new_dir -- --save-media
+datum convert -if image_zip -i ./images.zip -f coco -o ./new_dir -- --save-media
 ```
 
 Or, using Python API:
@@ -69,11 +67,9 @@ dataset.export('save_dir', 'coco', save_media=True)
 
 ## Export an unannotated dataset to a zip archive
 
-Example: exporting images from a VOC dataset to zip archives:
+Example: converting images from a VOC dataset to zip archives:
 ```bash
-datum project create -o project
-datum project import -p project -f voc ./VOC2012
-datum project export -p project -f image_zip -- --name voc_images.zip
+datum convert -if voc -i ./VOC2012 -f image_zip -o ./output_dir -- --name voc_images.zip
 ```
 
 Extra options for exporting to image_zip format:

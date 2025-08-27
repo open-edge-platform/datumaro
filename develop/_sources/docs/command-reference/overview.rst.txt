@@ -2,19 +2,10 @@
 Overview
 ========
 
-The command line is split into three groups:
-``commands`` (:ref:`Context Commands`), command ``contexts`` (:ref:`Context-free Commands`), and ``helpers`` (:ref:`Helper Commands`).
-Contexts group multiple commands related to a specific topic, e.g.
-project operations, data source operations etc. Almost all the commands
-operate on projects, so the ``project`` context and commands without a context
-are mostly the same. By default, commands look for a project in the current
-directory. If the project you're working on is located somewhere else, you
-can pass the ``-p/--project <path>`` argument to the command.
-
 .. note::
 
     **Note**: command behavior is subject to change, so this text might be outdated,
-    **always check the ``--help`` output of the specific command**
+    always check the output of ``--help`` of the specific command.
 
 .. note::
 

@@ -14,12 +14,11 @@ Supported annotation formats:
 - `YOLOv5 Oriented Bounding Boxes TXT`
 - `Multiclass Classification CSV`
 
-## Import Roboflow dataset
-A Datumaro project with a Roboflow source can be created in the following way:
+## Convert Roboflow dataset
+A Datumaro dataset can be converted in the following way:
 
 ```bash
-datum project create
-datum project import --format roboflow_coco <path/to/dataset>
+datum convert -if roboflow_coco -i <path/to/dataset> -o <output/dir>
 ```
 
 Or, using Python API:

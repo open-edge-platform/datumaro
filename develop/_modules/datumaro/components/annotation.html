@@ -375,7 +375,6 @@ document.write(`
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.attrs_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">default_if_none</span><span class="p">,</span> <span class="n">not_empty</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.deprecation</span><span class="w"> </span><span class="kn">import</span> <span class="n">deprecated</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.points_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">normalize_points</span>
 
 
@@ -394,7 +393,6 @@ document.write(`
     <span class="n">super_resolution_annotation</span> <span class="o">=</span> <span class="mi">9</span>
     <span class="n">depth_annotation</span> <span class="o">=</span> <span class="mi">10</span>
     <span class="n">ellipse</span> <span class="o">=</span> <span class="mi">11</span>
-    <span class="n">feature_vector</span> <span class="o">=</span> <span class="mi">12</span>
     <span class="n">tabular</span> <span class="o">=</span> <span class="mi">13</span>
     <span class="n">rotated_bbox</span> <span class="o">=</span> <span class="mi">14</span>
     <span class="n">cuboid_2d</span> <span class="o">=</span> <span class="mi">15</span></div>
@@ -644,21 +642,6 @@ document.write(`
 <span class="k">class</span><span class="w"> </span><span class="nc">Label</span><span class="p">(</span><span class="n">Annotation</span><span class="p">):</span>
     <span class="n">_type</span> <span class="o">=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span>
     <span class="n">label</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span></div>
-
-
-
-<div class="viewcode-block" id="FeatureVector">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.annotation.html#datumaro.components.abstracts.merger.FeatureVector">[docs]</a>
-<span class="nd">@deprecated</span><span class="p">(</span><span class="n">deprecated_version</span><span class="o">=</span><span class="s2">&quot;1.11&quot;</span><span class="p">,</span> <span class="n">removed_version</span><span class="o">=</span><span class="s2">&quot;1.12&quot;</span><span class="p">)</span>
-<span class="nd">@attrs</span><span class="p">(</span><span class="n">eq</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">FeatureVector</span><span class="p">(</span><span class="n">Annotation</span><span class="p">):</span>
-    <span class="n">_type</span> <span class="o">=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">feature_vector</span>
-    <span class="n">vector</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">validator</span><span class="o">=</span><span class="n">attr</span><span class="o">.</span><span class="n">validators</span><span class="o">.</span><span class="n">instance_of</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">))</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="vm">__class__</span><span class="p">):</span>
-            <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vector</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">vector</span><span class="p">)</span></div>
 
 
 

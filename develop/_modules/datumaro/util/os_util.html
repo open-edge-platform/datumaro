@@ -360,17 +360,6 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">StringIO</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="k">try</span><span class="p">:</span>
-    <span class="c1"># Declare functions to remove files and directories.</span>
-    <span class="c1">#</span>
-    <span class="c1"># Use rmtree from GitPython to avoid the problem with removal of</span>
-    <span class="c1"># readonly files on Windows, which Git uses extensively</span>
-    <span class="c1"># It double checks if a file cannot be removed because of readonly flag</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">git.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">rmfile</span><span class="p">,</span> <span class="n">rmtree</span>  <span class="c1"># noqa: F401</span>
-<span class="k">except</span> <span class="p">(</span><span class="ne">ModuleNotFoundError</span><span class="p">,</span> <span class="ne">ImportError</span><span class="p">):</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">os</span><span class="w"> </span><span class="kn">import</span> <span class="n">remove</span> <span class="k">as</span> <span class="n">rmfile</span>  <span class="c1"># noqa: F401</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">shutil</span><span class="w"> </span><span class="kn">import</span> <span class="n">rmtree</span> <span class="k">as</span> <span class="n">rmtree</span>  <span class="c1"># noqa: F401</span>
-
 <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">cast</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.definitions</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_SUBSET_NAME</span>
 

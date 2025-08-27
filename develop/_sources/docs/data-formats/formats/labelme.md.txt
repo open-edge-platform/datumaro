@@ -9,23 +9,17 @@ Supported annotation types:
 - `Polygon`
 - `Mask`
 
-## Import a LabelMe dataset
-A Datumaro project with a LabelMe source can be created in the following way:
+## Convert a LabelMe dataset
+A LabelMe dataset can be converted in the following way:
 
 ``` bash
-datum project create
-datum project import --format label_me <path/to/dataset>
+datum convert --input-format label_me --input-path <path/to/dataset> \
+    --output-format <desired_format> --output-dir <output/dir>
 ```
 
 ## Export a dataset with LabelMe format
 Datumaro helps to export a dataset with LabelMe format through below:
 
-```bash
-datum project create
-datum project add -f <any-other-dataset-format> <path/to/dataset/>
-datum project export -f label_me -o <output/dir> -- --save-media
-```
-or
 ```bash
 datum convert -if <any-other-dataset-format> -i <path/to/dataset> \
               -f label_me -o <output/dir> -- --save-media

@@ -8,18 +8,18 @@ The original NYU Depth Dataset V2 is available
 Supported annotation types:
 - `DepthAnnotation`
 
-## Import NYU Depth Dataset V2
+## Convert NYU Depth Dataset V2
 
 The NYU Depth Dataset V2 is available for free [download](http://datasets.lids.mit.edu/nyudepthv2/).
 
-A Datumaro project with a NYU Depth Dataset V2 source can be created in the following way:
+A NYU Depth Dataset V2 can be converted in the following way:
 
 ```bash
-datum project create
-datum project import --format nyu_depth_v2 <path/to/dataset>
+datum convert --input-format nyu_depth_v2 --input-path <path/to/dataset> \
+    --output-format <desired_format> --output-dir <output/dir>
 ```
 
-It is also possible to import the dataset using Python API:
+It is also possible to convert the dataset using Python API:
 
 ```python
 import datumaro as dm
@@ -37,9 +37,6 @@ Dataset/
     ├── 3.h5
     └── ...
 ```
-
-To make sure that the selected dataset has been added to the project, you can
-run `datum project info`, which will display the project information.
 
 ## Examples
 

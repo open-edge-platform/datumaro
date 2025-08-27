@@ -14,19 +14,16 @@ Supported annotation types:
 Supported annotation attributes:
 - `track_id` (int) - Unique ID assigned to an object within a trajectory
 
-## Import MOTS dataset
+## Convert MOTS dataset
 
 You can download the PNG format of MOTS challenge dataset [here](https://www.vision.rwth-aachen.de/page/mots).
 
-A Datumaro project with the MOTS challenge source can be created in the following way:
+A MOTS dataset can be converted in the following way:
 
 ``` bash
-datum project create
-datum project import --format mots <path/to/dataset>
+datum convert --input-format mots --input-path <path/to/dataset> \
+    --output-format <desired_format> --output-dir <output/dir>
 ```
-
-It is possible to specify project name and project directory. Run
-`datum project create --help` for more information.
 
 The MOTS challenge dataset directory should have the following structure:
 
@@ -50,9 +47,6 @@ The MOTS challenge dataset directory should have the following structure:
           └── ...     # Same as above
 ```
 
-To make sure that the selected dataset has been added to the project, you can
-run `datum project info`, which will display the project information.
-
 ## Export to other formats
 
 Datumaro can convert the MOTS challenge dataset into any other format [Datumaro supports](/docs/data-formats/formats/index.rst).
@@ -64,12 +58,6 @@ saved in `Cityscapes` format, but not as `COCO keypoints`.
 
 There are several ways to convert a MOTS dataset to other dataset formats:
 
-``` bash
-datum project create
-datum project import -f mots <path/to/mots>
-datum project export -f coco_instances -o <output/dir>
-```
-or
 ``` bash
 datum convert -if mots -i <path/to/mots> -f coco_instances -o <output/dir>
 ```
@@ -87,11 +75,6 @@ dataset.export('save_dir', 'cityscapes', save_media=True)
 
 There are several ways to convert a dataset to MOTS format:
 
-``` bash
-# export dataset into MOTS format from existing project
-datum project export -p <path/to/project> -f mots -o <output/dir> \
-    -- --save-media
-```
 ``` bash
 # converting to MOTS format from other format
 datum convert -if cityscapes -i <path/to/dataset> \

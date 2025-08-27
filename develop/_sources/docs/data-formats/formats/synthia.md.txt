@@ -13,16 +13,15 @@ Supported annotation types:
 Supported annotation attributes:
 - `dynamic_object` (boolean): whether the object moving
 
-## Import SYNTHIA dataset
+## Convert SYNTHIA dataset
 
-A Datumaro project with a SYNTHIA source can be created in the following way:
+A Datumaro dataset can be converted in the following way:
 
 ```bash
-datum project create
-datum project import --format synthia <path/to/dataset>
+datum convert -if synthia -i <path/to/dataset> -o <output/dir>
 ```
 
-It is also possible to import the dataset using Python API:
+It is also possible to convert the dataset using Python API:
 
 ```python
 import datumaro as dm
@@ -101,16 +100,9 @@ Datumaro can convert a SYNTHIA dataset into any other format [Datumaro supports]
 To get the expected result, convert the dataset to a format
 that supports segmentation masks.
 
-There are several ways to convert a SYNTHIA dataset to other dataset
-formats using CLI:
+You can convert a SYNTHIA dataset to other dataset formats using CLI:
 
 ```bash
-datum project create
-datum project import -f synthia <path/to/dataset>
-datum project export -f voc -o <output/dir> -- --save-media
-```
-or
-``` bash
 datum convert -if synthia -i <path/to/dataset> \
     -f voc -o <output/dir> -- --save-media
 ```

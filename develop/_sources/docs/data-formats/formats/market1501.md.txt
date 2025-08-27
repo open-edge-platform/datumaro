@@ -32,24 +32,22 @@ These item attributes decodes into the image name with such convention:
 - six digits after `s1_` indicate the `frame_id`;
 - the last two digits before `.jpg` indicate the `bbox_id`.
 
-## Import Market-1501 dataset
+## Convert Market-1501 dataset
 
-Importing of Market-1501 dataset into the Datumaro project:
+Converting Market-1501 dataset into Datumaro format:
 ```bash
-datum project create
-datum project import -f market1501 <path_to_market1501>
+datum convert --input-format market1501 --input-path <path_to_market1501> \
+    --output-format <desired_format> --output-dir <output/dir>
 ```
-See more information about adding datasets to the project in the
-[docs](../../command-reference/context/sources.md#add-dataset).
 
-Or you can import Market-1501 using Python API:
+Or you can convert Market-1501 using Python API:
 
 ```python
 import datumaro as dm
 dataset = dm.Dataset.import_from('<path_to_dataset>', 'market1501')
 ```
 
-For successful importing the Market-1501 dataset, the directory with it
+For successful conversion of the Market-1501 dataset, the directory with it
 should has the following structure:
 
 ```
@@ -79,12 +77,6 @@ to the Market-1501 format, example:
 # Converting MARS dataset into the Market-1501
 datum convert -if mars -i ./mars_dataset \
     -f market1501 -o ./output_dir
-```
-``` bash
-# Export dataaset to the Market-1501 format through the Datumaro project:
-datum project create
-datum project add -f mars ../mars
-datum project export -f market1501 -o ./output_dir -- --save-media --image-ext png
 ```
 
 > Note: if your dataset contains only person_id attributes Datumaro

@@ -21,7 +21,7 @@ Supported annotation types:
 
 The format only supports single channel 28 x 28 images.
 
-## Import MNIST dataset
+## Convert MNIST dataset
 
 The MNIST dataset is available for free download:
 
@@ -50,12 +50,13 @@ The MNIST in CSV dataset is available for free download:
 - [mnist_train.csv](https://pjreddie.com/media/files/mnist_train.csv)
 - [mnist_test.csv](https://pjreddie.com/media/files/mnist_test.csv)
 
-A Datumaro project with a MNIST source can be created in the following way:
+A MNIST dataset can be converted in the following way:
 
 ``` bash
-datum project create
-datum project import --format mnist <path/to/dataset>
-datum project import --format mnist_csv <path/to/dataset>
+datum convert --input-format mnist --input-path <path/to/dataset> \
+    --output-format <desired_format> --output-dir <output/dir>
+datum convert --input-format mnist_csv --input-path <path/to/dataset> \
+    --output-format <desired_format> --output-dir <output/dir>
 ```
 
 MNIST dataset directory should have the following structure:
@@ -113,12 +114,6 @@ etc.)
 There are several ways to convert a MNIST dataset to other dataset formats:
 
 ``` bash
-datum project create
-datum project import -f mnist <path/to/mnist>
-datum project export -f imagenet -o <output/dir>
-```
-or
-``` bash
 datum convert -if mnist -i <path/to/mnist> -f imagenet -o <output/dir>
 ```
 
@@ -138,11 +133,6 @@ instead of `mnist`.
 
 There are several ways to convert a dataset to MNIST format:
 
-``` bash
-# export dataset into MNIST format from existing project
-datum project export -p <path/to/project> -f mnist -o <output/dir> \
-    -- --save-media
-```
 ``` bash
 # converting to MNIST format from other format
 datum convert -if imagenet -i <path/to/dataset> \

@@ -4,7 +4,6 @@ There are few ways to extend and customize Datumaro behavior, which is
 supported by plugins. Check [our contribution guide](https://github.com/open-edge-platform/datumaro/blob/develop/contributing.md)
 for details on plugin implementation. In general, a plugin is a Python module.
 It must be put into a plugin directory:
-- `<project_dir>/.datumaro/plugins` for project-specific plugins
 - `<datumaro_dir>/plugins` for global plugins
 
 ## Built-in plugins
@@ -37,20 +36,11 @@ or
 pip install datumaro[tf-gpu]
 ```
 
-### OpenVINO™
-
-This plugin provides support for model inference with [OpenVINO™](https://01.org/openvinotoolkit).
-
-**Dependencies**
-
-The plugin depends on the OpenVINO™ Toolkit, which can be installed by
-following [these instructions](https://docs.openvino.ai/latest/openvino_docs_install_guides_install_runtime.html)
-
 ## Dataset Formats
 
 Dataset reading is supported by Extractors and Importers.
 An Extractor produces a list of dataset items corresponding
-to the dataset. An Importer creates a project from the data source location.
+to the dataset. An Importer loads a dataset from the data source location.
 It is possible to add custom Extractors and Importers. To do this, you need
 to put an Extractor and Importer implementation scripts to a plugin directory.
 
@@ -65,8 +55,3 @@ A Transform is a function for altering a dataset and producing a new one.
 It can update dataset items, annotations, classes, and other properties.
 A list of available transforms for dataset conversions can be extended by
 adding a Transform implementation script into a plugin directory.
-
-## Model launchers
-
-A list of available launchers for model execution can be extended by adding
-a Launcher implementation script into a plugin directory.

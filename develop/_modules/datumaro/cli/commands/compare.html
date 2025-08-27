@@ -351,10 +351,10 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">auto</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.comparator</span><span class="w"> </span><span class="kn">import</span> <span class="n">DistanceComparator</span><span class="p">,</span> <span class="n">EqualityComparator</span><span class="p">,</span> <span class="n">TableComparator</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.os_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">rmtree</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.scope</span><span class="w"> </span><span class="kn">import</span> <span class="n">on_error_do</span><span class="p">,</span> <span class="n">scoped</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">..util</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultilineFormatter</span>
@@ -389,7 +389,7 @@ document.write(`
 <span class="s2">        |s|s- &lt;dataset path&gt;[ :&lt;format&gt; ]|n</span>
 <span class="s2">        |n</span>
 <span class="s2">        Annotations can be matched 3 ways:|n</span>
-<span class="s2">        - by comparision table|n</span>
+<span class="s2">        - by comparison table|n</span>
 <span class="s2">        - by equality checking|n</span>
 <span class="s2">        - by distance computation|n</span>
 <span class="s2">        |n</span>
@@ -505,7 +505,7 @@ document.write(`
     <span class="n">dst_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">dst_dir</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dst_dir</span><span class="p">):</span>
-        <span class="n">on_error_do</span><span class="p">(</span><span class="n">rmtree</span><span class="p">,</span> <span class="n">dst_dir</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">on_error_do</span><span class="p">(</span><span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">,</span> <span class="n">dst_dir</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dst_dir</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>

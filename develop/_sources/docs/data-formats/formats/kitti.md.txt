@@ -23,21 +23,18 @@ Supported annotation attributes:
   within the bounding box is occluded by another object
 - `score` (float) - indicates confidence in detection
 
-## Import KITTI dataset
+## Convert KITTI dataset
 
 The KITTI left color images for object detection are available [here](http://www.cvlibs.net/download.php?file=data_object_image_2.zip).
 The KITTI object detection labels are available [here](http://www.cvlibs.net/download.php?file=data_object_label_2.zip).
 The KITTI segmentation dataset is available [here](http://www.cvlibs.net/download.php?file=data_semantics.zip).
 
-A Datumaro project with a KITTI source can be created in the following way:
+A KITTI dataset can be converted in the following way:
 
 ``` bash
-datum project create
-datum project import --format kitti <path/to/dataset>
+datum convert --input-format kitti --input-path <path/to/dataset> \
+    --output-format <desired_format> --output-dir <output/dir>
 ```
-
-It is possible to specify project name and project directory. Run
-`datum project create --help` for more information.
 
 KITTI detection dataset directory should have the following structure:
 
@@ -100,16 +97,14 @@ and `label_colors.txt`.
 If the `dataset_meta.json` is not represented in the dataset, then
 `label_colors.txt` will be imported if possible.
 
-You can import a dataset for specific tasks
+You can convert a dataset for specific tasks
 of KITTI dataset instead of the whole dataset,
 for example:
 
 ``` bash
-datum project import --format kitti_detection <path/to/dataset>
+datum convert --input-format kitti_detection --input-path <path/to/dataset> \
+    --output-format <desired_format> --output-dir <output/dir>
 ```
-
-To make sure that the selected dataset has been added to the project, you can
-run `datum project info`, which will display the project information.
 
 ## Export to other formats
 
@@ -123,13 +118,8 @@ saved in `Cityscapes` format, but not as `COCO keypoints`.
 There are several ways to convert a KITTI dataset to other dataset formats:
 
 ``` bash
-datum project create
-datum project import -f kitti <path/to/kitti>
-datum project export -f cityscapes -o <output/dir>
-```
-or
-``` bash
-datum convert -if kitti -i <path/to/kitti> -f cityscapes -o <output/dir>
+datum convert --input-format kitti --input-path <path/to/kitti> \
+    --output-format cityscapes --output-dir <output/dir>
 ```
 
 Or, using Python API:
@@ -146,14 +136,9 @@ dataset.export('save_dir', 'cityscapes', save_media=True)
 There are several ways to convert a dataset to KITTI format:
 
 ``` bash
-# export dataset into KITTI format from existing project
-datum project export -p <path/to/project> -f kitti -o <output/dir> \
-    -- --save-media
-```
-``` bash
 # converting to KITTI format from other format
-datum convert -if cityscapes -i <path/to/dataset> \
-    -f kitti -o <output/dir> -- --save-media
+datum convert --input-format cityscapes --input-path <path/to/dataset> \
+    --output-format kitti --output-dir <output/dir> -- --save-media
 ```
 
 Extra options for exporting to KITTI format:
@@ -172,18 +157,21 @@ Extra options for exporting to KITTI format:
 # 0 0 255 sky
 # 255 0 0 person
 #...
-datum project export -f kitti -- --label-map mycolormap.txt
+datum convert --input-format <source-format> --input-path <path/to/dataset> \
+    --output-format kitti --output-dir <output/dir> -- --label-map mycolormap.txt
 
 ```
 or you can use original kitti colormap:
 ``` bash
-datum project export -f kitti -- --label-map kitti
+datum convert --input-format <source-format> --input-path <path/to/dataset> \
+    --output-format kitti --output-dir <output/dir> -- --label-map kitti
 ```
 - `--tasks TASKS` allow to specify tasks for export dataset,
 by default Datumaro uses all tasks. Example:
 
 ```bash
-datum project export -f kitti -- --tasks detection
+datum convert --input-format <source-format> --input-path <path/to/dataset> \
+    --output-format kitti --output-dir <output/dir> -- --tasks detection
 ```
 - `--allow-attributes ALLOW_ATTRIBUTES` allow export of attributes
 (by default `True`).
@@ -201,10 +189,8 @@ particular problems with KITTI dataset:
 ### Example 1. How to load an original KITTI dataset and convert to Cityscapes
 
 ```bash
-datum project create -o project
-datum project import -p project -f kitti ./KITTI/
-datum stats -p project
-datum project export -p project -f cityscapes -- --save-media
+datum convert --input-format kitti --input-path ./KITTI/ \
+    --output-format cityscapes --output-dir ./output/ -- --save-media
 ```
 
 ### Example 2. How to create a custom KITTI-like dataset
