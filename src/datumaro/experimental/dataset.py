@@ -26,6 +26,8 @@ from typing import (
 import polars as pl
 from typing_extensions import TypeGuard, TypeVar
 
+from datumaro.experimental.categories import LabelGroup
+
 from .converter_registry import Converter, find_conversion_path
 from .schema import AttributeInfo, Field, Schema
 
@@ -123,14 +125,14 @@ class Dataset(Generic[DType]):
     def __init__(
         self,
         dtype_or_schema: Union[Schema, Type[DType]],
-        categories: Dict[str, Categories] = None,
+        label_group: LabelGroup = None,
     ):
         """
         Initialize dataset with either a schema or sample type.
 
         Args:
             dtype_or_schema: Either a Schema instance or a Sample class type
-            categories: Optional dictionary mapping attribute names to categories
+            label_group: Optional group of labels that are relevant for the dataset.
         """
         if isinstance(dtype_or_schema, Schema):
             self._schema = dtype_or_schema
@@ -140,10 +142,10 @@ class Dataset(Generic[DType]):
             self._dtype = dtype_or_schema
 
         # Apply categories if provided
-        if categories is not None:
-            self._schema = self._schema.with_categories(categories)
+        # if label_group is not None:
+        #     self._schema = self._schema.with_categories(categories)
 
-        self.categories = categories
+        self.label_group = label_group
         self.df = pl.DataFrame(schema=self._generate_polars_schema())
         self._lazy_converters: List[Converter] = []
 

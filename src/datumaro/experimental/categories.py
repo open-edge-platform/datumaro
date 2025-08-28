@@ -61,13 +61,41 @@ class LabelCategory:
 class LabelGroup:
     """Represents a group of labels with a specific group type."""
 
-    name: str
     labels: List[str] = field(default_factory=list)
     group_type: GroupType = GroupType.EXCLUSIVE
+    _indices: Dict[str, int] = field(default_factory=dict, init=False, repr=False)
 
     def __post_init__(self):
-        if not self.name:
-            raise ValueError("Label group name cannot be empty")
+        self._reindex()
+
+    def _reindex(self):
+        """Rebuild the internal index mapping names to positions."""
+        indices = {}
+        for index, label in enumerate(self.labels):
+            if label in indices:
+                raise ValueError(f"Duplicate label: {label}")
+            indices[label] = index
+        self._indices = indices
+
+    def add(self, label: str) -> int:
+        """
+        Add a new label.
+
+        Args:
+            label: The label name
+
+        Returns:
+            The index of the newly added category
+
+        Raises:
+            ValueError: If label already exists
+        """
+        if label in self.labels:
+            raise ValueError(f"Duplicate label: {label}")
+        self.labels.append(label)
+        index = len(self.labels)
+        self._indices[label] = index
+        return index
 
 
 @dataclass
@@ -112,15 +140,6 @@ class LabelCategories(Categories):
             temp_categories.add(*category)
 
         return temp_categories
-
-    def _reindex(self):
-        """Rebuild the internal index mapping names to positions."""
-        indices = {}
-        for index, item in enumerate(self.items):
-            if item.name in indices:
-                raise ValueError(f"Duplicate category name: {item.name}")
-            indices[item.name] = index
-        self._indices = indices
 
     def add(
         self,
