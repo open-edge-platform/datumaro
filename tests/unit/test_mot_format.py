@@ -11,8 +11,6 @@ from datumaro.components.environment import Environment
 from datumaro.components.media import Image
 from datumaro.plugins.data_formats.mot import MotSeqGtExporter, MotSeqImporter
 
-from ..requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, check_save_and_load, compare_datasets
 
@@ -32,7 +30,6 @@ class MotConverterTest(TestCase):
             **kwargs,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_bboxes(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -167,7 +164,6 @@ class MotConverterTest(TestCase):
                 require_media=True,
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_with_no_save_media(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -216,7 +212,6 @@ class MotConverterTest(TestCase):
                 source_dataset, partial(MotSeqGtExporter.convert, save_media=False), test_dir
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_image_with_arbitrary_extension(self):
         expected = Dataset.from_iterable(
             [
@@ -254,7 +249,6 @@ class MotConverterTest(TestCase):
                 require_media=True,
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_with_meta_file(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -340,12 +334,10 @@ class MotImporterTest(TestCase):
 
         return expected_dataset
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_detect(self):
         detected_formats = Environment().detect_dataset(DUMMY_DATASET_DIR)
         self.assertEqual([MotSeqImporter.NAME], detected_formats)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_import(self):
         expected_dataset = self._define_expected_dataset()
 
@@ -353,7 +345,6 @@ class MotImporterTest(TestCase):
 
         compare_datasets(self, expected_dataset, dataset)
 
-    @mark_requirement(Requirements.DATUM_BUG_560)
     def test_can_import_seqinfo(self):
         expected_dataset = self._define_expected_dataset()
 

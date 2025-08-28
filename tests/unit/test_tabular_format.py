@@ -12,7 +12,6 @@ from datumaro.components.dataset import Dataset
 from datumaro.components.environment import Environment
 from datumaro.plugins.data_formats.tabular import *
 
-from tests.requirements import Requirements, mark_requirement
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, compare_datasets
 
@@ -47,7 +46,6 @@ def fxt_buddy(fxt_tabular_root, fxt_buddy_target):
 
 @pytest.mark.new
 class TabularImporterTest:
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_import_tabular_file(self, fxt_electricity) -> None:
         dataset: Type[Dataset] = fxt_electricity
         expected_categories = {AnnotationType.tabular: TabularCategories.from_iterable([])}
@@ -61,7 +59,6 @@ class TabularImporterTest:
             assert idx == item.media.index
             assert len(item.annotations) == 0
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_import_tabular_folder(self, fxt_buddy) -> None:
         dataset: Type[Dataset] = fxt_buddy
         expected_categories_keys = [
@@ -91,7 +88,6 @@ class TabularImporterTest:
             assert idx == item.media.index
             assert len(item.annotations) == 0  # buddy dataset has no annotations in the test set.
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_detect_tabular(self, fxt_tabular_root: str) -> None:
         detected_formats = Environment().detect_dataset(fxt_tabular_root)
         assert [TabularDataImporter.NAME] == detected_formats
@@ -99,7 +95,6 @@ class TabularImporterTest:
             detected_formats = Environment().detect_dataset(test_dir)
             assert TabularDataImporter.NAME not in detected_formats
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize(
         "fxt,target", [("fxt_electricity", None), ("fxt_buddy", "fxt_buddy_target")]
     )
@@ -113,7 +108,6 @@ class TabularImporterTest:
             back_dataset = Dataset.import_from(test_dir, "tabular", target=target)
             compare_datasets(TestCase(), dataset, back_dataset)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize(
         "target, expected_media_data_keys, expected_categories_keys",
         [
@@ -149,7 +143,6 @@ class TabularImporterTest:
             (cat.name, cat.dtype) for cat in dataset.categories()[AnnotationType.tabular].items
         ] == expected_categories_keys
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize(
         "target,expected_included_labels",
         [
@@ -168,7 +161,6 @@ class TabularImporterTest:
 
         assert included_lables_result == expected_included_labels
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize(
         "input_string,expected_result",
         [
@@ -185,7 +177,6 @@ class TabularImporterTest:
     def test_string_to_dict(self, input_string, expected_result):
         assert string_to_dict(input_string) == expected_result
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_import_tabular_file_with_missing_value(self, fxt_electricity_missing) -> None:
         import math
 

@@ -15,7 +15,6 @@ from datumaro.components.format_detection import (
     detect_dataset_format,
 )
 
-from tests.requirements import Requirements, mark_requirement
 from tests.utils.test_utils import TestDir
 
 
@@ -27,17 +26,14 @@ class FormatDetectionTest(TestCase):
 
 
 class ApplyFormatDetectorTest(FormatDetectionTest):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_default_result(self):
         result = apply_format_detector(self._dataset_root, lambda c: None)
         self.assertEqual(result, FormatDetectionConfidence.MEDIUM)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_custom_confidence(self):
         result = apply_format_detector(self._dataset_root, lambda c: FormatDetectionConfidence.LOW)
         self.assertEqual(result, FormatDetectionConfidence.LOW)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_root_path(self):
         provided_root = None
 
@@ -48,7 +44,6 @@ class ApplyFormatDetectorTest(FormatDetectionTest):
         apply_format_detector(self._dataset_root, detect)
         self.assertEqual(provided_root, self._dataset_root)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_fail(self):
         def detect(context):
             context.fail("abcde")
@@ -58,7 +53,6 @@ class ApplyFormatDetectorTest(FormatDetectionTest):
 
         self.assertEqual(result.exception.failed_alternatives, ("abcde",))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_require_file_success(self):
         with open(osp.join(self._dataset_root, "foobar.txt"), "w"):
             pass
@@ -73,7 +67,6 @@ class ApplyFormatDetectorTest(FormatDetectionTest):
 
         self.assertEqual(selected_file, "foobar.txt")
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_require_file_failure(self):
         with open(osp.join(self._dataset_root, "foobar.txt"), "w"):
             pass
@@ -87,7 +80,6 @@ class ApplyFormatDetectorTest(FormatDetectionTest):
         self.assertEqual(len(result.exception.failed_alternatives), 1)
         self.assertIn("*/*", result.exception.failed_alternatives[0])
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_require_file_exclude_fname_one(self):
         with open(osp.join(self._dataset_root, "foobar.txt"), "w"):
             pass
@@ -102,7 +94,6 @@ class ApplyFormatDetectorTest(FormatDetectionTest):
         self.assertIn("foobar.*", result.exception.failed_alternatives[0])
         self.assertIn("*.txt", result.exception.failed_alternatives[0])
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_require_file_exclude_fname_many(self):
         for ext in ("txt", "lst"):
             with open(osp.join(self._dataset_root, f"foobar.{ext}"), "w"):
@@ -119,7 +110,6 @@ class ApplyFormatDetectorTest(FormatDetectionTest):
         self.assertIn("*.txt", result.exception.failed_alternatives[0])
         self.assertIn("*.lst", result.exception.failed_alternatives[0])
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_require_files_success(self):
         for stem in "cba":
             with open(osp.join(self._dataset_root, f"{stem}.txt"), "w"):
@@ -134,7 +124,6 @@ class ApplyFormatDetectorTest(FormatDetectionTest):
 
         self.assertEqual(selected_files, ["a.txt", "c.txt"])
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_require_files_failure(self):
         def detect(context):
             context.require_files("*.txt")
@@ -145,7 +134,6 @@ class ApplyFormatDetectorTest(FormatDetectionTest):
         self.assertEqual(len(result.exception.failed_alternatives), 1)
         self.assertIn("*.txt", result.exception.failed_alternatives[0])
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_probe_text_file_success(self):
         with open(osp.join(self._dataset_root, "foobar.txt"), "w") as f:
             print("123", file=f)
@@ -157,7 +145,6 @@ class ApplyFormatDetectorTest(FormatDetectionTest):
 
         apply_format_detector(self._dataset_root, detect)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_probe_text_file_failure_bad_file(self):
         def detect(context):
             with context.probe_text_file("foobar.txt", "abcde"):
@@ -168,7 +155,6 @@ class ApplyFormatDetectorTest(FormatDetectionTest):
 
         self.assertEqual(result.exception.failed_alternatives, ("foobar.txt: abcde",))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_probe_text_file_failure_exception(self):
         with open(osp.join(self._dataset_root, "foobar.txt"), "w"):
             pass
@@ -182,7 +168,6 @@ class ApplyFormatDetectorTest(FormatDetectionTest):
 
         self.assertEqual(result.exception.failed_alternatives, ("foobar.txt: abcde",))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_probe_text_file_nested_req(self):
         with open(osp.join(self._dataset_root, "foobar.txt"), "w"):
             pass
@@ -196,7 +181,6 @@ class ApplyFormatDetectorTest(FormatDetectionTest):
 
         self.assertEqual(result.exception.failed_alternatives, ("abcde",))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_require_any_success(self):
         alternatives_executed = set()
 
@@ -217,7 +201,6 @@ class ApplyFormatDetectorTest(FormatDetectionTest):
 
         self.assertEqual(alternatives_executed, {1, 2, 3})
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_require_any_failure(self):
         def detect(context):
             with context.require_any():
@@ -233,7 +216,6 @@ class ApplyFormatDetectorTest(FormatDetectionTest):
             result.exception.failed_alternatives, ("bad alternative 1", "bad alternative 2")
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_raise_unsupported(self):
         def detect(context):
             context.raise_unsupported()
@@ -243,12 +225,10 @@ class ApplyFormatDetectorTest(FormatDetectionTest):
 
 
 class DetectDatasetFormat(FormatDetectionTest):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_no_input_formats(self):
         detected_datasets = detect_dataset_format((), self._dataset_root)
         self.assertEqual(detected_datasets, [])
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_general_case(self):
         formats = [
             # aaa should be rejected after bbb is checked
@@ -284,7 +264,6 @@ class DetectDatasetFormat(FormatDetectionTest):
 
         self.assertEqual(rejected_formats["fff"][0], RejectionReason.detection_unsupported)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_no_callback(self):
         formats = [
             ("bbb", lambda context: None),

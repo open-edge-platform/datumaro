@@ -14,7 +14,6 @@ from datumaro.plugins.data_formats.image_dir import ImageDirImporter
 from datumaro.plugins.data_formats.lfw import LfwImporter
 from datumaro.util.os_util import suppress_output
 
-from tests.requirements import Requirements, mark_requirement
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir
 from tests.utils.test_utils import run_datum as run
@@ -35,7 +34,6 @@ class DetectFormatTest(TestCase):
 
         return [output.replace("Detected format: ", "").replace("\n", "")]
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_unambiguous(self):
         output_file = io.StringIO()
 
@@ -47,7 +45,6 @@ class DetectFormatTest(TestCase):
         self.assertEqual([Ade20k2017Importer.NAME], output)
         self.assertNotEqual([Ade20k2020Importer.NAME], output)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_deep_nested_folders(self):
         with TestDir() as test_dir:
             output_file = io.StringIO()
@@ -63,7 +60,6 @@ class DetectFormatTest(TestCase):
 
             self.assertEqual([LfwImporter.NAME], output)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_nested_folders(self):
         with TestDir() as test_dir:
             output_file = io.StringIO()
@@ -79,7 +75,6 @@ class DetectFormatTest(TestCase):
 
             self.assertEqual([Ade20k2020Importer.NAME], output)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_ambiguous(self):
         with TestDir() as test_dir:
             annotation_dir = osp.join(test_dir, "training/street")
@@ -104,7 +99,6 @@ class DetectFormatTest(TestCase):
     # but currently that's impossible, because some low-confidence detectors
     # always match.
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_rejections(self):
         output_file = io.StringIO()
 
@@ -117,7 +111,6 @@ class DetectFormatTest(TestCase):
 
         self.assertIn(CamvidImporter.NAME, output)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_json_report(self):
         with suppress_output(), TestDir() as test_dir:
             report_path = osp.join(test_dir, "report.json")

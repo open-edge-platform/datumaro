@@ -38,14 +38,11 @@ from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.errors import AnnotationTypeError
 from datumaro.components.media import Image, Table, TableRow, Video, VideoFrame
 
-from ..requirements import Requirements, mark_bug, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import compare_datasets, compare_datasets_strict
 
 
 class TransformsTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_reindex(self):
         source = Dataset.from_iterable(
             [
@@ -66,7 +63,6 @@ class TransformsTest(TestCase):
         actual = transforms.Reindex(source, start=5)
         compare_datasets(self, expected, actual)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_sort(self):
         items = []
         for i in range(10):
@@ -81,7 +77,6 @@ class TransformsTest(TestCase):
         actual = transforms.Sort(source, lambda item: int(item.id))
         compare_datasets_strict(self, expected, actual)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_mask_to_polygons(self):
         source = Dataset.from_iterable(
             [
@@ -121,7 +116,6 @@ class TransformsTest(TestCase):
         actual = transforms.MasksToPolygons(source)
         compare_datasets(self, expected, actual)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_mask_to_polygons_small_polygons_message(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -155,7 +149,6 @@ class TransformsTest(TestCase):
             compare_datasets(self, target_dataset, actual)
             self.assertRegex("\n".join(logs.output), "too small polygons")
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_polygons_to_masks(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -230,7 +223,6 @@ class TransformsTest(TestCase):
         actual = transforms.PolygonsToMasks(source_dataset)
         compare_datasets(self, target_dataset, actual)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_crop_covered_segments(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -284,7 +276,6 @@ class TransformsTest(TestCase):
         actual = transforms.CropCoveredSegments(source_dataset)
         compare_datasets(self, target_dataset, actual)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_merge_instance_segments(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -351,7 +342,6 @@ class TransformsTest(TestCase):
         actual = transforms.MergeInstanceSegments(source_dataset, include_polygons=True)
         compare_datasets(self, target_dataset, actual)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_map_subsets(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -372,7 +362,6 @@ class TransformsTest(TestCase):
         actual = transforms.MapSubsets(source_dataset, {"a": "", "b": "a"})
         compare_datasets(self, target_dataset, actual)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_shapes_to_boxes(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -420,7 +409,6 @@ class TransformsTest(TestCase):
         actual = transforms.ShapesToBoxes(source_dataset)
         compare_datasets(self, target_dataset, actual)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_boxes_to_masks(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -486,7 +474,6 @@ class TransformsTest(TestCase):
         actual = transforms.BoxesToMasks(source_dataset)
         compare_datasets(self, target_dataset, actual)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_boxes_to_polygons(self):
         x, y, w, h = 0, 0, 3, 3
         points = (0, 0, 3, 0, 3, 3, 0, 3)
@@ -525,7 +512,6 @@ class TransformsTest(TestCase):
         actual = transforms.BoxesToPolygons(source_dataset)
         compare_datasets(self, target_dataset, actual)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_random_split(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -550,7 +536,6 @@ class TransformsTest(TestCase):
         self.assertEqual(4, len(actual.get_subset("train")))
         self.assertEqual(3, len(actual.get_subset("test")))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_random_split_gives_error_on_wrong_ratios(self):
         source_dataset = Dataset.from_iterable([DatasetItem(id=1)])
 
@@ -575,7 +560,6 @@ class TransformsTest(TestCase):
                 ],
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_rename_item(self):
         src_dataset = Dataset.from_iterable(
             [
@@ -594,7 +578,6 @@ class TransformsTest(TestCase):
         actual = transforms.Rename(src_dataset, "|^frame_|")
         compare_datasets(self, expected, actual)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_remap_labels(self):
         src_dataset = Dataset.from_iterable(
             [
@@ -669,7 +652,6 @@ class TransformsTest(TestCase):
 
         compare_datasets(self, dst_dataset, actual)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_remap_labels_delete_unspecified(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -703,7 +685,6 @@ class TransformsTest(TestCase):
 
         compare_datasets(self, target_dataset, actual)
 
-    @mark_requirement(Requirements.DATUM_BUG_314)
     def test_remap_labels_ignore_missing_labels_in_secondary_categories(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -743,7 +724,6 @@ class TransformsTest(TestCase):
 
         compare_datasets(self, target_dataset, actual)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_project_labels(self):
         source = Dataset.from_iterable(
             [
@@ -776,7 +756,6 @@ class TransformsTest(TestCase):
 
         compare_datasets(self, expected, actual)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_project_labels_maps_secondary_categories(self):
         source = Dataset.from_iterable(
             [],
@@ -819,7 +798,6 @@ class TransformsTest(TestCase):
 
         compare_datasets(self, expected, actual)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_project_labels_generates_colors_for_added_labels(self):
         source = Dataset.from_iterable(
             [],
@@ -835,7 +813,6 @@ class TransformsTest(TestCase):
         self.assertNotIn(1, actual.categories()[AnnotationType.mask])
         self.assertIn(2, actual.categories()[AnnotationType.mask])
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_transform_to_labels(self):
         src_dataset = Dataset.from_iterable(
             [
@@ -865,7 +842,6 @@ class TransformsTest(TestCase):
 
         compare_datasets(self, dst_dataset, actual)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_bboxes_values_decrement_transform(self):
         src_dataset = Dataset.from_iterable(
             [
@@ -891,8 +867,6 @@ class TransformsTest(TestCase):
 
         compare_datasets(self, dst_dataset, actual)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
-    @mark_bug(Requirements.DATUM_BUG_618)
     def test_can_resize(self):
         small_dataset = Dataset.from_iterable(
             [
@@ -994,7 +968,6 @@ class TransformsTest(TestCase):
             actual = transforms.ResizeTransform(big_dataset, width=4, height=4)
             compare_datasets(self, small_dataset, actual)
 
-    @mark_bug(Requirements.DATUM_BUG_606)
     def test_can_keep_image_ext_on_resize(self):
         expected = Image.from_numpy(data=np.ones((8, 4)), ext="jpg")
 
@@ -1008,7 +981,6 @@ class TransformsTest(TestCase):
         self.assertEqual(actual.ext, expected.ext)
         self.assertTrue(np.array_equal(actual.data, expected.data))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_remove_items_by_ids(self):
         expected = Dataset.from_iterable([DatasetItem(id="1", subset="train")])
 
@@ -1020,7 +992,6 @@ class TransformsTest(TestCase):
 
         compare_datasets(self, expected, actual)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_remove_annotations_by_item_id(self):
         expected = Dataset.from_iterable(
             [
@@ -1042,7 +1013,6 @@ class TransformsTest(TestCase):
 
         compare_datasets(self, expected, actual)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_remove_annotations_in_dataset(self):
         expected = Dataset.from_iterable(
             [
@@ -1103,7 +1073,6 @@ class RemoveAttributesTest(TestCase):
             categories=["a"],
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_remove_all_attrs_by_item_id(self):
         expected = Dataset.from_iterable(
             [
@@ -1185,7 +1154,6 @@ class ReindexAnnotationsTest:
             LabelCategories.from_iterable([f"label_{label_id}" for label_id in range(n_labels)]),
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("reindex_each_item", [True, False])
     def test_annotation_reindex(self, fxt_dataset: Dataset, reindex_each_item: bool):
         start = random.randint(0, 10)
@@ -1226,7 +1194,6 @@ class IdFromImageNameTest:
             ]
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("ensure_unique", [True, False])
     def test_id_from_image(self, fxt_dataset, ensure_unique):
         source_dataset: Dataset = fxt_dataset
@@ -1249,13 +1216,11 @@ class IdFromImageNameTest:
                 else:
                     assert src.wrap(id=expected_id) == actual
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_id_from_image_wrong_suffix_length(self, fxt_dataset):
         with pytest.raises(ValueError) as e:
             transforms.IdFromImageName(fxt_dataset, ensure_unique=True, suffix_length=0)
         assert str(e.value).startswith("The 'suffix_length' must be greater than 0.")
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_id_from_image_too_many_duplication(self, fxt_dataset):
         with patch("datumaro.plugins.transforms.IdFromImageName.DEFAULT_RETRY", 1), patch(
             "datumaro.plugins.transforms.IdFromImageName.SUFFIX_LETTERS", "a"
@@ -1268,7 +1233,6 @@ class IdFromImageNameTest:
                 )
         assert str(e.value).startswith("Too many duplicate names.")
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize(
         "args,ensure_unique,suffix_length",
         [
@@ -1363,7 +1327,6 @@ class AstypeAnnotationsTest(TestCase):
             media_type=TableRow,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_split_arg_valid(self):
         # Test valid input with a single colon
         assert transforms.AstypeAnnotations._split_arg("date:label") == [("date", "label")]
@@ -1378,7 +1341,6 @@ class AstypeAnnotationsTest(TestCase):
         with pytest.raises(argparse.ArgumentTypeError):
             transforms.AstypeAnnotations._split_arg("datelabel")
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_transform_annotation_type_label(self):
         table = self.table
         expected = Dataset.from_iterable(
@@ -1416,7 +1378,6 @@ class AstypeAnnotationsTest(TestCase):
 
         compare_datasets(self, expected, result)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_transform_annotation_type_caption(self):
         table = self.table_caption
         expected = Dataset.from_iterable(
@@ -1443,7 +1404,6 @@ class AstypeAnnotationsTest(TestCase):
 
         compare_datasets(self, expected, result)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_transform_annotation_type_label_with_nan(self):
         table = self.table_label_nan
         expected = Dataset.from_iterable(
@@ -1660,7 +1620,6 @@ class CleanTest(TestCase):
             media_type=TableRow,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_remove_unneccessary_char(self):
         example_text = "This is a test 😊! Check out https://example.com for more <b>details</b> about this text. Enjoy!!!"
         cleaned_text = "test check details text enjoy"
@@ -1670,7 +1629,6 @@ class CleanTest(TestCase):
         with self.subTest("with normal text"):
             self.assertEqual(transforms.Clean.remove_unnecessary_char(example_text), cleaned_text)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_find_closest_value(self):
         series = pd.Series([1, 3, 7, 8, 10, 15])
         single_element_series = pd.Series([5])
@@ -1700,14 +1658,12 @@ class CleanTest(TestCase):
             result = transforms.Clean.find_closest_value(series, target_value)
             self.assertIn(result, [4, 6])  # Accept either 4 or 6 as both are equally close to 5
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_transform_clean(self):
         dataset = self.orig_tabular_dataset
         result = dataset.transform("clean")
 
         compare_datasets(self, self.refined_tabular_dataset, result)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_transform_clean_with_target(self):
         target = {"input": ["Title", "Review Text", "Age"], "output": ["Rating"]}
         dataset = Dataset.import_from(self.tabular_orig_path, "tabular", target=target)
@@ -1720,7 +1676,6 @@ class CleanTest(TestCase):
             self.assertEqual(expected_item.annotations, result_item.annotations)
             self.assertEqual(expected_item.media, result_item.media)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_transform_clean_after_astype_ann(self):
         dataset = self.orig_astyped_dataset
         dataset = dataset.transform("astype_annotations")

@@ -9,8 +9,6 @@ from datumaro.components.annotation import Bbox, Label, Mask
 from datumaro.components.dataset import Dataset, DatasetItem
 from datumaro.components.media import Image
 
-from ...requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, compare_datasets
 from tests.utils.test_utils import run_datum as run
@@ -52,7 +50,6 @@ class VocIntegrationScenarios(TestCase):
         parsed_dataset = Dataset.import_from(result_path, dataset_format)
         compare_datasets(self, expected_dataset, parsed_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_preparing_dataset_for_train_model(self):
         """
         <b>Description:</b>
@@ -164,7 +161,6 @@ class VocIntegrationScenarios(TestCase):
             parsed_dataset = Dataset.import_from(export_path, format="voc_detection")
             compare_datasets(self, expected_dataset, parsed_dataset)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_export_to_voc_format(self):
         label_map = OrderedDict(("label_%s" % i, [None, [], []]) for i in range(10))
         label_map["background"] = [None, [], []]
@@ -225,7 +221,6 @@ class VocIntegrationScenarios(TestCase):
             parsed_dataset = Dataset.import_from(voc_export, format="voc")
             compare_datasets(self, expected_dataset, parsed_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_283)
     def test_convert_to_voc_format(self):
         """
         <b>Description:</b>
@@ -296,7 +291,6 @@ class VocIntegrationScenarios(TestCase):
             target_dataset = Dataset.import_from(voc_dir, format="voc")
             compare_datasets(self, expected_dataset, target_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_283)
     def test_convert_from_voc_format(self):
         """
         <b>Description:</b>
@@ -352,7 +346,6 @@ class VocIntegrationScenarios(TestCase):
             target_dataset = Dataset.import_from(imagenet_dir, format="imagenet")
             compare_datasets(self, expected_dataset, target_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_voc_instance_segmentation_dataset(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -412,7 +405,6 @@ class VocIntegrationScenarios(TestCase):
                 label_map="voc_instance_segmentation",
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_voc_layout_dataset(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -453,7 +445,6 @@ class VocIntegrationScenarios(TestCase):
                 test_dir, dataset_dir, expected_dataset, "voc_layout", label_map="voc_layout"
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_voc_classification_dataset(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -495,7 +486,6 @@ class VocIntegrationScenarios(TestCase):
                         label_map="voc_classification",
                     )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_voc_detection_dataset(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -567,7 +557,6 @@ class VocIntegrationScenarios(TestCase):
                         label_map="voc_detection",
                     )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_voc_segmentation_dataset(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -609,7 +598,6 @@ class VocIntegrationScenarios(TestCase):
                         label_map="voc_segmentation",
                     )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_voc_action_dataset(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -667,7 +655,6 @@ class VocIntegrationScenarios(TestCase):
                         label_map="voc_action",
                     )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_label_projection_with_masks(self):
         expected_dataset = Dataset.from_iterable(
             [

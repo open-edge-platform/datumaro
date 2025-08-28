@@ -13,8 +13,6 @@ from datumaro.components.environment import Environment
 from datumaro.components.media import Video
 from datumaro.plugins.data_formats.kinetics import KineticsImporter
 
-from ..requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import compare_datasets
 
@@ -62,19 +60,16 @@ def fxt_kinetics_dataset(test_dir):
 
 
 class KineticsImporterTest:
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_detect(self):
         detected_formats = Environment().detect_dataset(KINETICS_DATASET_DIR)
         assert [KineticsImporter.NAME] == detected_formats
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_import_with_video(self, helper_tc, fxt_kinetics_dataset):
         expected_dataset = fxt_kinetics_dataset
         imported_dataset = Dataset.import_from(KINETICS_DATASET_DIR, "kinetics")
 
         compare_datasets(helper_tc, expected_dataset, imported_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_convert_to_datumaro_and_export_it(self, helper_tc, test_dir):
         imported_dataset = Dataset.import_from(KINETICS_DATASET_DIR, "kinetics")
         export_dir = osp.join(test_dir, "dst")

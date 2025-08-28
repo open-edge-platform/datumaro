@@ -12,7 +12,6 @@ import pytest
 
 from datumaro.util.scope import on_exit_do, scope_add, scoped
 
-from ...requirements import Requirements, mark_requirement
 from ...utils.video import make_sample_video
 
 from tests.utils.test_utils import TestDir
@@ -20,7 +19,6 @@ from tests.utils.test_utils import run_datum as run
 
 
 class VideoSplittingTest:
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @scoped
     @patch("datumaro.components.media.VideoFrame.data", new_callable=PropertyMock)
     def test_can_split_video(self, mock_video_frame_data):

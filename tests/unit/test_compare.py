@@ -16,13 +16,10 @@ from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DEFAULT_SUBSET_NAME, DatasetItem
 from datumaro.components.media import Image
 
-from ..requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 
 
 class DistanceComparatorTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_no_bbox_diff_with_same_item(self):
         detections = 3
         anns = [Bbox(i * 10, 10, 10, 10, label=i) for i in range(detections)]
@@ -42,7 +39,6 @@ class DistanceComparatorTest(TestCase):
             self.assertLess(iou_thresh, a_bbox.iou(b_bbox))
             self.assertEqual(a_bbox.label, b_bbox.label)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_find_bbox_with_wrong_label(self):
         detections = 3
         class_count = 2
@@ -70,7 +66,6 @@ class DistanceComparatorTest(TestCase):
             self.assertLess(iou_thresh, a_bbox.iou(b_bbox))
             self.assertEqual((a_bbox.label + 1) % class_count, b_bbox.label)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_find_missing_boxes(self):
         detections = 3
         class_count = 2
@@ -100,7 +95,6 @@ class DistanceComparatorTest(TestCase):
         self.assertEqual(len(item2.annotations), len(b_greater))
         self.assertEqual(0, len(matches))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_no_label_diff_with_same_item(self):
         detections = 3
         anns = [Label(i) for i in range(detections)]
@@ -113,7 +107,6 @@ class DistanceComparatorTest(TestCase):
         self.assertEqual(0, len(b_greater))
         self.assertEqual(len(item.annotations), len(matches))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_find_wrong_label(self):
         item1 = DatasetItem(
             id=1,
@@ -139,7 +132,6 @@ class DistanceComparatorTest(TestCase):
         self.assertEqual(2, len(b_greater))
         self.assertEqual(1, len(matches))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_match_points(self):
         item1 = DatasetItem(
             id=1,
@@ -166,7 +158,6 @@ class DistanceComparatorTest(TestCase):
 
 
 class ExactComparatorTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_class_comparison(self):
         a = Dataset.from_iterable([], categories=["a", "b", "c"])
         b = Dataset.from_iterable([], categories=["b", "c"])
@@ -177,7 +168,6 @@ class ExactComparatorTest(TestCase):
 
         self.assertEqual(1, len(errors), errors)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_item_comparison(self):
         a = Dataset.from_iterable(
             [
@@ -206,7 +196,6 @@ class ExactComparatorTest(TestCase):
         self.assertEqual([("3", DEFAULT_SUBSET_NAME)], b_extra_items)
         self.assertEqual(1, len(errors), errors)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_annotation_comparison(self):
         a = Dataset.from_iterable(
             [
@@ -286,7 +275,6 @@ class ExactComparatorTest(TestCase):
         self.assertEqual(2, len(unmatched), unmatched)
         self.assertEqual(0, len(errors), errors)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_image_comparison(self):
         a = Dataset.from_iterable(
             [

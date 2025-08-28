@@ -9,8 +9,6 @@ from datumaro.components.environment import Environment
 from datumaro.components.media import Image
 from datumaro.plugins.data_formats.nyu_depth_v2 import NyuDepthV2Importer
 
-from ..requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import compare_datasets
 
@@ -18,12 +16,10 @@ DUMMY_DATASET_DIR = get_test_asset_path("nyu_depth_v2_dataset")
 
 
 class NyuDepthV2ImporterTest(TestCase):
-    @mark_requirement(Requirements.DATUM_497)
     def test_can_detect(self):
         detected_formats = Environment().detect_dataset(DUMMY_DATASET_DIR)
         self.assertEqual([NyuDepthV2Importer.NAME], detected_formats)
 
-    @mark_requirement(Requirements.DATUM_497)
     def test_can_import(self):
         expected_dataset = Dataset.from_iterable(
             [
