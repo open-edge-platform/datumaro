@@ -185,6 +185,24 @@ class Converter(ABC):
         # Subclasses should override for sophisticated filtering
         return True
 
+    def get_input_attr_specs(self) -> List[AttributeSpec[Field]]:
+        """
+        Get the current input AttributeSpec instances from input_* attributes.
+
+        Returns:
+            List of input AttributeSpec instances currently configured on the converter
+        """
+        input_attr_specs: List[AttributeSpec[Field]] = []
+
+        # Get the input attribute names from class type hints
+        from_types = self.get_from_types()
+
+        for attr_name in from_types.keys():
+            attr_spec = cast(AttributeSpec[Field], getattr(self, attr_name))
+            input_attr_specs.append(attr_spec)
+
+        return input_attr_specs
+
     def get_output_attr_specs(self) -> List[AttributeSpec[Field]]:
         """
         Get the current output AttributeSpec instances from output_* attributes.
@@ -327,30 +345,66 @@ class AttributeRemapperConverter(Converter):
     effectively handling both renaming and deletion in a single operation.
     """
 
-    def __init__(self, attr_map: dict[str, str]):
+    def __init__(self, attr_mappings: list[tuple[AttributeSpec, AttributeSpec]]):
         """
-        Initialize the converter with a mapping of old to new names.
+        Initialize the converter with a list of attribute mappings.
 
         Args:
-            attr_map: Dictionary mapping old attribute names to new names.
-                          Only attributes in this mapping will be kept in the output.
+            attr_mappings: List of tuples (from_attr_spec, to_attr_spec) defining
+                          the attribute transformations. Only attributes in this
+                          list will be kept in the output.
         """
-        self.attr_map = attr_map
+        self.attr_mappings = attr_mappings
+
+        # Calculate column mapping from attribute mappings
+        self.column_map = {}
+        for from_attr, to_attr in attr_mappings:
+            # Get all column names for this field using to_polars_schema
+            from_columns = list(from_attr.field.to_polars_schema(from_attr.name).keys())
+            to_columns = list(to_attr.field.to_polars_schema(to_attr.name).keys())
+
+            # Map each column from source to target
+            for from_col, to_col in zip(from_columns, to_columns):
+                self.column_map[from_col] = to_col
+
+        # Dynamically set input_* and output_* attributes for get_from_types/get_to_types
+        for i, (from_attr, to_attr) in enumerate(attr_mappings):
+            setattr(self, f"input_{i}", from_attr)
+            setattr(self, f"output_{i}", to_attr)
+
         super().__init__()
 
-    @classmethod
-    def get_from_types(cls) -> dict[str, type[Field]]:
-        """Override to return empty dict since inputs are dynamic."""
-        return {}
+    @cache
+    def get_from_types(self) -> dict[str, Type[Field]]:
+        """
+        Extract input field types from input_* class attributes.
 
-    @classmethod
-    def get_to_types(cls) -> dict[str, type[Field]]:
-        """Override to return empty dict since outputs are dynamic."""
-        return {}
+        Returns:
+            Dictionary mapping input attribute names to their Field types
+        """
+        from_types: dict[str, Type[Field]] = {}
+        for i, (input_spec, _) in enumerate(self.attr_mappings):
+            from_types[f"input_{i}"] = type(input_spec.field)
+
+        return from_types
+
+    @cache
+    def get_to_types(self) -> dict[str, Type[Field]]:
+        """
+        Extract output field types from output_* class attributes.
+
+        Returns:
+            Dictionary mapping output attribute names to their Field types
+        """
+        to_types: dict[str, Type[Field]] = {}
+        for i, (_, output_spec) in enumerate(self.attr_mappings):
+            to_types[f"output_{i}"] = type(output_spec.field)
+
+        return to_types
 
     def convert(self, df: pl.DataFrame) -> pl.DataFrame:
         """
-        Select and rename columns according to attr_map.
+        Select and rename columns according to column_map.
         Columns not in the mapping are dropped.
 
         Args:
@@ -362,7 +416,7 @@ class AttributeRemapperConverter(Converter):
         # Build selection expressions for all columns we want to keep
         select_exprs = {}
 
-        for old_name, new_name in self.attr_map.items():
+        for old_name, new_name in self.column_map.items():
             select_exprs[new_name] = pl.col(old_name)
 
         return df.select(**select_exprs)
@@ -370,10 +424,6 @@ class AttributeRemapperConverter(Converter):
     def filter_output_spec(self) -> bool:
         """Always return True as renaming is always applicable."""
         return True
-
-    def get_output_attr_specs(self) -> List[AttributeSpec[Field]]:
-        """Override to return empty list since outputs are handled dynamically."""
-        return []
 
 
 @dataclass(frozen=True)
@@ -588,8 +638,8 @@ def _create_post_processing_for_semantic(
     Returns:
         List of post-processing converters (usually just one AttributeRemapperConverter)
     """
-    # Build rename mapping: include only attributes that should be kept
-    attr_map = {}
+    # Build attribute mappings: include only attributes that should be kept
+    attr_mappings = []
 
     # Determine if a converter is needed (i.e. at least one attribute has been renamed or deleted)
     converter_needed = False
@@ -601,26 +651,18 @@ def _create_post_processing_for_semantic(
             if final_attr_spec.name != target_attr_spec.name:
                 converter_needed = True
 
-            # Get all column names for this field using to_polars_schema
-            final_columns = list(
-                final_attr_spec.field.to_polars_schema(final_attr_spec.name).keys()
-            )
-            target_columns = list(
-                target_attr_spec.field.to_polars_schema(target_attr_spec.name).keys()
-            )
+            # Add the mapping from final to target attribute spec
+            attr_mappings.append((final_attr_spec, target_attr_spec))
 
-            # Map each column from final to target
-            for final_col, target_col in zip(final_columns, target_columns):
-                attr_map[final_col] = target_col
-
+    # Check if any fields need to be deleted (exist in final but not in target)
     for field_type, final_attr_spec in final_state.field_to_attr_spec.items():
         if field_type not in target_state.field_to_attr_spec:
             # If the field is not in the target state, it should be deleted
             converter_needed = True
 
-    # Create a single rename converter that handles both renaming and deletion
+    # Create a single remapper converter that handles both renaming and deletion
     if converter_needed:
-        return [AttributeRemapperConverter(attr_map=attr_map)]
+        return [AttributeRemapperConverter(attr_mappings=attr_mappings)]
 
     return []
 
@@ -725,6 +767,8 @@ def find_conversion_path(from_schema: Schema, to_schema: Schema) -> ConversionPa
     # Collect all converters needed across all semantic groups
     all_converters: List[Converter] = []
 
+    attr_mappings = []
+
     # Process each semantic group in the target schema
     for semantic, target_state in target_groups.items():
         # Get corresponding source state for this semantic (if any)
@@ -735,7 +779,15 @@ def find_conversion_path(from_schema: Schema, to_schema: Schema) -> ConversionPa
             start_state, target_state, semantic
         )
 
+        # Merge all the attribute remappers into a single one. If any, the remapper is always the last step.
+        if semantic_converters and isinstance(semantic_converters[-1], AttributeRemapperConverter):
+            attr_mappings += semantic_converters[-1].attr_mappings
+            semantic_converters = semantic_converters[:-1]
+
         all_converters.extend(semantic_converters)
+
+    if attr_mappings:
+        all_converters.append(AttributeRemapperConverter(attr_mappings=attr_mappings))
 
     # Separate batch and lazy converters
     return _separate_batch_and_lazy_converters(all_converters)
@@ -761,40 +813,31 @@ def _separate_batch_and_lazy_converters(
     # Track which converters must be lazy
     lazy_indices: Set[int] = set()
 
-    # First pass: mark all intrinsically lazy converters
+    lazy_fields: dict[str, bool] = defaultdict(
+        bool
+    )  # Maps fields whether they were produced lazily
+
     for i, converter in enumerate(conversion_path):
+        lazy = False
+
         if converter.lazy:
+            # Mark all intrinsically lazy converters as lazy
+            lazy = True
+        else:
+            # Check whether the converter depends on a lazy converter
+            input_specs = converter.get_input_attr_specs()
+            for attr_spec in input_specs:
+                if attr_spec.name in lazy_fields:
+                    lazy = True
+                    break
+
+        if lazy:
             lazy_indices.add(i)
 
-    # Second pass: mark converters that depend on lazy converter outputs
-    # Build dependency graph
-    converter_outputs: dict[
-        Type[Field], int
-    ] = {}  # Maps field types to converter indices that produce them
-
-    for i, converter in enumerate(conversion_path):
-        output_specs = converter.get_output_attr_specs()
-        for attr_spec in output_specs:
-            field_type = type(attr_spec.field)
-            converter_outputs[field_type] = i
-
-    # Mark dependent converters as lazy
-    changed = True
-    while changed:
-        changed = False
-        for i, converter in enumerate(conversion_path):
-            if i in lazy_indices:
-                continue
-
-            # Check if this converter depends on any lazy converter output
-            from_types = converter.get_from_types()
-            for field_type in from_types.values():
-                if field_type in converter_outputs:
-                    producer_index: int = converter_outputs[field_type]
-                    if producer_index in lazy_indices and producer_index < i:
-                        lazy_indices.add(i)
-                        changed = True
-                        break
+            # Mark all output fields as lazy
+            output_specs = converter.get_output_attr_specs()
+            for attr_spec in output_specs:
+                lazy_fields[attr_spec.name] = True
 
     # Separate into batch and lazy lists
     batch_converters: List[Converter] = []

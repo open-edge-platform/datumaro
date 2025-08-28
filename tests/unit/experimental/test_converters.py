@@ -944,9 +944,6 @@ def test_attribute_deletion():
     # Test the remapper converter functionality
     remapper_converter = path.batch_converters[0]
 
-    # Check that it only keeps the image attribute
-    assert remapper_converter.attr_map == {"image": "image", "image_shape": "image_shape"}
-
     # Create test DataFrame with both columns
     test_image = np.random.randint(0, 255, (10, 10, 3), dtype=np.uint8)
     test_bbox = np.array([[10.0, 20.0, 30.0, 40.0]], dtype=np.float32)
@@ -1005,16 +1002,32 @@ def test_combined_rename_and_delete():
     assert isinstance(path.batch_converters[0], AttributeRemapperConverter)
     assert len(path.lazy_converters) == 0
 
-    # Check that the remapper mapping only includes the field we want to keep
+    # Check that the remapper handles the conversion correctly by testing on sample data
     remapper_converter = path.batch_converters[0]
-    assert remapper_converter.attr_map == {
-        "old_image": "new_image",
-        "old_image_shape": "new_image_shape",
-    }
+
+    # Create test DataFrame
+    test_df = pl.DataFrame(
+        {
+            "old_image": [[1, 2, 3, 4, 5, 6]],  # Sample image data
+            "old_image_shape": [[2, 3]],  # Sample shape data
+            "other_field": ["should_be_deleted"],  # Should be deleted
+        }
+    )
+
+    # Apply the converter
+    result_df = remapper_converter.convert(test_df)
+
+    # Check that only the renamed fields are present
+    expected_columns = {"new_image", "new_image_shape"}
+    assert set(result_df.columns) == expected_columns
+
+    # Check that data is preserved correctly
+    assert result_df["new_image"].to_list() == [[1, 2, 3, 4, 5, 6]]
+    assert result_df["new_image_shape"].to_list() == [[2, 3]]
 
 
 def test_attribute_remapping_converter():
-    """Test AttributeRenameConverter with multiple attributes."""
+    """Test AttributeRemapperConverter with multiple attributes."""
     import polars as pl
 
     # Create test DataFrame with multiple columns including auxiliary columns
@@ -1027,17 +1040,24 @@ def test_attribute_remapping_converter():
         }
     )
 
-    # Create rename mapping
-    attr_map = {"old_image": "new_image", "old_bbox": "new_bbox"}
+    # Create attribute mappings using AttributeSpec
+    from_image_attr = AttributeSpec(name="old_image", field=image_field(dtype=pl.Int32()))
+    to_image_attr = AttributeSpec(name="new_image", field=image_field(dtype=pl.Int32()))
+
+    from_bbox_attr = AttributeSpec(name="old_bbox", field=bbox_field(dtype=pl.Int32()))
+    to_bbox_attr = AttributeSpec(name="new_bbox", field=bbox_field(dtype=pl.Int32()))
+
+    attr_mappings = [(from_image_attr, to_image_attr), (from_bbox_attr, to_bbox_attr)]
 
     # Create and apply converter
-    converter = AttributeRemapperConverter(attr_map=attr_map)
+    converter = AttributeRemapperConverter(attr_mappings=attr_mappings)
     result_df = converter.convert(df)
 
-    # Check that columns were remapped correctly
-    expected_columns = {"new_image", "new_bbox"}
+    # Check that columns were remapped correctly (should only have remapped columns)
+    expected_columns = {"new_image", "new_image_shape", "new_bbox"}
     assert set(result_df.columns) == expected_columns
 
     # Check that data is preserved
     assert result_df["new_image"].to_list() == [[1, 2, 3]]
+    assert result_df["new_image_shape"].to_list() == [[3]]
     assert result_df["new_bbox"].to_list() == [[[1, 2, 3, 4]]]
