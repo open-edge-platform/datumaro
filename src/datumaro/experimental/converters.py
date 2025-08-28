@@ -67,6 +67,9 @@ class RGBToBGRConverter(Converter):
         input_column_name = self.input_image.name
         output_column_name = self.output_image.name
 
+        input_shape_column_name = self.input_image.name + "_shape"
+        output_shape_column_name = self.output_image.name + "_shape"
+
         def rgb_to_bgr(tensor_data: pl.Series) -> Any:
             """Convert RGB tensor data to BGR by reversing the channel order."""
             data = tensor_data.to_numpy().copy()
@@ -79,7 +82,8 @@ class RGBToBGRConverter(Converter):
         return df.with_columns(
             pl.col(input_column_name)
             .map_elements(rgb_to_bgr, return_dtype=dtype)
-            .alias(output_column_name)
+            .alias(output_column_name),
+            pl.col(input_shape_column_name).alias(output_shape_column_name),
         )
 
 
@@ -129,16 +133,15 @@ class UInt8ToFloat32Converter(Converter):
         input_column_name = self.input_image.name
         output_column_name = self.output_image.name
 
-        image_field = self.input_image.field
-        print(f"Converting dtype from: {image_field.dtype}")
-        print(f"Input attribute name: {self.input_image.name}")
-        print(f"Output attribute name: {self.output_image.name}")
+        input_shape_column_name = self.input_image.name + "_shape"
+        output_shape_column_name = self.output_image.name + "_shape"
 
         return df.with_columns(
             # Normalize UInt8 values (0-255) to Float32 (0.0-1.0)
             pl.col(input_column_name)
             .list.eval((pl.element() / 255.0).cast(self.output_image.field.dtype))
-            .alias(output_column_name)
+            .alias(output_column_name),
+            pl.col(input_shape_column_name).alias(output_shape_column_name),
         )
 
 

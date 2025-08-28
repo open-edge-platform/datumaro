@@ -317,6 +317,65 @@ class ConversionError(Exception):
     pass
 
 
+class AttributeRemapperConverter(Converter):
+    """
+    Special converter for renaming/selecting attributes and dropping others.
+
+    This converter is not registered with the converter registry but is used
+    internally by find_conversion_path when attributes need to be renamed or deleted.
+    It uses .select() to only keep the specified attributes with their new names,
+    effectively handling both renaming and deletion in a single operation.
+    """
+
+    def __init__(self, attr_map: dict[str, str]):
+        """
+        Initialize the converter with a mapping of old to new names.
+
+        Args:
+            attr_map: Dictionary mapping old attribute names to new names.
+                          Only attributes in this mapping will be kept in the output.
+        """
+        self.attr_map = attr_map
+        super().__init__()
+
+    @classmethod
+    def get_from_types(cls) -> dict[str, type[Field]]:
+        """Override to return empty dict since inputs are dynamic."""
+        return {}
+
+    @classmethod
+    def get_to_types(cls) -> dict[str, type[Field]]:
+        """Override to return empty dict since outputs are dynamic."""
+        return {}
+
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+        """
+        Select and rename columns according to attr_map.
+        Columns not in the mapping are dropped.
+
+        Args:
+            df: Input DataFrame
+
+        Returns:
+            DataFrame with only the selected/renamed columns
+        """
+        # Build selection expressions for all columns we want to keep
+        select_exprs = {}
+
+        for old_name, new_name in self.attr_map.items():
+            select_exprs[new_name] = pl.col(old_name)
+
+        return df.select(**select_exprs)
+
+    def filter_output_spec(self) -> bool:
+        """Always return True as renaming is always applicable."""
+        return True
+
+    def get_output_attr_specs(self) -> List[AttributeSpec[Field]]:
+        """Override to return empty list since outputs are handled dynamically."""
+        return []
+
+
 @dataclass(frozen=True)
 class _SchemaState:
     """Represents a schema state during A* search."""
@@ -326,13 +385,29 @@ class _SchemaState:
     ]  # Map field types to their AttributeSpec
 
     def __hash__(self):
-        # Hash the items of the dict as a frozenset for immutability
-        return hash(frozenset(self.field_to_attr_spec.items()))
+        # Hash only field types and their properties, not names
+        field_items = []
+        for field_type, attr_spec in self.field_to_attr_spec.items():
+            # Hash field type and field properties, but not the attribute name
+            field_items.append((field_type, attr_spec.field))
+        return hash(tuple(field_items))
 
     def __eq__(self, other: object) -> bool:
-        return (
-            isinstance(other, _SchemaState) and self.field_to_attr_spec == other.field_to_attr_spec
-        )
+        if not isinstance(other, _SchemaState):
+            return False
+
+        # Compare only field types and their properties, not names
+        if set(self.field_to_attr_spec.keys()) != set(other.field_to_attr_spec.keys()):
+            return False
+
+        for field_type in self.field_to_attr_spec.keys():
+            if (
+                self.field_to_attr_spec[field_type].field
+                != other.field_to_attr_spec[field_type].field
+            ):
+                return False
+
+        return True
 
     def get_attr_spec_for_field_type(
         self, field_type: Type[Field]
@@ -367,6 +442,8 @@ def _heuristic_cost(current_state: _SchemaState, target_state: _SchemaState) -> 
     This counts both:
     1. Missing field types that need to be created
     2. Field differences where the type exists but properties differ (dtype, format, semantic, etc.)
+
+    Note: Attribute names are ignored in the heuristic as they can be fixed in post-processing.
     """
     cost = 0
 
@@ -383,7 +460,7 @@ def _heuristic_cost(current_state: _SchemaState, target_state: _SchemaState) -> 
         current_attr_spec = current_state.field_to_attr_spec[field_type]
         target_attr_spec = target_state.field_to_attr_spec[field_type]
 
-        # Compare field properties - if they differ, we need conversion
+        # Compare field properties (ignoring names) - if they differ, we need conversion
         if current_attr_spec.field != target_attr_spec.field:
             cost += 1
 
@@ -391,7 +468,7 @@ def _heuristic_cost(current_state: _SchemaState, target_state: _SchemaState) -> 
 
 
 def _get_applicable_converters(
-    state: _SchemaState, target_state: _SchemaState
+    state: _SchemaState, target_state: _SchemaState, iteration: int = 0
 ) -> List[Tuple[Converter, _SchemaState]]:
     """Get all converters that can be applied to the current state along with their resulting states."""
     applicable: List[Tuple[Converter, _SchemaState]] = []
@@ -402,18 +479,22 @@ def _get_applicable_converters(
     for converter_class in ConverterRegistry.list_converters():
         # Check if all required input types are available
         from_types = converter_class.get_from_types()
-        if (
-            not all(field_type in available_field_types for field_type in from_types.values())
-            and len(from_types) > 0
-        ):
-            continue
 
         # Collect available input AttributeSpec instances
-        from_attr_specs: List[AttributeSpec[Field]] = []
-        for field_type in from_types.values():
-            if field_type in available_field_types:
-                attr_spec = state.field_to_attr_spec[field_type]
-                from_attr_specs.append(attr_spec)
+        converter_kwargs = {}
+        all_inputs_available = True
+        for attr_name, field_type in from_types.items():
+            if field_type not in available_field_types:
+                all_inputs_available = False
+                break
+
+            # Add the input attribute to kwargs for the converter constructor
+            attr_spec = state.field_to_attr_spec[field_type]
+            converter_kwargs[attr_name] = attr_spec
+
+        # Check if we have the required input types
+        if not all_inputs_available:
+            continue
 
         # Collect desired output AttributeSpec instances
         to_types = converter_class.get_to_types()
@@ -423,50 +504,24 @@ def _get_applicable_converters(
                 attr_spec = target_state.field_to_attr_spec[field_type]
                 to_attr_specs.append(attr_spec)
 
-        # Initialize the converter with AttributeSpec instances
-        # Check if we have the required input types
-        if len(from_attr_specs) < len(from_types):
-            continue
-
-        # Create a mapping from input types to input specs
-        input_type_to_spec = {}
-        for attr_spec in from_attr_specs:
-            field_type = type(attr_spec.field)
-            input_type_to_spec[field_type] = attr_spec
-
-        # Verify all required input types are available
-        all_inputs_available = True
-        converter_kwargs = {}
-        for attr_name, field_type in from_types.items():
-            if field_type not in input_type_to_spec:
-                all_inputs_available = False
-                break
-            # Add the input attribute to kwargs for the converter constructor
-            converter_kwargs[attr_name] = input_type_to_spec[field_type]
-
-        if not all_inputs_available:
-            continue
-
-        # Create output AttributeSpec instances and add to kwargs
-        output_attr_specs: List[AttributeSpec[Field]] = []
-        for i, (attr_name, field_type) in enumerate(to_types.items()):
-            # Create a default output AttributeSpec
-            # Use desired target name if specified, otherwise generate default
-            if i < len(to_attr_specs):
-                output_name = to_attr_specs[i].name
-                # Optionally use the target field if it matches the type
-                if isinstance(to_attr_specs[i].field, field_type):
-                    output_field = to_attr_specs[i].field
-                else:
-                    output_field = field_type()
+        for attr_name, field_type in to_types.items():
+            # First, check if target state has a matching field type and use its name/field
+            if field_type in target_state.field_to_attr_spec:
+                target_attr_spec = target_state.field_to_attr_spec[field_type]
+                output_name = target_attr_spec.name
+                output_field = target_attr_spec.field
             else:
-                field_hash = abs(hash(str(field_type))) % 10000
-                output_name = f"{field_type.__name__.lower()}_{field_hash}"
+                # The field does not exist, use a temporary name
+                output_name = field_type.__name__.lower()
+                # and create a new instance of the field
                 output_field = field_type()
+
+            # Add the iteration count at the end to ensure uniqueness
+            # and avoid any conflict with existing attribute names
+            output_name = f"{output_name}_temp_{iteration}"
 
             output_attr_spec = AttributeSpec(name=output_name, field=output_field)
             converter_kwargs[attr_name] = output_attr_spec
-            output_attr_specs.append(output_attr_spec)
 
         # Create converter instance with all AttributeSpec instances as kwargs
         converter_instance = converter_class(**converter_kwargs)
@@ -520,6 +575,56 @@ def _group_fields_by_semantic(schema: Schema) -> dict[Semantic, _SchemaState]:
     }
 
 
+def _create_post_processing_for_semantic(
+    final_state: _SchemaState, target_state: _SchemaState
+) -> List[Converter]:
+    """
+    Create post-processing converters for a single semantic group.
+
+    Args:
+        final_state: Final state reached after conversions
+        target_state: Target state for this semantic group
+
+    Returns:
+        List of post-processing converters (usually just one AttributeRemapperConverter)
+    """
+    # Build rename mapping: include only attributes that should be kept
+    attr_map = {}
+
+    # Determine if a converter is needed (i.e. at least one attribute has been renamed or deleted)
+    converter_needed = False
+
+    for field_type, target_attr_spec in target_state.field_to_attr_spec.items():
+        if field_type in final_state.field_to_attr_spec:
+            final_attr_spec = final_state.field_to_attr_spec[field_type]
+
+            if final_attr_spec.name != target_attr_spec.name:
+                converter_needed = True
+
+            # Get all column names for this field using to_polars_schema
+            final_columns = list(
+                final_attr_spec.field.to_polars_schema(final_attr_spec.name).keys()
+            )
+            target_columns = list(
+                target_attr_spec.field.to_polars_schema(target_attr_spec.name).keys()
+            )
+
+            # Map each column from final to target
+            for final_col, target_col in zip(final_columns, target_columns):
+                attr_map[final_col] = target_col
+
+    for field_type, final_attr_spec in final_state.field_to_attr_spec.items():
+        if field_type not in target_state.field_to_attr_spec:
+            # If the field is not in the target state, it should be deleted
+            converter_needed = True
+
+    # Create a single rename converter that handles both renaming and deletion
+    if converter_needed:
+        return [AttributeRemapperConverter(attr_map=attr_map)]
+
+    return []
+
+
 def _find_conversion_path_for_semantic(
     start_state: _SchemaState, target_state: _SchemaState, semantic: Semantic
 ) -> List[Converter]:
@@ -537,9 +642,9 @@ def _find_conversion_path_for_semantic(
     Raises:
         ConversionError: If no conversion path is found for this semantic
     """
-    # If we already have all required fields, no conversion needed
+    # If we already have all required fields, check if we need renaming/deletion
     if start_state == target_state:
-        return []
+        return _create_post_processing_for_semantic(start_state, target_state)
 
     # Initialize A* search
     open_set: List[_SearchNode] = []
@@ -564,12 +669,15 @@ def _find_conversion_path_for_semantic(
 
         # Check if we've reached the goal - all target fields must match exactly
         if _heuristic_cost(current_node.state, target_state) == 0:
-            return current_node.path
+            # Add post-processing converters for final renaming and deletion
+            post_processing = _create_post_processing_for_semantic(current_node.state, target_state)
+            return current_node.path + post_processing
 
         # Explore neighbors
         for converter, new_state in _get_applicable_converters(
             current_node.state,
             target_state,
+            current_node.g_cost,
         ):
             if new_state in closed_set:
                 continue
