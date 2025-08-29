@@ -83,7 +83,7 @@ setuptools.setup(
     extras_require={
         # Tensorflow support
         "tf": ["tensorflow"],
-        "tfds": ["tensorflow-datasets<4.9.3", "absl-py>=0.12.0"],
+        "tfds": ["tensorflow-datasets<4.9.4", "absl-py>=0.12.0"],
         # PyTorch support
         "torch": ["torch", "torchvision"],
         # Kaggle download support
