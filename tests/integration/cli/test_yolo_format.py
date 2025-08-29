@@ -14,15 +14,12 @@ from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image
 
-from ...requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, compare_datasets
 from tests.utils.test_utils import run_datum as run
 
 
 class YoloIntegrationScenarios(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_yolo_dataset(self):
         target_dataset = Dataset.from_iterable(
             [
@@ -62,7 +59,6 @@ class YoloIntegrationScenarios(TestCase):
             parsed_dataset = Dataset.import_from(export_dir, format="yolo")
             compare_datasets(self, target_dataset, parsed_dataset)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_export_mot_as_yolo(self):
         target_dataset = Dataset.from_iterable(
             [DatasetItem(id="1", subset="train", annotations=[Bbox(0.0, 4.0, 4.0, 8.0, label=2)])],
@@ -91,7 +87,6 @@ class YoloIntegrationScenarios(TestCase):
             parsed_dataset = Dataset.import_from(yolo_dir, format="yolo")
             compare_datasets(self, target_dataset, parsed_dataset)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_convert_voc_to_yolo(self):
         target_dataset = Dataset.from_iterable(
             [
@@ -142,7 +137,6 @@ class YoloIntegrationScenarios(TestCase):
             parsed_dataset = Dataset.import_from(yolo_dir, format="yolo")
             compare_datasets(self, target_dataset, parsed_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_delete_labels_from_yolo_dataset(self):
         target_dataset = Dataset.from_iterable(
             [
@@ -215,7 +209,6 @@ class YoloIntegrationScenariosTest:
     def fxt_yolo_dir(self, request) -> str:
         return get_test_asset_path("yolo_dataset", request.param)
 
-    @mark_requirement(Requirements.DATUM_BUG_1214)
     def test_can_import_and_merge_nested_datasets(self, fxt_yolo_dir, test_dir, helper_tc):
         # Test merging multiple YOLO datasets without using project functionality
         num_total_items = 0

@@ -10,8 +10,6 @@ from datumaro.components.environment import DEFAULT_ENVIRONMENT
 from datumaro.components.exporter import Exporter
 from datumaro.components.importer import Importer
 
-from ...requirements import Requirements, mark_requirement
-
 from tests.utils.test_utils import check_is_stream, compare_datasets
 
 
@@ -19,7 +17,6 @@ class TestDataFormatBase:
     IMPORTER: Importer
     EXPORTER: Exporter
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_detect(self, fxt_dataset_dir: str, importer: Optional[Importer] = None):
         if importer is None:
             importer = getattr(self, "IMPORTER", None)
@@ -30,7 +27,6 @@ class TestDataFormatBase:
         detected_formats = DEFAULT_ENVIRONMENT.detect_dataset(fxt_dataset_dir)
         assert [importer.NAME] == detected_formats, f"{[importer.NAME]} != {detected_formats}"
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_import(
         self,
         fxt_dataset_dir: str,
@@ -53,7 +49,6 @@ class TestDataFormatBase:
 
         compare_datasets(helper_tc, fxt_expected_dataset, dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_export_and_import(
         self,
         fxt_expected_dataset: Dataset,

@@ -9,14 +9,11 @@ from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.util.scope import scope_add, scoped
 
-from ...requirements import Requirements, mark_requirement
-
 from tests.utils.test_utils import TestDir, compare_datasets
 from tests.utils.test_utils import run_datum as run
 
 
 class FilterTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @scoped
     def test_can_filter_dataset_inplace(self):
         test_dir = scope_add(TestDir())
@@ -40,7 +37,6 @@ class FilterTest(TestCase):
             self, expected_dataset, Dataset.import_from(test_dir, "coco"), ignored_attrs="*"
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_filter_fails_on_inplace_update_without_overwrite(self):
         with TestDir() as test_dir:
             Dataset.from_iterable(

@@ -9,13 +9,11 @@ from datumaro.components.environment import Environment
 from datumaro.components.media import Image
 from datumaro.plugins.data_formats.ava.ava import *
 
-from tests.requirements import Requirements, mark_requirement
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, compare_datasets
 
 
 class AvaFormatTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_video_detection(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -72,7 +70,6 @@ DUMMY_DATASET_DIR = get_test_asset_path("ava_dataset")
 
 
 class AvaImporterTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_import_video_detection(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -121,7 +118,6 @@ class AvaImporterTest(TestCase):
         dataset = Dataset.import_from(DUMMY_DATASET_DIR, "ava")
         compare_datasets(self, expected_dataset, dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_detect_ava(self):
         detected_formats = Environment().detect_dataset(DUMMY_DATASET_DIR)
         self.assertEqual([AvaImporter.NAME], detected_formats)

@@ -16,13 +16,10 @@ from datumaro.util.image import (
 )
 from datumaro.util.image_cache import ImageCache
 
-from ..requirements import Requirements, mark_requirement
-
 from tests.utils.test_utils import TestDir
 
 
 class ImageCacheTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_cache_works(self):
         with TestDir() as test_dir:
             image = np.ones((100, 100, 3), dtype=np.uint8)
@@ -35,7 +32,6 @@ class ImageCacheTest(TestCase):
             non_caching_loader = lazy_image(image_path, cache=False)
             self.assertFalse(non_caching_loader() is non_caching_loader())
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_cache_fifo_displacement(self):
         capacity = 2
         cache = ImageCache(capacity)
@@ -53,7 +49,6 @@ class ImageCacheTest(TestCase):
         matches = sum([a is b for a, b in zip(first_request, second_request)])
         self.assertEqual(matches, len(first_request) - 1)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_global_cache_is_accessible(self):
         loader = lazy_image(None, loader=lambda p: object())
 
@@ -106,7 +101,6 @@ class ImageTest(TestCase):
             ],
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_report_cached_size(self):
         data = np.ones((5, 6, 3))
 
@@ -114,7 +108,6 @@ class ImageTest(TestCase):
 
         self.assertEqual((2, 4), image.size)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_lazy_image_shape(self):
         data = encode_image(np.ones((5, 6, 3)), "png")
 
@@ -124,7 +117,6 @@ class ImageTest(TestCase):
         self.assertEqual((2, 4), image_lazy.size)
         self.assertEqual((5, 6), image_eager.size)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_ctors(self):
         with TestDir() as test_dir:
             image, args_list = self._gen_image_and_args_list(test_dir)
@@ -172,13 +164,11 @@ class ImageTest(TestCase):
                 self.assertEqual(img.path, "somepath")
                 self.assertEqual(img2.path, "otherpath")
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_ctor_errors(self):
         with self.subTest("no data specified"):
             with self.assertRaisesRegex(Exception, "Directly initalizing"):
                 Image(ext="jpg")
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_ext_detection(self):
         image_data = np.zeros((3, 4))
 
@@ -187,20 +177,17 @@ class ImageTest(TestCase):
                 image = Image.from_bytes(data=encode_image(image_data, ext))
                 self.assertEqual(image.ext, ext)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_ext_detection_failure(self):
         image_bytes = b"\xff" * 10  # invalid image
         image = Image.from_bytes(data=image_bytes)
         self.assertEqual(image.ext, None)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_floating_image_from_numpy(self):
         image_float = np.random.rand(32, 32, 3).astype(np.float16) * 255.0
         media = Image.from_numpy(image_float)
         data = media.get_data_as_dtype(dtype=np.float16)
         self.assertTrue(np.all(image_float == data))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_floating_image_from_file(self):
         import tifffile
 
@@ -270,7 +257,6 @@ class RoIImageTest(TestCase):
 
 
 class ImageMetaTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_loading(self):
         meta_file_contents = r"""
         # this is a comment
@@ -294,7 +280,6 @@ class ImageMetaTest(TestCase):
 
         self.assertEqual(meta_loaded, meta_expected)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_saving(self):
         meta_original = {
             "a": (123, 456),

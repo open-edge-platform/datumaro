@@ -16,8 +16,6 @@ from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image
 from datumaro.components.operations import compute_ann_statistics
 
-from ..requirements import Requirements, mark_requirement
-
 
 class SplitterTest(TestCase):
     @staticmethod
@@ -71,7 +69,6 @@ class SplitterTest(TestCase):
         dataset = Dataset.from_iterable(iterable, categories=categories)
         return dataset
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_split_for_classification_multi_class_no_attr(self):
         config = {
             "label1": {"attrs": None, "counts": 10},
@@ -101,7 +98,6 @@ class SplitterTest(TestCase):
         self.assertEqual(6, dist_test["label2"][0])
         self.assertEqual(9, dist_test["label3"][0])
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_split_for_classification_single_class_single_attr(self):
         counts = {0: 10, 1: 20, 2: 30}
         config = {"label": {"attrs": ["attr"], "counts": counts}}
@@ -128,7 +124,6 @@ class SplitterTest(TestCase):
         self.assertEqual(6, attr_test["attr"]["distribution"]["1"][0])
         self.assertEqual(9, attr_test["attr"]["distribution"]["2"][0])
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_split_for_classification_single_class_multi_attr(self):
         counts = {
             (0, 0): 20,
@@ -175,7 +170,6 @@ class SplitterTest(TestCase):
             self.assertEqual(114, len(actual.get_subset("train")))
             self.assertEqual(6, len(actual.get_subset("test")))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_split_for_classification_multi_label_with_attr(self):
         counts = {
             (0, 0): 20,
@@ -239,7 +233,6 @@ class SplitterTest(TestCase):
             self.assertEqual(list(r1.get_subset("test")), list(r2.get_subset("test")))
             self.assertNotEqual(list(r1.get_subset("test")), list(r3.get_subset("test")))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_split_for_classification_zero_ratio(self):
         config = {
             "label1": {"attrs": None, "counts": 5},
@@ -254,7 +247,6 @@ class SplitterTest(TestCase):
         self.assertEqual(4, len(actual.get_subset("val")))
         self.assertEqual(0, len(actual.get_subset("test")))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_split_for_classification_unlabeled(self):
         with self.subTest("no label"):
             iterable = [DatasetItem(i, annotations=[]) for i in range(10)]
@@ -277,7 +269,6 @@ class SplitterTest(TestCase):
             self.assertEqual(7, len(actual.get_subset("train")))
             self.assertEqual(3, len(actual.get_subset("test")))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_split_for_classification_gives_error(self):
         source = Dataset.from_iterable(
             [
@@ -302,7 +293,6 @@ class SplitterTest(TestCase):
                 splits = [("train", 0.5), ("train", 0.2), ("test", 0.3)]
                 splitter.Split(source, task, splits)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_split_for_reidentification(self):
         """
         Test ReidentificationSplit using Dataset with label (ImageNet style)
@@ -380,7 +370,6 @@ class SplitterTest(TestCase):
                 self.assertEqual(int(total * 0.3 / 0.7), dist_gallery[pid][0])
                 self.assertEqual(int(total * 0.4 / 0.7), dist_query[pid][0])
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_split_for_reidentification_randomseed(self):
         """
         Test randomseed for reidentification
@@ -402,7 +391,6 @@ class SplitterTest(TestCase):
         self.assertEqual(list(r1.get_subset("train")), list(r2.get_subset("train")))
         self.assertNotEqual(list(r1.get_subset("train")), list(r3.get_subset("train")))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_split_for_reidentification_rebalance(self):
         """
         rebalance function shouldn't gives error when there's no exchange
@@ -422,7 +410,6 @@ class SplitterTest(TestCase):
         self.assertEqual(90, len(actual.get_subset("test-gallery")))
         self.assertEqual(120, len(actual.get_subset("test-query")))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_split_for_reidentification_unlabeled(self):
         query = 0.5
         task = splitter.SplitTask.reid.name
@@ -443,7 +430,6 @@ class SplitterTest(TestCase):
 
             self.assertEqual(10, len(actual.get_subset("not-supported")))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_split_for_reidentification_gives_error(self):
         query = 0.4 / 0.7  # valid query ratio
         task = splitter.SplitTask.reid.name
@@ -773,7 +759,6 @@ class SplitterTest(TestCase):
         func = functions.get(dataset_type, append_polygon_coco)
         return func
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_split_for_detection(self):
         dtypes = ["coco", "voc", "yolo", "cvat", "labelme", "mot", "widerface"]
         task = splitter.SplitTask.detection.name
@@ -824,7 +809,6 @@ class SplitterTest(TestCase):
         self.assertEqual(list(r1.get_subset("test")), list(r2.get_subset("test")))
         self.assertNotEqual(list(r1.get_subset("test")), list(r3.get_subset("test")))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_split_for_detection_with_unlabeled(self):
         source, _ = self._generate_detection_segmentation_dataset(
             annotation_type=self._get_append_bbox("cvat"),
@@ -841,7 +825,6 @@ class SplitterTest(TestCase):
         self.assertEqual(4, len(actual.get_subset("val")))
         self.assertEqual(6, len(actual.get_subset("test")))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_split_for_detection_gives_error(self):
         source, _ = self._generate_detection_segmentation_dataset(
             annotation_type=self._get_append_bbox("cvat"),
@@ -864,7 +847,6 @@ class SplitterTest(TestCase):
                 splits = [("train", 0.5), ("train", 0.2), ("test", 0.3)]
                 splitter.Split(source, task, splits)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_no_subset_name_and_count_restriction(self):
         splits = [
             ("_train", 0.5),
@@ -925,7 +907,6 @@ class SplitterTest(TestCase):
             self.assertEqual(2, len(actual.get_subset("test*")))
             self.assertEqual(1, len(actual.get_subset("test2")))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_split_for_segmentation(self):
         with self.subTest("mask annotation"):
             dtypes = ["coco", "voc", "labelme", "mot"]
@@ -1038,7 +1019,6 @@ class SplitterTest(TestCase):
             self.assertEqual(list(r1.get_subset("test")), list(r2.get_subset("test")))
             self.assertNotEqual(list(r1.get_subset("test")), list(r3.get_subset("test")))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_split_for_segmentation_with_unlabeled(self):
         with self.subTest("mask annotation"):
             source, _ = self._generate_detection_segmentation_dataset(
@@ -1072,7 +1052,6 @@ class SplitterTest(TestCase):
             self.assertEqual(4, len(actual.get_subset("val")))
             self.assertEqual(6, len(actual.get_subset("test")))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_split_for_segmentation_gives_error(self):
         with self.subTest("mask annotation"):
             source, _ = self._generate_detection_segmentation_dataset(

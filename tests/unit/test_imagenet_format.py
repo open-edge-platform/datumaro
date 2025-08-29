@@ -19,8 +19,6 @@ from datumaro.plugins.data_formats.imagenet import (
     ImagenetWithSubsetDirsImporter,
 )
 
-from ..requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import (
     TestCaseHelper,
@@ -125,7 +123,6 @@ class ImagenetFormatTest:
     helper = TestCaseHelper()
     exporter = ImagenetExporter
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize(
         "fxt_test_case",
         [
@@ -162,7 +159,6 @@ class ImagenetWithSubsetDirsFormatTest(ImagenetFormatTest):
         )
         return _to_subsets(source), _to_subsets(expected)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize(
         "fxt_test_case_with_subsets",
         [
@@ -213,7 +209,6 @@ class ImagenetImporterTest:
             categories={AnnotationType.label: label_categories},
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("dataset_cls, is_stream", [(Dataset, False), (StreamDataset, True)])
     def test_can_import(self, dataset_cls, is_stream, helper_tc):
         expected_dataset = self._create_expected_dataset()
@@ -224,12 +219,10 @@ class ImagenetImporterTest:
 
         compare_datasets(helper_tc, expected_dataset, dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_detect_imagenet(self):
         detected_formats = Environment().detect_dataset(self.DUMMY_DATASET_DIR)
         assert [self.IMPORTER_NAME] == detected_formats
 
-    @mark_requirement(Requirements.DATUM_673)
     def test_can_pickle(self, helper_tc):
         source = Dataset.import_from(self.DUMMY_DATASET_DIR, format=self.IMPORTER_NAME)
 
@@ -242,7 +235,6 @@ class ImagenetWithSubsetDirsImporterTest(ImagenetImporterTest):
     DUMMY_DATASET_DIR = get_test_asset_path("imagenet_subsets_dataset")
     IMPORTER_NAME = ImagenetWithSubsetDirsImporter.NAME
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("dataset_cls, is_stream", [(Dataset, False), (StreamDataset, True)])
     def test_can_import(self, dataset_cls, is_stream, helper_tc):
         dataset = dataset_cls.import_from(

@@ -10,7 +10,6 @@ from datumaro.components.environment import Environment
 from datumaro.components.media import Image, PointCloud
 from datumaro.plugins.data_formats.kitti_3d.importer import Kitti3dImporter
 
-from tests.requirements import Requirements, mark_requirement
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import compare_datasets_3d
 
@@ -19,12 +18,10 @@ DUMMY_SUBSET_DATASET_DIR = get_test_asset_path("kitti_dataset", "kitti_3d_with_s
 
 
 class Kitti3DImporterTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_detect(self):
         detected_formats = Environment().detect_dataset(DUMMY_DATASET_DIR)
         self.assertEqual([Kitti3dImporter.NAME], detected_formats)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_load(self):
         """
         <b>Description:</b>
@@ -126,7 +123,6 @@ class Kitti3DImporterTest(TestCase):
 
         compare_datasets_3d(self, expected_dataset, parsed_dataset, require_point_cloud=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_load_with_subset(self):
         """
         <b>Description:</b>

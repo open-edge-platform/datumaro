@@ -15,14 +15,11 @@ from datumaro.components.media import Image
 from datumaro.plugins.data_formats.camvid import CamvidExporter, CamvidImporter
 from datumaro.util.meta_file_util import parse_meta_file
 
-from ..requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, check_save_and_load, compare_datasets
 
 
 class CamvidFormatTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_write_and_parse_labelmap(self):
         src_label_map = Camvid.CamvidLabelMap
 
@@ -33,7 +30,6 @@ class CamvidFormatTest(TestCase):
 
             self.assertEqual(src_label_map, dst_label_map)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_write_and_parse_meta_file(self):
         src_label_map = Camvid.CamvidLabelMap
 
@@ -61,7 +57,6 @@ class TestExtractorBase(DatasetBase):
 
 
 class CamvidImportTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_import(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -111,14 +106,12 @@ class CamvidImportTest(TestCase):
 
         compare_datasets(self, source_dataset, parsed_dataset)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_detect_camvid(self):
         detected_formats = Environment().detect_dataset(DUMMY_DATASET_DIR)
         self.assertEqual([CamvidImporter.NAME], detected_formats)
 
 
 class CamvidExporterTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def _test_save_and_load(
         self, source_dataset, converter, test_dir, target_dataset=None, importer_args=None, **kwargs
     ):
@@ -133,7 +126,6 @@ class CamvidExporterTest(TestCase):
             **kwargs,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_camvid_segm(self):
         class TestExtractor(TestExtractorBase):
             def __iter__(self):
@@ -157,7 +149,6 @@ class CamvidExporterTest(TestCase):
                 TestExtractor(), partial(CamvidExporter.convert, label_map="camvid"), test_dir
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_camvid_segm_unpainted(self):
         class TestExtractor(TestExtractorBase):
             def __iter__(self):
@@ -201,7 +192,6 @@ class CamvidExporterTest(TestCase):
                 target_dataset=DstExtractor(),
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_no_subsets(self):
         class TestExtractor(TestExtractorBase):
             def __iter__(self):
@@ -231,7 +221,6 @@ class CamvidExporterTest(TestCase):
                 TestExtractor(), partial(CamvidExporter.convert, label_map="camvid"), test_dir
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_cyrillic_and_spaces_in_filename(self):
         class TestExtractor(TestExtractorBase):
             def __iter__(self):
@@ -253,7 +242,6 @@ class CamvidExporterTest(TestCase):
                 TestExtractor(), partial(CamvidExporter.convert, label_map="camvid"), test_dir
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_with_no_masks(self):
         class TestExtractor(TestExtractorBase):
             def __iter__(self):
@@ -272,7 +260,6 @@ class CamvidExporterTest(TestCase):
                 TestExtractor(), partial(CamvidExporter.convert, label_map="camvid"), test_dir
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_dataset_with_source_labelmap_undefined(self):
         class SrcExtractor(TestExtractorBase):
             def __iter__(self):
@@ -319,7 +306,6 @@ class CamvidExporterTest(TestCase):
                 target_dataset=DstExtractor(),
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_dataset_with_source_labelmap_defined(self):
         class SrcExtractor(TestExtractorBase):
             def __iter__(self):
@@ -365,7 +351,6 @@ class CamvidExporterTest(TestCase):
                 target_dataset=DstExtractor(),
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_image_with_arbitrary_extension(self):
         class SrcExtractor(TestExtractorBase):
             def __iter__(self):
@@ -426,7 +411,6 @@ class CamvidExporterTest(TestCase):
                 target_dataset=DstExtractor(),
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_inplace_save_writes_only_updated_data(self):
         src_mask_cat = MaskCategories.generate(3, include_background=False)
 
@@ -489,7 +473,6 @@ class CamvidExporterTest(TestCase):
                 self, expected, Dataset.import_from(path, "camvid"), require_media=True
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_dataset_with_meta_file(self):
         class SrcExtractor(TestExtractorBase):
             def __iter__(self):

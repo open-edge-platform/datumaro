@@ -19,8 +19,6 @@ from datumaro.plugins.data_formats.mpii.mpii_mat import (
     MpiiImporter,
 )
 
-from ..requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import compare_datasets
 
@@ -28,7 +26,6 @@ DUMMY_DATASET_DIR = get_test_asset_path("mpii_dataset")
 
 
 class MpiiImporterTest(TestCase):
-    @mark_requirement(Requirements.DATUM_580)
     def test_can_import(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -227,7 +224,6 @@ class MpiiImporterTest(TestCase):
 
         compare_datasets(self, expected_dataset, dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_580)
     def test_can_detect(self):
         detected_formats = Environment().detect_dataset(DUMMY_DATASET_DIR)
         self.assertEqual([MpiiImporter.NAME], detected_formats)

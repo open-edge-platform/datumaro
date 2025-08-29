@@ -22,8 +22,6 @@ from datumaro.plugins.data_formats.datumaro.exporter import DatumaroExporter
 from datumaro.plugins.data_formats.datumaro.format import DatumaroPath
 from datumaro.plugins.data_formats.datumaro.importer import DatumaroImporter
 
-from ....requirements import Requirements, mark_requirement
-
 from tests.utils.test_utils import (
     Dimensions,
     check_save_and_load,
@@ -64,7 +62,6 @@ class DatumaroFormatTest:
             **kwargs,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize(
         "fxt_dataset, compare, require_media",
         [
@@ -168,7 +165,6 @@ class DatumaroFormatTest:
             stream=stream,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("require_media", [True, False])
     @pytest.mark.parametrize("stream", [True, False])
     def test_cannot_export_dataset_with_subset_containing_path_separators(
@@ -193,7 +189,6 @@ class DatumaroFormatTest:
                 stream=stream,
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_export_video_only_once(
         self,
         fxt_test_datumaro_format_video_dataset: Dataset,
@@ -205,7 +200,6 @@ class DatumaroFormatTest:
             fxt_test_datumaro_format_video_dataset.export(test_dir, "datumaro", save_media=True)
             assert mocked_save.call_count == 2  # train/video.avi, test/video.avi
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize(
         "fxt_dataset_pair, compare, require_media, dimension",
         [
@@ -240,7 +234,6 @@ class DatumaroFormatTest:
             dimension=dimension,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize(
         "fxt_dataset",
         ("fxt_test_datumaro_format_dataset", "fxt_test_datumaro_format_video_dataset"),
@@ -253,7 +246,6 @@ class DatumaroFormatTest:
         assert [self.importer.NAME] == detected_formats
 
     # Below is testing special cases...
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_inplace_save_writes_only_updated_data_with_direct_changes(self, test_dir, helper_tc):
         expected = Dataset.from_iterable(
             [
@@ -294,7 +286,6 @@ class DatumaroFormatTest:
             require_media=True,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_inplace_save_writes_only_updated_data_with_transforms(self, test_dir, helper_tc):
         expected = Dataset.from_iterable(
             [
@@ -335,7 +326,6 @@ class DatumaroFormatTest:
 
         compare_datasets(helper_tc, expected, Dataset.import_from(test_dir, format=self.format))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_version_compatibility(self, fxt_wrong_version_dir):
         with pytest.raises(DatasetImportError):
             Dataset.import_from(fxt_wrong_version_dir, "datumaro")

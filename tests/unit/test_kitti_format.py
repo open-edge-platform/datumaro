@@ -26,8 +26,6 @@ from datumaro.plugins.data_formats.kitti.importer import (
 )
 from datumaro.util.meta_file_util import parse_meta_file
 
-from ..requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, check_save_and_load, compare_datasets
 
@@ -35,7 +33,6 @@ DUMMY_DATASET_DIR = get_test_asset_path("kitti_dataset")
 
 
 class KittiFormatTest(TestCase):
-    @mark_requirement(Requirements.DATUM_280)
     def test_can_write_and_parse_labelmap(self):
         src_label_map = KittiLabelMap
 
@@ -47,7 +44,6 @@ class KittiFormatTest(TestCase):
 
             self.assertEqual(src_label_map, dst_label_map)
 
-    @mark_requirement(Requirements.DATUM_280)
     def test_can_write_and_parse_dataset_meta_file(self):
         src_label_map = KittiLabelMap
 
@@ -63,7 +59,6 @@ class KittiFormatTest(TestCase):
 
 
 class KittiImportTest(TestCase):
-    @mark_requirement(Requirements.DATUM_280)
     def test_can_import_segmentation(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -127,7 +122,6 @@ class KittiImportTest(TestCase):
 
         compare_datasets(self, source_dataset, parsed_dataset)
 
-    @mark_requirement(Requirements.DATUM_280)
     def test_can_import_detection(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -200,7 +194,6 @@ class KittiImportTest(TestCase):
 
         compare_datasets(self, source_dataset, parsed_dataset)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_detect_kitti(self):
         matrix = [
             # Whole dataset
@@ -254,7 +247,6 @@ class KittiExporterTest(TestCase):
             **kwargs,
         )
 
-    @mark_requirement(Requirements.DATUM_280)
     def test_can_save_kitti_segm(self):
         class TestExtractor(TestExtractorBase):
             def __iter__(self):
@@ -314,7 +306,6 @@ class KittiExporterTest(TestCase):
                 test_dir,
             )
 
-    @mark_requirement(Requirements.DATUM_280)
     def test_can_save_kitti_detection(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -370,7 +361,6 @@ class KittiExporterTest(TestCase):
                 test_dir,
             )
 
-    @mark_requirement(Requirements.DATUM_280)
     def test_can_save_kitti_segm_unpainted(self):
         class TestExtractor(TestExtractorBase):
             def __iter__(self):
@@ -413,7 +403,6 @@ class KittiExporterTest(TestCase):
                 test_dir,
             )
 
-    @mark_requirement(Requirements.DATUM_280)
     def test_can_save_kitti_dataset_with_no_subsets(self):
         class TestExtractor(TestExtractorBase):
             def __iter__(self):
@@ -465,7 +454,6 @@ class KittiExporterTest(TestCase):
                 test_dir,
             )
 
-    @mark_requirement(Requirements.DATUM_280)
     def test_can_save_kitti_dataset_without_frame_and_sequence(self):
         class TestExtractor(TestExtractorBase):
             def __iter__(self):
@@ -500,7 +488,6 @@ class KittiExporterTest(TestCase):
                 test_dir,
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_cyrillic_and_spaces_in_filename(self):
         class TestExtractor(TestExtractorBase):
             def __iter__(self):
@@ -534,7 +521,6 @@ class KittiExporterTest(TestCase):
                 test_dir,
             )
 
-    @mark_requirement(Requirements.DATUM_280)
     def test_can_save_kitti_dataset_with_complex_id(self):
         class TestExtractor(TestExtractorBase):
             def __iter__(self):
@@ -569,7 +555,6 @@ class KittiExporterTest(TestCase):
                 test_dir,
             )
 
-    @mark_requirement(Requirements.DATUM_280)
     def test_can_save_with_no_masks(self):
         class TestExtractor(TestExtractorBase):
             def __iter__(self):
@@ -590,7 +575,6 @@ class KittiExporterTest(TestCase):
                 test_dir,
             )
 
-    @mark_requirement(Requirements.DATUM_280)
     def test_dataset_with_source_labelmap_undefined(self):
         class SrcExtractor(TestExtractorBase):
             def __iter__(self):
@@ -658,7 +642,6 @@ class KittiExporterTest(TestCase):
                 target_dataset=DstExtractor(),
             )
 
-    @mark_requirement(Requirements.DATUM_280)
     def test_dataset_with_source_labelmap_defined(self):
         class SrcExtractor(TestExtractorBase):
             def __iter__(self):
@@ -724,7 +707,6 @@ class KittiExporterTest(TestCase):
                 target_dataset=DstExtractor(),
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_image_with_arbitrary_extension(self):
         class TestExtractor(TestExtractorBase):
             def __iter__(self):
@@ -775,7 +757,6 @@ class KittiExporterTest(TestCase):
                 osp.isfile(osp.join(test_dir, "default", KittiPath.IMAGES_DIR, "q/1.jpeg"))
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_with_no_save_media_segmentation(self):
         class TestExtractor(TestExtractorBase):
             def __iter__(self):
@@ -807,7 +788,6 @@ class KittiExporterTest(TestCase):
                 test_dir,
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_with_no_save_media_detection(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -837,7 +817,6 @@ class KittiExporterTest(TestCase):
                 test_dir,
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_segmentation_with_unordered_labels(self):
         source_label_map = {
             "background": (0, 0, 0),
@@ -921,7 +900,6 @@ class KittiExporterTest(TestCase):
                 target_dataset=expected_dataset,
             )
 
-    @mark_requirement(Requirements.DATUM_280)
     def test_can_save_detection_with_score_attribute(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -977,7 +955,6 @@ class KittiExporterTest(TestCase):
                 test_dir,
             )
 
-    @mark_requirement(Requirements.DATUM_280)
     def test_can_save_detection_with_meta_file(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -1038,7 +1015,6 @@ class KittiExporterTest(TestCase):
                 test_dir,
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_segmentation_with_meta_file(self):
         class SrcExtractor(TestExtractorBase):
             def __iter__(self):

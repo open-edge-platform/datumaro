@@ -11,8 +11,6 @@ from datumaro.components.environment import Environment
 from datumaro.components.media import Image
 from datumaro.plugins.data_formats.mots import MotsImporter, MotsPngExporter
 
-from ..requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, check_save_and_load, compare_datasets
 
@@ -34,7 +32,6 @@ class MotsPngExporterTest(TestCase):
             **kwargs,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_masks(self):
         source = Dataset.from_iterable(
             [
@@ -125,7 +122,6 @@ class MotsPngExporterTest(TestCase):
                 target_dataset=target,
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_with_no_save_media(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -147,7 +143,6 @@ class MotsPngExporterTest(TestCase):
                 source_dataset, partial(MotsPngExporter.convert, save_media=False), test_dir
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_cyrillic_and_spaces_in_filename(self):
         source = Dataset.from_iterable(
             [
@@ -171,7 +166,6 @@ class MotsPngExporterTest(TestCase):
                 require_media=True,
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_image_with_arbitrary_extension(self):
         expected = Dataset.from_iterable(
             [
@@ -201,7 +195,6 @@ class MotsPngExporterTest(TestCase):
                 require_media=True,
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_with_meta_file(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -229,12 +222,10 @@ class MotsPngExporterTest(TestCase):
 
 
 class MotsImporterTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_detect(self):
         detected_formats = Environment().detect_dataset(DUMMY_DATASET_DIR)
         self.assertEqual([MotsImporter.NAME], detected_formats)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_import(self):
         target = Dataset.from_iterable(
             [

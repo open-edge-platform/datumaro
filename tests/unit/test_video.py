@@ -17,7 +17,6 @@ from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image, Video, VideoFrame
 from datumaro.util.scope import Scope, on_exit_do, scope_add, scoped
 
-from ..requirements import Requirements, mark_requirement
 from ..utils.video import make_sample_video
 
 from tests.utils.test_utils import TestDir, compare_datasets
@@ -30,7 +29,6 @@ def _make_sample_video(video_dir, fname="video.avi", frame_size=(4, 6), frames=4
 
 
 class VideoTest:
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @scoped
     def test_can_read_video(self, test_dir):
         video_path = _make_sample_video(test_dir)
@@ -40,7 +38,6 @@ class VideoTest:
         assert None is video.length
         assert (4, 6) == video.frame_size
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @scoped
     def test_can_read_frames_sequentially(self, test_dir):
         video_path = _make_sample_video(test_dir)
@@ -64,7 +61,6 @@ class VideoTest:
         with pytest.raises(IndexError):
             video.get_frame_data(idx + 1)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @scoped
     def test_can_read_frames_randomly(self, test_dir):
         video_path = _make_sample_video(test_dir)
@@ -79,7 +75,6 @@ class VideoTest:
         with pytest.raises(IndexError):
             frame = video[4]
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @scoped
     def test_can_skip_frames_between(self, test_dir):
         video_path = _make_sample_video(test_dir)
@@ -89,7 +84,6 @@ class VideoTest:
         for idx, frame in enumerate(video):
             assert 2 * idx == frame.index
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @scoped
     def test_can_skip_from_start(self, test_dir):
         video_path = _make_sample_video(test_dir)
@@ -98,7 +92,6 @@ class VideoTest:
 
         assert 1 == next(iter(video)).index
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @scoped
     def test_can_skip_from_end(self, test_dir):
         video_path = _make_sample_video(test_dir)
@@ -112,7 +105,6 @@ class VideoTest:
         assert 3 == video.length
         assert 2 == last_frame.index
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @scoped
     def test_check_invalid_length(self, test_dir):
         video_path = _make_sample_video(test_dir)
@@ -122,7 +114,6 @@ class VideoTest:
         with pytest.raises(ValueError):
             video.length
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @scoped
     def test_check_invalid_end_frame(self, test_dir):
         video_path = _make_sample_video(test_dir)
@@ -133,7 +124,6 @@ class VideoTest:
             for _ in video:
                 pass
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @scoped
     def test_can_init_frame_count_lazily(self, test_dir):
         video_path = _make_sample_video(test_dir)
@@ -147,7 +137,6 @@ class VideoTest:
 
         assert 4 == video.length
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @scoped
     def test_can_open_lazily(self, test_dir):
         video = Video(osp.join(test_dir, "path.mp4"))
@@ -155,7 +144,6 @@ class VideoTest:
         assert osp.join(test_dir, "path.mp4") == video.path
         assert ".mp4" == video.ext
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @scoped
     def test_can_compare(self, test_dir):
         video_path1 = _make_sample_video(test_dir)
@@ -172,7 +160,6 @@ class VideoTest:
         assert video1 != Video(video_path3)
         assert Video(video_path3, end_frame=3) == video1
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @scoped
     def test_can_preserve_zero_end_frame(self):
         video = Video("video.avi", start_frame=0, end_frame=0)
@@ -181,7 +168,6 @@ class VideoTest:
 
 
 class VideoExtractorTest:
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @scoped
     def test_can_read_frames(self, test_dir):
         video_path = _make_sample_video(test_dir)
@@ -202,7 +188,6 @@ class VideoExtractorTest:
 
         compare_datasets(TestCase(), expected, actual)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @scoped
     def test_can_split_and_load(self, test_dir):
         video_path = _make_sample_video(test_dir)
@@ -226,7 +211,6 @@ class VideoExtractorTest:
 
 @pytest.mark.new
 class VideoAnnotationTest:
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("dataset_format", ["datumaro", "datumaro_binary"])
     @scoped
     def test_can_video_annotation_export(self, dataset_format, test_dir):
@@ -253,7 +237,6 @@ class VideoAnnotationTest:
             actual = Dataset.import_from(dataset_path)
             compare_datasets(TestCase(), expected, actual)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @scoped
     def test_can_save_video(self, test_dir):
         video_path = _make_sample_video(test_dir)

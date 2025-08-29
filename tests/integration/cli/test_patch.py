@@ -8,14 +8,11 @@ from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image
 
-from ...requirements import Requirements, mark_requirement
-
 from tests.utils.test_utils import TestDir, compare_datasets
 from tests.utils.test_utils import run_datum as run
 
 
 class PatchTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_run_patch(self):
         dataset = Dataset.from_iterable(
             [
@@ -113,7 +110,6 @@ class PatchTest(TestCase):
                 ignored_attrs="*",
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_patch_fails_on_inplace_update_without_overwrite(self):
         dataset = Dataset.from_iterable(
             [
@@ -146,7 +142,6 @@ class PatchTest(TestCase):
 
             run(self, "patch", dataset_url + ":coco", patch_url + ":coco", expected_code=1)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_patch_fails_on_inplace_update_of_stage(self):
         dataset = Dataset.from_iterable(
             [

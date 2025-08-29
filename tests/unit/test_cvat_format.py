@@ -23,8 +23,6 @@ from datumaro.plugins.data_formats.cvat.base import CvatImporter
 from datumaro.plugins.data_formats.cvat.exporter import CvatExporter
 from datumaro.plugins.transforms import ProjectLabels
 
-from ..requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, check_save_and_load, compare_datasets
 
@@ -140,25 +138,21 @@ EXPECTED_IMAGE_DATASETS = [
 
 
 class CvatImporterTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_detect_image(self):
         for dataset_dir in DUMMY_IMAGE_DATASET_DIRS:
             detected_formats = Environment().detect_dataset(dataset_dir)
             self.assertEqual([CvatImporter.NAME], detected_formats)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_detect_video(self):
         detected_formats = Environment().detect_dataset(DUMMY_VIDEO_DATASET_DIR)
         self.assertEqual([CvatImporter.NAME], detected_formats)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_load_image(self):
         for expected_dataset, dataset_dir in zip(EXPECTED_IMAGE_DATASETS, DUMMY_IMAGE_DATASET_DIRS):
             parsed_dataset = Dataset.import_from(dataset_dir, "cvat")
 
             compare_datasets(self, expected_dataset, parsed_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_load_video(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -302,7 +296,6 @@ class CvatExporterTest(TestCase):
             **kwargs,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load(self):
         src_label_cat = LabelCategories(attributes={"occluded", "common"})
         for i in range(10):
@@ -450,7 +443,6 @@ class CvatExporterTest(TestCase):
                 require_media=True,
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_allow_undeclared_attrs(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -494,7 +486,6 @@ class CvatExporterTest(TestCase):
                 require_media=True,
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_relative_paths(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -532,7 +523,6 @@ class CvatExporterTest(TestCase):
                 require_media=True,
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_cyrillic_and_spaces_in_filename(self):
         label_categories = LabelCategories(attributes={"occluded"})
         for i in range(10):
@@ -581,7 +571,6 @@ class CvatExporterTest(TestCase):
                 require_media=True,
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_image_with_arbitrary_extension(self):
         expected = Dataset.from_iterable(
             [
@@ -609,7 +598,6 @@ class CvatExporterTest(TestCase):
             self.assertTrue(osp.isfile(osp.join(test_dir, "images", "q", "1.jpeg")))
             self.assertTrue(osp.isfile(osp.join(test_dir, "images", "a", "b", "c", "2.bmp")))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_preserve_frame_ids(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -630,7 +618,6 @@ class CvatExporterTest(TestCase):
                 require_media=True,
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_reindex(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -662,7 +649,6 @@ class CvatExporterTest(TestCase):
                 require_media=True,
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_inplace_save_writes_only_updated_data(self):
         expected = Dataset.from_iterable(
             [
@@ -698,7 +684,6 @@ class CvatExporterTest(TestCase):
                 ignored_attrs={"frame"},
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_video_export(self):
         dataset = Dataset.import_from(
             DUMMY_VIDEO_DATASET_FILE,

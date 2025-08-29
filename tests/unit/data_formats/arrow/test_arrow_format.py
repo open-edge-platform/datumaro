@@ -15,8 +15,6 @@ from datumaro.components.media import FromFileMixin, Image
 from datumaro.plugins.data_formats.arrow import ArrowExporter, ArrowImporter
 from datumaro.plugins.transforms import Sort
 
-from ....requirements import Requirements, mark_requirement
-
 from tests.utils.test_utils import check_save_and_load, compare_datasets, compare_datasets_strict
 
 
@@ -49,7 +47,6 @@ class ArrowFormatTest:
             **kwargs,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize(
         [
             "fxt_dataset",
@@ -240,7 +237,6 @@ class ArrowFormatTest:
             post_processing=post_processing,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_detect(self, fxt_test_datumaro_format_dataset, test_dir):
         self.exporter.convert(fxt_test_datumaro_format_dataset, save_dir=test_dir)
 
@@ -293,7 +289,6 @@ class ArrowFormatTest:
                     assert item_b.media.data is None
 
     # Below is testing special cases...
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_inplace_save_writes_only_updated_data_with_direct_changes(self, test_dir, helper_tc):
         expected = Dataset.from_iterable(
             [
@@ -324,7 +319,6 @@ class ArrowFormatTest:
             helper_tc, expected, Dataset.import_from(test_dir, format=self.format)
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_inplace_save_writes_only_updated_data_with_transforms(self, test_dir, helper_tc):
         expected = Dataset.from_iterable(
             [

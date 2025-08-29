@@ -51,7 +51,6 @@ from datumaro.plugins.data_formats.voc.importer import (
 from datumaro.util.image import save_image
 from datumaro.util.mask_tools import load_mask
 
-from ...requirements import Requirements, mark_requirement
 from .base import TestDataFormatBase
 
 from tests.utils.assets import get_test_asset_path
@@ -342,7 +341,6 @@ class VocFormatImportExportTest(TestDataFormatBase):
             (DUMMY_DATASET_DIR, "voc_detection"),
         ],
     )
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_pickle(
         self, fxt_dataset_dir: str, fxt_format: str, request: pytest.FixtureRequest
     ):
@@ -353,7 +351,6 @@ class VocFormatImportExportTest(TestDataFormatBase):
         helper_tc = request.getfixturevalue("helper_tc")
         compare_datasets(helper_tc, source, parsed)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_colormap_generator(self):
         reference = np.array(
             [
@@ -384,7 +381,6 @@ class VocFormatImportExportTest(TestDataFormatBase):
 
         assert np.array_equal(reference, list(VOC.VocColormap.values())) == True
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_write_and_parse_labelmap(self, test_dir: str):
         src_label_map = VOC.make_voc_label_map()
         src_label_map["qq"] = [None, ["part1", "part2"], ["act1", "act2"]]
@@ -397,7 +393,6 @@ class VocFormatImportExportTest(TestDataFormatBase):
 
         assert src_label_map == dst_label_map
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_write_and_parse_dataset_meta_file(self, test_dir: str):
         src_label_map = VOC.make_voc_label_map()
         src_label_map["qq"] = [None, ["part1", "part2"], ["act1", "act2"]]
@@ -408,7 +403,6 @@ class VocFormatImportExportTest(TestDataFormatBase):
 
         assert src_label_map == dst_label_map
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_report_invalid_line_in_labelmap(self, test_dir: str):
         path = osp.join(test_dir, "labelmap.txt")
         with open(path, "w") as f:
@@ -421,7 +415,6 @@ class VocFormatImportExportTest(TestDataFormatBase):
             == "Label description has wrong number of fields '1'. Expected 4 ':'-separated fields."
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_report_repeated_label_in_labelmap(self, test_dir: str):
         path = osp.join(test_dir, "labelmap.txt")
         with open(path, "w") as f:
@@ -432,7 +425,6 @@ class VocFormatImportExportTest(TestDataFormatBase):
             VOC.parse_label_map(path)
         assert str(err_info.value) == "Label 'a' is already defined in the label map"
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_report_invalid_color_in_labelmap(self, test_dir: str):
         path = osp.join(test_dir, "labelmap.txt")
         with open(path, "w") as f:
@@ -447,7 +439,6 @@ class VocFormatImportExportTest(TestDataFormatBase):
 
 
 class VocFormatPracticeTest:
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_attributes(self, test_dir: str, request: pytest.FixtureRequest):
         src_dataset = Dataset.from_iterable(
             [
@@ -505,7 +496,6 @@ class VocFormatPracticeTest:
         helper_tc = request.getfixturevalue("helper_tc")
         compare_datasets(helper_tc, dst_dataset, imported, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_voc_with_custom_labelmap(self, test_dir: str, request: pytest.FixtureRequest):
         def src_categories():
             label_cat = LabelCategories()
@@ -588,7 +578,6 @@ class VocFormatPracticeTest:
         helper_tc = request.getfixturevalue("helper_tc")
         compare_datasets(helper_tc, dst_dataset, imported_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_voc_segm_unpainted(self, test_dir: str, request: pytest.FixtureRequest):
         src_dataset = Dataset.from_iterable(
             [
@@ -642,7 +631,6 @@ class VocFormatPracticeTest:
         helper_tc = request.getfixturevalue("helper_tc")
         compare_datasets(helper_tc, dst_dataset, imported_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_voc_segm_with_many_instances(
         self, test_dir: str, request: pytest.FixtureRequest
     ):
@@ -697,7 +685,6 @@ class VocFormatPracticeTest:
         helper_tc = request.getfixturevalue("helper_tc")
         compare_datasets(helper_tc, dst_dataset, imported_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_dataset_with_source_labelmap_undefined(
         self, test_dir: str, request: pytest.FixtureRequest
     ):
@@ -769,7 +756,6 @@ class VocFormatPracticeTest:
         helper_tc = request.getfixturevalue("helper_tc")
         compare_datasets(helper_tc, dst_dataset, imported_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_dataset_with_source_labelmap_defined(
         self, test_dir: str, request: pytest.FixtureRequest
     ):
@@ -843,7 +829,6 @@ class VocFormatPracticeTest:
         helper_tc = request.getfixturevalue("helper_tc")
         compare_datasets(helper_tc, dst_dataset, imported_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_inplace_save_writes_only_updated_data_with_transforms(
         self, test_dir: str, request: pytest.FixtureRequest
     ):
@@ -934,7 +919,6 @@ class VocFormatPracticeTest:
         helper_tc = request.getfixturevalue("helper_tc")
         compare_datasets(helper_tc, dst_dataset, src_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_inplace_save_writes_only_updated_data_with_direct_changes(
         self, test_dir: str, request: pytest.FixtureRequest
     ):
@@ -1026,7 +1010,6 @@ class VocFormatPracticeTest:
         helper_tc = request.getfixturevalue("helper_tc")
         compare_datasets(helper_tc, dst_dataset, imported_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_no_data_images(
         self, test_dir: str, request: pytest.FixtureRequest
     ):
@@ -1082,7 +1065,6 @@ class VocFormatPracticeTest:
             (VocTask.voc_action, VocActionImporter, VocActionExporter),
         ],
     )
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_only_images(
         self, fxt_task, fxt_importer, fxt_exporter, test_dir: str, request: pytest.FixtureRequest
     ):
@@ -1121,7 +1103,6 @@ class VocFormatPracticeTest:
             (VocTask.voc_action, VocActionImporter, VocActionExporter),
         ],
     )
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_no_subsets(
         self, fxt_task, fxt_importer, fxt_exporter, test_dir: str, request: pytest.FixtureRequest
     ):
@@ -1159,7 +1140,6 @@ class VocFormatPracticeTest:
             (VocTask.voc_action, VocActionImporter, VocActionExporter),
         ],
     )
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_spaces_in_filename(
         self, fxt_task, fxt_importer, fxt_exporter, test_dir: str, request: pytest.FixtureRequest
     ):
@@ -1185,7 +1165,6 @@ class VocFormatPracticeTest:
         helper_tc = request.getfixturevalue("helper_tc")
         compare_datasets(helper_tc, src_dataset, imported_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_background_masks_dont_introduce_instances_but_cover_others(self, test_dir: str):
         dataset = Dataset.from_iterable(
             [
@@ -1224,7 +1203,6 @@ class VocFormatPracticeTest:
             (VocTask.voc_action, VocActionImporter, VocActionExporter),
         ],
     )
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_image_info(
         self, fxt_task, fxt_importer, fxt_exporter, test_dir: str, request: pytest.FixtureRequest
     ):
@@ -1261,7 +1239,6 @@ class VocFormatPracticeTest:
             (VocTask.voc_action, VocActionImporter, VocActionExporter),
         ],
     )
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_image_with_arbitrary_extension(
         self, fxt_task, fxt_importer, fxt_exporter, test_dir: str, request: pytest.FixtureRequest
     ):
@@ -1301,7 +1278,6 @@ class VocFormatPracticeTest:
             (VocTask.voc_action, VocActionImporter, VocActionExporter),
         ],
     )
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_save_dataset_with_relative_paths(
         self, fxt_task, fxt_importer, fxt_exporter, test_dir: str, request: pytest.FixtureRequest
     ):
@@ -1375,7 +1351,6 @@ class VocFormatErrorTest:
             ("voc_action", "Action"),
         ],
     )
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_parse_xml_without_errors(
         self, fxt_format: str, fxt_format_dir: str, test_dir: str
     ):
@@ -1384,7 +1359,6 @@ class VocFormatErrorTest:
         dataset = Dataset.import_from(test_dir, fxt_format)
         assert len(dataset) == 1
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_invalid_label_in_xml(self, test_dir: str):
         def mangle_xml(xml: ElementTree.ElementBase):
             xml.find("object/name").text = "test"
@@ -1422,7 +1396,6 @@ class VocFormatErrorTest:
             ("object/point/y", "a"),
         ],
     )
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_invalid_field_in_xml(
         self, fxt_format: str, fxt_format_dir: str, fxt_key: str, fxt_value: str, test_dir: str
     ):
@@ -1458,7 +1431,6 @@ class VocFormatErrorTest:
             "object/attributes/attribute/value",
         ],
     )
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_missing_field_in_xml(
         self, fxt_format: str, fxt_format_dir: str, fxt_key: str, test_dir: str
     ):
@@ -1472,7 +1444,6 @@ class VocFormatErrorTest:
             Dataset.import_from(test_dir, format=fxt_format).init_cache()
         assert "Missing annotation field" in str(err_info.value)
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_parse_classification_without_errors(
         self, test_dir: str, request: pytest.FixtureRequest
     ):
@@ -1503,7 +1474,6 @@ class VocFormatErrorTest:
         helper_tc = request.getfixturevalue("helper_tc")
         compare_datasets(helper_tc, expected, parsed)
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_missing_field_in_classification(self, test_dir: str):
         subset_file = osp.join(test_dir, "ImageSets", "Main", "test.txt")
         os.makedirs(osp.dirname(subset_file))
@@ -1518,7 +1488,6 @@ class VocFormatErrorTest:
             Dataset.import_from(test_dir, format="voc_classification").init_cache()
         assert str(err_info.value) == "cat_test.txt:1: invalid number of fields in line, expected 2"
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_invalid_annotation_value_in_classification(self, test_dir: str):
         subset_file = osp.join(test_dir, "ImageSets", "Main", "test.txt")
         os.makedirs(osp.dirname(subset_file))
@@ -1536,7 +1505,6 @@ class VocFormatErrorTest:
             == "cat_test.txt:1: unexpected class existence value '3', expected -1, 0 or 1"
         )
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_invalid_label_in_segmentation_cls_mask(self, test_dir: str):
         subset_file = osp.join(test_dir, "ImageSets", "Segmentation", "test.txt")
         os.makedirs(osp.dirname(subset_file))
@@ -1554,7 +1522,6 @@ class VocFormatErrorTest:
             == "Failed to import item ('a', 'test') annotation: Undeclared label '30'"
         )
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_invalid_label_in_segmentation_both_masks(self, test_dir: str):
         subset_file = osp.join(test_dir, "ImageSets", "Segmentation", "test.txt")
         os.makedirs(osp.dirname(subset_file))
@@ -1576,7 +1543,6 @@ class VocFormatErrorTest:
             == "Failed to import item ('a', 'test') annotation: Undeclared label '30'"
         )
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_invalid_quotes_in_lists_of_layout_task(self, test_dir: str):
         subset_file = osp.join(test_dir, "ImageSets", "Layout", "test.txt")
         os.makedirs(osp.dirname(subset_file))

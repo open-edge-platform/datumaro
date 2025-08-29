@@ -8,8 +8,6 @@ import numpy as np
 from datumaro.components.dataset import Dataset, DatasetItem
 from datumaro.components.media import Image
 
-from ...requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, compare_datasets
 from tests.utils.test_utils import run_datum as run
@@ -24,7 +22,6 @@ def make_zip_archive(src_path, dst_path):
 
 
 class ImageZipIntegrationScenarios(TestCase):
-    @mark_requirement(Requirements.DATUM_267)
     def test_can_save_and_load(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -60,7 +57,6 @@ class ImageZipIntegrationScenarios(TestCase):
             parsed_dataset = Dataset.import_from(export_path, format="image_zip")
             compare_datasets(self, source_dataset, parsed_dataset)
 
-    @mark_requirement(Requirements.DATUM_267)
     def test_can_export_zip_images_from_coco_dataset(self):
         with TestDir() as test_dir:
             coco_dir = get_test_asset_path(
@@ -92,7 +88,6 @@ class ImageZipIntegrationScenarios(TestCase):
                 images = {f.filename for f in zf.filelist}
                 self.assertTrue(images == {"a.jpg", "b.jpg"})
 
-    @mark_requirement(Requirements.DATUM_267)
     def test_can_change_extension_for_images_in_zip(self):
         source_dataset = Dataset.from_iterable(
             [

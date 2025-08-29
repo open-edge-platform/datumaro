@@ -15,13 +15,11 @@ from datumaro.plugins.data_formats.mvtec.importer import (
     MvtecSegmentationImporter,
 )
 
-from tests.requirements import Requirements, mark_requirement
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, compare_datasets
 
 
 class MVTecFormatTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_classification(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -49,7 +47,6 @@ class MVTecFormatTest(TestCase):
 
             compare_datasets(self, source_dataset, parsed_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_segmentation(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -82,7 +79,6 @@ class MVTecFormatTest(TestCase):
 
             compare_datasets(self, source_dataset, parsed_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_detection(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -120,7 +116,6 @@ DUMMY_DATASET_DIR = get_test_asset_path("mvtec_dataset", "category_0")
 
 
 class MvtecImporterTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_import_classification(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -151,7 +146,6 @@ class MvtecImporterTest(TestCase):
 
         compare_datasets(self, expected_dataset, dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_import_segmentation(self):
         mask_label_1 = np.pad(np.ones((4, 4), dtype=np.uint8), ((0, 4), (0, 4)), "constant")
         mask_label_2 = np.pad(np.ones((4, 4), dtype=np.uint8), ((4, 0), (4, 0)), "constant")
@@ -190,7 +184,6 @@ class MvtecImporterTest(TestCase):
 
         compare_datasets(self, expected_dataset, dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_import_detection(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -221,7 +214,6 @@ class MvtecImporterTest(TestCase):
 
         compare_datasets(self, expected_dataset, dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_detect_mvtec(self):
         env = Environment()
         path = DUMMY_DATASET_DIR
@@ -238,7 +230,6 @@ class MvtecImporterTest(TestCase):
 
 
 class MVTecExporterTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_segmentation_masks_saved_as_binary_image(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -259,7 +250,6 @@ class MVTecExporterTest(TestCase):
             MvtecExporter.convert(source_dataset, test_dir, save_media=True)
             assert cv2.imread(test_dir + "/ground_truth/label_1/000_mask.png").max() == 255
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_detection_masks_saved_as_binary_image(self):
         source_dataset = Dataset.from_iterable(
             [

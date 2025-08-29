@@ -7,7 +7,6 @@ import pytest
 from datumaro import Dataset, DatasetItem, HLOps
 from datumaro.components.annotation import Bbox, Ellipse, Label, Polygon
 
-from tests.requirements import Requirements, mark_requirement
 from tests.utils.test_utils import TestCaseHelper, TestDir
 from tests.utils.test_utils import compare_datasets as _compare_datasets
 
@@ -81,7 +80,6 @@ class HLOpsTest:
 
         compare_datasets(self, expected, actual)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_filter_by_annotation_types(self):
         annotations = [
             Label(0, id=0),

@@ -26,8 +26,6 @@ from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image
 from datumaro.components.visualizer import Visualizer
 
-from ..requirements import Requirements, mark_requirement
-
 
 @dataclass
 class GridSizeTestCase:
@@ -157,11 +155,9 @@ class LabelVisualizerTest(TestCaseClosePltFigure, VisualizerTestBase):
         ]
         cls.dataset = Dataset.from_iterable(cls.items)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_vis_one_sample(self):
         self._test_vis_one_sample("_draw_label", check_z_order=False)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_vis_gallery(self):
         self._test_vis_gallery(self.DEFAULT_GRID_SIZE_TEST_CASES)
 
@@ -191,11 +187,9 @@ class PointsVisualizerTest(TestCaseClosePltFigure, VisualizerTestBase):
         ]
         cls.dataset = Dataset.from_iterable(cls.items)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_vis_one_sample(self):
         self._test_vis_one_sample("_draw_points", check_z_order=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_vis_gallery(self):
         self._test_vis_gallery(self.DEFAULT_GRID_SIZE_TEST_CASES)
 
@@ -225,11 +219,9 @@ class MaskVisualizerTest(TestCaseClosePltFigure, VisualizerTestBase):
         ]
         cls.dataset = Dataset.from_iterable(cls.items)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_vis_one_sample(self):
         self._test_vis_one_sample("_draw_mask", check_z_order=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_vis_gallery(self):
         self._test_vis_gallery(self.DEFAULT_GRID_SIZE_TEST_CASES)
 
@@ -259,11 +251,9 @@ class PolygonVisualizerTest(TestCaseClosePltFigure, VisualizerTestBase):
         ]
         cls.dataset = Dataset.from_iterable(cls.items)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_vis_one_sample(self):
         self._test_vis_one_sample("_draw_polygon", check_z_order=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_vis_gallery(self):
         self._test_vis_gallery(self.DEFAULT_GRID_SIZE_TEST_CASES)
 
@@ -293,11 +283,9 @@ class PolyLineVisualizerTest(TestCaseClosePltFigure, VisualizerTestBase):
         ]
         cls.dataset = Dataset.from_iterable(cls.items)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_vis_one_sample(self):
         self._test_vis_one_sample("_draw_polygon", check_z_order=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_vis_gallery(self):
         self._test_vis_gallery(self.DEFAULT_GRID_SIZE_TEST_CASES)
 
@@ -330,11 +318,9 @@ class BboxVisualizerTest(TestCaseClosePltFigure, VisualizerTestBase):
         ]
         cls.dataset = Dataset.from_iterable(cls.items)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_vis_one_sample(self):
         self._test_vis_one_sample("_draw_bbox")
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_vis_gallery(self):
         self._test_vis_gallery(self.DEFAULT_GRID_SIZE_TEST_CASES)
 
@@ -361,11 +347,9 @@ class CaptionVisualizerTest(TestCaseClosePltFigure, VisualizerTestBase):
         ]
         cls.dataset = Dataset.from_iterable(cls.items)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_vis_one_sample(self):
         self._test_vis_one_sample("_draw_caption", check_z_order=False)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_vis_gallery(self):
         self._test_vis_gallery(self.DEFAULT_GRID_SIZE_TEST_CASES)
 
@@ -391,11 +375,9 @@ class SuperResolutionVisualizerTest(TestCaseClosePltFigure, VisualizerTestBase):
         ]
         cls.dataset = Dataset.from_iterable(cls.items)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_vis_one_sample(self):
         self._test_vis_one_sample("_draw_super_resolution_annotation", check_z_order=False)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_vis_gallery(self):
         self._test_vis_gallery(self.DEFAULT_GRID_SIZE_TEST_CASES)
 
@@ -421,11 +403,9 @@ class DepthVisualizerTest(TestCaseClosePltFigure, VisualizerTestBase):
         ]
         cls.dataset = Dataset.from_iterable(cls.items)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_vis_one_sample(self):
         self._test_vis_one_sample("_draw_depth_annotation", check_z_order=False)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_vis_gallery(self):
         self._test_vis_gallery(self.DEFAULT_GRID_SIZE_TEST_CASES)
 
@@ -458,10 +438,8 @@ class EllipseVisualizerTest(TestCaseClosePltFigure, VisualizerTestBase):
         ]
         cls.dataset = Dataset.from_iterable(cls.items)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_vis_one_sample(self):
         self._test_vis_one_sample("_draw_ellipse")
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_vis_gallery(self):
         self._test_vis_gallery(self.DEFAULT_GRID_SIZE_TEST_CASES)

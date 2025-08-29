@@ -25,14 +25,11 @@ from datumaro.plugins.data_formats.yolo.base import YoloStrictBase
 from datumaro.plugins.data_formats.yolo.exporter import YoloExporter
 from datumaro.util.image import save_image
 
-from ...requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, compare_datasets, compare_datasets_strict
 
 
 class YoloExportertTest:
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("dataset_cls, is_stream", [(Dataset, False), (StreamDataset, True)])
     def test_can_save_and_load(self, dataset_cls, is_stream, test_dir, helper_tc):
         source_dataset = Dataset.from_iterable(
@@ -77,7 +74,6 @@ class YoloExportertTest:
 
         compare_datasets(helper_tc, source_dataset, parsed_dataset)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("dataset_cls, is_stream", [(Dataset, False), (StreamDataset, True)])
     def test_can_save_dataset_with_image_info(self, dataset_cls, is_stream, test_dir, helper_tc):
         source_dataset = Dataset.from_iterable(
@@ -105,7 +101,6 @@ class YoloExportertTest:
 
         compare_datasets(helper_tc, source_dataset, parsed_dataset)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("dataset_cls, is_stream", [(Dataset, False), (StreamDataset, True)])
     def test_can_load_dataset_with_exact_image_info(
         self, dataset_cls, is_stream, test_dir, helper_tc
@@ -132,7 +127,6 @@ class YoloExportertTest:
 
         compare_datasets(helper_tc, source_dataset, parsed_dataset)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("dataset_cls, is_stream", [(Dataset, False), (StreamDataset, True)])
     def test_can_save_dataset_with_cyrillic_and_spaces_in_filename(
         self, dataset_cls, is_stream, test_dir, helper_tc
@@ -158,7 +152,6 @@ class YoloExportertTest:
 
         compare_datasets(helper_tc, source_dataset, parsed_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("dataset_cls, is_stream", [(Dataset, False), (StreamDataset, True)])
     @pytest.mark.parametrize("save_media", [True, False])
     def test_relative_paths(self, dataset_cls, is_stream, save_media, test_dir, helper_tc):
@@ -183,7 +176,6 @@ class YoloExportertTest:
 
         compare_datasets(helper_tc, source_dataset, parsed_dataset)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("dataset_cls, is_stream", [(Dataset, False), (StreamDataset, True)])
     def test_can_save_and_load_image_with_arbitrary_extension(
         self, dataset_cls, is_stream, test_dir, helper_tc
@@ -210,7 +202,6 @@ class YoloExportertTest:
 
         compare_datasets(helper_tc, dataset, parsed_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("dataset_cls, is_stream", [(Dataset, False), (StreamDataset, True)])
     def test_inplace_save_writes_only_updated_data(
         self, dataset_cls, is_stream, test_dir, helper_tc
@@ -245,7 +236,6 @@ class YoloExportertTest:
         assert actual.is_stream == is_stream
         compare_datasets(helper_tc, expected, actual, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("dataset_cls, is_stream", [(Dataset, False), (StreamDataset, True)])
     def test_can_save_and_load_with_meta_file(self, dataset_cls, is_stream, test_dir, helper_tc):
         source_dataset = Dataset.from_iterable(
@@ -293,7 +283,6 @@ class YoloExportertTest:
         assert osp.isfile(osp.join(test_dir, "dataset_meta.json"))
         compare_datasets(helper_tc, source_dataset, parsed_dataset)
 
-    @mark_requirement(Requirements.DATUM_565)
     @pytest.mark.parametrize("dataset_cls, is_stream", [(Dataset, False), (StreamDataset, True)])
     def test_can_save_and_load_with_custom_subset_name(
         self, dataset_cls, is_stream, test_dir, helper_tc
@@ -319,7 +308,6 @@ class YoloExportertTest:
 
         compare_datasets(helper_tc, source_dataset, parsed_dataset)
 
-    @mark_requirement(Requirements.DATUM_565)
     def test_cant_save_with_reserved_subset_name(self):
         for subset in ["backup", "classes"]:
             dataset = Dataset.from_iterable(
@@ -337,7 +325,6 @@ class YoloExportertTest:
                 with pytest.raises(DatasetExportError, match=f"Can't export '{subset}' subset"):
                     YoloExporter.convert(dataset, test_dir)
 
-    @mark_requirement(Requirements.DATUM_609)
     @pytest.mark.parametrize("dataset_cls, is_stream", [(Dataset, False), (StreamDataset, True)])
     def test_can_save_and_load_without_path_prefix(
         self, dataset_cls, is_stream, test_dir, helper_tc
@@ -377,7 +364,6 @@ DUMMY_DATASET_DIR = get_test_asset_path("yolo_dataset", "strict")
 
 
 class YoloImporterTest:
-    @mark_requirement(Requirements.DATUM_673)
     @pytest.mark.parametrize("dataset_cls, is_stream", [(Dataset, False), (StreamDataset, True)])
     def test_can_pickle(self, dataset_cls, is_stream, helper_tc):
         source = dataset_cls.import_from(DUMMY_DATASET_DIR, format="yolo")
@@ -406,19 +392,16 @@ class YoloStrictBaseTest:
 
         return dataset
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_parse(self, fxt_dataset, test_dir, helper_tc):
         expected = fxt_dataset
 
         actual = Dataset.import_from(test_dir, "yolo")
         compare_datasets(helper_tc, expected, actual)
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_invalid_data_file(self, test_dir):
         with pytest.raises(DatasetImportError, match="Can't read dataset descriptor file"):
             YoloStrictBase(test_dir)
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_invalid_ann_line_format(self, fxt_dataset, test_dir):
         with open(osp.join(test_dir, "obj_train_data", "a.txt"), "w") as f:
             f.write("1 2 3\n")
@@ -428,7 +411,6 @@ class YoloStrictBaseTest:
         assert isinstance(capture.value.__cause__, InvalidAnnotationError)
         assert "Unexpected field count" in str(capture.value.__cause__)
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_invalid_label(self, fxt_dataset, test_dir):
         with open(osp.join(test_dir, "obj_train_data", "a.txt"), "w") as f:
             f.write("10 0.5 0.5 0.5 0.5\n")
@@ -438,7 +420,6 @@ class YoloStrictBaseTest:
         assert isinstance(capture.value.__cause__, UndeclaredLabelError)
         assert capture.value.__cause__.id == "10"
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     @pytest.mark.parametrize(
         "field, field_name",
         [
@@ -459,7 +440,6 @@ class YoloStrictBaseTest:
         assert isinstance(capture.value.__cause__, InvalidAnnotationError)
         assert field_name in str(capture.value.__cause__)
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_missing_ann_file(self, fxt_dataset, test_dir):
         os.remove(osp.join(test_dir, "obj_train_data", "a.txt"))
 
@@ -467,7 +447,6 @@ class YoloStrictBaseTest:
             Dataset.import_from(test_dir, "yolo").init_cache()
         assert isinstance(capture.value.__cause__, FileNotFoundError)
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_missing_image_info(self, fxt_dataset, test_dir):
         os.remove(osp.join(test_dir, "obj_train_data", "a.jpg"))
 
@@ -476,7 +455,6 @@ class YoloStrictBaseTest:
         assert isinstance(capture.value.__cause__, DatasetImportError)
         assert "Can't find image info" in str(capture.value.__cause__)
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_missing_subset_info(self, fxt_dataset, test_dir):
         os.remove(osp.join(test_dir, "train.txt"))
 

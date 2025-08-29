@@ -12,7 +12,6 @@ from datumaro.components.environment import Environment
 from datumaro.components.media import Image
 from datumaro.plugins.data_formats.ade20k2017 import Ade20k2017Importer
 
-from tests.requirements import Requirements, mark_requirement
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import compare_datasets
 
@@ -22,12 +21,10 @@ DUMMY_DATASET_DIR_META_FILE = get_test_asset_path("ade20k2017_dataset", "dataset
 
 
 class Ade20k2017ImporterTest(TestCase):
-    @mark_requirement(Requirements.DATUM_399)
     def test_can_detect(self):
         detected_formats = Environment().detect_dataset(DUMMY_DATASET_DIR)
         self.assertEqual([Ade20k2017Importer.NAME], detected_formats)
 
-    @mark_requirement(Requirements.DATUM_399)
     def test_can_import(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -71,7 +68,6 @@ class Ade20k2017ImporterTest(TestCase):
         print(imported_dataset)
         compare_datasets(self, expected_dataset, imported_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_399)
     def test_can_import_with_meta_file(self):
         expected_dataset = Dataset.from_iterable(
             [

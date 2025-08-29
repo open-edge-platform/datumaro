@@ -13,7 +13,6 @@ from datumaro.components.media import Image, PointCloud
 from datumaro.plugins.data_formats.kitti_raw.base import KittiRawImporter
 from datumaro.plugins.data_formats.kitti_raw.exporter import KittiRawExporter
 
-from tests.requirements import Requirements, mark_requirement
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import Dimensions, TestDir, check_save_and_load, compare_datasets_3d
 
@@ -21,12 +20,10 @@ DUMMY_DATASET_DIR = get_test_asset_path("kitti_dataset", "kitti_raw")
 
 
 class KittiRawImporterTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_detect(self):
         detected_formats = Environment().detect_dataset(DUMMY_DATASET_DIR)
         self.assertEqual([KittiRawImporter.NAME], detected_formats)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_load(self):
         pcd1 = osp.join(DUMMY_DATASET_DIR, "velodyne_points", "data", "0000000000.pcd")
         pcd2 = osp.join(DUMMY_DATASET_DIR, "velodyne_points", "data", "0000000001.pcd")
@@ -118,7 +115,6 @@ class KittiRawExporterTest(TestCase):
         path=osp.abspath(osp.join(DUMMY_DATASET_DIR, "IMAGE_00", "data", "0000000002.png"))
     )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def _test_save_and_load(
         self, source_dataset, converter, test_dir, target_dataset=None, importer_args=None, **kwargs
     ):
@@ -134,7 +130,6 @@ class KittiRawExporterTest(TestCase):
             **kwargs,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -299,7 +294,6 @@ class KittiRawExporterTest(TestCase):
                 require_point_cloud=True,
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_preserve_frame_ids(self):
         source_dataset = Dataset.from_iterable(
             [DatasetItem(id="abc", attributes={"frame": 40})],
@@ -310,7 +304,6 @@ class KittiRawExporterTest(TestCase):
         with TestDir() as test_dir:
             self._test_save_and_load(source_dataset, KittiRawExporter.convert, test_dir)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_reindex_frames(self):
         source_dataset = Dataset.from_iterable(
             [DatasetItem(id="abc")],
@@ -332,7 +325,6 @@ class KittiRawExporterTest(TestCase):
                 target_dataset=expected_dataset,
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_requires_track_id(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -351,7 +343,6 @@ class KittiRawExporterTest(TestCase):
             with self.assertRaisesRegex(Exception, "track_id"):
                 KittiRawExporter.convert(source_dataset, test_dir)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_reindex_allows_single_annotations(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -392,7 +383,6 @@ class KittiRawExporterTest(TestCase):
                 target_dataset=expected_dataset,
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_attributes(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -440,7 +430,6 @@ class KittiRawExporterTest(TestCase):
                 target_dataset=target_dataset,
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_discard_attributes(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -485,7 +474,6 @@ class KittiRawExporterTest(TestCase):
                 source_dataset, KittiRawExporter.convert, test_dir, target_dataset=target_dataset
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_without_annotations(self):
         source_dataset = Dataset.from_iterable(
             [DatasetItem(id="0000000000", attributes={"frame": 0})],
@@ -496,7 +484,6 @@ class KittiRawExporterTest(TestCase):
         with TestDir() as test_dir:
             self._test_save_and_load(source_dataset, KittiRawExporter.convert, test_dir)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_arbitrary_paths(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -549,7 +536,6 @@ class KittiRawExporterTest(TestCase):
             )
             self.assertTrue(osp.isfile(osp.join(test_dir, "image_00", "data", "a", "d.png")))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_multiple_related_images(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -612,7 +598,6 @@ class KittiRawExporterTest(TestCase):
             self.assertTrue(osp.isfile(osp.join(test_dir, "image_01", "data", "a", "d.png")))
             self.assertTrue(osp.isfile(osp.join(test_dir, "image_02", "data", "a", "d.png")))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_inplace_save_writes_only_updated_data(self):
         with TestDir() as path:
             dataset = Dataset.from_iterable(
@@ -647,7 +632,6 @@ class KittiRawExporterTest(TestCase):
                 {"frame2.pcd"}, set(os.listdir(osp.join(path, "velodyne_points", "data")))
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_with_meta_file(self):
         source_dataset = Dataset.from_iterable(
             [

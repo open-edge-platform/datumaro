@@ -25,14 +25,11 @@ from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image
 
-from ...requirements import Requirements, mark_requirement
-
 from tests.utils.test_utils import TestDir
 from tests.utils.test_utils import run_datum as run
 
 
 class CompareTest:
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_compare_projects(self, capsys):  # just a smoke test
         label_categories1 = LabelCategories.from_iterable(["x", "a", "b", "y", "z"])
         mask_categories1 = MaskCategories.generate(len(label_categories1))
@@ -186,7 +183,6 @@ class CompareTest:
             assert expected_output2 in captured.out
             assert 0 != os.listdir(osp.join(test_dir))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_run_distance_diff(self, helper_tc):
         dataset1 = Dataset.from_iterable(
             [
@@ -237,7 +233,6 @@ class CompareTest:
             )
             assert {"bbox_confusion.png", "train"} == set(os.listdir(result_dir))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_run_equality_diff(self, helper_tc):
         dataset1 = Dataset.from_iterable(
             [
