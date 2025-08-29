@@ -351,7 +351,6 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">overload</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.cli.util.compare</span><span class="w"> </span><span class="kn">import</span> <span class="n">DistanceCompareVisualizer</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.comparator</span><span class="w"> </span><span class="kn">import</span> <span class="n">DistanceComparator</span><span class="p">,</span> <span class="n">EqualityComparator</span><span class="p">,</span> <span class="n">TableComparator</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">IDataset</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.environment</span><span class="w"> </span><span class="kn">import</span> <span class="n">Environment</span>
@@ -434,6 +433,8 @@ document.write(`
                 <span class="p">)</span>
             <span class="n">output_format</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;output_format&quot;</span><span class="p">,</span> <span class="s2">&quot;simple&quot;</span><span class="p">)</span>
             <span class="n">comparator</span> <span class="o">=</span> <span class="n">DistanceComparator</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.cli.util.compare</span><span class="w"> </span><span class="kn">import</span> <span class="n">DistanceCompareVisualizer</span>
+
             <span class="k">with</span> <span class="n">DistanceCompareVisualizer</span><span class="p">(</span>
                 <span class="n">save_dir</span><span class="o">=</span><span class="n">report_dir</span><span class="p">,</span>
                 <span class="n">comparator</span><span class="o">=</span><span class="n">comparator</span><span class="p">,</span>
