@@ -11,8 +11,9 @@ on:
       - synchronize
       - reopened
       - ready_for_review
-# No permissions by default, no specific permissions are required for this workflow
-permissions: {}
+permissions:
+  # The id-token permission is required by Codecov to use OIDC
+  id-token: write
 
 # This is what will cancel the workflow concurrency
 concurrency:
