@@ -416,6 +416,9 @@ document.write(`
         <span class="n">input_column_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_image</span><span class="o">.</span><span class="n">name</span>
         <span class="n">output_column_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_image</span><span class="o">.</span><span class="n">name</span>
 
+        <span class="n">input_shape_column_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_image</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_shape&quot;</span>
+        <span class="n">output_shape_column_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_image</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_shape&quot;</span>
+
         <span class="k">def</span><span class="w"> </span><span class="nf">rgb_to_bgr</span><span class="p">(</span><span class="n">tensor_data</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot;Convert RGB tensor data to BGR by reversing the channel order.&quot;&quot;&quot;</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">tensor_data</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -428,7 +431,8 @@ document.write(`
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">with_columns</span><span class="p">(</span>
             <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">input_column_name</span><span class="p">)</span>
             <span class="o">.</span><span class="n">map_elements</span><span class="p">(</span><span class="n">rgb_to_bgr</span><span class="p">,</span> <span class="n">return_dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="n">output_column_name</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="n">output_column_name</span><span class="p">),</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">input_shape_column_name</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="n">output_shape_column_name</span><span class="p">),</span>
         <span class="p">)</span></div>
 </div>
 
@@ -487,16 +491,15 @@ document.write(`
         <span class="n">input_column_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_image</span><span class="o">.</span><span class="n">name</span>
         <span class="n">output_column_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_image</span><span class="o">.</span><span class="n">name</span>
 
-        <span class="n">image_field</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_image</span><span class="o">.</span><span class="n">field</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Converting dtype from: </span><span class="si">{</span><span class="n">image_field</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Input attribute name: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">input_image</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Output attribute name: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">output_image</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">input_shape_column_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_image</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_shape&quot;</span>
+        <span class="n">output_shape_column_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_image</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_shape&quot;</span>
 
         <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">with_columns</span><span class="p">(</span>
             <span class="c1"># Normalize UInt8 values (0-255) to Float32 (0.0-1.0)</span>
             <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">input_column_name</span><span class="p">)</span>
             <span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">eval</span><span class="p">((</span><span class="n">pl</span><span class="o">.</span><span class="n">element</span><span class="p">()</span> <span class="o">/</span> <span class="mf">255.0</span><span class="p">)</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_image</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">dtype</span><span class="p">))</span>
-            <span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="n">output_column_name</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="n">output_column_name</span><span class="p">),</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">input_shape_column_name</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="n">output_shape_column_name</span><span class="p">),</span>
         <span class="p">)</span></div>
 </div>
 

@@ -629,16 +629,19 @@ path discovery using graph algorithms.</p>
 <p class="rubric">Classes</p>
 <table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.converter_registry.AttributeSpec" title="datumaro.experimental.converter_registry.AttributeSpec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AttributeSpec</span></code></a>(name, field)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.converter_registry.AttributeRemapperConverter" title="datumaro.experimental.converter_registry.AttributeRemapperConverter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AttributeRemapperConverter</span></code></a>(attr_mappings)</p></td>
+<td><p>Special converter for renaming/selecting attributes and dropping others.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.experimental.converter_registry.AttributeSpec" title="datumaro.experimental.converter_registry.AttributeSpec"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AttributeSpec</span></code></a>(name, field)</p></td>
 <td><p>Specification for an attribute used in converters.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.experimental.converter_registry.ConversionPaths" title="datumaro.experimental.converter_registry.ConversionPaths"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConversionPaths</span></code></a>(batch_converters, ...)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.converter_registry.ConversionPaths" title="datumaro.experimental.converter_registry.ConversionPaths"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConversionPaths</span></code></a>(batch_converters, ...)</p></td>
 <td><p>Container for separated batch and lazy conversion paths.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.converter_registry.Converter" title="datumaro.experimental.converter_registry.Converter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Converter</span></code></a>(**kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.experimental.converter_registry.Converter" title="datumaro.experimental.converter_registry.Converter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Converter</span></code></a>(**kwargs)</p></td>
 <td><p>Base class for data converters with input/output specifications.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.experimental.converter_registry.ConverterRegistry" title="datumaro.experimental.converter_registry.ConverterRegistry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConverterRegistry</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.converter_registry.ConverterRegistry" title="datumaro.experimental.converter_registry.ConverterRegistry"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConverterRegistry</span></code></a>()</p></td>
 <td><p>Registry for managing and discovering data converters.</p></td>
 </tr>
 </tbody>
@@ -794,6 +797,17 @@ True if the converter can handle the given input/output combination.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="datumaro.experimental.converter_registry.Converter.get_input_attr_specs">
+<span class="sig-name descname"><span class="pre">get_input_attr_specs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#datumaro.experimental.converter_registry.AttributeSpec" title="datumaro.experimental.converter_registry.AttributeSpec"><span class="pre">AttributeSpec</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="datumaro.experimental.schema.html#datumaro.experimental.schema.Field" title="datumaro.experimental.schema.Field"><span class="pre">Field</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/converter_registry.html#Converter.get_input_attr_specs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.converter_registry.Converter.get_input_attr_specs" title="Link to this definition">#</a></dt>
+<dd><p>Get the current input AttributeSpec instances from input_* attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of input AttributeSpec instances currently configured on the converter</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="datumaro.experimental.converter_registry.Converter.get_output_attr_specs">
 <span class="sig-name descname"><span class="pre">get_output_attr_specs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.13)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#datumaro.experimental.converter_registry.AttributeSpec" title="datumaro.experimental.converter_registry.AttributeSpec"><span class="pre">AttributeSpec</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="datumaro.experimental.schema.html#datumaro.experimental.schema.Field" title="datumaro.experimental.schema.Field"><span class="pre">Field</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/converter_registry.html#Converter.get_output_attr_specs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.converter_registry.Converter.get_output_attr_specs" title="Link to this definition">#</a></dt>
 <dd><p>Get the current output AttributeSpec instances from output_* attributes.</p>
@@ -893,6 +907,68 @@ return df</p>
 <p>Exception raised when conversion fails.</p>
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="datumaro.experimental.converter_registry.AttributeRemapperConverter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datumaro.experimental.converter_registry.</span></span><span class="sig-name descname"><span class="pre">AttributeRemapperConverter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">attr_mappings</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#datumaro.experimental.converter_registry.AttributeSpec" title="datumaro.experimental.converter_registry.AttributeSpec"><span class="pre">AttributeSpec</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#datumaro.experimental.converter_registry.AttributeSpec" title="datumaro.experimental.converter_registry.AttributeSpec"><span class="pre">AttributeSpec</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/datumaro/experimental/converter_registry.html#AttributeRemapperConverter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.converter_registry.AttributeRemapperConverter" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#datumaro.experimental.converter_registry.Converter" title="datumaro.experimental.converter_registry.Converter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Converter</span></code></a></p>
+<p>Special converter for renaming/selecting attributes and dropping others.</p>
+<p>This converter is not registered with the converter registry but is used
+internally by find_conversion_path when attributes need to be renamed or deleted.
+It uses .select() to only keep the specified attributes with their new names,
+effectively handling both renaming and deletion in a single operation.</p>
+<p>Initialize the converter with a list of attribute mappings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>attr_mappings</strong> – List of tuples (from_attr_spec, to_attr_spec) defining
+the attribute transformations. Only attributes in this
+list will be kept in the output.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.experimental.converter_registry.AttributeRemapperConverter.get_from_types">
+<span class="sig-name descname"><span class="pre">get_from_types</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.13)"><span class="pre">Type</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="datumaro.experimental.schema.html#datumaro.experimental.schema.Field" title="datumaro.experimental.schema.Field"><span class="pre">Field</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/converter_registry.html#AttributeRemapperConverter.get_from_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.converter_registry.AttributeRemapperConverter.get_from_types" title="Link to this definition">#</a></dt>
+<dd><p>Extract input field types from input_* class attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary mapping input attribute names to their Field types</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.experimental.converter_registry.AttributeRemapperConverter.get_to_types">
+<span class="sig-name descname"><span class="pre">get_to_types</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Type" title="(in Python v3.13)"><span class="pre">Type</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="datumaro.experimental.schema.html#datumaro.experimental.schema.Field" title="datumaro.experimental.schema.Field"><span class="pre">Field</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/converter_registry.html#AttributeRemapperConverter.get_to_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.converter_registry.AttributeRemapperConverter.get_to_types" title="Link to this definition">#</a></dt>
+<dd><p>Extract output field types from output_* class attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary mapping output attribute names to their Field types</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.experimental.converter_registry.AttributeRemapperConverter.convert">
+<span class="sig-name descname"><span class="pre">convert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/converter_registry.html#AttributeRemapperConverter.convert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.converter_registry.AttributeRemapperConverter.convert" title="Link to this definition">#</a></dt>
+<dd><p>Select and rename columns according to column_map.
+Columns not in the mapping are dropped.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> – Input DataFrame</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame with only the selected/renamed columns</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.experimental.converter_registry.AttributeRemapperConverter.filter_output_spec">
+<span class="sig-name descname"><span class="pre">filter_output_spec</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/converter_registry.html#AttributeRemapperConverter.filter_output_spec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.converter_registry.AttributeRemapperConverter.filter_output_spec" title="Link to this definition">#</a></dt>
+<dd><p>Always return True as renaming is always applicable.</p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="datumaro.experimental.converter_registry.find_conversion_path">
 <span class="sig-prename descclassname"><span class="pre">datumaro.experimental.converter_registry.</span></span><span class="sig-name descname"><span class="pre">find_conversion_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">from_schema</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.experimental.schema.html#datumaro.experimental.schema.Schema" title="datumaro.experimental.schema.Schema"><span class="pre">Schema</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_schema</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.experimental.schema.html#datumaro.experimental.schema.Schema" title="datumaro.experimental.schema.Schema"><span class="pre">Schema</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#datumaro.experimental.converter_registry.ConversionPaths" title="datumaro.experimental.converter_registry.ConversionPaths"><span class="pre">ConversionPaths</span></a></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/converter_registry.html#find_conversion_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.converter_registry.find_conversion_path" title="Link to this definition">#</a></dt>
@@ -981,6 +1057,7 @@ conversion across semantic boundaries is not allowed.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converter_registry.Converter.get_to_types"><code class="docutils literal notranslate"><span class="pre">Converter.get_to_types()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converter_registry.Converter.convert"><code class="docutils literal notranslate"><span class="pre">Converter.convert()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converter_registry.Converter.filter_output_spec"><code class="docutils literal notranslate"><span class="pre">Converter.filter_output_spec()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converter_registry.Converter.get_input_attr_specs"><code class="docutils literal notranslate"><span class="pre">Converter.get_input_attr_specs()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converter_registry.Converter.get_output_attr_specs"><code class="docutils literal notranslate"><span class="pre">Converter.get_output_attr_specs()</span></code></a></li>
 </ul>
 </li>
@@ -992,6 +1069,13 @@ conversion across semantic boundaries is not allowed.</p>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converter_registry.converter"><code class="docutils literal notranslate"><span class="pre">converter()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converter_registry.ConversionError"><code class="docutils literal notranslate"><span class="pre">ConversionError</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converter_registry.AttributeRemapperConverter"><code class="docutils literal notranslate"><span class="pre">AttributeRemapperConverter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converter_registry.AttributeRemapperConverter.get_from_types"><code class="docutils literal notranslate"><span class="pre">AttributeRemapperConverter.get_from_types()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converter_registry.AttributeRemapperConverter.get_to_types"><code class="docutils literal notranslate"><span class="pre">AttributeRemapperConverter.get_to_types()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converter_registry.AttributeRemapperConverter.convert"><code class="docutils literal notranslate"><span class="pre">AttributeRemapperConverter.convert()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converter_registry.AttributeRemapperConverter.filter_output_spec"><code class="docutils literal notranslate"><span class="pre">AttributeRemapperConverter.filter_output_spec()</span></code></a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converter_registry.find_conversion_path"><code class="docutils literal notranslate"><span class="pre">find_conversion_path()</span></code></a></li>
 </ul>
   </nav></div>

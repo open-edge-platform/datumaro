@@ -547,6 +547,27 @@ document.write(`
         <span class="k">return</span> <span class="kc">True</span></div>
 
 
+<div class="viewcode-block" id="Converter.get_input_attr_specs">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converter_registry.html#datumaro.experimental.converter_registry.Converter.get_input_attr_specs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_input_attr_specs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">AttributeSpec</span><span class="p">[</span><span class="n">Field</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the current input AttributeSpec instances from input_* attributes.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of input AttributeSpec instances currently configured on the converter</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">input_attr_specs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">AttributeSpec</span><span class="p">[</span><span class="n">Field</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Get the input attribute names from class type hints</span>
+        <span class="n">from_types</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_from_types</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">attr_name</span> <span class="ow">in</span> <span class="n">from_types</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">attr_spec</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">AttributeSpec</span><span class="p">[</span><span class="n">Field</span><span class="p">],</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">))</span>
+            <span class="n">input_attr_specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attr_spec</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">input_attr_specs</span></div>
+
+
 <div class="viewcode-block" id="Converter.get_output_attr_specs">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converter_registry.html#datumaro.experimental.converter_registry.Converter.get_output_attr_specs">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_output_attr_specs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">AttributeSpec</span><span class="p">[</span><span class="n">Field</span><span class="p">]]:</span>
@@ -701,6 +722,112 @@ document.write(`
 
 
 
+<div class="viewcode-block" id="AttributeRemapperConverter">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converter_registry.html#datumaro.experimental.converter_registry.AttributeRemapperConverter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AttributeRemapperConverter</span><span class="p">(</span><span class="n">Converter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Special converter for renaming/selecting attributes and dropping others.</span>
+
+<span class="sd">    This converter is not registered with the converter registry but is used</span>
+<span class="sd">    internally by find_conversion_path when attributes need to be renamed or deleted.</span>
+<span class="sd">    It uses .select() to only keep the specified attributes with their new names,</span>
+<span class="sd">    effectively handling both renaming and deletion in a single operation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr_mappings</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">AttributeSpec</span><span class="p">,</span> <span class="n">AttributeSpec</span><span class="p">]]):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the converter with a list of attribute mappings.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            attr_mappings: List of tuples (from_attr_spec, to_attr_spec) defining</span>
+<span class="sd">                          the attribute transformations. Only attributes in this</span>
+<span class="sd">                          list will be kept in the output.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attr_mappings</span> <span class="o">=</span> <span class="n">attr_mappings</span>
+
+        <span class="c1"># Calculate column mapping from attribute mappings</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">column_map</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">from_attr</span><span class="p">,</span> <span class="n">to_attr</span> <span class="ow">in</span> <span class="n">attr_mappings</span><span class="p">:</span>
+            <span class="c1"># Get all column names for this field using to_polars_schema</span>
+            <span class="n">from_columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">from_attr</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">to_polars_schema</span><span class="p">(</span><span class="n">from_attr</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="n">to_columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">to_attr</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">to_polars_schema</span><span class="p">(</span><span class="n">to_attr</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+            <span class="c1"># Map each column from source to target</span>
+            <span class="k">for</span> <span class="n">from_col</span><span class="p">,</span> <span class="n">to_col</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">from_columns</span><span class="p">,</span> <span class="n">to_columns</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">column_map</span><span class="p">[</span><span class="n">from_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_col</span>
+
+        <span class="c1"># Dynamically set input_* and output_* attributes for get_from_types/get_to_types</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">from_attr</span><span class="p">,</span> <span class="n">to_attr</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">attr_mappings</span><span class="p">):</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;input_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">from_attr</span><span class="p">)</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;output_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">to_attr</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+<div class="viewcode-block" id="AttributeRemapperConverter.get_from_types">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converter_registry.html#datumaro.experimental.converter_registry.AttributeRemapperConverter.get_from_types">[docs]</a>
+    <span class="nd">@cache</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_from_types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">Field</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extract input field types from input_* class attributes.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dictionary mapping input attribute names to their Field types</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">from_types</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">Field</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">input_spec</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attr_mappings</span><span class="p">):</span>
+            <span class="n">from_types</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;input_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">input_spec</span><span class="o">.</span><span class="n">field</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">from_types</span></div>
+
+
+<div class="viewcode-block" id="AttributeRemapperConverter.get_to_types">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converter_registry.html#datumaro.experimental.converter_registry.AttributeRemapperConverter.get_to_types">[docs]</a>
+    <span class="nd">@cache</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_to_types</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">Field</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extract output field types from output_* class attributes.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dictionary mapping output attribute names to their Field types</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">to_types</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">Field</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">output_spec</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attr_mappings</span><span class="p">):</span>
+            <span class="n">to_types</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;output_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">output_spec</span><span class="o">.</span><span class="n">field</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">to_types</span></div>
+
+
+<div class="viewcode-block" id="AttributeRemapperConverter.convert">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converter_registry.html#datumaro.experimental.converter_registry.AttributeRemapperConverter.convert">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Select and rename columns according to column_map.</span>
+<span class="sd">        Columns not in the mapping are dropped.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df: Input DataFrame</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            DataFrame with only the selected/renamed columns</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Build selection expressions for all columns we want to keep</span>
+        <span class="n">select_exprs</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">old_name</span><span class="p">,</span> <span class="n">new_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_map</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">select_exprs</span><span class="p">[</span><span class="n">new_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">old_name</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="o">**</span><span class="n">select_exprs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AttributeRemapperConverter.filter_output_spec">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converter_registry.html#datumaro.experimental.converter_registry.AttributeRemapperConverter.filter_output_spec">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">filter_output_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Always return True as renaming is always applicable.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+</div>
+
+
+
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">_SchemaState</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Represents a schema state during A* search.&quot;&quot;&quot;</span>
@@ -710,13 +837,29 @@ document.write(`
     <span class="p">]</span>  <span class="c1"># Map field types to their AttributeSpec</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># Hash the items of the dict as a frozenset for immutability</span>
-        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="nb">frozenset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">field_to_attr_spec</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
+        <span class="c1"># Hash only field types and their properties, not names</span>
+        <span class="n">field_items</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">field_type</span><span class="p">,</span> <span class="n">attr_spec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_to_attr_spec</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># Hash field type and field properties, but not the attribute name</span>
+            <span class="n">field_items</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">field_type</span><span class="p">,</span> <span class="n">attr_spec</span><span class="o">.</span><span class="n">field</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">field_items</span><span class="p">))</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="nb">object</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">_SchemaState</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_to_attr_spec</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">field_to_attr_spec</span>
-        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">_SchemaState</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="c1"># Compare only field types and their properties, not names</span>
+        <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">field_to_attr_spec</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="o">!=</span> <span class="nb">set</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">field_to_attr_spec</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">for</span> <span class="n">field_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">field_to_attr_spec</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">field_to_attr_spec</span><span class="p">[</span><span class="n">field_type</span><span class="p">]</span><span class="o">.</span><span class="n">field</span>
+                <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">field_to_attr_spec</span><span class="p">[</span><span class="n">field_type</span><span class="p">]</span><span class="o">.</span><span class="n">field</span>
+            <span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">get_attr_spec_for_field_type</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">field_type</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">Field</span><span class="p">]</span>
@@ -751,6 +894,8 @@ document.write(`
 <span class="sd">    This counts both:</span>
 <span class="sd">    1. Missing field types that need to be created</span>
 <span class="sd">    2. Field differences where the type exists but properties differ (dtype, format, semantic, etc.)</span>
+
+<span class="sd">    Note: Attribute names are ignored in the heuristic as they can be fixed in post-processing.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">cost</span> <span class="o">=</span> <span class="mi">0</span>
 
@@ -767,7 +912,7 @@ document.write(`
         <span class="n">current_attr_spec</span> <span class="o">=</span> <span class="n">current_state</span><span class="o">.</span><span class="n">field_to_attr_spec</span><span class="p">[</span><span class="n">field_type</span><span class="p">]</span>
         <span class="n">target_attr_spec</span> <span class="o">=</span> <span class="n">target_state</span><span class="o">.</span><span class="n">field_to_attr_spec</span><span class="p">[</span><span class="n">field_type</span><span class="p">]</span>
 
-        <span class="c1"># Compare field properties - if they differ, we need conversion</span>
+        <span class="c1"># Compare field properties (ignoring names) - if they differ, we need conversion</span>
         <span class="k">if</span> <span class="n">current_attr_spec</span><span class="o">.</span><span class="n">field</span> <span class="o">!=</span> <span class="n">target_attr_spec</span><span class="o">.</span><span class="n">field</span><span class="p">:</span>
             <span class="n">cost</span> <span class="o">+=</span> <span class="mi">1</span>
 
@@ -775,7 +920,7 @@ document.write(`
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_get_applicable_converters</span><span class="p">(</span>
-    <span class="n">state</span><span class="p">:</span> <span class="n">_SchemaState</span><span class="p">,</span> <span class="n">target_state</span><span class="p">:</span> <span class="n">_SchemaState</span>
+    <span class="n">state</span><span class="p">:</span> <span class="n">_SchemaState</span><span class="p">,</span> <span class="n">target_state</span><span class="p">:</span> <span class="n">_SchemaState</span><span class="p">,</span> <span class="n">iteration</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Converter</span><span class="p">,</span> <span class="n">_SchemaState</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get all converters that can be applied to the current state along with their resulting states.&quot;&quot;&quot;</span>
     <span class="n">applicable</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Converter</span><span class="p">,</span> <span class="n">_SchemaState</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -786,18 +931,22 @@ document.write(`
     <span class="k">for</span> <span class="n">converter_class</span> <span class="ow">in</span> <span class="n">ConverterRegistry</span><span class="o">.</span><span class="n">list_converters</span><span class="p">():</span>
         <span class="c1"># Check if all required input types are available</span>
         <span class="n">from_types</span> <span class="o">=</span> <span class="n">converter_class</span><span class="o">.</span><span class="n">get_from_types</span><span class="p">()</span>
-        <span class="k">if</span> <span class="p">(</span>
-            <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">field_type</span> <span class="ow">in</span> <span class="n">available_field_types</span> <span class="k">for</span> <span class="n">field_type</span> <span class="ow">in</span> <span class="n">from_types</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-            <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">from_types</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
-        <span class="p">):</span>
-            <span class="k">continue</span>
 
         <span class="c1"># Collect available input AttributeSpec instances</span>
-        <span class="n">from_attr_specs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">AttributeSpec</span><span class="p">[</span><span class="n">Field</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">field_type</span> <span class="ow">in</span> <span class="n">from_types</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">field_type</span> <span class="ow">in</span> <span class="n">available_field_types</span><span class="p">:</span>
-                <span class="n">attr_spec</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">field_to_attr_spec</span><span class="p">[</span><span class="n">field_type</span><span class="p">]</span>
-                <span class="n">from_attr_specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attr_spec</span><span class="p">)</span>
+        <span class="n">converter_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">all_inputs_available</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">for</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">field_type</span> <span class="ow">in</span> <span class="n">from_types</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">field_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">available_field_types</span><span class="p">:</span>
+                <span class="n">all_inputs_available</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">break</span>
+
+            <span class="c1"># Add the input attribute to kwargs for the converter constructor</span>
+            <span class="n">attr_spec</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">field_to_attr_spec</span><span class="p">[</span><span class="n">field_type</span><span class="p">]</span>
+            <span class="n">converter_kwargs</span><span class="p">[</span><span class="n">attr_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr_spec</span>
+
+        <span class="c1"># Check if we have the required input types</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">all_inputs_available</span><span class="p">:</span>
+            <span class="k">continue</span>
 
         <span class="c1"># Collect desired output AttributeSpec instances</span>
         <span class="n">to_types</span> <span class="o">=</span> <span class="n">converter_class</span><span class="o">.</span><span class="n">get_to_types</span><span class="p">()</span>
@@ -807,50 +956,24 @@ document.write(`
                 <span class="n">attr_spec</span> <span class="o">=</span> <span class="n">target_state</span><span class="o">.</span><span class="n">field_to_attr_spec</span><span class="p">[</span><span class="n">field_type</span><span class="p">]</span>
                 <span class="n">to_attr_specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attr_spec</span><span class="p">)</span>
 
-        <span class="c1"># Initialize the converter with AttributeSpec instances</span>
-        <span class="c1"># Check if we have the required input types</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">from_attr_specs</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">from_types</span><span class="p">):</span>
-            <span class="k">continue</span>
-
-        <span class="c1"># Create a mapping from input types to input specs</span>
-        <span class="n">input_type_to_spec</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">attr_spec</span> <span class="ow">in</span> <span class="n">from_attr_specs</span><span class="p">:</span>
-            <span class="n">field_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">attr_spec</span><span class="o">.</span><span class="n">field</span><span class="p">)</span>
-            <span class="n">input_type_to_spec</span><span class="p">[</span><span class="n">field_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr_spec</span>
-
-        <span class="c1"># Verify all required input types are available</span>
-        <span class="n">all_inputs_available</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="n">converter_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">field_type</span> <span class="ow">in</span> <span class="n">from_types</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">field_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_type_to_spec</span><span class="p">:</span>
-                <span class="n">all_inputs_available</span> <span class="o">=</span> <span class="kc">False</span>
-                <span class="k">break</span>
-            <span class="c1"># Add the input attribute to kwargs for the converter constructor</span>
-            <span class="n">converter_kwargs</span><span class="p">[</span><span class="n">attr_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">input_type_to_spec</span><span class="p">[</span><span class="n">field_type</span><span class="p">]</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">all_inputs_available</span><span class="p">:</span>
-            <span class="k">continue</span>
-
-        <span class="c1"># Create output AttributeSpec instances and add to kwargs</span>
-        <span class="n">output_attr_specs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">AttributeSpec</span><span class="p">[</span><span class="n">Field</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">attr_name</span><span class="p">,</span> <span class="n">field_type</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">to_types</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
-            <span class="c1"># Create a default output AttributeSpec</span>
-            <span class="c1"># Use desired target name if specified, otherwise generate default</span>
-            <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">to_attr_specs</span><span class="p">):</span>
-                <span class="n">output_name</span> <span class="o">=</span> <span class="n">to_attr_specs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
-                <span class="c1"># Optionally use the target field if it matches the type</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">to_attr_specs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">field</span><span class="p">,</span> <span class="n">field_type</span><span class="p">):</span>
-                    <span class="n">output_field</span> <span class="o">=</span> <span class="n">to_attr_specs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">field</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">output_field</span> <span class="o">=</span> <span class="n">field_type</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">field_type</span> <span class="ow">in</span> <span class="n">to_types</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># First, check if target state has a matching field type and use its name/field</span>
+            <span class="k">if</span> <span class="n">field_type</span> <span class="ow">in</span> <span class="n">target_state</span><span class="o">.</span><span class="n">field_to_attr_spec</span><span class="p">:</span>
+                <span class="n">target_attr_spec</span> <span class="o">=</span> <span class="n">target_state</span><span class="o">.</span><span class="n">field_to_attr_spec</span><span class="p">[</span><span class="n">field_type</span><span class="p">]</span>
+                <span class="n">output_name</span> <span class="o">=</span> <span class="n">target_attr_spec</span><span class="o">.</span><span class="n">name</span>
+                <span class="n">output_field</span> <span class="o">=</span> <span class="n">target_attr_spec</span><span class="o">.</span><span class="n">field</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">field_hash</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">hash</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">field_type</span><span class="p">)))</span> <span class="o">%</span> <span class="mi">10000</span>
-                <span class="n">output_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">field_type</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">field_hash</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="c1"># The field does not exist, use a temporary name</span>
+                <span class="n">output_name</span> <span class="o">=</span> <span class="n">field_type</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="c1"># and create a new instance of the field</span>
                 <span class="n">output_field</span> <span class="o">=</span> <span class="n">field_type</span><span class="p">()</span>
+
+            <span class="c1"># Add the iteration count at the end to ensure uniqueness</span>
+            <span class="c1"># and avoid any conflict with existing attribute names</span>
+            <span class="n">output_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">output_name</span><span class="si">}</span><span class="s2">_temp_</span><span class="si">{</span><span class="n">iteration</span><span class="si">}</span><span class="s2">&quot;</span>
 
             <span class="n">output_attr_spec</span> <span class="o">=</span> <span class="n">AttributeSpec</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">output_name</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="n">output_field</span><span class="p">)</span>
             <span class="n">converter_kwargs</span><span class="p">[</span><span class="n">attr_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_attr_spec</span>
-            <span class="n">output_attr_specs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">output_attr_spec</span><span class="p">)</span>
 
         <span class="c1"># Create converter instance with all AttributeSpec instances as kwargs</span>
         <span class="n">converter_instance</span> <span class="o">=</span> <span class="n">converter_class</span><span class="p">(</span><span class="o">**</span><span class="n">converter_kwargs</span><span class="p">)</span>
@@ -904,6 +1027,48 @@ document.write(`
     <span class="p">}</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_post_processing_for_semantic</span><span class="p">(</span>
+    <span class="n">final_state</span><span class="p">:</span> <span class="n">_SchemaState</span><span class="p">,</span> <span class="n">target_state</span><span class="p">:</span> <span class="n">_SchemaState</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Converter</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create post-processing converters for a single semantic group.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        final_state: Final state reached after conversions</span>
+<span class="sd">        target_state: Target state for this semantic group</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        List of post-processing converters (usually just one AttributeRemapperConverter)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Build attribute mappings: include only attributes that should be kept</span>
+    <span class="n">attr_mappings</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Determine if a converter is needed (i.e. at least one attribute has been renamed or deleted)</span>
+    <span class="n">converter_needed</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">for</span> <span class="n">field_type</span><span class="p">,</span> <span class="n">target_attr_spec</span> <span class="ow">in</span> <span class="n">target_state</span><span class="o">.</span><span class="n">field_to_attr_spec</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">field_type</span> <span class="ow">in</span> <span class="n">final_state</span><span class="o">.</span><span class="n">field_to_attr_spec</span><span class="p">:</span>
+            <span class="n">final_attr_spec</span> <span class="o">=</span> <span class="n">final_state</span><span class="o">.</span><span class="n">field_to_attr_spec</span><span class="p">[</span><span class="n">field_type</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">final_attr_spec</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="n">target_attr_spec</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+                <span class="n">converter_needed</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="c1"># Add the mapping from final to target attribute spec</span>
+            <span class="n">attr_mappings</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">final_attr_spec</span><span class="p">,</span> <span class="n">target_attr_spec</span><span class="p">))</span>
+
+    <span class="c1"># Check if any fields need to be deleted (exist in final but not in target)</span>
+    <span class="k">for</span> <span class="n">field_type</span><span class="p">,</span> <span class="n">final_attr_spec</span> <span class="ow">in</span> <span class="n">final_state</span><span class="o">.</span><span class="n">field_to_attr_spec</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">field_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">target_state</span><span class="o">.</span><span class="n">field_to_attr_spec</span><span class="p">:</span>
+            <span class="c1"># If the field is not in the target state, it should be deleted</span>
+            <span class="n">converter_needed</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="c1"># Create a single remapper converter that handles both renaming and deletion</span>
+    <span class="k">if</span> <span class="n">converter_needed</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">AttributeRemapperConverter</span><span class="p">(</span><span class="n">attr_mappings</span><span class="o">=</span><span class="n">attr_mappings</span><span class="p">)]</span>
+
+    <span class="k">return</span> <span class="p">[]</span>
+
+
 <span class="k">def</span><span class="w"> </span><span class="nf">_find_conversion_path_for_semantic</span><span class="p">(</span>
     <span class="n">start_state</span><span class="p">:</span> <span class="n">_SchemaState</span><span class="p">,</span> <span class="n">target_state</span><span class="p">:</span> <span class="n">_SchemaState</span><span class="p">,</span> <span class="n">semantic</span><span class="p">:</span> <span class="n">Semantic</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Converter</span><span class="p">]:</span>
@@ -921,9 +1086,9 @@ document.write(`
 <span class="sd">    Raises:</span>
 <span class="sd">        ConversionError: If no conversion path is found for this semantic</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># If we already have all required fields, no conversion needed</span>
+    <span class="c1"># If we already have all required fields, check if we need renaming/deletion</span>
     <span class="k">if</span> <span class="n">start_state</span> <span class="o">==</span> <span class="n">target_state</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">return</span> <span class="n">_create_post_processing_for_semantic</span><span class="p">(</span><span class="n">start_state</span><span class="p">,</span> <span class="n">target_state</span><span class="p">)</span>
 
     <span class="c1"># Initialize A* search</span>
     <span class="n">open_set</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">_SearchNode</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -948,12 +1113,15 @@ document.write(`
 
         <span class="c1"># Check if we&#39;ve reached the goal - all target fields must match exactly</span>
         <span class="k">if</span> <span class="n">_heuristic_cost</span><span class="p">(</span><span class="n">current_node</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">target_state</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">current_node</span><span class="o">.</span><span class="n">path</span>
+            <span class="c1"># Add post-processing converters for final renaming and deletion</span>
+            <span class="n">post_processing</span> <span class="o">=</span> <span class="n">_create_post_processing_for_semantic</span><span class="p">(</span><span class="n">current_node</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">target_state</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">current_node</span><span class="o">.</span><span class="n">path</span> <span class="o">+</span> <span class="n">post_processing</span>
 
         <span class="c1"># Explore neighbors</span>
         <span class="k">for</span> <span class="n">converter</span><span class="p">,</span> <span class="n">new_state</span> <span class="ow">in</span> <span class="n">_get_applicable_converters</span><span class="p">(</span>
             <span class="n">current_node</span><span class="o">.</span><span class="n">state</span><span class="p">,</span>
             <span class="n">target_state</span><span class="p">,</span>
+            <span class="n">current_node</span><span class="o">.</span><span class="n">g_cost</span><span class="p">,</span>
         <span class="p">):</span>
             <span class="k">if</span> <span class="n">new_state</span> <span class="ow">in</span> <span class="n">closed_set</span><span class="p">:</span>
                 <span class="k">continue</span>
@@ -1003,6 +1171,8 @@ document.write(`
     <span class="c1"># Collect all converters needed across all semantic groups</span>
     <span class="n">all_converters</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Converter</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
+    <span class="n">attr_mappings</span> <span class="o">=</span> <span class="p">[]</span>
+
     <span class="c1"># Process each semantic group in the target schema</span>
     <span class="k">for</span> <span class="n">semantic</span><span class="p">,</span> <span class="n">target_state</span> <span class="ow">in</span> <span class="n">target_groups</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="c1"># Get corresponding source state for this semantic (if any)</span>
@@ -1013,7 +1183,15 @@ document.write(`
             <span class="n">start_state</span><span class="p">,</span> <span class="n">target_state</span><span class="p">,</span> <span class="n">semantic</span>
         <span class="p">)</span>
 
+        <span class="c1"># Merge all the attribute remappers into a single one. If any, the remapper is always the last step.</span>
+        <span class="k">if</span> <span class="n">semantic_converters</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">semantic_converters</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">AttributeRemapperConverter</span><span class="p">):</span>
+            <span class="n">attr_mappings</span> <span class="o">+=</span> <span class="n">semantic_converters</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">attr_mappings</span>
+            <span class="n">semantic_converters</span> <span class="o">=</span> <span class="n">semantic_converters</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
         <span class="n">all_converters</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">semantic_converters</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">attr_mappings</span><span class="p">:</span>
+        <span class="n">all_converters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">AttributeRemapperConverter</span><span class="p">(</span><span class="n">attr_mappings</span><span class="o">=</span><span class="n">attr_mappings</span><span class="p">))</span>
 
     <span class="c1"># Separate batch and lazy converters</span>
     <span class="k">return</span> <span class="n">_separate_batch_and_lazy_converters</span><span class="p">(</span><span class="n">all_converters</span><span class="p">)</span></div>
@@ -1040,40 +1218,31 @@ document.write(`
     <span class="c1"># Track which converters must be lazy</span>
     <span class="n">lazy_indices</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
-    <span class="c1"># First pass: mark all intrinsically lazy converters</span>
+    <span class="n">lazy_fields</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span>
+        <span class="nb">bool</span>
+    <span class="p">)</span>  <span class="c1"># Maps fields whether they were produced lazily</span>
+
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">converter</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">conversion_path</span><span class="p">):</span>
+        <span class="n">lazy</span> <span class="o">=</span> <span class="kc">False</span>
+
         <span class="k">if</span> <span class="n">converter</span><span class="o">.</span><span class="n">lazy</span><span class="p">:</span>
+            <span class="c1"># Mark all intrinsically lazy converters as lazy</span>
+            <span class="n">lazy</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Check whether the converter depends on a lazy converter</span>
+            <span class="n">input_specs</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="n">get_input_attr_specs</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">attr_spec</span> <span class="ow">in</span> <span class="n">input_specs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">attr_spec</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">lazy_fields</span><span class="p">:</span>
+                    <span class="n">lazy</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">break</span>
+
+        <span class="k">if</span> <span class="n">lazy</span><span class="p">:</span>
             <span class="n">lazy_indices</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
 
-    <span class="c1"># Second pass: mark converters that depend on lazy converter outputs</span>
-    <span class="c1"># Build dependency graph</span>
-    <span class="n">converter_outputs</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span>
-        <span class="n">Type</span><span class="p">[</span><span class="n">Field</span><span class="p">],</span> <span class="nb">int</span>
-    <span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># Maps field types to converter indices that produce them</span>
-
-    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">converter</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">conversion_path</span><span class="p">):</span>
-        <span class="n">output_specs</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="n">get_output_attr_specs</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">attr_spec</span> <span class="ow">in</span> <span class="n">output_specs</span><span class="p">:</span>
-            <span class="n">field_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">attr_spec</span><span class="o">.</span><span class="n">field</span><span class="p">)</span>
-            <span class="n">converter_outputs</span><span class="p">[</span><span class="n">field_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
-
-    <span class="c1"># Mark dependent converters as lazy</span>
-    <span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="k">while</span> <span class="n">changed</span><span class="p">:</span>
-        <span class="n">changed</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">converter</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">conversion_path</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">lazy_indices</span><span class="p">:</span>
-                <span class="k">continue</span>
-
-            <span class="c1"># Check if this converter depends on any lazy converter output</span>
-            <span class="n">from_types</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="n">get_from_types</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">field_type</span> <span class="ow">in</span> <span class="n">from_types</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">field_type</span> <span class="ow">in</span> <span class="n">converter_outputs</span><span class="p">:</span>
-                    <span class="n">producer_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">converter_outputs</span><span class="p">[</span><span class="n">field_type</span><span class="p">]</span>
-                    <span class="k">if</span> <span class="n">producer_index</span> <span class="ow">in</span> <span class="n">lazy_indices</span> <span class="ow">and</span> <span class="n">producer_index</span> <span class="o">&lt;</span> <span class="n">i</span><span class="p">:</span>
-                        <span class="n">lazy_indices</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-                        <span class="n">changed</span> <span class="o">=</span> <span class="kc">True</span>
-                        <span class="k">break</span>
+            <span class="c1"># Mark all output fields as lazy</span>
+            <span class="n">output_specs</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="n">get_output_attr_specs</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">attr_spec</span> <span class="ow">in</span> <span class="n">output_specs</span><span class="p">:</span>
+                <span class="n">lazy_fields</span><span class="p">[</span><span class="n">attr_spec</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="c1"># Separate into batch and lazy lists</span>
     <span class="n">batch_converters</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Converter</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
