@@ -7,9 +7,67 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased version
 
+This release streamlines Datumaro by removing a number of lesser-used features, helping to simplify the tool and reduce its dependencies. These changes are part of an effort to keep Datumaro focused on its core strengths: dataset management and integration with machine learning frameworks. As part of this update, inference-related features have been removed. For inference tasks, we recommend using the [OpenVINO model API](https://github.com/open-edge-platform/model_api). If you rely on a specific feature that is no longer available, you can still access it from [the previous version of Datumaro](https://github.com/open-edge-platform/datumaro/tree/v1.11.1).
+
+### Removed features
+- CLI commmands:
+  - explain, explore, generate, prune
+    (<https://github.com/open-edge-platform/datumaro/pull/1812>, <https://github.com/open-edge-platform/datumaro/pull/1813>, <https://github.com/open-edge-platform/datumaro/pull/1814>, <https://github.com/open-edge-platform/datumaro/pull/1815>)
+  - model: add, remove, run, info
+    (<https://github.com/open-edge-platform/datumaro/pull/1816>)
+  - project: add, create, export, import, remove, checkout, commit, log, info, status
+    (<https://github.com/open-edge-platform/datumaro/pull/1816>)
+  - source: import, add, remove
+    (<https://github.com/open-edge-platform/datumaro/pull/1816>)
+- API features:
+  - Model inference
+    (<https://github.com/open-edge-platform/datumaro/pull/1831>, <https://github.com/open-edge-platform/datumaro/pull/1825>)
+  - Model-based transformations
+    (<https://github.com/open-edge-platform/datumaro/pull/1826>, <https://github.com/open-edge-platform/datumaro/pull/1839>)
+  - Crypter
+    (<https://github.com/open-edge-platform/datumaro/pull/1829>)
+  - Synthetic dataset generation
+    (<https://github.com/open-edge-platform/datumaro/pull/1815>)
+  - Data exploration
+    (<https://github.com/open-edge-platform/datumaro/pull/1814>)
+  - BBox to mask using SAM
+    (<https://github.com/open-edge-platform/datumaro/pull/1826>)
+  - Telemetry
+    (<https://github.com/open-edge-platform/datumaro/pull/1828>)
+  - Anchor generation
+    (<https://github.com/open-edge-platform/datumaro/pull/1832>)
+  - Missing annotation detection
+    (<https://github.com/open-edge-platform/datumaro/pull/1826>)
+  - Model inference explanation
+    (<https://github.com/open-edge-platform/datumaro/pull/1812>)
+  - Near-duplicate removal
+    (<https://github.com/open-edge-platform/datumaro/pull/1835>)
+  - Pruning
+    (<https://github.com/open-edge-platform/datumaro/pull/1813>)
+  - Pseudo-labels
+    (<https://github.com/open-edge-platform/datumaro/pull/1814>)
+  - Project
+    (<https://github.com/open-edge-platform/datumaro/pull/1824>)
+  - Noisy label detection
+    (<https://github.com/open-edge-platform/datumaro/pull/1833>)
+  - Data shift analysis
+    (<https://github.com/open-edge-platform/datumaro/pull/1827>)
+- SAM Docker image
+  (<https://github.com/open-edge-platform/datumaro/pull/1830>)
+
 ### New features
 - Experimental dataset class
-  (<https://github.com/open-edge-platform/datumaro/pull/1807>, <https://github.com/open-edge-platform/datumaro/pull/1810>, <https://github.com/open-edge-platform/datumaro/pull/1811>)
+  (<https://github.com/open-edge-platform/datumaro/pull/1807>, <https://github.com/open-edge-platform/datumaro/pull/1810>, <https://github.com/open-edge-platform/datumaro/pull/1811>, <https://github.com/open-edge-platform/datumaro/pull/1834>, <https://github.com/open-edge-platform/datumaro/pull/1858>, <https://github.com/open-edge-platform/datumaro/pull/1845>)
+
+### Enhancements
+- Mark several dependencies as optional
+  (<https://github.com/open-edge-platform/datumaro/pull/1849>)
+- Removal of unneeded dependencies
+  (<https://github.com/open-edge-platform/datumaro/pull/1837>)
+- Documentation tidy-up
+  (<https://github.com/open-edge-platform/datumaro/pull/1840>)
+- DCO introduction; readme, PR template, and contribution guide tidy-up
+  (<https://github.com/open-edge-platform/datumaro/pull/1844>, <https://github.com/open-edge-platform/datumaro/pull/1860>, <https://github.com/open-edge-platform/datumaro/pull/1856>, <https://github.com/open-edge-platform/datumaro/pull/1847>)
 
 ## Q3 2025 Release 1.11.1
 
