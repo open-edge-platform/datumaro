@@ -57,15 +57,17 @@ This release streamlines Datumaro by removing a number of lesser-used features, 
 
 ### New features
 - Experimental dataset class
-  (<https://github.com/open-edge-platform/datumaro/pull/1807>, <https://github.com/open-edge-platform/datumaro/pull/1810>, <https://github.com/open-edge-platform/datumaro/pull/1811>, <https://github.com/open-edge-platform/datumaro/pull/1834>)
+  (<https://github.com/open-edge-platform/datumaro/pull/1807>, <https://github.com/open-edge-platform/datumaro/pull/1810>, <https://github.com/open-edge-platform/datumaro/pull/1811>, <https://github.com/open-edge-platform/datumaro/pull/1834>, <https://github.com/open-edge-platform/datumaro/pull/1858>, <https://github.com/open-edge-platform/datumaro/pull/1845>)
 
 ### Enhancements
+- Mark several dependencies as optional
+  (<https://github.com/open-edge-platform/datumaro/pull/1849>)
 - Removal of unneeded dependencies
   (<https://github.com/open-edge-platform/datumaro/pull/1837>)
 - Documentation tidy-up
   (<https://github.com/open-edge-platform/datumaro/pull/1840>)
-- DCO introduction and contribution guide tidy-up
-  (<https://github.com/open-edge-platform/datumaro/pull/1844>)
+- DCO introduction; readme, PR template, and contribution guide tidy-up
+  (<https://github.com/open-edge-platform/datumaro/pull/1844>, <https://github.com/open-edge-platform/datumaro/pull/1860>, <https://github.com/open-edge-platform/datumaro/pull/1856>, <https://github.com/open-edge-platform/datumaro/pull/1847>)
 
 ## Q3 2025 Release 1.11.1
 
