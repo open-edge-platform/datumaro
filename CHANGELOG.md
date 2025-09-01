@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased version
 
-This release removes a significant number of features to simplify Datumaro and reduce the number of dependencies. The removed features had little or no active use. Moving forward, we would like to keep Datumaro focused on its core: dataset management and integration with other ML frameworks rather than an ever expanding set of features. In particular, we have removed all features based on inference from Datumaro. For inference, we suggest to instead use the [OpenVINO Model API](https://github.com/open-edge-platform/model_api). If you need a specific feature which is no longer in Datumaro, we suggest that you copy the feature which you need from the [previous version](https://github.com/open-edge-platform/datumaro/tree/v1.11.1) of Datumaro.
+This release streamlines Datumaro by removing a number of lesser-used features, helping to simplify the tool and reduce its dependencies. These changes are part of an effort to keep Datumaro focused on its core strengths: dataset management and integration with machine learning frameworks. As part of this update, inference-related features have been removed. For inference tasks, we recommend using the [OpenVINO model API](https://github.com/open-edge-platform/model_api). If you rely on a specific feature that is no longer available, you can still access it from [the previous version of Datumaro](https://github.com/open-edge-platform/datumaro/tree/v1.11.1).
 
 ### Removed features
 - CLI commmands:
