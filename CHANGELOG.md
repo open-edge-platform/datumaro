@@ -68,6 +68,8 @@ This release streamlines Datumaro by removing a number of lesser-used features, 
   (<https://github.com/open-edge-platform/datumaro/pull/1840>)
 - DCO introduction; readme, PR template, and contribution guide tidy-up
   (<https://github.com/open-edge-platform/datumaro/pull/1844>, <https://github.com/open-edge-platform/datumaro/pull/1860>, <https://github.com/open-edge-platform/datumaro/pull/1856>, <https://github.com/open-edge-platform/datumaro/pull/1847>)
+- Fix code coverage upload to Codecov in the CI
+  (<https://github.com/open-edge-platform/datumaro/pull/1861>)
 
 ## Q3 2025 Release 1.11.1
 
