@@ -10,6 +10,7 @@ import polars as pl
 import pytest
 
 from datumaro.experimental.converter_registry import (
+    AttributeRemapperConverter,
     AttributeSpec,
     ConversionError,
     Converter,
@@ -30,6 +31,7 @@ from datumaro.experimental.fields import (
     ImagePathField,
     bbox_field,
     image_field,
+    image_info_field,
 )
 from datumaro.experimental.schema import AttributeInfo, Schema, Semantic
 
@@ -262,8 +264,9 @@ def test_find_conversion_path():
 
     # This should find a conversion path (UInt8 -> Float32)
     path = find_conversion_path(source_schema, target_schema)
-    assert len(path.batch_converters) == 1
+    assert len(path.batch_converters) == 2
     assert type(path.batch_converters[0]) is UInt8ToFloat32Converter
+    assert type(path.batch_converters[1]) is AttributeRemapperConverter
 
 
 def test_convert_dataframe():
@@ -393,10 +396,11 @@ def test_multiple_converter_chaining():
 
     path = find_conversion_path(source_schema, target_schema)
     # If successful, should have multiple steps
-    assert len(path.batch_converters) == 3
+    assert len(path.batch_converters) == 4
     assert type(path.batch_converters[0]) is BBoxCoordinateConverter
     assert type(path.batch_converters[1]) is RGBToBGRConverter
     assert type(path.batch_converters[2]) is UInt8ToFloat32Converter
+    assert type(path.batch_converters[3]) is AttributeRemapperConverter
 
 
 def test_astar_direct_conversion():
@@ -455,8 +459,9 @@ def test_astar_direct_conversion():
 
     # Test finding conversion path
     path = find_conversion_path(from_schema, to_schema)
-    assert len(path.batch_converters) == 1
+    assert len(path.batch_converters) == 2
     assert type(path.batch_converters[0]) is ExtractImageSizeConverter
+    assert type(path.batch_converters[1]) is AttributeRemapperConverter
     assert path.lazy_converters == []
 
 
@@ -559,9 +564,10 @@ def test_astar_chained_conversion():
     # Test finding conversion path
     path = find_conversion_path(from_schema, to_schema)
     # Should need 2 converters: ImageField -> ImageSizeField, then NormalizedBbox -> AbsoluteBbox
-    assert len(path.batch_converters) == 2
+    assert len(path.batch_converters) == 3
     assert type(path.batch_converters[0]) is ExtractImageSizeChainConverter
     assert type(path.batch_converters[1]) is NormalizeToAbsoluteBboxConverter
+    assert type(path.batch_converters[2]) is AttributeRemapperConverter
     assert len(path.lazy_converters) == 0
 
 
@@ -698,8 +704,9 @@ def test_optimal_path_selection():
     )
 
     path = find_conversion_path(from_schema, to_schema)
-    assert len(path.batch_converters) == 1
+    assert len(path.batch_converters) == 2
     assert type(path.batch_converters[0]) is AToCDirectConverter
+    assert type(path.batch_converters[1]) is AttributeRemapperConverter
     assert len(path.lazy_converters) == 0
 
 
@@ -733,8 +740,9 @@ def test_generator_converter():
     )
 
     path = find_conversion_path(from_schema, to_schema)
-    assert len(path.batch_converters) == 1
+    assert len(path.batch_converters) == 2
     assert type(path.batch_converters[0]) is GenerateBConverter
+    assert type(path.batch_converters[1]) is AttributeRemapperConverter
     assert len(path.lazy_converters) == 0
 
 
@@ -791,8 +799,9 @@ def test_multiple_output_converter():
     )
 
     path = find_conversion_path(from_schema, to_schema)
-    assert len(path.batch_converters) == 1
+    assert len(path.batch_converters) == 2
     assert type(path.batch_converters[0]) is AToMultiConverter
+    assert type(path.batch_converters[1]) is AttributeRemapperConverter
     assert len(path.lazy_converters) == 0
 
 
@@ -842,6 +851,213 @@ def test_partial_schema_matching():
     )
 
     path = find_conversion_path(from_schema, to_schema)
-    assert len(path.batch_converters) == 1
+    assert len(path.batch_converters) == 2
     assert type(path.batch_converters[0]) is AToCPartialConverter
+    assert type(path.batch_converters[1]) is AttributeRemapperConverter
     assert len(path.lazy_converters) == 0
+
+
+def test_attribute_renaming():
+    """Test attribute renaming functionality using special converters."""
+
+    # Create source schema with an image field named "input_image"
+    source_schema = Schema(
+        {
+            "input_image": AttributeInfo(
+                type=str, annotation=image_field(dtype=pl.UInt8(), format="RGB")
+            ),
+        }
+    )
+
+    # Create target schema with the same field type but different name "output_image"
+    target_schema = Schema(
+        {
+            "output_image": AttributeInfo(
+                type=str, annotation=image_field(dtype=pl.UInt8(), format="RGB")
+            ),
+        }
+    )
+
+    # Find conversion path - should include a remapper converter
+    path = find_conversion_path(source_schema, target_schema)
+
+    # Should have exactly one batch converter for renaming
+    assert len(path.batch_converters) == 1
+    assert isinstance(path.batch_converters[0], AttributeRemapperConverter)
+    assert len(path.lazy_converters) == 0
+
+    # Test the remapper converter functionality
+    remapper_converter = path.batch_converters[0]
+
+    # Create test DataFrame with the source column
+    test_data = np.random.randint(0, 255, (10, 10, 3), dtype=np.uint8)
+    df = pl.DataFrame(
+        {"input_image": [test_data.flatten()], "input_image_shape": [test_data.shape]}
+    )
+
+    # Apply the remapper converter
+    result_df = remapper_converter.convert(df)
+
+    # Check that columns were renamed correctly
+    assert "output_image" in result_df.columns
+    assert "output_image_shape" in result_df.columns
+    assert "input_image" not in result_df.columns
+    assert "input_image_shape" not in result_df.columns
+
+    # Check that data was preserved
+    assert result_df["output_image"][0].to_list() == test_data.flatten().tolist()
+    assert result_df["output_image_shape"][0].to_list() == list(test_data.shape)
+
+
+def test_attribute_deletion():
+    """Test attribute deletion functionality using AttributeRenameConverter."""
+
+    # Create source schema with two fields
+    source_schema = Schema(
+        {
+            "image": AttributeInfo(
+                type=str, annotation=image_field(dtype=pl.UInt8(), format="RGB")
+            ),
+            "bbox": AttributeInfo(
+                type=str, annotation=bbox_field(dtype=pl.Float32(), format="x1y1x2y2")
+            ),
+        }
+    )
+
+    # Create target schema with only the image field (bbox should be deleted)
+    target_schema = Schema(
+        {
+            "image": AttributeInfo(
+                type=str, annotation=image_field(dtype=pl.UInt8(), format="RGB")
+            ),
+        }
+    )
+
+    # Find conversion path - should include a remapper converter that only keeps image
+    path = find_conversion_path(source_schema, target_schema)
+
+    # Should have exactly one batch converter for selection/deletion
+    assert len(path.batch_converters) == 1
+    assert isinstance(path.batch_converters[0], AttributeRemapperConverter)
+    assert len(path.lazy_converters) == 0
+
+    # Test the remapper converter functionality
+    remapper_converter = path.batch_converters[0]
+
+    # Create test DataFrame with both columns
+    test_image = np.random.randint(0, 255, (10, 10, 3), dtype=np.uint8)
+    test_bbox = np.array([[10.0, 20.0, 30.0, 40.0]], dtype=np.float32)
+
+    df = pl.DataFrame(
+        {
+            "image": test_image.reshape(1, -1),
+            "image_shape": [list(test_image.shape)],
+            "bbox": test_bbox.reshape(1, -1, 4),
+        }
+    )
+
+    # Apply the remapper converter
+    result_df = remapper_converter.convert(df)
+
+    # Check that bbox column was removed but image columns remain
+    assert "image" in result_df.columns
+    assert "image_shape" in result_df.columns
+    assert "bbox" not in result_df.columns
+
+    # Check that image data was preserved
+    assert result_df["image"][0].to_list() == test_image.flatten().tolist()
+    assert result_df["image_shape"][0].to_list() == list(test_image.shape)
+
+
+def test_combined_rename_and_delete():
+    """Test scenario with both renaming and deletion operations."""
+
+    # Create source schema with three fields
+    source_schema = Schema(
+        {
+            "old_image": AttributeInfo(
+                type=str, annotation=image_field(dtype=pl.UInt8(), format="RGB")
+            ),
+            "bbox": AttributeInfo(
+                type=str, annotation=bbox_field(dtype=pl.Float32(), format="x1y1x2y2")
+            ),
+            "extra_field": AttributeInfo(type=str, annotation=image_info_field()),
+        }
+    )
+
+    # Create target schema with renamed image and no bbox or extra_field
+    target_schema = Schema(
+        {
+            "new_image": AttributeInfo(
+                type=str, annotation=image_field(dtype=pl.UInt8(), format="RGB")
+            ),
+        }
+    )
+
+    # Find conversion path - should include a single remapper converter that handles both operations
+    path = find_conversion_path(source_schema, target_schema)
+
+    # Should have exactly one batch converter that handles both renaming and deletion
+    assert len(path.batch_converters) == 1
+    assert isinstance(path.batch_converters[0], AttributeRemapperConverter)
+    assert len(path.lazy_converters) == 0
+
+    # Check that the remapper handles the conversion correctly by testing on sample data
+    remapper_converter = path.batch_converters[0]
+
+    # Create test DataFrame
+    test_df = pl.DataFrame(
+        {
+            "old_image": [[1, 2, 3, 4, 5, 6]],  # Sample image data
+            "old_image_shape": [[2, 3]],  # Sample shape data
+            "other_field": ["should_be_deleted"],  # Should be deleted
+        }
+    )
+
+    # Apply the converter
+    result_df = remapper_converter.convert(test_df)
+
+    # Check that only the renamed fields are present
+    expected_columns = {"new_image", "new_image_shape"}
+    assert set(result_df.columns) == expected_columns
+
+    # Check that data is preserved correctly
+    assert result_df["new_image"].to_list() == [[1, 2, 3, 4, 5, 6]]
+    assert result_df["new_image_shape"].to_list() == [[2, 3]]
+
+
+def test_attribute_remapping_converter():
+    """Test AttributeRemapperConverter with multiple attributes."""
+    import polars as pl
+
+    # Create test DataFrame with multiple columns including auxiliary columns
+    df = pl.DataFrame(
+        {
+            "old_image": [[1, 2, 3]],
+            "old_image_shape": [[3]],
+            "old_bbox": [[[1, 2, 3, 4]]],
+            "other_field": ["test"],
+        }
+    )
+
+    # Create attribute mappings using AttributeSpec
+    from_image_attr = AttributeSpec(name="old_image", field=image_field(dtype=pl.Int32()))
+    to_image_attr = AttributeSpec(name="new_image", field=image_field(dtype=pl.Int32()))
+
+    from_bbox_attr = AttributeSpec(name="old_bbox", field=bbox_field(dtype=pl.Int32()))
+    to_bbox_attr = AttributeSpec(name="new_bbox", field=bbox_field(dtype=pl.Int32()))
+
+    attr_mappings = [(from_image_attr, to_image_attr), (from_bbox_attr, to_bbox_attr)]
+
+    # Create and apply converter
+    converter = AttributeRemapperConverter(attr_mappings=attr_mappings)
+    result_df = converter.convert(df)
+
+    # Check that columns were remapped correctly (should only have remapped columns)
+    expected_columns = {"new_image", "new_image_shape", "new_bbox"}
+    assert set(result_df.columns) == expected_columns
+
+    # Check that data is preserved
+    assert result_df["new_image"].to_list() == [[1, 2, 3]]
+    assert result_df["new_image_shape"].to_list() == [[3]]
+    assert result_df["new_bbox"].to_list() == [[[1, 2, 3, 4]]]
