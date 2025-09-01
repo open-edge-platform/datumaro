@@ -1,6 +1,7 @@
 # Dataset Management Framework (Datumaro)
 
 [![Build status](https://github.com/open-edge-platform/datumaro/actions/workflows/health_check.yml/badge.svg)](https://github.com/open-edge-platform/datumaro/actions/workflows/health_check.yml)
+[![codecov](https://codecov.io/gh/open-edge-platform/datumaro/branch/develop/graph/badge.svg?token=FG25VU096Q)](https://codecov.io/gh/open-edge-platform/datumaro)
 [![Downloads](https://static.pepy.tech/badge/datumaro)](https://pepy.tech/project/datumaro)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/open-edge-platform/datumaro/badge)](https://scorecard.dev/viewer/?uri=github.com/open-edge-platform/datumaro)
 
