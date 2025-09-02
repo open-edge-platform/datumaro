@@ -13,8 +13,6 @@ from datumaro.components.media import Image, PointCloud
 from datumaro.plugins.data_formats.sly_pointcloud.base import SuperviselyPointCloudImporter
 from datumaro.plugins.data_formats.sly_pointcloud.exporter import SuperviselyPointCloudExporter
 
-from ..requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import Dimensions, TestDir, check_save_and_load, compare_datasets_3d
 
@@ -22,12 +20,10 @@ DUMMY_DATASET_DIR = get_test_asset_path("sly_pointcloud_dataset")
 
 
 class SuperviselyPointcloudImporterTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_detect(self):
         detected_formats = Environment().detect_dataset(DUMMY_DATASET_DIR)
         self.assertEqual([SuperviselyPointCloudImporter.NAME], detected_formats)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_load(self):
         pcd1 = osp.join(DUMMY_DATASET_DIR, "ds0", "pointcloud", "frame1.pcd")
         pcd2 = osp.join(DUMMY_DATASET_DIR, "ds0", "pointcloud", "frame2.pcd")
@@ -100,7 +96,6 @@ class PointCloudConverterTest(TestCase):
         path=osp.join(DUMMY_DATASET_DIR, "ds0", "related_images", "frame2_pcd", "img1.png")
     )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def _test_save_and_load(
         self, source_dataset, converter, test_dir, target_dataset=None, importer_args=None, **kwargs
     ):
@@ -116,7 +111,6 @@ class PointCloudConverterTest(TestCase):
             **kwargs,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load(self):
         src_label_cat = LabelCategories(attributes={"occluded"})
         src_label_cat.add("car", attributes=["x"])
@@ -268,7 +262,6 @@ class PointCloudConverterTest(TestCase):
                 require_point_cloud=True,
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_preserve_frame_ids(self):
         dataset = Dataset.from_iterable(
             [
@@ -286,7 +279,6 @@ class PointCloudConverterTest(TestCase):
                 ignored_attrs={"description"},
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_reindex(self):
         source_dataset = Dataset.from_iterable(
             [DatasetItem(id="somename", attributes={"frame": 1234})],
@@ -308,7 +300,6 @@ class PointCloudConverterTest(TestCase):
                 ignored_attrs={"description"},
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_keep_undeclared_attributes(self):
         src_label_cat = LabelCategories(attributes={"occluded"})
         src_label_cat.add("label1", attributes={"a"})
@@ -349,7 +340,6 @@ class PointCloudConverterTest(TestCase):
                 ignored_attrs=["description"],
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_drop_undeclared_attributes(self):
         src_label_cat = LabelCategories(attributes={"occluded"})
         src_label_cat.add("label1", attributes={"a"})
@@ -401,7 +391,6 @@ class PointCloudConverterTest(TestCase):
                 ignored_attrs=["description"],
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_have_arbitrary_item_ids(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -447,7 +436,6 @@ class PointCloudConverterTest(TestCase):
                 set(os.listdir(osp.join(test_dir, "ds0", "related_images", "a", "b", "c235_pcd"))),
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_inplace_save_writes_only_updated_data(self):
         with TestDir() as path:
             dataset = Dataset.from_iterable(

@@ -54,8 +54,6 @@ from datumaro.plugins.data_formats.coco.exporter import (
 from datumaro.plugins.data_formats.coco.format import CocoPath
 from datumaro.util import dump_json_file, parse_json_file
 
-from ..requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import (
     TestDir,
@@ -69,7 +67,6 @@ DUMMY_DATASET_DIR = get_test_asset_path("coco_dataset")
 
 
 class CocoImporterTest:
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize(
         "format, path",
         [
@@ -91,7 +88,6 @@ class CocoImporterTest:
         check_is_stream(back_dataset, stream)
         compare_datasets(helper_tc, dataset, back_dataset)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("stream", [True, False])
     def test_can_import_from_any_cwd(self, stream):
         class ChangeCWD:
@@ -139,7 +135,6 @@ class CocoImporterTest:
                         )
                         check_is_stream(dataset, stream)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("format", ["coco", "coco_instances"])
     @pytest.mark.parametrize(
         "subset, path",
@@ -232,7 +227,6 @@ class CocoImporterTest:
         "COCO format is required to specify the task in annotation file "
         " for resolving ambiguity problem."
     )
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("stream", [True, False])
     def test_can_import_instances_with_any_annotation_filename(self, stream, test_dir, helper_tc):
         expected_dataset = Dataset.from_iterable(
@@ -268,7 +262,6 @@ class CocoImporterTest:
         check_is_stream(imported_dataset, stream)
         compare_datasets(helper_tc, expected_dataset, imported_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("stream", [True, False])
     def test_warning_users_with_zero_category_id(self, stream, test_dir):
         expected_dataset = Dataset.from_iterable(
@@ -329,7 +322,6 @@ class CocoImporterTest:
         item = next(iter(imported_dataset))
         assert item.annotations[0].label is None
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("stream", [True, False])
     def test_can_import_instances_with_original_cat_ids(self, stream, helper_tc):
         expected_dataset = Dataset.from_iterable(
@@ -359,7 +351,6 @@ class CocoImporterTest:
         check_is_stream(actual_dataset, stream)
         compare_datasets(helper_tc, expected_dataset, actual_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("format", ["coco", "coco_captions"])
     @pytest.mark.parametrize(
         "subset, path",
@@ -415,7 +406,6 @@ class CocoImporterTest:
         "COCO format is required to specify the task in annotation file "
         " for resolving ambiguity problem."
     )
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("stream", [True, False])
     def test_can_import_captions_with_any_annotation_filename(self, stream, test_dir, helper_tc):
         expected_dataset = Dataset.from_iterable(
@@ -449,7 +439,6 @@ class CocoImporterTest:
         check_is_stream(imported_dataset, stream)
         compare_datasets(helper_tc, expected_dataset, imported_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("format", ["coco", "coco_labels"])
     @pytest.mark.parametrize(
         "subset, path",
@@ -503,7 +492,6 @@ class CocoImporterTest:
         "COCO format is required to specify the task in annotation file "
         " for resolving ambiguity problem."
     )
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("stream", [True, False])
     def test_can_import_labels_with_any_annotation_filename(self, stream, test_dir, helper_tc):
         expected_dataset = Dataset.from_iterable(
@@ -538,7 +526,6 @@ class CocoImporterTest:
         check_is_stream(imported_dataset, stream)
         compare_datasets(helper_tc, expected_dataset, imported_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("format", ["coco", "coco_person_keypoints"])
     @pytest.mark.parametrize(
         "subset, path",
@@ -666,7 +653,6 @@ class CocoImporterTest:
         "COCO format is required to specify the task in annotation file "
         " for resolving ambiguity problem."
     )
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("stream", [True, False])
     def test_can_import_keypoints_with_any_annotation_filename(self, stream, test_dir, helper_tc):
         expected_dataset = Dataset.from_iterable(
@@ -714,7 +700,6 @@ class CocoImporterTest:
         check_is_stream(imported_dataset, stream)
         compare_datasets(helper_tc, expected_dataset, imported_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("stream", [True, False])
     def test_can_import_keypoints_with_original_cat_ids(self, stream, helper_tc):
         expected_dataset = Dataset.from_iterable(
@@ -761,7 +746,6 @@ class CocoImporterTest:
 
         compare_datasets(helper_tc, expected_dataset, actual_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("format", ["coco", "coco_image_info"])
     @pytest.mark.parametrize(
         "subset, path",
@@ -813,7 +797,6 @@ class CocoImporterTest:
         "COCO format is required to specify the task in annotation file "
         " for resolving ambiguity problem."
     )
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("stream", [True, False])
     def test_can_import_image_info_with_any_annotation_filename(self, stream, test_dir, helper_tc):
         expected_dataset = Dataset.from_iterable(
@@ -845,7 +828,6 @@ class CocoImporterTest:
 
         compare_datasets(helper_tc, expected_dataset, imported_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("format", ["coco", "coco_panoptic"])
     @pytest.mark.parametrize(
         "subset, path",
@@ -918,7 +900,6 @@ class CocoImporterTest:
         "COCO format is required to specify the task in annotation file "
         " for resolving ambiguity problem."
     )
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("stream", [True, False])
     def test_can_import_panoptic_with_any_annotation_filename(self, stream, test_dir, helper_tc):
         expected_dataset = Dataset.from_iterable(
@@ -963,7 +944,6 @@ class CocoImporterTest:
         check_is_stream(imported_dataset, stream)
         compare_datasets(helper_tc, expected_dataset, imported_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("stream", [True, False])
     def test_can_import_panoptic_with_original_cat_ids(self, stream, helper_tc):
         expected_dataset = Dataset.from_iterable(
@@ -999,7 +979,6 @@ class CocoImporterTest:
 
         compare_datasets(helper_tc, expected_dataset, actual_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("format", ["coco", "coco_stuff"])
     @pytest.mark.parametrize(
         "subset, path",
@@ -1083,7 +1062,6 @@ class CocoImporterTest:
         "COCO format is required to specify the task in annotation file "
         " for resolving ambiguity problem."
     )
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("stream", [True, False])
     def test_can_import_stuff_with_any_annotation_filename(self, stream, test_dir, helper_tc):
         expected_dataset = Dataset.from_iterable(
@@ -1135,7 +1113,6 @@ class CocoImporterTest:
         check_is_stream(imported_dataset, stream)
         compare_datasets(helper_tc, expected_dataset, imported_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize(
         "subdir",
         [
@@ -1157,7 +1134,6 @@ class CocoImporterTest:
         detected_formats = env.detect_dataset(dataset_dir)
         assert [subdir] == detected_formats
 
-    @mark_requirement(Requirements.DATUM_673)
     @pytest.mark.parametrize(
         "subdir",
         [
@@ -1200,7 +1176,6 @@ class CocoImporterTest:
         shutil.move(osp.join(dataset_dir, "images"), osp.join(dataset_dir, "imgs"))
         yield dataset_dir
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("tc", ["fxt_wrong_structure_1", "fxt_wrong_structure_2"])
     @pytest.mark.parametrize("stream", [True, False])
     def test_import_error_on_wrong_directory_structure(
@@ -1243,7 +1218,6 @@ class CocoExtractorTests(TestCase):
         ],
     }
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_unexpected_file(self):
         with TestDir() as test_dir:
             with self.assertRaisesRegex(FileNotFoundError, "JSON file"):
@@ -1259,7 +1233,6 @@ class CocoExtractorTests(TestCase):
             os.makedirs(images_dir)
         return osp.join(test_dir, "annotations", "ann.json")
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_missing_item_field(self):
         for field in ["id", "file_name"]:
             with self.subTest(field=field):
@@ -1279,7 +1252,6 @@ class CocoExtractorTests(TestCase):
                     self.assertIsInstance(capture.exception.__cause__, MissingFieldError)
                     self.assertEqual(capture.exception.__cause__.name, field)
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_missing_ann_field(self):
         # https://github.com/open-edge-platform/datumaro/issues/1344 requires to make "segmentation" optional
         for field in ["id", "image_id", "iscrowd", "category_id", "bbox"]:
@@ -1300,7 +1272,6 @@ class CocoExtractorTests(TestCase):
                     self.assertIsInstance(capture.exception.__cause__, MissingFieldError)
                     self.assertEqual(capture.exception.__cause__.name, field)
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_missing_global_field(self):
         for field in ["images", "annotations", "categories"]:
             with self.subTest(field=field):
@@ -1319,7 +1290,6 @@ class CocoExtractorTests(TestCase):
                             raise
                     self.assertEqual(capture.exception.name, field)
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_missing_category_field(self):
         for field in ["id", "name"]:
             with self.subTest(field=field):
@@ -1338,7 +1308,6 @@ class CocoExtractorTests(TestCase):
                             raise
                     self.assertEqual(capture.exception.name, field)
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_undeclared_label(self):
         with TestDir() as test_dir:
             ann_path = self._get_dummy_annotation_path(test_dir)
@@ -1356,7 +1325,6 @@ class CocoExtractorTests(TestCase):
             self.assertIsInstance(capture.exception.__cause__, UndeclaredLabelError)
             self.assertEqual(capture.exception.__cause__.id, "2")
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_invalid_bbox(self):
         with TestDir() as test_dir:
             ann_path = self._get_dummy_annotation_path(test_dir)
@@ -1374,7 +1342,6 @@ class CocoExtractorTests(TestCase):
             self.assertIsInstance(capture.exception.__cause__, InvalidAnnotationError)
             self.assertIn("Bbox has wrong value count", str(capture.exception.__cause__))
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_invalid_polygon_odd_points(self):
         with TestDir() as test_dir:
             ann_path = self._get_dummy_annotation_path(test_dir)
@@ -1392,7 +1359,6 @@ class CocoExtractorTests(TestCase):
             self.assertIsInstance(capture.exception.__cause__, InvalidAnnotationError)
             self.assertIn("not divisible by 2", str(capture.exception.__cause__))
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_invalid_polygon_less_than_3_points(self):
         with TestDir() as test_dir:
             ann_path = self._get_dummy_annotation_path(test_dir)
@@ -1414,7 +1380,6 @@ class CocoExtractorTests(TestCase):
         "CocoBase is changed to skip loading annotation "
         "if there is no image id reference rather than raising an error."
     )
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_invalid_image_id(self):
         with TestDir() as test_dir:
             ann_path = self._get_dummy_annotation_path(test_dir)
@@ -1432,7 +1397,6 @@ class CocoExtractorTests(TestCase):
             self.assertIsInstance(capture.exception.__cause__, InvalidAnnotationError)
             self.assertIn("Unknown image id", str(capture.exception.__cause__))
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_invalid_item_field_type(self):
         with TestDir() as test_dir:
             for field, value in [("id", "q"), ("width", "q"), ("height", "q"), ("file_name", 0)]:
@@ -1453,7 +1417,6 @@ class CocoExtractorTests(TestCase):
                     self.assertEqual(capture.exception.__cause__.name, field)
                     self.assertEqual(capture.exception.__cause__.actual, str(type(value)))
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_invalid_ann_field_type(self):
         with TestDir() as test_dir:
             for field, value in [
@@ -1510,7 +1473,6 @@ class CocoExporterTest:
     def stream(self, request: pytest.FixtureRequest) -> bool:
         return request.param
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_captions(self, stream: bool, test_dir: str):
         expected_dataset = Dataset.from_iterable(
             [
@@ -1549,7 +1511,6 @@ class CocoExporterTest:
             stream=stream,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_instances(self, test_dir, stream: bool):
         source_dataset = Dataset.from_iterable(
             [
@@ -1708,7 +1669,6 @@ class CocoExporterTest:
             stream=stream,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_panoptic(self, test_dir, stream: bool):
         dataset = Dataset.from_iterable(
             [
@@ -1779,7 +1739,6 @@ class CocoExporterTest:
             stream=stream,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_stuff(self, test_dir, stream: bool):
         source_dataset = Dataset.from_iterable(
             [
@@ -1891,7 +1850,6 @@ class CocoExporterTest:
             stream=stream,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_merge_polygons_on_loading(self, test_dir, stream: bool):
         source_dataset = Dataset.from_iterable(
             [
@@ -1958,7 +1916,6 @@ class CocoExporterTest:
             stream=stream,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_crop_covered_segments(self, test_dir, stream: bool):
         source_dataset = Dataset.from_iterable(
             [
@@ -2052,7 +2009,6 @@ class CocoExporterTest:
             stream=stream,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_convert_polygons_to_mask(self, test_dir, stream: bool):
         """
         <b>Description:</b>
@@ -2137,7 +2093,6 @@ class CocoExporterTest:
             stream=stream,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_convert_masks_to_polygons(self, test_dir, stream: bool):
         source_dataset = Dataset.from_iterable(
             [
@@ -2211,7 +2166,6 @@ class CocoExporterTest:
             stream=stream,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_images(self, test_dir, stream: bool):
         expected_dataset = Dataset.from_iterable(
             [
@@ -2231,7 +2185,6 @@ class CocoExporterTest:
             stream=stream,
         )
 
-    @mark_requirement(Requirements.DATUM_231)
     def test_can_save_dataset_with_cjk_categories(self, test_dir, stream: bool):
         expected_dataset = Dataset.from_iterable(
             [
@@ -2270,7 +2223,6 @@ class CocoExporterTest:
             expected_dataset, CocoInstancesExporter.convert, test_dir, stream=stream
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_cyrillic_and_spaces_in_filename(self, test_dir, stream: bool):
         expected_dataset = Dataset.from_iterable(
             [
@@ -2285,7 +2237,6 @@ class CocoExporterTest:
             stream=stream,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_labels(self, test_dir, stream: bool):
         expected_dataset = Dataset.from_iterable(
             [
@@ -2309,7 +2260,6 @@ class CocoExporterTest:
             stream=stream,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_keypoints(self, test_dir, stream: bool):
         source_dataset = Dataset.from_iterable(
             [
@@ -2412,7 +2362,6 @@ class CocoExporterTest:
             stream=stream,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_no_subsets(self, test_dir, stream: bool):
         test_dataset = Dataset.from_iterable(
             [
@@ -2428,7 +2377,6 @@ class CocoExporterTest:
             stream=stream,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_image_info(self, test_dir, stream: bool):
         expected_dataset = Dataset.from_iterable(
             [
@@ -2442,7 +2390,6 @@ class CocoExporterTest:
             expected_dataset, CocoImageInfoExporter.convert, test_dir, stream=stream
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_relative_paths(self, test_dir, stream: bool):
         expected_dataset = Dataset.from_iterable(
             [
@@ -2470,7 +2417,6 @@ class CocoExporterTest:
             stream=stream,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_image_with_arbitrary_extension(self, test_dir, stream: bool):
         expected = Dataset.from_iterable(
             [
@@ -2495,7 +2441,6 @@ class CocoExporterTest:
             stream=stream,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_preserve_coco_ids(self, test_dir, stream: bool):
         expected_dataset = Dataset.from_iterable(
             [
@@ -2515,7 +2460,6 @@ class CocoExporterTest:
             stream=stream,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_annotation_attributes(self, test_dir, stream: bool):
         source_dataset = Dataset.from_iterable(
             [
@@ -2576,7 +2520,6 @@ class CocoExporterTest:
             stream=stream,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_auto_annotation_ids(self, test_dir, stream: bool):
         source_dataset = Dataset.from_iterable(
             [
@@ -2630,7 +2573,6 @@ class CocoExporterTest:
             stream=stream,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_subset_can_contain_underscore(self, test_dir, stream: bool):
         source_dataset = Dataset.from_iterable(
             [
@@ -2693,7 +2635,6 @@ class CocoExporterTest:
             stream=stream,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_reindex(self, test_dir, stream: bool):
         source_dataset = Dataset.from_iterable(
             [
@@ -2748,7 +2689,6 @@ class CocoExporterTest:
             stream=stream,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_media_in_single_dir(self, test_dir, stream: bool):
         dataset = Dataset.from_iterable(
             [
@@ -2770,7 +2710,6 @@ class CocoExporterTest:
         )
         assert osp.isfile(osp.join(test_dir, "images", "1.jpg"))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_media_in_separate_dirs(self, test_dir, stream: bool):
         dataset = Dataset.from_iterable(
             [
@@ -2792,7 +2731,6 @@ class CocoExporterTest:
         )
         assert osp.isfile(osp.join(test_dir, "images", "train", "1.jpg"))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_inplace_save_writes_only_updated_data(self, test_dir, stream: bool):
         expected = Dataset.from_iterable(
             [
@@ -2828,7 +2766,6 @@ class CocoExporterTest:
             ignored_attrs={"id"},
         )
 
-    @mark_requirement(Requirements.DATUM_BUG_425)
     def test_can_save_and_load_grouped_masks_and_polygons(self, test_dir, stream: bool):
         source_dataset = Dataset.from_iterable(
             [
@@ -2905,7 +2842,6 @@ class CocoExporterTest:
             stream=stream,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_panoptic_with_meta_file(self, test_dir, stream: bool):
         dataset = Dataset.from_iterable(
             [
@@ -2962,7 +2898,6 @@ class CocoExporterTest:
         )
         assert osp.isfile(osp.join(test_dir, "dataset_meta.json"))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_stuff_with_meta_file(self, test_dir, stream: bool):
         dataset = Dataset.from_iterable(
             [
@@ -3013,7 +2948,6 @@ class CocoExporterTest:
         )
         assert osp.isfile(osp.join(test_dir, "dataset_meta.json"))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_export_and_import_ellipse(self, test_dir, stream: bool):
         ellipses = [
             Ellipse(0, 0, 5, 5, id=1, label=1, group=1),
@@ -3070,7 +3004,6 @@ class CocoExporterTest:
             stream=stream,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize(
         "annotations, n_expected_anns",
         [

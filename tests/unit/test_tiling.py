@@ -28,8 +28,6 @@ from datumaro.components.media import Image
 from datumaro.plugins.tiling import Tile
 from datumaro.plugins.tiling.util import xywh_to_x1y1x2y2
 
-from ..requirements import Requirements, mark_requirement
-
 from tests.utils.test_utils import compare_datasets
 
 
@@ -299,7 +297,6 @@ class TileTest(_TestBase, TestCase):
         for cnt in ann_counts.values():
             assert cnt == 1
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_overlap(self):
         source = Dataset.from_iterable(
             [
@@ -329,7 +326,6 @@ class TileTest(_TestBase, TestCase):
             assert item.media.size == expected_size
             assert item.media.data.shape[:2] == expected_size
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_label(self):
         source = self.source_dataset_label
 
@@ -352,7 +348,6 @@ class TileTest(_TestBase, TestCase):
 
         assert label_counts == expected_label_counts
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_caption(self):
         source = self.source_dataset_caption
 
@@ -377,7 +372,6 @@ class TileTest(_TestBase, TestCase):
 
         assert caption_counts == expected_label_counts
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_bbox(self):
         source = self.source_dataset_bbox
 
@@ -398,7 +392,6 @@ class TileTest(_TestBase, TestCase):
                 assert ann.w == self.tile_width
                 assert ann.h == self.tile_height
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_polygon(self):
         source = self.source_dataset_polygon
 
@@ -427,7 +420,6 @@ class TileTest(_TestBase, TestCase):
                 iou = inter_area / union_area
                 assert iou == 1.0
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_points(self):
         source = self.source_dataset_points
 
@@ -450,7 +442,6 @@ class TileTest(_TestBase, TestCase):
                 for a_p, e_p in zip(ann.get_points(), expected_points):
                     assert a_p == e_p
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_polyline(self):
         source = self.source_dataset_polyline
 
@@ -473,7 +464,6 @@ class TileTest(_TestBase, TestCase):
                 for a_p, e_p in zip(ann.get_points(), expected_points):
                     assert a_p == e_p
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_mask(self):
         n_pixels = min(self.tile_height, self.tile_width)
         source = self.source_dataset_mask
@@ -492,7 +482,6 @@ class TileTest(_TestBase, TestCase):
             for ann in item.annotations:
                 assert ann.image.astype(np.int32).sum() == n_pixels
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_depth_annotation(self):
         n_pixels = min(self.tile_height, self.tile_width)
         source = self.source_dataset_depth_annotation
@@ -511,7 +500,6 @@ class TileTest(_TestBase, TestCase):
             for ann in item.annotations:
                 assert ann.image.astype(np.int32).sum() == n_pixels
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_cuboid3d_annotation(self):
         source = self.source_dataset_cuboid3d
 
@@ -526,7 +514,6 @@ class TileTest(_TestBase, TestCase):
         with self.assertRaises(DatumaroError):
             self._test_common(transformed, self.default_attrs, AnnotationType.cuboid_3d)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_super_resolution_annotation(self):
         source = self.source_dataset_super_resolution_annotation
 
@@ -551,7 +538,6 @@ class TileTest(_TestBase, TestCase):
             h=self.tile_height,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_drop_annotations(self):
         source = Dataset.from_iterable(
             [
@@ -591,7 +577,6 @@ class TileTest(_TestBase, TestCase):
         for item in transformed:
             assert len(item.annotations) == 0
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_crop_annotations(self):
         source = Dataset.from_iterable(
             [
@@ -652,7 +637,6 @@ class TileTest(_TestBase, TestCase):
 
 
 class MergeTileTest(_TestBase, TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_tile_and_merge_tile(self):
         for ann_type in [
             "label",

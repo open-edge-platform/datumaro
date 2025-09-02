@@ -14,8 +14,6 @@ from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image
 
-from ...requirements import Requirements, mark_requirement
-
 from tests.utils.test_utils import TestDir, compare_datasets
 from tests.utils.test_utils import run_datum as run
 
@@ -250,7 +248,6 @@ class MergeTest:
 
 
 class IntersectMergeTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_run_self_merge(self):
         dataset1 = Dataset.from_iterable(
             [
@@ -358,7 +355,6 @@ class IntersectMergeTest(TestCase):
 
             compare_datasets(self, expected, Dataset.load(result_dir), require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_run_multimerge(self):
         dataset1 = Dataset.from_iterable(
             [
@@ -466,7 +462,6 @@ class IntersectMergeTest(TestCase):
 
             compare_datasets(self, expected, Dataset.load(result_dir), require_media=True)
 
-    @mark_requirement(Requirements.DATUM_542)
     def test_can_save_in_another_format(self):
         dataset1 = Dataset.from_iterable(
             [

@@ -19,8 +19,6 @@ from datumaro.plugins.data_formats.mpii.mpii_json import (
     MpiiJsonImporter,
 )
 
-from ..requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import compare_datasets
 
@@ -33,7 +31,6 @@ DUMMY_DATASET_DIR_WO_NUMPY_FILES = get_test_asset_path(
 
 
 class MpiiJsonImporterTest(TestCase):
-    @mark_requirement(Requirements.DATUM_580)
     def test_can_import_dataset_witn_numpy_files(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -271,7 +268,6 @@ class MpiiJsonImporterTest(TestCase):
 
         compare_datasets(self, expected_dataset, dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_580)
     def test_can_import_dataset_wo_numpy_files(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -426,12 +422,10 @@ class MpiiJsonImporterTest(TestCase):
 
         compare_datasets(self, expected_dataset, dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_580)
     def test_can_detect_dataset_with_numpy_files(self):
         detected_formats = Environment().detect_dataset(DUMMY_DATASET_DIR_WITH_NUMPY_FILES)
         self.assertEqual([MpiiJsonImporter.NAME], detected_formats)
 
-    @mark_requirement(Requirements.DATUM_580)
     def test_can_detect_dataset_wo_numpy_files(self):
         detected_formats = Environment().detect_dataset(DUMMY_DATASET_DIR_WO_NUMPY_FILES)
         self.assertEqual([MpiiJsonImporter.NAME], detected_formats)

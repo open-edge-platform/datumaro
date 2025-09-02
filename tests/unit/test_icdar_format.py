@@ -20,8 +20,6 @@ from datumaro.plugins.data_formats.icdar.exporter import (
     IcdarWordRecognitionExporter,
 )
 
-from ..requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, check_save_and_load, compare_datasets
 
@@ -29,28 +27,24 @@ DUMMY_DATASET_DIR = get_test_asset_path("icdar_dataset")
 
 
 class IcdarImporterTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_detect_word_recognition(self):
         detected_formats = Environment().detect_dataset(
             osp.join(DUMMY_DATASET_DIR, "word_recognition")
         )
         self.assertEqual([IcdarWordRecognitionImporter.NAME], detected_formats)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_detect_text_localization(self):
         detected_formats = Environment().detect_dataset(
             osp.join(DUMMY_DATASET_DIR, "text_localization")
         )
         self.assertEqual([IcdarTextLocalizationImporter.NAME], detected_formats)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_detect_text_segmentation(self):
         detected_formats = Environment().detect_dataset(
             osp.join(DUMMY_DATASET_DIR, "text_segmentation")
         )
         self.assertEqual([IcdarTextSegmentationImporter.NAME], detected_formats)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_import_captions(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -79,7 +73,6 @@ class IcdarImporterTest(TestCase):
 
         compare_datasets(self, expected_dataset, dataset)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_import_bboxes(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -109,7 +102,6 @@ class IcdarImporterTest(TestCase):
 
         compare_datasets(self, expected_dataset, dataset)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_import_masks(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -182,7 +174,6 @@ class IcdarConverterTest(TestCase):
             **kwargs,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_captions(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -213,7 +204,6 @@ class IcdarConverterTest(TestCase):
                 "icdar_word_recognition",
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_captions_with_no_save_media(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -236,7 +226,6 @@ class IcdarConverterTest(TestCase):
                 "icdar_word_recognition",
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_bboxes(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -278,7 +267,6 @@ class IcdarConverterTest(TestCase):
                 "icdar_text_localization",
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_bboxes_with_no_save_media(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -302,7 +290,6 @@ class IcdarConverterTest(TestCase):
                 "icdar_text_localization",
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_masks(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -391,7 +378,6 @@ class IcdarConverterTest(TestCase):
                 "icdar_text_segmentation",
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_masks_with_no_save_media(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -433,7 +419,6 @@ class IcdarConverterTest(TestCase):
                 "icdar_text_segmentation",
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_with_no_subsets(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -455,7 +440,6 @@ class IcdarConverterTest(TestCase):
                 "icdar_text_localization",
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_cyrillic_and_spaces_in_filename(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -479,7 +463,6 @@ class IcdarConverterTest(TestCase):
                     require_media=True,
                 )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_image_with_arbitrary_extension(self):
         expected = Dataset.from_iterable(
             [
@@ -506,7 +489,6 @@ class IcdarConverterTest(TestCase):
                     require_media=True,
                 )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_captions_with_quotes(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -526,7 +508,6 @@ class IcdarConverterTest(TestCase):
                 "icdar_word_recognition",
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_segm_wo_color_attribute(self):
         source_dataset = Dataset.from_iterable(
             [

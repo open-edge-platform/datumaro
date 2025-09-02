@@ -13,7 +13,6 @@ from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image
 
-from tests.requirements import Requirements, mark_requirement
 from tests.utils.test_utils import IGNORE_ALL, TestCaseHelper, compare_datasets
 from tests.utils.test_utils import run_datum as run
 
@@ -54,7 +53,6 @@ def fxt_dataset():
     )
 
 
-@mark_requirement(Requirements.DATUM_GENERAL_REQ)
 @pytest.mark.parametrize(
     "input_format", ["coco", "yolo", "datumaro", "datumaro_binary"], ids=lambda x: f"[if:{x}]"
 )

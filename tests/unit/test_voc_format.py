@@ -47,8 +47,6 @@ from datumaro.plugins.data_formats.voc.importer import VocImporter
 from datumaro.util.image import save_image
 from datumaro.util.mask_tools import load_mask
 
-from ..requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import (
     TestDir,
@@ -59,7 +57,6 @@ from tests.utils.test_utils import (
 
 
 class VocFormatTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_colormap_generator(self):
         reference = np.array(
             [
@@ -90,7 +87,6 @@ class VocFormatTest(TestCase):
 
         self.assertTrue(np.array_equal(reference, list(VOC.VocColormap.values())))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_write_and_parse_labelmap(self):
         src_label_map = VOC.make_voc_label_map()
         src_label_map["qq"] = [None, ["part1", "part2"], ["act1", "act2"]]
@@ -104,7 +100,6 @@ class VocFormatTest(TestCase):
 
             self.assertEqual(src_label_map, dst_label_map)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_write_and_parse_dataset_meta_file(self):
         src_label_map = VOC.make_voc_label_map()
         src_label_map["qq"] = [None, ["part1", "part2"], ["act1", "act2"]]
@@ -116,7 +111,6 @@ class VocFormatTest(TestCase):
 
             self.assertEqual(src_label_map, dst_label_map)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_report_invalid_line_in_labelmap(self):
         with TestDir() as test_dir:
             path = osp.join(test_dir, "labelmap.txt")
@@ -126,7 +120,6 @@ class VocFormatTest(TestCase):
             with self.assertRaisesRegex(InvalidAnnotationError, "Expected 4 ':'-separated fields"):
                 VOC.parse_label_map(path)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_report_repeated_label_in_labelmap(self):
         with TestDir() as test_dir:
             path = osp.join(test_dir, "labelmap.txt")
@@ -137,7 +130,6 @@ class VocFormatTest(TestCase):
             with self.assertRaisesRegex(InvalidAnnotationError, "already defined"):
                 VOC.parse_label_map(path)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_report_invalid_color_in_labelmap(self):
         with TestDir() as test_dir:
             path = osp.join(test_dir, "labelmap.txt")
@@ -162,7 +154,6 @@ DUMMY_DATASET3_DIR = get_test_asset_path("voc_dataset", "voc_dataset3")
 
 
 class VocImportTest:
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("dataset_cls, is_stream", [(Dataset, False), (StreamDataset, True)])
     def test_can_import(self, dataset_cls, is_stream, helper_tc):
         class DstExtractor(TestExtractorBase):
@@ -240,7 +231,6 @@ class VocImportTest:
 
         compare_datasets(helper_tc, DstExtractor(), actual)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("dataset_cls, is_stream", [(Dataset, False), (StreamDataset, True)])
     @pytest.mark.parametrize(
         "format, subset, path",
@@ -287,7 +277,6 @@ class VocImportTest:
 
         compare_datasets(helper_tc, expected, actual, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("dataset_cls, is_stream", [(Dataset, False), (StreamDataset, True)])
     @pytest.mark.parametrize(
         "format, subset, path",
@@ -343,7 +332,6 @@ class VocImportTest:
 
         compare_datasets(helper_tc, expected, actual, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("dataset_cls, is_stream", [(Dataset, False), (StreamDataset, True)])
     @pytest.mark.parametrize(
         "format, subset, path",
@@ -412,7 +400,6 @@ class VocImportTest:
 
         compare_datasets(helper_tc, expected, actual, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("dataset_cls, is_stream", [(Dataset, False), (StreamDataset, True)])
     @pytest.mark.parametrize(
         "format, subset, path",
@@ -452,7 +439,6 @@ class VocImportTest:
 
         compare_datasets(helper_tc, expected, actual, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("dataset_cls, is_stream", [(Dataset, False), (StreamDataset, True)])
     @pytest.mark.parametrize(
         "format, subset, path",
@@ -514,7 +500,6 @@ class VocImportTest:
         detected_formats = env.detect_dataset(path)
         assert VocImporter.NAME in detected_formats
 
-    @mark_requirement(Requirements.DATUM_BUG_583)
     @pytest.mark.parametrize("dataset_cls, is_stream", [(Dataset, False), (StreamDataset, True)])
     @pytest.mark.parametrize(
         "format, subset, path",
@@ -564,7 +549,6 @@ class VocImportTest:
 
         compare_datasets(helper_tc, expected, actual, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_673)
     @pytest.mark.parametrize(
         "fmt",
         [
@@ -623,7 +607,6 @@ class VocExtractorTest(TestCase):
                 mangle_xml(xml)
             f.write(ElementTree.tostring(xml))
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_parse_xml_without_errors(self):
         formats = [
             ("voc_detection", "Main"),
@@ -640,7 +623,6 @@ class VocExtractorTest(TestCase):
                     dataset.init_cache()
                     self.assertEqual(len(dataset), 1)
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_invalid_quotes_in_lists_of_layout_task(self):
         with TestDir() as test_dir:
             subset_file = osp.join(test_dir, "ImageSets", "Layout", "test.txt")
@@ -658,7 +640,6 @@ class VocExtractorTest(TestCase):
                         raise e.__cause__
                     raise
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_invalid_label_in_xml(self):
         formats = [
             ("voc_detection", "Main"),
@@ -680,7 +661,6 @@ class VocExtractorTest(TestCase):
                     self.assertIsInstance(capture.exception.__cause__, UndeclaredLabelError)
                     self.assertEqual(capture.exception.__cause__.id, "test")
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_missing_field_in_xml(self):
         formats = [
             ("voc_detection", "Main"),
@@ -718,7 +698,6 @@ class VocExtractorTest(TestCase):
                             self.assertIsInstance(capture.exception.__cause__, MissingFieldError)
                             self.assertIn(osp.basename(key), capture.exception.__cause__.name)
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_invalid_field_in_xml(self):
         formats = [
             ("voc_detection", "Main"),
@@ -756,7 +735,6 @@ class VocExtractorTest(TestCase):
                             self.assertIsInstance(capture.exception.__cause__, InvalidFieldError)
                             self.assertIn(osp.basename(key), capture.exception.__cause__.name)
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_missing_field_in_classification(self):
         with TestDir() as test_dir:
             subset_file = osp.join(test_dir, "ImageSets", "Main", "test.txt")
@@ -771,7 +749,6 @@ class VocExtractorTest(TestCase):
             with self.assertRaisesRegex(InvalidAnnotationError, "invalid number of fields"):
                 Dataset.import_from(test_dir, format="voc_classification").init_cache()
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_parse_classification_without_errors(self):
         with TestDir() as test_dir:
             subset_file = osp.join(test_dir, "ImageSets", "Main", "test.txt")
@@ -799,7 +776,6 @@ class VocExtractorTest(TestCase):
             )
             compare_datasets(self, expected, parsed)
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_invalid_annotation_value_in_classification(self):
         with TestDir() as test_dir:
             subset_file = osp.join(test_dir, "ImageSets", "Main", "test.txt")
@@ -814,7 +790,6 @@ class VocExtractorTest(TestCase):
             with self.assertRaisesRegex(InvalidAnnotationError, "unexpected class existence value"):
                 Dataset.import_from(test_dir, format="voc_classification").init_cache()
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_invalid_label_in_segmentation_cls_mask(self):
         with TestDir() as test_dir:
             subset_file = osp.join(test_dir, "ImageSets", "Segmentation", "test.txt")
@@ -831,7 +806,6 @@ class VocExtractorTest(TestCase):
             self.assertIsInstance(capture.exception.__cause__, UndeclaredLabelError)
             self.assertEqual(capture.exception.__cause__.id, "30")
 
-    @mark_requirement(Requirements.DATUM_ERROR_REPORTING)
     def test_can_report_invalid_label_in_segmentation_both_masks(self):
         with TestDir() as test_dir:
             subset_file = osp.join(test_dir, "ImageSets", "Segmentation", "test.txt")
@@ -875,7 +849,6 @@ class VocExporterTest(TestCase):
             **kwargs,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_voc_cls(self):
         class TestExtractor(TestExtractorBase):
             def __iter__(self):
@@ -911,7 +884,6 @@ class VocExporterTest(TestCase):
                 importer="voc_classification",
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_voc_det(self):
         class TestExtractor(TestExtractorBase):
             def __iter__(self):
@@ -1025,7 +997,6 @@ class VocExporterTest(TestCase):
                 target_dataset=DstExtractor(),
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_voc_segm(self):
         class TestExtractor(TestExtractorBase):
             def __iter__(self):
@@ -1076,7 +1047,6 @@ class VocExporterTest(TestCase):
                 target_dataset=DstExtractor(),
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_voc_segm_unpainted(self):
         class TestExtractor(TestExtractorBase):
             def __iter__(self):
@@ -1131,7 +1101,6 @@ class VocExporterTest(TestCase):
                 target_dataset=DstExtractor(),
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_voc_segm_with_many_instances(self):
         def bit(x, y, shape):
             mask = np.zeros(shape)
@@ -1193,7 +1162,6 @@ class VocExporterTest(TestCase):
                 target_dataset=DstExtractor(),
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_voc_layout(self):
         class TestExtractor(TestExtractorBase):
             def __iter__(self):
@@ -1239,7 +1207,6 @@ class VocExporterTest(TestCase):
                 importer="voc_layout",
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_voc_action(self):
         class TestExtractor(TestExtractorBase):
             def __iter__(self):
@@ -1337,7 +1304,6 @@ class VocExporterTest(TestCase):
                 target_dataset=DstExtractor(),
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_no_subsets(self):
         class TestExtractor(TestExtractorBase):
             def __init__(self, task):
@@ -1364,7 +1330,6 @@ class VocExporterTest(TestCase):
                     importer=task.name,
                 )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_cyrillic_and_spaces_in_filename(self):
         class TestExtractor(TestExtractorBase):
             def __init__(self, task):
@@ -1395,7 +1360,6 @@ class VocExporterTest(TestCase):
                     require_media=True,
                 )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_images(self):
         class TestExtractor(TestExtractorBase):
             def __init__(self, task):
@@ -1430,7 +1394,6 @@ class VocExporterTest(TestCase):
                     require_media=True,
                 )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_dataset_with_voc_labelmap(self):
         class SrcExtractor(TestExtractorBase):
             def __iter__(self):
@@ -1485,7 +1448,6 @@ class VocExporterTest(TestCase):
                 target_dataset=DstExtractor(),
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_dataset_with_source_labelmap_undefined(self):
         class SrcExtractor(TestExtractorBase):
             def __iter__(self):
@@ -1557,7 +1519,6 @@ class VocExporterTest(TestCase):
                 target_dataset=DstExtractor(),
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_dataset_with_source_labelmap_defined(self):
         class SrcExtractor(TestExtractorBase):
             def __iter__(self):
@@ -1628,7 +1589,6 @@ class VocExporterTest(TestCase):
                 target_dataset=DstExtractor(),
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_dataset_with_save_dataset_meta_file(self):
         label_map = OrderedDict(
             [
@@ -1687,7 +1647,6 @@ class VocExporterTest(TestCase):
             )
             self.assertTrue(osp.isfile(osp.join(test_dir, "dataset_meta.json")))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_dataset_with_fixed_labelmap(self):
         class SrcExtractor(TestExtractorBase):
             def __iter__(self):
@@ -1769,7 +1728,6 @@ class VocExporterTest(TestCase):
                 target_dataset=DstExtractor(),
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_background_masks_dont_introduce_instances_but_cover_others(self):
         dataset = Dataset.from_iterable(
             [
@@ -1794,7 +1752,6 @@ class VocExporterTest(TestCase):
             self.assertTrue(np.array_equal([0, 1], np.unique(cls_mask)))
             self.assertTrue(np.array_equal([0, 1], np.unique(inst_mask)))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_image_info(self):
         class TestExtractor(TestExtractorBase):
             def __init__(self, task):
@@ -1820,7 +1777,6 @@ class VocExporterTest(TestCase):
                     importer=task.name,
                 )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_image_with_arbitrary_extension(self):
         class TestExtractor(TestExtractorBase):
             def __init__(self, task):
@@ -1850,7 +1806,6 @@ class VocExporterTest(TestCase):
                     require_media=True,
                 )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_relative_paths(self):
         class TestExtractor(TestExtractorBase):
             def __init__(self, task):
@@ -1883,7 +1838,6 @@ class VocExporterTest(TestCase):
                     require_media=True,
                 )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_attributes(self):
         class TestExtractor(TestExtractorBase):
             def __iter__(self):
@@ -1948,7 +1902,6 @@ class VocExporterTest(TestCase):
                 target_dataset=DstExtractor(),
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_inplace_save_writes_only_updated_data_with_direct_changes(self):
         expected = Dataset.from_iterable(
             [
@@ -2036,7 +1989,6 @@ class VocExporterTest(TestCase):
             )
             compare_datasets(self, expected, Dataset.import_from(path, "voc"), require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_inplace_save_writes_only_updated_data_with_transforms(self):
         expected = Dataset.from_iterable(
             [
@@ -2144,7 +2096,6 @@ class VocExporterTest(TestCase):
             )
             compare_datasets(self, expected, Dataset.import_from(path, "voc"), require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_no_data_images(self):
         class TestExtractor(TestExtractorBase):
             def __iter__(self):

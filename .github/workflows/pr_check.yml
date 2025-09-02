@@ -11,8 +11,9 @@ on:
       - synchronize
       - reopened
       - ready_for_review
-# No permissions by default, no specific permissions are required for this workflow
-permissions: {}
+permissions:
+  # The id-token permission is required by Codecov to use OIDC
+  id-token: write
 
 # This is what will cancel the workflow concurrency
 concurrency:
@@ -24,10 +25,6 @@ defaults:
     shell: bash
 jobs:
   pr_test:
-    if: |
-      github.event.pull_request.draft == false &&
-      !(startsWith(github.event.pull_request.title, '[WIP]')) &&
-      !(startsWith(github.event.pull_request.title, '[Dependent]'))
     strategy:
       fail-fast: false
       matrix:
@@ -75,3 +72,4 @@ jobs:
         uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # v5.4.3
         with:
           flags: ${{ matrix.os }}_Python-${{ matrix.python-version }}
+          use_oidc: true

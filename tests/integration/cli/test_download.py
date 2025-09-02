@@ -14,8 +14,6 @@ from datumaro.components.dataset import Dataset
 from datumaro.components.extractor_tfds import AVAILABLE_TFDS_DATASETS, TFDS_EXTRACTOR_AVAILABLE
 from datumaro.util import parse_json
 
-from ...requirements import Requirements, mark_requirement
-
 from tests.utils.test_utils import TestCaseHelper, TestDir, compare_datasets, mock_tfds_data
 from tests.utils.test_utils import run_datum as run
 
@@ -24,7 +22,6 @@ from tests.utils.test_utils import run_datum as run
 class DownloadGetTest:
     _helper_tc = TestCaseHelper()
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @mock_tfds_data(subsets=("train", "val"))
     def test_download(self, test_dir: str):
         expected_dataset = Dataset(AVAILABLE_TFDS_DATASETS["mnist"].make_extractor())
@@ -43,7 +40,6 @@ class DownloadGetTest:
         actual_dataset = Dataset.import_from(test_dir, "mnist")
         compare_datasets(self._helper_tc, expected_dataset, actual_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @mock_tfds_data(subsets=("train", "val"))
     def test_download_custom_format(self, test_dir: str, helper_tc):
         expected_dataset = Dataset(AVAILABLE_TFDS_DATASETS["mnist"].make_extractor())
@@ -63,7 +59,6 @@ class DownloadGetTest:
         actual_dataset = Dataset.load(test_dir)
         compare_datasets(self._helper_tc, expected_dataset, actual_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_download_fails_on_existing_dir_without_overwrite(self, test_dir: str):
         with open(osp.join(test_dir, "text.txt"), "w"):
             pass
@@ -79,7 +74,6 @@ class DownloadGetTest:
             expected_code=1,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @mock_tfds_data()
     def test_download_works_on_existing_dir_without_overwrite(self, test_dir: str):
         with open(osp.join(test_dir, "text.txt"), "w"):
@@ -98,7 +92,6 @@ class DownloadGetTest:
             "--save-media",
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @mock_tfds_data(subsets=("train", "val"))
     def test_download_subset(self, test_dir: str):
         expected_dataset = Dataset(
@@ -121,7 +114,6 @@ class DownloadGetTest:
         actual_dataset = Dataset.load(test_dir)
         compare_datasets(self._helper_tc, expected_dataset, actual_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @mock_tfds_data(subsets=("train", "val"))
     def test_download_invalid_subset(self, test_dir: str):
         run(
@@ -171,7 +163,6 @@ class DownloadGetTest:
 class DownloadDescribeTest:
     _helper_tc = TestCaseHelper()
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @mock_tfds_data()
     def test_text(self):
         output_file = io.StringIO()
@@ -211,7 +202,6 @@ class DownloadDescribeTest:
                 assert subset_name in output
                 assert str(subset_metadata.num_items) in output
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @mock_tfds_data()
     def test_json(self):
         output_file = io.StringIO()

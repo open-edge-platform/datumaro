@@ -18,8 +18,6 @@ from datumaro.components.errors import DatasetImportError
 from datumaro.components.media import Image
 from datumaro.plugins.data_formats.cifar import CifarExporter, CifarImporter
 
-from ..requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, compare_datasets
 
@@ -28,7 +26,6 @@ DUMMY_100_DATASET_DIR = get_test_asset_path("cifar100_dataset")
 
 
 class CifarFormatTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -57,7 +54,6 @@ class CifarFormatTest(TestCase):
 
             compare_datasets(self, source_dataset, parsed_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_without_saving_images(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -73,7 +69,6 @@ class CifarFormatTest(TestCase):
 
             compare_datasets(self, source_dataset, parsed_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_with_different_image_size(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -97,7 +92,6 @@ class CifarFormatTest(TestCase):
 
             compare_datasets(self, source_dataset, parsed_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_cyrillic_and_spaces_in_filename(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -116,7 +110,6 @@ class CifarFormatTest(TestCase):
 
             compare_datasets(self, source_dataset, parsed_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_image_with_arbitrary_extension(self):
         dataset = Dataset.from_iterable(
             [
@@ -136,7 +129,6 @@ class CifarFormatTest(TestCase):
 
             compare_datasets(self, dataset, parsed_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_empty_image(self):
         dataset = Dataset.from_iterable(
             [DatasetItem(id="a", annotations=[Label(0)]), DatasetItem(id="b")],
@@ -149,7 +141,6 @@ class CifarFormatTest(TestCase):
 
             compare_datasets(self, dataset, parsed_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_inplace_save_writes_only_updated_data(self):
         expected = Dataset.from_iterable(
             [
@@ -216,7 +207,6 @@ class CifarFormatTest(TestCase):
             self.assertEqual({"a", "b", "batches.meta"}, set(os.listdir(path)))
             compare_datasets(self, expected, Dataset.import_from(path, "cifar"), require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_cifar100(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -245,7 +235,6 @@ class CifarFormatTest(TestCase):
 
             compare_datasets(self, source_dataset, parsed_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_cifar100_without_saving_images(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -261,7 +250,6 @@ class CifarFormatTest(TestCase):
 
             compare_datasets(self, source_dataset, parsed_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_catch_pickle_exception(self):
         with TestDir() as test_dir:
             # Create dummy CIFAR100 dataset by copy
@@ -279,7 +267,6 @@ class CifarFormatTest(TestCase):
                         raise e.__cause__
                     raise
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_with_meta_file(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -311,7 +298,6 @@ class CifarFormatTest(TestCase):
 
 
 class CifarImporterTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_import_10(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -355,12 +341,10 @@ class CifarImporterTest(TestCase):
 
         compare_datasets(self, expected_dataset, dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_detect_10(self):
         detected_formats = Environment().detect_dataset(DUMMY_10_DATASET_DIR)
         self.assertEqual(detected_formats, [CifarImporter.NAME])
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_import_100(self):
         # Unless simple dataset merge can't overlap labels and add parent
         # information, the datasets must contain all the possible labels.
@@ -417,7 +401,6 @@ class CifarImporterTest(TestCase):
 
         compare_datasets(self, expected_dataset, dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_detect_100(self):
         detected_formats = Environment().detect_dataset(DUMMY_100_DATASET_DIR)
         self.assertEqual(detected_formats, [CifarImporter.NAME])

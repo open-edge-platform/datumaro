@@ -18,8 +18,6 @@ from datumaro.util.multi_procs_util import consumer_generator
 from datumaro.util.os_util import walk
 from datumaro.util.scope import Scope, on_error_do, on_exit_do, scoped
 
-from ..requirements import Requirements, mark_requirement
-
 from tests.utils.test_utils import TestDir
 
 
@@ -28,7 +26,6 @@ class TestException(Exception):
 
 
 class ScopeTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_calls_only_exit_callback_on_exit(self):
         error_cb = mock.MagicMock()
         exit_cb = mock.MagicMock()
@@ -40,7 +37,6 @@ class ScopeTest(TestCase):
         error_cb.assert_not_called()
         exit_cb.assert_called_once()
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_calls_both_callbacks_on_error(self):
         error_cb = mock.MagicMock()
         exit_cb = mock.MagicMock()
@@ -53,7 +49,6 @@ class ScopeTest(TestCase):
         error_cb.assert_called_once()
         exit_cb.assert_called_once()
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_adds_cm(self):
         cm = mock.Mock()
         cm.__enter__ = mock.MagicMock(return_value=42)
@@ -66,7 +61,6 @@ class ScopeTest(TestCase):
         cm.__exit__.assert_called_once()
         self.assertEqual(42, retval)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_calls_cm_on_error(self):
         cm = mock.Mock()
         cm.__enter__ = mock.MagicMock()
@@ -79,7 +73,6 @@ class ScopeTest(TestCase):
         cm.__enter__.assert_called_once()
         cm.__exit__.assert_called_once()
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_decorator_calls_on_error(self):
         cb = mock.MagicMock()
 
@@ -93,7 +86,6 @@ class ScopeTest(TestCase):
 
         cb.assert_called_once()
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_decorator_does_not_call_on_no_error(self):
         error_cb = mock.MagicMock()
         exit_cb = mock.MagicMock()
@@ -108,7 +100,6 @@ class ScopeTest(TestCase):
         error_cb.assert_not_called()
         exit_cb.assert_called_once()
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_decorator_supports_implicit_form(self):
         error_cb = mock.MagicMock()
         exit_cb = mock.MagicMock()
@@ -125,7 +116,6 @@ class ScopeTest(TestCase):
         error_cb.assert_called_once()
         exit_cb.assert_called_once()
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_fowrard_args(self):
         cb = mock.MagicMock()
 
@@ -135,7 +125,6 @@ class ScopeTest(TestCase):
 
         cb.assert_called_once_with(5, a2=2)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_decorator_can_return_on_success_in_implicit_form(self):
         @scoped
         def f():
@@ -145,7 +134,6 @@ class ScopeTest(TestCase):
 
         self.assertEqual(42, retval)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_decorator_can_return_on_success_in_explicit_form(self):
         @scoped("scope")
         def f(scope=None):
@@ -157,7 +145,6 @@ class ScopeTest(TestCase):
 
 
 class TestOsUtils(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_walk_with_maxdepth(self):
         with TestDir() as rootdir:
             os.makedirs(osp.join(rootdir, "1", "2", "3", "4"))
@@ -178,21 +165,18 @@ class TestMemberRedefined(TestCase):
         def method(self):
             pass
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_detect_no_changes_in_derived_class(self):
         class Derived(self.Base):
             pass
 
         self.assertFalse(is_method_redefined("method", self.Base, Derived))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_detect_no_changes_in_derived_instance(self):
         class Derived(self.Base):
             pass
 
         self.assertFalse(is_method_redefined("method", self.Base, Derived()))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_detect_changes_in_derived_class(self):
         class Derived(self.Base):
             def method(self):
@@ -200,7 +184,6 @@ class TestMemberRedefined(TestCase):
 
         self.assertTrue(is_method_redefined("method", self.Base, Derived))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_detect_changes_in_derived_instance(self):
         class Derived(self.Base):
             def method(self):
@@ -208,7 +191,6 @@ class TestMemberRedefined(TestCase):
 
         self.assertTrue(is_method_redefined("method", self.Base, Derived()))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_detect_changes_in_patched_instance(self):
         obj = self.Base()
         with mock.patch.object(obj, "method"):

@@ -13,8 +13,6 @@ from datumaro.components.media import Image
 from datumaro.util.image import encode_image
 from datumaro.util.tf_util import check_import
 
-from ..requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, check_save_and_load, compare_datasets
 
@@ -35,7 +33,6 @@ except ImportError:
 
     @skipIf(not module_found, "Tensorflow package is not found")
     class TfImportTest(TestCase):
-        @mark_requirement(Requirements.DATUM_GENERAL_REQ)
         def test_raises_when_crashes_on_import(self):
             # Should fire if import can't be done for any reason except
             # module unavailability and import crash
@@ -59,7 +56,6 @@ class TfrecordExporterTest(TestCase):
             **kwargs,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_bboxes(self):
         test_dataset = Dataset.from_iterable(
             [
@@ -87,7 +83,6 @@ class TfrecordExporterTest(TestCase):
                 test_dataset, partial(TfDetectionApiExporter.convert, save_media=True), test_dir
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_masks(self):
         test_dataset = Dataset.from_iterable(
             [
@@ -123,7 +118,6 @@ class TfrecordExporterTest(TestCase):
                 test_dataset, partial(TfDetectionApiExporter.convert, save_masks=True), test_dir
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_no_subsets(self):
         test_dataset = Dataset.from_iterable(
             [
@@ -162,7 +156,6 @@ class TfrecordExporterTest(TestCase):
                 test_dataset, partial(TfDetectionApiExporter.convert, save_media=True), test_dir
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_cyrillic_and_spaces_in_filename(self):
         test_dataset = Dataset.from_iterable(
             [
@@ -188,7 +181,6 @@ class TfrecordExporterTest(TestCase):
                 test_dataset, partial(TfDetectionApiExporter.convert, save_media=True), test_dir
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_image_info(self):
         test_dataset = Dataset.from_iterable(
             [
@@ -204,7 +196,6 @@ class TfrecordExporterTest(TestCase):
         with TestDir() as test_dir:
             self._test_save_and_load(test_dataset, TfDetectionApiExporter.convert, test_dir)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_unknown_image_formats(self):
         test_dataset = Dataset.from_iterable(
             [
@@ -230,7 +221,6 @@ class TfrecordExporterTest(TestCase):
                 require_media=True,
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_image_with_arbitrary_extension(self):
         dataset = Dataset.from_iterable(
             [
@@ -258,7 +248,6 @@ class TfrecordExporterTest(TestCase):
                 require_media=True,
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_inplace_save_writes_only_updated_data(self):
         with TestDir() as path:
             # generate initial dataset
@@ -282,7 +271,6 @@ class TfrecordExporterTest(TestCase):
             self.assertFalse(osp.isfile(osp.join(path, "b.tfrecord")))
             self.assertTrue(osp.isfile(osp.join(path, "c.tfrecord")))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_labelmap_parsing(self):
         text = """
             {
@@ -315,12 +303,10 @@ DUMMY_DATASET_DIR = get_test_asset_path("tf_detection_api_dataset")
 
 @skipIf(import_failed, "Failed to import tensorflow")
 class TfrecordImporterTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_detect(self):
         detected_formats = Environment().detect_dataset(DUMMY_DATASET_DIR)
         self.assertEqual([TfDetectionApiImporter.NAME], detected_formats)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_import(self):
         target_dataset = Dataset.from_iterable(
             [

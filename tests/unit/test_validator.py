@@ -62,8 +62,6 @@ from datumaro.plugins.validators import (
     _TaskValidator,
 )
 
-from ..requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 
 
@@ -415,18 +413,15 @@ class TestBaseValidator(_TestValidatorBase):
             topk_bins=0.1,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_has_enum_entries_in_environment(self):
         env = Environment()
         for key in TaskType.__members__:
             self.assertIn(key, env.validators._items)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_generate_reports(self):
         with self.assertRaises(NotImplementedError):
             self.validator.generate_reports({})
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_missing_label_categories(self):
         stats = {"label_distribution": {"defined_labels": {}}}
 
@@ -435,7 +430,6 @@ class TestBaseValidator(_TestValidatorBase):
         self.assertTrue(len(actual_reports) == 1)
         self.assertIsInstance(actual_reports[0], MissingLabelCategories)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_missing_attribute(self):
         label_name = "unit"
         attr_name = "test"
@@ -446,7 +440,6 @@ class TestBaseValidator(_TestValidatorBase):
         self.assertTrue(len(actual_reports) == 1)
         self.assertIsInstance(actual_reports[0], MissingAttribute)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_undefined_label(self):
         label_name = "cat0"
         item_id = 1
@@ -459,7 +452,6 @@ class TestBaseValidator(_TestValidatorBase):
         self.assertTrue(len(actual_reports) == 1)
         self.assertIsInstance(actual_reports[0], UndefinedLabel)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_undefined_attribute(self):
         label_name = "unit"
         attr_name = "test"
@@ -470,7 +462,6 @@ class TestBaseValidator(_TestValidatorBase):
         self.assertTrue(len(actual_reports) == 1)
         self.assertIsInstance(actual_reports[0], UndefinedAttribute)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_label_defined_but_not_found(self):
         stats = {"label_distribution": {"defined_labels": {"unittest": 0}}}
 
@@ -479,7 +470,6 @@ class TestBaseValidator(_TestValidatorBase):
         self.assertTrue(len(actual_reports) == 1)
         self.assertIsInstance(actual_reports[0], LabelDefinedButNotFound)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_attribute_defined_but_not_found(self):
         label_name = "unit"
         attr_stats = {"test": {"distribution": {}}}
@@ -491,7 +481,6 @@ class TestBaseValidator(_TestValidatorBase):
         self.assertTrue(len(actual_reports) == 1)
         self.assertIsInstance(actual_reports[0], AttributeDefinedButNotFound)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_only_one_label(self):
         stats = {"label_distribution": {"defined_labels": {"unit": 1, "test": 0}}}
 
@@ -500,7 +489,6 @@ class TestBaseValidator(_TestValidatorBase):
         self.assertTrue(len(actual_reports) == 1)
         self.assertIsInstance(actual_reports[0], OnlyOneLabel)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_only_one_attribute(self):
         label_name = "unit"
         attr_name = "test"
@@ -511,7 +499,6 @@ class TestBaseValidator(_TestValidatorBase):
         self.assertTrue(len(actual_reports) == 1)
         self.assertIsInstance(actual_reports[0], OnlyOneAttributeValue)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_few_samples_in_label(self):
         with self.subTest("Few Samples"):
             stats = {
@@ -534,7 +521,6 @@ class TestBaseValidator(_TestValidatorBase):
 
             self.assertTrue(len(actual_reports) == 0)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_few_samples_in_attribute(self):
         label_name = "unit"
         attr_name = "test"
@@ -558,7 +544,6 @@ class TestBaseValidator(_TestValidatorBase):
 
             self.assertTrue(len(actual_reports) == 0)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_imbalanced_labels(self):
         with self.subTest("Imbalance"):
             stats = {
@@ -583,7 +568,6 @@ class TestBaseValidator(_TestValidatorBase):
 
             self.assertTrue(len(actual_reports) == 0)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_imbalanced_attribute(self):
         label_name = "unit"
         attr_name = "test"
@@ -621,7 +605,6 @@ class TestClassificationValidator(_TestValidatorBase):
             topk_bins=0.1,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_missing_label_annotation(self):
         stats = {"items_missing_annotation": [(1, "unittest")]}
 
@@ -630,7 +613,6 @@ class TestClassificationValidator(_TestValidatorBase):
         self.assertTrue(len(actual_reports) == 1)
         self.assertIsInstance(actual_reports[0], MissingAnnotation)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_multi_label_annotations(self):
         stats = {"items_with_multiple_labels": [(1, "unittest")]}
 
@@ -651,7 +633,6 @@ class TestDetectionValidator(_TestValidatorBase):
             topk_bins=0.1,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_imbalanced_dist_in_label(self):
         label_name = "unittest"
         most = int(self.validator.dominance_thr * 100)
@@ -670,7 +651,6 @@ class TestDetectionValidator(_TestValidatorBase):
 
             self.assertTrue(len(reports) == 0)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_imbalanced_dist_in_attr(self):
         label_name = "unit"
         attr_name = "test"
@@ -696,7 +676,6 @@ class TestDetectionValidator(_TestValidatorBase):
 
             self.assertTrue(len(reports) == 0)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_missing_bbox_annotation(self):
         stats = {"items_missing_annotation": [(1, "unittest")]}
 
@@ -705,7 +684,6 @@ class TestDetectionValidator(_TestValidatorBase):
         self.assertTrue(len(actual_reports) == 1)
         self.assertIsInstance(actual_reports[0], MissingAnnotation)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_negative_length(self):
         stats = {"items_with_negative_length": {("1", "unittest"): {1: {"x": -1}}}}
 
@@ -714,7 +692,6 @@ class TestDetectionValidator(_TestValidatorBase):
         self.assertTrue(len(actual_reports) == 1)
         self.assertIsInstance(actual_reports[0], NegativeLength)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_invalid_value(self):
         stats = {"items_with_invalid_value": {("1", "unittest"): {1: ["x"]}}}
 
@@ -723,7 +700,6 @@ class TestDetectionValidator(_TestValidatorBase):
         self.assertTrue(len(actual_reports) == 1)
         self.assertIsInstance(actual_reports[0], InvalidValue)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_far_from_label_mean(self):
         label_name = "unittest"
         bbox_label_stats = {
@@ -738,7 +714,6 @@ class TestDetectionValidator(_TestValidatorBase):
         self.assertTrue(len(actual_reports) == 1)
         self.assertIsInstance(actual_reports[0], FarFromLabelMean)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_far_from_attr_mean(self):
         label_name = "unit"
         attr_name = "test"
@@ -770,7 +745,6 @@ class TestSegmentationValidator(_TestValidatorBase):
             topk_bins=0.1,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_imbalanced_dist_in_label(self):
         label_name = "unittest"
         most = int(self.validator.dominance_thr * 100)
@@ -789,7 +763,6 @@ class TestSegmentationValidator(_TestValidatorBase):
 
             self.assertTrue(len(reports) == 0)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_imbalanced_dist_in_attr(self):
         label_name = "unit"
         attr_name = "test"
@@ -815,7 +788,6 @@ class TestSegmentationValidator(_TestValidatorBase):
 
             self.assertTrue(len(reports) == 0)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_missing_mask_annotation(self):
         stats = {"items_missing_annotation": [(1, "unittest")]}
 
@@ -824,7 +796,6 @@ class TestSegmentationValidator(_TestValidatorBase):
         self.assertTrue(len(actual_reports) == 1)
         self.assertIsInstance(actual_reports[0], MissingAnnotation)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_invalid_value(self):
         stats = {"items_with_invalid_value": {("1", "unittest"): {1: ["x"]}}}
 
@@ -833,7 +804,6 @@ class TestSegmentationValidator(_TestValidatorBase):
         self.assertTrue(len(actual_reports) == 1)
         self.assertIsInstance(actual_reports[0], InvalidValue)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_far_from_label_mean(self):
         label_name = "unittest"
         mask_label_stats = {
@@ -848,7 +818,6 @@ class TestSegmentationValidator(_TestValidatorBase):
         self.assertTrue(len(actual_reports) == 1)
         self.assertIsInstance(actual_reports[0], FarFromLabelMean)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_far_from_attr_mean(self):
         label_name = "unit"
         attr_name = "test"
@@ -887,7 +856,6 @@ class TestTabularValidator(_TestValidatorBase):
             caption_info = {"value": caption_}
             self.validator._update_prop_distributions(caption_info, caption_stats)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_compute_prop_dist(self):
         stats = {
             "distribution_in_caption": {
@@ -922,7 +890,6 @@ class TestTabularValidator(_TestValidatorBase):
         self.assertEqual(stats["distribution_in_caption"]["unittest"]["value"]["distribution"], [0])
         self.assertEqual(stats["distribution_in_dataset_item"], {("1", "train"): 1})
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_compute_prop_stats_from_dist(self):
         dist = range(0, 100)
         dist_by_caption = {
@@ -956,7 +923,6 @@ class TestTabularValidator(_TestValidatorBase):
             dist_by_caption["unittest"]["value"]["histogram"]["counts"], counts.tolist()
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_compute_far_from_mean(self):
         dist = range(1, 101)
         counts, bins = np.histogram(dist)
@@ -978,7 +944,6 @@ class TestTabularValidator(_TestValidatorBase):
         self.validator._compute_far_from_mean(prop_stats, val, item_key)
         self.assertEqual(prop_stats["items_far_from_mean"], {item_key: val})
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_compute_outliers(self):
         prop_stats = {
             "items_outlier": {},
@@ -990,7 +955,6 @@ class TestTabularValidator(_TestValidatorBase):
         self.validator._compute_outlier(prop_stats, val, item_key)
         self.assertEqual(prop_stats["items_outlier"], {item_key: val})
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_broken_annotation(self):
         stats = {"items_broken_annotation": [(1, "train")]}
 
@@ -999,7 +963,6 @@ class TestTabularValidator(_TestValidatorBase):
         self.assertTrue(len(actual_reports) == 1)
         self.assertIsInstance(actual_reports[0], BrokenAnnotation)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_empty_label(self):
         stats = {
             "label_distribution": {
@@ -1012,7 +975,6 @@ class TestTabularValidator(_TestValidatorBase):
         self.assertTrue(len(actual_reports) == 1)
         self.assertIsInstance(actual_reports[0], EmptyLabel)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_empty_caption(self):
         stats = {
             "caption_distribution": {
@@ -1027,7 +989,6 @@ class TestTabularValidator(_TestValidatorBase):
         self.assertTrue(len(actual_reports) == 1)
         self.assertIsInstance(actual_reports[0], EmptyCaption)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_few_samples_in_caption(self):
         with self.subTest("Few Samples"):
             stats = {
@@ -1052,7 +1013,6 @@ class TestTabularValidator(_TestValidatorBase):
 
             self.assertTrue(len(actual_reports) == 0)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_far_from_caption_mean(self):
         caption_name = "unittest"
         caption_stats = {
@@ -1068,7 +1028,6 @@ class TestTabularValidator(_TestValidatorBase):
         self.assertTrue(len(actual_reports) == 1)
         self.assertIsInstance(actual_reports[0], FarFromCaptionMean)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_redundancies_in_caption(self):
         stats = {
             "caption_distribution": {
@@ -1085,7 +1044,6 @@ class TestTabularValidator(_TestValidatorBase):
         self.assertTrue(len(actual_reports) == 1)
         self.assertIsInstance(actual_reports[0], RedundanciesInCaption)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_imbalanced_captions(self):
         with self.subTest("Imbalance"):
             stats = {
@@ -1110,7 +1068,6 @@ class TestTabularValidator(_TestValidatorBase):
 
             self.assertTrue(len(actual_reports) == 0)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_check_imbalanced_dist_in_caption(self):
         caption = "unittest"
         most = int(self.validator.dominance_thr * 100)
@@ -1139,7 +1096,6 @@ class TestValidateAnnotations(_TestValidatorBase):
         "topk_bins": 0.1,
     }
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_validate_annotations_classification(self):
         validator = ClassificationValidator(**self.extra_args)
         actual_results = validator.validate(self.dataset)
@@ -1191,7 +1147,6 @@ class TestValidateAnnotations(_TestValidatorBase):
             self.assertEqual(actual_summary, expected_summary)
 
     @pytest.mark.new
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_validate_multilabel_annotations_classification(self):
         label_cat = LabelCategories.from_iterable(["car", "bicycle", "dog", "cat", "plate", "pan"])
         label_cat.add_label_group("vehicle", ["car", "bicycle"], group_type=0)
@@ -1289,7 +1244,6 @@ class TestValidateAnnotations(_TestValidatorBase):
 
             self.assertEqual(actual_summary, expected_summary)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_validate_annotations_detection(self):
         validator = DetectionValidator(**self.extra_args)
         actual_results = validator.validate(self.dataset)
@@ -1341,7 +1295,6 @@ class TestValidateAnnotations(_TestValidatorBase):
 
             self.assertEqual(actual_summary, expected_summary)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_validate_annotations_segmentation(self):
         validator = SegmentationValidator(**self.extra_args)
         actual_results = validator.validate(self.dataset)
@@ -1394,7 +1347,6 @@ class TestValidateAnnotations(_TestValidatorBase):
 
             self.assertEqual(actual_summary, expected_summary)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_validate_annotations_tabular(self):
         validator = TabularValidator(**self.extra_args)
         actual_results = validator.validate(self.tabular_dataset)
@@ -1476,7 +1428,6 @@ class TestValidateAnnotations(_TestValidatorBase):
 
             self.assertEqual(actual_summary, expected_summary)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_validate_invalid_dataset_type(self):
         with self.assertRaises(TypeError):
             validator = ClassificationValidator(**self.extra_args)

@@ -81,10 +81,30 @@ setuptools.setup(
     python_requires=">=3.9",
     install_requires=CORE_REQUIREMENTS,
     extras_require={
+        # Tensorflow support
         "tf": ["tensorflow"],
         "tfds": ["tensorflow-datasets<4.9.3", "absl-py>=0.12.0"],
+        # PyTorch support
         "torch": ["torch", "torchvision"],
+        # Kaggle download support
         "kaggle": ["kaggle"],
+        # NDR, mpii file format, missing value detection in tabular data
+        "scipy": ["scipy"],
+        # Tabular data processing
+        "nlp": ["nltk", "tokenizers", "portalocker"],
+        # Comparator
+        "tabulate": ["tabulate"],
+        # Any dependencies needed by the CLI
+        # 2.3 has an unlisted dependency on PyTorch, which we don't need
+        "cli": ["tensorboardX>=1.8,!=2.3", "tabulate", "scipy", "matplotlib>=3.3.1"],
+        # Visualizer
+        "visualizer": ["matplotlib>=3.3.1"],
+        # NYU Depth Dataset v2 file format
+        "h5py": ["h5py>=2.10.0"],
+        # BraTS file format
+        "nibabel": ["nibabel>=3.2.1"],
+        # AVA dataset
+        "protobuf": ["protobuf"],
     },
     ext_modules=ext_modules,
     entry_points={

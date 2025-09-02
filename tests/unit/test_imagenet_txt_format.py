@@ -10,14 +10,11 @@ from datumaro.components.environment import Environment
 from datumaro.components.media import Image
 from datumaro.plugins.data_formats.imagenet_txt import ImagenetTxtExporter, ImagenetTxtImporter
 
-from ..requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, compare_datasets
 
 
 class ImagenetTxtFormatTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -43,7 +40,6 @@ class ImagenetTxtFormatTest(TestCase):
 
             compare_datasets(self, source_dataset, parsed_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_with_no_save_media(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -59,7 +55,6 @@ class ImagenetTxtFormatTest(TestCase):
 
             compare_datasets(self, source_dataset, parsed_dataset)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_dataset_with_save_dataset_meta_file(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -77,7 +72,6 @@ class ImagenetTxtFormatTest(TestCase):
             self.assertTrue(osp.isfile(osp.join(test_dir, "dataset_meta.json")))
             compare_datasets(self, source_dataset, parsed_dataset)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_with_multiple_labels(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -102,7 +96,6 @@ class ImagenetTxtFormatTest(TestCase):
 
             compare_datasets(self, source_dataset, parsed_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_no_subsets(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -126,7 +119,6 @@ class ImagenetTxtFormatTest(TestCase):
 
             compare_datasets(self, source_dataset, parsed_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_cyrillic_and_spaces_in_filename(self):
         dataset = Dataset.from_iterable(
             [
@@ -150,7 +142,6 @@ class ImagenetTxtFormatTest(TestCase):
 
             compare_datasets(self, dataset, parsed_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_image_with_arbitrary_extension(self):
         dataset = Dataset.from_iterable(
             [
@@ -178,7 +169,6 @@ DUMMY_DATASET_WITH_NO_LABELS_DIR = get_test_asset_path("imagenet_txt_dataset", "
 
 
 class ImagenetTxtImporterTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_import(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -208,7 +198,6 @@ class ImagenetTxtImporterTest(TestCase):
 
         compare_datasets(self, expected_dataset, dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_import_with_custom_labels_file(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -223,7 +212,6 @@ class ImagenetTxtImporterTest(TestCase):
 
         compare_datasets(self, expected_dataset, dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_import_with_no_labels_file(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -238,7 +226,6 @@ class ImagenetTxtImporterTest(TestCase):
 
         compare_datasets(self, expected_dataset, dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_detect_imagenet(self):
         detected_formats = Environment().detect_dataset(DUMMY_DATASET_DIR)
         self.assertEqual([ImagenetTxtImporter.NAME], detected_formats)

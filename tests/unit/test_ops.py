@@ -35,14 +35,11 @@ from datumaro.errors import (
     WrongGroupError,
 )
 
-from ..requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import compare_datasets
 
 
 class TestOperations(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_mean_std(self):
         np.random.seed(3000)
         expected_mean = [100, 50, 150]
@@ -67,7 +64,6 @@ class TestOperations(TestCase):
         for estd, astd in zip(expected_std, actual_std):
             assert np.allclose(estd, astd, atol=0.1)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_unique_image_count(self):
         expected = {
             frozenset([("1", "a"), ("1", "b")]),
@@ -94,7 +90,6 @@ class TestOperations(TestCase):
 
 
 class TestMultimerge(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_match_items(self):
         # items 1 and 3 are unique, item 2 is common and should be merged
 
@@ -195,7 +190,6 @@ class TestMultimerge(TestCase):
             ),
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_match_shapes(self):
         source0 = Dataset.from_iterable(
             [
@@ -358,7 +352,6 @@ class TestMultimerge(TestCase):
             ),
         )
 
-    @mark_requirement(Requirements.DATUM_BUG_219)
     def test_can_match_lines_when_line_not_approximated(self):
         source0 = Dataset.from_iterable(
             [
@@ -400,7 +393,6 @@ class TestMultimerge(TestCase):
         compare_datasets(self, expected, merged, ignored_attrs={"score"})
         self.assertEqual(0, len(merger.errors))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_attributes(self):
         source0 = Dataset.from_iterable(
             [
@@ -477,7 +469,6 @@ class TestMultimerge(TestCase):
         compare_datasets(self, expected, merged, ignored_attrs={"score"})
         self.assertEqual(2, len([e for e in merger.errors if isinstance(e, FailedAttrVotingError)]))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_group_checks(self):
         dataset = Dataset.from_iterable(
             [
@@ -505,7 +496,6 @@ class TestMultimerge(TestCase):
             3, len([e for e in merger.errors if isinstance(e, WrongGroupError)]), merger.errors
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_merge_classes(self):
         source0 = Dataset.from_iterable(
             [
@@ -562,7 +552,6 @@ class TestMultimerge(TestCase):
 
         compare_datasets(self, expected, merged, ignored_attrs={"score"})
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_merge_categories(self):
         source0 = Dataset.from_iterable(
             [
@@ -650,7 +639,6 @@ class TestMultimerge(TestCase):
 
         compare_datasets(self, expected, merged, ignored_attrs={"score"})
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_merge_point_clouds(self):
         dataset_dir = get_test_asset_path("sly_pointcloud_dataset")
         pcd1 = osp.join(dataset_dir, "ds0", "pointcloud", "frame1.pcd")
@@ -706,7 +694,6 @@ class TestMultimerge(TestCase):
 
         compare_datasets(self, expected, merged)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_merge_multiframe_images(self):
         source0 = Dataset.from_iterable(
             [
@@ -749,7 +736,6 @@ class TestMultimerge(TestCase):
 
         compare_datasets(self, expected, merged)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_merge_union(self):
         source0 = Dataset.from_iterable(
             [
@@ -817,7 +803,6 @@ class TestMultimerge(TestCase):
 
         compare_datasets(self, expected, merged, ignored_attrs={"score"})
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_raises_error_exact_merge_different_categories(self):
         source0 = Dataset.from_iterable(
             [
@@ -857,7 +842,6 @@ class TestMultimerge(TestCase):
         with pytest.raises(ConflictingCategoriesError):
             _ = merger(source0, source1)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_merge_exact_image(self):
         source0 = Dataset.from_iterable(
             [
@@ -909,7 +893,6 @@ class TestMultimerge(TestCase):
 
         compare_datasets(self, expected, merged, ignored_attrs={"score"})
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_raises_error_exact_image_merge(self):
         with TemporaryDirectory() as tmp_dir:
             Image.from_numpy(data=np.ones([5, 5, 3])).save(osp.join(tmp_dir, "ones.png"))
@@ -947,7 +930,6 @@ class TestMultimerge(TestCase):
             with pytest.raises(MismatchingMediaPathError):
                 _ = merger(source0, source1)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_merge_exact_pcd(self):
         with TemporaryDirectory() as tmp_dir:
             Image.from_numpy(data=np.ones([5, 5, 3])).save(osp.join(tmp_dir, "ones.png"))
@@ -985,7 +967,6 @@ class TestMultimerge(TestCase):
             with pytest.raises(MismatchingMediaPathError):
                 _ = merger(source0, source1)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_raises_error_exact_pcd_merge(self):
         with TemporaryDirectory() as tmp_dir:
             with open(osp.join(tmp_dir, "ones.pcd"), "wb") as f:
@@ -1027,7 +1008,6 @@ class TestMultimerge(TestCase):
             with pytest.raises(MismatchingMediaPathError):
                 _ = merger(source0, source1)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_merge_exact_image_with_different_path(self):
         with TemporaryDirectory() as tmp_dir:
             Image.from_numpy(data=np.ones([5, 5, 3])).save(osp.join(tmp_dir, "ones.png"))

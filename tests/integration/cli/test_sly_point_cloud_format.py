@@ -6,8 +6,6 @@ from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image, PointCloud
 
-from ...requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, compare_datasets_3d
 from tests.utils.test_utils import run_datum as run
@@ -16,7 +14,6 @@ DUMMY_DATASET_DIR = get_test_asset_path("sly_pointcloud_dataset")
 
 
 class SlyPointCloudIntegrationScenarios(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_convert_to_kitti_raw(self):
         with TestDir() as test_dir:
             export_dir = osp.join(test_dir, "export_dir")

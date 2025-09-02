@@ -9,8 +9,6 @@ import pytest
 from datumaro.components.dataset import Dataset
 from datumaro.plugins.data_formats.tabular import *
 
-from ...requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestCaseHelper, TestDir, compare_datasets
 from tests.utils.test_utils import run_datum as run
@@ -48,7 +46,6 @@ def fxt_buddy(fxt_buddy_path, fxt_buddy_target):
 
 @pytest.mark.new
 class TabularIntegrationTest:
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_import_and_export_tabular_dataset_electricity(
         self, helper_tc: TestCaseHelper, txf_electricity, fxt_electricity_path
     ):
@@ -88,7 +85,6 @@ class TabularIntegrationTest:
             exported = Dataset.import_from(export_dir, format="tabular")
             compare_datasets(helper_tc, txf_electricity, exported)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_export_and_import_tabular_dataset_with_target(
         self, helper_tc: TestCaseHelper, fxt_buddy, fxt_buddy_path, fxt_buddy_target
     ):

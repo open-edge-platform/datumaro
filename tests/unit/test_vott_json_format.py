@@ -9,8 +9,6 @@ from datumaro.components.environment import Environment
 from datumaro.components.media import Image
 from datumaro.plugins.data_formats.vott_json import VottJsonImporter
 
-from ..requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import compare_datasets
 
@@ -21,7 +19,6 @@ DUMMY_DATASET_DIR_WITH_META_FILE = get_test_asset_path(
 
 
 class VottJsonImporterTest(TestCase):
-    @mark_requirement(Requirements.DATUM_475)
     def test_can_import(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -60,7 +57,6 @@ class VottJsonImporterTest(TestCase):
 
         compare_datasets(self, expected_dataset, dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_475)
     def test_can_import_with_meta_file(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -98,12 +94,10 @@ class VottJsonImporterTest(TestCase):
 
         compare_datasets(self, expected_dataset, dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_475)
     def test_can_detect(self):
         detected_formats = Environment().detect_dataset(DUMMY_DATASET_DIR)
         self.assertEqual([VottJsonImporter.NAME], detected_formats)
 
-    @mark_requirement(Requirements.DATUM_475)
     def test_can_detect_with_meta_file(self):
         detected_formats = Environment().detect_dataset(DUMMY_DATASET_DIR_WITH_META_FILE)
         self.assertEqual([VottJsonImporter.NAME], detected_formats)

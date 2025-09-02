@@ -6,8 +6,6 @@ from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image
 from datumaro.plugins.data_formats.image_dir import ImageDirExporter
 
-from ..requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, check_save_and_load, compare_datasets
 
@@ -16,7 +14,6 @@ FORMAT_NAME = "image_dir"
 
 
 class ImageDirFormatTest:
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_load(self, helper_tc):
         dataset = Dataset.from_iterable(
             [
@@ -35,7 +32,6 @@ class ImageDirFormatTest:
                 require_media=True,
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     @pytest.mark.parametrize("dataset_cls, is_stream", [(Dataset, False), (StreamDataset, True)])
     def test_can_import(self, dataset_cls, is_stream, helper_tc):
         expected_dataset = Dataset.from_iterable(
@@ -50,7 +46,6 @@ class ImageDirFormatTest:
         assert actual_dataset.is_stream == is_stream
         compare_datasets(helper_tc, expected_dataset, actual_dataset)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_cyrillic_and_spaces_in_filename(self, helper_tc):
         dataset = Dataset.from_iterable(
             [
@@ -65,7 +60,6 @@ class ImageDirFormatTest:
                 helper_tc, dataset, ImageDirExporter.convert, test_dir, importer=FORMAT_NAME
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_image_with_arbitrary_extension(self, helper_tc):
         dataset = Dataset.from_iterable(
             [

@@ -1220,8 +1220,6 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Any, List, Optional
 
-from nltk.corpus import stopwords
-
 
 @dataclass
 class TabularValidationStats:
@@ -1384,6 +1382,8 @@ class TabularValidator(_TaskValidator):
             return
 
         import re
+
+        from nltk.corpus import stopwords
 
         try:
             stop_words = set(stopwords.words("english"))  # TODO

@@ -11,7 +11,6 @@ from datumaro.components.extractor_tfds import AVAILABLE_TFDS_DATASETS, TFDS_EXT
 from datumaro.components.media import Image, MediaElement
 from datumaro.util.image import decode_image, encode_image
 
-from tests.requirements import Requirements, mark_requirement
 from tests.utils.test_utils import compare_datasets, mock_tfds_data
 
 if TFDS_EXTRACTOR_AVAILABLE:
@@ -20,7 +19,6 @@ if TFDS_EXTRACTOR_AVAILABLE:
 
 @skipIf(not TFDS_EXTRACTOR_AVAILABLE, reason="TFDS is not installed")
 class TfdsDatasetsTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_metadata(self):
         env = Environment()
 
@@ -36,7 +34,6 @@ class TfdsDatasetsTest(TestCase):
             assert isinstance(dataset.metadata.home_url, str)
             assert dataset.metadata.home_url != ""
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_remote_metadata(self):
         with mock_tfds_data():
             dataset = AVAILABLE_TFDS_DATASETS["mnist"]
@@ -64,7 +61,6 @@ class TfdsDatasetsTest(TestCase):
 
 @skipIf(not TFDS_EXTRACTOR_AVAILABLE, reason="TFDS is not installed")
 class TfdsExtractorTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_data_access(self):
         with mock_tfds_data(subsets=("train", "val")):
             extractor = AVAILABLE_TFDS_DATASETS["mnist"].make_extractor()
@@ -86,7 +82,6 @@ class TfdsExtractorTest(TestCase):
             self.assertIsNone(extractor.get("x"))
             self.assertIsNone(extractor.get("0", subset="test"))
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_extract_mnist(self):
         with mock_tfds_data():
             tfds_ds, tfds_info = tfds.load("mnist", split="train", with_info=True)
@@ -131,15 +126,12 @@ class TfdsExtractorTest(TestCase):
 
             compare_datasets(self, expected_dataset, actual_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_extract_cifar10(self):
         self._test_can_extract_cifar("cifar10")
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_extract_cifar100(self):
         self._test_can_extract_cifar("cifar100")
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_extract_coco(self):
         tfds_example = {
             "image": encode_image(np.ones((20, 10)), ".png"),
@@ -175,7 +167,6 @@ class TfdsExtractorTest(TestCase):
 
             compare_datasets(self, expected_dataset, actual_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_extract_imagenet_v2(self):
         with mock_tfds_data():
             tfds_ds, tfds_info = tfds.load(
@@ -213,7 +204,6 @@ class TfdsExtractorTest(TestCase):
 
             compare_datasets(self, expected_dataset, actual_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_extract_voc(self):
         # TFDS is unable to generate fake examples for object detection
         # datasets. See <https://github.com/tensorflow/datasets/issues/3633>.

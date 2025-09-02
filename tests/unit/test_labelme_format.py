@@ -12,8 +12,6 @@ from datumaro.components.environment import Environment
 from datumaro.components.media import Image
 from datumaro.plugins.data_formats.labelme import LabelMeExporter, LabelMeImporter
 
-from ..requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, check_save_and_load, compare_datasets
 
@@ -33,7 +31,6 @@ class LabelMeExporterTest(TestCase):
             **kwargs,
         )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -145,7 +142,6 @@ class LabelMeExporterTest(TestCase):
                 require_media=True,
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_image_with_arbitrary_extension(self):
         dataset = Dataset.from_iterable(
             [
@@ -167,7 +163,6 @@ class LabelMeExporterTest(TestCase):
                 require_media=True,
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_cyrillic_and_spaces_in_filename(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -209,7 +204,6 @@ class LabelMeExporterTest(TestCase):
                 require_media=True,
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_relative_paths(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -258,7 +252,6 @@ class LabelMeExporterTest(TestCase):
                 require_media=True,
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_to_correct_dir_with_correct_filename(self):
         dataset = Dataset.from_iterable(
             [
@@ -284,7 +277,6 @@ class LabelMeExporterTest(TestCase):
             self.assertEqual(set(os.listdir(xml_dirpath)), {"a.xml"})
             self.assertEqual(set(os.listdir(img_dirpath)), {"a.jpeg"})
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_save_and_load_with_meta_file(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -333,12 +325,10 @@ DUMMY_DATASET_DIR = get_test_asset_path("labelme_dataset")
 
 
 class LabelMeImporterTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_detect(self):
         detected_formats = Environment().detect_dataset(DUMMY_DATASET_DIR)
         self.assertEqual([LabelMeImporter.NAME], detected_formats)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_import(self):
         img1 = np.ones((77, 102, 3)) * 255
         img1[6:32, 7:41] = 0
@@ -440,7 +430,6 @@ class LabelMeImporterTest(TestCase):
         parsed = Dataset.import_from(DUMMY_DATASET_DIR, "label_me")
         compare_datasets(self, expected=target_dataset, actual=parsed)
 
-    @mark_requirement(Requirements.DATUM_BUG_289)
     def test_can_convert(self):
         source_dataset = Dataset.import_from(DUMMY_DATASET_DIR, "label_me")
         with TestDir() as test_dir:

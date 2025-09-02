@@ -35,8 +35,6 @@ from datumaro.plugins.framework_converter import (
     _MultiFrameworkDataset,
 )
 
-from ..requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 
 try:
@@ -224,7 +222,6 @@ def data_iter():
 
 
 @pytest.mark.new
-@mark_requirement(Requirements.DATUM_GENERAL_REQ)
 class FrameworkConverterFactoryTest(TestCase):
     @skipIf(not TORCH_AVAILABLE, reason="PyTorch is not installed")
     def test_create_converter_torch(self):
@@ -257,7 +254,6 @@ def _transforms_to_tensor():
     return transforms.ToTensor() if TORCH_AVAILABLE else ""
 
 
-@mark_requirement(Requirements.DATUM_GENERAL_REQ)
 class MultiframeworkConverterTest:
     @pytest.mark.parametrize(
         "fxt_dataset_type,fxt_subset,fxt_task",

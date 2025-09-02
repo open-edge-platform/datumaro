@@ -8,14 +8,11 @@ from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image, save_image
 from datumaro.plugins.data_formats.image_zip import ImageZipExporter, ImageZipPath
 
-from ..requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, compare_datasets
 
 
 class ImageZipExporterTest(TestCase):
-    @mark_requirement(Requirements.DATUM_267)
     def _test_can_save_and_load(self, source_dataset, test_dir, **kwargs):
         archive_path = osp.join(test_dir, kwargs.get("name", ImageZipPath.DEFAULT_ARCHIVE_NAME))
         ImageZipExporter.convert(source_dataset, test_dir, **kwargs)
@@ -23,7 +20,6 @@ class ImageZipExporterTest(TestCase):
 
         compare_datasets(self, source_dataset, parsed_dataset)
 
-    @mark_requirement(Requirements.DATUM_267)
     def test_can_save_and_load(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -35,7 +31,6 @@ class ImageZipExporterTest(TestCase):
         with TestDir() as test_dir:
             self._test_can_save_and_load(source_dataset, test_dir)
 
-    @mark_requirement(Requirements.DATUM_267)
     def test_can_save_and_load_with_custom_archive_name(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -46,7 +41,6 @@ class ImageZipExporterTest(TestCase):
         with TestDir() as test_dir:
             self._test_can_save_and_load(source_dataset, test_dir, name="my_archive.zip")
 
-    @mark_requirement(Requirements.DATUM_267)
     def test_relative_paths(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -59,7 +53,6 @@ class ImageZipExporterTest(TestCase):
         with TestDir() as test_dir:
             self._test_can_save_and_load(source_dataset, test_dir)
 
-    @mark_requirement(Requirements.DATUM_267)
     def test_can_save_and_load_custom_compresion_method(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -71,7 +64,6 @@ class ImageZipExporterTest(TestCase):
         with TestDir() as test_dir:
             self._test_can_save_and_load(source_dataset, test_dir, compression="ZIP_DEFLATED")
 
-    @mark_requirement(Requirements.DATUM_267)
     def test_can_save_and_load_with_arbitrary_extensions(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -95,7 +87,6 @@ DUMMY_DATASET_DIR = get_test_asset_path("image_zip_dataset")
 
 
 class ImageZipImporterTest(TestCase):
-    @mark_requirement(Requirements.DATUM_267)
     def test_can_import(self):
         source_dataset = Dataset.from_iterable(
             [DatasetItem(id="1", media=Image.from_numpy(data=np.ones((10, 10, 3))))]
@@ -105,7 +96,6 @@ class ImageZipImporterTest(TestCase):
         parsed_dataset = Dataset.import_from(zip_path, format="image_zip")
         compare_datasets(self, source_dataset, parsed_dataset)
 
-    @mark_requirement(Requirements.DATUM_267)
     def test_can_import_from_directory(self):
         source_dataset = Dataset.from_iterable(
             [

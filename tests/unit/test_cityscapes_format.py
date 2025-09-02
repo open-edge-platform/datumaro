@@ -19,8 +19,6 @@ from datumaro.plugins.data_formats.cityscapes import (
 )
 from datumaro.util.meta_file_util import parse_meta_file
 
-from ..requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import IGNORE_ALL, TestDir, check_save_and_load, compare_datasets
 
@@ -29,7 +27,6 @@ DUMMY_TRAIN_DATASET_DIR = get_test_asset_path("cityscapes_dataset", "train_datas
 
 
 class CityscapesFormatTest(TestCase):
-    @mark_requirement(Requirements.DATUM_267)
     def test_can_write_and_parse_labelmap(self):
         src_label_map = Cityscapes.CITYSCAPES_LABEL_MAP
 
@@ -41,7 +38,6 @@ class CityscapesFormatTest(TestCase):
 
             self.assertEqual(src_label_map, dst_label_map)
 
-    @mark_requirement(Requirements.DATUM_267)
     def test_can_write_and_parse_dataset_meta_file(self):
         src_label_map = Cityscapes.CITYSCAPES_LABEL_MAP
 
@@ -58,7 +54,6 @@ class CityscapesFormatTest(TestCase):
 
 
 class CityscapesImportTest(TestCase):
-    @mark_requirement(Requirements.DATUM_267)
     def test_can_import(self):
         # is_crowd marks labels allowing to specify instance id
         source_dataset = Dataset.from_iterable(
@@ -111,7 +106,6 @@ class CityscapesImportTest(TestCase):
 
         compare_datasets(self, source_dataset, parsed_dataset)
 
-    @mark_requirement(Requirements.DATUM_267)
     def test_can_import_with_train_label_map(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -159,7 +153,6 @@ class CityscapesImportTest(TestCase):
 
         compare_datasets(self, source_dataset, parsed_dataset)
 
-    @mark_requirement(Requirements.DATUM_267)
     def test_can_detect_cityscapes(self):
         detected_formats = Environment().detect_dataset(DUMMY_DATASET_DIR)
         self.assertEqual([CityscapesImporter.NAME], detected_formats)
@@ -188,7 +181,6 @@ class CityscapesExporterTest(TestCase):
             **kwargs,
         )
 
-    @mark_requirement(Requirements.DATUM_267)
     def test_can_save_segm(self):
         class TestExtractor(TestExtractorBase):
             def __iter__(self):
@@ -223,7 +215,6 @@ class CityscapesExporterTest(TestCase):
                 test_dir,
             )
 
-    @mark_requirement(Requirements.DATUM_267)
     def test_can_save_with_no_subsets(self):
         class TestExtractor(TestExtractorBase):
             def __iter__(self):
@@ -255,7 +246,6 @@ class CityscapesExporterTest(TestCase):
                 test_dir,
             )
 
-    @mark_requirement(Requirements.DATUM_267)
     def test_can_save_dataset_with_cyrillic_and_spaces_in_filename(self):
         class TestExtractor(TestExtractorBase):
             def __iter__(self):
@@ -279,7 +269,6 @@ class CityscapesExporterTest(TestCase):
                 test_dir,
             )
 
-    @mark_requirement(Requirements.DATUM_267)
     def test_can_save_with_relative_path_in_id(self):
         class TestExtractor(TestExtractorBase):
             def __iter__(self):
@@ -304,7 +293,6 @@ class CityscapesExporterTest(TestCase):
                 test_dir,
             )
 
-    @mark_requirement(Requirements.DATUM_267)
     def test_can_save_with_no_masks(self):
         class TestExtractor(TestExtractorBase):
             def __iter__(self):
@@ -325,7 +313,6 @@ class CityscapesExporterTest(TestCase):
                 test_dir,
             )
 
-    @mark_requirement(Requirements.DATUM_267)
     def test_dataset_with_source_labelmap_undefined(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -375,7 +362,6 @@ class CityscapesExporterTest(TestCase):
                 target_dataset=DstExtractor(),
             )
 
-    @mark_requirement(Requirements.DATUM_267)
     def test_dataset_with_save_dataset_meta_file(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -431,7 +417,6 @@ class CityscapesExporterTest(TestCase):
             )
             self.assertTrue(osp.isfile(osp.join(test_dir, "dataset_meta.json")))
 
-    @mark_requirement(Requirements.DATUM_267)
     def test_dataset_with_source_labelmap_defined(self):
         class SrcExtractor(TestExtractorBase):
             def __iter__(self):
@@ -493,7 +478,6 @@ class CityscapesExporterTest(TestCase):
                 target_dataset=DstExtractor(),
             )
 
-    @mark_requirement(Requirements.DATUM_267)
     def test_can_save_and_load_image_with_arbitrary_extension(self):
         class TestExtractor(TestExtractorBase):
             def __iter__(self):
@@ -535,7 +519,6 @@ class CityscapesExporterTest(TestCase):
                 require_media=True,
             )
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_inplace_save_writes_only_updated_data(self):
         src_mask_cat = MaskCategories.generate(2, include_background=False)
 
@@ -625,7 +608,6 @@ class CityscapesExporterTest(TestCase):
                 ignored_attrs=IGNORE_ALL,
             )
 
-    @mark_requirement(Requirements.DATUM_BUG_470)
     def test_can_save_and_load_without_image_saving(self):
         class TestExtractor(TestExtractorBase):
             def __iter__(self):

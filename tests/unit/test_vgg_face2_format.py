@@ -10,14 +10,11 @@ from datumaro.components.environment import Environment
 from datumaro.components.media import Image
 from datumaro.plugins.data_formats.vgg_face2 import VggFace2Exporter, VggFace2Importer
 
-from ..requirements import Requirements, mark_requirement
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, compare_datasets
 
 
 class VggFace2FormatTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -82,7 +79,6 @@ class VggFace2FormatTest(TestCase):
 
             compare_datasets(self, source_dataset, parsed_dataset)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_no_subsets(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -106,7 +102,6 @@ class VggFace2FormatTest(TestCase):
 
             compare_datasets(self, source_dataset, parsed_dataset)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_cyrillic_and_spaces_in_filename(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -129,7 +124,6 @@ class VggFace2FormatTest(TestCase):
 
             compare_datasets(self, source_dataset, parsed_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_no_save_media(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -153,7 +147,6 @@ class VggFace2FormatTest(TestCase):
 
             compare_datasets(self, source_dataset, parsed_dataset)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_no_labels(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -182,7 +175,6 @@ class VggFace2FormatTest(TestCase):
 
             compare_datasets(self, source_dataset, parsed_dataset)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_dataset_with_wrong_number_of_points(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -212,7 +204,6 @@ class VggFace2FormatTest(TestCase):
 
             compare_datasets(self, target_dataset, parsed_dataset)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_image_with_arbitrary_extension(self):
         dataset = Dataset.from_iterable(
             [
@@ -239,7 +230,6 @@ class VggFace2FormatTest(TestCase):
 
             compare_datasets(self, dataset, parsed_dataset, require_media=True)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_save_and_load_with_meta_file(self):
         source_dataset = Dataset.from_iterable(
             [
@@ -284,12 +274,10 @@ DUMMY_DATASET_DIR = get_test_asset_path("vgg_face2_dataset")
 
 
 class VggFace2ImporterTest(TestCase):
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_detect(self):
         detected_formats = Environment().detect_dataset(DUMMY_DATASET_DIR)
         self.assertEqual([VggFace2Importer.NAME], detected_formats)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_import(self):
         expected_dataset = Dataset.from_iterable(
             [
@@ -343,7 +331,6 @@ class VggFace2ImporterTest(TestCase):
 
         compare_datasets(self, expected_dataset, dataset)
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_can_import_specific_subset(self):
         expected_dataset = Dataset.from_iterable(
             [

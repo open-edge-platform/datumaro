@@ -30,8 +30,6 @@ from datumaro.components.operations import (
     compute_image_statistics,
 )
 
-from tests.requirements import Requirements, mark_requirement
-
 
 @pytest.fixture
 def fxt_image_dataset_expected_mean_std():
@@ -92,7 +90,6 @@ def fxt_point_cloud_dataset():
 
 
 class ImageStatisticsTest:
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_image_stats(
         self,
         fxt_image_dataset: Dataset,
@@ -118,7 +115,6 @@ class ImageStatisticsTest:
         for estd, astd in zip(expected_std, actual_std):
             assert astd == pytest.approx(estd, 1e-1)
 
-    @mark_requirement(Requirements.DATUM_BUG_873)
     def test_invalid_media_type(
         self,
         fxt_point_cloud_dataset: Dataset,
@@ -135,7 +131,6 @@ class ImageStatisticsTest:
 
 
 class AnnStatisticsTest:
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_stats(self):
         dataset = Dataset.from_iterable(
             [
@@ -364,7 +359,6 @@ class AnnStatisticsTest:
 
         assert actual == expected
 
-    @mark_requirement(Requirements.DATUM_GENERAL_REQ)
     def test_stats_with_empty_dataset(self):
         label_names = ["label_%s" % i for i in range(4)]
         dataset = Dataset.from_iterable(
@@ -383,7 +377,6 @@ class AnnStatisticsTest:
         actual = compute_ann_statistics(dataset)
         assert actual == expected
 
-    @mark_requirement(Requirements.DATUM_BUG_1214)
     def test_stats_with_invalid_label(self):
         label_names = ["label_%s" % i for i in range(3)]
         dataset = Dataset.from_iterable(
