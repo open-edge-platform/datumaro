@@ -79,8 +79,8 @@ class LabelCategories(Categories):
         """
         if label in self.labels:
             raise ValueError(f"Duplicate label: {label}")
-        self.labels.append(label)
         index = len(self.labels)
+        self.labels.append(label)
         self._indices[label] = index
         return index
 
