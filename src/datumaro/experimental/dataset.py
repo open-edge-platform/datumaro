@@ -124,7 +124,7 @@ class Dataset(Generic[DType]):
     def __init__(
         self,
         dtype_or_schema: Union[Schema, Type[DType]],
-        categories: Categories = None,
+        categories: dict[str, Categories] = None,
     ):
         """
         Initialize dataset with either a schema or sample type.

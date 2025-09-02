@@ -19,9 +19,8 @@ from typing import Dict, Iterator, List, NamedTuple, Optional, Tuple, Union
 class GroupType(IntEnum):
     """Types of label groups for organizing labels."""
 
-    EXCLUSIVE = 0
-    INCLUSIVE = 1
-    RESTRICTED = 2
+    EXCLUSIVE = 0  # Only one label from the group can be assigned
+    INCLUSIVE = 1  # Multiple labels from the group can be assigned
 
     def to_str(self) -> str:
         return self.name.lower()
@@ -46,168 +45,78 @@ class Categories:
 
 
 @dataclass
-class LabelCategory:
-    """Represents a single label category with optional parent and attributes."""
-
-    name: str
-    parent: str = ""
-
-    def __post_init__(self):
-        if not self.name:
-            raise ValueError("Category name cannot be empty")
-
-
-@dataclass
-class LabelGroup:
+class LabelCategories(Categories):
     """Represents a group of labels with a specific group type."""
 
-    name: str
     labels: List[str] = field(default_factory=list)
     group_type: GroupType = GroupType.EXCLUSIVE
-
-    def __post_init__(self):
-        if not self.name:
-            raise ValueError("Label group name cannot be empty")
-
-
-@dataclass
-class LabelCategories(Categories):
-    """
-    Label categories management with support for hierarchical labels and groups.
-    """
-
-    items: List[LabelCategory] = field(default_factory=list)
-    label_groups: List[LabelGroup] = field(default_factory=list)
     _indices: Dict[str, int] = field(default_factory=dict, init=False, repr=False)
 
     def __post_init__(self):
         self._reindex()
 
-    @classmethod
-    def from_iterable(
-        cls,
-        iterable: Union[
-            List[str],
-            List[Tuple[str]],
-            List[Tuple[str, str]],
-            List[Tuple[str, str, List[str]]],
-        ],
-    ) -> LabelCategories:
-        """
-        Creates a LabelCategories from iterable.
-
-        Args:
-            iterable: This iterable object can be:
-                - a list of str - will be interpreted as list of Category names
-                - a list of positional arguments - will generate Categories
-                  with these arguments
-
-        Returns: a LabelCategories object
-        """
-        temp_categories = cls()
-
-        for category in iterable:
-            if isinstance(category, str):
-                category = [category]
-            temp_categories.add(*category)
-
-        return temp_categories
-
     def _reindex(self):
         """Rebuild the internal index mapping names to positions."""
         indices = {}
-        for index, item in enumerate(self.items):
-            if item.name in indices:
-                raise ValueError(f"Duplicate category name: {item.name}")
-            indices[item.name] = index
+        for index, label in enumerate(self.labels):
+            if label in indices:
+                raise ValueError(f"Duplicate label: {label}")
+            indices[label] = index
         self._indices = indices
 
-    def add(
-        self,
-        name: str,
-        parent: Optional[str] = None,
-    ) -> int:
+    def add(self, label: str) -> int:
         """
-        Add a new label category.
+        Add a new label.
 
         Args:
-            name: The category name
-            parent: Optional parent category name
+            label: The label name
 
         Returns:
             The index of the newly added category
 
         Raises:
-            AssertionError: If name is empty or already exists
+            ValueError: If label already exists
         """
-        if name in self._indices:
-            raise ValueError(f"Category '{name}' already exists")
-
-        index = len(self.items)
-        category = LabelCategory(
-            name=name,
-            parent=parent or "",
-        )
-        self.items.append(category)
-        self._indices[name] = index
+        if label in self.labels:
+            raise ValueError(f"Duplicate label: {label}")
+        index = len(self.labels)
+        self.labels.append(label)
+        self._indices[label] = index
         return index
 
-    def add_label_group(
-        self,
-        name: str,
-        labels: List[str],
-        group_type: GroupType = GroupType.EXCLUSIVE,
-    ) -> int:
+    def find(self, name: str) -> Tuple[Optional[int], Optional[str]]:
         """
-        Add a new label group.
+        Find a label by name.
 
         Args:
-            name: The group name
-            labels: List of label names in this group
-            group_type: The type of group (exclusive, inclusive, restricted)
-
-        Returns:
-            The index of the newly added label group
-        """
-
-        index = len(self.label_groups)
-        label_group = LabelGroup(name=name, labels=labels, group_type=group_type)
-        self.label_groups.append(label_group)
-        return index
-
-    def find(self, name: str) -> Tuple[Optional[int], Optional[LabelCategory]]:
-        """
-        Find a category by name.
-
-        Args:
-            name: The category name to find
+            name: The label name to find
 
         Returns:
             A tuple of (index, category) or (None, None) if not found
         """
         index = self._indices.get(name)
         if index is not None:
-            return index, self.items[index]
+            return index, self.labels[index]
         return None, None
 
-    def __getitem__(self, idx: int) -> LabelCategory:
+    def __getitem__(self, idx: int) -> str:
         """Get category by index."""
-        return self.items[idx]
+        return self.labels[idx]
 
     def __contains__(self, value: Union[int, str]) -> bool:
-        """Check if a category exists by name or index."""
+        """Check if a label exists by name or index."""
         if isinstance(value, str):
-            return self.find(value)[1] is not None
+            return value in self.labels
         else:
-            return 0 <= value < len(self.items)
+            return 0 <= value < len(self.labels)
 
     def __len__(self) -> int:
-        """Get the number of categories."""
-        return len(self.items)
+        """Get the number of labels."""
+        return len(self.labels)
 
     def __iter__(self):
-        """Iterate over categories."""
-        return iter(self.items)
+        """Iterate over label."""
+        return iter(self.labels)
 
 
 class RgbColor(NamedTuple):
