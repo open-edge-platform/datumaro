@@ -2,6 +2,59 @@
 requires = ["setuptools", "wheel", "pybind11", "setuptools-rust"]
 build-backend = "setuptools.build_meta"
 
+[project]
+name = "datumaro"
+dynamic = ["version"]
+description = "Dataset Management Framework (Datumaro)"
+authors = [
+    {name = "Intel", email = "emily.chun@intel.com"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "attrs>=21.3.0",
+    "defusedxml>=0.7.0",
+    "imagesize>=1.4.1",
+    "lxml<7,>=5.2.0",
+    "numpy>=1.23.4,<2.2.0",
+    "orjson>=3.10.0",
+    "Pillow>=10.3.0",
+    "ruamel.yaml>=0.17.0",
+    "shapely>=1.7",
+    "typing_extensions>=3.7.4.3",
+    "tqdm>=4.67.1", # version with the latest security fixes
+    "pycocotools>=2.0.4",
+    "PyYAML==6.0.2",
+    "polars>=1.31.0,<2.0.0",
+    "pandas>=1.4.0",
+    "pyarrow",
+    "json-stream",
+    # From requirements.txt
+    "opencv-python-headless>=4.11.0.86",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pre-commit",
+    "ruff",
+]
+
+test = [
+    "pytest>=5.3.5",
+    "pytest-cov>=4.0.0",
+    "pytest-stress",
+    "pytest-html",
+    "coverage",
+    "pytest-csv",
+    "dill",
+    "tifffile",
+]
+
 [tool.isort]
 profile = "black"
 forced_separate = ["tests"]

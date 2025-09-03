@@ -35,15 +35,9 @@ def find_version(project_dir=None):
     return version
 
 
-CORE_REQUIREMENTS_FILE = "requirements-core.txt"
-
-
-def parse_requirements(filename=CORE_REQUIREMENTS_FILE):
-    with open(filename, "r", encoding="utf-8") as fh:
-        return fh.readlines()
-
-
-CORE_REQUIREMENTS = parse_requirements(CORE_REQUIREMENTS_FILE)
+# Dependencies are now managed in pyproject.toml
+# Only handle the opencv-python variant selection based on environment variable
+CORE_REQUIREMENTS = []
 if strtobool(os.getenv("DATUMARO_HEADLESS", "0").lower()):
     CORE_REQUIREMENTS.append("opencv-python-headless")
 else:
