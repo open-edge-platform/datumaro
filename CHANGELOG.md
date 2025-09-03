@@ -61,7 +61,7 @@ This release streamlines Datumaro by removing a number of lesser-used features, 
 
 ### Enhancements
 - Mark several dependencies as optional
-  (<https://github.com/open-edge-platform/datumaro/pull/1849>)
+  (<https://github.com/open-edge-platform/datumaro/pull/1849>, <https://github.com/open-edge-platform/datumaro/pull/1862>)
 - Removal of unneeded dependencies
   (<https://github.com/open-edge-platform/datumaro/pull/1837>)
 - Documentation tidy-up
