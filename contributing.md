@@ -67,28 +67,22 @@ To set up your development environment, please follow the steps below.
     ``` bash
     git clone <forked_repo>
     ```
-3. Optionally, install a virtual environment (recommended):
-    ``` bash
-    python -m pip install virtualenv
-    python -m virtualenv venv
-    . venv/bin/activate
-    ```
+3. Install uv: https://docs.astral.sh/uv/getting-started/installation/
 
 4. Install Datumaro with the following optional dependencies:
     ``` bash
     cd /path/to/the/cloned/repo/
-    pip install -e .[tf,tfds,torch]
+    uv sync --extra tf --extra tfds --extra torch
     ```
 
 5. Install development dependencies:
     ``` bash
-    pip install -r requirements-dev.txt
+    uv sync --extra dev
     ```
 
 6. Set up pre-commit hooks in the repo. See [Code style](#code-style).
     ``` bash
     pre-commit install
-    pre-commit run
     ```
 
 7. Create your branch based off the `develop` branch and make changes.
