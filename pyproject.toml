@@ -2,6 +2,18 @@
 requires = ["setuptools", "wheel", "pybind11", "setuptools-rust"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools]
+package-dir = {"" = "src"}
+include-package-data = true
+zip-safe = false
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["datumaro*"]
+
+[tool.setuptools.dynamic]
+version = {attr = "datumaro.version.__version__"}
+
 [project]
 name = "datumaro"
 dynamic = ["version"]
@@ -34,9 +46,14 @@ dependencies = [
     "pandas>=1.4.0",
     "pyarrow",
     "json-stream",
-    # From requirements.txt
     "opencv-python-headless>=4.11.0.86",
 ]
+
+[project.scripts]
+datum = "datumaro.cli.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/open-edge-platform/datumaro"
 
 [project.optional-dependencies]
 dev = [
@@ -55,6 +72,41 @@ test = [
     "tifffile",
 ]
 
+# Tensorflow support
+tf = ["tensorflow"]
+tfds = ["tensorflow-datasets<4.9.3", "absl-py>=0.12.0"]
+
+# PyTorch support
+torch = ["torch", "torchvision"]
+
+# Kaggle download support
+kaggle = ["kaggle"]
+
+# NDR, mpii file format, missing value detection in tabular data
+scipy = ["scipy"]
+
+# Tabular data processing
+nlp = ["nltk", "tokenizers", "portalocker"]
+
+# Comparator
+tabulate = ["tabulate"]
+
+# Any dependencies needed by the CLI
+# 2.3 has an unlisted dependency on PyTorch, which we don't need
+cli = ["tensorboardX>=1.8,!=2.3", "tabulate", "scipy", "matplotlib>=3.3.1"]
+
+# Visualizer
+visualizer = ["matplotlib>=3.3.1"]
+
+# NYU Depth Dataset v2 file format
+h5py = ["h5py>=2.10.0"]
+
+# BraTS file format
+nibabel = ["nibabel>=3.2.1"]
+
+# AVA dataset
+protobuf = ["protobuf"]
+
 [tool.isort]
 profile = "black"
 forced_separate = ["tests"]
@@ -62,7 +114,6 @@ line_length = 100
 
 [tool.coverage.run]
 branch = true
-# relative_files = true # does not work?
 
 source = [
     "src/",

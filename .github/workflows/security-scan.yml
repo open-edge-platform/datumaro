@@ -78,16 +78,11 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
-        run: python -m pip install pip-tools
-
-      - name: Freeze dependencies
+      - name: Prepare dependency files for scanning
         run: |
-          mkdir -p trivy_input/core
-          pip-compile -o trivy_input/core/requirements.txt requirements-core.txt
-
-          mkdir -p trivy_input/base
-          pip-compile -o trivy_input/base/requirements.txt requirements.txt
+          mkdir -p trivy_input
+          # Use uv.lock for dependency scanning
+          cp uv.lock trivy_input/
 
       - name: Run Trivy scan
         id: trivy
