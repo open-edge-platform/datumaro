@@ -14,6 +14,14 @@ include = ["datumaro*"]
 [tool.setuptools.dynamic]
 version = {attr = "datumaro.version.__version__"}
 
+[tool.pybind11.ext_modules]
+"datumaro._capi" = { sources = ["src/datumaro/capi/pybind.cpp"], extra_compile_args = ["-O3"] }
+
+[[tool.setuptools-rust.ext-modules]]
+target = "datumaro.rust_api"
+path = "rust/Cargo.toml"
+binding = "PyO3"
+
 [project]
 name = "datumaro"
 dynamic = ["version"]
