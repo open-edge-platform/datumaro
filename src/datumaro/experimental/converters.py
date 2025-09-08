@@ -358,7 +358,7 @@ class BBoxCoordinateConverter(Converter):
         return result_df
 
 
-@converter
+@converter(lazy=True)
 class PolygonToMaskConverter(Converter):
     """
     Converts polygon annotations to rasterized masks.
