@@ -13,13 +13,12 @@ repos:
               tests/assets/.*
           )$
 
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.12.11
+  # Ruff
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: "v0.5.0"
     hooks:
-    - id: ruff
-      name: Ruff linter on all Python files
-      types_or: [ python, pyi ]
-      args: ["--fix"]
+      - id: ruff
+        exclude: "tests"
 
   # python code formatting
   - repo: https://github.com/psf/black
