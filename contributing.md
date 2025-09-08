@@ -55,7 +55,7 @@ Before submitting a pull request, ensure you follow these guidelines:
 ## Development Guidelines
 
 ### Prerequisites
-- Python (3.9+)
+- Python (3.10+)
 
 To set up your development environment, please follow the steps below.
 
