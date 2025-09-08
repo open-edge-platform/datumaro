@@ -73,17 +73,6 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Set up Python
-        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
-        with:
-          python-version: "3.11"
-
-      - name: Prepare dependency files for scanning
-        run: |
-          mkdir -p trivy_input
-          # Use uv.lock for dependency scanning
-          cp uv.lock trivy_input/
-
       - name: Run Trivy scan
         id: trivy
         uses: open-edge-platform/geti-ci/actions/trivy@db5335076dfe564b039b5a7480b8f6b6ae38370a

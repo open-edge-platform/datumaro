@@ -81,8 +81,16 @@ test = [
 ]
 
 # Tensorflow support
-tf = ["tensorflow"]
-tfds = ["tensorflow-datasets<4.9.3", "absl-py>=0.12.0"]
+# Exclude Tensorflow from Python 3.13 as it is not supported yet
+# Also exclude TensorFlow from the MacOS checks due to the following issue:
+# https://github.com/tensorflow/tensorflow/issues/98563
+tf = [
+    "tensorflow; python_version < '3.13' and sys_platform != 'darwin'",
+]
+tfds = [
+    "tensorflow-datasets<4.9.3; python_version < '3.13' and sys_platform != 'darwin'",
+    "absl-py>=0.12.0; python_version < '3.13' and sys_platform != 'darwin'",
+]
 
 # PyTorch support
 torch = ["torch", "torchvision"]
