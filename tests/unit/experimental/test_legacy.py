@@ -12,10 +12,13 @@ from typing_extensions import Annotated
 from datumaro.components.annotation import AnnotationType, Bbox, LabelCategories, Polygon
 from datumaro.components.dataset import Dataset as LegacyDataset
 from datumaro.components.dataset_base import CategoriesInfo, DatasetItem
-from datumaro.components.media import Image, ImageFromFile, Video
+from datumaro.components.media import Image, ImageFromFile, MediaElement, Video
 from datumaro.experimental.dataset import Dataset, Sample
 from datumaro.experimental.fields import (
+    ImageInfo,
     bbox_field,
+    image_bytes_field,
+    image_info_field,
     image_path_field,
     label_field,
     polygon_field,
@@ -38,11 +41,18 @@ from datumaro.experimental.legacy import (
     register_forward_media_converter,
 )
 from datumaro.experimental.schema import AttributeInfo, Schema
+from datumaro.util.image import encode_image
 
 
 def test_image_media_converter_get_schema_attributes():
     """Test schema attribute generation for images."""
-    converter = ForwardImageMediaConverter()
+    # Create a simple dataset with file-based images to get the converter
+    items = [DatasetItem(id="test", media=Image.from_file("/path/to/image.jpg"))]
+    dataset = LegacyDataset.from_iterable(items)
+
+    converter = ForwardImageMediaConverter.create(dataset)
+    assert converter is not None
+
     attributes = converter.get_schema_attributes()
 
     assert "image_path" in attributes
@@ -51,7 +61,12 @@ def test_image_media_converter_get_schema_attributes():
 
 def test_image_media_converter_convert_item_media_with_path_and_size():
     """Test media conversion with path and size."""
-    converter = ForwardImageMediaConverter()
+    # Create a dataset to get the converter
+    items = [DatasetItem(id="test", media=Image.from_file("/path/to/image.jpg"))]
+    dataset = LegacyDataset.from_iterable(items)
+
+    converter = ForwardImageMediaConverter.create(dataset)
+    assert converter is not None
 
     image_media = Image.from_file(
         "/path/to/image.jpg", size=(480, 640)
@@ -65,7 +80,12 @@ def test_image_media_converter_convert_item_media_with_path_and_size():
 
 def test_image_media_converter_convert_item_media_with_path_only():
     """Test media conversion with only path."""
-    converter = ForwardImageMediaConverter()
+    # Create a dataset to get the converter
+    items = [DatasetItem(id="test", media=Image.from_file("/path/to/image.jpg"))]
+    dataset = LegacyDataset.from_iterable(items)
+
+    converter = ForwardImageMediaConverter.create(dataset)
+    assert converter is not None
 
     image_media = Image.from_file("/path/to/image.jpg")  # pyright: ignore[reportUnknownMemberType]
 
@@ -77,11 +97,289 @@ def test_image_media_converter_convert_item_media_with_path_only():
 
 def test_image_media_converter_convert_item_media_no_media():
     """Test media conversion with no media."""
-    converter = ForwardImageMediaConverter()
+    # Create a dataset to get the converter
+    items = [DatasetItem(id="test", media=Image.from_file("/path/to/image.jpg"))]
+    dataset = LegacyDataset.from_iterable(items)
+
+    converter = ForwardImageMediaConverter.create(dataset)
+    assert converter is not None
+
     item = DatasetItem(id="test", media=None)
     result = converter.convert_item_media(item)
 
     assert result == {}
+
+
+def test_image_bytes_media_converter_get_schema_attributes():
+    """Test schema attribute generation for image bytes."""
+    # Create test image data
+    test_image = np.random.randint(0, 256, (32, 32, 3), dtype=np.uint8)
+    image_bytes = encode_image(test_image, ".png")
+
+    # Create a dataset with ImageFromBytes media
+    items = [DatasetItem(id="test", media=Image.from_bytes(image_bytes))]
+    dataset = LegacyDataset.from_iterable(items)
+
+    converter = ForwardImageMediaConverter.create(dataset)
+    assert converter is not None
+
+    attributes = converter.get_schema_attributes()
+
+    assert "image_bytes" in attributes
+    assert attributes["image_bytes"].type == bytes
+
+
+def test_image_bytes_media_converter_convert_item_media():
+    """Test media conversion with image bytes."""
+    # Create test image data
+    test_image = np.random.randint(0, 256, (32, 32, 3), dtype=np.uint8)
+    image_bytes = encode_image(test_image, ".png")
+
+    # Create a dataset to get the converter
+    items = [DatasetItem(id="test", media=Image.from_bytes(image_bytes))]
+    dataset = LegacyDataset.from_iterable(items)
+
+    converter = ForwardImageMediaConverter.create(dataset)
+    assert converter is not None
+
+    image_media = Image.from_bytes(image_bytes)
+    item = DatasetItem(id="test", media=image_media)
+    result = converter.convert_item_media(item)
+
+    assert "image_bytes" in result
+    assert isinstance(result["image_bytes"], (bytes, np.ndarray))
+
+
+def test_image_bytes_media_converter_convert_item_media_with_numpy():
+    """Test media conversion with numpy-based image."""
+    # Create test image data
+    test_image = np.random.randint(0, 256, (32, 32, 3), dtype=np.uint8)
+
+    # Create a dataset with ImageFromNumpy media
+    items = [DatasetItem(id="test", media=Image.from_numpy(test_image))]
+    dataset = LegacyDataset.from_iterable(items)
+
+    converter = ForwardImageMediaConverter.create(dataset)
+    assert converter is not None
+
+    image_media = Image.from_numpy(test_image)
+    item = DatasetItem(id="test", media=image_media)
+    result = converter.convert_item_media(item)
+
+    assert "image_bytes" in result
+    assert isinstance(result["image_bytes"], np.ndarray)
+    np.testing.assert_array_equal(result["image_bytes"], test_image)
+
+
+def test_unified_image_converter_handles_file_based_images():
+    """Test that the unified ForwardImageMediaConverter handles file-based images."""
+    # Create a dataset with file-based images
+    items = [DatasetItem(id="test", media=Image.from_file("/path/to/image.jpg"))]
+    dataset = LegacyDataset.from_iterable(items)
+
+    converter = ForwardImageMediaConverter.create(dataset)
+    assert converter is not None
+
+    # Should generate image_path attributes for file-based images
+    attributes = converter.get_schema_attributes()
+    assert "image_path" in attributes
+
+
+def test_unified_image_converter_handles_data_based_images():
+    """Test that the unified ForwardImageMediaConverter handles data-based images."""
+    # Create test image data
+    test_image = np.random.randint(0, 256, (32, 32, 3), dtype=np.uint8)
+    image_bytes = encode_image(test_image, ".png")
+
+    # Create a dataset with data-based images
+    items = [DatasetItem(id="test", media=Image.from_bytes(image_bytes))]
+    dataset = LegacyDataset.from_iterable(items)
+
+    converter = ForwardImageMediaConverter.create(dataset)
+    assert converter is not None
+
+    # Should generate image_bytes attributes for data-based images
+    attributes = converter.get_schema_attributes()
+    assert "image_bytes" in attributes
+
+
+def test_image_converter_with_size_info_includes_image_info_field():
+    """Test that ForwardImageMediaConverter includes ImageInfoField when all images have size."""
+    # Create images with size information
+    items = [
+        DatasetItem(id="test1", media=Image.from_file("/path/to/image1.jpg", size=(480, 640))),
+        DatasetItem(id="test2", media=Image.from_file("/path/to/image2.jpg", size=(720, 1280))),
+    ]
+    dataset = LegacyDataset.from_iterable(items)
+
+    converter = ForwardImageMediaConverter.create(dataset)
+    assert converter is not None
+    assert converter.has_image_info is True
+
+    # Should include both image_path and image_info attributes
+    attributes = converter.get_schema_attributes()
+    assert "image_path" in attributes
+    assert "image_info" in attributes
+    assert attributes["image_info"].type == ImageInfo
+
+
+def test_image_converter_without_size_info_excludes_image_info_field():
+    """Test that ForwardImageMediaConverter excludes ImageInfoField when images don't have size."""
+    # Create images without size information
+    items = [
+        DatasetItem(id="test1", media=Image.from_file("/path/to/image1.jpg")),
+        DatasetItem(id="test2", media=Image.from_file("/path/to/image2.jpg")),
+    ]
+    dataset = LegacyDataset.from_iterable(items)
+
+    converter = ForwardImageMediaConverter.create(dataset)
+    assert converter is not None
+    assert converter.has_image_info is False
+
+    # Should only include image_path attribute, not image_info
+    attributes = converter.get_schema_attributes()
+    assert "image_path" in attributes
+    assert "image_info" not in attributes
+
+
+def test_image_converter_mixed_size_info_excludes_image_info_field():
+    """Test that ForwardImageMediaConverter excludes ImageInfoField when some images lack size."""
+    # Create mixed dataset - some images with size, some without
+    items = [
+        DatasetItem(id="test1", media=Image.from_file("/path/to/image1.jpg", size=(480, 640))),
+        DatasetItem(id="test2", media=Image.from_file("/path/to/image2.jpg")),  # No size
+    ]
+    dataset = LegacyDataset.from_iterable(items)
+
+    converter = ForwardImageMediaConverter.create(dataset)
+    assert converter is not None
+    assert converter.has_image_info is False
+
+    # Should only include image_path attribute, not image_info
+    attributes = converter.get_schema_attributes()
+    assert "image_path" in attributes
+    assert "image_info" not in attributes
+
+
+def test_image_converter_converts_size_info():
+    """Test that ForwardImageMediaConverter properly converts size information."""
+    # Create images with size information
+    items = [DatasetItem(id="test", media=Image.from_file("/path/to/image.jpg", size=(480, 640)))]
+    dataset = LegacyDataset.from_iterable(items)
+
+    converter = ForwardImageMediaConverter.create(dataset)
+    assert converter is not None
+    assert converter.has_image_info is True
+
+    # Test conversion
+    image_media = Image.from_file("/path/to/image.jpg", size=(480, 640))
+    item = DatasetItem(id="test", media=image_media)
+    result = converter.convert_item_media(item)
+
+    assert "image_path" in result
+    assert "image_info" in result
+    assert result["image_path"] == "/path/to/image.jpg"
+    assert isinstance(result["image_info"], ImageInfo)
+    assert result["image_info"].width == 640
+    assert result["image_info"].height == 480
+
+
+def test_image_converter_bytes_with_size_info():
+    """Test ForwardImageMediaConverter with image bytes that have size information."""
+    # Create test image data with size
+    test_image = np.random.randint(0, 256, (64, 128, 3), dtype=np.uint8)
+    image_bytes = encode_image(test_image, ".png")
+
+    # Create images from bytes - they should have size info when loaded
+    items = [DatasetItem(id="test", media=Image.from_bytes(image_bytes))]
+    dataset = LegacyDataset.from_iterable(items)
+
+    converter = ForwardImageMediaConverter.create(dataset)
+    assert converter is not None
+
+    # Test conversion - the exact behavior depends on whether from_bytes has size info
+    image_media = Image.from_bytes(image_bytes)
+    item = DatasetItem(id="test", media=image_media)
+    result = converter.convert_item_media(item)
+
+    assert "image_bytes" in result
+
+    # If the image has size info, it should be included
+    if converter.has_image_info and image_media.has_size:
+        assert "image_info" in result
+        assert isinstance(result["image_info"], ImageInfo)
+        # Note: Image size is (H, W) but ImageInfo expects (width, height)
+        height, width = image_media.size
+        assert result["image_info"].width == width
+        assert result["image_info"].height == height
+
+
+def test_convert_from_legacy_with_image_bytes():
+    """Test full conversion pipeline with ImageFromData images."""
+    # Create test images
+    test_image1 = np.random.randint(0, 256, (32, 32, 3), dtype=np.uint8)
+    test_image2 = np.random.randint(0, 256, (64, 64, 3), dtype=np.uint8)
+
+    # Encode images as bytes
+    image_bytes1 = encode_image(test_image1, ".png")
+    image_bytes2 = encode_image(test_image2, ".jpg")
+
+    # Create dataset items with ImageFromBytes media
+    items = [
+        DatasetItem(id="item1", media=Image.from_bytes(image_bytes1), annotations=[]),
+        DatasetItem(id="item2", media=Image.from_bytes(image_bytes2), annotations=[]),
+    ]
+
+    # Create legacy dataset
+    legacy_dataset = LegacyDataset.from_iterable(items)
+
+    # Convert to experimental format
+    experimental_dataset = convert_from_legacy(legacy_dataset)
+
+    # Verify conversion
+    assert "image_bytes" in experimental_dataset.schema.attributes
+    assert "image_path" not in experimental_dataset.schema.attributes
+
+    # Verify samples
+    assert len(experimental_dataset) == 2
+
+    sample1 = experimental_dataset[0]
+    sample2 = experimental_dataset[1]
+
+    # Check that image_bytes are present
+    assert hasattr(sample1, "image_bytes")
+    assert hasattr(sample2, "image_bytes")
+
+
+def test_convert_from_legacy_with_image_paths():
+    """Test that file-based images still use ImagePathField correctly."""
+    # Create dataset items with ImageFromFile media
+    items = [
+        DatasetItem(id="item1", media=Image.from_file("test1.jpg"), annotations=[]),
+        DatasetItem(id="item2", media=Image.from_file("test2.png"), annotations=[]),
+    ]
+
+    # Create legacy dataset
+    legacy_dataset = LegacyDataset.from_iterable(items)
+
+    # Convert to experimental format
+    experimental_dataset = convert_from_legacy(legacy_dataset)
+
+    # Verify conversion
+    assert "image_path" in experimental_dataset.schema.attributes
+    assert "image_bytes" not in experimental_dataset.schema.attributes
+
+    # Verify samples
+    assert len(experimental_dataset) == 2
+
+    sample1 = experimental_dataset[0]
+    sample2 = experimental_dataset[1]
+
+    # Check that image_path are present
+    assert hasattr(sample1, "image_path")
+    assert hasattr(sample2, "image_path")
+    assert sample1.image_path == "test1.jpg"
+    assert sample2.image_path == "test2.png"
 
 
 def test_bbox_annotation_converter_get_schema_attributes():
@@ -173,11 +471,15 @@ def test_bbox_annotation_converter_convert_annotations_empty_list():
 
 def test_register_and_get_media_converter():
     """Test media converter registration and retrieval."""
-    converter = ForwardImageMediaConverter()
-    register_forward_media_converter(Image, converter)
+    register_forward_media_converter(ForwardImageMediaConverter)
 
-    retrieved = get_forward_media_converter(Image)
-    assert retrieved is converter
+    # Create a dataset with file-based images
+    items = [DatasetItem(id="test", media=Image.from_file("/path/to/image.jpg"))]
+    dataset = LegacyDataset.from_iterable(items)
+
+    retrieved = get_forward_media_converter(dataset)
+    assert retrieved is not None
+    assert isinstance(retrieved, ForwardImageMediaConverter)
 
 
 def test_register_and_get_annotation_converter():
@@ -191,10 +493,13 @@ def test_register_and_get_annotation_converter():
 
 
 def test_get_nonexistent_media_converter():
-    """Test getting converter for unregistered media type."""
+    """Test getting converter for unsupported dataset."""
+    # Create a dataset with Video media (not supported by current converters)
+    items = [DatasetItem(id="test", media=Video("/path/to/video.mp4"))]
+    dataset = LegacyDataset.from_iterable(items, media_type=Video)
 
-    with pytest.raises(ValueError, match="No converter registered for media type"):
-        get_forward_media_converter(Video)
+    retrieved = get_forward_media_converter(dataset)
+    assert retrieved is None
 
 
 def test_get_nonexistent_annotation_converter():
@@ -278,7 +583,8 @@ def test_analyze_unknown_annotation_type():
 
         # Should skip unknown annotation type
         assert "image_path" in analysis_result.schema.attributes
-        assert len(analysis_result.schema.attributes) == 1  # Only image_path field
+        assert "image_info" in analysis_result.schema.attributes
+        assert len(analysis_result.schema.attributes) == 2  # Only image_path and image_info field
 
 
 def test_convert_simple_bbox_dataset():
@@ -369,7 +675,12 @@ def test_convert_image_only_dataset():
 
 def test_builtin_converters_registration():
     """Test that built-in converters are registered on import."""
-    image_converter = get_forward_media_converter(Image)
+    # Create a dataset with file-based images
+    items = [DatasetItem(id="test", media=Image.from_file("/path/to/image.jpg"))]
+    dataset = LegacyDataset.from_iterable(items)
+
+    image_converter = get_forward_media_converter(dataset)
+    assert image_converter is not None
     assert isinstance(image_converter, ForwardImageMediaConverter)
 
     categories: CategoriesInfo = {}

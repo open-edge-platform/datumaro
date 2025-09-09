@@ -11,6 +11,7 @@ import pytest
 from datumaro.experimental.dataset import Sample
 from datumaro.experimental.fields import (
     BBoxField,
+    ImageBytesField,
     ImageField,
     ImageInfo,
     ImageInfoField,
@@ -18,6 +19,7 @@ from datumaro.experimental.fields import (
     PolygonField,
     TensorField,
     bbox_field,
+    image_bytes_field,
     image_field,
     image_info_field,
     image_path_field,
@@ -25,6 +27,7 @@ from datumaro.experimental.fields import (
     tensor_field,
 )
 from datumaro.experimental.schema import AttributeInfo, Schema, Semantic
+from datumaro.util.image import decode_image, encode_image
 
 
 def test_tensor_field_creation():
@@ -83,6 +86,193 @@ def test_image_field_polars_schema():
 
     expected = {"image": pl.List(pl.UInt8()), "image_shape": pl.List(pl.Int32())}
     assert schema == expected
+
+
+def test_image_bytes_field_creation():
+    """Test ImageBytesField creation and properties."""
+    field = image_bytes_field(format="PNG", semantic=Semantic.Left)
+
+    assert isinstance(field, ImageBytesField)
+    assert field.format == "PNG"
+    assert field.semantic == Semantic.Left
+
+
+def test_image_bytes_field_creation_with_optional_format():
+    """Test ImageBytesField creation with optional format."""
+    field = image_bytes_field(format=None, semantic=Semantic.Default)
+
+    assert isinstance(field, ImageBytesField)
+    assert field.format is None
+    assert field.semantic == Semantic.Default
+
+    # Test factory function default
+    field_default = image_bytes_field()
+    assert field_default.format is None
+
+
+def test_image_bytes_field_effective_format():
+    """Test ImageBytesField effective format detection."""
+    field = image_bytes_field(format=None)
+    test_image = np.random.randint(0, 256, (8, 8, 3), dtype=np.uint8)
+
+    # Test with different formats
+    png_bytes = encode_image(test_image, ".png")
+    jpeg_bytes = encode_image(test_image, ".jpg")
+
+    # Test effective format with data
+    assert field.get_effective_format(png_bytes) == "PNG"
+    assert field.get_effective_format(jpeg_bytes) == "JPEG"
+    assert field.get_effective_format() == "PNG"  # Default when no data
+
+    # Test with explicit format
+    field_explicit = image_bytes_field(format="JPEG")
+    assert (
+        field_explicit.get_effective_format(png_bytes) == "JPEG"
+    )  # Uses explicit format even with PNG data
+
+
+def test_image_bytes_field_polars_schema():
+    """Test ImageBytesField Polars schema generation."""
+    field = image_bytes_field(format="PNG")
+    schema = field.to_polars_schema("image_bytes")
+
+    expected = {"image_bytes": pl.Binary()}
+    assert schema == expected
+
+
+def test_image_bytes_field_polars_conversion_with_numpy():
+    """Test ImageBytesField to/from Polars conversion with numpy arrays."""
+    field = image_bytes_field(format="PNG")
+    test_image = np.random.randint(0, 256, (32, 32, 3), dtype=np.uint8)
+
+    # Test to_polars with numpy array
+    polars_data = field.to_polars("image_bytes", test_image)
+    assert "image_bytes" in polars_data
+    assert isinstance(polars_data["image_bytes"][0], bytes)
+    assert len(polars_data["image_bytes"][0]) > 0
+
+    # Create DataFrame and test from_polars
+    df = pl.DataFrame(polars_data)
+    reconstructed = field.from_polars("image_bytes", 0, df, np.ndarray)
+
+    assert isinstance(reconstructed, np.ndarray)
+    assert reconstructed.shape == test_image.shape
+    assert np.allclose(reconstructed, test_image)
+
+
+def test_image_bytes_field_polars_conversion_with_bytes():
+    """Test ImageBytesField to/from Polars conversion with direct bytes."""
+    field = image_bytes_field(format="JPEG")
+    test_image = np.random.randint(0, 256, (16, 16, 3), dtype=np.uint8)
+    image_bytes = encode_image(test_image, ".jpg")
+    decoded_test_image = decode_image(image_bytes)
+
+    # Test to_polars with bytes
+    polars_data = field.to_polars("image_bytes", image_bytes)
+    assert "image_bytes" in polars_data
+    assert polars_data["image_bytes"][0] == image_bytes
+
+    # Create DataFrame and test from_polars
+    df = pl.DataFrame(polars_data)
+    reconstructed = field.from_polars("image_bytes", 0, df, np.ndarray)
+
+    assert isinstance(reconstructed, np.ndarray)
+    assert reconstructed.shape == test_image.shape
+    assert np.all(reconstructed == decoded_test_image)
+
+
+def test_image_bytes_field_auto_detection():
+    """Test ImageBytesField with auto-detection (format=None)."""
+    field = image_bytes_field(format=None)  # Auto-detection enabled
+    test_image = np.random.randint(0, 256, (16, 16, 3), dtype=np.uint8)
+
+    # Test with PNG bytes
+    png_bytes = encode_image(test_image, ".png")
+    polars_data = field.to_polars("image_bytes", png_bytes)
+    df = pl.DataFrame(polars_data)
+    reconstructed = field.from_polars("image_bytes", 0, df, np.ndarray)
+
+    assert isinstance(reconstructed, np.ndarray)
+    assert reconstructed.shape == test_image.shape
+    assert np.allclose(reconstructed, test_image)
+
+    # Test with numpy array (should default to PNG when encoding)
+    polars_data_numpy = field.to_polars("image_bytes", test_image)
+    df_numpy = pl.DataFrame(polars_data_numpy)
+    reconstructed_numpy = field.from_polars("image_bytes", 0, df_numpy, np.ndarray)
+
+    assert isinstance(reconstructed_numpy, np.ndarray)
+    assert reconstructed_numpy.shape == test_image.shape
+    assert np.allclose(reconstructed_numpy, test_image)
+
+
+def test_image_bytes_field_format_detection():
+    """Test ImageBytesField format detection."""
+    field = image_bytes_field()
+    test_image = np.random.randint(0, 256, (8, 8, 3), dtype=np.uint8)
+
+    # Test PNG detection
+    png_bytes = encode_image(test_image, ".png")
+    detected_format = field._guess_format(png_bytes)
+    assert detected_format == "PNG"
+
+    # Test JPEG detection
+    jpeg_bytes = encode_image(test_image, ".jpg")
+    detected_format = field._guess_format(jpeg_bytes)
+    assert detected_format == "JPEG"
+
+    # Test BMP detection
+    bmp_bytes = encode_image(test_image, ".bmp")
+    detected_format = field._guess_format(bmp_bytes)
+    assert detected_format == "BMP"
+
+    # Test unknown format
+    unknown_bytes = b"unknown_image_data"
+    detected_format = field._guess_format(unknown_bytes)
+    assert detected_format is None
+
+
+def test_image_bytes_field_converters():
+    """Test converters between ImageField and ImageBytesField."""
+    # Test ImageField to ImageBytesField conversion
+    image_field_instance = image_field(dtype=pl.UInt8(), format="RGB")
+    bytes_field_instance = image_field_instance.convert_to_image_bytes_field("JPEG")
+
+    assert isinstance(bytes_field_instance, ImageBytesField)
+    assert bytes_field_instance.format == "JPEG"
+    assert bytes_field_instance.semantic == image_field_instance.semantic
+
+    # Test ImageField to ImageBytesField conversion with None format
+    bytes_field_auto = image_field_instance.convert_to_image_bytes_field(None)
+    assert isinstance(bytes_field_auto, ImageBytesField)
+    assert bytes_field_auto.format is None
+    assert bytes_field_auto.semantic == image_field_instance.semantic
+
+    # Test ImageBytesField to ImageField conversion
+    bytes_field_instance2 = image_bytes_field(format="PNG", semantic=Semantic.Left)
+    image_field_instance2 = bytes_field_instance2.convert_to_image_field(pl.Float32())
+
+    assert isinstance(image_field_instance2, ImageField)
+    assert image_field_instance2.dtype == pl.Float32()
+    assert image_field_instance2.format == "RGB"
+    assert image_field_instance2.semantic == Semantic.Left
+
+    # Test ImageBytesField to ImageField conversion with None format
+    bytes_field_auto2 = image_bytes_field(format=None, semantic=Semantic.Right)
+    image_field_auto = bytes_field_auto2.convert_to_image_field(pl.Int32())
+
+    assert isinstance(image_field_auto, ImageField)
+    assert image_field_auto.dtype == pl.Int32()
+    assert image_field_auto.format == "RGB"
+    assert image_field_auto.semantic == Semantic.Right
+
+
+def test_image_bytes_field_unsupported_type():
+    """Test ImageBytesField with unsupported input type."""
+    field = image_bytes_field()
+
+    with pytest.raises(TypeError, match="Unsupported type for ImageBytesField"):
+        field.to_polars("image_bytes", "invalid_string_input")
 
 
 def test_bbox_field_creation():

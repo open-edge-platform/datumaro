@@ -518,7 +518,7 @@ def _heuristic_cost(current_state: _SchemaState, target_state: _SchemaState) -> 
 
 
 def _get_applicable_converters(
-    state: _SchemaState, target_state: _SchemaState, iteration: int = 0
+    semantic: Semantic, state: _SchemaState, target_state: _SchemaState, iteration: int = 0
 ) -> List[Tuple[Converter, _SchemaState]]:
     """Get all converters that can be applied to the current state along with their resulting states."""
     applicable: List[Tuple[Converter, _SchemaState]] = []
@@ -564,7 +564,7 @@ def _get_applicable_converters(
                 # The field does not exist, use a temporary name
                 output_name = field_type.__name__.lower()
                 # and create a new instance of the field
-                output_field = field_type()
+                output_field = field_type(semantic=semantic)
 
             # Add the iteration count at the end to ensure uniqueness
             # and avoid any conflict with existing attribute names
@@ -717,6 +717,7 @@ def _find_conversion_path_for_semantic(
 
         # Explore neighbors
         for converter, new_state in _get_applicable_converters(
+            semantic,
             current_node.state,
             target_state,
             current_node.g_cost,

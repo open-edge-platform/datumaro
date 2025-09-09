@@ -19,7 +19,9 @@ from PIL import Image
 from .converter_registry import AttributeSpec, Converter, converter
 from .fields import (
     BBoxField,
+    ImageBytesField,
     ImageField,
+    ImageInfo,
     ImageInfoField,
     ImagePathField,
     LabelField,
@@ -167,6 +169,7 @@ class ImagePathToImageConverter(Converter):
 
     input_path: AttributeSpec[ImagePathField]
     output_image: AttributeSpec[ImageField]
+    output_info: AttributeSpec[ImageInfoField]
 
     def filter_output_spec(self) -> bool:
         """Configure output image specification based on input."""
@@ -179,24 +182,33 @@ class ImagePathToImageConverter(Converter):
                 format="RGB",  # Default to RGB format
             ),
         )
+        # Configure output info specification
+        self.output_info = AttributeSpec(
+            name=self.output_info.name,
+            field=ImageInfoField(
+                semantic=self.input_path.field.semantic,
+            ),
+        )
         return True
 
     def convert(self, df: pl.DataFrame) -> pl.DataFrame:
         """
-        Convert image paths to loaded image tensors.
+        Convert image paths to loaded image tensors and image info.
 
         Args:
             df: DataFrame containing image path column
 
         Returns:
-            DataFrame with loaded image data and shape information
+            DataFrame with loaded image data, shape information, and image info
         """
         input_col = self.input_path.name
         output_col = self.output_image.name
+        output_info_col = self.output_info.name
 
         # Load images from paths
         image_data: list[Any] = []
         image_shapes: list[list[int]] = []
+        image_infos: list[ImageInfo] = []
 
         for path in df[input_col]:
             # Load image using PIL
@@ -210,12 +222,99 @@ class ImagePathToImageConverter(Converter):
                 image_data.append(img_array.flatten().tolist())
                 image_shapes.append(list(img_array.shape))
 
+                # Create image info with just width and height
+                image_infos.append(ImageInfo(width=img_array.shape[1], height=img_array.shape[0]))
+
         # Create output DataFrame
         result_df = df.clone()
         result_df = result_df.with_columns(
             [
                 pl.Series(output_col, image_data),
                 pl.Series(output_col + "_shape", image_shapes),
+                pl.Series(output_info_col, image_infos),
+            ]
+        )
+
+        return result_df
+
+
+@converter(lazy=True)
+class ImageBytesToImageConverter(Converter):
+    """
+    Lazy converter that decodes images from byte data.
+
+    This converter takes encoded image bytes (PNG, JPEG, BMP, etc.) and decodes
+    them to tensor format. It's marked as lazy to defer the expensive decoding
+    operation until the data is actually accessed.
+    """
+
+    input_bytes: AttributeSpec[ImageBytesField]
+    output_image: AttributeSpec[ImageField]
+    output_info: AttributeSpec[ImageInfoField]
+
+    def filter_output_spec(self) -> bool:
+        """Configure output image specification based on input."""
+        # Configure output specification with default RGB format
+        self.output_image = AttributeSpec(
+            name=self.output_image.name,
+            field=ImageField(
+                semantic=self.input_bytes.field.semantic,
+                dtype=pl.UInt8,  # Default to UInt8 for decoded images
+                format="RGB",  # Default to RGB format
+            ),
+        )
+        # Configure output info specification
+        self.output_info = AttributeSpec(
+            name=self.output_info.name,
+            field=ImageInfoField(
+                semantic=self.input_bytes.field.semantic,
+            ),
+        )
+        return True
+
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+        """
+        Convert image bytes to decoded image tensors and image info.
+
+        Args:
+            df: DataFrame containing image bytes column
+
+        Returns:
+            DataFrame with decoded image data, shape information, and image info
+        """
+        input_col = self.input_bytes.name
+        output_col = self.output_image.name
+        output_info_col = self.output_info.name
+
+        # Decode images from bytes
+        image_data: list[np.ndarray] = []
+        image_shapes: list[list[int]] = []
+        image_infos: list[ImageInfo] = []
+
+        for image_bytes in df[input_col]:
+            # Decode image using PIL
+            from io import BytesIO
+
+            with Image.open(BytesIO(image_bytes)) as img:
+                # Convert to RGB if needed
+                if img.mode != "RGB":
+                    img = img.convert("RGB")
+
+                # Convert to numpy array
+                img_array = np.array(img, dtype=np.uint8)
+                image_data.append(img_array.reshape(-1))
+                image_shapes.append(list(img_array.shape))
+
+                # Create image info with just width and height
+                image_infos.append(ImageInfo(width=img_array.shape[1], height=img_array.shape[0]))
+
+        # Create output DataFrame
+        result_df = df.clone()
+        result_df = result_df.with_columns(
+            [
+                pl.Series(output_col, image_data),
+                pl.Series(output_col + "_shape", image_shapes),
+                pl.Series(output_info_col, image_infos),
             ]
         )
 

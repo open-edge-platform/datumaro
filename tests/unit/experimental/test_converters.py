@@ -20,6 +20,7 @@ from datumaro.experimental.converter_registry import (
 )
 from datumaro.experimental.converters import (
     BBoxCoordinateConverter,
+    ImageBytesToImageConverter,
     ImagePathToImageConverter,
     PolygonToMaskConverter,
     RGBToBGRConverter,
@@ -28,6 +29,7 @@ from datumaro.experimental.converters import (
 from datumaro.experimental.fields import (
     BBoxField,
     Field,
+    ImageBytesField,
     ImageField,
     ImageInfoField,
     ImagePathField,
@@ -221,6 +223,7 @@ def test_image_path_to_image_converter():
         # Set up converter attributes
         input_field = ImagePathField(semantic=Semantic.Default)
         output_field = ImageField(dtype=pl.UInt8, format="RGB", semantic=Semantic.Default)
+        output_info_field = ImageInfoField(semantic=Semantic.Default)
 
         setattr(
             converter_instance,
@@ -232,6 +235,11 @@ def test_image_path_to_image_converter():
             "output_image",
             AttributeSpec(name="image", field=output_field),
         )
+        setattr(
+            converter_instance,
+            "output_info",
+            AttributeSpec(name="image_info", field=output_info_field),
+        )
 
         # Test filter - should return True for path->image conversion
         assert converter_instance.filter_output_spec() is True
@@ -241,10 +249,83 @@ def test_image_path_to_image_converter():
 
         assert "image" in result_df.columns
         assert "image_shape" in result_df.columns
+        assert "image_info" in result_df.columns
 
         # Check that image was loaded correctly
         result_shape = list(result_df["image_shape"][0])
         assert result_shape == [50, 75, 3]  # height, width, channels
+
+        # Check that image info was created correctly (only width and height)
+        image_info = result_df["image_info"][0]
+        assert "width" in image_info
+        assert "height" in image_info
+        assert image_info["width"] == 75  # width
+        assert image_info["height"] == 50  # height
+
+
+def test_image_bytes_to_image_converter():
+    """Test ImageBytesToImageConverter functionality."""
+    import numpy as np
+
+    from datumaro.util.image import encode_image
+
+    converter_instance = ImageBytesToImageConverter()  # type: ignore[call-arg]
+
+    # Create test image data
+    test_image = np.random.randint(0, 256, (32, 48, 3), dtype=np.uint8)
+    image_bytes = encode_image(test_image, ".png")
+
+    # Create test data
+    df = pl.DataFrame({"image_bytes": [image_bytes]})
+
+    # Set up converter attributes
+    from datumaro.experimental.fields import image_bytes_field
+
+    input_field = ImageBytesField(semantic=Semantic.Default)
+    output_field = ImageField(dtype=pl.UInt8, format="RGB", semantic=Semantic.Default)
+    output_info_field = ImageInfoField(semantic=Semantic.Default)
+
+    setattr(
+        converter_instance,
+        "input_bytes",
+        AttributeSpec(name="image_bytes", field=input_field),
+    )
+    setattr(
+        converter_instance,
+        "output_image",
+        AttributeSpec(name="image", field=output_field),
+    )
+    setattr(
+        converter_instance,
+        "output_info",
+        AttributeSpec(name="image_info", field=output_info_field),
+    )
+
+    # Test filter - should return True for bytes->image conversion
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    assert "image" in result_df.columns
+    assert "image_shape" in result_df.columns
+    assert "image_info" in result_df.columns
+
+    # Check that image was loaded correctly
+    result_shape = tuple(result_df["image_shape"][0])
+    assert result_shape == (32, 48, 3)  # height, width, channels
+
+    # Check that image info was created correctly (only width and height)
+    image_info = result_df["image_info"][0]
+    assert "width" in image_info
+    assert "height" in image_info
+    assert image_info["width"] == 48  # width
+    assert image_info["height"] == 32  # height
+
+    # Check that the actual image data is correct (approximately, since PNG compression may cause slight differences)
+    result_image = result_df["image"][0].to_numpy().reshape(result_shape)
+    assert result_image.shape == test_image.shape
+    assert result_image.dtype == np.uint8
 
 
 def test_find_conversion_path():
