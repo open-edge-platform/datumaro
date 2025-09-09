@@ -19,6 +19,7 @@ from functools import cache
 from typing import (
     Any,
     Callable,
+    Dict,
     Generic,
     List,
     NamedTuple,
@@ -35,6 +36,7 @@ from typing import (
 import polars as pl
 from typing_extensions import cast, dataclass_transform
 
+from .categories import Categories
 from .schema import Field, Schema, Semantic
 
 TField = TypeVar("TField", bound=Field)
@@ -66,10 +68,12 @@ class AttributeSpec(Generic[TField]):
     Attributes:
         name: The attribute name
         field: The field type specification
+        categories: Optional categories information (e.g., LabelCategories, MaskCategories)
     """
 
     name: str
     field: TField
+    categories: Optional[Categories] = None
 
 
 @dataclass_transform()
@@ -560,17 +564,21 @@ def _get_applicable_converters(
                 target_attr_spec = target_state.field_to_attr_spec[field_type]
                 output_name = target_attr_spec.name
                 output_field = target_attr_spec.field
+                output_categories = target_attr_spec.categories
             else:
                 # The field does not exist, use a temporary name
                 output_name = field_type.__name__.lower()
                 # and create a new instance of the field
                 output_field = field_type(semantic=semantic)
+                output_categories = None
 
             # Add the iteration count at the end to ensure uniqueness
             # and avoid any conflict with existing attribute names
             output_name = f"{output_name}_temp_{iteration}"
 
-            output_attr_spec = AttributeSpec(name=output_name, field=output_field)
+            output_attr_spec = AttributeSpec(
+                name=output_name, field=output_field, categories=output_categories
+            )
             converter_kwargs[attr_name] = output_attr_spec
 
         # Create converter instance with all AttributeSpec instances as kwargs
@@ -615,7 +623,9 @@ def _group_fields_by_semantic(schema: Schema) -> dict[Semantic, _SchemaState]:
         semantic = attr_info.annotation.semantic
 
         field_type = type(attr_info.annotation)
-        attr_spec = AttributeSpec(name=attr_name, field=attr_info.annotation)
+        attr_spec = AttributeSpec(
+            name=attr_name, field=attr_info.annotation, categories=attr_info.categories
+        )
         groups[semantic][field_type] = attr_spec
 
     # Convert to SchemaState objects
@@ -627,7 +637,7 @@ def _group_fields_by_semantic(schema: Schema) -> dict[Semantic, _SchemaState]:
 
 def _create_post_processing_for_semantic(
     final_state: _SchemaState, target_state: _SchemaState
-) -> List[Converter]:
+) -> Tuple[List[Converter], _SchemaState]:
     """
     Create post-processing converters for a single semantic group.
 
@@ -636,7 +646,8 @@ def _create_post_processing_for_semantic(
         target_state: Target state for this semantic group
 
     Returns:
-        List of post-processing converters (usually just one AttributeRemapperConverter)
+        Tuple of (list of post-processing converters, updated_state_after_processing)
+        where updated_state_after_processing reflects the state after renaming/deletion
     """
     # Build attribute mappings: include only attributes that should be kept
     attr_mappings = []
@@ -662,14 +673,30 @@ def _create_post_processing_for_semantic(
 
     # Create a single remapper converter that handles both renaming and deletion
     if converter_needed:
-        return [AttributeRemapperConverter(attr_mappings=attr_mappings)]
+        # Create the updated state after processing by applying the attr_mappings to final_state
+        # This preserves the categories from final_state but with the target names/structure
+        updated_field_to_attr_spec = {}
 
-    return []
+        for final_attr_spec, target_attr_spec in attr_mappings:
+            # Use the target name and field type, but preserve categories from final state
+            updated_field_to_attr_spec[type(target_attr_spec.field)] = AttributeSpec(
+                name=target_attr_spec.name,
+                field=target_attr_spec.field,
+                categories=final_attr_spec.categories,  # Preserve inferred categories
+            )
+
+        updated_state_after_processing = _SchemaState(updated_field_to_attr_spec)
+        return [
+            AttributeRemapperConverter(attr_mappings=attr_mappings)
+        ], updated_state_after_processing
+
+    # No converter needed, return the final state as-is
+    return [], final_state
 
 
 def _find_conversion_path_for_semantic(
     start_state: _SchemaState, target_state: _SchemaState, semantic: Semantic
-) -> List[Converter]:
+) -> Tuple[List[Converter], _SchemaState]:
     """
     Find conversion path for fields with a specific semantic tag.
 
@@ -679,7 +706,7 @@ def _find_conversion_path_for_semantic(
         semantic: The semantic tag being processed
 
     Returns:
-        List of converters needed for this semantic group
+        Tuple of (list of converters needed for this semantic group, updated target state)
 
     Raises:
         ConversionError: If no conversion path is found for this semantic
@@ -712,8 +739,10 @@ def _find_conversion_path_for_semantic(
         # Check if we've reached the goal - all target fields must match exactly
         if _heuristic_cost(current_node.state, target_state) == 0:
             # Add post-processing converters for final renaming and deletion
-            post_processing = _create_post_processing_for_semantic(current_node.state, target_state)
-            return current_node.path + post_processing
+            post_processing, final_state = _create_post_processing_for_semantic(
+                current_node.state, target_state
+            )
+            return current_node.path + post_processing, final_state
 
         # Explore neighbors
         for converter, new_state in _get_applicable_converters(
@@ -744,7 +773,9 @@ def _find_conversion_path_for_semantic(
     )
 
 
-def find_conversion_path(from_schema: Schema, to_schema: Schema) -> ConversionPaths:
+def find_conversion_path(
+    from_schema: Schema, to_schema: Schema
+) -> Tuple[ConversionPaths, Dict[str, Categories]]:
     """
     Find an optimal sequence of converters using A* search, grouped by semantic.
 
@@ -756,7 +787,8 @@ def find_conversion_path(from_schema: Schema, to_schema: Schema) -> ConversionPa
         to_schema: Target schema
 
     Returns:
-        ConversionPaths with separated batch and lazy converter lists
+        Tuple of (ConversionPaths with separated batch and lazy converter lists,
+                 dictionary of attribute names to inferred categories)
 
     Raises:
         ConversionError: If no conversion path is found
@@ -776,9 +808,12 @@ def find_conversion_path(from_schema: Schema, to_schema: Schema) -> ConversionPa
         start_state = start_groups.get(semantic, _SchemaState({}))
 
         # Find conversion path for this semantic group
-        semantic_converters = _find_conversion_path_for_semantic(
+        semantic_converters, updated_target_state = _find_conversion_path_for_semantic(
             start_state, target_state, semantic
         )
+
+        # Update the target state with any inferred categories
+        target_groups[semantic] = updated_target_state
 
         # Merge all the attribute remappers into a single one. If any, the remapper is always the last step.
         if semantic_converters and isinstance(semantic_converters[-1], AttributeRemapperConverter):
@@ -790,8 +825,17 @@ def find_conversion_path(from_schema: Schema, to_schema: Schema) -> ConversionPa
     if attr_mappings:
         all_converters.append(AttributeRemapperConverter(attr_mappings=attr_mappings))
 
+    # Reconstruct the updated schema with inferred categories
+    inferred_categories: dict[str, Categories] = {}
+    for semantic, updated_target_state in target_groups.items():
+        for attr_spec in updated_target_state.field_to_attr_spec.values():
+            if attr_spec.categories is not None:
+                inferred_categories[attr_spec.name] = attr_spec.categories
+
     # Separate batch and lazy converters
-    return _separate_batch_and_lazy_converters(all_converters)
+    conversion_paths = _separate_batch_and_lazy_converters(all_converters)
+
+    return conversion_paths, inferred_categories
 
 
 def _separate_batch_and_lazy_converters(

@@ -16,11 +16,14 @@ from typing import Any, Optional, Type, cast
 import numpy as np
 import polars as pl
 
-from datumaro.components.annotation import Annotation, AnnotationType, Bbox, Polygon
+from datumaro.components.annotation import Annotation, AnnotationType, Bbox
+from datumaro.components.annotation import LabelCategories as LegacyLabelCategories
+from datumaro.components.annotation import Polygon
 from datumaro.components.dataset import Dataset as LegacyDataset
 from datumaro.components.dataset_base import CategoriesInfo, DatasetItem
 from datumaro.components.media import FromDataMixin, FromFileMixin, Image, MediaElement
 
+from .categories import LabelCategories
 from .dataset import Dataset, Sample
 from .fields import (
     BBoxField,
@@ -232,17 +235,22 @@ class ForwardBboxAnnotationConverter(ForwardAnnotationConverter):
     ) -> "ForwardBboxAnnotationConverter | None":
         """Create converter instance for bbox annotations."""
         # Extract label categories if available
-        label_categories = categories.get(AnnotationType.label, None)
+        legacy_label_categories = categories.get(AnnotationType.label, None)
 
         bbox_attribute = AttributeInfo(type=np.ndarray, annotation=bbox_field(dtype=pl.Float32))
 
         bbox_labels_attribute = None
         # Only add bbox_labels if we have label categories
-        if label_categories is not None:
+        if legacy_label_categories is not None:
+            # Convert legacy label categories to new format
+            new_label_categories = LabelCategories()
+            for label_item in legacy_label_categories.items:
+                new_label_categories.add(label_item.name)
+
             bbox_labels_attribute = AttributeInfo(
                 type=np.ndarray,
                 annotation=label_field(dtype=pl.Int32, multi_label=False, is_list=True),
-                categories=label_categories,
+                categories=new_label_categories,
             )
 
         return cls(bbox_attribute=bbox_attribute, bbox_labels_attribute=bbox_labels_attribute)
@@ -300,7 +308,7 @@ class ForwardPolygonAnnotationConverter(ForwardAnnotationConverter):
     ) -> "ForwardPolygonAnnotationConverter | None":
         """Create converter instance for polygon annotations."""
         # Extract label categories if available
-        label_categories = categories.get(AnnotationType.label, None)
+        legacy_label_categories = categories.get(AnnotationType.label, None)
 
         polygon_attribute = AttributeInfo(
             type=np.ndarray, annotation=polygon_field(dtype=pl.Float32, format="xy")
@@ -308,11 +316,16 @@ class ForwardPolygonAnnotationConverter(ForwardAnnotationConverter):
 
         polygon_labels_attribute = None
         # Only add polygon_labels if we have label categories
-        if label_categories is not None:
+        if legacy_label_categories is not None:
+            # Convert legacy label categories to new format
+            new_label_categories = LabelCategories()
+            for label_item in legacy_label_categories.items:
+                new_label_categories.add(label_item.name)
+
             polygon_labels_attribute = AttributeInfo(
                 type=np.ndarray,
                 annotation=label_field(dtype=pl.Int32, multi_label=False, is_list=True),
-                categories=label_categories,
+                categories=new_label_categories,
             )
 
         return cls(
@@ -624,7 +637,6 @@ class BackwardBboxAnnotationConverter(BackwardAnnotationConverter):
 
     def infer_categories(self, experimental_dataset: Dataset[Sample]) -> CategoriesInfo:
         """Infer label categories from bbox_labels."""
-        from datumaro.components.annotation import LabelCategories
 
         # Collect all unique label IDs
         label_ids: set[int] = set()
@@ -636,7 +648,7 @@ class BackwardBboxAnnotationConverter(BackwardAnnotationConverter):
                         label_ids.add(int(label_id))
 
         # Create label categories
-        label_categories = LabelCategories()
+        label_categories = LegacyLabelCategories()
         for label_id in sorted(label_ids):
             label_categories.add(f"class_{label_id}")
 
@@ -697,7 +709,6 @@ class BackwardPolygonAnnotationConverter(BackwardAnnotationConverter):
 
     def infer_categories(self, experimental_dataset: Dataset[Sample]) -> CategoriesInfo:
         """Infer label categories from polygon_labels."""
-        from datumaro.components.annotation import LabelCategories
 
         if self.polygon_labels_attr is None:
             return {}
@@ -712,7 +723,7 @@ class BackwardPolygonAnnotationConverter(BackwardAnnotationConverter):
                         label_ids.add(int(label_id))
 
         # Create label categories
-        label_categories = LabelCategories()
+        label_categories = LegacyLabelCategories()
         for label_id in sorted(label_ids):
             label_categories.add(f"class_{label_id}")
 
