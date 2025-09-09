@@ -316,7 +316,7 @@ def label_field(
     return LabelField(semantic=semantic, dtype=dtype, multi_label=multi_label, is_list=is_list)
 
 
-def convert_numpy_object_array_to_series(data):
+def convert_numpy_object_array_to_series(data: np.ndarray) -> pl.Series:
     """
     Convert ragged numpy object arrays to Polars Series recursively.
 
@@ -351,7 +351,7 @@ def convert_numpy_object_array_to_series(data):
                 [6 7 8 9]
         ]
     """
-    if data.dtype == "O":
+    if data.dtype == object:
         return pl.Series([convert_numpy_object_array_to_series(elem) for elem in data])
     else:
         return pl.Series(data)
