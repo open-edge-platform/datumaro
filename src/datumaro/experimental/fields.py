@@ -353,8 +353,7 @@ def convert_numpy_object_array_to_series(data: np.ndarray) -> pl.Series:
     """
     if data.dtype == object:
         return pl.Series([convert_numpy_object_array_to_series(elem) for elem in data])
-    else:
-        return pl.Series(data)
+    return pl.Series(data)
 
 
 @dataclass(frozen=True)
