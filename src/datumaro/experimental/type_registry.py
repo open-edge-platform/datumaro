@@ -131,8 +131,10 @@ def to_numpy(value: Any, dtype: Any = None) -> np.ndarray[Any, Any]:
 
         # Apply dtype conversion if specified
         if dtype is not None:
-            if numpy_value.dtype == "O":
-                nested_func = np.vectorize(lambda x: to_numpy(x, dtype), otypes="O")
+            if numpy_value.dtype == object:
+                nested_func = np.vectorize(
+                    lambda x: to_numpy(x, dtype), otypes=numpy_value.dtype.char
+                )
                 numpy_value = nested_func(numpy_value)
             else:
                 target_numpy_dtype = polars_to_numpy_dtype(dtype)
