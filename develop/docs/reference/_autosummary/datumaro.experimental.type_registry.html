@@ -627,17 +627,43 @@ DataFrames. New types can be registered at runtime without modifying core code.<
 <tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.type_registry.get_supported_image_types" title="datumaro.experimental.type_registry.get_supported_image_types"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_supported_image_types</span></code></a>()</p></td>
 <td><p>Get a list of all supported image types for conversion.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.experimental.type_registry.register_from_polars_converter" title="datumaro.experimental.type_registry.register_from_polars_converter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_from_polars_converter</span></code></a>(target_type, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.experimental.type_registry.polars_to_numpy_dtype" title="datumaro.experimental.type_registry.polars_to_numpy_dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">polars_to_numpy_dtype</span></code></a>(polars_dtype)</p></td>
+<td><p>Convert a Polars dtype to the corresponding NumPy dtype.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.type_registry.register_from_polars_converter" title="datumaro.experimental.type_registry.register_from_polars_converter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_from_polars_converter</span></code></a>(target_type, ...)</p></td>
 <td><p>Register a converter function to convert from polars data to target_type.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.type_registry.register_numpy_converter" title="datumaro.experimental.type_registry.register_numpy_converter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_numpy_converter</span></code></a>(source_type, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.experimental.type_registry.register_numpy_converter" title="datumaro.experimental.type_registry.register_numpy_converter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_numpy_converter</span></code></a>(source_type, ...)</p></td>
 <td><p>Register a converter function to convert from source_type to numpy array.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.experimental.type_registry.to_numpy" title="datumaro.experimental.type_registry.to_numpy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_numpy</span></code></a>(value[, dtype])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.type_registry.to_numpy" title="datumaro.experimental.type_registry.to_numpy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_numpy</span></code></a>(value[, dtype])</p></td>
 <td><p>Convert any registered type to numpy array with optional dtype conversion.</p></td>
 </tr>
 </tbody>
 </table>
+<dl class="py function">
+<dt class="sig sig-object py" id="datumaro.experimental.type_registry.polars_to_numpy_dtype">
+<span class="sig-prename descclassname"><span class="pre">datumaro.experimental.type_registry.</span></span><span class="sig-name descname"><span class="pre">polars_to_numpy_dtype</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">polars_dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v2.3)"><span class="pre">dtype</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Any" title="typing.Any"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/type_registry.html#polars_to_numpy_dtype"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.type_registry.polars_to_numpy_dtype" title="Link to this definition">#</a></dt>
+<dd><p>Convert a Polars dtype to the corresponding NumPy dtype.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>polars_dtype</strong> – Polars data type to convert</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Corresponding NumPy dtype</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.13)"><strong>TypeError</strong></a> – If no mapping exists for the given Polars dtype</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">numpy_dtype</span> <span class="o">=</span> <span class="n">polars_to_numpy_dtype</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">Float32</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">numpy_dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="datumaro.experimental.type_registry.register_numpy_converter">
 <span class="sig-prename descclassname"><span class="pre">datumaro.experimental.type_registry.</span></span><span class="sig-name descname"><span class="pre">register_numpy_converter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><span class="pre">type</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">converter_func</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.13)"><span class="pre">Callable</span></a><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Any" title="typing.Any"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Any" title="typing.Any"><span class="pre">Any</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Any" title="typing.Any"><span class="pre">Any</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/type_registry.html#register_numpy_converter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.type_registry.register_numpy_converter" title="Link to this definition">#</a></dt>
@@ -818,6 +844,7 @@ the registered converters in the type registry.
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.type_registry.polars_to_numpy_dtype"><code class="docutils literal notranslate"><span class="pre">polars_to_numpy_dtype()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.type_registry.register_numpy_converter"><code class="docutils literal notranslate"><span class="pre">register_numpy_converter()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.type_registry.register_from_polars_converter"><code class="docutils literal notranslate"><span class="pre">register_from_polars_converter()</span></code></a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.type_registry.to_numpy"><code class="docutils literal notranslate"><span class="pre">to_numpy()</span></code></a></li>

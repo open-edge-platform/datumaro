@@ -353,12 +353,22 @@ document.write(`
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">polars</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.converter_registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">AttributeSpec</span><span class="p">,</span> <span class="n">Converter</span><span class="p">,</span> <span class="n">converter</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.fields</span><span class="w"> </span><span class="kn">import</span> <span class="n">BBoxField</span><span class="p">,</span> <span class="n">ImageField</span><span class="p">,</span> <span class="n">ImagePathField</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.fields</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BBoxField</span><span class="p">,</span>
+    <span class="n">ImageField</span><span class="p">,</span>
+    <span class="n">ImageInfoField</span><span class="p">,</span>
+    <span class="n">ImagePathField</span><span class="p">,</span>
+    <span class="n">LabelField</span><span class="p">,</span>
+    <span class="n">MaskField</span><span class="p">,</span>
+    <span class="n">PolygonField</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.type_registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">polars_to_numpy_dtype</span>
 
 
 <div class="viewcode-block" id="RGBToBGRConverter">
@@ -725,6 +735,146 @@ document.write(`
         <span class="n">result_df</span> <span class="o">=</span> <span class="n">result_df</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="n">temp_width_col</span><span class="p">,</span> <span class="n">temp_height_col</span><span class="p">])</span>
 
         <span class="k">return</span> <span class="n">result_df</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="PolygonToMaskConverter">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.PolygonToMaskConverter">[docs]</a>
+<span class="nd">@converter</span><span class="p">(</span><span class="n">lazy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PolygonToMaskConverter</span><span class="p">(</span><span class="n">Converter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts polygon annotations to rasterized masks.</span>
+
+<span class="sd">    Transforms polygon coordinates into binary or indexed masks using</span>
+<span class="sd">    OpenCV contour filling for efficient rasterization.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">input_polygon</span><span class="p">:</span> <span class="n">AttributeSpec</span><span class="p">[</span><span class="n">PolygonField</span><span class="p">]</span>
+    <span class="n">input_labels</span><span class="p">:</span> <span class="n">AttributeSpec</span><span class="p">[</span><span class="n">LabelField</span><span class="p">]</span>
+    <span class="n">image_info</span><span class="p">:</span> <span class="n">AttributeSpec</span><span class="p">[</span><span class="n">ImageInfoField</span><span class="p">]</span>
+    <span class="n">output_mask</span><span class="p">:</span> <span class="n">AttributeSpec</span><span class="p">[</span><span class="n">MaskField</span><span class="p">]</span>
+
+    <span class="c1"># Configuration options</span>
+    <span class="n">background_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Background value</span>
+
+<div class="viewcode-block" id="PolygonToMaskConverter.filter_output_spec">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.PolygonToMaskConverter.filter_output_spec">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">filter_output_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Configure mask output specification.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True if the converter should be applied, False otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Configure output for mask format</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_mask</span> <span class="o">=</span> <span class="n">AttributeSpec</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_mask</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">field</span><span class="o">=</span><span class="n">MaskField</span><span class="p">(</span>
+                <span class="n">semantic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_polygon</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">semantic</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_mask</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="PolygonToMaskConverter.convert">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.PolygonToMaskConverter.convert">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Rasterize polygon coordinates into indexed masks.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df: DataFrame with polygon coordinates, labels, and image info</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            DataFrame with mask data in output column</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">input_column_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_polygon</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">labels_column_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_labels</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">image_info_column_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_info</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">output_column_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_mask</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">output_shape_column_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_mask</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_shape&quot;</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">polygons_to_mask</span><span class="p">(</span>
+            <span class="n">polygons_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">labels_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">img_info</span><span class="p">:</span> <span class="nb">dict</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Rasterize polygons into indexed mask using OpenCV contour filling.&quot;&quot;&quot;</span>
+            <span class="c1"># Extract image dimensions</span>
+            <span class="n">image_width</span> <span class="o">=</span> <span class="n">img_info</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">]</span>
+            <span class="n">image_height</span> <span class="o">=</span> <span class="n">img_info</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">]</span>
+
+            <span class="c1"># Initialize mask with background index</span>
+            <span class="n">numpy_dtype</span> <span class="o">=</span> <span class="n">polars_to_numpy_dtype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_mask</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span>
+                <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">image_height</span><span class="p">,</span> <span class="n">image_width</span><span class="p">),</span>
+                <span class="n">fill_value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">background_index</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">numpy_dtype</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Rasterize each polygon</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">polygon_data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">polygons_data</span><span class="p">):</span>
+                <span class="n">coords</span> <span class="o">=</span> <span class="n">polygon_data</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+                <span class="n">class_index</span> <span class="o">=</span> <span class="n">labels_data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+                <span class="c1"># Denormalize coordinates if needed</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_polygon</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">normalize</span><span class="p">:</span>
+                    <span class="n">coords</span> <span class="o">=</span> <span class="n">coords</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                    <span class="n">coords</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*=</span> <span class="n">image_width</span>
+                    <span class="n">coords</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*=</span> <span class="n">image_height</span>
+
+                <span class="c1"># Convert to OpenCV contour format</span>
+                <span class="n">contour</span> <span class="o">=</span> <span class="n">coords</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+
+                <span class="c1"># Fill polygon with class index</span>
+                <span class="n">cv2</span><span class="o">.</span><span class="n">drawContours</span><span class="p">(</span>
+                    <span class="n">mask</span><span class="p">,</span>
+                    <span class="p">[</span><span class="n">contour</span><span class="p">],</span>
+                    <span class="mi">0</span><span class="p">,</span>
+                    <span class="nb">int</span><span class="p">(</span><span class="n">class_index</span><span class="p">),</span>
+                    <span class="n">thickness</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">FILLED</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">mask</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">[</span><span class="n">image_height</span><span class="p">,</span> <span class="n">image_width</span><span class="p">]</span>
+
+        <span class="c1"># Apply conversion using map_batches</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">apply_conversion_batch</span><span class="p">(</span><span class="n">batch_df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Apply polygon-to-mask conversion for a batch.&quot;&quot;&quot;</span>
+            <span class="n">batch_polygons</span> <span class="o">=</span> <span class="n">batch_df</span><span class="o">.</span><span class="n">struct</span><span class="p">[</span><span class="s2">&quot;polygons&quot;</span><span class="p">]</span>
+            <span class="n">batch_labels</span> <span class="o">=</span> <span class="n">batch_df</span><span class="o">.</span><span class="n">struct</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]</span>
+            <span class="n">batch_img_infos</span> <span class="o">=</span> <span class="n">batch_df</span><span class="o">.</span><span class="n">struct</span><span class="p">[</span><span class="s2">&quot;img_info&quot;</span><span class="p">]</span>
+
+            <span class="n">results_batch_polygons</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">results_batch_shape</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">polygons</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">img_infos</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">batch_polygons</span><span class="p">,</span> <span class="n">batch_labels</span><span class="p">,</span> <span class="n">batch_img_infos</span><span class="p">):</span>
+                <span class="n">mask_data</span><span class="p">,</span> <span class="n">shape_data</span> <span class="o">=</span> <span class="n">polygons_to_mask</span><span class="p">(</span><span class="n">polygons</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">img_infos</span><span class="p">)</span>
+                <span class="n">results_batch_polygons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">mask_data</span><span class="p">))</span>
+                <span class="n">results_batch_shape</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">shape_data</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">pl</span><span class="o">.</span><span class="n">struct</span><span class="p">(</span>
+                <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">results_batch_polygons</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;mask&quot;</span><span class="p">),</span>
+                <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">results_batch_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">pl</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">Int32</span><span class="p">))</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;shape&quot;</span><span class="p">),</span>
+                <span class="n">eager</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">mask_data</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">struct</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">input_column_name</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;polygons&quot;</span><span class="p">),</span>
+                <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">labels_column_name</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;labels&quot;</span><span class="p">),</span>
+                <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">image_info_column_name</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;img_info&quot;</span><span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">map_batches</span><span class="p">(</span>
+            <span class="n">apply_conversion_batch</span><span class="p">,</span>
+            <span class="n">return_dtype</span><span class="o">=</span><span class="n">pl</span><span class="o">.</span><span class="n">Struct</span><span class="p">({</span><span class="s2">&quot;mask&quot;</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">UInt8</span><span class="p">),</span> <span class="s2">&quot;shape&quot;</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">Int32</span><span class="p">)}),</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">with_columns</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">mask_data</span><span class="o">.</span><span class="n">struct</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;mask&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="n">output_column_name</span><span class="p">),</span>
+                <span class="n">mask_data</span><span class="o">.</span><span class="n">struct</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;shape&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="n">output_shape_column_name</span><span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span></div>
 </div>
 
 </pre></div>

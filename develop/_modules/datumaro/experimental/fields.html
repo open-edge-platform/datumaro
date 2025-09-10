@@ -675,27 +675,37 @@ document.write(`
     <span class="n">semantic</span><span class="p">:</span> <span class="n">Semantic</span>
     <span class="n">dtype</span><span class="p">:</span> <span class="n">Any</span>
     <span class="n">multi_label</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># Flag to indicate if this field should handle multi-labels</span>
+    <span class="n">is_list</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_pl_type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataType</span><span class="p">:</span>
+        <span class="n">pl_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">multi_label</span><span class="p">:</span>
+            <span class="n">pl_type</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">pl_type</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_list</span><span class="p">:</span>
+            <span class="n">pl_type</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">pl_type</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pl_type</span>
 
 <div class="viewcode-block" id="LabelField.to_polars_schema">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.LabelField.to_polars_schema">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_polars_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataType</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate schema based on whether this is single or multi-label.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">multi_label</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)}</span>
-        <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">}</span></div>
+        <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pl_type</span><span class="p">}</span></div>
 
 
 <div class="viewcode-block" id="LabelField.to_polars">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.LabelField.to_polars">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_polars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert label(s) to Polars format for single or multi-label cases.&quot;&quot;&quot;</span>
+        <span class="n">pl_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pl_type</span>
+
         <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="kc">None</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)}</span>
+            <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="kc">None</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">pl_type</span><span class="p">)}</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">multi_label</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="n">to_numpy</span><span class="p">(</span><span class="n">value</span><span class="p">)],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">pl</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">))}</span>
 
-        <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="n">value</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)}</span></div>
+        <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="n">value</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">pl_type</span><span class="p">)}</span></div>
 
 
 <div class="viewcode-block" id="LabelField.from_polars">
@@ -711,7 +721,10 @@ document.write(`
 <div class="viewcode-block" id="label_field">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.label_field">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">label_field</span><span class="p">(</span>
-    <span class="n">dtype</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">Int32</span><span class="p">(),</span> <span class="n">semantic</span><span class="p">:</span> <span class="n">Semantic</span> <span class="o">=</span> <span class="n">Semantic</span><span class="o">.</span><span class="n">Default</span><span class="p">,</span> <span class="n">multi_label</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">Int32</span><span class="p">(),</span>
+    <span class="n">semantic</span><span class="p">:</span> <span class="n">Semantic</span> <span class="o">=</span> <span class="n">Semantic</span><span class="o">.</span><span class="n">Default</span><span class="p">,</span>
+    <span class="n">multi_label</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">is_list</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a LabelField instance with the specified parameters.</span>
@@ -720,11 +733,196 @@ document.write(`
 <span class="sd">        dtype: Polars data type for label values (defaults to pl.Int32())</span>
 <span class="sd">        semantic: Semantic tags describing the label purpose (optional)</span>
 <span class="sd">        multi_label: Whether this field should handle multiple labels (defaults to False)</span>
+<span class="sd">        is_list: Whether this field should be treated as a list type (defaults to False)</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        LabelField instance configured with the given parameters</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">LabelField</span><span class="p">(</span><span class="n">semantic</span><span class="o">=</span><span class="n">semantic</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">multi_label</span><span class="o">=</span><span class="n">multi_label</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">LabelField</span><span class="p">(</span><span class="n">semantic</span><span class="o">=</span><span class="n">semantic</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">multi_label</span><span class="o">=</span><span class="n">multi_label</span><span class="p">,</span> <span class="n">is_list</span><span class="o">=</span><span class="n">is_list</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="convert_numpy_object_array_to_series">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.convert_numpy_object_array_to_series">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_numpy_object_array_to_series</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert ragged numpy object arrays to Polars Series recursively.</span>
+
+<span class="sd">    Handles nested object arrays containing variable-length lists.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">        &gt;&gt;&gt; ragged = np.array([</span>
+<span class="sd">        ...     np.array([1, 2, 3]),</span>
+<span class="sd">        ...     np.array([4, 5]),</span>
+<span class="sd">        ...     np.array([6, 7, 8, 9])</span>
+<span class="sd">        ... ], dtype=object)</span>
+<span class="sd">        &gt;&gt;&gt; series = convert_numpy_object_array_to_series(ragged)</span>
+<span class="sd">        &gt;&gt;&gt; print(series)</span>
+<span class="sd">        shape: (3,)</span>
+<span class="sd">        Series: &#39;&#39; [list[i64]]</span>
+<span class="sd">        [</span>
+<span class="sd">                [1, 2, 3]</span>
+<span class="sd">                [4, 5]</span>
+<span class="sd">                [6, 7, … 9]</span>
+<span class="sd">        ]</span>
+
+<span class="sd">        # Compare with direct conversion which results</span>
+<span class="sd">        # into an object Series instead of a list Series:</span>
+<span class="sd">        &gt;&gt;&gt; direct = pl.Series(ragged)</span>
+<span class="sd">        &gt;&gt;&gt; print(direct)</span>
+<span class="sd">        shape: (3,)</span>
+<span class="sd">        Series: &#39;&#39; [o][object]</span>
+<span class="sd">        [</span>
+<span class="sd">                [1 2 3]</span>
+<span class="sd">                [4 5]</span>
+<span class="sd">                [6 7 8 9]</span>
+<span class="sd">        ]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="nb">object</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="n">convert_numpy_object_array_to_series</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">data</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="PolygonField">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.PolygonField">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PolygonField</span><span class="p">(</span><span class="n">Field</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a polygon field with format and normalization options.</span>
+
+<span class="sd">    Handles polygon data with support for different coordinate formats</span>
+<span class="sd">    and optional normalization to [0,1] range. Polygons are stored as</span>
+<span class="sd">    variable-length lists of coordinate pairs.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        semantic: Semantic tags describing the polygon purpose</span>
+<span class="sd">        dtype: Polars data type for coordinate values</span>
+<span class="sd">        format: Coordinate format (e.g., &quot;xy&quot;, &quot;yx&quot;)</span>
+<span class="sd">        normalize: Whether coordinates are normalized to [0,1] range</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">semantic</span><span class="p">:</span> <span class="n">Semantic</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span>
+
+<div class="viewcode-block" id="PolygonField.to_polars_schema">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.PolygonField.to_polars_schema">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_polars_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataType</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate schema for polygon as list of coordinate values.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">Array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="mi">2</span><span class="p">)))}</span></div>
+
+
+<div class="viewcode-block" id="PolygonField.to_polars">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.PolygonField.to_polars">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_polars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert polygon tensor to Polars list format.&quot;&quot;&quot;</span>
+        <span class="n">numpy_value</span> <span class="o">=</span> <span class="n">to_numpy</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+        <span class="n">series</span> <span class="o">=</span> <span class="n">convert_numpy_object_array_to_series</span><span class="p">(</span><span class="n">numpy_value</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="n">series</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">pl</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">Array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="mi">2</span><span class="p">))))}</span></div>
+
+
+<div class="viewcode-block" id="PolygonField.from_polars">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.PolygonField.from_polars">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_polars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">row_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">target_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reconstruct polygon tensor from Polars data.&quot;&quot;&quot;</span>
+        <span class="n">polars_data</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="n">row_index</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">from_polars_data</span><span class="p">(</span><span class="n">polars_data</span><span class="p">,</span> <span class="n">target_type</span><span class="p">)</span>  <span class="c1"># type: ignore</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="polygon_field">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.polygon_field">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">polygon_field</span><span class="p">(</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+    <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;xy&quot;</span><span class="p">,</span>
+    <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">semantic</span><span class="p">:</span> <span class="n">Semantic</span> <span class="o">=</span> <span class="n">Semantic</span><span class="o">.</span><span class="n">Default</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a PolygonField instance with the specified parameters.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dtype: Polars data type for coordinate values</span>
+<span class="sd">        format: Coordinate format (defaults to &quot;xy&quot;)</span>
+<span class="sd">        normalize: Whether coordinates are normalized (defaults to False)</span>
+<span class="sd">        semantic: Semantic tags describing the polygon purpose (optional)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        PolygonField instance configured with the given parameters</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">PolygonField</span><span class="p">(</span><span class="n">semantic</span><span class="o">=</span><span class="n">semantic</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="nb">format</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="n">normalize</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="MaskField">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.MaskField">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MaskField</span><span class="p">(</span><span class="n">Field</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a mask tensor field for binary or indexed segmentation masks.</span>
+
+<span class="sd">    Similar to TensorField but specialized for masks: handles single-channel</span>
+<span class="sd">    2D arrays with no color format specification. Uses uint8 as the default</span>
+<span class="sd">    data type suitable for binary masks, class masks, or instance masks.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        semantic: Semantic tags describing the mask purpose</span>
+<span class="sd">        dtype: Polars data type for mask values (defaults to uint8)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">semantic</span><span class="p">:</span> <span class="n">Semantic</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">Any</span>
+
+<div class="viewcode-block" id="MaskField.to_polars_schema">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.MaskField.to_polars_schema">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_polars_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataType</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate Polars schema with separate columns for data and shape.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_shape&quot;</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">Int32</span><span class="p">())}</span></div>
+
+
+<div class="viewcode-block" id="MaskField.to_polars">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.MaskField.to_polars">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_polars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert mask tensor to flattened data and shape information.&quot;&quot;&quot;</span>
+        <span class="n">numpy_value</span> <span class="o">=</span> <span class="n">to_numpy</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">name</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="n">numpy_value</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)]),</span>
+            <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_shape&quot;</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_shape&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">numpy_value</span><span class="o">.</span><span class="n">shape</span><span class="p">]),</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="MaskField.from_polars">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.MaskField.from_polars">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_polars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">row_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">target_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reconstruct mask tensor from flattened data using stored shape.&quot;&quot;&quot;</span>
+        <span class="n">flat_data</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="n">row_index</span><span class="p">]</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_shape&quot;</span><span class="p">][</span><span class="n">row_index</span><span class="p">]</span>
+        <span class="n">numpy_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">flat_data</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">from_polars_data</span><span class="p">(</span><span class="n">numpy_data</span><span class="p">,</span> <span class="n">target_type</span><span class="p">)</span>  <span class="c1"># type: ignore</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="mask_field">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.mask_field">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mask_field</span><span class="p">(</span><span class="n">dtype</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">UInt8</span><span class="p">(),</span> <span class="n">semantic</span><span class="p">:</span> <span class="n">Semantic</span> <span class="o">=</span> <span class="n">Semantic</span><span class="o">.</span><span class="n">Default</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a MaskField instance with the specified parameters.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dtype: Polars data type for mask values (defaults to pl.UInt8())</span>
+<span class="sd">        semantic: Semantic tags describing the mask purpose (optional)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        MaskField instance configured with the given parameters</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">MaskField</span><span class="p">(</span><span class="n">semantic</span><span class="o">=</span><span class="n">semantic</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span></div>
 
 </pre></div>
 

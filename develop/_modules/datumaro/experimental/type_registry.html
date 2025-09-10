@@ -358,6 +358,54 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">polars</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
 
+
+<div class="viewcode-block" id="polars_to_numpy_dtype">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.type_registry.html#datumaro.experimental.type_registry.polars_to_numpy_dtype">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">polars_to_numpy_dtype</span><span class="p">(</span><span class="n">polars_dtype</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a Polars dtype to the corresponding NumPy dtype.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        polars_dtype: Polars data type to convert</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Corresponding NumPy dtype</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        TypeError: If no mapping exists for the given Polars dtype</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; numpy_dtype = polars_to_numpy_dtype(pl.Float32)</span>
+<span class="sd">        &gt;&gt;&gt; numpy_dtype == np.float32</span>
+<span class="sd">        True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Basic numeric types</span>
+    <span class="k">if</span> <span class="n">polars_dtype</span> <span class="o">==</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float32</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">polars_dtype</span> <span class="o">==</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">polars_dtype</span> <span class="o">==</span> <span class="n">pl</span><span class="o">.</span><span class="n">Int8</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">polars_dtype</span> <span class="o">==</span> <span class="n">pl</span><span class="o">.</span><span class="n">Int16</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">polars_dtype</span> <span class="o">==</span> <span class="n">pl</span><span class="o">.</span><span class="n">Int32</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">polars_dtype</span> <span class="o">==</span> <span class="n">pl</span><span class="o">.</span><span class="n">Int64</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">polars_dtype</span> <span class="o">==</span> <span class="n">pl</span><span class="o">.</span><span class="n">UInt8</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">polars_dtype</span> <span class="o">==</span> <span class="n">pl</span><span class="o">.</span><span class="n">UInt16</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint16</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">polars_dtype</span> <span class="o">==</span> <span class="n">pl</span><span class="o">.</span><span class="n">UInt32</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint32</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">polars_dtype</span> <span class="o">==</span> <span class="n">pl</span><span class="o">.</span><span class="n">UInt64</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">polars_dtype</span> <span class="o">==</span> <span class="n">pl</span><span class="o">.</span><span class="n">Boolean</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No NumPy dtype mapping for Polars dtype: </span><span class="si">{</span><span class="n">polars_dtype</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
 <span class="c1"># Type conversion registry - extensible at runtime</span>
 <span class="n">_to_numpy_converters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{</span>
     <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span>
@@ -436,14 +484,14 @@ document.write(`
 
         <span class="c1"># Apply dtype conversion if specified</span>
         <span class="k">if</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">dtype</span> <span class="o">==</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float32</span><span class="p">:</span>
-                <span class="n">numpy_value</span> <span class="o">=</span> <span class="n">numpy_value</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">dtype</span> <span class="o">==</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float64</span><span class="p">:</span>
-                <span class="n">numpy_value</span> <span class="o">=</span> <span class="n">numpy_value</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">dtype</span> <span class="o">==</span> <span class="n">pl</span><span class="o">.</span><span class="n">Int32</span><span class="p">:</span>
-                <span class="n">numpy_value</span> <span class="o">=</span> <span class="n">numpy_value</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">dtype</span> <span class="o">==</span> <span class="n">pl</span><span class="o">.</span><span class="n">Int64</span><span class="p">:</span>
-                <span class="n">numpy_value</span> <span class="o">=</span> <span class="n">numpy_value</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">numpy_value</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="nb">object</span><span class="p">:</span>
+                <span class="n">nested_func</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span>
+                    <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">to_numpy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="p">),</span> <span class="n">otypes</span><span class="o">=</span><span class="n">numpy_value</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">char</span>
+                <span class="p">)</span>
+                <span class="n">numpy_value</span> <span class="o">=</span> <span class="n">nested_func</span><span class="p">(</span><span class="n">numpy_value</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">target_numpy_dtype</span> <span class="o">=</span> <span class="n">polars_to_numpy_dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+                <span class="n">numpy_value</span> <span class="o">=</span> <span class="n">numpy_value</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">target_numpy_dtype</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">numpy_value</span>
 
