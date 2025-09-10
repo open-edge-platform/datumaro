@@ -629,16 +629,19 @@ multi-field transformations.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.converters.BBoxCoordinateConverter" title="datumaro.experimental.converters.BBoxCoordinateConverter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BBoxCoordinateConverter</span></code></a>(**kwargs)</p></td>
 <td><p>Convert bounding box coordinates between normalized and absolute formats.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.experimental.converters.ImagePathToImageConverter" title="datumaro.experimental.converters.ImagePathToImageConverter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ImagePathToImageConverter</span></code></a>(**kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.experimental.converters.ImageBytesToImageConverter" title="datumaro.experimental.converters.ImageBytesToImageConverter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ImageBytesToImageConverter</span></code></a>(**kwargs)</p></td>
+<td><p>Lazy converter that decodes images from byte data.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.converters.ImagePathToImageConverter" title="datumaro.experimental.converters.ImagePathToImageConverter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ImagePathToImageConverter</span></code></a>(**kwargs)</p></td>
 <td><p>Lazy converter that loads images from file paths using Pillow.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.converters.PolygonToMaskConverter" title="datumaro.experimental.converters.PolygonToMaskConverter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PolygonToMaskConverter</span></code></a>(**kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.experimental.converters.PolygonToMaskConverter" title="datumaro.experimental.converters.PolygonToMaskConverter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PolygonToMaskConverter</span></code></a>(**kwargs)</p></td>
 <td><p>Converts polygon annotations to rasterized masks.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.experimental.converters.RGBToBGRConverter" title="datumaro.experimental.converters.RGBToBGRConverter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RGBToBGRConverter</span></code></a>(**kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.converters.RGBToBGRConverter" title="datumaro.experimental.converters.RGBToBGRConverter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RGBToBGRConverter</span></code></a>(**kwargs)</p></td>
 <td><p>Converter that transforms RGB image format to BGR format.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.converters.UInt8ToFloat32Converter" title="datumaro.experimental.converters.UInt8ToFloat32Converter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UInt8ToFloat32Converter</span></code></a>(**kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.experimental.converters.UInt8ToFloat32Converter" title="datumaro.experimental.converters.UInt8ToFloat32Converter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UInt8ToFloat32Converter</span></code></a>(**kwargs)</p></td>
 <td><p>Convert image data from UInt8 to Float32 with normalization.</p></td>
 </tr>
 </tbody>
@@ -790,6 +793,11 @@ based on input_*/output_* class attributes</p>
 <span class="sig-name descname"><span class="pre">output_image</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="datumaro.experimental.converter_registry.html#datumaro.experimental.converter_registry.AttributeSpec" title="datumaro.experimental.converter_registry.AttributeSpec"><span class="pre">AttributeSpec</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="datumaro.experimental.fields.html#datumaro.experimental.fields.ImageField" title="datumaro.experimental.fields.ImageField"><span class="pre">ImageField</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#datumaro.experimental.converters.ImagePathToImageConverter.output_image" title="Link to this definition">#</a></dt>
 <dd></dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="datumaro.experimental.converters.ImagePathToImageConverter.output_info">
+<span class="sig-name descname"><span class="pre">output_info</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="datumaro.experimental.converter_registry.html#datumaro.experimental.converter_registry.AttributeSpec" title="datumaro.experimental.converter_registry.AttributeSpec"><span class="pre">AttributeSpec</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="datumaro.experimental.fields.html#datumaro.experimental.fields.ImageInfoField" title="datumaro.experimental.fields.ImageInfoField"><span class="pre">ImageInfoField</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#datumaro.experimental.converters.ImagePathToImageConverter.output_info" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="datumaro.experimental.converters.ImagePathToImageConverter.filter_output_spec">
 <span class="sig-name descname"><span class="pre">filter_output_spec</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/converters.html#ImagePathToImageConverter.filter_output_spec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.converters.ImagePathToImageConverter.filter_output_spec" title="Link to this definition">#</a></dt>
@@ -799,13 +807,13 @@ based on input_*/output_* class attributes</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="datumaro.experimental.converters.ImagePathToImageConverter.convert">
 <span class="sig-name descname"><span class="pre">convert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/converters.html#ImagePathToImageConverter.convert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.converters.ImagePathToImageConverter.convert" title="Link to this definition">#</a></dt>
-<dd><p>Convert image paths to loaded image tensors.</p>
+<dd><p>Convert image paths to loaded image tensors and image info.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>df</strong> – DataFrame containing image path column</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>DataFrame with loaded image data and shape information</p>
+<dd class="field-even"><p>DataFrame with loaded image data, shape information, and image info</p>
 </dd>
 </dl>
 </dd></dl>
@@ -813,6 +821,67 @@ based on input_*/output_* class attributes</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="datumaro.experimental.converters.ImagePathToImageConverter.lazy">
 <span class="sig-name descname"><span class="pre">lazy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#datumaro.experimental.converters.ImagePathToImageConverter.lazy" title="Link to this definition">#</a></dt>
+<dd><p>Whether this converter performs lazy operations.</p>
+<p>Lazy converters defer expensive operations (like loading images from disk)
+until data is actually accessed. When a lazy converter is in the conversion
+path, all dependent converters must also be executed lazily.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="datumaro.experimental.converters.ImageBytesToImageConverter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datumaro.experimental.converters.</span></span><span class="sig-name descname"><span class="pre">ImageBytesToImageConverter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Any" title="typing.Any"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/datumaro/experimental/converters.html#ImageBytesToImageConverter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.converters.ImageBytesToImageConverter" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="datumaro.experimental.converter_registry.html#datumaro.experimental.converter_registry.Converter" title="datumaro.experimental.converter_registry.Converter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Converter</span></code></a></p>
+<p>Lazy converter that decodes images from byte data.</p>
+<p>This converter takes encoded image bytes (PNG, JPEG, BMP, etc.) and decodes
+them to tensor format. It’s marked as lazy to defer the expensive decoding
+operation until the data is actually accessed.</p>
+<p>Initialize converter with input and output AttributeSpec instances.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> – AttributeSpec instances for converter inputs/outputs
+based on input_*/output_* class attributes</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="datumaro.experimental.converters.ImageBytesToImageConverter.input_bytes">
+<span class="sig-name descname"><span class="pre">input_bytes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="datumaro.experimental.converter_registry.html#datumaro.experimental.converter_registry.AttributeSpec" title="datumaro.experimental.converter_registry.AttributeSpec"><span class="pre">AttributeSpec</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="datumaro.experimental.fields.html#datumaro.experimental.fields.ImageBytesField" title="datumaro.experimental.fields.ImageBytesField"><span class="pre">ImageBytesField</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#datumaro.experimental.converters.ImageBytesToImageConverter.input_bytes" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="datumaro.experimental.converters.ImageBytesToImageConverter.output_image">
+<span class="sig-name descname"><span class="pre">output_image</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="datumaro.experimental.converter_registry.html#datumaro.experimental.converter_registry.AttributeSpec" title="datumaro.experimental.converter_registry.AttributeSpec"><span class="pre">AttributeSpec</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="datumaro.experimental.fields.html#datumaro.experimental.fields.ImageField" title="datumaro.experimental.fields.ImageField"><span class="pre">ImageField</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#datumaro.experimental.converters.ImageBytesToImageConverter.output_image" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="datumaro.experimental.converters.ImageBytesToImageConverter.output_info">
+<span class="sig-name descname"><span class="pre">output_info</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="datumaro.experimental.converter_registry.html#datumaro.experimental.converter_registry.AttributeSpec" title="datumaro.experimental.converter_registry.AttributeSpec"><span class="pre">AttributeSpec</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="datumaro.experimental.fields.html#datumaro.experimental.fields.ImageInfoField" title="datumaro.experimental.fields.ImageInfoField"><span class="pre">ImageInfoField</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#datumaro.experimental.converters.ImageBytesToImageConverter.output_info" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.experimental.converters.ImageBytesToImageConverter.filter_output_spec">
+<span class="sig-name descname"><span class="pre">filter_output_spec</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/converters.html#ImageBytesToImageConverter.filter_output_spec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.converters.ImageBytesToImageConverter.filter_output_spec" title="Link to this definition">#</a></dt>
+<dd><p>Configure output image specification based on input.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.experimental.converters.ImageBytesToImageConverter.convert">
+<span class="sig-name descname"><span class="pre">convert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/converters.html#ImageBytesToImageConverter.convert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.converters.ImageBytesToImageConverter.convert" title="Link to this definition">#</a></dt>
+<dd><p>Convert image bytes to decoded image tensors and image info.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> – DataFrame containing image bytes column</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame with decoded image data, shape information, and image info</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="datumaro.experimental.converters.ImageBytesToImageConverter.lazy">
+<span class="sig-name descname"><span class="pre">lazy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#datumaro.experimental.converters.ImageBytesToImageConverter.lazy" title="Link to this definition">#</a></dt>
 <dd><p>Whether this converter performs lazy operations.</p>
 <p>Lazy converters defer expensive operations (like loading images from disk)
 until data is actually accessed. When a lazy converter is in the conversion
@@ -1056,9 +1125,19 @@ path, all dependent converters must also be executed lazily.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.ImagePathToImageConverter"><code class="docutils literal notranslate"><span class="pre">ImagePathToImageConverter</span></code></a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.ImagePathToImageConverter.input_path"><code class="docutils literal notranslate"><span class="pre">ImagePathToImageConverter.input_path</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.ImagePathToImageConverter.output_image"><code class="docutils literal notranslate"><span class="pre">ImagePathToImageConverter.output_image</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.ImagePathToImageConverter.output_info"><code class="docutils literal notranslate"><span class="pre">ImagePathToImageConverter.output_info</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.ImagePathToImageConverter.filter_output_spec"><code class="docutils literal notranslate"><span class="pre">ImagePathToImageConverter.filter_output_spec()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.ImagePathToImageConverter.convert"><code class="docutils literal notranslate"><span class="pre">ImagePathToImageConverter.convert()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.ImagePathToImageConverter.lazy"><code class="docutils literal notranslate"><span class="pre">ImagePathToImageConverter.lazy</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.ImageBytesToImageConverter"><code class="docutils literal notranslate"><span class="pre">ImageBytesToImageConverter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.ImageBytesToImageConverter.input_bytes"><code class="docutils literal notranslate"><span class="pre">ImageBytesToImageConverter.input_bytes</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.ImageBytesToImageConverter.output_image"><code class="docutils literal notranslate"><span class="pre">ImageBytesToImageConverter.output_image</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.ImageBytesToImageConverter.output_info"><code class="docutils literal notranslate"><span class="pre">ImageBytesToImageConverter.output_info</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.ImageBytesToImageConverter.filter_output_spec"><code class="docutils literal notranslate"><span class="pre">ImageBytesToImageConverter.filter_output_spec()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.ImageBytesToImageConverter.convert"><code class="docutils literal notranslate"><span class="pre">ImageBytesToImageConverter.convert()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.ImageBytesToImageConverter.lazy"><code class="docutils literal notranslate"><span class="pre">ImageBytesToImageConverter.lazy</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.list_eval_ref"><code class="docutils literal notranslate"><span class="pre">list_eval_ref()</span></code></a></li>

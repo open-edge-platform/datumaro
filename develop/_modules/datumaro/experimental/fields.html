@@ -352,15 +352,18 @@ document.write(`
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TypeVar</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">polars</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeAlias</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span><span class="p">,</span> <span class="n">Semantic</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.type_registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">from_polars_data</span><span class="p">,</span> <span class="n">to_numpy</span>
 
 <span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
+
+<span class="n">PolarsDataType</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">pl</span><span class="o">.</span><span class="n">DataType</span><span class="p">],</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataType</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="TensorField">
@@ -379,7 +382,7 @@ document.write(`
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">semantic</span><span class="p">:</span> <span class="n">Semantic</span>
-    <span class="n">dtype</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">PolarsDataType</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">UInt8</span><span class="p">()</span>
 
 <div class="viewcode-block" id="TensorField.to_polars_schema">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.TensorField.to_polars_schema">[docs]</a>
@@ -442,7 +445,7 @@ document.write(`
 <span class="sd">        format: Image color format (e.g., &quot;RGB&quot;, &quot;BGR&quot;, &quot;RGBA&quot;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span></div>
+    <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;RGB&quot;</span></div>
 
 
 
@@ -464,6 +467,66 @@ document.write(`
 
 
 
+<div class="viewcode-block" id="ImageBytesField">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.ImageBytesField">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImageBytesField</span><span class="p">(</span><span class="n">Field</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents an image field stored as bytes data.</span>
+
+<span class="sd">    This field stores image data as encoded bytes (PNG, JPEG, BMP, etc.) and</span>
+<span class="sd">    provides conversion capabilities to decode them into numpy arrays or encode</span>
+<span class="sd">    numpy arrays into bytes format.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        semantic: Semantic tags describing the image&#39;s purpose</span>
+<span class="sd">        format: Image encoding format (e.g., &quot;PNG&quot;, &quot;JPEG&quot;, &quot;BMP&quot;). If None,</span>
+<span class="sd">                auto-detects format when decoding or defaults to PNG when encoding.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">semantic</span><span class="p">:</span> <span class="n">Semantic</span>
+
+<div class="viewcode-block" id="ImageBytesField.to_polars_schema">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.ImageBytesField.to_polars_schema">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_polars_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataType</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate schema for image bytes as binary data.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Binary</span><span class="p">()}</span></div>
+
+
+<div class="viewcode-block" id="ImageBytesField.to_polars">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.ImageBytesField.to_polars">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_polars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert image data to bytes and store in Polars series.&quot;&quot;&quot;</span>
+        <span class="n">numpy_value</span> <span class="o">=</span> <span class="n">to_numpy</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">pl</span><span class="o">.</span><span class="n">Binary</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="nb">bytes</span><span class="p">(</span><span class="n">numpy_value</span><span class="p">)])}</span></div>
+
+
+<div class="viewcode-block" id="ImageBytesField.from_polars">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.ImageBytesField.from_polars">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_polars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">row_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">target_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reconstruct image from bytes data.&quot;&quot;&quot;</span>
+        <span class="n">bytes_data</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="n">row_index</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">from_polars_data</span><span class="p">(</span><span class="n">bytes_data</span><span class="p">,</span> <span class="n">target_type</span><span class="p">)</span>  <span class="c1"># type: ignore</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="image_bytes_field">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.image_bytes_field">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">image_bytes_field</span><span class="p">(</span><span class="n">semantic</span><span class="p">:</span> <span class="n">Semantic</span> <span class="o">=</span> <span class="n">Semantic</span><span class="o">.</span><span class="n">Default</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create an ImageBytesField instance with the specified parameters.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        semantic: Semantic tags describing the image&#39;s purpose (optional)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ImageBytesField instance configured with the given parameters</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">ImageBytesField</span><span class="p">(</span><span class="n">semantic</span><span class="o">=</span><span class="n">semantic</span><span class="p">)</span></div>
+
+
+
 <div class="viewcode-block" id="BBoxField">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.BBoxField">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -482,9 +545,9 @@ document.write(`
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">semantic</span><span class="p">:</span> <span class="n">Semantic</span>
-    <span class="n">dtype</span><span class="p">:</span> <span class="n">Any</span>
-    <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">PolarsDataType</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float32</span><span class="p">()</span>
+    <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;x1y1x2y2&quot;</span>
+    <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 
 <div class="viewcode-block" id="BBoxField.to_polars_schema">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.BBoxField.to_polars_schema">[docs]</a>
@@ -673,7 +736,7 @@ document.write(`
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">semantic</span><span class="p">:</span> <span class="n">Semantic</span>
-    <span class="n">dtype</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">PolarsDataType</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">UInt8</span><span class="p">()</span>
     <span class="n">multi_label</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># Flag to indicate if this field should handle multi-labels</span>
     <span class="n">is_list</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 
@@ -804,9 +867,9 @@ document.write(`
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">semantic</span><span class="p">:</span> <span class="n">Semantic</span>
-    <span class="n">dtype</span><span class="p">:</span> <span class="n">Any</span>
-    <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">PolarsDataType</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float32</span><span class="p">()</span>
+    <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;xy&quot;</span>
+    <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 
 <div class="viewcode-block" id="PolygonField.to_polars_schema">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.PolygonField.to_polars_schema">[docs]</a>
@@ -877,7 +940,7 @@ document.write(`
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">semantic</span><span class="p">:</span> <span class="n">Semantic</span>
-    <span class="n">dtype</span><span class="p">:</span> <span class="n">Any</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">PolarsDataType</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">UInt8</span><span class="p">()</span>
 
 <div class="viewcode-block" id="MaskField.to_polars_schema">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.MaskField.to_polars_schema">[docs]</a>

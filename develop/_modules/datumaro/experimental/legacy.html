@@ -353,7 +353,7 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">cast</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">cast</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">polars</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
@@ -361,15 +361,18 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotation</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">Polygon</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span> <span class="k">as</span> <span class="n">LegacyDataset</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">CategoriesInfo</span><span class="p">,</span> <span class="n">DatasetItem</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">FromFileMixin</span><span class="p">,</span> <span class="n">Image</span><span class="p">,</span> <span class="n">MediaElement</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">FromDataMixin</span><span class="p">,</span> <span class="n">FromFileMixin</span><span class="p">,</span> <span class="n">Image</span><span class="p">,</span> <span class="n">MediaElement</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">Sample</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.fields</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">BBoxField</span><span class="p">,</span>
+    <span class="n">ImageInfo</span><span class="p">,</span>
     <span class="n">ImagePathField</span><span class="p">,</span>
     <span class="n">LabelField</span><span class="p">,</span>
     <span class="n">PolygonField</span><span class="p">,</span>
     <span class="n">bbox_field</span><span class="p">,</span>
+    <span class="n">image_bytes_field</span><span class="p">,</span>
+    <span class="n">image_info_field</span><span class="p">,</span>
     <span class="n">image_path_field</span><span class="p">,</span>
     <span class="n">label_field</span><span class="p">,</span>
     <span class="n">polygon_field</span><span class="p">,</span>
@@ -381,6 +384,24 @@ document.write(`
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardMediaConverter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ForwardMediaConverter</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for forward media type converters.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ForwardMediaConverter.get_supported_media_types">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardMediaConverter.get_supported_media_types">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_supported_media_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">MediaElement</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return list of media types this converter can handle.&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="ForwardMediaConverter.create">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardMediaConverter.create">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">LegacyDataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ForwardMediaConverter | None&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create converter instance if dataset is supported, None otherwise.&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
 
 <div class="viewcode-block" id="ForwardMediaConverter.get_schema_attributes">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardMediaConverter.get_schema_attributes">[docs]</a>
@@ -446,17 +467,16 @@ document.write(`
 
 
 <span class="c1"># Global registries</span>
-<span class="n">_media_converters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">MediaElement</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="n">ForwardMediaConverter</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">_media_converter_classes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">MediaElement</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="n">Type</span><span class="p">[</span><span class="n">ForwardMediaConverter</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="n">_annotation_converters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">ForwardAnnotationConverter</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
 
 
 <div class="viewcode-block" id="register_forward_media_converter">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.register_forward_media_converter">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">register_forward_media_converter</span><span class="p">(</span>
-    <span class="n">media_type</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">MediaElement</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="n">converter</span><span class="p">:</span> <span class="n">ForwardMediaConverter</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Register a forward converter for a media type.&quot;&quot;&quot;</span>
-    <span class="n">_media_converters</span><span class="p">[</span><span class="n">media_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">converter</span></div>
+<span class="k">def</span><span class="w"> </span><span class="nf">register_forward_media_converter</span><span class="p">(</span><span class="n">converter_class</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">ForwardMediaConverter</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Register a forward converter class for media types it supports.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">media_type</span> <span class="ow">in</span> <span class="n">converter_class</span><span class="o">.</span><span class="n">get_supported_media_types</span><span class="p">():</span>
+        <span class="n">_media_converter_classes</span><span class="p">[</span><span class="n">media_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">converter_class</span></div>
 
 
 
@@ -473,12 +493,17 @@ document.write(`
 
 <div class="viewcode-block" id="get_forward_media_converter">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.get_forward_media_converter">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_forward_media_converter</span><span class="p">(</span><span class="n">media_type</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">MediaElement</span><span class="p">[</span><span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">ForwardMediaConverter</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get forward converter for a media type.&quot;&quot;&quot;</span>
-    <span class="k">for</span> <span class="n">registered_type</span><span class="p">,</span> <span class="n">converter</span> <span class="ow">in</span> <span class="n">_media_converters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">media_type</span><span class="p">,</span> <span class="n">registered_type</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">converter</span>
-    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No converter registered for media type: </span><span class="si">{</span><span class="n">media_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_forward_media_converter</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">LegacyDataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ForwardMediaConverter</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get forward converter for a dataset by trying registered converters.&quot;&quot;&quot;</span>
+    <span class="c1"># Get the dataset&#39;s media type</span>
+    <span class="n">media_type</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">Type</span><span class="p">[</span><span class="n">MediaElement</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="n">dataset</span><span class="o">.</span><span class="n">media_type</span><span class="p">())</span>
+
+    <span class="c1"># Try converter registered for this specific media type</span>
+    <span class="k">if</span> <span class="n">media_type</span> <span class="ow">in</span> <span class="n">_media_converter_classes</span><span class="p">:</span>
+        <span class="n">converter_class</span> <span class="o">=</span> <span class="n">_media_converter_classes</span><span class="p">[</span><span class="n">media_type</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">converter_class</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="kc">None</span></div>
 
 
 
@@ -498,12 +523,74 @@ document.write(`
 <div class="viewcode-block" id="ForwardImageMediaConverter">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardImageMediaConverter">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ForwardImageMediaConverter</span><span class="p">(</span><span class="n">ForwardMediaConverter</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Forward converter for Image media type.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Forward converter for Image media type supporting both file paths and byte data.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">media_mixin</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">has_image_info</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize converter with format preference and image info availability.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">media_mixin</span> <span class="o">=</span> <span class="n">media_mixin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_image_info</span> <span class="o">=</span> <span class="n">has_image_info</span>
+
+<div class="viewcode-block" id="ForwardImageMediaConverter.get_supported_media_types">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardImageMediaConverter.get_supported_media_types">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_supported_media_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">MediaElement</span><span class="p">[</span><span class="n">Any</span><span class="p">]]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return list of media types this converter can handle.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">Image</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="ForwardImageMediaConverter.create">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardImageMediaConverter.create">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">LegacyDataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ForwardImageMediaConverter | None&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create converter instance, detecting whether to use paths or bytes.&quot;&quot;&quot;</span>
+        <span class="n">found_media_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">has_image_info</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># Assume all images have size until proven otherwise</span>
+
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
+                <span class="n">media_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">found_media_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">media_type</span> <span class="o">!=</span> <span class="n">found_media_type</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;The dataset has a mix of different image media types: &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">found_media_type</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">media_type</span><span class="si">}</span><span class="s2">. This is not supported by the converter.&quot;</span>
+                    <span class="p">)</span>
+
+                <span class="n">found_media_type</span> <span class="o">=</span> <span class="n">media_type</span>
+
+                <span class="c1"># Check if this image has size info</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">has_size</span><span class="p">:</span>
+                    <span class="n">has_image_info</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">found_media_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">found_media_type</span><span class="p">,</span> <span class="n">FromDataMixin</span><span class="p">):</span>
+            <span class="n">media_mixin</span> <span class="o">=</span> <span class="n">FromDataMixin</span>
+        <span class="k">elif</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">found_media_type</span><span class="p">,</span> <span class="n">FromFileMixin</span><span class="p">):</span>
+            <span class="n">media_mixin</span> <span class="o">=</span> <span class="n">FromFileMixin</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown media mixin for </span><span class="si">{</span><span class="n">found_media_type</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">media_mixin</span><span class="o">=</span><span class="n">media_mixin</span><span class="p">,</span> <span class="n">has_image_info</span><span class="o">=</span><span class="n">has_image_info</span><span class="p">)</span></div>
+
 
 <div class="viewcode-block" id="ForwardImageMediaConverter.get_schema_attributes">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardImageMediaConverter.get_schema_attributes">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_schema_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AttributeInfo</span><span class="p">]:</span>
-        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;image_path&quot;</span><span class="p">:</span> <span class="n">AttributeInfo</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">annotation</span><span class="o">=</span><span class="n">image_path_field</span><span class="p">())}</span></div>
+        <span class="n">attributes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AttributeInfo</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">media_mixin</span> <span class="o">==</span> <span class="n">FromDataMixin</span><span class="p">:</span>
+            <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;image_bytes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">AttributeInfo</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="nb">bytes</span><span class="p">,</span> <span class="n">annotation</span><span class="o">=</span><span class="n">image_bytes_field</span><span class="p">())</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">media_mixin</span> <span class="o">==</span> <span class="n">FromFileMixin</span><span class="p">:</span>
+            <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;image_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">AttributeInfo</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">annotation</span><span class="o">=</span><span class="n">image_path_field</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Media mixin not implemented: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">media_mixin</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Add image info field if all images have size</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_image_info</span><span class="p">:</span>
+            <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;image_info&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">AttributeInfo</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">ImageInfo</span><span class="p">,</span> <span class="n">annotation</span><span class="o">=</span><span class="n">image_info_field</span><span class="p">())</span>
+
+        <span class="k">return</span> <span class="n">attributes</span></div>
 
 
 <div class="viewcode-block" id="ForwardImageMediaConverter.convert_item_media">
@@ -512,11 +599,17 @@ document.write(`
         <span class="n">result</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>  <span class="c1"># pyright: ignore[reportUnknownMemberType]</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="n">FromFileMixin</span><span class="p">):</span>
-                <span class="c1"># Handle image path</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">media_mixin</span> <span class="o">==</span> <span class="n">FromDataMixin</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">[</span><span class="s2">&quot;image_bytes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">data</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">media_mixin</span> <span class="o">==</span> <span class="n">FromFileMixin</span><span class="p">:</span>
                 <span class="n">result</span><span class="p">[</span><span class="s2">&quot;image_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">path</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported media type for Image: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Media mixin not implemented: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">media_mixin</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Add image info if available</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_image_info</span> <span class="ow">and</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">has_size</span><span class="p">:</span>
+                <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">size</span>  <span class="c1"># size returns (H, W)</span>
+                <span class="n">result</span><span class="p">[</span><span class="s2">&quot;image_info&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ImageInfo</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">height</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">result</span></div>
 </div>
@@ -702,7 +795,7 @@ document.write(`
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Register built-in forward converters for common types.&quot;&quot;&quot;</span>
 
     <span class="c1"># Media converters</span>
-    <span class="n">register_forward_media_converter</span><span class="p">(</span><span class="n">Image</span><span class="p">,</span> <span class="n">ForwardImageMediaConverter</span><span class="p">())</span>
+    <span class="n">register_forward_media_converter</span><span class="p">(</span><span class="n">ForwardImageMediaConverter</span><span class="p">)</span>
 
     <span class="c1"># Annotation converters</span>
     <span class="n">register_forward_annotation_converter</span><span class="p">(</span><span class="n">ForwardBboxAnnotationConverter</span><span class="p">)</span>
@@ -737,9 +830,6 @@ document.write(`
 <span class="sd">        AnalysisResult containing the inferred schema and converters</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">categories</span> <span class="o">=</span> <span class="n">legacy_dataset</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span>
-    <span class="n">media_type</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span>
-        <span class="n">Type</span><span class="p">[</span><span class="n">MediaElement</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="n">legacy_dataset</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span>
-    <span class="p">)</span>  <span class="c1"># pyright: ignore[reportUnknownMemberType]</span>
     <span class="n">ann_types</span> <span class="o">=</span> <span class="n">legacy_dataset</span><span class="o">.</span><span class="n">ann_types</span><span class="p">()</span>
 
     <span class="n">attributes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AttributeInfo</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -747,12 +837,9 @@ document.write(`
     <span class="n">ann_converters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="n">AnnotationType</span><span class="p">,</span> <span class="n">ForwardAnnotationConverter</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="c1"># Get media attributes from converter</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">media_converter</span> <span class="o">=</span> <span class="n">get_forward_media_converter</span><span class="p">(</span><span class="n">media_type</span><span class="p">)</span>
+    <span class="n">media_converter</span> <span class="o">=</span> <span class="n">get_forward_media_converter</span><span class="p">(</span><span class="n">legacy_dataset</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">media_converter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">attributes</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">media_converter</span><span class="o">.</span><span class="n">get_schema_attributes</span><span class="p">())</span>
-    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-        <span class="c1"># No converter for this media type - skip</span>
-        <span class="k">pass</span>
 
     <span class="c1"># Get annotation attributes from converters for each annotation type in the dataset</span>
     <span class="k">for</span> <span class="n">ann_type</span> <span class="ow">in</span> <span class="n">ann_types</span><span class="p">:</span>

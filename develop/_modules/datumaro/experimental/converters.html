@@ -361,7 +361,9 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">.converter_registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">AttributeSpec</span><span class="p">,</span> <span class="n">Converter</span><span class="p">,</span> <span class="n">converter</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.fields</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">BBoxField</span><span class="p">,</span>
+    <span class="n">ImageBytesField</span><span class="p">,</span>
     <span class="n">ImageField</span><span class="p">,</span>
+    <span class="n">ImageInfo</span><span class="p">,</span>
     <span class="n">ImageInfoField</span><span class="p">,</span>
     <span class="n">ImagePathField</span><span class="p">,</span>
     <span class="n">LabelField</span><span class="p">,</span>
@@ -529,6 +531,7 @@ document.write(`
 
     <span class="n">input_path</span><span class="p">:</span> <span class="n">AttributeSpec</span><span class="p">[</span><span class="n">ImagePathField</span><span class="p">]</span>
     <span class="n">output_image</span><span class="p">:</span> <span class="n">AttributeSpec</span><span class="p">[</span><span class="n">ImageField</span><span class="p">]</span>
+    <span class="n">output_info</span><span class="p">:</span> <span class="n">AttributeSpec</span><span class="p">[</span><span class="n">ImageInfoField</span><span class="p">]</span>
 
 <div class="viewcode-block" id="ImagePathToImageConverter.filter_output_spec">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.ImagePathToImageConverter.filter_output_spec">[docs]</a>
@@ -543,6 +546,13 @@ document.write(`
                 <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;RGB&quot;</span><span class="p">,</span>  <span class="c1"># Default to RGB format</span>
             <span class="p">),</span>
         <span class="p">)</span>
+        <span class="c1"># Configure output info specification</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_info</span> <span class="o">=</span> <span class="n">AttributeSpec</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_info</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">field</span><span class="o">=</span><span class="n">ImageInfoField</span><span class="p">(</span>
+                <span class="n">semantic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_path</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">semantic</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
 
@@ -550,20 +560,22 @@ document.write(`
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.ImagePathToImageConverter.convert">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Convert image paths to loaded image tensors.</span>
+<span class="sd">        Convert image paths to loaded image tensors and image info.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            df: DataFrame containing image path column</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            DataFrame with loaded image data and shape information</span>
+<span class="sd">            DataFrame with loaded image data, shape information, and image info</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">input_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_path</span><span class="o">.</span><span class="n">name</span>
         <span class="n">output_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_image</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">output_info_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_info</span><span class="o">.</span><span class="n">name</span>
 
         <span class="c1"># Load images from paths</span>
         <span class="n">image_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">image_shapes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">image_infos</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ImageInfo</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="n">input_col</span><span class="p">]:</span>
             <span class="c1"># Load image using PIL</span>
@@ -577,12 +589,108 @@ document.write(`
                 <span class="n">image_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">img_array</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
                 <span class="n">image_shapes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">img_array</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
 
+                <span class="c1"># Create image info with just width and height</span>
+                <span class="n">image_infos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ImageInfo</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="n">img_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">height</span><span class="o">=</span><span class="n">img_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
         <span class="c1"># Create output DataFrame</span>
         <span class="n">result_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
         <span class="n">result_df</span> <span class="o">=</span> <span class="n">result_df</span><span class="o">.</span><span class="n">with_columns</span><span class="p">(</span>
             <span class="p">[</span>
                 <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">output_col</span><span class="p">,</span> <span class="n">image_data</span><span class="p">),</span>
                 <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">output_col</span> <span class="o">+</span> <span class="s2">&quot;_shape&quot;</span><span class="p">,</span> <span class="n">image_shapes</span><span class="p">),</span>
+                <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">output_info_col</span><span class="p">,</span> <span class="n">image_infos</span><span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result_df</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ImageBytesToImageConverter">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.ImageBytesToImageConverter">[docs]</a>
+<span class="nd">@converter</span><span class="p">(</span><span class="n">lazy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImageBytesToImageConverter</span><span class="p">(</span><span class="n">Converter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Lazy converter that decodes images from byte data.</span>
+
+<span class="sd">    This converter takes encoded image bytes (PNG, JPEG, BMP, etc.) and decodes</span>
+<span class="sd">    them to tensor format. It&#39;s marked as lazy to defer the expensive decoding</span>
+<span class="sd">    operation until the data is actually accessed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">input_bytes</span><span class="p">:</span> <span class="n">AttributeSpec</span><span class="p">[</span><span class="n">ImageBytesField</span><span class="p">]</span>
+    <span class="n">output_image</span><span class="p">:</span> <span class="n">AttributeSpec</span><span class="p">[</span><span class="n">ImageField</span><span class="p">]</span>
+    <span class="n">output_info</span><span class="p">:</span> <span class="n">AttributeSpec</span><span class="p">[</span><span class="n">ImageInfoField</span><span class="p">]</span>
+
+<div class="viewcode-block" id="ImageBytesToImageConverter.filter_output_spec">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.ImageBytesToImageConverter.filter_output_spec">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">filter_output_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Configure output image specification based on input.&quot;&quot;&quot;</span>
+        <span class="c1"># Configure output specification with default RGB format</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_image</span> <span class="o">=</span> <span class="n">AttributeSpec</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_image</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">field</span><span class="o">=</span><span class="n">ImageField</span><span class="p">(</span>
+                <span class="n">semantic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_bytes</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">semantic</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">pl</span><span class="o">.</span><span class="n">UInt8</span><span class="p">,</span>  <span class="c1"># Default to UInt8 for decoded images</span>
+                <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;RGB&quot;</span><span class="p">,</span>  <span class="c1"># Default to RGB format</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="c1"># Configure output info specification</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_info</span> <span class="o">=</span> <span class="n">AttributeSpec</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_info</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">field</span><span class="o">=</span><span class="n">ImageInfoField</span><span class="p">(</span>
+                <span class="n">semantic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_bytes</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">semantic</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="ImageBytesToImageConverter.convert">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.ImageBytesToImageConverter.convert">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert image bytes to decoded image tensors and image info.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df: DataFrame containing image bytes column</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            DataFrame with decoded image data, shape information, and image info</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">input_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_bytes</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">output_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_image</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">output_info_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_info</span><span class="o">.</span><span class="n">name</span>
+
+        <span class="c1"># Decode images from bytes</span>
+        <span class="n">image_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">image_shapes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">image_infos</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ImageInfo</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">image_bytes</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="n">input_col</span><span class="p">]:</span>
+            <span class="c1"># Decode image using PIL</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">BytesIO</span>
+
+            <span class="k">with</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">))</span> <span class="k">as</span> <span class="n">img</span><span class="p">:</span>
+                <span class="c1"># Convert to RGB if needed</span>
+                <span class="k">if</span> <span class="n">img</span><span class="o">.</span><span class="n">mode</span> <span class="o">!=</span> <span class="s2">&quot;RGB&quot;</span><span class="p">:</span>
+                    <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;RGB&quot;</span><span class="p">)</span>
+
+                <span class="c1"># Convert to numpy array</span>
+                <span class="n">img_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+                <span class="n">image_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">img_array</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+                <span class="n">image_shapes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">img_array</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+
+                <span class="c1"># Create image info with just width and height</span>
+                <span class="n">image_infos</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ImageInfo</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="n">img_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">height</span><span class="o">=</span><span class="n">img_array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+        <span class="c1"># Create output DataFrame</span>
+        <span class="n">result_df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+        <span class="n">result_df</span> <span class="o">=</span> <span class="n">result_df</span><span class="o">.</span><span class="n">with_columns</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">output_col</span><span class="p">,</span> <span class="n">image_data</span><span class="p">),</span>
+                <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">output_col</span> <span class="o">+</span> <span class="s2">&quot;_shape&quot;</span><span class="p">,</span> <span class="n">image_shapes</span><span class="p">),</span>
+                <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">output_info_col</span><span class="p">,</span> <span class="n">image_infos</span><span class="p">),</span>
             <span class="p">]</span>
         <span class="p">)</span>
 

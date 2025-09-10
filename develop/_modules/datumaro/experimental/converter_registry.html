@@ -920,7 +920,7 @@ document.write(`
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_get_applicable_converters</span><span class="p">(</span>
-    <span class="n">state</span><span class="p">:</span> <span class="n">_SchemaState</span><span class="p">,</span> <span class="n">target_state</span><span class="p">:</span> <span class="n">_SchemaState</span><span class="p">,</span> <span class="n">iteration</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">semantic</span><span class="p">:</span> <span class="n">Semantic</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">_SchemaState</span><span class="p">,</span> <span class="n">target_state</span><span class="p">:</span> <span class="n">_SchemaState</span><span class="p">,</span> <span class="n">iteration</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Converter</span><span class="p">,</span> <span class="n">_SchemaState</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get all converters that can be applied to the current state along with their resulting states.&quot;&quot;&quot;</span>
     <span class="n">applicable</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Converter</span><span class="p">,</span> <span class="n">_SchemaState</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -966,7 +966,7 @@ document.write(`
                 <span class="c1"># The field does not exist, use a temporary name</span>
                 <span class="n">output_name</span> <span class="o">=</span> <span class="n">field_type</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
                 <span class="c1"># and create a new instance of the field</span>
-                <span class="n">output_field</span> <span class="o">=</span> <span class="n">field_type</span><span class="p">()</span>
+                <span class="n">output_field</span> <span class="o">=</span> <span class="n">field_type</span><span class="p">(</span><span class="n">semantic</span><span class="o">=</span><span class="n">semantic</span><span class="p">)</span>
 
             <span class="c1"># Add the iteration count at the end to ensure uniqueness</span>
             <span class="c1"># and avoid any conflict with existing attribute names</span>
@@ -1119,6 +1119,7 @@ document.write(`
 
         <span class="c1"># Explore neighbors</span>
         <span class="k">for</span> <span class="n">converter</span><span class="p">,</span> <span class="n">new_state</span> <span class="ow">in</span> <span class="n">_get_applicable_converters</span><span class="p">(</span>
+            <span class="n">semantic</span><span class="p">,</span>
             <span class="n">current_node</span><span class="o">.</span><span class="n">state</span><span class="p">,</span>
             <span class="n">target_state</span><span class="p">,</span>
             <span class="n">current_node</span><span class="o">.</span><span class="n">g_cost</span><span class="p">,</span>
