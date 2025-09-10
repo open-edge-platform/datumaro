@@ -21,6 +21,7 @@ from datumaro.experimental.converter_registry import (
 from datumaro.experimental.converters import (
     BBoxCoordinateConverter,
     ImagePathToImageConverter,
+    PolygonToMaskConverter,
     RGBToBGRConverter,
     UInt8ToFloat32Converter,
 )
@@ -28,7 +29,11 @@ from datumaro.experimental.fields import (
     BBoxField,
     Field,
     ImageField,
+    ImageInfoField,
     ImagePathField,
+    LabelField,
+    MaskField,
+    PolygonField,
     bbox_field,
     image_field,
     image_info_field,
@@ -1061,3 +1066,160 @@ def test_attribute_remapping_converter():
     assert result_df["new_image"].to_list() == [[1, 2, 3]]
     assert result_df["new_image_shape"].to_list() == [[3]]
     assert result_df["new_bbox"].to_list() == [[[1, 2, 3, 4]]]
+
+
+def test_polygon_to_mask_converter():
+    """Test conversion from polygon coordinates to mask format."""
+    converter_instance = PolygonToMaskConverter()  # type: ignore[call-arg]
+
+    # Create test data with polygon coordinates and labels
+    # Triangle polygon: (10,10) -> (30,10) -> (20,30) -> (10,10)
+    polygon_coords1 = [[10.0, 10.0], [30.0, 10.0], [20.0, 30.0]]
+
+    # Rectangle polygon: (40,40) -> (60,40) -> (60,60) -> (40,60) -> (40,40)
+    polygon_coords2 = [[40.0, 40.0], [60.0, 40.0], [60.0, 60.0], [40.0, 60.0], [40.0, 40.0]]
+
+    # Pentagon polygon: (70,10) -> (85,5) -> (90,20) -> (80,35) -> (65,25)
+    polygon_coords3 = [[70.0, 10.0], [85.0, 5.0], [90.0, 20.0], [80.0, 35.0], [65.0, 25.0]]
+
+    polygon_series = pl.Series(
+        [polygon_coords1, polygon_coords2, polygon_coords3], dtype=pl.List(pl.Array(pl.Float32, 2))
+    )
+
+    df = pl.DataFrame(
+        {
+            "polygons": [polygon_series],  # List of three polygons
+            "labels": [[1, 2, 3]],  # Corresponding labels for each polygon
+            "image_info": [{"width": 100, "height": 100}],  # Image dimensions
+        }
+    )
+
+    # Set up converter attributes
+    input_polygon_field = PolygonField(
+        dtype=pl.Float32, format="xy", normalize=False, semantic=Semantic.Default
+    )
+    input_labels_field = LabelField(dtype=pl.Int32, semantic=Semantic.Default, multi_label=True)
+    image_info_field = ImageInfoField(semantic=Semantic.Default)
+    output_mask_field = MaskField(dtype=pl.UInt8, semantic=Semantic.Default)
+
+    setattr(
+        converter_instance,
+        "input_polygon",
+        AttributeSpec(name="polygons", field=input_polygon_field),
+    )
+    setattr(
+        converter_instance,
+        "input_labels",
+        AttributeSpec(name="labels", field=input_labels_field),
+    )
+    setattr(
+        converter_instance,
+        "image_info",
+        AttributeSpec(name="image_info", field=image_info_field),
+    )
+    setattr(
+        converter_instance,
+        "output_mask",
+        AttributeSpec(name="mask", field=output_mask_field),
+    )
+
+    # Test filter - should return True when we have valid input
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    # Check that mask column was created
+    assert "mask" in result_df.columns
+    assert "mask_shape" in result_df.columns
+
+    # Get the mask data and reshape it
+    mask_data = np.array(result_df["mask"][0])
+    mask_shape = result_df["mask_shape"][0]
+    mask = mask_data.reshape(mask_shape)
+
+    # Check mask properties
+    assert mask.shape == (100, 100)  # Should match image dimensions
+    assert mask.dtype == np.uint8
+
+    # Check that polygons were filled with correct labels
+    # Triangle should have label 1, rectangle should have label 2, pentagon should have label 3
+    # Background should be 0
+
+    # Check that triangle area has label 1
+    assert mask[15, 20] == 1  # Point inside triangle
+
+    # Check that rectangle area has label 2
+    assert mask[50, 50] == 2  # Point inside rectangle
+
+    # Check that pentagon area has label 3
+    assert mask[20, 75] == 3  # Point inside pentagon
+
+    # Check background area has label 0
+    assert mask[5, 5] == 0  # Point outside all polygons
+    assert mask[95, 95] == 0  # Another background point
+
+    # Check that mask contains the expected label values
+    unique_labels = np.unique(mask)
+    assert 0 in unique_labels  # Background
+    assert 1 in unique_labels  # First polygon label (triangle)
+    assert 2 in unique_labels  # Second polygon label (rectangle)
+    assert 3 in unique_labels  # Third polygon label (pentagon)
+
+
+def test_polygon_to_mask_converter_normalized():
+    """Test conversion with normalized polygon coordinates."""
+    converter_instance = PolygonToMaskConverter()  # type: ignore[call-arg]
+
+    # Create test data with normalized coordinates (0.0 to 1.0 range)
+    # Small triangle in normalized coordinates
+    polygon_coords = [[0.1, 0.1], [0.3, 0.1], [0.2, 0.3]]  # Normalized coordinates
+    polygon_series = pl.Series([polygon_coords], dtype=pl.List(pl.Array(pl.Float32, 2)))
+
+    df = pl.DataFrame(
+        {
+            "polygons": [polygon_series],
+            "labels": [[5]],  # Label 5 for this polygon
+            "image_info": [{"width": 100, "height": 100}],
+        }
+    )
+
+    # Set up converter attributes with normalization enabled
+    input_polygon_field = PolygonField(
+        dtype=pl.Float32,
+        format="xy",
+        normalize=True,  # Enable normalization
+        semantic=Semantic.Default,
+    )
+    input_labels_field = LabelField(dtype=pl.Int32, semantic=Semantic.Default, multi_label=True)
+    image_info_field = ImageInfoField(semantic=Semantic.Default)
+    output_mask_field = MaskField(dtype=pl.UInt8, semantic=Semantic.Default)
+
+    setattr(
+        converter_instance,
+        "input_polygon",
+        AttributeSpec(name="polygons", field=input_polygon_field),
+    )
+    setattr(
+        converter_instance, "input_labels", AttributeSpec(name="labels", field=input_labels_field)
+    )
+    setattr(
+        converter_instance, "image_info", AttributeSpec(name="image_info", field=image_info_field)
+    )
+    setattr(converter_instance, "output_mask", AttributeSpec(name="mask", field=output_mask_field))
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    # Get the mask and check it
+    mask_data = np.array(result_df["mask"][0])
+    mask_shape = result_df["mask_shape"][0]
+    mask = mask_data.reshape(mask_shape)
+
+    # Check that polygon was filled with label 5
+    # Normalized coordinates should be scaled: 0.2 * 100 = 20, 0.1 * 100 = 10, etc.
+    assert mask[15, 20] == 5  # Point inside the scaled triangle
+    assert mask[5, 5] == 0  # Background point
+
+    # Verify the label is present in the mask
+    assert 5 in np.unique(mask)

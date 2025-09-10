@@ -16,7 +16,7 @@ from typing import Any, Type, cast
 import numpy as np
 import polars as pl
 
-from datumaro.components.annotation import Annotation, AnnotationType, Bbox
+from datumaro.components.annotation import Annotation, AnnotationType, Bbox, Polygon
 from datumaro.components.dataset import Dataset as LegacyDataset
 from datumaro.components.dataset_base import CategoriesInfo, DatasetItem
 from datumaro.components.media import FromFileMixin, Image, MediaElement
@@ -25,10 +25,12 @@ from .dataset import Dataset, Sample
 from .fields import (
     BBoxField,
     ImagePathField,
-    TensorField,
+    LabelField,
+    PolygonField,
     bbox_field,
     image_path_field,
-    tensor_field,
+    label_field,
+    polygon_field,
 )
 from .schema import AttributeInfo, Schema
 
@@ -50,8 +52,22 @@ class ForwardMediaConverter(ABC):
 class ForwardAnnotationConverter(ABC):
     """Base class for forward annotation type converters."""
 
+    @classmethod
     @abstractmethod
-    def get_schema_attributes(self, categories: CategoriesInfo) -> dict[str, AttributeInfo]:
+    def create_from_categories(
+        cls, categories: CategoriesInfo
+    ) -> "ForwardAnnotationConverter | None":
+        """Create converter instance if categories support this annotation type."""
+        pass
+
+    @classmethod
+    @abstractmethod
+    def get_annotation_type(cls) -> AnnotationType:
+        """Get the annotation type this converter handles."""
+        pass
+
+    @abstractmethod
+    def get_schema_attributes(self) -> dict[str, AttributeInfo]:
         """Return schema attributes for this annotation type."""
         pass
 
@@ -65,7 +81,7 @@ class ForwardAnnotationConverter(ABC):
 
 # Global registries
 _media_converters: dict[Type[MediaElement[Any]], ForwardMediaConverter] = {}
-_annotation_converters: dict[AnnotationType, ForwardAnnotationConverter] = {}
+_annotation_converters: dict[AnnotationType, Type[ForwardAnnotationConverter]] = {}
 
 
 def register_forward_media_converter(
@@ -76,10 +92,11 @@ def register_forward_media_converter(
 
 
 def register_forward_annotation_converter(
-    annotation_type: AnnotationType, converter: ForwardAnnotationConverter
+    converter_class: Type[ForwardAnnotationConverter],
 ) -> None:
-    """Register a forward converter for an annotation type."""
-    _annotation_converters[annotation_type] = converter
+    """Register a forward converter class for an annotation type."""
+    annotation_type = converter_class.get_annotation_type()
+    _annotation_converters[annotation_type] = converter_class
 
 
 def get_forward_media_converter(media_type: Type[MediaElement[Any]]) -> ForwardMediaConverter:
@@ -90,11 +107,14 @@ def get_forward_media_converter(media_type: Type[MediaElement[Any]]) -> ForwardM
     raise ValueError(f"No converter registered for media type: {media_type}")
 
 
-def get_forward_annotation_converter(annotation_type: AnnotationType) -> ForwardAnnotationConverter:
-    """Get forward converter for an annotation type."""
+def get_forward_annotation_converter(
+    annotation_type: AnnotationType, categories: CategoriesInfo
+) -> ForwardAnnotationConverter | None:
+    """Get forward converter for an annotation type that can handle the given categories."""
     if annotation_type not in _annotation_converters:
-        raise ValueError(f"No converter registered for annotation type: {annotation_type}")
-    return _annotation_converters[annotation_type]
+        return None
+    converter_class = _annotation_converters[annotation_type]
+    return converter_class.create_from_categories(categories)
 
 
 class ForwardImageMediaConverter(ForwardMediaConverter):
@@ -119,13 +139,42 @@ class ForwardImageMediaConverter(ForwardMediaConverter):
 class ForwardBboxAnnotationConverter(ForwardAnnotationConverter):
     """Forward converter for Bbox annotations."""
 
-    def get_schema_attributes(self, categories: CategoriesInfo) -> dict[str, AttributeInfo]:
-        return {
-            "bboxes": AttributeInfo(
-                type=np.ndarray, annotation=bbox_field(dtype=pl.Float32, format="x1y1x2y2")
-            ),
-            "bbox_labels": AttributeInfo(type=np.ndarray, annotation=tensor_field(dtype=pl.Int32)),
-        }
+    def __init__(self, bbox_attribute: AttributeInfo, bbox_labels_attribute: AttributeInfo | None):
+        """Initialize with bbox attributes and label attribute name."""
+        super().__init__()
+        self.bbox_attribute = bbox_attribute
+        self.bbox_labels_attribute = bbox_labels_attribute
+
+    @classmethod
+    def create_from_categories(
+        cls, categories: CategoriesInfo
+    ) -> "ForwardBboxAnnotationConverter | None":
+        """Create converter instance for bbox annotations."""
+        # Extract label categories if available
+        label_categories = categories.get(AnnotationType.label, None)
+
+        bbox_attribute = AttributeInfo(type=np.ndarray, annotation=bbox_field(dtype=pl.Float32))
+
+        bbox_labels_attribute = None
+        # Only add bbox_labels if we have label categories
+        if label_categories is not None:
+            bbox_labels_attribute = AttributeInfo(
+                type=np.ndarray,
+                annotation=label_field(dtype=pl.Int32, multi_label=False, is_list=True),
+                categories=label_categories,
+            )
+
+        return cls(bbox_attribute=bbox_attribute, bbox_labels_attribute=bbox_labels_attribute)
+
+    @classmethod
+    def get_annotation_type(cls) -> AnnotationType:
+        return AnnotationType.bbox
+
+    def get_schema_attributes(self) -> dict[str, AttributeInfo]:
+        attributes = {"bboxes": self.bbox_attribute}
+        if self.bbox_labels_attribute is not None:
+            attributes["bbox_labels"] = self.bbox_labels_attribute
+        return attributes
 
     def convert_annotations(
         self, annotations: list[Annotation], item: DatasetItem
@@ -144,7 +193,90 @@ class ForwardBboxAnnotationConverter(ForwardAnnotationConverter):
         if bboxes_array.shape == (0,):
             bboxes_array = bboxes_array.reshape(0, 4)
 
-        return {"bboxes": bboxes_array, "bbox_labels": np.array(labels, dtype=np.int32)}
+        result = {"bboxes": bboxes_array}
+
+        # Only add bbox_labels if we have label categories
+        if self.bbox_labels_attribute is not None:
+            result["bbox_labels"] = np.array(labels, dtype=np.int32)
+
+        return result
+
+
+class ForwardPolygonAnnotationConverter(ForwardAnnotationConverter):
+    """Forward converter for Polygon annotations."""
+
+    def __init__(
+        self, polygon_attribute: AttributeInfo, polygon_labels_attribute: AttributeInfo | None
+    ):
+        """Initialize with polygon attributes and label attribute."""
+        super().__init__()
+        self.polygon_attribute = polygon_attribute
+        self.polygon_labels_attribute = polygon_labels_attribute
+
+    @classmethod
+    def create_from_categories(
+        cls, categories: CategoriesInfo
+    ) -> "ForwardPolygonAnnotationConverter | None":
+        """Create converter instance for polygon annotations."""
+        # Extract label categories if available
+        label_categories = categories.get(AnnotationType.label, None)
+
+        polygon_attribute = AttributeInfo(
+            type=np.ndarray, annotation=polygon_field(dtype=pl.Float32, format="xy")
+        )
+
+        polygon_labels_attribute = None
+        # Only add polygon_labels if we have label categories
+        if label_categories is not None:
+            polygon_labels_attribute = AttributeInfo(
+                type=np.ndarray,
+                annotation=label_field(dtype=pl.Int32, multi_label=False, is_list=True),
+                categories=label_categories,
+            )
+
+        return cls(
+            polygon_attribute=polygon_attribute, polygon_labels_attribute=polygon_labels_attribute
+        )
+
+    @classmethod
+    def get_annotation_type(cls) -> AnnotationType:
+        return AnnotationType.polygon
+
+    def get_schema_attributes(self) -> dict[str, AttributeInfo]:
+        attributes = {"polygons": self.polygon_attribute}
+        if self.polygon_labels_attribute is not None:
+            attributes["polygon_labels"] = self.polygon_labels_attribute
+        return attributes
+
+    def convert_annotations(
+        self, annotations: list[Annotation], item: DatasetItem
+    ) -> dict[str, Any]:
+        polygons: list[list[float]] = []
+        labels: list[int | None] = []
+
+        for ann in annotations:
+            if isinstance(ann, Polygon):
+                # Points are stored as flat coordinates in Polygon
+                # ann.points in the format [x1,y1,x2,y2,...] format
+                polygons.append(np.array(ann.points).reshape(-1, 2))
+                labels.append(ann.label)
+
+        # Convert to numpy array - polygons is a list of variable-length coordinate lists
+        # We'll store it as a ragged array (object dtype to handle different lengths)
+
+        # When using np.array, there is a corner case for the case where len(polygons) == 1 where
+        # Numpy creates a 2D array of objects instead of a 1D array of objects.
+        # We may be able to solve this in the upcoming version of Numpy with the argument ndmax.
+        # In the meantime, create an empty array, then assign to avoid the corner case
+        polygons_array = np.empty((len(polygons),), dtype=object)
+        polygons_array[:] = polygons
+        result = {"polygons": polygons_array}
+
+        # Only add polygon_labels if we have label categories
+        if self.polygon_labels_attribute is not None:
+            result["polygon_labels"] = np.array(labels, dtype=np.int32)
+
+        return result
 
 
 def register_builtin_forward_converters():
@@ -154,7 +286,8 @@ def register_builtin_forward_converters():
     register_forward_media_converter(Image, ForwardImageMediaConverter())
 
     # Annotation converters
-    register_forward_annotation_converter(AnnotationType.bbox, ForwardBboxAnnotationConverter())
+    register_forward_annotation_converter(ForwardBboxAnnotationConverter)
+    register_forward_annotation_converter(ForwardPolygonAnnotationConverter)
 
 
 from dataclasses import dataclass
@@ -196,15 +329,12 @@ def analyze_legacy_dataset(legacy_dataset: LegacyDataset) -> AnalysisResult:
         # No converter for this media type - skip
         pass
 
-    # Get annotation attributes from converters
+    # Get annotation attributes from converters for each annotation type in the dataset
     for ann_type in ann_types:
-        try:
-            ann_converter = get_forward_annotation_converter(ann_type)
-            ann_converters[ann_type] = ann_converter
-            attributes.update(ann_converter.get_schema_attributes(categories))
-        except ValueError:
-            # No converter for this annotation type - skip
-            continue
+        converter = get_forward_annotation_converter(ann_type, categories)
+        if converter is not None:
+            ann_converters[ann_type] = converter
+            attributes.update(converter.get_schema_attributes())
 
     schema = Schema(attributes=attributes)
     return AnalysisResult(
@@ -381,11 +511,9 @@ class BackwardBboxAnnotationConverter(BackwardAnnotationConverter):
                 bboxes_attr = attr_name
                 break
 
-        # Find bbox_labels field (look for tensor field with 'bbox_labels' in name or similar pattern)
+        # Find bbox_labels field (look for label field with 'bbox_labels' in name or similar pattern)
         for attr_name, attr_info in schema.attributes.items():
-            if isinstance(attr_info.annotation, TensorField) and (
-                "bbox_label" in attr_name.lower() or "label" in attr_name.lower()
-            ):
+            if isinstance(attr_info.annotation, LabelField):
                 bbox_labels_attr = attr_name
                 break
 
@@ -429,6 +557,82 @@ class BackwardBboxAnnotationConverter(BackwardAnnotationConverter):
             bbox_labels = getattr(sample, self.bbox_labels_attr, None)
             if bbox_labels is not None:
                 for label_id in bbox_labels:
+                    if label_id is not None:
+                        label_ids.add(int(label_id))
+
+        # Create label categories
+        label_categories = LabelCategories()
+        for label_id in sorted(label_ids):
+            label_categories.add(f"class_{label_id}")
+
+        return {AnnotationType.label: label_categories}
+
+
+class BackwardPolygonAnnotationConverter(BackwardAnnotationConverter):
+    """Backward converter for Polygon annotations."""
+
+    def __init__(self, polygons_attr: str, polygon_labels_attr: str | None):
+        """Initialize with the names of the polygon-related attributes."""
+        self.polygons_attr = polygons_attr
+        self.polygon_labels_attr = polygon_labels_attr
+
+    @classmethod
+    def create_from_schema(cls, schema: Schema) -> "BackwardPolygonAnnotationConverter | None":
+        """Create converter instance if schema contains polygon-related fields."""
+        polygons_attr = None
+        polygon_labels_attr = None
+
+        # Find polygon field
+        for attr_name, attr_info in schema.attributes.items():
+            if isinstance(attr_info.annotation, PolygonField):
+                polygons_attr = attr_name
+                break
+
+        # Find polygon_labels field
+        for attr_name, attr_info in schema.attributes.items():
+            if isinstance(attr_info.annotation, LabelField):
+                polygon_labels_attr = attr_name
+                break
+
+        if polygons_attr:
+            return cls(polygons_attr=polygons_attr, polygon_labels_attr=polygon_labels_attr)
+        return None
+
+    def get_annotation_type(self) -> AnnotationType:
+        return AnnotationType.polygon
+
+    def convert_to_legacy_annotations(
+        self, sample: Sample, categories: CategoriesInfo
+    ) -> list[Annotation]:
+        """Convert polygons and polygon_labels back to legacy Polygon annotations."""
+        polygons = getattr(sample, self.polygons_attr)
+        polygon_labels = (
+            getattr(sample, self.polygon_labels_attr) if self.polygon_labels_attr else None
+        )
+
+        annotations: list[Annotation] = []
+        for i in range(len(polygons)):
+            flat_coords = polygons[i].reshape(-1)
+            label = int(polygon_labels[i]) if polygon_labels is not None else None
+
+            polygon = Polygon(points=flat_coords, label=label)
+            annotations.append(polygon)
+
+        return annotations
+
+    def infer_categories(self, experimental_dataset: Dataset[Sample]) -> CategoriesInfo:
+        """Infer label categories from polygon_labels."""
+        from datumaro.components.annotation import LabelCategories
+
+        if self.polygon_labels_attr is None:
+            return {}
+
+        # Collect all unique label IDs
+        label_ids: set[int] = set()
+        for sample in experimental_dataset:
+            polygon_labels = getattr(sample, self.polygon_labels_attr, None)
+            if polygon_labels is not None:
+                for label_id in polygon_labels:
                     if label_id is not None:
                         label_ids.add(int(label_id))
 
@@ -567,6 +771,7 @@ def register_builtin_backward_converters():
 
     # Register backward annotation converters
     register_backward_annotation_converter(BackwardBboxAnnotationConverter)
+    register_backward_annotation_converter(BackwardPolygonAnnotationConverter)
 
 
 # Auto-register built-in converters when module is imported

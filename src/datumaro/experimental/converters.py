@@ -11,12 +11,22 @@ multi-field transformations.
 
 from typing import Any, Callable
 
+import cv2
 import numpy as np
 import polars as pl
 from PIL import Image
 
 from .converter_registry import AttributeSpec, Converter, converter
-from .fields import BBoxField, ImageField, ImagePathField
+from .fields import (
+    BBoxField,
+    ImageField,
+    ImageInfoField,
+    ImagePathField,
+    LabelField,
+    MaskField,
+    PolygonField,
+)
+from .type_registry import polars_to_numpy_dtype
 
 
 @converter
@@ -346,3 +356,134 @@ class BBoxCoordinateConverter(Converter):
         result_df = result_df.drop([temp_width_col, temp_height_col])
 
         return result_df
+
+
+@converter(lazy=True)
+class PolygonToMaskConverter(Converter):
+    """
+    Converts polygon annotations to rasterized masks.
+
+    Transforms polygon coordinates into binary or indexed masks using
+    OpenCV contour filling for efficient rasterization.
+    """
+
+    input_polygon: AttributeSpec[PolygonField]
+    input_labels: AttributeSpec[LabelField]
+    image_info: AttributeSpec[ImageInfoField]
+    output_mask: AttributeSpec[MaskField]
+
+    # Configuration options
+    background_index: int = 0  # Background value
+
+    def filter_output_spec(self) -> bool:
+        """
+        Configure mask output specification.
+
+        Returns:
+            True if the converter should be applied, False otherwise
+        """
+        # Configure output for mask format
+        self.output_mask = AttributeSpec(
+            name=self.output_mask.name,
+            field=MaskField(
+                semantic=self.input_polygon.field.semantic,
+                dtype=self.output_mask.field.dtype,
+            ),
+        )
+
+        return True
+
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+        """
+        Rasterize polygon coordinates into indexed masks.
+
+        Args:
+            df: DataFrame with polygon coordinates, labels, and image info
+
+        Returns:
+            DataFrame with mask data in output column
+        """
+        input_column_name = self.input_polygon.name
+        labels_column_name = self.input_labels.name
+        image_info_column_name = self.image_info.name
+        output_column_name = self.output_mask.name
+        output_shape_column_name = self.output_mask.name + "_shape"
+
+        def polygons_to_mask(
+            polygons_data: list, labels_data: list, img_info: dict
+        ) -> tuple[list[int], list[int]]:
+            """Rasterize polygons into indexed mask using OpenCV contour filling."""
+            # Extract image dimensions
+            image_width = img_info["width"]
+            image_height = img_info["height"]
+
+            # Initialize mask with background index
+            numpy_dtype = polars_to_numpy_dtype(self.output_mask.field.dtype)
+            mask = np.full(
+                shape=(image_height, image_width),
+                fill_value=self.background_index,
+                dtype=numpy_dtype,
+            )
+
+            # Rasterize each polygon
+            for i, polygon_data in enumerate(polygons_data):
+                coords = polygon_data.to_numpy()
+                class_index = labels_data[i]
+
+                # Denormalize coordinates if needed
+                if self.input_polygon.field.normalize:
+                    coords = coords.copy()
+                    coords[:, 0] *= image_width
+                    coords[:, 1] *= image_height
+
+                # Convert to OpenCV contour format
+                contour = coords.astype(np.int32)
+
+                # Fill polygon with class index
+                cv2.drawContours(
+                    mask,
+                    [contour],
+                    0,
+                    int(class_index),
+                    thickness=cv2.FILLED,
+                )
+
+            return mask.reshape(-1), [image_height, image_width]
+
+        # Apply conversion using map_batches
+        def apply_conversion_batch(batch_df: pl.DataFrame) -> pl.DataFrame:
+            """Apply polygon-to-mask conversion for a batch."""
+            batch_polygons = batch_df.struct["polygons"]
+            batch_labels = batch_df.struct["labels"]
+            batch_img_infos = batch_df.struct["img_info"]
+
+            results_batch_polygons = []
+            results_batch_shape = []
+            for polygons, labels, img_infos in zip(batch_polygons, batch_labels, batch_img_infos):
+                mask_data, shape_data = polygons_to_mask(polygons, labels, img_infos)
+                results_batch_polygons.append(pl.Series(mask_data))
+                results_batch_shape.append(shape_data)
+
+            return pl.struct(
+                pl.Series(results_batch_polygons).alias("mask"),
+                pl.Series(results_batch_shape, dtype=pl.List(pl.Int32)).alias("shape"),
+                eager=True,
+            )
+
+        mask_data = pl.struct(
+            [
+                pl.col(input_column_name).alias("polygons"),
+                pl.col(labels_column_name).alias("labels"),
+                pl.col(image_info_column_name).alias("img_info"),
+            ]
+        ).map_batches(
+            apply_conversion_batch,
+            return_dtype=pl.Struct({"mask": pl.List(pl.UInt8), "shape": pl.List(pl.Int32)}),
+        )
+
+        return df.with_columns(
+            [
+                mask_data.struct.field("mask").alias(output_column_name),
+                mask_data.struct.field("shape").alias(output_shape_column_name),
+            ]
+        )

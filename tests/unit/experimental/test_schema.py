@@ -15,11 +15,13 @@ from datumaro.experimental.fields import (
     ImageInfo,
     ImageInfoField,
     ImagePathField,
+    PolygonField,
     TensorField,
     bbox_field,
     image_field,
     image_info_field,
     image_path_field,
+    polygon_field,
     tensor_field,
 )
 from datumaro.experimental.schema import AttributeInfo, Schema, Semantic
@@ -292,3 +294,56 @@ def test_schema_duplicate_field_type_assertion():
     assert len(schema.attributes) == 2
     assert "left_image" in schema.attributes
     assert "right_image" in schema.attributes
+
+
+def test_polygon_field_creation():
+    """Test PolygonField creation and properties."""
+    field = polygon_field(dtype=pl.Float32, format="xy", normalize=True, semantic=Semantic.Default)
+
+    assert isinstance(field, PolygonField)
+    assert field.dtype == pl.Float32
+    assert field.format == "xy"
+    assert field.normalize is True
+    assert field.semantic == Semantic.Default
+
+
+def test_polygon_field_creation_defaults():
+    """Test PolygonField creation with default values."""
+    field = polygon_field(dtype=pl.Float32)
+
+    assert isinstance(field, PolygonField)
+    assert field.dtype == pl.Float32
+    assert field.format == "xy"  # Default format
+    assert field.normalize is False  # Default normalization
+    assert field.semantic == Semantic.Default  # Default semantic
+
+
+def test_polygon_field_polars_schema():
+    """Test PolygonField Polars schema generation."""
+    field = polygon_field(dtype=pl.Float32)
+    schema = field.to_polars_schema("polygon")
+
+    expected = {"polygon": pl.List(pl.List(pl.Array(pl.Float32, 2)))}
+    assert schema == expected
+
+
+def test_polygon_field_polars_conversion():
+    """Test PolygonField to/from Polars conversion with simple polygon."""
+    field = cast(PolygonField, polygon_field(dtype=pl.Float32, normalize=False))
+    # Triangle: (0,0) -> (10,0) -> (5,10) -> (0,0)
+    test_polygon_1 = np.array([[0.0, 0.0], [10.0, 0.0], [5.0, 10.0]], dtype=np.float32)
+    test_polygon_2 = np.array([[2.0, 2.0], [10.0, 2.0], [5.0, 10.0], [6.0, 11.0]], dtype=np.float32)
+    polygons = np.array([test_polygon_1, test_polygon_2], dtype=object)
+
+    # Test to_polars
+    polars_data = field.to_polars("polygon", polygons)
+    assert "polygon" in polars_data
+    assert isinstance(polars_data["polygon"], pl.Series)
+
+    # Create DataFrame and test from_polars
+    df = pl.DataFrame(polars_data)
+    reconstructed = cast(np.ndarray[Any, Any], field.from_polars("polygon", 0, df, np.ndarray))
+
+    assert len(reconstructed) == 2
+    assert np.all(reconstructed[0] == test_polygon_1)
+    assert np.all(reconstructed[1] == test_polygon_2)
