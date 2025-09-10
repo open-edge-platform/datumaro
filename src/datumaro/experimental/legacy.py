@@ -11,7 +11,7 @@ experimental dataset format with automatic schema inference and type conversion.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Type, cast
+from typing import Any, Optional, Type, cast
 
 import numpy as np
 import polars as pl
@@ -19,15 +19,18 @@ import polars as pl
 from datumaro.components.annotation import Annotation, AnnotationType, Bbox, Polygon
 from datumaro.components.dataset import Dataset as LegacyDataset
 from datumaro.components.dataset_base import CategoriesInfo, DatasetItem
-from datumaro.components.media import FromFileMixin, Image, MediaElement
+from datumaro.components.media import FromDataMixin, FromFileMixin, Image, MediaElement
 
 from .dataset import Dataset, Sample
 from .fields import (
     BBoxField,
+    ImageInfo,
     ImagePathField,
     LabelField,
     PolygonField,
     bbox_field,
+    image_bytes_field,
+    image_info_field,
     image_path_field,
     label_field,
     polygon_field,
@@ -37,6 +40,18 @@ from .schema import AttributeInfo, Schema
 
 class ForwardMediaConverter(ABC):
     """Base class for forward media type converters."""
+
+    @classmethod
+    @abstractmethod
+    def get_supported_media_types(cls) -> list[Type[MediaElement[Any]]]:
+        """Return list of media types this converter can handle."""
+        pass
+
+    @classmethod
+    @abstractmethod
+    def create(cls, dataset: LegacyDataset) -> "ForwardMediaConverter | None":
+        """Create converter instance if dataset is supported, None otherwise."""
+        pass
 
     @abstractmethod
     def get_schema_attributes(self) -> dict[str, AttributeInfo]:
@@ -80,15 +95,14 @@ class ForwardAnnotationConverter(ABC):
 
 
 # Global registries
-_media_converters: dict[Type[MediaElement[Any]], ForwardMediaConverter] = {}
+_media_converter_classes: dict[Type[MediaElement[Any]], Type[ForwardMediaConverter]] = {}
 _annotation_converters: dict[AnnotationType, Type[ForwardAnnotationConverter]] = {}
 
 
-def register_forward_media_converter(
-    media_type: Type[MediaElement[Any]], converter: ForwardMediaConverter
-) -> None:
-    """Register a forward converter for a media type."""
-    _media_converters[media_type] = converter
+def register_forward_media_converter(converter_class: Type[ForwardMediaConverter]) -> None:
+    """Register a forward converter class for media types it supports."""
+    for media_type in converter_class.get_supported_media_types():
+        _media_converter_classes[media_type] = converter_class
 
 
 def register_forward_annotation_converter(
@@ -99,12 +113,17 @@ def register_forward_annotation_converter(
     _annotation_converters[annotation_type] = converter_class
 
 
-def get_forward_media_converter(media_type: Type[MediaElement[Any]]) -> ForwardMediaConverter:
-    """Get forward converter for a media type."""
-    for registered_type, converter in _media_converters.items():
-        if issubclass(media_type, registered_type):
-            return converter
-    raise ValueError(f"No converter registered for media type: {media_type}")
+def get_forward_media_converter(dataset: LegacyDataset) -> ForwardMediaConverter | None:
+    """Get forward converter for a dataset by trying registered converters."""
+    # Get the dataset's media type
+    media_type = cast(Type[MediaElement[Any]], dataset.media_type())
+
+    # Try converter registered for this specific media type
+    if media_type in _media_converter_classes:
+        converter_class = _media_converter_classes[media_type]
+        return converter_class.create(dataset)
+
+    return None
 
 
 def get_forward_annotation_converter(
@@ -118,20 +137,82 @@ def get_forward_annotation_converter(
 
 
 class ForwardImageMediaConverter(ForwardMediaConverter):
-    """Forward converter for Image media type."""
+    """Forward converter for Image media type supporting both file paths and byte data."""
+
+    def __init__(self, media_mixin: type, has_image_info: bool):
+        """Initialize converter with format preference and image info availability."""
+        self.media_mixin = media_mixin
+        self.has_image_info = has_image_info
+
+    @classmethod
+    def get_supported_media_types(cls) -> list[Type[MediaElement[Any]]]:
+        """Return list of media types this converter can handle."""
+        return [Image]
+
+    @classmethod
+    def create(cls, dataset: LegacyDataset) -> "ForwardImageMediaConverter | None":
+        """Create converter instance, detecting whether to use paths or bytes."""
+        found_media_type: Optional[type] = None
+        has_image_info = True  # Assume all images have size until proven otherwise
+
+        for item in dataset:
+            if isinstance(item.media, Image):
+                media_type = type(item.media)
+                if found_media_type is not None and media_type != found_media_type:
+                    raise ValueError(
+                        f"The dataset has a mix of different image media types: "
+                        f"{found_media_type} and {media_type}. This is not supported by the converter."
+                    )
+
+                found_media_type = media_type
+
+                # Check if this image has size info
+                if not item.media.has_size:
+                    has_image_info = False
+
+        if found_media_type is None:
+            return None
+
+        if issubclass(found_media_type, FromDataMixin):
+            media_mixin = FromDataMixin
+        elif issubclass(found_media_type, FromFileMixin):
+            media_mixin = FromFileMixin
+        else:
+            raise ValueError(f"Unknown media mixin for {found_media_type}.")
+
+        return cls(media_mixin=media_mixin, has_image_info=has_image_info)
 
     def get_schema_attributes(self) -> dict[str, AttributeInfo]:
-        return {"image_path": AttributeInfo(type=str, annotation=image_path_field())}
+        attributes: dict[str, AttributeInfo] = {}
+
+        if self.media_mixin == FromDataMixin:
+            attributes["image_bytes"] = AttributeInfo(type=bytes, annotation=image_bytes_field())
+        elif self.media_mixin == FromFileMixin:
+            attributes["image_path"] = AttributeInfo(type=str, annotation=image_path_field())
+        else:
+            raise RuntimeError(f"Media mixin not implemented: {self.media_mixin}")
+
+        # Add image info field if all images have size
+        if self.has_image_info:
+            attributes["image_info"] = AttributeInfo(type=ImageInfo, annotation=image_info_field())
+
+        return attributes
 
     def convert_item_media(self, item: DatasetItem) -> dict[str, Any]:
         result: dict[str, Any] = {}
 
         if isinstance(item.media, Image):  # pyright: ignore[reportUnknownMemberType]
-            if isinstance(item.media, FromFileMixin):
-                # Handle image path
+            if self.media_mixin == FromDataMixin:
+                result["image_bytes"] = item.media.data
+            elif self.media_mixin == FromFileMixin:
                 result["image_path"] = item.media.path
             else:
-                raise ValueError(f"Unsupported media type for Image: {type(item.media)}")
+                raise RuntimeError(f"Media mixin not implemented: {self.media_mixin}")
+
+            # Add image info if available
+            if self.has_image_info and item.media.has_size:
+                height, width = item.media.size  # size returns (H, W)
+                result["image_info"] = ImageInfo(width=width, height=height)
 
         return result
 
@@ -283,7 +364,7 @@ def register_builtin_forward_converters():
     """Register built-in forward converters for common types."""
 
     # Media converters
-    register_forward_media_converter(Image, ForwardImageMediaConverter())
+    register_forward_media_converter(ForwardImageMediaConverter)
 
     # Annotation converters
     register_forward_annotation_converter(ForwardBboxAnnotationConverter)
@@ -312,9 +393,6 @@ def analyze_legacy_dataset(legacy_dataset: LegacyDataset) -> AnalysisResult:
         AnalysisResult containing the inferred schema and converters
     """
     categories = legacy_dataset.categories()
-    media_type = cast(
-        Type[MediaElement[Any]], legacy_dataset.media_type()
-    )  # pyright: ignore[reportUnknownMemberType]
     ann_types = legacy_dataset.ann_types()
 
     attributes: dict[str, AttributeInfo] = {}
@@ -322,12 +400,9 @@ def analyze_legacy_dataset(legacy_dataset: LegacyDataset) -> AnalysisResult:
     ann_converters: dict[AnnotationType, ForwardAnnotationConverter] = {}
 
     # Get media attributes from converter
-    try:
-        media_converter = get_forward_media_converter(media_type)
+    media_converter = get_forward_media_converter(legacy_dataset)
+    if media_converter is not None:
         attributes.update(media_converter.get_schema_attributes())
-    except ValueError:
-        # No converter for this media type - skip
-        pass
 
     # Get annotation attributes from converters for each annotation type in the dataset
     for ann_type in ann_types:

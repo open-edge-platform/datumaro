@@ -10,15 +10,18 @@ learning and computer vision applications.
 """
 
 from dataclasses import dataclass
-from typing import Any, TypeVar
+from typing import Any, TypeVar, Union
 
 import numpy as np
 import polars as pl
+from typing_extensions import TypeAlias
 
 from .schema import Field, Semantic
 from .type_registry import from_polars_data, to_numpy
 
 T = TypeVar("T")
+
+PolarsDataType: TypeAlias = Union[type[pl.DataType], pl.DataType]
 
 
 @dataclass(frozen=True)
@@ -35,7 +38,7 @@ class TensorField(Field):
     """
 
     semantic: Semantic
-    dtype: Any
+    dtype: PolarsDataType = pl.UInt8()
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Generate Polars schema with separate columns for data and shape."""
@@ -83,7 +86,7 @@ class ImageField(TensorField):
         format: Image color format (e.g., "RGB", "BGR", "RGBA")
     """
 
-    format: str
+    format: str = "RGB"
 
 
 def image_field(dtype: Any, format: str = "RGB", semantic: Semantic = Semantic.Default) -> Any:
@@ -102,6 +105,51 @@ def image_field(dtype: Any, format: str = "RGB", semantic: Semantic = Semantic.D
 
 
 @dataclass(frozen=True)
+class ImageBytesField(Field):
+    """
+    Represents an image field stored as bytes data.
+
+    This field stores image data as encoded bytes (PNG, JPEG, BMP, etc.) and
+    provides conversion capabilities to decode them into numpy arrays or encode
+    numpy arrays into bytes format.
+
+    Attributes:
+        semantic: Semantic tags describing the image's purpose
+        format: Image encoding format (e.g., "PNG", "JPEG", "BMP"). If None,
+                auto-detects format when decoding or defaults to PNG when encoding.
+    """
+
+    semantic: Semantic
+
+    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+        """Generate schema for image bytes as binary data."""
+        return {name: pl.Binary()}
+
+    def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
+        """Convert image data to bytes and store in Polars series."""
+        numpy_value = to_numpy(value, pl.Binary)
+        return {name: pl.Series(name, [bytes(numpy_value)])}
+
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+        """Reconstruct image from bytes data."""
+        bytes_data = df[name][row_index]
+        return from_polars_data(bytes_data, target_type)  # type: ignore
+
+
+def image_bytes_field(semantic: Semantic = Semantic.Default) -> Any:
+    """
+    Create an ImageBytesField instance with the specified parameters.
+
+    Args:
+        semantic: Semantic tags describing the image's purpose (optional)
+
+    Returns:
+        ImageBytesField instance configured with the given parameters
+    """
+    return ImageBytesField(semantic=semantic)
+
+
+@dataclass(frozen=True)
 class BBoxField(Field):
     """
     Represents a bounding box field with format and normalization options.
@@ -117,9 +165,9 @@ class BBoxField(Field):
     """
 
     semantic: Semantic
-    dtype: Any
-    format: str
-    normalize: bool
+    dtype: PolarsDataType = pl.Float32()
+    format: str = "x1y1x2y2"
+    normalize: bool = False
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Generate schema for bounding box as list of 4-element arrays."""
@@ -260,7 +308,7 @@ class LabelField(Field):
     """
 
     semantic: Semantic
-    dtype: Any
+    dtype: PolarsDataType = pl.UInt8()
     multi_label: bool = False  # Flag to indicate if this field should handle multi-labels
     is_list: bool = False
 
@@ -373,9 +421,9 @@ class PolygonField(Field):
     """
 
     semantic: Semantic
-    dtype: Any
-    format: str
-    normalize: bool
+    dtype: PolarsDataType = pl.Float32()
+    format: str = "xy"
+    normalize: bool = False
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Generate schema for polygon as list of coordinate values."""
@@ -431,7 +479,7 @@ class MaskField(Field):
     """
 
     semantic: Semantic
-    dtype: Any
+    dtype: PolarsDataType = pl.UInt8()
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Generate Polars schema with separate columns for data and shape."""

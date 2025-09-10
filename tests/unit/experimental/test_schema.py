@@ -11,6 +11,7 @@ import pytest
 from datumaro.experimental.dataset import Sample
 from datumaro.experimental.fields import (
     BBoxField,
+    ImageBytesField,
     ImageField,
     ImageInfo,
     ImageInfoField,
@@ -18,6 +19,7 @@ from datumaro.experimental.fields import (
     PolygonField,
     TensorField,
     bbox_field,
+    image_bytes_field,
     image_field,
     image_info_field,
     image_path_field,
@@ -25,6 +27,7 @@ from datumaro.experimental.fields import (
     tensor_field,
 )
 from datumaro.experimental.schema import AttributeInfo, Schema, Semantic
+from datumaro.util.image import decode_image, encode_image
 
 
 def test_tensor_field_creation():
@@ -83,6 +86,60 @@ def test_image_field_polars_schema():
 
     expected = {"image": pl.List(pl.UInt8()), "image_shape": pl.List(pl.Int32())}
     assert schema == expected
+
+
+def test_image_bytes_field_creation():
+    """Test ImageBytesField creation and properties."""
+    field = image_bytes_field(semantic=Semantic.Left)
+
+    assert isinstance(field, ImageBytesField)
+    assert field.semantic == Semantic.Left
+
+
+def test_image_bytes_field_polars_schema():
+    """Test ImageBytesField Polars schema generation."""
+    field = image_bytes_field()
+    schema = field.to_polars_schema("image_bytes")
+
+    expected = {"image_bytes": pl.Binary()}
+    assert schema == expected
+
+
+def test_image_bytes_field_polars_conversion_with_numpy():
+    """Test ImageBytesField to/from Polars conversion with numpy arrays."""
+    field = image_bytes_field()
+    image_bytes = np.array(np.random.bytes(30))
+
+    # Test to_polars with numpy array
+    polars_data = field.to_polars("image_bytes", image_bytes)
+    assert "image_bytes" in polars_data
+    assert isinstance(polars_data["image_bytes"][0], bytes)
+    assert len(polars_data["image_bytes"][0]) > 0
+
+    # Create DataFrame and test from_polars
+    df = pl.DataFrame(polars_data)
+    reconstructed = field.from_polars("image_bytes", 0, df, np.ndarray)
+
+    assert isinstance(reconstructed, np.ndarray)
+    assert np.all(reconstructed == image_bytes)
+
+
+def test_image_bytes_field_polars_conversion_with_bytes():
+    """Test ImageBytesField to/from Polars conversion with direct bytes."""
+    field = image_bytes_field()
+    image_bytes = np.array(np.random.bytes(30))
+
+    # Test to_polars with bytes
+    polars_data = field.to_polars("image_bytes", image_bytes)
+    assert "image_bytes" in polars_data
+    assert polars_data["image_bytes"][0] == image_bytes
+
+    # Create DataFrame and test from_polars
+    df = pl.DataFrame(polars_data)
+    reconstructed = field.from_polars("image_bytes", 0, df, bytes)
+
+    assert isinstance(reconstructed, bytes)
+    assert reconstructed == image_bytes
 
 
 def test_bbox_field_creation():
