@@ -9,6 +9,7 @@ import numpy as np
 import polars as pl
 import pytest
 
+from datumaro.experimental.categories import LabelCategories, MaskCategories
 from datumaro.experimental.converter_registry import (
     AttributeRemapperConverter,
     AttributeSpec,
@@ -349,7 +350,7 @@ def test_find_conversion_path():
     )
 
     # This should find a conversion path (UInt8 -> Float32)
-    path = find_conversion_path(source_schema, target_schema)
+    path, _ = find_conversion_path(source_schema, target_schema)
     assert len(path.batch_converters) == 2
     assert type(path.batch_converters[0]) is UInt8ToFloat32Converter
     assert type(path.batch_converters[1]) is AttributeRemapperConverter
@@ -381,7 +382,7 @@ def test_convert_dataframe():
     )
 
     # Get conversion path and apply it manually
-    conversion_paths = find_conversion_path(source_schema, target_schema)
+    conversion_paths, _ = find_conversion_path(source_schema, target_schema)
 
     # Apply batch converters first
     result_df = df
@@ -480,7 +481,7 @@ def test_multiple_converter_chaining():
     # 2. UInt8 -> Float32 (dtype)
     # 3. absolute -> normalized bbox (with image as auxiliary)
 
-    path = find_conversion_path(source_schema, target_schema)
+    path, _ = find_conversion_path(source_schema, target_schema)
     # If successful, should have multiple steps
     assert len(path.batch_converters) == 4
     assert type(path.batch_converters[0]) is BBoxCoordinateConverter
@@ -544,7 +545,7 @@ def test_astar_direct_conversion():
     )
 
     # Test finding conversion path
-    path = find_conversion_path(from_schema, to_schema)
+    path, _ = find_conversion_path(from_schema, to_schema)
     assert len(path.batch_converters) == 2
     assert type(path.batch_converters[0]) is ExtractImageSizeConverter
     assert type(path.batch_converters[1]) is AttributeRemapperConverter
@@ -648,7 +649,7 @@ def test_astar_chained_conversion():
     )
 
     # Test finding conversion path
-    path = find_conversion_path(from_schema, to_schema)
+    path, _ = find_conversion_path(from_schema, to_schema)
     # Should need 2 converters: ImageField -> ImageSizeField, then NormalizedBbox -> AbsoluteBbox
     assert len(path.batch_converters) == 3
     assert type(path.batch_converters[0]) is ExtractImageSizeChainConverter
@@ -675,7 +676,7 @@ def test_astar_no_conversion_needed():
         }
     )
 
-    path = find_conversion_path(schema, schema)
+    path, _ = find_conversion_path(schema, schema)
     total_converters = len(path.batch_converters) + len(path.lazy_converters)
     assert (
         total_converters == 0
@@ -789,7 +790,7 @@ def test_optimal_path_selection():
         }
     )
 
-    path = find_conversion_path(from_schema, to_schema)
+    path, _ = find_conversion_path(from_schema, to_schema)
     assert len(path.batch_converters) == 2
     assert type(path.batch_converters[0]) is AToCDirectConverter
     assert type(path.batch_converters[1]) is AttributeRemapperConverter
@@ -825,7 +826,7 @@ def test_generator_converter():
         }
     )
 
-    path = find_conversion_path(from_schema, to_schema)
+    path, _ = find_conversion_path(from_schema, to_schema)
     assert len(path.batch_converters) == 2
     assert type(path.batch_converters[0]) is GenerateBConverter
     assert type(path.batch_converters[1]) is AttributeRemapperConverter
@@ -884,7 +885,7 @@ def test_multiple_output_converter():
         }
     )
 
-    path = find_conversion_path(from_schema, to_schema)
+    path, _ = find_conversion_path(from_schema, to_schema)
     assert len(path.batch_converters) == 2
     assert type(path.batch_converters[0]) is AToMultiConverter
     assert type(path.batch_converters[1]) is AttributeRemapperConverter
@@ -936,7 +937,7 @@ def test_partial_schema_matching():
         }
     )
 
-    path = find_conversion_path(from_schema, to_schema)
+    path, _ = find_conversion_path(from_schema, to_schema)
     assert len(path.batch_converters) == 2
     assert type(path.batch_converters[0]) is AToCPartialConverter
     assert type(path.batch_converters[1]) is AttributeRemapperConverter
@@ -965,7 +966,7 @@ def test_attribute_renaming():
     )
 
     # Find conversion path - should include a remapper converter
-    path = find_conversion_path(source_schema, target_schema)
+    path, _ = find_conversion_path(source_schema, target_schema)
 
     # Should have exactly one batch converter for renaming
     assert len(path.batch_converters) == 1
@@ -1020,7 +1021,7 @@ def test_attribute_deletion():
     )
 
     # Find conversion path - should include a remapper converter that only keeps image
-    path = find_conversion_path(source_schema, target_schema)
+    path, _ = find_conversion_path(source_schema, target_schema)
 
     # Should have exactly one batch converter for selection/deletion
     assert len(path.batch_converters) == 1
@@ -1081,7 +1082,7 @@ def test_combined_rename_and_delete():
     )
 
     # Find conversion path - should include a single remapper converter that handles both operations
-    path = find_conversion_path(source_schema, target_schema)
+    path, _ = find_conversion_path(source_schema, target_schema)
 
     # Should have exactly one batch converter that handles both renaming and deletion
     assert len(path.batch_converters) == 1
@@ -1170,7 +1171,7 @@ def test_polygon_to_mask_converter():
     df = pl.DataFrame(
         {
             "polygons": [polygon_series],  # List of three polygons
-            "labels": [[1, 2, 3]],  # Corresponding labels for each polygon
+            "labels": [[0, 1, 2]],  # Corresponding labels for each polygon
             "image_info": [{"width": 100, "height": 100}],  # Image dimensions
         }
     )
@@ -1195,7 +1196,7 @@ def test_polygon_to_mask_converter():
     )
     setattr(
         converter_instance,
-        "image_info",
+        "input_image_info",
         AttributeSpec(name="image_info", field=image_info_field),
     )
     setattr(
@@ -1227,13 +1228,13 @@ def test_polygon_to_mask_converter():
     # Triangle should have label 1, rectangle should have label 2, pentagon should have label 3
     # Background should be 0
 
-    # Check that triangle area has label 1
+    # Check that triangle area has label 0 (stored as mask value 1)
     assert mask[15, 20] == 1  # Point inside triangle
 
-    # Check that rectangle area has label 2
+    # Check that rectangle area has label 1 (stored as mask value 2)
     assert mask[50, 50] == 2  # Point inside rectangle
 
-    # Check that pentagon area has label 3
+    # Check that pentagon area has label 2 (stored as mask value 3)
     assert mask[20, 75] == 3  # Point inside pentagon
 
     # Check background area has label 0
@@ -1285,7 +1286,9 @@ def test_polygon_to_mask_converter_normalized():
         converter_instance, "input_labels", AttributeSpec(name="labels", field=input_labels_field)
     )
     setattr(
-        converter_instance, "image_info", AttributeSpec(name="image_info", field=image_info_field)
+        converter_instance,
+        "input_image_info",
+        AttributeSpec(name="image_info", field=image_info_field),
     )
     setattr(converter_instance, "output_mask", AttributeSpec(name="mask", field=output_mask_field))
 
@@ -1297,10 +1300,74 @@ def test_polygon_to_mask_converter_normalized():
     mask_shape = result_df["mask_shape"][0]
     mask = mask_data.reshape(mask_shape)
 
-    # Check that polygon was filled with label 5
+    # Check that polygon was filled with label 5 (stored as mask value 6)
     # Normalized coordinates should be scaled: 0.2 * 100 = 20, 0.1 * 100 = 10, etc.
-    assert mask[15, 20] == 5  # Point inside the scaled triangle
+    assert mask[15, 20] == 6  # Point inside the scaled triangle (5+1=6)
     assert mask[5, 5] == 0  # Background point
 
-    # Verify the label is present in the mask
-    assert 5 in np.unique(mask)
+
+def test_find_conversion_path_inferred_categories():
+    """Test that find_conversion_path returns inferred categories."""
+
+    # Create test data for polygon to mask conversion
+    df = pl.DataFrame(
+        {
+            "polygons": [[[10, 20, 30, 25, 20, 40]]],  # Triangle coordinates
+            "labels": [[2]],  # Label 2
+            "image_info": [{"width": 100, "height": 100}],
+        },
+        schema=pl.Schema(
+            {
+                "polygons": pl.List(pl.List(pl.Float32)),
+                "labels": pl.List(pl.Int32),
+                "image_info": pl.Struct({"width": pl.Int32, "height": pl.Int32}),
+            }
+        ),
+    )
+
+    # Create source schema with label categories
+    label_categories = LabelCategories(labels=["cat", "dog", "bird"])
+    source_schema = Schema(
+        attributes={
+            "polygons": AttributeInfo(
+                type=list,
+                annotation=PolygonField(dtype=pl.Float32, semantic=Semantic.Default),
+                categories=None,
+            ),
+            "labels": AttributeInfo(
+                type=list,
+                annotation=LabelField(semantic=Semantic.Default),
+                categories=label_categories,
+            ),
+            "image_info": AttributeInfo(
+                type=dict, annotation=ImageInfoField(semantic=Semantic.Default)
+            ),
+        }
+    )
+
+    # Create target schema (polygon to mask conversion)
+    target_schema = Schema(
+        attributes={
+            "mask": AttributeInfo(
+                type=np.ndarray, annotation=MaskField(dtype=pl.UInt8, semantic=Semantic.Default)
+            )
+        }
+    )
+
+    # Get conversion path and check inferred categories
+    conversion_paths, inferred_categories = find_conversion_path(source_schema, target_schema)
+
+    # Should have converters for polygon to mask conversion
+    total_converters = len(conversion_paths.batch_converters) + len(
+        conversion_paths.lazy_converters
+    )
+    assert total_converters > 0
+
+    # Check that mask categories were inferred
+    assert "mask" in inferred_categories
+    mask_categories = inferred_categories["mask"]
+    assert isinstance(mask_categories, MaskCategories)
+
+    # Check that the mask categories include background + original labels
+    expected_labels = ["background", "cat", "dog", "bird"]
+    assert mask_categories.labels == expected_labels
