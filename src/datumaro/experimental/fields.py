@@ -10,13 +10,11 @@ learning and computer vision applications.
 """
 
 from dataclasses import dataclass
-from typing import Any, Optional, TypeVar, Union
+from typing import Any, TypeVar, Union
 
 import numpy as np
 import polars as pl
 from typing_extensions import TypeAlias
-
-from datumaro.util.image import decode_image, encode_image
 
 from .schema import Field, Semantic
 from .type_registry import from_polars_data, to_numpy
@@ -90,21 +88,6 @@ class ImageField(TensorField):
 
     format: str = "RGB"
 
-    def convert_to_image_bytes_field(
-        self, encoding_format: Optional[str] = None
-    ) -> "ImageBytesField":
-        """
-        Convert this ImageField to an ImageBytesField.
-
-        Args:
-            encoding_format: Image encoding format for bytes storage. If None,
-                           uses auto-detection/PNG default.
-
-        Returns:
-            ImageBytesField instance with the same semantic tags
-        """
-        return ImageBytesField(semantic=self.semantic, format=encoding_format)
-
 
 def image_field(dtype: Any, format: str = "RGB", semantic: Semantic = Semantic.Default) -> Any:
     """
@@ -137,14 +120,6 @@ class ImageBytesField(Field):
     """
 
     semantic: Semantic
-    format: Optional[str] = None
-
-    # Format detection magic numbers (similar to ImageFromBytes)
-    _FORMAT_MAGICS = (
-        (b"\x89PNG\r\n\x1a\n", "PNG"),
-        (b"\xff\xd8\xff", "JPEG"),
-        (b"BM", "BMP"),
-    )
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Generate schema for image bytes as binary data."""
@@ -152,101 +127,26 @@ class ImageBytesField(Field):
 
     def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
         """Convert image data to bytes and store in Polars series."""
-        if isinstance(value, bytes):
-            # Already bytes, store directly
-            bytes_data = value
-        elif isinstance(value, np.ndarray):
-            # Encode numpy array to bytes using specified format or default to PNG
-            encoding_format = self.format or "PNG"
-            ext = f".{encoding_format.lower()}"
-            bytes_data = encode_image(value, ext)
-        elif hasattr(value, "data") and isinstance(value.data, bytes):
-            # Handle ImageFromBytes-like objects
-            bytes_data = value.data
-        elif hasattr(value, "data") and isinstance(value.data, np.ndarray):
-            # Handle Image objects with numpy data
-            encoding_format = self.format or "PNG"
-            ext = f".{encoding_format.lower()}"
-            bytes_data = encode_image(value.data, ext)
-        else:
-            raise TypeError(f"Unsupported type for ImageBytesField: {type(value)}")
-
-        return {name: pl.Series(name, [bytes_data])}
+        numpy_value = to_numpy(value, pl.Binary)
+        return {name: pl.Series(name, [bytes(numpy_value)])}
 
     def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
         """Reconstruct image from bytes data."""
         bytes_data = df[name][row_index]
-
-        if target_type is bytes:
-            return bytes_data  # type: ignore
-        elif target_type is np.ndarray or hasattr(target_type, "__origin__"):
-            # If format is None, try to auto-detect format from bytes
-            if self.format is None:
-                detected_format = self._guess_format(bytes_data)
-                if detected_format is None:
-                    # If detection fails, still try to decode (decode_image handles various formats)
-                    pass
-
-            # Decode bytes to numpy array
-            return decode_image(bytes_data)  # type: ignore
-        else:
-            return from_polars_data(bytes_data, target_type)  # type: ignore
-
-    @classmethod
-    def _guess_format(cls, data: bytes) -> Optional[str]:
-        """Guess image format from bytes magic numbers."""
-        return next(
-            (fmt for magic, fmt in cls._FORMAT_MAGICS if data.startswith(magic)),
-            None,
-        )
-
-    def get_effective_format(self, data: Optional[bytes] = None) -> str:
-        """
-        Get the effective format for this field.
-
-        Args:
-            data: Optional bytes data to auto-detect format from
-
-        Returns:
-            The format to use - either the specified format, auto-detected format, or PNG as default
-        """
-        if self.format is not None:
-            return self.format
-
-        if data is not None:
-            detected = self._guess_format(data)
-            if detected is not None:
-                return detected
-
-        # Default to PNG if no format specified and no detection possible
-        return "PNG"
-
-    def convert_to_image_field(self, dtype: Any = pl.UInt8()) -> "ImageField":
-        """
-        Convert this ImageBytesField to an ImageField.
-
-        Args:
-            dtype: Polars data type for the resulting tensor field
-
-        Returns:
-            ImageField instance with the same semantic tags
-        """
-        return ImageField(semantic=self.semantic, dtype=dtype, format="RGB")
+        return from_polars_data(bytes_data, target_type)  # type: ignore
 
 
-def image_bytes_field(format: Optional[str] = None, semantic: Semantic = Semantic.Default) -> Any:
+def image_bytes_field(semantic: Semantic = Semantic.Default) -> Any:
     """
     Create an ImageBytesField instance with the specified parameters.
 
     Args:
-        format: Image encoding format (e.g., "PNG", "JPEG", "BMP"). If None,
-                auto-detects format when decoding or defaults to PNG when encoding.
         semantic: Semantic tags describing the image's purpose (optional)
 
     Returns:
         ImageBytesField instance configured with the given parameters
     """
-    return ImageBytesField(semantic=semantic, format=format)
+    return ImageBytesField(semantic=semantic)
 
 
 @dataclass(frozen=True)

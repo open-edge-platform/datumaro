@@ -57,6 +57,8 @@ def polars_to_numpy_dtype(polars_dtype: pl.DataType) -> np.dtype[Any]:
         return np.dtype(np.uint64)
     elif polars_dtype == pl.Boolean:
         return np.dtype(np.bool_)
+    elif polars_dtype == pl.Binary:
+        return np.dtype(np.bytes_)
     else:
         raise TypeError(f"No NumPy dtype mapping for Polars dtype: {polars_dtype}")
 
@@ -64,6 +66,7 @@ def polars_to_numpy_dtype(polars_dtype: pl.DataType) -> np.dtype[Any]:
 # Type conversion registry - extensible at runtime
 _to_numpy_converters: dict[type, Callable[[Any], np.ndarray[Any, Any]]] = {
     np.ndarray: lambda x: x,
+    bytes: lambda x: np.array(x),
 }
 
 _from_polars_converters: dict[type, Callable[[Any], Any]] = {
@@ -71,6 +74,7 @@ _from_polars_converters: dict[type, Callable[[Any], Any]] = {
     int: lambda x: int(x),
     float: lambda x: float(x),
     str: lambda x: str(x),
+    bytes: lambda x: bytes(x),
 }
 
 
