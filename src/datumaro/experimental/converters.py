@@ -16,6 +16,9 @@ import numpy as np
 import polars as pl
 from PIL import Image
 
+from datumaro.util.mask_tools import generate_colormap
+
+from .categories import LabelCategories, MaskCategories, RgbColor
 from .converter_registry import AttributeSpec, Converter, converter
 from .fields import (
     BBoxField,
@@ -468,7 +471,7 @@ class PolygonToMaskConverter(Converter):
 
     input_polygon: AttributeSpec[PolygonField]
     input_labels: AttributeSpec[LabelField]
-    image_info: AttributeSpec[ImageInfoField]
+    input_image_info: AttributeSpec[ImageInfoField]
     output_mask: AttributeSpec[MaskField]
 
     # Configuration options
@@ -481,6 +484,27 @@ class PolygonToMaskConverter(Converter):
         Returns:
             True if the converter should be applied, False otherwise
         """
+
+        # Copy label categories and create mask categories
+        mask_categories = None
+        if self.input_labels.categories is not None:
+            # Create mask categories based on label categories
+            if isinstance(self.input_labels.categories, LabelCategories):
+                # Create a colormap for mask categories
+                # Generate colors for all labels plus background
+                num_classes = len(self.input_labels.categories) + 1  # +1 for background
+                colormap_dict = generate_colormap(num_classes, include_background=True)
+
+                # Create mask categories with the generated colormap
+                mask_categories = MaskCategories()
+                for index, color in colormap_dict.items():
+                    if isinstance(color, tuple):
+                        mask_categories.colormap[index] = RgbColor(*color)
+                    else:
+                        mask_categories.colormap[index] = color
+
+                mask_categories.labels = ["background"] + self.input_labels.categories.labels
+
         # Configure output for mask format
         self.output_mask = AttributeSpec(
             name=self.output_mask.name,
@@ -488,6 +512,7 @@ class PolygonToMaskConverter(Converter):
                 semantic=self.input_polygon.field.semantic,
                 dtype=self.output_mask.field.dtype,
             ),
+            categories=mask_categories,
         )
 
         return True
@@ -504,14 +529,19 @@ class PolygonToMaskConverter(Converter):
         """
         input_column_name = self.input_polygon.name
         labels_column_name = self.input_labels.name
-        image_info_column_name = self.image_info.name
+        image_info_column_name = self.input_image_info.name
         output_column_name = self.output_mask.name
         output_shape_column_name = self.output_mask.name + "_shape"
 
         def polygons_to_mask(
             polygons_data: list, labels_data: list, img_info: dict
         ) -> tuple[list[int], list[int]]:
-            """Rasterize polygons into indexed mask using OpenCV contour filling."""
+            """Rasterize polygons into indexed mask using OpenCV contour filling.
+
+            The mask uses:
+            - Index 0: Background (empty areas)
+            - Index 1+: Polygon class labels (shifted by 1 to reserve 0 for background)
+            """
             # Extract image dimensions
             image_width = img_info["width"]
             image_height = img_info["height"]
@@ -538,12 +568,13 @@ class PolygonToMaskConverter(Converter):
                 # Convert to OpenCV contour format
                 contour = coords.astype(np.int32)
 
-                # Fill polygon with class index
+                # Fill polygon with class index + 1 (to reserve 0 for background)
+                # This means label 0 becomes mask index 1, label 1 becomes mask index 2, etc.
                 cv2.drawContours(
                     mask,
                     [contour],
                     0,
-                    int(class_index),
+                    int(class_index) + 1,  # +1 to shift labels and reserve 0 for background
                     thickness=cv2.FILLED,
                 )
 
