@@ -358,11 +358,14 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">polars</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotation</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">Polygon</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotation</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Bbox</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">LabelCategories</span> <span class="k">as</span> <span class="n">LegacyLabelCategories</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Polygon</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span> <span class="k">as</span> <span class="n">LegacyDataset</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">CategoriesInfo</span><span class="p">,</span> <span class="n">DatasetItem</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">FromDataMixin</span><span class="p">,</span> <span class="n">FromFileMixin</span><span class="p">,</span> <span class="n">Image</span><span class="p">,</span> <span class="n">MediaElement</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">.categories</span><span class="w"> </span><span class="kn">import</span> <span class="n">LabelCategories</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">Sample</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.fields</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">BBoxField</span><span class="p">,</span>
@@ -635,17 +638,22 @@ document.write(`
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ForwardBboxAnnotationConverter | None&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create converter instance for bbox annotations.&quot;&quot;&quot;</span>
         <span class="c1"># Extract label categories if available</span>
-        <span class="n">label_categories</span> <span class="o">=</span> <span class="n">categories</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">legacy_label_categories</span> <span class="o">=</span> <span class="n">categories</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="n">bbox_attribute</span> <span class="o">=</span> <span class="n">AttributeInfo</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">annotation</span><span class="o">=</span><span class="n">bbox_field</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">pl</span><span class="o">.</span><span class="n">Float32</span><span class="p">))</span>
 
         <span class="n">bbox_labels_attribute</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="c1"># Only add bbox_labels if we have label categories</span>
-        <span class="k">if</span> <span class="n">label_categories</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">legacy_label_categories</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Convert legacy label categories to new format</span>
+            <span class="n">new_label_categories</span> <span class="o">=</span> <span class="n">LabelCategories</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">label_item</span> <span class="ow">in</span> <span class="n">legacy_label_categories</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
+                <span class="n">new_label_categories</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">label_item</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
             <span class="n">bbox_labels_attribute</span> <span class="o">=</span> <span class="n">AttributeInfo</span><span class="p">(</span>
                 <span class="nb">type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
                 <span class="n">annotation</span><span class="o">=</span><span class="n">label_field</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">pl</span><span class="o">.</span><span class="n">Int32</span><span class="p">,</span> <span class="n">multi_label</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">is_list</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
-                <span class="n">categories</span><span class="o">=</span><span class="n">label_categories</span><span class="p">,</span>
+                <span class="n">categories</span><span class="o">=</span><span class="n">new_label_categories</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">bbox_attribute</span><span class="o">=</span><span class="n">bbox_attribute</span><span class="p">,</span> <span class="n">bbox_labels_attribute</span><span class="o">=</span><span class="n">bbox_labels_attribute</span><span class="p">)</span></div>
@@ -718,7 +726,7 @@ document.write(`
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ForwardPolygonAnnotationConverter | None&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create converter instance for polygon annotations.&quot;&quot;&quot;</span>
         <span class="c1"># Extract label categories if available</span>
-        <span class="n">label_categories</span> <span class="o">=</span> <span class="n">categories</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">legacy_label_categories</span> <span class="o">=</span> <span class="n">categories</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="n">polygon_attribute</span> <span class="o">=</span> <span class="n">AttributeInfo</span><span class="p">(</span>
             <span class="nb">type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">annotation</span><span class="o">=</span><span class="n">polygon_field</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">pl</span><span class="o">.</span><span class="n">Float32</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;xy&quot;</span><span class="p">)</span>
@@ -726,11 +734,16 @@ document.write(`
 
         <span class="n">polygon_labels_attribute</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="c1"># Only add polygon_labels if we have label categories</span>
-        <span class="k">if</span> <span class="n">label_categories</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">legacy_label_categories</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Convert legacy label categories to new format</span>
+            <span class="n">new_label_categories</span> <span class="o">=</span> <span class="n">LabelCategories</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">label_item</span> <span class="ow">in</span> <span class="n">legacy_label_categories</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
+                <span class="n">new_label_categories</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">label_item</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
             <span class="n">polygon_labels_attribute</span> <span class="o">=</span> <span class="n">AttributeInfo</span><span class="p">(</span>
                 <span class="nb">type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
                 <span class="n">annotation</span><span class="o">=</span><span class="n">label_field</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">pl</span><span class="o">.</span><span class="n">Int32</span><span class="p">,</span> <span class="n">multi_label</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">is_list</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
-                <span class="n">categories</span><span class="o">=</span><span class="n">label_categories</span><span class="p">,</span>
+                <span class="n">categories</span><span class="o">=</span><span class="n">new_label_categories</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
@@ -1123,7 +1136,6 @@ document.write(`
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.BackwardBboxAnnotationConverter.infer_categories">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">infer_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">experimental_dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">[</span><span class="n">Sample</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">CategoriesInfo</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Infer label categories from bbox_labels.&quot;&quot;&quot;</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">LabelCategories</span>
 
         <span class="c1"># Collect all unique label IDs</span>
         <span class="n">label_ids</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
@@ -1135,7 +1147,7 @@ document.write(`
                         <span class="n">label_ids</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">label_id</span><span class="p">))</span>
 
         <span class="c1"># Create label categories</span>
-        <span class="n">label_categories</span> <span class="o">=</span> <span class="n">LabelCategories</span><span class="p">()</span>
+        <span class="n">label_categories</span> <span class="o">=</span> <span class="n">LegacyLabelCategories</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">label_id</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">label_ids</span><span class="p">):</span>
             <span class="n">label_categories</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;class_</span><span class="si">{</span><span class="n">label_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
@@ -1211,7 +1223,6 @@ document.write(`
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.BackwardPolygonAnnotationConverter.infer_categories">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">infer_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">experimental_dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">[</span><span class="n">Sample</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">CategoriesInfo</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Infer label categories from polygon_labels.&quot;&quot;&quot;</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">LabelCategories</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">polygon_labels_attr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">{}</span>
@@ -1226,7 +1237,7 @@ document.write(`
                         <span class="n">label_ids</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">label_id</span><span class="p">))</span>
 
         <span class="c1"># Create label categories</span>
-        <span class="n">label_categories</span> <span class="o">=</span> <span class="n">LabelCategories</span><span class="p">()</span>
+        <span class="n">label_categories</span> <span class="o">=</span> <span class="n">LegacyLabelCategories</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">label_id</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">label_ids</span><span class="p">):</span>
             <span class="n">label_categories</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;class_</span><span class="si">{</span><span class="n">label_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 

@@ -390,6 +390,11 @@ document.write(`
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">pass</span>
+
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a string representation of the sample.&quot;&quot;&quot;</span>
         <span class="n">fields</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">)</span>
@@ -676,16 +681,19 @@ document.write(`
             <span class="k">return</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">from_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">,</span> <span class="n">target_dtype_or_schema</span><span class="p">)</span>
 
         <span class="c1"># Find the optimal conversion path using A* search</span>
-        <span class="n">conversion_paths</span> <span class="o">=</span> <span class="n">find_conversion_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_schema</span><span class="p">,</span> <span class="n">target_schema</span><span class="p">)</span>
+        <span class="n">conversion_paths</span><span class="p">,</span> <span class="n">inferred_categories</span> <span class="o">=</span> <span class="n">find_conversion_path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_schema</span><span class="p">,</span> <span class="n">target_schema</span><span class="p">)</span>
 
         <span class="c1"># Apply batch converters immediately</span>
         <span class="n">converted_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">converter</span> <span class="ow">in</span> <span class="n">conversion_paths</span><span class="o">.</span><span class="n">batch_converters</span><span class="p">:</span>
             <span class="n">converted_df</span> <span class="o">=</span> <span class="n">converter</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">converted_df</span><span class="p">)</span>
 
-        <span class="c1"># Create new dataset with converted data and new schema using from_dataframe</span>
+        <span class="c1"># Create new dataset with converted data and inferred categories</span>
         <span class="k">return</span> <span class="n">Dataset</span><span class="o">.</span><span class="n">from_dataframe</span><span class="p">(</span>
-            <span class="n">converted_df</span><span class="p">,</span> <span class="n">target_dtype_or_schema</span><span class="p">,</span> <span class="n">conversion_paths</span><span class="o">.</span><span class="n">lazy_converters</span>
+            <span class="n">converted_df</span><span class="p">,</span>
+            <span class="n">target_dtype_or_schema</span><span class="p">,</span>
+            <span class="n">conversion_paths</span><span class="o">.</span><span class="n">lazy_converters</span><span class="p">,</span>
+            <span class="n">categories</span><span class="o">=</span><span class="n">inferred_categories</span><span class="p">,</span>
         <span class="p">)</span></div>
 </div>
 

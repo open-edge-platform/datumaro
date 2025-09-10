@@ -361,6 +361,7 @@ document.write(`
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Any</span><span class="p">,</span>
     <span class="n">Callable</span><span class="p">,</span>
+    <span class="n">Dict</span><span class="p">,</span>
     <span class="n">Generic</span><span class="p">,</span>
     <span class="n">List</span><span class="p">,</span>
     <span class="n">NamedTuple</span><span class="p">,</span>
@@ -377,6 +378,7 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">polars</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing_extensions</span><span class="w"> </span><span class="kn">import</span> <span class="n">cast</span><span class="p">,</span> <span class="n">dataclass_transform</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">.categories</span><span class="w"> </span><span class="kn">import</span> <span class="n">Categories</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.schema</span><span class="w"> </span><span class="kn">import</span> <span class="n">Field</span><span class="p">,</span> <span class="n">Schema</span><span class="p">,</span> <span class="n">Semantic</span>
 
 <span class="n">TField</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;TField&quot;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Field</span><span class="p">)</span>
@@ -413,10 +415,12 @@ document.write(`
 <span class="sd">    Attributes:</span>
 <span class="sd">        name: The attribute name</span>
 <span class="sd">        field: The field type specification</span>
+<span class="sd">        categories: Optional categories information (e.g., LabelCategories, MaskCategories)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">field</span><span class="p">:</span> <span class="n">TField</span></div>
+    <span class="n">field</span><span class="p">:</span> <span class="n">TField</span>
+    <span class="n">categories</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Categories</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 
 
@@ -962,17 +966,21 @@ document.write(`
                 <span class="n">target_attr_spec</span> <span class="o">=</span> <span class="n">target_state</span><span class="o">.</span><span class="n">field_to_attr_spec</span><span class="p">[</span><span class="n">field_type</span><span class="p">]</span>
                 <span class="n">output_name</span> <span class="o">=</span> <span class="n">target_attr_spec</span><span class="o">.</span><span class="n">name</span>
                 <span class="n">output_field</span> <span class="o">=</span> <span class="n">target_attr_spec</span><span class="o">.</span><span class="n">field</span>
+                <span class="n">output_categories</span> <span class="o">=</span> <span class="n">target_attr_spec</span><span class="o">.</span><span class="n">categories</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># The field does not exist, use a temporary name</span>
                 <span class="n">output_name</span> <span class="o">=</span> <span class="n">field_type</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
                 <span class="c1"># and create a new instance of the field</span>
                 <span class="n">output_field</span> <span class="o">=</span> <span class="n">field_type</span><span class="p">(</span><span class="n">semantic</span><span class="o">=</span><span class="n">semantic</span><span class="p">)</span>
+                <span class="n">output_categories</span> <span class="o">=</span> <span class="kc">None</span>
 
             <span class="c1"># Add the iteration count at the end to ensure uniqueness</span>
             <span class="c1"># and avoid any conflict with existing attribute names</span>
             <span class="n">output_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">output_name</span><span class="si">}</span><span class="s2">_temp_</span><span class="si">{</span><span class="n">iteration</span><span class="si">}</span><span class="s2">&quot;</span>
 
-            <span class="n">output_attr_spec</span> <span class="o">=</span> <span class="n">AttributeSpec</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">output_name</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="n">output_field</span><span class="p">)</span>
+            <span class="n">output_attr_spec</span> <span class="o">=</span> <span class="n">AttributeSpec</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">output_name</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="n">output_field</span><span class="p">,</span> <span class="n">categories</span><span class="o">=</span><span class="n">output_categories</span>
+            <span class="p">)</span>
             <span class="n">converter_kwargs</span><span class="p">[</span><span class="n">attr_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_attr_spec</span>
 
         <span class="c1"># Create converter instance with all AttributeSpec instances as kwargs</span>
@@ -1017,7 +1025,9 @@ document.write(`
         <span class="n">semantic</span> <span class="o">=</span> <span class="n">attr_info</span><span class="o">.</span><span class="n">annotation</span><span class="o">.</span><span class="n">semantic</span>
 
         <span class="n">field_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">attr_info</span><span class="o">.</span><span class="n">annotation</span><span class="p">)</span>
-        <span class="n">attr_spec</span> <span class="o">=</span> <span class="n">AttributeSpec</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">attr_name</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="n">attr_info</span><span class="o">.</span><span class="n">annotation</span><span class="p">)</span>
+        <span class="n">attr_spec</span> <span class="o">=</span> <span class="n">AttributeSpec</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">attr_name</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="n">attr_info</span><span class="o">.</span><span class="n">annotation</span><span class="p">,</span> <span class="n">categories</span><span class="o">=</span><span class="n">attr_info</span><span class="o">.</span><span class="n">categories</span>
+        <span class="p">)</span>
         <span class="n">groups</span><span class="p">[</span><span class="n">semantic</span><span class="p">][</span><span class="n">field_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr_spec</span>
 
     <span class="c1"># Convert to SchemaState objects</span>
@@ -1029,7 +1039,7 @@ document.write(`
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_create_post_processing_for_semantic</span><span class="p">(</span>
     <span class="n">final_state</span><span class="p">:</span> <span class="n">_SchemaState</span><span class="p">,</span> <span class="n">target_state</span><span class="p">:</span> <span class="n">_SchemaState</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Converter</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Converter</span><span class="p">],</span> <span class="n">_SchemaState</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create post-processing converters for a single semantic group.</span>
 
@@ -1038,7 +1048,8 @@ document.write(`
 <span class="sd">        target_state: Target state for this semantic group</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        List of post-processing converters (usually just one AttributeRemapperConverter)</span>
+<span class="sd">        Tuple of (list of post-processing converters, updated_state_after_processing)</span>
+<span class="sd">        where updated_state_after_processing reflects the state after renaming/deletion</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Build attribute mappings: include only attributes that should be kept</span>
     <span class="n">attr_mappings</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1064,14 +1075,30 @@ document.write(`
 
     <span class="c1"># Create a single remapper converter that handles both renaming and deletion</span>
     <span class="k">if</span> <span class="n">converter_needed</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">AttributeRemapperConverter</span><span class="p">(</span><span class="n">attr_mappings</span><span class="o">=</span><span class="n">attr_mappings</span><span class="p">)]</span>
+        <span class="c1"># Create the updated state after processing by applying the attr_mappings to final_state</span>
+        <span class="c1"># This preserves the categories from final_state but with the target names/structure</span>
+        <span class="n">updated_field_to_attr_spec</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">final_attr_spec</span><span class="p">,</span> <span class="n">target_attr_spec</span> <span class="ow">in</span> <span class="n">attr_mappings</span><span class="p">:</span>
+            <span class="c1"># Use the target name and field type, but preserve categories from final state</span>
+            <span class="n">updated_field_to_attr_spec</span><span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="n">target_attr_spec</span><span class="o">.</span><span class="n">field</span><span class="p">)]</span> <span class="o">=</span> <span class="n">AttributeSpec</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">target_attr_spec</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">field</span><span class="o">=</span><span class="n">target_attr_spec</span><span class="o">.</span><span class="n">field</span><span class="p">,</span>
+                <span class="n">categories</span><span class="o">=</span><span class="n">final_attr_spec</span><span class="o">.</span><span class="n">categories</span><span class="p">,</span>  <span class="c1"># Preserve inferred categories</span>
+            <span class="p">)</span>
+
+        <span class="n">updated_state_after_processing</span> <span class="o">=</span> <span class="n">_SchemaState</span><span class="p">(</span><span class="n">updated_field_to_attr_spec</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span>
+            <span class="n">AttributeRemapperConverter</span><span class="p">(</span><span class="n">attr_mappings</span><span class="o">=</span><span class="n">attr_mappings</span><span class="p">)</span>
+        <span class="p">],</span> <span class="n">updated_state_after_processing</span>
+
+    <span class="c1"># No converter needed, return the final state as-is</span>
+    <span class="k">return</span> <span class="p">[],</span> <span class="n">final_state</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_find_conversion_path_for_semantic</span><span class="p">(</span>
     <span class="n">start_state</span><span class="p">:</span> <span class="n">_SchemaState</span><span class="p">,</span> <span class="n">target_state</span><span class="p">:</span> <span class="n">_SchemaState</span><span class="p">,</span> <span class="n">semantic</span><span class="p">:</span> <span class="n">Semantic</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Converter</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Converter</span><span class="p">],</span> <span class="n">_SchemaState</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Find conversion path for fields with a specific semantic tag.</span>
 
@@ -1081,7 +1108,7 @@ document.write(`
 <span class="sd">        semantic: The semantic tag being processed</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        List of converters needed for this semantic group</span>
+<span class="sd">        Tuple of (list of converters needed for this semantic group, updated target state)</span>
 
 <span class="sd">    Raises:</span>
 <span class="sd">        ConversionError: If no conversion path is found for this semantic</span>
@@ -1114,8 +1141,10 @@ document.write(`
         <span class="c1"># Check if we&#39;ve reached the goal - all target fields must match exactly</span>
         <span class="k">if</span> <span class="n">_heuristic_cost</span><span class="p">(</span><span class="n">current_node</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">target_state</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="c1"># Add post-processing converters for final renaming and deletion</span>
-            <span class="n">post_processing</span> <span class="o">=</span> <span class="n">_create_post_processing_for_semantic</span><span class="p">(</span><span class="n">current_node</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">target_state</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">current_node</span><span class="o">.</span><span class="n">path</span> <span class="o">+</span> <span class="n">post_processing</span>
+            <span class="n">post_processing</span><span class="p">,</span> <span class="n">final_state</span> <span class="o">=</span> <span class="n">_create_post_processing_for_semantic</span><span class="p">(</span>
+                <span class="n">current_node</span><span class="o">.</span><span class="n">state</span><span class="p">,</span> <span class="n">target_state</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">current_node</span><span class="o">.</span><span class="n">path</span> <span class="o">+</span> <span class="n">post_processing</span><span class="p">,</span> <span class="n">final_state</span>
 
         <span class="c1"># Explore neighbors</span>
         <span class="k">for</span> <span class="n">converter</span><span class="p">,</span> <span class="n">new_state</span> <span class="ow">in</span> <span class="n">_get_applicable_converters</span><span class="p">(</span>
@@ -1148,7 +1177,9 @@ document.write(`
 
 <div class="viewcode-block" id="find_conversion_path">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converter_registry.html#datumaro.experimental.converter_registry.find_conversion_path">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">find_conversion_path</span><span class="p">(</span><span class="n">from_schema</span><span class="p">:</span> <span class="n">Schema</span><span class="p">,</span> <span class="n">to_schema</span><span class="p">:</span> <span class="n">Schema</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ConversionPaths</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_conversion_path</span><span class="p">(</span>
+    <span class="n">from_schema</span><span class="p">:</span> <span class="n">Schema</span><span class="p">,</span> <span class="n">to_schema</span><span class="p">:</span> <span class="n">Schema</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">ConversionPaths</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Categories</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Find an optimal sequence of converters using A* search, grouped by semantic.</span>
 
@@ -1160,7 +1191,8 @@ document.write(`
 <span class="sd">        to_schema: Target schema</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        ConversionPaths with separated batch and lazy converter lists</span>
+<span class="sd">        Tuple of (ConversionPaths with separated batch and lazy converter lists,</span>
+<span class="sd">                 dictionary of attribute names to inferred categories)</span>
 
 <span class="sd">    Raises:</span>
 <span class="sd">        ConversionError: If no conversion path is found</span>
@@ -1180,9 +1212,12 @@ document.write(`
         <span class="n">start_state</span> <span class="o">=</span> <span class="n">start_groups</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">semantic</span><span class="p">,</span> <span class="n">_SchemaState</span><span class="p">({}))</span>
 
         <span class="c1"># Find conversion path for this semantic group</span>
-        <span class="n">semantic_converters</span> <span class="o">=</span> <span class="n">_find_conversion_path_for_semantic</span><span class="p">(</span>
+        <span class="n">semantic_converters</span><span class="p">,</span> <span class="n">updated_target_state</span> <span class="o">=</span> <span class="n">_find_conversion_path_for_semantic</span><span class="p">(</span>
             <span class="n">start_state</span><span class="p">,</span> <span class="n">target_state</span><span class="p">,</span> <span class="n">semantic</span>
         <span class="p">)</span>
+
+        <span class="c1"># Update the target state with any inferred categories</span>
+        <span class="n">target_groups</span><span class="p">[</span><span class="n">semantic</span><span class="p">]</span> <span class="o">=</span> <span class="n">updated_target_state</span>
 
         <span class="c1"># Merge all the attribute remappers into a single one. If any, the remapper is always the last step.</span>
         <span class="k">if</span> <span class="n">semantic_converters</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">semantic_converters</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">AttributeRemapperConverter</span><span class="p">):</span>
@@ -1194,8 +1229,17 @@ document.write(`
     <span class="k">if</span> <span class="n">attr_mappings</span><span class="p">:</span>
         <span class="n">all_converters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">AttributeRemapperConverter</span><span class="p">(</span><span class="n">attr_mappings</span><span class="o">=</span><span class="n">attr_mappings</span><span class="p">))</span>
 
+    <span class="c1"># Reconstruct the updated schema with inferred categories</span>
+    <span class="n">inferred_categories</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Categories</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">semantic</span><span class="p">,</span> <span class="n">updated_target_state</span> <span class="ow">in</span> <span class="n">target_groups</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">attr_spec</span> <span class="ow">in</span> <span class="n">updated_target_state</span><span class="o">.</span><span class="n">field_to_attr_spec</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">attr_spec</span><span class="o">.</span><span class="n">categories</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">inferred_categories</span><span class="p">[</span><span class="n">attr_spec</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr_spec</span><span class="o">.</span><span class="n">categories</span>
+
     <span class="c1"># Separate batch and lazy converters</span>
-    <span class="k">return</span> <span class="n">_separate_batch_and_lazy_converters</span><span class="p">(</span><span class="n">all_converters</span><span class="p">)</span></div>
+    <span class="n">conversion_paths</span> <span class="o">=</span> <span class="n">_separate_batch_and_lazy_converters</span><span class="p">(</span><span class="n">all_converters</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">conversion_paths</span><span class="p">,</span> <span class="n">inferred_categories</span></div>
 
 
 
