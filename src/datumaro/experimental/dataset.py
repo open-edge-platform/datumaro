@@ -207,7 +207,12 @@ class Dataset(Generic[DType]):
             series_data.update(attr_info.annotation.to_polars(key, getattr(sample, key)))
 
         new_row = pl.DataFrame(series_data).cast(dict(self.df.schema))  # type: ignore
-        self.df.extend(new_row)
+
+        # Use vstack instead of extend for object columns since extend doesn't support them
+        if any(dtype == pl.Object for dtype in self.df.schema.values()):
+            self.df = self.df.vstack(new_row)
+        else:
+            self.df.extend(new_row)
 
     def __getitem__(self, row_idx: int) -> DType:
         """

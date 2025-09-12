@@ -564,3 +564,54 @@ def instance_mask_field(dtype: Any = pl.Boolean(), semantic: Semantic = Semantic
         InstanceMaskField instance configured with the given parameters
     """
     return InstanceMaskField(semantic=semantic, dtype=dtype)
+
+
+@dataclass(frozen=True)
+class ImageCallableField(Field):
+    """
+    Represents a field that stores a callable which returns an image as a numpy array.
+
+    This field is useful for lazy loading scenarios where images are generated
+    or loaded on-demand. The callable should return a numpy array representing
+    the image data when invoked.
+
+    Attributes:
+        semantic: Semantic tags describing the callable's purpose
+        format: Expected image color format (e.g., "RGB", "BGR", "RGBA")
+    """
+
+    semantic: Semantic
+    format: str = "RGB"
+
+    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+        """Return schema with Object type to store callable."""
+        return {name: pl.Object}
+
+    def to_polars(self, name: str, value: callable) -> dict[str, pl.Series]:
+        """Store callable as Object in Polars series."""
+        if not callable(value):
+            raise TypeError(f"Expected callable, got {type(value)}")
+        return {name: pl.Series(name, [value])}
+
+    def from_polars(
+        self, name: str, row_index: int, df: pl.DataFrame, target_type: type
+    ) -> callable:
+        """Extract callable from Polars dataframe."""
+        value = df[name][row_index]
+        if not callable(value):
+            raise TypeError(f"Expected callable in column {name}, got {type(value)}")
+        return value
+
+
+def image_callable_field(format: str = "RGB", semantic: Semantic = Semantic.Default) -> Any:
+    """
+    Create an ImageCallableField instance for storing image-generating callables.
+
+    Args:
+        format: Expected image color format (defaults to "RGB")
+        semantic: Semantic tags describing the callable's purpose (optional)
+
+    Returns:
+        ImageCallableField instance configured with the given parameters
+    """
+    return ImageCallableField(semantic=semantic, format=format)

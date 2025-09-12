@@ -12,6 +12,7 @@ from datumaro.experimental.dataset import Sample
 from datumaro.experimental.fields import (
     BBoxField,
     ImageBytesField,
+    ImageCallableField,
     ImageField,
     ImageInfo,
     ImageInfoField,
@@ -20,6 +21,7 @@ from datumaro.experimental.fields import (
     TensorField,
     bbox_field,
     image_bytes_field,
+    image_callable_field,
     image_field,
     image_info_field,
     image_path_field,
@@ -261,6 +263,105 @@ def test_image_path_field_polars_conversion():
 
     assert isinstance(reconstructed, str)
     assert reconstructed == test_path
+
+
+def test_image_callable_field_creation():
+    """Test ImageCallableField creation and properties."""
+    field = image_callable_field(format="RGB", semantic=Semantic.Default)
+
+    assert isinstance(field, ImageCallableField)
+    assert field.format == "RGB"
+    assert field.semantic == Semantic.Default
+
+    # Test with different format
+    field_bgr = image_callable_field(format="BGR", semantic=Semantic.Left)
+    assert field_bgr.format == "BGR"
+    assert field_bgr.semantic == Semantic.Left
+
+
+def test_image_callable_field_polars_schema():
+    """Test ImageCallableField Polars schema generation."""
+    field = image_callable_field()
+    schema = field.to_polars_schema("image_callable")
+
+    expected = {"image_callable": pl.Object}
+    assert schema == expected
+
+
+def test_image_callable_field_polars_conversion():
+    """Test ImageCallableField to/from Polars conversion."""
+    import numpy as np
+
+    field = image_callable_field()  # Create a test callable
+
+    def test_image_generator():
+        return np.array([[[255, 0, 0], [0, 255, 0]], [[0, 0, 255], [255, 255, 0]]], dtype=np.uint8)
+
+    # Test to_polars
+    polars_data = field.to_polars("image_callable", test_image_generator)
+    assert "image_callable" in polars_data
+    assert isinstance(polars_data["image_callable"], pl.Series)
+
+    # Create DataFrame and test from_polars
+    df = pl.DataFrame(polars_data)
+    reconstructed = field.from_polars("image_callable", 0, df, callable)
+
+    assert callable(reconstructed)
+    assert reconstructed == test_image_generator
+
+    # Test that the callable produces the expected output
+    result = reconstructed()
+    assert isinstance(result, np.ndarray)
+    assert result.shape == (2, 2, 3)
+    assert result.dtype == np.uint8
+
+
+def test_image_callable_field_error_handling():
+    """Test ImageCallableField error handling."""
+    field = image_callable_field()
+
+    # Test with non-callable object
+    with pytest.raises(TypeError, match="Expected callable"):
+        field.to_polars("image_callable", "not_a_callable")
+
+    # Test with non-callable in from_polars
+    df = pl.DataFrame({"image_callable": ["not_a_callable"]})
+    with pytest.raises(TypeError, match="Expected callable in column"):
+        field.from_polars("image_callable", 0, df, callable)
+
+
+def test_image_callable_field_complex_callable():
+    """Test ImageCallableField with more complex callables."""
+    import numpy as np
+
+    field = image_callable_field(format="RGBA")  # Test with lambda
+    lambda_callable = lambda: np.zeros((5, 5, 4), dtype=np.uint8)
+
+    polars_data = field.to_polars("image_callable", lambda_callable)
+    df = pl.DataFrame(polars_data)
+    reconstructed = field.from_polars("image_callable", 0, df, callable)
+
+    result = reconstructed()
+    assert result.shape == (5, 5, 4)
+    assert result.dtype == np.uint8
+    assert np.all(result == 0)
+
+    # Test with class method
+    class ImageGenerator:
+        def __init__(self, size):
+            self.size = size
+
+        def generate(self):
+            return np.ones((self.size, self.size, 3), dtype=np.uint8) * 128
+
+    generator = ImageGenerator(3)
+    polars_data2 = field.to_polars("image_callable", generator.generate)
+    df2 = pl.DataFrame(polars_data2)
+    reconstructed2 = field.from_polars("image_callable", 0, df2, callable)
+
+    result2 = reconstructed2()
+    assert result2.shape == (3, 3, 3)
+    assert np.all(result2 == 128)
 
 
 def test_attribute_info_creation():

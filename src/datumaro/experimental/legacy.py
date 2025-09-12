@@ -10,11 +10,13 @@ experimental dataset format with automatic schema inference and type conversion.
 
 from __future__ import annotations
 
+import io
 from abc import ABC, abstractmethod
 from typing import Any, Optional, Type, cast
 
 import numpy as np
 import polars as pl
+from PIL import Image as PILImage
 
 from datumaro.components.annotation import Annotation, AnnotationType, Bbox
 from datumaro.components.annotation import LabelCategories as LegacyLabelCategories
@@ -33,6 +35,7 @@ from .fields import (
     PolygonField,
     bbox_field,
     image_bytes_field,
+    image_callable_field,
     image_info_field,
     image_path_field,
     label_field,
@@ -142,10 +145,11 @@ def get_forward_annotation_converter(
 class ForwardImageMediaConverter(ForwardMediaConverter):
     """Forward converter for Image media type supporting both file paths and byte data."""
 
-    def __init__(self, media_mixin: type, has_image_info: bool):
+    def __init__(self, media_mixin: type, has_image_info: bool, has_callable_data: bool = False):
         """Initialize converter with format preference and image info availability."""
         self.media_mixin = media_mixin
         self.has_image_info = has_image_info
+        self.has_callable_data = has_callable_data
 
     @classmethod
     def get_supported_media_types(cls) -> list[Type[MediaElement[Any]]]:
@@ -157,6 +161,7 @@ class ForwardImageMediaConverter(ForwardMediaConverter):
         """Create converter instance, detecting whether to use paths or bytes."""
         found_media_type: Optional[type] = None
         has_image_info = True  # Assume all images have size until proven otherwise
+        has_callable_data = False  # Track if any FromDataMixin has callable _data
 
         for item in dataset:
             if isinstance(item.media, Image):
@@ -173,6 +178,10 @@ class ForwardImageMediaConverter(ForwardMediaConverter):
                 if not item.media.has_size:
                     has_image_info = False
 
+                # Check if this is FromDataMixin with callable _data
+                if isinstance(item.media, FromDataMixin) and callable(item.media._data):
+                    has_callable_data = True
+
         if found_media_type is None:
             return None
 
@@ -183,13 +192,24 @@ class ForwardImageMediaConverter(ForwardMediaConverter):
         else:
             raise ValueError(f"Unknown media mixin for {found_media_type}.")
 
-        return cls(media_mixin=media_mixin, has_image_info=has_image_info)
+        return cls(
+            media_mixin=media_mixin,
+            has_image_info=has_image_info,
+            has_callable_data=has_callable_data,
+        )
 
     def get_schema_attributes(self) -> dict[str, AttributeInfo]:
         attributes: dict[str, AttributeInfo] = {}
 
         if self.media_mixin == FromDataMixin:
-            attributes["image_bytes"] = AttributeInfo(type=bytes, annotation=image_bytes_field())
+            if self.has_callable_data:
+                attributes["image_callable"] = AttributeInfo(
+                    type=callable, annotation=image_callable_field()
+                )
+            else:
+                attributes["image_bytes"] = AttributeInfo(
+                    type=bytes, annotation=image_bytes_field()
+                )
         elif self.media_mixin == FromFileMixin:
             attributes["image_path"] = AttributeInfo(type=str, annotation=image_path_field())
         else:
@@ -206,7 +226,34 @@ class ForwardImageMediaConverter(ForwardMediaConverter):
 
         if isinstance(item.media, Image):  # pyright: ignore[reportUnknownMemberType]
             if self.media_mixin == FromDataMixin:
-                result["image_bytes"] = item.media.data
+                if self.has_callable_data:
+                    # Create a wrapper callable that converts bytes to image array
+                    def create_image_callable(media_obj):
+                        """Create a callable that returns image array from bytes."""
+
+                        def get_image_array():
+                            # Get the bytes data (either directly or from callable)
+                            if callable(media_obj._data):
+                                bytes_data = media_obj._data()
+                            else:
+                                bytes_data = media_obj._data
+
+                            if not isinstance(bytes_data, bytes):
+                                raise TypeError(f"Expected bytes data, got {type(bytes_data)}")
+
+                            # Convert bytes to image array using PIL
+                            with PILImage.open(io.BytesIO(bytes_data)) as pil_image:
+                                # Convert to RGB if needed
+                                if pil_image.mode != "RGB":
+                                    pil_image = pil_image.convert("RGB")
+                                # Convert to numpy array
+                                return np.array(pil_image, dtype=np.uint8)
+
+                        return get_image_array
+
+                    result["image_callable"] = create_image_callable(item.media)
+                else:
+                    result["image_bytes"] = item.media._data
             elif self.media_mixin == FromFileMixin:
                 result["image_path"] = item.media.path
             else:
