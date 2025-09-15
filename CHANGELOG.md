@@ -12,7 +12,7 @@ This release streamlines Datumaro by removing a number of lesser-used features, 
 ### Removed features
 - CLI commmands:
   - explain, explore, generate, prune
-    (<https://github.com/open-edge-platform/datumaro/pull/1812>, <https://github.com/open-edge-platform/datumaro/pull/1813>, <https://github.com/open-edge-platform/datumaro/pull/1814>, <https://github.com/open-edge-platform/datumaro/pull/1815>)
+    (<https://github.com/open-edge-platform/datumaro/pull/1812>, <https://github.com/open-edge-platform/datumaro/pull/1813>, <https://github.com/open-edge-platform/datumaro/pull/1814>, <https://github.com/open-edge-platform/datumaro/pull/1815>, <https://github.com/open-edge-platform/datumaro/pull/1880>)
   - model: add, remove, run, info
     (<https://github.com/open-edge-platform/datumaro/pull/1816>)
   - project: add, create, export, import, remove, checkout, commit, log, info, status
