@@ -23,6 +23,7 @@ from .converter_registry import AttributeSpec, Converter, converter
 from .fields import (
     BBoxField,
     ImageBytesField,
+    ImageCallableField,
     ImageField,
     ImageInfo,
     ImageInfoField,
@@ -829,3 +830,104 @@ class PolygonToBBoxConverter(Converter):
             )
 
         return df
+
+
+@converter(lazy=True)
+class ImageCallableToImageConverter(Converter):
+    """
+    Lazy converter that executes callables to generate image data.
+
+    This converter takes a callable stored in an ImageCallableField,
+    executes it to get image data as a numpy array, and produces both
+    ImageField and ImageInfoField outputs.
+    """
+
+    input_callable: AttributeSpec[ImageCallableField]
+    output_image: AttributeSpec[ImageField]
+    output_info: AttributeSpec[ImageInfoField]
+
+    def filter_output_spec(self) -> bool:
+        """Configure output image and info specifications based on input."""
+        # Configure output image specification
+        self.output_image = AttributeSpec(
+            name=self.output_image.name,
+            field=ImageField(
+                semantic=self.input_callable.field.semantic,
+                dtype=pl.UInt8,  # Default to UInt8 for image data
+                format=self.input_callable.field.format,  # Use format from callable field
+            ),
+        )
+        # Configure output info specification
+        self.output_info = AttributeSpec(
+            name=self.output_info.name,
+            field=ImageInfoField(
+                semantic=self.input_callable.field.semantic,
+            ),
+        )
+        return True
+
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+        """
+        Execute callables to generate image data and metadata.
+
+        Args:
+            df: DataFrame containing callable column
+
+        Returns:
+            DataFrame with image tensor data, shape information, and image info
+        """
+        input_col = self.input_callable.name
+        output_col = self.output_image.name
+        output_info_col = self.output_info.name
+
+        # Execute callables to generate image data
+        image_data: list[Any] = []
+        image_shapes: list[list[int]] = []
+        image_infos: list[ImageInfo] = []
+
+        for callable_obj in df[input_col]:
+            try:
+                # Execute the callable to get image array
+                img_array = callable_obj()
+
+                # Validate that we got a numpy array
+                if not isinstance(img_array, np.ndarray):
+                    raise TypeError(f"Callable must return numpy.ndarray, got {type(img_array)}")
+
+                # Ensure the array has 3 dimensions for an image (height, width, channels)
+                if len(img_array.shape) != 3:
+                    raise ValueError(
+                        f"Image array must be 3D (height, width, channels), got shape {img_array.shape}"
+                    )
+
+                # Check that the array has the expected dtype (no conversion)
+                expected_dtype = self.output_image.field.dtype
+                expected_numpy_dtype = polars_to_numpy_dtype(expected_dtype)
+                if img_array.dtype != expected_numpy_dtype:
+                    raise TypeError(
+                        f"Expected {expected_numpy_dtype} image array, got {img_array.dtype}"
+                    )
+                # If no specific dtype checking needed, accept as-is
+
+                # Store flattened image data and shape
+                image_data.append(img_array.flatten())
+                image_shapes.append(list(img_array.shape))
+
+                # Create image info with width and height from 3D array
+                height, width = img_array.shape[:2]
+                image_infos.append(ImageInfo(width=width, height=height))
+
+            except Exception as e:
+                raise RuntimeError(f"Error executing callable for image generation: {e}") from e
+
+        # Create output DataFrame
+        result_df = df.clone()
+        result_df = result_df.with_columns(
+            [
+                pl.Series(output_col, image_data),
+                pl.Series(output_col + "_shape", image_shapes),
+                pl.Series(output_info_col, image_infos),
+            ]
+        )
+
+        return result_df

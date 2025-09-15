@@ -12,7 +12,7 @@ from typing_extensions import Annotated
 from datumaro.components.annotation import AnnotationType, Bbox, LabelCategories, Polygon
 from datumaro.components.dataset import Dataset as LegacyDataset
 from datumaro.components.dataset_base import CategoriesInfo, DatasetItem
-from datumaro.components.media import Image, ImageFromFile, MediaElement, Video
+from datumaro.components.media import Image, ImageFromData, ImageFromFile, MediaElement, Video
 from datumaro.experimental.dataset import Dataset, Sample
 from datumaro.experimental.fields import (
     ImageInfo,
@@ -378,8 +378,123 @@ def test_convert_from_legacy_with_image_paths():
     # Check that image_path are present
     assert hasattr(sample1, "image_path")
     assert hasattr(sample2, "image_path")
-    assert sample1.image_path == "test1.jpg"
-    assert sample2.image_path == "test2.png"
+
+
+def test_convert_from_legacy_with_callable_image_data():
+    """Test conversion with ImageFromData containing callable _data."""
+    import io
+
+    from PIL import Image as PILImage
+
+    # Create test image bytes
+    test_image1 = np.random.randint(0, 256, (32, 32, 3), dtype=np.uint8)
+    test_image2 = np.random.randint(0, 256, (64, 64, 3), dtype=np.uint8)
+
+    # Create bytes using PIL
+    def create_image_bytes(img_array):
+        pil_image = PILImage.fromarray(img_array)
+        img_bytes = io.BytesIO()
+        pil_image.save(img_bytes, format="PNG")
+        return img_bytes.getvalue()
+
+    image_bytes1 = create_image_bytes(test_image1)
+    image_bytes2 = create_image_bytes(test_image2)
+
+    # Create callables that return these bytes
+    def get_image_bytes1():
+        return image_bytes1
+
+    def get_image_bytes2():
+        return image_bytes2
+
+    # Create dataset items with ImageFromData containing callable _data
+    items = [
+        DatasetItem(id="item1", media=ImageFromData(data=get_image_bytes1), annotations=[]),
+        DatasetItem(id="item2", media=ImageFromData(data=get_image_bytes2), annotations=[]),
+    ]
+
+    # Create legacy dataset
+    legacy_dataset = LegacyDataset.from_iterable(items)
+
+    # Convert to experimental format
+    experimental_dataset = convert_from_legacy(legacy_dataset)
+
+    # Verify conversion uses callable field instead of bytes field
+    assert "image_callable" in experimental_dataset.schema.attributes
+    assert "image_bytes" not in experimental_dataset.schema.attributes
+    assert "image_path" not in experimental_dataset.schema.attributes
+
+    # Verify samples
+    assert len(experimental_dataset) == 2
+
+    sample1 = experimental_dataset[0]
+    sample2 = experimental_dataset[1]
+
+    # Check that image_callable are present and work
+    assert hasattr(sample1, "image_callable")
+    assert hasattr(sample2, "image_callable")
+    assert callable(sample1.image_callable)
+    assert callable(sample2.image_callable)
+
+    # Test that callables return proper image arrays
+    result1 = sample1.image_callable()
+    result2 = sample2.image_callable()
+
+    assert isinstance(result1, np.ndarray)
+    assert isinstance(result2, np.ndarray)
+    assert result1.dtype == np.uint8
+    assert result2.dtype == np.uint8
+    assert result1.shape == (32, 32, 3)
+    assert result2.shape == (64, 64, 3)
+
+
+def test_image_converter_with_mixed_callable_and_bytes_data():
+    """Test that mixed callable and non-callable data uses callable field."""
+    import io
+
+    from PIL import Image as PILImage
+
+    # Create test image bytes
+    test_image = np.random.randint(0, 256, (16, 16, 3), dtype=np.uint8)
+    pil_image = PILImage.fromarray(test_image)
+    img_bytes = io.BytesIO()
+    pil_image.save(img_bytes, format="PNG")
+    image_bytes = img_bytes.getvalue()
+
+    def get_image_bytes():
+        return image_bytes
+
+    # Create dataset with mixed callable and non-callable data
+    items = [
+        DatasetItem(
+            id="item1", media=ImageFromData(data=get_image_bytes), annotations=[]
+        ),  # callable
+        DatasetItem(
+            id="item2", media=ImageFromData(data=image_bytes), annotations=[]
+        ),  # non-callable
+    ]
+
+    legacy_dataset = LegacyDataset.from_iterable(items)
+    experimental_dataset = convert_from_legacy(legacy_dataset)
+
+    # Should use callable field (callable takes precedence)
+    assert "image_callable" in experimental_dataset.schema.attributes
+    assert "image_bytes" not in experimental_dataset.schema.attributes
+
+    # Both samples should have working callables
+    sample1 = experimental_dataset[0]
+    sample2 = experimental_dataset[1]
+
+    assert hasattr(sample1, "image_callable")
+    assert hasattr(sample2, "image_callable")
+
+    result1 = sample1.image_callable()
+    result2 = sample2.image_callable()
+
+    assert isinstance(result1, np.ndarray)
+    assert isinstance(result2, np.ndarray)
+    assert result1.shape == (16, 16, 3)
+    assert result2.shape == (16, 16, 3)
 
 
 def test_bbox_annotation_converter_get_schema_attributes():

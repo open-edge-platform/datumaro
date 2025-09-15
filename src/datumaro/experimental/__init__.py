@@ -6,12 +6,14 @@ from .converter_registry import ConverterRegistry, converter, find_conversion_pa
 from .dataset import Dataset, Sample
 from .fields import (
     BBoxField,
+    ImageCallableField,
     ImageField,
     ImageInfoField,
     ImagePathField,
     LabelField,
     TensorField,
     bbox_field,
+    image_callable_field,
     image_field,
     image_info_field,
     image_path_field,

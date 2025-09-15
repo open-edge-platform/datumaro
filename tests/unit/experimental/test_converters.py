@@ -22,6 +22,7 @@ from datumaro.experimental.converter_registry import (
 from datumaro.experimental.converters import (
     BBoxCoordinateConverter,
     ImageBytesToImageConverter,
+    ImageCallableToImageConverter,
     ImagePathToImageConverter,
     PolygonToBBoxConverter,
     PolygonToInstanceMaskConverter,
@@ -33,6 +34,7 @@ from datumaro.experimental.fields import (
     BBoxField,
     Field,
     ImageBytesField,
+    ImageCallableField,
     ImageField,
     ImageInfoField,
     ImagePathField,
@@ -1686,3 +1688,184 @@ def test_polygon_to_bbox_converter_normalized():
     assert abs(rectangle_bbox[1] - 0.3) < 1e-6  # y1 (normalized)
     assert abs(rectangle_bbox[2] - 0.4) < 1e-6  # x2 (normalized)
     assert abs(rectangle_bbox[3] - 0.4) < 1e-6  # y2 (normalized)
+
+
+def test_image_callable_to_image_converter():
+    """Test ImageCallableToImageConverter functionality."""
+    import numpy as np
+
+    # Create a callable that returns a test image
+    def create_test_image():
+        return np.array(
+            [
+                [[255, 0, 0], [0, 255, 0], [0, 0, 255]],
+                [[255, 255, 0], [255, 0, 255], [0, 255, 255]],
+                [[128, 128, 128], [64, 64, 64], [192, 192, 192]],
+            ],
+            dtype=np.uint8,
+        )
+
+    # Create input DataFrame with callable
+    df = pl.DataFrame({"my_callable": [create_test_image]}, schema={"my_callable": pl.Object})
+
+    # Create converter instance
+    converter_instance = ImageCallableToImageConverter()  # type: ignore[call-arg]
+
+    # Set up converter attributes
+    input_field = ImageCallableField(format="RGB", semantic=Semantic.Default)
+    output_field = ImageField(dtype=pl.UInt8, format="RGB", semantic=Semantic.Default)
+    output_info_field = ImageInfoField(semantic=Semantic.Default)
+
+    setattr(
+        converter_instance,
+        "input_callable",
+        AttributeSpec(name="my_callable", field=input_field),
+    )
+    setattr(
+        converter_instance,
+        "output_image",
+        AttributeSpec(name="output_image", field=output_field),
+    )
+    setattr(
+        converter_instance,
+        "output_info",
+        AttributeSpec(name="output_info", field=output_info_field),
+    )
+
+    # Test filter - should return True
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    # Check expected columns exist
+    assert "output_image" in result_df.columns
+    assert "output_image_shape" in result_df.columns
+    assert "output_info" in result_df.columns
+
+    # Check image shape
+    image_shape = result_df["output_image_shape"][0]
+    assert list(image_shape) == [3, 3, 3]  # height, width, channels
+
+    # Check image info
+    image_info = result_df["output_info"][0]
+    assert image_info["width"] == 3
+    assert image_info["height"] == 3
+
+    # Check image data can be reconstructed
+    image_data = result_df["output_image"][0]
+    reconstructed = np.array(image_data, dtype=np.uint8).reshape(list(image_shape))
+    assert reconstructed.shape == (3, 3, 3)
+    assert reconstructed.dtype == np.uint8
+
+
+def test_image_callable_converter_error_handling():
+    """Test error handling in ImageCallableToImageConverter."""
+    import numpy as np
+
+    # Test with callable that returns non-numpy array
+    def bad_callable_1():
+        return "not an array"
+
+    # Test with callable that returns wrong shape
+    def bad_callable_2():
+        return np.array([1, 2, 3, 4])  # 1D array
+
+    # Test with callable that raises exception
+    def bad_callable_3():
+        raise ValueError("Something went wrong")
+
+    # Create converter instance
+    converter_instance = ImageCallableToImageConverter()  # type: ignore[call-arg]
+
+    # Set up converter attributes
+    input_field = ImageCallableField(format="RGB", semantic=Semantic.Default)
+    output_field = ImageField(dtype=pl.UInt8, format="RGB", semantic=Semantic.Default)
+    output_info_field = ImageInfoField(semantic=Semantic.Default)
+
+    setattr(
+        converter_instance,
+        "input_callable",
+        AttributeSpec(name="my_callable", field=input_field),
+    )
+    setattr(
+        converter_instance,
+        "output_image",
+        AttributeSpec(name="output_image", field=output_field),
+    )
+    setattr(
+        converter_instance,
+        "output_info",
+        AttributeSpec(name="output_info", field=output_info_field),
+    )
+
+    # Test TypeError for non-numpy return
+    df1 = pl.DataFrame({"my_callable": [bad_callable_1]}, schema={"my_callable": pl.Object})
+    with pytest.raises(RuntimeError, match="must return numpy.ndarray"):
+        converter_instance.convert(df1)
+
+    # Test ValueError for wrong shape
+    df2 = pl.DataFrame({"my_callable": [bad_callable_2]}, schema={"my_callable": pl.Object})
+    with pytest.raises(RuntimeError, match="must be 3D"):
+        converter_instance.convert(df2)
+
+    # Test exception propagation
+    df3 = pl.DataFrame({"my_callable": [bad_callable_3]}, schema={"my_callable": pl.Object})
+    with pytest.raises(RuntimeError, match="Error executing callable"):
+        converter_instance.convert(df3)
+
+
+def test_image_callable_converter_dtype_handling():
+    """Test dtype handling in ImageCallableToImageConverter."""
+    import numpy as np
+
+    # Test with uint8 image (should work)
+    def uint8_callable():
+        return np.array([[[255, 0, 128]]], dtype=np.uint8)
+
+    # Test with float32 image
+    def float32_callable():
+        return np.array([[[1.0, 0.5, 0.25]]], dtype=np.float32)
+
+    # Create converter instance
+    converter_instance = ImageCallableToImageConverter()  # type: ignore[call-arg]
+
+    # Set up converter attributes for uint8
+    input_field = ImageCallableField(format="RGB", semantic=Semantic.Default)
+    output_field = ImageField(dtype=pl.UInt8, format="RGB", semantic=Semantic.Default)
+    output_info_field = ImageInfoField(semantic=Semantic.Default)
+
+    setattr(
+        converter_instance, "input_callable", AttributeSpec(name="my_callable", field=input_field)
+    )
+    setattr(
+        converter_instance, "output_image", AttributeSpec(name="output_image", field=output_field)
+    )
+    setattr(
+        converter_instance,
+        "output_info",
+        AttributeSpec(name="output_info", field=output_info_field),
+    )
+
+    # Test uint8 image
+    df1 = pl.DataFrame({"my_callable": [uint8_callable]}, schema={"my_callable": pl.Object})
+    result1 = converter_instance.convert(df1)
+    image_data1 = np.array(result1["output_image"][0], dtype=np.uint8).reshape([1, 1, 3])
+    assert image_data1.dtype == np.uint8
+    assert image_data1[0, 0, 0] == 255
+    assert image_data1[0, 0, 1] == 0
+    assert image_data1[0, 0, 2] == 128
+
+    # Test float32 image with different output field
+    output_field_f32 = ImageField(dtype=pl.Float32, format="RGB", semantic=Semantic.Default)
+    setattr(
+        converter_instance,
+        "output_image",
+        AttributeSpec(name="output_image", field=output_field_f32),
+    )
+
+    df2 = pl.DataFrame({"my_callable": [float32_callable]}, schema={"my_callable": pl.Object})
+    result2 = converter_instance.convert(df2)
+    image_info2 = result2["output_info"][0]
+    assert image_info2["width"] == 1  # width
+    assert image_info2["height"] == 1  # height
