@@ -1,5 +1,6 @@
 """Unit tests for legacy dataset conversion functionality."""
 
+import math
 import tempfile
 from pathlib import Path
 from typing import Any, cast
@@ -9,7 +10,13 @@ import polars as pl
 import pytest
 from typing_extensions import Annotated
 
-from datumaro.components.annotation import AnnotationType, Bbox, LabelCategories, Polygon
+from datumaro.components.annotation import (
+    AnnotationType,
+    Bbox,
+    LabelCategories,
+    Polygon,
+    RotatedBbox,
+)
 from datumaro.components.dataset import Dataset as LegacyDataset
 from datumaro.components.dataset_base import CategoriesInfo, DatasetItem
 from datumaro.components.media import Image, ImageFromData, ImageFromFile, MediaElement, Video
@@ -22,15 +29,18 @@ from datumaro.experimental.fields import (
     image_path_field,
     label_field,
     polygon_field,
+    rotated_bbox_field,
     tensor_field,
 )
 from datumaro.experimental.legacy import (
     BackwardBboxAnnotationConverter,
     BackwardImageMediaConverter,
     BackwardPolygonAnnotationConverter,
+    BackwardRotatedBboxAnnotationConverter,
     ForwardBboxAnnotationConverter,
     ForwardImageMediaConverter,
     ForwardPolygonAnnotationConverter,
+    ForwardRotatedBboxAnnotationConverter,
     analyze_experimental_dataset,
     analyze_legacy_dataset,
     convert_from_legacy,
@@ -815,6 +825,16 @@ class DetectionSample(Sample):
     ]
 
 
+class RotatedDetectionSample(Sample):
+    image_path: Annotated[str, image_path_field()]
+    rotated_bboxes: Annotated[
+        np.ndarray[Any, np.dtype[np.float32]], rotated_bbox_field(dtype=pl.Float32)
+    ]
+    rotated_bbox_labels: Annotated[
+        np.ndarray[Any, np.dtype[np.int32]], label_field(dtype=pl.Int32, multi_label=True)
+    ]
+
+
 def test_convert_to_legacy_simple():
     """Test basic convert_to_legacy functionality."""
     # Create experimental dataset with sample data
@@ -1416,3 +1436,307 @@ def test_polygon_conversion_without_labels():
         restored_polygon = polygon_anns[0]
         assert restored_polygon.points == [10, 20, 30, 25, 20, 40]
         assert restored_polygon.label is None
+
+
+def test_forward_rotated_bbox_annotation_converter_get_schema_attributes():
+    """Test schema attribute generation for rotated bboxes."""
+    categories: CategoriesInfo = {}  # Empty categories
+    converter = ForwardRotatedBboxAnnotationConverter.create_from_categories(categories)
+    assert converter is not None
+    attributes = converter.get_schema_attributes()
+
+    assert "rotated_bboxes" in attributes
+    # rotated_bbox_labels should not be present when there are no label categories
+    assert "rotated_bbox_labels" not in attributes
+    assert attributes["rotated_bboxes"].type == np.ndarray
+
+
+def test_forward_rotated_bbox_annotation_converter_convert_annotations():
+    """Test rotated bbox annotation conversion."""
+    import math
+
+    # Create categories with labels
+    label_categories = LabelCategories()
+    label_categories.add("class_1")
+    label_categories.add("class_2")
+    categories: CategoriesInfo = {AnnotationType.label: label_categories}
+
+    converter = ForwardRotatedBboxAnnotationConverter.create_from_categories(categories)
+    assert converter is not None
+
+    # Create rotated bbox annotations: RotatedBbox(cx, cy, w, h, r_degrees, ...)
+    rotated_bbox1 = RotatedBbox(50, 60, 30, 20, 45.0, label=0)  # 45 degrees
+    rotated_bbox2 = RotatedBbox(100, 120, 40, 25, -30.0, label=1)  # -30 degrees
+
+    annotations = [rotated_bbox1, rotated_bbox2]
+    item = DatasetItem(id="test")
+
+    result = converter.convert_annotations(annotations, item)
+
+    assert "rotated_bboxes" in result
+    assert "rotated_bbox_labels" in result
+
+    # Check rotated bbox data (should be converted to radians)
+    rotated_bboxes = result["rotated_bboxes"]
+    assert len(rotated_bboxes) == 2
+
+    # First rotated bbox: (50, 60, 30, 20, 45°) -> (50, 60, 30, 20, π/4 radians)
+    assert abs(rotated_bboxes[0, 0] - 50.0) < 1e-6
+    assert abs(rotated_bboxes[0, 1] - 60.0) < 1e-6
+    assert abs(rotated_bboxes[0, 2] - 30.0) < 1e-6
+    assert abs(rotated_bboxes[0, 3] - 20.0) < 1e-6
+    assert abs(rotated_bboxes[0, 4] - math.radians(45.0)) < 1e-6
+
+    # Second rotated bbox: (100, 120, 40, 25, -30°) -> (100, 120, 40, 25, -π/6 radians)
+    assert abs(rotated_bboxes[1, 0] - 100.0) < 1e-6
+    assert abs(rotated_bboxes[1, 1] - 120.0) < 1e-6
+    assert abs(rotated_bboxes[1, 2] - 40.0) < 1e-6
+    assert abs(rotated_bboxes[1, 3] - 25.0) < 1e-6
+    assert abs(rotated_bboxes[1, 4] - math.radians(-30.0)) < 1e-6
+
+    # Check labels
+    labels = result["rotated_bbox_labels"]
+    assert len(labels) == 2
+    assert labels[0] == 0
+    assert labels[1] == 1
+
+
+def test_backward_rotated_bbox_annotation_converter_create_from_schema():
+    """Test backward rotated bbox converter creation from schema."""
+    from datumaro.experimental.fields import LabelField, RotatedBBoxField
+    from datumaro.experimental.schema import AttributeInfo, Schema
+
+    # Create schema with rotated bbox attributes
+    attributes = {
+        "rotated_bboxes": AttributeInfo(
+            type=np.ndarray,
+            annotation=rotated_bbox_field(dtype=pl.Float32),
+        ),
+        "rotated_bbox_labels": AttributeInfo(
+            type=np.ndarray,
+            annotation=label_field(is_list=True),
+        ),
+    }
+    schema = Schema(attributes=attributes)
+
+    converter = BackwardRotatedBboxAnnotationConverter.create_from_schema(schema)
+    assert converter is not None
+    assert converter.rotated_bboxes_attr == "rotated_bboxes"
+    assert converter.rotated_bbox_labels_attr == "rotated_bbox_labels"
+
+
+def test_backward_rotated_bbox_annotation_converter_convert_to_legacy():
+    """Test backward conversion from experimental to legacy rotated bbox format."""
+    import math
+
+    from datumaro.experimental.fields import LabelField, RotatedBBoxField
+    from datumaro.experimental.schema import AttributeInfo, Schema
+
+    # Create experimental dataset with rotated bbox data
+    rotated_bbox_data = np.array(
+        [
+            [50.0, 60.0, 30.0, 20.0, math.radians(45.0)],  # 45 degrees in radians
+            [100.0, 120.0, 40.0, 25.0, math.radians(-30.0)],  # -30 degrees in radians
+        ],
+        dtype=np.float32,
+    )
+
+    label_data = np.array([0, 1], dtype=np.int32)
+
+    # Create experimental dataset and add sample with rotated bbox data
+    experimental_dataset = Dataset(RotatedDetectionSample)
+
+    sample = RotatedDetectionSample(
+        image_path="/path/to/test.jpg",
+        rotated_bboxes=rotated_bbox_data,
+        rotated_bbox_labels=label_data,
+    )
+    experimental_dataset.append(sample)
+
+    # Create categories for testing
+    categories: CategoriesInfo = {
+        AnnotationType.label: LabelCategories(),
+    }
+
+    # Create converter
+    attributes = {
+        "rotated_bboxes": AttributeInfo(
+            type=np.ndarray,
+            annotation=rotated_bbox_field(dtype=pl.Float32),
+        ),
+        "rotated_bbox_labels": AttributeInfo(
+            type=np.ndarray,
+            annotation=label_field(is_list=True),
+        ),
+    }
+    schema = Schema(attributes=attributes)
+
+    converter = BackwardRotatedBboxAnnotationConverter.create_from_schema(schema)
+    assert converter is not None
+
+    # Convert to legacy annotations
+    annotations = converter.convert_to_legacy_annotations(sample, categories)
+
+    # Check results
+    assert len(annotations) == 2
+
+    # Check first rotated bbox (should be converted back to degrees)
+    rotated_bbox1 = annotations[0]
+    assert isinstance(rotated_bbox1, RotatedBbox)
+    assert abs(rotated_bbox1.cx - 50.0) < 1e-5
+    assert abs(rotated_bbox1.cy - 60.0) < 1e-5
+    assert abs(rotated_bbox1.w - 30.0) < 1e-5
+    assert abs(rotated_bbox1.h - 20.0) < 1e-5
+    assert abs(rotated_bbox1.r - 45.0) < 1e-5  # Back to degrees
+    assert rotated_bbox1.label == 0
+
+    # Check second rotated bbox
+    rotated_bbox2 = annotations[1]
+    assert isinstance(rotated_bbox2, RotatedBbox)
+    assert abs(rotated_bbox2.cx - 100.0) < 1e-5
+    assert abs(rotated_bbox2.cy - 120.0) < 1e-5
+    assert abs(rotated_bbox2.w - 40.0) < 1e-5
+    assert abs(rotated_bbox2.h - 25.0) < 1e-5
+    assert abs(rotated_bbox2.r - (-30.0)) < 1e-5  # Back to degrees
+    assert rotated_bbox2.label == 1
+
+
+def test_rotated_bbox_conversion_with_labels():
+    """Test end-to-end rotated bbox conversion with labels."""
+    import math
+
+    # Create legacy dataset with rotated bbox and label categories
+    label_categories = LabelCategories()
+    label_categories.add("person")
+    label_categories.add("car")
+
+    items = [
+        DatasetItem(
+            id="test_item",
+            media=Image.from_file("test.jpg", size=(200, 150)),
+            annotations=[
+                RotatedBbox(75, 50, 40, 30, 30.0, label=0),  # person
+                RotatedBbox(125, 100, 60, 40, -45.0, label=1),  # car
+            ],
+        )
+    ]
+
+    legacy_dataset = LegacyDataset.from_iterable(
+        items,
+        ann_types={AnnotationType.rotated_bbox},
+        categories={AnnotationType.label: label_categories},
+    )
+
+    # Convert to experimental format
+    experimental_dataset = convert_from_legacy(legacy_dataset)
+
+    # Check experimental dataset
+    assert len(experimental_dataset) == 1
+    exp_sample = experimental_dataset[0]
+
+    # Check rotated bbox data
+    assert hasattr(exp_sample, "rotated_bboxes")
+    assert hasattr(exp_sample, "rotated_bbox_labels")
+
+    rotated_bboxes = exp_sample.rotated_bboxes
+    labels = exp_sample.rotated_bbox_labels
+
+    assert len(rotated_bboxes) == 2
+    assert len(labels) == 2
+
+    # Verify first rotated bbox (converted to radians)
+    assert abs(rotated_bboxes[0, 0] - 75.0) < 1e-6  # cx
+    assert abs(rotated_bboxes[0, 1] - 50.0) < 1e-6  # cy
+    assert abs(rotated_bboxes[0, 2] - 40.0) < 1e-6  # w
+    assert abs(rotated_bboxes[0, 3] - 30.0) < 1e-6  # h
+    assert abs(rotated_bboxes[0, 4] - math.radians(30.0)) < 1e-6  # r in radians
+    assert labels[0] == 0
+
+    # Verify second rotated bbox
+    assert abs(rotated_bboxes[1, 0] - 125.0) < 1e-6  # cx
+    assert abs(rotated_bboxes[1, 1] - 100.0) < 1e-6  # cy
+    assert abs(rotated_bboxes[1, 2] - 60.0) < 1e-6  # w
+    assert abs(rotated_bboxes[1, 3] - 40.0) < 1e-6  # h
+    assert abs(rotated_bboxes[1, 4] - math.radians(-45.0)) < 1e-6  # r in radians
+    assert labels[1] == 1
+
+    # Convert back to legacy format
+    restored_legacy_dataset = convert_to_legacy(experimental_dataset)
+
+    # Verify restored dataset
+    restored_items = list(restored_legacy_dataset)
+    assert len(restored_items) == 1
+
+    restored_item = restored_items[0]
+    rotated_bbox_anns = [ann for ann in restored_item.annotations if isinstance(ann, RotatedBbox)]
+    assert len(rotated_bbox_anns) == 2
+
+    # Check restored first rotated bbox (should be back to degrees)
+    restored_bbox1 = rotated_bbox_anns[0]
+    assert abs(restored_bbox1.cx - 75.0) < 1e-5
+    assert abs(restored_bbox1.cy - 50.0) < 1e-5
+    assert abs(restored_bbox1.w - 40.0) < 1e-5
+    assert abs(restored_bbox1.h - 30.0) < 1e-5
+    assert abs(restored_bbox1.r - 30.0) < 1e-5  # Back to degrees
+    assert restored_bbox1.label == 0
+
+    # Check restored second rotated bbox
+    restored_bbox2 = rotated_bbox_anns[1]
+    assert abs(restored_bbox2.cx - 125.0) < 1e-5
+    assert abs(restored_bbox2.cy - 100.0) < 1e-5
+    assert abs(restored_bbox2.w - 60.0) < 1e-5
+    assert abs(restored_bbox2.h - 40.0) < 1e-5
+    assert abs(restored_bbox2.r - (-45.0)) < 1e-5  # Back to degrees
+    assert restored_bbox2.label == 1
+
+
+def test_rotated_bbox_conversion_without_labels():
+    """Test rotated bbox conversion without label categories."""
+
+    # Create legacy dataset with rotated bbox but no label categories
+    items = [
+        DatasetItem(
+            id="test_item",
+            media=Image.from_file("test.jpg", size=(100, 100)),
+            annotations=[
+                RotatedBbox(50, 50, 20, 30, 0.0),  # No label, no rotation
+                RotatedBbox(25, 75, 10, 15, 90.0),  # No label, 90 degrees
+            ],
+        )
+    ]
+
+    legacy_dataset = LegacyDataset.from_iterable(items, ann_types={AnnotationType.rotated_bbox})
+
+    # Convert to experimental format
+    experimental_dataset = convert_from_legacy(legacy_dataset)
+
+    # Check experimental dataset
+    assert len(experimental_dataset) == 1
+    exp_sample = experimental_dataset[0]
+
+    # Should have rotated_bboxes but not rotated_bbox_labels
+    assert hasattr(exp_sample, "rotated_bboxes")
+    assert not hasattr(exp_sample, "rotated_bbox_labels")
+
+    rotated_bboxes = exp_sample.rotated_bboxes
+    assert len(rotated_bboxes) == 2
+
+    # Verify rotated bbox data
+    assert abs(rotated_bboxes[0, 0] - 50.0) < 1e-6  # cx
+    assert abs(rotated_bboxes[0, 1] - 50.0) < 1e-6  # cy
+    assert abs(rotated_bboxes[1, 4] - math.radians(90.0)) < 1e-6  # 90 degrees in radians
+
+    # Convert back to legacy format
+    restored_legacy_dataset = convert_to_legacy(experimental_dataset)
+
+    # Verify restored dataset
+    restored_items = list(restored_legacy_dataset)
+    assert len(restored_items) == 1
+
+    restored_item = restored_items[0]
+    rotated_bbox_anns = [ann for ann in restored_item.annotations if isinstance(ann, RotatedBbox)]
+    assert len(rotated_bbox_anns) == 2
+
+    # Check that labels are None (since we didn't have label categories)
+    for bbox in rotated_bbox_anns:
+        assert bbox.label is None
