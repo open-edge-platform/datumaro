@@ -27,6 +27,7 @@ from .fields import (
     ImageInfo,
     ImageInfoField,
     ImagePathField,
+    InstanceMaskField,
     LabelField,
     MaskField,
     PolygonField,
@@ -617,3 +618,214 @@ class PolygonToMaskConverter(Converter):
                 mask_data.struct.field("shape").alias(output_shape_column_name),
             ]
         )
+
+
+@converter(lazy=True)
+class PolygonToInstanceMaskConverter(Converter):
+    """
+    Converts polygon annotations to instance masks.
+
+    Transforms polygon coordinates into binary instance masks of shape (N, H, W)
+    where N is the number of instances. Each mask represents a single instance
+    without category information.
+    """
+
+    input_polygon: AttributeSpec[PolygonField]
+    input_image_info: AttributeSpec[ImageInfoField]
+    output_instance_mask: AttributeSpec[InstanceMaskField]
+
+    def filter_output_spec(self) -> bool:
+        """Configure output specification for instance mask format."""
+        # Configure output for instance mask format
+        self.output_instance_mask = AttributeSpec(
+            name=self.output_instance_mask.name,
+            field=InstanceMaskField(
+                semantic=self.input_polygon.field.semantic,
+                dtype=self.output_instance_mask.field.dtype,
+            ),
+        )
+        return True
+
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+        """
+        Rasterize polygon coordinates into instance masks.
+
+        Args:
+            df: DataFrame with polygon coordinates and image info
+
+        Returns:
+            DataFrame with instance mask data in output column
+        """
+        input_column_name = self.input_polygon.name
+        image_info_column_name = self.input_image_info.name
+        output_column_name = self.output_instance_mask.name
+        output_shape_column_name = self.output_instance_mask.name + "_shape"
+
+        def polygons_to_instance_masks(
+            polygons_data: list, img_info: dict
+        ) -> tuple[list[bool], list[int]]:
+            """Rasterize polygons into instance masks using OpenCV contour filling."""
+            # Extract image dimensions
+            image_width = img_info["width"]
+            image_height = img_info["height"]
+
+            # Convert dtype - use uint8 for OpenCV, then convert to bool
+            numpy_dtype = polars_to_numpy_dtype(self.output_instance_mask.field.dtype)
+
+            if len(polygons_data) == 0:
+                # No polygons, return empty mask with shape (0, H, W)
+                empty_mask = np.array([], dtype=numpy_dtype)
+                return empty_mask.tolist(), [0, image_height, image_width]
+
+            # Create instance masks for each polygon
+            instance_masks = []
+
+            for polygon_data in polygons_data:
+                coords = polygon_data.to_numpy()
+
+                # Initialize mask for this instance (use uint8 for OpenCV compatibility)
+                mask = np.zeros((image_height, image_width), dtype=np.uint8)
+
+                # Denormalize coordinates if needed
+                if self.input_polygon.field.normalize:
+                    coords = coords.copy()
+                    coords[:, 0] *= image_width
+                    coords[:, 1] *= image_height
+
+                # Convert to OpenCV contour format
+                contour = coords.astype(np.int32)
+
+                # Fill polygon with 1 for instance mask
+                cv2.drawContours(
+                    mask,
+                    [contour],
+                    0,
+                    1,  # Fill with 1 for binary instance mask
+                    thickness=cv2.FILLED,
+                )
+
+                # Convert to the target dtype (e.g., bool)
+                mask = mask.astype(numpy_dtype)
+                instance_masks.append(mask)
+
+            # Stack into (N, H, W) tensor
+            stacked_masks = np.stack(instance_masks, axis=0)
+            return stacked_masks.reshape(-1), list(stacked_masks.shape)
+
+        # Apply conversion using map_batches
+        def apply_conversion_batch(batch_df: pl.DataFrame, **kwargs) -> pl.DataFrame:
+            """Apply polygon-to-instance-mask conversion for a batch."""
+            batch_polygons = batch_df.struct["polygons"]
+            batch_img_infos = batch_df.struct["img_info"]
+
+            results_batch_mask = []
+            results_batch_shape = []
+
+            for polygons, img_info in zip(batch_polygons, batch_img_infos):
+                mask_data, shape_data = polygons_to_instance_masks(polygons, img_info)
+                results_batch_mask.append(pl.Series(mask_data))
+                results_batch_shape.append(shape_data)
+
+            return pl.struct(
+                pl.Series(results_batch_mask).alias("mask"),
+                pl.Series(results_batch_shape, dtype=pl.List(pl.Int32)).alias("shape"),
+                eager=True,
+            )
+
+        mask_data = pl.struct(
+            [
+                pl.col(input_column_name).alias("polygons"),
+                pl.col(image_info_column_name).alias("img_info"),
+            ]
+        ).map_batches(
+            apply_conversion_batch,
+            return_dtype=pl.Struct(
+                {"mask": pl.List(self.output_instance_mask.field.dtype), "shape": pl.List(pl.Int32)}
+            ),
+        )
+
+        return df.with_columns(
+            [
+                mask_data.struct.field("mask").alias(output_column_name),
+                mask_data.struct.field("shape").alias(output_shape_column_name),
+            ]
+        )
+
+
+@converter(lazy=True)
+class PolygonToBBoxConverter(Converter):
+    """
+    Converts polygon annotations to bounding boxes.
+
+    Extracts the bounding box coordinates that enclose each polygon.
+    """
+
+    input_polygon: AttributeSpec[PolygonField]
+    output_bbox: AttributeSpec[BBoxField]
+
+    def filter_output_spec(self) -> bool:
+        """Configure output specification for bounding box format."""
+        # Configure output for bbox format
+        self.output_bbox = AttributeSpec(
+            name=self.output_bbox.name,
+            field=BBoxField(
+                semantic=self.input_polygon.field.semantic,
+                dtype=self.input_polygon.field.dtype,
+                format=self.output_bbox.field.format,
+                normalize=self.input_polygon.field.normalize,  # Inherit normalization from polygon
+            ),
+        )
+        return True
+
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+        """
+        Extract bounding boxes from polygon coordinates.
+
+        Args:
+            df: DataFrame with polygon coordinates
+
+        Returns:
+            DataFrame with bounding box data in output column
+        """
+        input_column_name = self.input_polygon.name
+        output_column_name = self.output_bbox.name
+
+        df = df.with_columns(
+            pl.col(input_column_name)
+            .list.eval(
+                pl.concat_arr(
+                    [
+                        pl.element().list.eval(pl.element().arr.get(0)).list.min(),
+                        pl.element().list.eval(pl.element().arr.get(1)).list.min(),
+                        pl.element().list.eval(pl.element().arr.get(0)).list.max(),
+                        pl.element().list.eval(pl.element().arr.get(1)).list.max(),
+                    ]
+                )
+            )
+            .alias(output_column_name)
+        )
+
+        # Format according to output bbox format
+        if self.output_bbox.field.format == "x1y1x2y2":
+            # Already in this format
+            pass
+        elif self.output_bbox.field.format == "xywh":
+            df = df.with_columns(
+                pl.col(output_column_name).list.eval(
+                    pl.concat_arr(
+                        [
+                            pl.element().arr.get(0),
+                            pl.element().arr.get(1),
+                            pl.element().arr.get(2) - pl.element().arr.get(0),
+                            pl.element().arr.get(3) - pl.element().arr.get(1),
+                        ]
+                    )
+                )
+            )
+        else:
+            raise NotImplementedError(
+                f"This conversion is not yet implemented "
+                f"for the format {self.output_bbox.field.format}."
+            )
+
+        return df

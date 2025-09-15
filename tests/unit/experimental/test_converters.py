@@ -23,6 +23,8 @@ from datumaro.experimental.converters import (
     BBoxCoordinateConverter,
     ImageBytesToImageConverter,
     ImagePathToImageConverter,
+    PolygonToBBoxConverter,
+    PolygonToInstanceMaskConverter,
     PolygonToMaskConverter,
     RGBToBGRConverter,
     UInt8ToFloat32Converter,
@@ -34,6 +36,7 @@ from datumaro.experimental.fields import (
     ImageField,
     ImageInfoField,
     ImagePathField,
+    InstanceMaskField,
     LabelField,
     MaskField,
     PolygonField,
@@ -1371,3 +1374,315 @@ def test_find_conversion_path_inferred_categories():
     # Check that the mask categories include background + original labels
     expected_labels = ["background", "cat", "dog", "bird"]
     assert mask_categories.labels == expected_labels
+
+
+def test_polygon_to_instance_mask_converter():
+    """Test conversion from polygon coordinates to instance mask format."""
+    # Create test data with triangle, rectangle, and pentagon polygons
+    polygon_coords1 = [[10.0, 10.0], [20.0, 10.0], [15.0, 20.0]]
+    polygon_coords2 = [[30.0, 30.0], [40.0, 30.0], [40.0, 40.0], [30.0, 40.0]]
+    polygon_coords3 = [[50.0, 50.0], [60.0, 50.0], [65.0, 60.0], [55.0, 70.0], [45.0, 60.0]]
+
+    polygon_series = pl.Series(
+        [polygon_coords1, polygon_coords2, polygon_coords3], dtype=pl.List(pl.Array(pl.Float32, 2))
+    )
+
+    df = pl.DataFrame(
+        {
+            "polygons": [polygon_series],
+            "image_info": [{"width": 100, "height": 100}],
+        }
+    )
+
+    # Create converter instance
+    converter_instance = PolygonToInstanceMaskConverter()
+
+    # Set up field specs
+    input_polygon_field = PolygonField(
+        dtype=pl.Float32, format="xy", normalize=False, semantic=Semantic.Default
+    )
+    image_info_field = ImageInfoField(semantic=Semantic.Default)
+    output_instance_mask_field = InstanceMaskField(dtype=pl.Boolean, semantic=Semantic.Default)
+
+    setattr(
+        converter_instance,
+        "input_polygon",
+        AttributeSpec(name="polygons", field=input_polygon_field),
+    )
+    setattr(
+        converter_instance,
+        "input_image_info",
+        AttributeSpec(name="image_info", field=image_info_field),
+    )
+    setattr(
+        converter_instance,
+        "output_instance_mask",
+        AttributeSpec(name="instance_mask", field=output_instance_mask_field),
+    )
+
+    # Test filter - should return True when we have valid input
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    # Check that instance mask column was created
+    assert "instance_mask" in result_df.columns
+    assert "instance_mask_shape" in result_df.columns
+
+    # Get the mask data and reshape it
+    mask_data = np.array(result_df["instance_mask"][0])
+    mask_shape = result_df["instance_mask_shape"][0]
+    masks = mask_data.reshape(mask_shape)
+
+    # Check mask properties
+    assert masks.shape == (3, 100, 100)  # 3 instances, 100x100 image
+    assert masks.dtype == bool
+
+    # Check that each instance is properly filled
+    # Triangle should be in first mask
+    assert masks[0, 15, 15] == True  # Point inside triangle
+    assert masks[0, 5, 5] == False  # Point outside triangle
+
+    # Rectangle should be in second mask
+    assert masks[1, 35, 35] == True  # Point inside rectangle
+    assert masks[1, 5, 5] == False  # Point outside rectangle
+
+    # Pentagon should be in third mask
+    assert masks[2, 55, 55] == True  # Point inside pentagon
+    assert masks[2, 5, 5] == False  # Point outside pentagon
+
+    # No overlap between instances
+    assert not np.any(masks[0] & masks[1])  # Triangle and rectangle don't overlap
+    assert not np.any(masks[0] & masks[2])  # Triangle and pentagon don't overlap
+    assert not np.any(masks[1] & masks[2])  # Rectangle and pentagon don't overlap
+
+
+def test_polygon_to_instance_mask_converter_normalized():
+    """Test conversion with normalized polygon coordinates."""
+    # Create test data with normalized coordinates (0-1 range)
+    polygon_coords1 = [[0.1, 0.1], [0.2, 0.1], [0.15, 0.2]]
+    polygon_coords2 = [[0.3, 0.3], [0.4, 0.3], [0.4, 0.4], [0.3, 0.4]]
+
+    polygon_series = pl.Series(
+        [polygon_coords1, polygon_coords2], dtype=pl.List(pl.Array(pl.Float32, 2))
+    )
+
+    df = pl.DataFrame(
+        {
+            "polygons": [polygon_series],
+            "image_info": [{"width": 100, "height": 100}],
+        }
+    )
+
+    # Create converter instance with normalized coordinates
+    converter_instance = PolygonToInstanceMaskConverter()
+
+    # Set up field specs
+    input_polygon_field = PolygonField(
+        dtype=pl.Float32, format="xy", normalize=True, semantic=Semantic.Default
+    )
+    image_info_field = ImageInfoField(semantic=Semantic.Default)
+    output_instance_mask_field = InstanceMaskField(dtype=pl.Boolean, semantic=Semantic.Default)
+
+    setattr(
+        converter_instance,
+        "input_polygon",
+        AttributeSpec(name="polygons", field=input_polygon_field),
+    )
+    setattr(
+        converter_instance,
+        "input_image_info",
+        AttributeSpec(name="image_info", field=image_info_field),
+    )
+    setattr(
+        converter_instance,
+        "output_instance_mask",
+        AttributeSpec(name="instance_mask", field=output_instance_mask_field),
+    )
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    # Get the mask and check it
+    mask_data = np.array(result_df["instance_mask"][0])
+    mask_shape = result_df["instance_mask_shape"][0]
+    masks = mask_data.reshape(mask_shape)
+
+    # Check mask properties
+    assert masks.shape == (2, 100, 100)
+
+    # Check that polygons were filled correctly after denormalization
+    # Triangle: 0.1 * 100 = 10, 0.2 * 100 = 20, etc.
+    assert masks[0, 15, 15] == True  # Point inside the scaled triangle
+    assert masks[0, 5, 5] == False  # Background point
+
+    # Rectangle: 0.3 * 100 = 30, 0.4 * 100 = 40, etc.
+    assert masks[1, 35, 35] == True  # Point inside the scaled rectangle
+    assert masks[1, 5, 5] == False  # Background point
+
+
+def test_polygon_to_bbox_converter():
+    """Test conversion from polygon coordinates to bounding box format."""
+    # Create test data with triangle and rectangle polygons
+    polygon_coords1 = [[10.0, 10.0], [20.0, 10.0], [15.0, 20.0]]
+    polygon_coords2 = [[30.0, 30.0], [40.0, 30.0], [40.0, 40.0], [30.0, 40.0]]
+
+    polygon_series = pl.Series(
+        [polygon_coords1, polygon_coords2], dtype=pl.List(pl.Array(pl.Float32, 2))
+    )
+
+    df = pl.DataFrame(
+        {
+            "polygons": [polygon_series],
+        }
+    )
+
+    # Create converter instance
+    converter_instance = PolygonToBBoxConverter()
+
+    # Set up field specs
+    input_polygon_field = PolygonField(
+        dtype=pl.Float32, format="xy", normalize=False, semantic=Semantic.Default
+    )
+    output_bbox_field = BBoxField(
+        dtype=pl.Float32, format="x1y1x2y2", normalize=False, semantic=Semantic.Default
+    )
+
+    setattr(
+        converter_instance,
+        "input_polygon",
+        AttributeSpec(name="polygons", field=input_polygon_field),
+    )
+    setattr(
+        converter_instance,
+        "output_bbox",
+        AttributeSpec(name="bboxes", field=output_bbox_field),
+    )
+
+    # Test filter - should return True when we have valid input
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    # Check that bbox column was created
+    assert "bboxes" in result_df.columns
+
+    # Get the bbox data
+    bboxes = result_df["bboxes"][0]
+
+    # Check that we have 2 bounding boxes (triangle and rectangle)
+    assert len(bboxes) == 2
+
+    # Check triangle bbox (x1y1x2y2 format)
+    triangle_bbox = bboxes[0]
+    assert triangle_bbox[0] == 10.0  # x1 (min x)
+    assert triangle_bbox[1] == 10.0  # y1 (min y)
+    assert triangle_bbox[2] == 20.0  # x2 (max x)
+    assert triangle_bbox[3] == 20.0  # y2 (max y)
+
+    # Check rectangle bbox
+    rectangle_bbox = bboxes[1]
+    assert rectangle_bbox[0] == 30.0  # x1
+    assert rectangle_bbox[1] == 30.0  # y1
+    assert rectangle_bbox[2] == 40.0  # x2
+    assert rectangle_bbox[3] == 40.0  # y2
+
+
+def test_polygon_to_bbox_converter_xywh():
+    """Test conversion to xywh bbox format."""
+    # Create test data with rectangle polygon
+    polygon_coords = [[30.0, 30.0], [40.0, 30.0], [40.0, 40.0], [30.0, 40.0]]
+
+    polygon_series = pl.Series([polygon_coords], dtype=pl.List(pl.Array(pl.Float32, 2)))
+
+    df = pl.DataFrame(
+        {
+            "polygons": [polygon_series],
+        }
+    )
+
+    # Create converter instance
+    converter_instance = PolygonToBBoxConverter()
+
+    # Set up field specs for xywh format
+    input_polygon_field = PolygonField(
+        dtype=pl.Float32, format="xy", normalize=False, semantic=Semantic.Default
+    )
+    output_bbox_field = BBoxField(
+        dtype=pl.Float32, format="xywh", normalize=False, semantic=Semantic.Default
+    )
+
+    setattr(
+        converter_instance,
+        "input_polygon",
+        AttributeSpec(name="polygons", field=input_polygon_field),
+    )
+    setattr(
+        converter_instance,
+        "output_bbox",
+        AttributeSpec(name="bboxes", field=output_bbox_field),
+    )
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    # Get the bbox data
+    bboxes = result_df["bboxes"][0]
+
+    # Check rectangle bbox in xywh format
+    rectangle_bbox = bboxes[0]
+    assert rectangle_bbox[0] == 30.0  # x (min x)
+    assert rectangle_bbox[1] == 30.0  # y (min y)
+    assert rectangle_bbox[2] == 10.0  # w (width)
+    assert rectangle_bbox[3] == 10.0  # h (height)
+
+
+def test_polygon_to_bbox_converter_normalized():
+    """Test conversion with normalized polygon coordinates."""
+    # Create test data with normalized coordinates (0-1 range)
+    polygon_coords = [[0.3, 0.3], [0.4, 0.3], [0.4, 0.4], [0.3, 0.4]]
+
+    polygon_series = pl.Series([polygon_coords], dtype=pl.List(pl.Array(pl.Float32, 2)))
+
+    df = pl.DataFrame(
+        {
+            "polygons": [polygon_series],
+        }
+    )
+
+    # Create converter instance
+    converter_instance = PolygonToBBoxConverter()
+
+    # Set up field specs with normalized coordinates
+    input_polygon_field = PolygonField(
+        dtype=pl.Float32, format="xy", normalize=True, semantic=Semantic.Default
+    )
+    output_bbox_field = BBoxField(
+        dtype=pl.Float32, format="x1y1x2y2", normalize=True, semantic=Semantic.Default
+    )
+
+    setattr(
+        converter_instance,
+        "input_polygon",
+        AttributeSpec(name="polygons", field=input_polygon_field),
+    )
+    setattr(
+        converter_instance,
+        "output_bbox",
+        AttributeSpec(name="bboxes", field=output_bbox_field),
+    )
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    # Get the bbox data
+    bboxes = result_df["bboxes"][0]
+
+    # Check rectangle bbox with normalized coordinates
+    rectangle_bbox = bboxes[0]
+    assert abs(rectangle_bbox[0] - 0.3) < 1e-6  # x1 (normalized)
+    assert abs(rectangle_bbox[1] - 0.3) < 1e-6  # y1 (normalized)
+    assert abs(rectangle_bbox[2] - 0.4) < 1e-6  # x2 (normalized)
+    assert abs(rectangle_bbox[3] - 0.4) < 1e-6  # y2 (normalized)

@@ -249,7 +249,7 @@ class ForwardBboxAnnotationConverter(ForwardAnnotationConverter):
 
             bbox_labels_attribute = AttributeInfo(
                 type=np.ndarray,
-                annotation=label_field(dtype=pl.Int32, multi_label=False, is_list=True),
+                annotation=label_field(is_list=True),
                 categories=new_label_categories,
             )
 
@@ -324,7 +324,7 @@ class ForwardPolygonAnnotationConverter(ForwardAnnotationConverter):
 
             polygon_labels_attribute = AttributeInfo(
                 type=np.ndarray,
-                annotation=label_field(dtype=pl.Int32, multi_label=False, is_list=True),
+                annotation=label_field(is_list=True),
                 categories=new_label_categories,
             )
 

@@ -513,3 +513,54 @@ def mask_field(dtype: Any = pl.UInt8(), semantic: Semantic = Semantic.Default) -
         MaskField instance configured with the given parameters
     """
     return MaskField(semantic=semantic, dtype=dtype)
+
+
+@dataclass(frozen=True)
+class InstanceMaskField(Field):
+    """
+    Represents an instance mask tensor field for instance segmentation masks.
+
+    Handles 3D tensor data of shape (N, H, W) where N is the number of instances,
+    H and W are the mask height and width. Each mask is a binary mask representing
+    a single instance. Unlike MaskField, this does not contain category information.
+
+    Attributes:
+        semantic: Semantic tags describing the instance mask purpose
+        dtype: Polars data type for mask values (defaults to bool for binary masks)
+    """
+
+    semantic: Semantic
+    dtype: PolarsDataType = pl.Boolean()
+
+    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+        """Generate Polars schema with separate columns for data and shape."""
+        return {name: pl.List(self.dtype), name + "_shape": pl.List(pl.Int32())}
+
+    def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
+        """Convert instance mask tensor to flattened data and shape information."""
+        numpy_value = to_numpy(value, self.dtype)
+        return {
+            name: pl.Series(name, [numpy_value.reshape(-1)]),
+            name + "_shape": pl.Series(name + "_shape", [numpy_value.shape]),
+        }
+
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+        """Reconstruct instance mask tensor from flattened data using stored shape."""
+        flat_data = df[name][row_index]
+        shape = df[name + "_shape"][row_index]
+        numpy_data = np.array(flat_data).reshape(shape)
+        return from_polars_data(numpy_data, target_type)  # type: ignore
+
+
+def instance_mask_field(dtype: Any = pl.Boolean(), semantic: Semantic = Semantic.Default) -> Any:
+    """
+    Create an InstanceMaskField instance with the specified parameters.
+
+    Args:
+        dtype: Polars data type for mask values (defaults to pl.Boolean())
+        semantic: Semantic tags describing the instance mask purpose (optional)
+
+    Returns:
+        InstanceMaskField instance configured with the given parameters
+    """
+    return InstanceMaskField(semantic=semantic, dtype=dtype)
