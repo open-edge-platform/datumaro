@@ -987,6 +987,72 @@ document.write(`
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">MaskField</span><span class="p">(</span><span class="n">semantic</span><span class="o">=</span><span class="n">semantic</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span></div>
 
+
+
+<div class="viewcode-block" id="InstanceMaskField">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.InstanceMaskField">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">InstanceMaskField</span><span class="p">(</span><span class="n">Field</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents an instance mask tensor field for instance segmentation masks.</span>
+
+<span class="sd">    Handles 3D tensor data of shape (N, H, W) where N is the number of instances,</span>
+<span class="sd">    H and W are the mask height and width. Each mask is a binary mask representing</span>
+<span class="sd">    a single instance. Unlike MaskField, this does not contain category information.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        semantic: Semantic tags describing the instance mask purpose</span>
+<span class="sd">        dtype: Polars data type for mask values (defaults to bool for binary masks)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">semantic</span><span class="p">:</span> <span class="n">Semantic</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">PolarsDataType</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">Boolean</span><span class="p">()</span>
+
+<div class="viewcode-block" id="InstanceMaskField.to_polars_schema">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.InstanceMaskField.to_polars_schema">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_polars_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataType</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate Polars schema with separate columns for data and shape.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_shape&quot;</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">Int32</span><span class="p">())}</span></div>
+
+
+<div class="viewcode-block" id="InstanceMaskField.to_polars">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.InstanceMaskField.to_polars">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_polars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert instance mask tensor to flattened data and shape information.&quot;&quot;&quot;</span>
+        <span class="n">numpy_value</span> <span class="o">=</span> <span class="n">to_numpy</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">name</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="n">numpy_value</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)]),</span>
+            <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_shape&quot;</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_shape&quot;</span><span class="p">,</span> <span class="p">[</span><span class="n">numpy_value</span><span class="o">.</span><span class="n">shape</span><span class="p">]),</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="InstanceMaskField.from_polars">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.InstanceMaskField.from_polars">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_polars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">row_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">target_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reconstruct instance mask tensor from flattened data using stored shape.&quot;&quot;&quot;</span>
+        <span class="n">flat_data</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="n">row_index</span><span class="p">]</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_shape&quot;</span><span class="p">][</span><span class="n">row_index</span><span class="p">]</span>
+        <span class="n">numpy_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">flat_data</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">from_polars_data</span><span class="p">(</span><span class="n">numpy_data</span><span class="p">,</span> <span class="n">target_type</span><span class="p">)</span>  <span class="c1"># type: ignore</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="instance_mask_field">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.instance_mask_field">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">instance_mask_field</span><span class="p">(</span><span class="n">dtype</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">Boolean</span><span class="p">(),</span> <span class="n">semantic</span><span class="p">:</span> <span class="n">Semantic</span> <span class="o">=</span> <span class="n">Semantic</span><span class="o">.</span><span class="n">Default</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create an InstanceMaskField instance with the specified parameters.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dtype: Polars data type for mask values (defaults to pl.Boolean())</span>
+<span class="sd">        semantic: Semantic tags describing the instance mask purpose (optional)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        InstanceMaskField instance configured with the given parameters</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">InstanceMaskField</span><span class="p">(</span><span class="n">semantic</span><span class="o">=</span><span class="n">semantic</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span></div>
+
 </pre></div>
 
                 </article>

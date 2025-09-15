@@ -369,6 +369,7 @@ document.write(`
     <span class="n">ImageInfo</span><span class="p">,</span>
     <span class="n">ImageInfoField</span><span class="p">,</span>
     <span class="n">ImagePathField</span><span class="p">,</span>
+    <span class="n">InstanceMaskField</span><span class="p">,</span>
     <span class="n">LabelField</span><span class="p">,</span>
     <span class="n">MaskField</span><span class="p">,</span>
     <span class="n">PolygonField</span><span class="p">,</span>
@@ -1014,6 +1015,235 @@ document.write(`
                 <span class="n">mask_data</span><span class="o">.</span><span class="n">struct</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;shape&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="n">output_shape_column_name</span><span class="p">),</span>
             <span class="p">]</span>
         <span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="PolygonToInstanceMaskConverter">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.PolygonToInstanceMaskConverter">[docs]</a>
+<span class="nd">@converter</span><span class="p">(</span><span class="n">lazy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PolygonToInstanceMaskConverter</span><span class="p">(</span><span class="n">Converter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts polygon annotations to instance masks.</span>
+
+<span class="sd">    Transforms polygon coordinates into binary instance masks of shape (N, H, W)</span>
+<span class="sd">    where N is the number of instances. Each mask represents a single instance</span>
+<span class="sd">    without category information.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">input_polygon</span><span class="p">:</span> <span class="n">AttributeSpec</span><span class="p">[</span><span class="n">PolygonField</span><span class="p">]</span>
+    <span class="n">input_image_info</span><span class="p">:</span> <span class="n">AttributeSpec</span><span class="p">[</span><span class="n">ImageInfoField</span><span class="p">]</span>
+    <span class="n">output_instance_mask</span><span class="p">:</span> <span class="n">AttributeSpec</span><span class="p">[</span><span class="n">InstanceMaskField</span><span class="p">]</span>
+
+<div class="viewcode-block" id="PolygonToInstanceMaskConverter.filter_output_spec">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.PolygonToInstanceMaskConverter.filter_output_spec">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">filter_output_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Configure output specification for instance mask format.&quot;&quot;&quot;</span>
+        <span class="c1"># Configure output for instance mask format</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_instance_mask</span> <span class="o">=</span> <span class="n">AttributeSpec</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_instance_mask</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">field</span><span class="o">=</span><span class="n">InstanceMaskField</span><span class="p">(</span>
+                <span class="n">semantic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_polygon</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">semantic</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_instance_mask</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="PolygonToInstanceMaskConverter.convert">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.PolygonToInstanceMaskConverter.convert">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Rasterize polygon coordinates into instance masks.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df: DataFrame with polygon coordinates and image info</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            DataFrame with instance mask data in output column</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">input_column_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_polygon</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">image_info_column_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_image_info</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">output_column_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_instance_mask</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">output_shape_column_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_instance_mask</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_shape&quot;</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">polygons_to_instance_masks</span><span class="p">(</span>
+            <span class="n">polygons_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">img_info</span><span class="p">:</span> <span class="nb">dict</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">bool</span><span class="p">],</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Rasterize polygons into instance masks using OpenCV contour filling.&quot;&quot;&quot;</span>
+            <span class="c1"># Extract image dimensions</span>
+            <span class="n">image_width</span> <span class="o">=</span> <span class="n">img_info</span><span class="p">[</span><span class="s2">&quot;width&quot;</span><span class="p">]</span>
+            <span class="n">image_height</span> <span class="o">=</span> <span class="n">img_info</span><span class="p">[</span><span class="s2">&quot;height&quot;</span><span class="p">]</span>
+
+            <span class="c1"># Convert dtype - use uint8 for OpenCV, then convert to bool</span>
+            <span class="n">numpy_dtype</span> <span class="o">=</span> <span class="n">polars_to_numpy_dtype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_instance_mask</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">polygons_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># No polygons, return empty mask with shape (0, H, W)</span>
+                <span class="n">empty_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy_dtype</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">empty_mask</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">image_height</span><span class="p">,</span> <span class="n">image_width</span><span class="p">]</span>
+
+            <span class="c1"># Create instance masks for each polygon</span>
+            <span class="n">instance_masks</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">polygon_data</span> <span class="ow">in</span> <span class="n">polygons_data</span><span class="p">:</span>
+                <span class="n">coords</span> <span class="o">=</span> <span class="n">polygon_data</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+
+                <span class="c1"># Initialize mask for this instance (use uint8 for OpenCV compatibility)</span>
+                <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">image_height</span><span class="p">,</span> <span class="n">image_width</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+
+                <span class="c1"># Denormalize coordinates if needed</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_polygon</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">normalize</span><span class="p">:</span>
+                    <span class="n">coords</span> <span class="o">=</span> <span class="n">coords</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                    <span class="n">coords</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*=</span> <span class="n">image_width</span>
+                    <span class="n">coords</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*=</span> <span class="n">image_height</span>
+
+                <span class="c1"># Convert to OpenCV contour format</span>
+                <span class="n">contour</span> <span class="o">=</span> <span class="n">coords</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+
+                <span class="c1"># Fill polygon with 1 for instance mask</span>
+                <span class="n">cv2</span><span class="o">.</span><span class="n">drawContours</span><span class="p">(</span>
+                    <span class="n">mask</span><span class="p">,</span>
+                    <span class="p">[</span><span class="n">contour</span><span class="p">],</span>
+                    <span class="mi">0</span><span class="p">,</span>
+                    <span class="mi">1</span><span class="p">,</span>  <span class="c1"># Fill with 1 for binary instance mask</span>
+                    <span class="n">thickness</span><span class="o">=</span><span class="n">cv2</span><span class="o">.</span><span class="n">FILLED</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="c1"># Convert to the target dtype (e.g., bool)</span>
+                <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">numpy_dtype</span><span class="p">)</span>
+                <span class="n">instance_masks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+
+            <span class="c1"># Stack into (N, H, W) tensor</span>
+            <span class="n">stacked_masks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">instance_masks</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">stacked_masks</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="n">stacked_masks</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+        <span class="c1"># Apply conversion using map_batches</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">apply_conversion_batch</span><span class="p">(</span><span class="n">batch_df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Apply polygon-to-instance-mask conversion for a batch.&quot;&quot;&quot;</span>
+            <span class="n">batch_polygons</span> <span class="o">=</span> <span class="n">batch_df</span><span class="o">.</span><span class="n">struct</span><span class="p">[</span><span class="s2">&quot;polygons&quot;</span><span class="p">]</span>
+            <span class="n">batch_img_infos</span> <span class="o">=</span> <span class="n">batch_df</span><span class="o">.</span><span class="n">struct</span><span class="p">[</span><span class="s2">&quot;img_info&quot;</span><span class="p">]</span>
+
+            <span class="n">results_batch_mask</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">results_batch_shape</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">polygons</span><span class="p">,</span> <span class="n">img_info</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">batch_polygons</span><span class="p">,</span> <span class="n">batch_img_infos</span><span class="p">):</span>
+                <span class="n">mask_data</span><span class="p">,</span> <span class="n">shape_data</span> <span class="o">=</span> <span class="n">polygons_to_instance_masks</span><span class="p">(</span><span class="n">polygons</span><span class="p">,</span> <span class="n">img_info</span><span class="p">)</span>
+                <span class="n">results_batch_mask</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">mask_data</span><span class="p">))</span>
+                <span class="n">results_batch_shape</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">shape_data</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">pl</span><span class="o">.</span><span class="n">struct</span><span class="p">(</span>
+                <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">results_batch_mask</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;mask&quot;</span><span class="p">),</span>
+                <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">results_batch_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">pl</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">Int32</span><span class="p">))</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;shape&quot;</span><span class="p">),</span>
+                <span class="n">eager</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">mask_data</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">struct</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">input_column_name</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;polygons&quot;</span><span class="p">),</span>
+                <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">image_info_column_name</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">&quot;img_info&quot;</span><span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">map_batches</span><span class="p">(</span>
+            <span class="n">apply_conversion_batch</span><span class="p">,</span>
+            <span class="n">return_dtype</span><span class="o">=</span><span class="n">pl</span><span class="o">.</span><span class="n">Struct</span><span class="p">(</span>
+                <span class="p">{</span><span class="s2">&quot;mask&quot;</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_instance_mask</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">dtype</span><span class="p">),</span> <span class="s2">&quot;shape&quot;</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">Int32</span><span class="p">)}</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">with_columns</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">mask_data</span><span class="o">.</span><span class="n">struct</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;mask&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="n">output_column_name</span><span class="p">),</span>
+                <span class="n">mask_data</span><span class="o">.</span><span class="n">struct</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="s2">&quot;shape&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="n">output_shape_column_name</span><span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="PolygonToBBoxConverter">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.PolygonToBBoxConverter">[docs]</a>
+<span class="nd">@converter</span><span class="p">(</span><span class="n">lazy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PolygonToBBoxConverter</span><span class="p">(</span><span class="n">Converter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts polygon annotations to bounding boxes.</span>
+
+<span class="sd">    Extracts the bounding box coordinates that enclose each polygon.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">input_polygon</span><span class="p">:</span> <span class="n">AttributeSpec</span><span class="p">[</span><span class="n">PolygonField</span><span class="p">]</span>
+    <span class="n">output_bbox</span><span class="p">:</span> <span class="n">AttributeSpec</span><span class="p">[</span><span class="n">BBoxField</span><span class="p">]</span>
+
+<div class="viewcode-block" id="PolygonToBBoxConverter.filter_output_spec">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.PolygonToBBoxConverter.filter_output_spec">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">filter_output_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Configure output specification for bounding box format.&quot;&quot;&quot;</span>
+        <span class="c1"># Configure output for bbox format</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_bbox</span> <span class="o">=</span> <span class="n">AttributeSpec</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_bbox</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">field</span><span class="o">=</span><span class="n">BBoxField</span><span class="p">(</span>
+                <span class="n">semantic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_polygon</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">semantic</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_polygon</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+                <span class="nb">format</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_bbox</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">format</span><span class="p">,</span>
+                <span class="n">normalize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_polygon</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">normalize</span><span class="p">,</span>  <span class="c1"># Inherit normalization from polygon</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="PolygonToBBoxConverter.convert">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.PolygonToBBoxConverter.convert">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extract bounding boxes from polygon coordinates.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df: DataFrame with polygon coordinates</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            DataFrame with bounding box data in output column</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">input_column_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_polygon</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">output_column_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_bbox</span><span class="o">.</span><span class="n">name</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">with_columns</span><span class="p">(</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">input_column_name</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span>
+                <span class="n">pl</span><span class="o">.</span><span class="n">concat_arr</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="n">pl</span><span class="o">.</span><span class="n">element</span><span class="p">()</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">element</span><span class="p">()</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span>
+                        <span class="n">pl</span><span class="o">.</span><span class="n">element</span><span class="p">()</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">element</span><span class="p">()</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span>
+                        <span class="n">pl</span><span class="o">.</span><span class="n">element</span><span class="p">()</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">element</span><span class="p">()</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
+                        <span class="n">pl</span><span class="o">.</span><span class="n">element</span><span class="p">()</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">element</span><span class="p">()</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="n">output_column_name</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Format according to output bbox format</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_bbox</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">format</span> <span class="o">==</span> <span class="s2">&quot;x1y1x2y2&quot;</span><span class="p">:</span>
+            <span class="c1"># Already in this format</span>
+            <span class="k">pass</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_bbox</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">format</span> <span class="o">==</span> <span class="s2">&quot;xywh&quot;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">with_columns</span><span class="p">(</span>
+                <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">output_column_name</span><span class="p">)</span><span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span>
+                    <span class="n">pl</span><span class="o">.</span><span class="n">concat_arr</span><span class="p">(</span>
+                        <span class="p">[</span>
+                            <span class="n">pl</span><span class="o">.</span><span class="n">element</span><span class="p">()</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
+                            <span class="n">pl</span><span class="o">.</span><span class="n">element</span><span class="p">()</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+                            <span class="n">pl</span><span class="o">.</span><span class="n">element</span><span class="p">()</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="n">pl</span><span class="o">.</span><span class="n">element</span><span class="p">()</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
+                            <span class="n">pl</span><span class="o">.</span><span class="n">element</span><span class="p">()</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">-</span> <span class="n">pl</span><span class="o">.</span><span class="n">element</span><span class="p">()</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+                        <span class="p">]</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;This conversion is not yet implemented &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;for the format </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">output_bbox</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">format</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">df</span></div>
 </div>
 
 </pre></div>
