@@ -352,11 +352,13 @@ document.write(`
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">cast</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">polars</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span> <span class="k">as</span> <span class="n">PILImage</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotation</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Bbox</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">LabelCategories</span> <span class="k">as</span> <span class="n">LegacyLabelCategories</span>
@@ -375,6 +377,7 @@ document.write(`
     <span class="n">PolygonField</span><span class="p">,</span>
     <span class="n">bbox_field</span><span class="p">,</span>
     <span class="n">image_bytes_field</span><span class="p">,</span>
+    <span class="n">image_callable_field</span><span class="p">,</span>
     <span class="n">image_info_field</span><span class="p">,</span>
     <span class="n">image_path_field</span><span class="p">,</span>
     <span class="n">label_field</span><span class="p">,</span>
@@ -528,10 +531,11 @@ document.write(`
 <span class="k">class</span><span class="w"> </span><span class="nc">ForwardImageMediaConverter</span><span class="p">(</span><span class="n">ForwardMediaConverter</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Forward converter for Image media type supporting both file paths and byte data.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">media_mixin</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">has_image_info</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">media_mixin</span><span class="p">:</span> <span class="nb">type</span><span class="p">,</span> <span class="n">has_image_info</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">has_callable_data</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize converter with format preference and image info availability.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">media_mixin</span> <span class="o">=</span> <span class="n">media_mixin</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">has_image_info</span> <span class="o">=</span> <span class="n">has_image_info</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">has_callable_data</span> <span class="o">=</span> <span class="n">has_callable_data</span>
 
 <div class="viewcode-block" id="ForwardImageMediaConverter.get_supported_media_types">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardImageMediaConverter.get_supported_media_types">[docs]</a>
@@ -548,6 +552,7 @@ document.write(`
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create converter instance, detecting whether to use paths or bytes.&quot;&quot;&quot;</span>
         <span class="n">found_media_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">has_image_info</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># Assume all images have size until proven otherwise</span>
+        <span class="n">has_callable_data</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># Track if any FromDataMixin has callable _data</span>
 
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>
@@ -564,6 +569,10 @@ document.write(`
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">has_size</span><span class="p">:</span>
                     <span class="n">has_image_info</span> <span class="o">=</span> <span class="kc">False</span>
 
+                <span class="c1"># Check if this is FromDataMixin with callable _data</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="n">FromDataMixin</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">callable</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">_data</span><span class="p">):</span>
+                    <span class="n">has_callable_data</span> <span class="o">=</span> <span class="kc">True</span>
+
         <span class="k">if</span> <span class="n">found_media_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
@@ -574,7 +583,11 @@ document.write(`
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown media mixin for </span><span class="si">{</span><span class="n">found_media_type</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">media_mixin</span><span class="o">=</span><span class="n">media_mixin</span><span class="p">,</span> <span class="n">has_image_info</span><span class="o">=</span><span class="n">has_image_info</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">media_mixin</span><span class="o">=</span><span class="n">media_mixin</span><span class="p">,</span>
+            <span class="n">has_image_info</span><span class="o">=</span><span class="n">has_image_info</span><span class="p">,</span>
+            <span class="n">has_callable_data</span><span class="o">=</span><span class="n">has_callable_data</span><span class="p">,</span>
+        <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ForwardImageMediaConverter.get_schema_attributes">
@@ -583,7 +596,14 @@ document.write(`
         <span class="n">attributes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AttributeInfo</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">media_mixin</span> <span class="o">==</span> <span class="n">FromDataMixin</span><span class="p">:</span>
-            <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;image_bytes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">AttributeInfo</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="nb">bytes</span><span class="p">,</span> <span class="n">annotation</span><span class="o">=</span><span class="n">image_bytes_field</span><span class="p">())</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_callable_data</span><span class="p">:</span>
+                <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;image_callable&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">AttributeInfo</span><span class="p">(</span>
+                    <span class="nb">type</span><span class="o">=</span><span class="nb">callable</span><span class="p">,</span> <span class="n">annotation</span><span class="o">=</span><span class="n">image_callable_field</span><span class="p">()</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;image_bytes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">AttributeInfo</span><span class="p">(</span>
+                    <span class="nb">type</span><span class="o">=</span><span class="nb">bytes</span><span class="p">,</span> <span class="n">annotation</span><span class="o">=</span><span class="n">image_bytes_field</span><span class="p">()</span>
+                <span class="p">)</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">media_mixin</span> <span class="o">==</span> <span class="n">FromFileMixin</span><span class="p">:</span>
             <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;image_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">AttributeInfo</span><span class="p">(</span><span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">annotation</span><span class="o">=</span><span class="n">image_path_field</span><span class="p">())</span>
         <span class="k">else</span><span class="p">:</span>
@@ -603,7 +623,34 @@ document.write(`
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="n">Image</span><span class="p">):</span>  <span class="c1"># pyright: ignore[reportUnknownMemberType]</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">media_mixin</span> <span class="o">==</span> <span class="n">FromDataMixin</span><span class="p">:</span>
-                <span class="n">result</span><span class="p">[</span><span class="s2">&quot;image_bytes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">data</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_callable_data</span><span class="p">:</span>
+                    <span class="c1"># Create a wrapper callable that converts bytes to image array</span>
+                    <span class="k">def</span><span class="w"> </span><span class="nf">create_image_callable</span><span class="p">(</span><span class="n">media_obj</span><span class="p">):</span>
+<span class="w">                        </span><span class="sd">&quot;&quot;&quot;Create a callable that returns image array from bytes.&quot;&quot;&quot;</span>
+
+                        <span class="k">def</span><span class="w"> </span><span class="nf">get_image_array</span><span class="p">():</span>
+                            <span class="c1"># Get the bytes data (either directly or from callable)</span>
+                            <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">media_obj</span><span class="o">.</span><span class="n">_data</span><span class="p">):</span>
+                                <span class="n">bytes_data</span> <span class="o">=</span> <span class="n">media_obj</span><span class="o">.</span><span class="n">_data</span><span class="p">()</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">bytes_data</span> <span class="o">=</span> <span class="n">media_obj</span><span class="o">.</span><span class="n">_data</span>
+
+                            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bytes_data</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+                                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected bytes data, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">bytes_data</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                            <span class="c1"># Convert bytes to image array using PIL</span>
+                            <span class="k">with</span> <span class="n">PILImage</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">bytes_data</span><span class="p">))</span> <span class="k">as</span> <span class="n">pil_image</span><span class="p">:</span>
+                                <span class="c1"># Convert to RGB if needed</span>
+                                <span class="k">if</span> <span class="n">pil_image</span><span class="o">.</span><span class="n">mode</span> <span class="o">!=</span> <span class="s2">&quot;RGB&quot;</span><span class="p">:</span>
+                                    <span class="n">pil_image</span> <span class="o">=</span> <span class="n">pil_image</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;RGB&quot;</span><span class="p">)</span>
+                                <span class="c1"># Convert to numpy array</span>
+                                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pil_image</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+
+                        <span class="k">return</span> <span class="n">get_image_array</span>
+
+                    <span class="n">result</span><span class="p">[</span><span class="s2">&quot;image_callable&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">create_image_callable</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">result</span><span class="p">[</span><span class="s2">&quot;image_bytes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">_data</span>
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">media_mixin</span> <span class="o">==</span> <span class="n">FromFileMixin</span><span class="p">:</span>
                 <span class="n">result</span><span class="p">[</span><span class="s2">&quot;image_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">path</span>
             <span class="k">else</span><span class="p">:</span>

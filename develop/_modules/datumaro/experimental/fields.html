@@ -1053,6 +1053,72 @@ document.write(`
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">InstanceMaskField</span><span class="p">(</span><span class="n">semantic</span><span class="o">=</span><span class="n">semantic</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span></div>
 
+
+
+<div class="viewcode-block" id="ImageCallableField">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.ImageCallableField">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImageCallableField</span><span class="p">(</span><span class="n">Field</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a field that stores a callable which returns an image as a numpy array.</span>
+
+<span class="sd">    This field is useful for lazy loading scenarios where images are generated</span>
+<span class="sd">    or loaded on-demand. The callable should return a numpy array representing</span>
+<span class="sd">    the image data when invoked.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        semantic: Semantic tags describing the callable&#39;s purpose</span>
+<span class="sd">        format: Expected image color format (e.g., &quot;RGB&quot;, &quot;BGR&quot;, &quot;RGBA&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">semantic</span><span class="p">:</span> <span class="n">Semantic</span>
+    <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;RGB&quot;</span>
+
+<div class="viewcode-block" id="ImageCallableField.to_polars_schema">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.ImageCallableField.to_polars_schema">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_polars_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataType</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return schema with Object type to store callable.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Object</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="ImageCallableField.to_polars">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.ImageCallableField.to_polars">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_polars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Store callable as Object in Polars series.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected callable, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="n">value</span><span class="p">])}</span></div>
+
+
+<div class="viewcode-block" id="ImageCallableField.from_polars">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.ImageCallableField.from_polars">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_polars</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">row_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">target_type</span><span class="p">:</span> <span class="nb">type</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">callable</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract callable from Polars dataframe.&quot;&quot;&quot;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="n">row_index</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected callable in column </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="image_callable_field">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.image_callable_field">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">image_callable_field</span><span class="p">(</span><span class="nb">format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;RGB&quot;</span><span class="p">,</span> <span class="n">semantic</span><span class="p">:</span> <span class="n">Semantic</span> <span class="o">=</span> <span class="n">Semantic</span><span class="o">.</span><span class="n">Default</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create an ImageCallableField instance for storing image-generating callables.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        format: Expected image color format (defaults to &quot;RGB&quot;)</span>
+<span class="sd">        semantic: Semantic tags describing the callable&#39;s purpose (optional)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ImageCallableField instance configured with the given parameters</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">ImageCallableField</span><span class="p">(</span><span class="n">semantic</span><span class="o">=</span><span class="n">semantic</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="nb">format</span><span class="p">)</span></div>
+
 </pre></div>
 
                 </article>
