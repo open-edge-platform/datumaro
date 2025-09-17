@@ -650,7 +650,10 @@ multi-field transformations.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#datumaro.experimental.converters.RGBToBGRConverter" title="datumaro.experimental.converters.RGBToBGRConverter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RGBToBGRConverter</span></code></a>(**kwargs)</p></td>
 <td><p>Converter that transforms RGB image format to BGR format.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.converters.UInt8ToFloat32Converter" title="datumaro.experimental.converters.UInt8ToFloat32Converter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UInt8ToFloat32Converter</span></code></a>(**kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.converters.RotatedBBoxToPolygonConverter" title="datumaro.experimental.converters.RotatedBBoxToPolygonConverter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RotatedBBoxToPolygonConverter</span></code></a>(**kwargs)</p></td>
+<td><p>Converts rotated bounding boxes to polygon coordinates.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.experimental.converters.UInt8ToFloat32Converter" title="datumaro.experimental.converters.UInt8ToFloat32Converter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">UInt8ToFloat32Converter</span></code></a>(**kwargs)</p></td>
 <td><p>Convert image data from UInt8 to Float32 with normalization.</p></td>
 </tr>
 </tbody>
@@ -1173,7 +1176,7 @@ based on input_*/output_* class attributes</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="datumaro.experimental.converters.PolygonToBBoxConverter.lazy">
-<span class="sig-name descname"><span class="pre">lazy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#datumaro.experimental.converters.PolygonToBBoxConverter.lazy" title="Link to this definition">#</a></dt>
+<span class="sig-name descname"><span class="pre">lazy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#datumaro.experimental.converters.PolygonToBBoxConverter.lazy" title="Link to this definition">#</a></dt>
 <dd><p>Whether this converter performs lazy operations.</p>
 <p>Lazy converters defer expensive operations (like loading images from disk)
 until data is actually accessed. When a lazy converter is in the conversion
@@ -1235,6 +1238,61 @@ based on input_*/output_* class attributes</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="datumaro.experimental.converters.ImageCallableToImageConverter.lazy">
 <span class="sig-name descname"><span class="pre">lazy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#datumaro.experimental.converters.ImageCallableToImageConverter.lazy" title="Link to this definition">#</a></dt>
+<dd><p>Whether this converter performs lazy operations.</p>
+<p>Lazy converters defer expensive operations (like loading images from disk)
+until data is actually accessed. When a lazy converter is in the conversion
+path, all dependent converters must also be executed lazily.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="datumaro.experimental.converters.RotatedBBoxToPolygonConverter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datumaro.experimental.converters.</span></span><span class="sig-name descname"><span class="pre">RotatedBBoxToPolygonConverter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Any" title="typing.Any"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/datumaro/experimental/converters.html#RotatedBBoxToPolygonConverter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.converters.RotatedBBoxToPolygonConverter" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="datumaro.experimental.converter_registry.html#datumaro.experimental.converter_registry.Converter" title="datumaro.experimental.converter_registry.Converter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Converter</span></code></a></p>
+<p>Converts rotated bounding boxes to polygon coordinates.</p>
+<p>Transforms rotated bounding box parameters (cx, cy, w, h, r) into
+polygon corner points by rotating the rectangle corners around the center.</p>
+<p>Initialize converter with input and output AttributeSpec instances.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> – AttributeSpec instances for converter inputs/outputs
+based on input_*/output_* class attributes</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="datumaro.experimental.converters.RotatedBBoxToPolygonConverter.input_rotated_bbox">
+<span class="sig-name descname"><span class="pre">input_rotated_bbox</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="datumaro.experimental.converter_registry.html#datumaro.experimental.converter_registry.AttributeSpec" title="datumaro.experimental.converter_registry.AttributeSpec"><span class="pre">AttributeSpec</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="datumaro.experimental.fields.html#datumaro.experimental.fields.RotatedBBoxField" title="datumaro.experimental.fields.RotatedBBoxField"><span class="pre">RotatedBBoxField</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#datumaro.experimental.converters.RotatedBBoxToPolygonConverter.input_rotated_bbox" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="datumaro.experimental.converters.RotatedBBoxToPolygonConverter.output_polygon">
+<span class="sig-name descname"><span class="pre">output_polygon</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="datumaro.experimental.converter_registry.html#datumaro.experimental.converter_registry.AttributeSpec" title="datumaro.experimental.converter_registry.AttributeSpec"><span class="pre">AttributeSpec</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="datumaro.experimental.fields.html#datumaro.experimental.fields.PolygonField" title="datumaro.experimental.fields.PolygonField"><span class="pre">PolygonField</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#datumaro.experimental.converters.RotatedBBoxToPolygonConverter.output_polygon" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.experimental.converters.RotatedBBoxToPolygonConverter.filter_output_spec">
+<span class="sig-name descname"><span class="pre">filter_output_spec</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/converters.html#RotatedBBoxToPolygonConverter.filter_output_spec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.converters.RotatedBBoxToPolygonConverter.filter_output_spec" title="Link to this definition">#</a></dt>
+<dd><p>Configure output specification for polygon format.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.experimental.converters.RotatedBBoxToPolygonConverter.convert">
+<span class="sig-name descname"><span class="pre">convert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/converters.html#RotatedBBoxToPolygonConverter.convert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.converters.RotatedBBoxToPolygonConverter.convert" title="Link to this definition">#</a></dt>
+<dd><p>Convert rotated bounding boxes to polygon corner points.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> – DataFrame with rotated bounding box coordinates</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame with polygon data in output column</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="datumaro.experimental.converters.RotatedBBoxToPolygonConverter.lazy">
+<span class="sig-name descname"><span class="pre">lazy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#datumaro.experimental.converters.RotatedBBoxToPolygonConverter.lazy" title="Link to this definition">#</a></dt>
 <dd><p>Whether this converter performs lazy operations.</p>
 <p>Lazy converters defer expensive operations (like loading images from disk)
 until data is actually accessed. When a lazy converter is in the conversion
@@ -1370,6 +1428,14 @@ path, all dependent converters must also be executed lazily.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.ImageCallableToImageConverter.filter_output_spec"><code class="docutils literal notranslate"><span class="pre">ImageCallableToImageConverter.filter_output_spec()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.ImageCallableToImageConverter.convert"><code class="docutils literal notranslate"><span class="pre">ImageCallableToImageConverter.convert()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.ImageCallableToImageConverter.lazy"><code class="docutils literal notranslate"><span class="pre">ImageCallableToImageConverter.lazy</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.RotatedBBoxToPolygonConverter"><code class="docutils literal notranslate"><span class="pre">RotatedBBoxToPolygonConverter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.RotatedBBoxToPolygonConverter.input_rotated_bbox"><code class="docutils literal notranslate"><span class="pre">RotatedBBoxToPolygonConverter.input_rotated_bbox</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.RotatedBBoxToPolygonConverter.output_polygon"><code class="docutils literal notranslate"><span class="pre">RotatedBBoxToPolygonConverter.output_polygon</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.RotatedBBoxToPolygonConverter.filter_output_spec"><code class="docutils literal notranslate"><span class="pre">RotatedBBoxToPolygonConverter.filter_output_spec()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.RotatedBBoxToPolygonConverter.convert"><code class="docutils literal notranslate"><span class="pre">RotatedBBoxToPolygonConverter.convert()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.RotatedBBoxToPolygonConverter.lazy"><code class="docutils literal notranslate"><span class="pre">RotatedBBoxToPolygonConverter.lazy</span></code></a></li>
 </ul>
 </li>
 </ul>

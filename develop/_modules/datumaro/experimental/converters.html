@@ -374,6 +374,7 @@ document.write(`
     <span class="n">LabelField</span><span class="p">,</span>
     <span class="n">MaskField</span><span class="p">,</span>
     <span class="n">PolygonField</span><span class="p">,</span>
+    <span class="n">RotatedBBoxField</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.type_registry</span><span class="w"> </span><span class="kn">import</span> <span class="n">polars_to_numpy_dtype</span>
 
@@ -1163,7 +1164,7 @@ document.write(`
 
 <div class="viewcode-block" id="PolygonToBBoxConverter">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.PolygonToBBoxConverter">[docs]</a>
-<span class="nd">@converter</span><span class="p">(</span><span class="n">lazy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nd">@converter</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">PolygonToBBoxConverter</span><span class="p">(</span><span class="n">Converter</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Converts polygon annotations to bounding boxes.</span>
@@ -1355,6 +1356,85 @@ document.write(`
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">result_df</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="RotatedBBoxToPolygonConverter">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.RotatedBBoxToPolygonConverter">[docs]</a>
+<span class="nd">@converter</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RotatedBBoxToPolygonConverter</span><span class="p">(</span><span class="n">Converter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts rotated bounding boxes to polygon coordinates.</span>
+
+<span class="sd">    Transforms rotated bounding box parameters (cx, cy, w, h, r) into</span>
+<span class="sd">    polygon corner points by rotating the rectangle corners around the center.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">input_rotated_bbox</span><span class="p">:</span> <span class="n">AttributeSpec</span><span class="p">[</span><span class="n">RotatedBBoxField</span><span class="p">]</span>
+    <span class="n">output_polygon</span><span class="p">:</span> <span class="n">AttributeSpec</span><span class="p">[</span><span class="n">PolygonField</span><span class="p">]</span>
+
+<div class="viewcode-block" id="RotatedBBoxToPolygonConverter.filter_output_spec">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.RotatedBBoxToPolygonConverter.filter_output_spec">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">filter_output_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Configure output specification for polygon format.&quot;&quot;&quot;</span>
+        <span class="c1"># Configure output for polygon format</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_polygon</span> <span class="o">=</span> <span class="n">AttributeSpec</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_polygon</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">field</span><span class="o">=</span><span class="n">PolygonField</span><span class="p">(</span>
+                <span class="n">semantic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_rotated_bbox</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">semantic</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_rotated_bbox</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+                <span class="nb">format</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_polygon</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">format</span><span class="p">,</span>
+                <span class="n">normalize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_rotated_bbox</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">normalize</span><span class="p">,</span>  <span class="c1"># Inherit normalization</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="RotatedBBoxToPolygonConverter.convert">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.RotatedBBoxToPolygonConverter.convert">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert rotated bounding boxes to polygon corner points.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df: DataFrame with rotated bounding box coordinates</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            DataFrame with polygon data in output column</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">input_column_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_rotated_bbox</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">output_column_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_polygon</span><span class="o">.</span><span class="n">name</span>
+
+        <span class="n">cx</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">element</span><span class="p">()</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">cy</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">element</span><span class="p">()</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">element</span><span class="p">()</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">element</span><span class="p">()</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">element</span><span class="p">()</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">rotate_corner</span><span class="p">(</span><span class="n">expr</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Expr</span><span class="p">):</span>
+            <span class="n">px</span> <span class="o">=</span> <span class="n">expr</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">py</span> <span class="o">=</span> <span class="n">expr</span><span class="o">.</span><span class="n">arr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">cos_theta</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">cos</span><span class="p">()</span>
+            <span class="n">sin_theta</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">sin</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">pl</span><span class="o">.</span><span class="n">concat_arr</span><span class="p">(</span>
+                <span class="n">cos_theta</span> <span class="o">*</span> <span class="n">px</span> <span class="o">-</span> <span class="n">sin_theta</span> <span class="o">*</span> <span class="n">py</span> <span class="o">+</span> <span class="n">cx</span><span class="p">,</span> <span class="n">sin_theta</span> <span class="o">*</span> <span class="n">px</span> <span class="o">+</span> <span class="n">cos_theta</span> <span class="o">*</span> <span class="n">py</span> <span class="o">+</span> <span class="n">cy</span>
+            <span class="p">)</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">with_columns</span><span class="p">(</span>
+            <span class="n">pl</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="n">input_column_name</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">list</span><span class="o">.</span><span class="n">eval</span><span class="p">(</span>
+                <span class="n">pl</span><span class="o">.</span><span class="n">concat_list</span><span class="p">(</span>
+                    <span class="n">rotate_corner</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">concat_arr</span><span class="p">(</span><span class="o">-</span><span class="n">w</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="n">h</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)),</span>
+                    <span class="n">rotate_corner</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">concat_arr</span><span class="p">(</span><span class="n">w</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="n">h</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)),</span>
+                    <span class="n">rotate_corner</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">concat_arr</span><span class="p">(</span><span class="n">w</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">h</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)),</span>
+                    <span class="n">rotate_corner</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">concat_arr</span><span class="p">(</span><span class="o">-</span><span class="n">w</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">h</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)),</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="n">output_column_name</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">df</span></div>
 </div>
 
 </pre></div>
