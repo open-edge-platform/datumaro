@@ -70,6 +70,8 @@ This release streamlines Datumaro by removing a number of lesser-used features, 
   (<https://github.com/open-edge-platform/datumaro/pull/1844>, <https://github.com/open-edge-platform/datumaro/pull/1860>, <https://github.com/open-edge-platform/datumaro/pull/1856>, <https://github.com/open-edge-platform/datumaro/pull/1847>)
 - Fix code coverage upload to Codecov in the CI
   (<https://github.com/open-edge-platform/datumaro/pull/1861>)
+  - Added Semgrep security scan in the CI
+  (<https://github.com/open-edge-platform/datumaro/pull/1883>)
 
 ## Q3 2025 Release 1.11.1
 
