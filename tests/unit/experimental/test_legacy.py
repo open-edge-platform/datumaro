@@ -537,7 +537,7 @@ def test_bbox_annotation_converter_convert_annotations_single_bbox():
     expected_labels = np.array([1], dtype=np.int32)
 
     np.testing.assert_array_equal(result["bboxes"], expected_bbox)
-    np.testing.assert_array_equal(result["bbox_labels"], expected_labels)
+    np.testing.assert_array_equal(result["labels"], expected_labels)
 
 
 def test_bbox_annotation_converter_convert_annotations_multiple_bboxes():
@@ -568,7 +568,7 @@ def test_bbox_annotation_converter_convert_annotations_multiple_bboxes():
     expected_labels = np.array([1, 2], dtype=np.int32)
 
     np.testing.assert_array_equal(result["bboxes"], expected_bboxes)
-    np.testing.assert_array_equal(result["bbox_labels"], expected_labels)
+    np.testing.assert_array_equal(result["labels"], expected_labels)
 
 
 def test_bbox_annotation_converter_convert_annotations_empty_list():
@@ -658,7 +658,7 @@ def test_analyze_image_and_bbox_dataset():
         # Should have image and bbox attributes
         assert "image_path" in analysis_result.schema.attributes
         assert "bboxes" in analysis_result.schema.attributes
-        assert "bbox_labels" in analysis_result.schema.attributes
+        assert "labels" in analysis_result.schema.attributes
 
 
 def test_analyze_image_only_dataset():
@@ -746,7 +746,7 @@ def test_convert_simple_bbox_dataset():
         assert hasattr(sample, "image_path")
         assert Path(getattr(sample, "image_path")) == Path(image_path)
         assert hasattr(sample, "bboxes")
-        assert hasattr(sample, "bbox_labels")
+        assert hasattr(sample, "labels")
 
         expected_bboxes = np.array(
             [
@@ -758,7 +758,7 @@ def test_convert_simple_bbox_dataset():
         expected_labels = np.array([1, 2], dtype=np.int32)
 
         np.testing.assert_array_equal(getattr(sample, "bboxes"), expected_bboxes)
-        np.testing.assert_array_equal(getattr(sample, "bbox_labels"), expected_labels)
+        np.testing.assert_array_equal(getattr(sample, "labels"), expected_labels)
 
 
 def test_convert_empty_dataset():
@@ -1217,7 +1217,7 @@ def test_forward_polygon_annotation_converter_convert_annotations():
     result = converter.convert_annotations(annotations, item)
 
     assert "polygons" in result
-    assert "polygon_labels" in result
+    assert "labels" in result
 
     # Check polygon data
     polygons = result["polygons"]
@@ -1230,7 +1230,7 @@ def test_forward_polygon_annotation_converter_convert_annotations():
     assert np.all(polygons[1] == [[20, 20], [30, 20], [30, 30], [20, 30]])
 
     # Check labels
-    labels = result["polygon_labels"]
+    labels = result["labels"]
     assert len(labels) == 2
     assert labels[0] == 1
     assert labels[1] == 2
@@ -1339,9 +1339,9 @@ def test_polygon_conversion_with_labels():
         assert len(experimental_dataset) == 1
         exp_sample = experimental_dataset[0]
 
-        # Check that polygons and polygon_labels are present
+        # Check that polygons and labels are present
         assert hasattr(exp_sample, "polygons")
-        assert hasattr(exp_sample, "polygon_labels")
+        assert hasattr(exp_sample, "labels")
 
         # Check polygon data
         assert len(exp_sample.polygons) == 2
@@ -1351,7 +1351,7 @@ def test_polygon_conversion_with_labels():
         )  # Rectangle
 
         # Check labels
-        np.testing.assert_array_equal(exp_sample.polygon_labels, [1, 2])
+        np.testing.assert_array_equal(exp_sample.labels, [1, 2])
 
         # Convert back to legacy format
         restored_legacy_dataset = convert_to_legacy(experimental_dataset)
