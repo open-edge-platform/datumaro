@@ -642,65 +642,27 @@ def _create_initial_renaming_converter(
     Returns:
         Tuple of (optional AttributeRemapperConverter, updated_start_state after renaming)
     """
+
     attr_mappings = []
     converter_needed = False
-
-    # Dictionary to track what column names are already taken in the target
-    target_column_names = set()
-    for attr_spec in target_state.field_to_attr_spec.values():
-        target_columns = list(attr_spec.field.to_polars_schema(attr_spec.name).keys())
-        target_column_names.update(target_columns)
-
     updated_field_to_attr_spec = dict(start_state.field_to_attr_spec)
+
+    # Used to check for conflicts when renaming
+    used_names = set(
+        updated_field_to_attr_spec[field_type].name for field_type in updated_field_to_attr_spec
+    )
 
     for field_type, start_attr_spec in start_state.field_to_attr_spec.items():
         if field_type in target_state.field_to_attr_spec:
             target_attr_spec = target_state.field_to_attr_spec[field_type]
-
             if start_attr_spec.name != target_attr_spec.name:
                 converter_needed = True
-
-                # Check if renaming would create a column conflict
-                target_columns = list(
-                    target_attr_spec.field.to_polars_schema(target_attr_spec.name).keys()
-                )
-
-                # Check if any target column already exists in start state (from other attributes)
-                temp_rename_needed = False
-                for target_col in target_columns:
-                    if target_col in [
-                        col
-                        for other_field_type, other_attr_spec in start_state.field_to_attr_spec.items()
-                        if other_field_type != field_type
-                        for col in other_attr_spec.field.to_polars_schema(
-                            other_attr_spec.name
-                        ).keys()
-                    ]:
-                        temp_rename_needed = True
-                        break
-
-                if temp_rename_needed:
-                    # First rename the conflicting attribute to a temporary name
-                    for other_field_type, other_attr_spec in start_state.field_to_attr_spec.items():
-                        if other_field_type == field_type:
-                            continue
-                        other_columns = list(
-                            other_attr_spec.field.to_polars_schema(other_attr_spec.name).keys()
-                        )
-                        if any(col in target_columns for col in other_columns):
-                            # Rename this conflicting attribute to a temporary name
-                            temp_name = f"{other_attr_spec.name}_temp_conflict"
-                            temp_attr_spec = AttributeSpec(
-                                name=temp_name,
-                                field=other_attr_spec.field,
-                                categories=other_attr_spec.categories,
-                            )
-                            attr_mappings.append((other_attr_spec, temp_attr_spec))
-                            updated_field_to_attr_spec[other_field_type] = temp_attr_spec
-
-                # Now add the main renaming
+                new_name = target_attr_spec.name
+                # If the new name would conflict with another attribute in the target_state, use a temporary name
+                if new_name in used_names:
+                    new_name = f"{new_name}_temp_{id(start_attr_spec)}"
                 renamed_attr_spec = AttributeSpec(
-                    name=target_attr_spec.name,
+                    name=new_name,
                     field=start_attr_spec.field,
                     categories=start_attr_spec.categories,
                 )
