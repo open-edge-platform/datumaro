@@ -89,6 +89,22 @@ jobs:
           mkdir -p trivy_input/base
           pip-compile -o trivy_input/base/requirements.txt requirements.txt
 
+          mkdir -p trivy_input/extra
+
+          pip-compile -o trivy_input/extra/requirements.txt setup.py  \
+          --extra  tf  \
+          --extra  tfds  \
+          --extra  torch  \
+          --extra  kaggle  \
+          --extra  scipy  \
+          --extra  nlp  \
+          --extra  tabulate  \
+          --extra  cli  \
+          --extra  visualizer  \
+          --extra  h5py  \
+          --extra  nibabel  \
+          --extra  protobuf  \
+
       - name: Run Trivy scan
         id: trivy
         uses: open-edge-platform/geti-ci/actions/trivy@db5335076dfe564b039b5a7480b8f6b6ae38370a
