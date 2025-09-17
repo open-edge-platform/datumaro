@@ -1,5 +1,6 @@
 """Unit tests for legacy dataset conversion functionality."""
 
+import io
 import math
 import tempfile
 from pathlib import Path
@@ -8,6 +9,7 @@ from typing import Any, cast
 import numpy as np
 import polars as pl
 import pytest
+from PIL import Image as PILImage
 from typing_extensions import Annotated
 
 from datumaro.components.annotation import (
@@ -392,9 +394,6 @@ def test_convert_from_legacy_with_image_paths():
 
 def test_convert_from_legacy_with_callable_image_data():
     """Test conversion with ImageFromData containing callable _data."""
-    import io
-
-    from PIL import Image as PILImage
 
     # Create test image bytes
     test_image1 = np.random.randint(0, 256, (32, 32, 3), dtype=np.uint8)
@@ -460,9 +459,6 @@ def test_convert_from_legacy_with_callable_image_data():
 
 def test_image_converter_with_mixed_callable_and_bytes_data():
     """Test that mixed callable and non-callable data uses callable field."""
-    import io
-
-    from PIL import Image as PILImage
 
     # Create test image bytes
     test_image = np.random.randint(0, 256, (16, 16, 3), dtype=np.uint8)
@@ -1453,7 +1449,6 @@ def test_forward_rotated_bbox_annotation_converter_get_schema_attributes():
 
 def test_forward_rotated_bbox_annotation_converter_convert_annotations():
     """Test rotated bbox annotation conversion."""
-    import math
 
     # Create categories with labels
     label_categories = LabelCategories()
@@ -1503,8 +1498,6 @@ def test_forward_rotated_bbox_annotation_converter_convert_annotations():
 
 def test_backward_rotated_bbox_annotation_converter_create_from_schema():
     """Test backward rotated bbox converter creation from schema."""
-    from datumaro.experimental.fields import LabelField, RotatedBBoxField
-    from datumaro.experimental.schema import AttributeInfo, Schema
 
     # Create schema with rotated bbox attributes
     attributes = {
@@ -1527,10 +1520,6 @@ def test_backward_rotated_bbox_annotation_converter_create_from_schema():
 
 def test_backward_rotated_bbox_annotation_converter_convert_to_legacy():
     """Test backward conversion from experimental to legacy rotated bbox format."""
-    import math
-
-    from datumaro.experimental.fields import LabelField, RotatedBBoxField
-    from datumaro.experimental.schema import AttributeInfo, Schema
 
     # Create experimental dataset with rotated bbox data
     rotated_bbox_data = np.array(
@@ -1603,7 +1592,6 @@ def test_backward_rotated_bbox_annotation_converter_convert_to_legacy():
 
 def test_rotated_bbox_conversion_with_labels():
     """Test end-to-end rotated bbox conversion with labels."""
-    import math
 
     # Create legacy dataset with rotated bbox and label categories
     label_categories = LabelCategories()
