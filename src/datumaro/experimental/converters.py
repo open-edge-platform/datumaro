@@ -224,19 +224,23 @@ class ImagePathToImageConverter(Converter):
 
                 # Convert to numpy array
                 img_array = np.array(img, dtype=np.uint8)
-                image_data.append(img_array.flatten().tolist())
+                image_data.append(img_array.flatten())
                 image_shapes.append(list(img_array.shape))
 
                 # Create image info with just width and height
                 image_infos.append(ImageInfo(width=img_array.shape[1], height=img_array.shape[0]))
 
         # Create output DataFrame
+        image_schema = self.output_image.field.to_polars_schema("image")
+        image_info_schema = self.output_image.field.to_polars_schema("image_info")
+
         result_df = df.clone()
+
         result_df = result_df.with_columns(
             [
-                pl.Series(output_col, image_data),
-                pl.Series(output_col + "_shape", image_shapes),
-                pl.Series(output_info_col, image_infos),
+                pl.Series(output_col, image_data, dtype=image_schema["image"]),
+                pl.Series(output_col + "_shape", image_shapes, dtype=image_schema["image_shape"]),
+                pl.Series(output_info_col, image_infos, dtype=image_info_schema["image_info"]),
             ]
         )
 

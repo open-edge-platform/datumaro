@@ -322,7 +322,7 @@ def test_dataset_lazy_converters_property():
     dataset = Dataset(TestSample)
     lazy_converters = dataset.lazy_converters
 
-    assert isinstance(lazy_converters, list)
+    assert isinstance(lazy_converters, dict)
     # Initially should be empty
     assert len(lazy_converters) == 0
 
