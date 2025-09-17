@@ -212,6 +212,70 @@ def bbox_field(
     return BBoxField(semantic=semantic, dtype=dtype, format=format, normalize=normalize)
 
 
+@dataclass(frozen=True)
+class RotatedBBoxField(Field):
+    """
+    Represents a rotated bounding box field with format and normalization options.
+
+    Handles rotated bounding box data with support for different coordinate formats
+    and optional normalization to [0,1] range. Stores all attributes (cx, cy, w, h, r)
+    in one tensor similar to BBoxField.
+
+    Attributes:
+        semantic: Semantic tags describing the rotated bounding box purpose
+        dtype: Polars data type for coordinate values
+        format: Coordinate format (e.g., "cxcywhr", "cxcywha" for angle in degrees)
+        normalize: Whether coordinates are normalized to [0,1] range
+    """
+
+    semantic: Semantic
+    dtype: PolarsDataType = pl.Float32()
+    format: str = "cxcywhr"
+    normalize: bool = False
+
+    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+        """Generate schema for rotated bounding box as list of 5-element arrays."""
+        return {name: pl.List(pl.Array(self.dtype, 5))}
+
+    def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
+        """Convert rotated bounding box tensor to Polars list format."""
+        numpy_value = to_numpy(value, self.dtype)
+
+        return {
+            name: pl.Series(
+                name,
+                numpy_value.reshape(1, -1, 5),
+                dtype=pl.List(pl.Array(self.dtype, 5)),
+            )
+        }
+
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+        """Reconstruct rotated bounding box tensor from Polars data."""
+        polars_data = df[name][row_index]
+        return from_polars_data(polars_data, target_type)  # type: ignore
+
+
+def rotated_bbox_field(
+    dtype: Any,
+    format: str = "cxcywhr",
+    normalize: bool = False,
+    semantic: Semantic = Semantic.Default,
+) -> Any:
+    """
+    Create a RotatedBBoxField instance with the specified parameters.
+
+    Args:
+        dtype: Polars data type for coordinate values
+        format: Coordinate format (defaults to "cxcywhr" for cx,cy,w,h,rotation_radians)
+        normalize: Whether coordinates are normalized (defaults to False)
+        semantic: Semantic tags describing the rotated bounding box purpose (optional)
+
+    Returns:
+        RotatedBBoxField instance configured with the given parameters
+    """
+    return RotatedBBoxField(semantic=semantic, dtype=dtype, format=format, normalize=normalize)
+
+
 @dataclass
 class ImageInfo:
     """Container for image metadata (width and height)."""
