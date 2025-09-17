@@ -309,7 +309,7 @@ class ForwardBboxAnnotationConverter(ForwardAnnotationConverter):
     def get_schema_attributes(self) -> dict[str, AttributeInfo]:
         attributes = {"bboxes": self.bbox_attribute}
         if self.bbox_labels_attribute is not None:
-            attributes["bbox_labels"] = self.bbox_labels_attribute
+            attributes["labels"] = self.bbox_labels_attribute
         return attributes
 
     def convert_annotations(
@@ -333,7 +333,7 @@ class ForwardBboxAnnotationConverter(ForwardAnnotationConverter):
 
         # Only add bbox_labels if we have label categories
         if self.bbox_labels_attribute is not None:
-            result["bbox_labels"] = np.array(labels, dtype=np.int32)
+            result["labels"] = np.array(labels, dtype=np.int32)
 
         return result
 
@@ -386,7 +386,7 @@ class ForwardPolygonAnnotationConverter(ForwardAnnotationConverter):
     def get_schema_attributes(self) -> dict[str, AttributeInfo]:
         attributes = {"polygons": self.polygon_attribute}
         if self.polygon_labels_attribute is not None:
-            attributes["polygon_labels"] = self.polygon_labels_attribute
+            attributes["labels"] = self.polygon_labels_attribute
         return attributes
 
     def convert_annotations(
@@ -415,7 +415,7 @@ class ForwardPolygonAnnotationConverter(ForwardAnnotationConverter):
 
         # Only add polygon_labels if we have label categories
         if self.polygon_labels_attribute is not None:
-            result["polygon_labels"] = np.array(labels, dtype=np.int32)
+            result["labels"] = np.array(labels, dtype=np.int32)
 
         return result
 
