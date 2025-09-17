@@ -11,6 +11,7 @@ experimental dataset format with automatic schema inference and type conversion.
 from __future__ import annotations
 
 import io
+import math
 from abc import ABC, abstractmethod
 from typing import Any, Optional, Type, cast
 
@@ -20,7 +21,7 @@ from PIL import Image as PILImage
 
 from datumaro.components.annotation import Annotation, AnnotationType, Bbox
 from datumaro.components.annotation import LabelCategories as LegacyLabelCategories
-from datumaro.components.annotation import Polygon
+from datumaro.components.annotation import Polygon, RotatedBbox
 from datumaro.components.dataset import Dataset as LegacyDataset
 from datumaro.components.dataset_base import CategoriesInfo, DatasetItem
 from datumaro.components.media import FromDataMixin, FromFileMixin, Image, MediaElement
@@ -33,6 +34,7 @@ from .fields import (
     ImagePathField,
     LabelField,
     PolygonField,
+    RotatedBBoxField,
     bbox_field,
     image_bytes_field,
     image_callable_field,
@@ -40,6 +42,7 @@ from .fields import (
     image_path_field,
     label_field,
     polygon_field,
+    rotated_bbox_field,
 )
 from .schema import AttributeInfo, Schema
 
@@ -309,7 +312,7 @@ class ForwardBboxAnnotationConverter(ForwardAnnotationConverter):
     def get_schema_attributes(self) -> dict[str, AttributeInfo]:
         attributes = {"bboxes": self.bbox_attribute}
         if self.bbox_labels_attribute is not None:
-            attributes["bbox_labels"] = self.bbox_labels_attribute
+            attributes["labels"] = self.bbox_labels_attribute
         return attributes
 
     def convert_annotations(
@@ -333,7 +336,89 @@ class ForwardBboxAnnotationConverter(ForwardAnnotationConverter):
 
         # Only add bbox_labels if we have label categories
         if self.bbox_labels_attribute is not None:
-            result["bbox_labels"] = np.array(labels, dtype=np.int32)
+            result["labels"] = np.array(labels, dtype=np.int32)
+
+        return result
+
+
+class ForwardRotatedBboxAnnotationConverter(ForwardAnnotationConverter):
+    """Forward converter for RotatedBbox annotations."""
+
+    def __init__(
+        self,
+        rotated_bbox_attribute: AttributeInfo,
+        rotated_bbox_labels_attribute: AttributeInfo | None = None,
+    ):
+        """Initialize converter with rotated bbox attributes."""
+        self.rotated_bbox_attribute = rotated_bbox_attribute
+        self.rotated_bbox_labels_attribute = rotated_bbox_labels_attribute
+
+    @classmethod
+    def create_from_categories(
+        cls, categories: CategoriesInfo
+    ) -> "ForwardRotatedBboxAnnotationConverter":
+        """Create converter instance from dataset categories."""
+        # Create attribute for rotated bboxes (cx, cy, w, h, r)
+        rotated_bbox_attribute = AttributeInfo(
+            type=np.ndarray,
+            annotation=rotated_bbox_field(dtype=pl.Float32),
+        )
+
+        # Create attribute for labels if we have label categories
+        rotated_bbox_labels_attribute = None
+        # Extract label categories if available
+        legacy_label_categories = categories.get(AnnotationType.label, None)
+
+        if legacy_label_categories is not None and len(legacy_label_categories.items) > 0:
+            # Convert legacy label categories to new format
+            new_label_categories = LabelCategories()
+            for label_item in legacy_label_categories.items:
+                new_label_categories.add(label_item.name)
+
+            rotated_bbox_labels_attribute = AttributeInfo(
+                type=np.ndarray,
+                annotation=label_field(is_list=True),
+                categories=new_label_categories,
+            )
+
+        return cls(
+            rotated_bbox_attribute=rotated_bbox_attribute,
+            rotated_bbox_labels_attribute=rotated_bbox_labels_attribute,
+        )
+
+    @classmethod
+    def get_annotation_type(cls) -> AnnotationType:
+        return AnnotationType.rotated_bbox
+
+    def get_schema_attributes(self) -> dict[str, AttributeInfo]:
+        attributes = {"rotated_bboxes": self.rotated_bbox_attribute}
+        if self.rotated_bbox_labels_attribute is not None:
+            attributes["rotated_bbox_labels"] = self.rotated_bbox_labels_attribute
+        return attributes
+
+    def convert_annotations(
+        self, annotations: list[Annotation], item: DatasetItem
+    ) -> dict[str, Any]:
+        rotated_bboxes: list[list[float]] = []
+        labels: list[int | None] = []
+
+        for ann in annotations:
+            if isinstance(ann, RotatedBbox):
+                # Convert from degrees to radians for rotation angle
+                r_radians = math.radians(ann.r)
+                rotated_bboxes.append([ann.cx, ann.cy, ann.w, ann.h, r_radians])
+                labels.append(ann.label)
+
+        # Ensure proper shapes for empty arrays
+        rotated_bboxes_array = np.array(rotated_bboxes, dtype=np.float32)
+        if rotated_bboxes_array.shape == (0,):
+            rotated_bboxes_array = rotated_bboxes_array.reshape(0, 5)
+
+        result = {"rotated_bboxes": rotated_bboxes_array}
+
+        # Only add rotated_bbox_labels if we have label categories
+        if self.rotated_bbox_labels_attribute is not None:
+            result["rotated_bbox_labels"] = np.array(labels, dtype=np.int32)
 
         return result
 
@@ -386,7 +471,7 @@ class ForwardPolygonAnnotationConverter(ForwardAnnotationConverter):
     def get_schema_attributes(self) -> dict[str, AttributeInfo]:
         attributes = {"polygons": self.polygon_attribute}
         if self.polygon_labels_attribute is not None:
-            attributes["polygon_labels"] = self.polygon_labels_attribute
+            attributes["labels"] = self.polygon_labels_attribute
         return attributes
 
     def convert_annotations(
@@ -415,7 +500,7 @@ class ForwardPolygonAnnotationConverter(ForwardAnnotationConverter):
 
         # Only add polygon_labels if we have label categories
         if self.polygon_labels_attribute is not None:
-            result["polygon_labels"] = np.array(labels, dtype=np.int32)
+            result["labels"] = np.array(labels, dtype=np.int32)
 
         return result
 
@@ -429,6 +514,7 @@ def register_builtin_forward_converters():
     # Annotation converters
     register_forward_annotation_converter(ForwardBboxAnnotationConverter)
     register_forward_annotation_converter(ForwardPolygonAnnotationConverter)
+    register_forward_annotation_converter(ForwardRotatedBboxAnnotationConverter)
 
 
 from dataclasses import dataclass
@@ -702,6 +788,89 @@ class BackwardBboxAnnotationConverter(BackwardAnnotationConverter):
         return {AnnotationType.label: label_categories}
 
 
+class BackwardRotatedBboxAnnotationConverter(BackwardAnnotationConverter):
+    """Backward converter for RotatedBbox annotations."""
+
+    def __init__(self, rotated_bboxes_attr: str, rotated_bbox_labels_attr: str | None):
+        """Initialize with the names of the rotated bbox-related attributes."""
+        self.rotated_bboxes_attr = rotated_bboxes_attr
+        self.rotated_bbox_labels_attr = rotated_bbox_labels_attr
+
+    @classmethod
+    def create_from_schema(cls, schema: Schema) -> "BackwardRotatedBboxAnnotationConverter | None":
+        """Create converter if schema contains rotated bbox fields."""
+        rotated_bboxes_attr: str | None = None
+        rotated_bbox_labels_attr: str | None = None
+
+        for attr_name, attr_info in schema.attributes.items():
+            if isinstance(attr_info.annotation, RotatedBBoxField):
+                rotated_bboxes_attr = attr_name
+            elif isinstance(attr_info.annotation, LabelField):
+                rotated_bbox_labels_attr = attr_name
+
+        if rotated_bboxes_attr is None:
+            return None
+
+        return cls(rotated_bboxes_attr, rotated_bbox_labels_attr)
+
+    def get_annotation_type(self) -> AnnotationType:
+        return AnnotationType.rotated_bbox
+
+    def convert_to_legacy_annotations(
+        self, sample: Sample, categories: CategoriesInfo
+    ) -> list[Annotation]:
+        """Convert experimental rotated bbox data to legacy RotatedBbox annotations."""
+        rotated_bboxes = getattr(sample, self.rotated_bboxes_attr, None)
+        if rotated_bboxes is None or len(rotated_bboxes) == 0:
+            return []
+
+        rotated_bbox_labels = None
+        if self.rotated_bbox_labels_attr is not None:
+            rotated_bbox_labels = getattr(sample, self.rotated_bbox_labels_attr, None)
+
+        annotations: list[Annotation] = []
+        for i, bbox in enumerate(rotated_bboxes):
+            cx, cy, w, h, r_radians = bbox
+            # Convert from radians to degrees
+            r_degrees = math.degrees(r_radians)
+
+            label = None
+            if rotated_bbox_labels is not None and i < len(rotated_bbox_labels):
+                label = int(rotated_bbox_labels[i])
+
+            annotation = RotatedBbox(
+                cx=float(cx),
+                cy=float(cy),
+                w=float(w),
+                h=float(h),
+                r=float(r_degrees),
+                label=label,
+            )
+            annotations.append(annotation)
+
+        return annotations
+
+    def infer_categories(self, experimental_dataset: Dataset[Sample]) -> CategoriesInfo:
+        """Infer label categories from rotated_bbox_labels."""
+
+        # Collect all unique label IDs
+        label_ids: set[int] = set()
+        for sample in experimental_dataset:
+            if self.rotated_bbox_labels_attr is not None:
+                rotated_bbox_labels = getattr(sample, self.rotated_bbox_labels_attr, None)
+                if rotated_bbox_labels is not None:
+                    for label_id in rotated_bbox_labels:
+                        if label_id is not None:
+                            label_ids.add(int(label_id))
+
+        # Create label categories
+        label_categories = LegacyLabelCategories()
+        for label_id in sorted(label_ids):
+            label_categories.add(f"class_{label_id}")
+
+        return {AnnotationType.label: label_categories}
+
+
 class BackwardPolygonAnnotationConverter(BackwardAnnotationConverter):
     """Backward converter for Polygon annotations."""
 
@@ -905,6 +1074,7 @@ def register_builtin_backward_converters():
     # Register backward annotation converters
     register_backward_annotation_converter(BackwardBboxAnnotationConverter)
     register_backward_annotation_converter(BackwardPolygonAnnotationConverter)
+    register_backward_annotation_converter(BackwardRotatedBboxAnnotationConverter)
 
 
 # Auto-register built-in converters when module is imported

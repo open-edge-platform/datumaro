@@ -84,7 +84,7 @@ def test_object_detection(
         assert "bboxes" in schema.attributes
         assert "image_path" in schema.attributes
         assert "bboxes" in schema.attributes
-        assert "bbox_labels" in schema.attributes
+        assert "labels" in schema.attributes
 
         # Verify data conversion for first few samples
         for legacy_item, experimental_sample in zip(legacy_dataset, experimental_dataset):
@@ -95,7 +95,7 @@ def test_object_detection(
 
             # Check bbox data
             assert hasattr(experimental_sample, "bboxes")
-            assert hasattr(experimental_sample, "bbox_labels")
+            assert hasattr(experimental_sample, "labels")
 
             # Get bbox annotations from legacy item
             bbox_anns = [ann for ann in legacy_item.annotations if isinstance(ann, Bbox)]
@@ -103,7 +103,7 @@ def test_object_detection(
 
             # Verify bbox array shape and values
             bboxes = getattr(experimental_sample, "bboxes")
-            labels = getattr(experimental_sample, "bbox_labels")
+            labels = getattr(experimental_sample, "labels")
 
             assert bboxes.shape[0] == len(bbox_anns)
             assert bboxes.shape[1] == 4  # x1, y1, x2, y2

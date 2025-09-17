@@ -32,6 +32,7 @@ from .fields import (
     LabelField,
     MaskField,
     PolygonField,
+    RotatedBBoxField,
 )
 from .type_registry import polars_to_numpy_dtype
 
@@ -757,7 +758,7 @@ class PolygonToInstanceMaskConverter(Converter):
         )
 
 
-@converter(lazy=True)
+@converter
 class PolygonToBBoxConverter(Converter):
     """
     Converts polygon annotations to bounding boxes.
@@ -935,3 +936,73 @@ class ImageCallableToImageConverter(Converter):
         )
 
         return result_df
+
+
+@converter
+class RotatedBBoxToPolygonConverter(Converter):
+    """
+    Converts rotated bounding boxes to polygon coordinates.
+
+    Transforms rotated bounding box parameters (cx, cy, w, h, r) into
+    polygon corner points by rotating the rectangle corners around the center.
+    """
+
+    input_rotated_bbox: AttributeSpec[RotatedBBoxField]
+    output_polygon: AttributeSpec[PolygonField]
+
+    def filter_output_spec(self) -> bool:
+        """Configure output specification for polygon format."""
+        # Configure output for polygon format
+        self.output_polygon = AttributeSpec(
+            name=self.output_polygon.name,
+            field=PolygonField(
+                semantic=self.input_rotated_bbox.field.semantic,
+                dtype=self.input_rotated_bbox.field.dtype,
+                format=self.output_polygon.field.format,
+                normalize=self.input_rotated_bbox.field.normalize,  # Inherit normalization
+            ),
+        )
+        return True
+
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+        """
+        Convert rotated bounding boxes to polygon corner points.
+
+        Args:
+            df: DataFrame with rotated bounding box coordinates
+
+        Returns:
+            DataFrame with polygon data in output column
+        """
+        input_column_name = self.input_rotated_bbox.name
+        output_column_name = self.output_polygon.name
+
+        cx = pl.element().arr.get(0)
+        cy = pl.element().arr.get(1)
+        w = pl.element().arr.get(2)
+        h = pl.element().arr.get(3)
+        r = pl.element().arr.get(4)
+
+        def rotate_corner(expr: pl.Expr):
+            px = expr.arr.get(0)
+            py = expr.arr.get(1)
+            cos_theta = r.cos()
+            sin_theta = r.sin()
+            return pl.concat_arr(
+                cos_theta * px - sin_theta * py + cx, sin_theta * px + cos_theta * py + cy
+            )
+
+        df = df.with_columns(
+            pl.col(input_column_name)
+            .list.eval(
+                pl.concat_list(
+                    rotate_corner(pl.concat_arr(-w / 2, -h / 2)),
+                    rotate_corner(pl.concat_arr(w / 2, -h / 2)),
+                    rotate_corner(pl.concat_arr(w / 2, h / 2)),
+                    rotate_corner(pl.concat_arr(-w / 2, h / 2)),
+                )
+            )
+            .alias(output_column_name)
+        )
+
+        return df

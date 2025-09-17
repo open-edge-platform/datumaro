@@ -28,6 +28,7 @@ from datumaro.experimental.converters import (
     PolygonToInstanceMaskConverter,
     PolygonToMaskConverter,
     RGBToBGRConverter,
+    RotatedBBoxToPolygonConverter,
     UInt8ToFloat32Converter,
 )
 from datumaro.experimental.fields import (
@@ -42,9 +43,11 @@ from datumaro.experimental.fields import (
     LabelField,
     MaskField,
     PolygonField,
+    RotatedBBoxField,
     bbox_field,
     image_field,
     image_info_field,
+    rotated_bbox_field,
 )
 from datumaro.experimental.schema import AttributeInfo, Schema, Semantic
 
@@ -1801,3 +1804,79 @@ def test_image_callable_converter_dtype_handling():
     image_info2 = result2["output_info"][0]
     assert image_info2["width"] == 1  # width
     assert image_info2["height"] == 1  # height
+
+
+def test_rotated_bbox_to_polygon_converter():
+    """Test conversion from rotated bounding box to polygon format."""
+    import math
+
+    # Create test data with rotated bboxes: [cx, cy, w, h, r]
+    rotated_bbox_coords1 = [50.0, 60.0, 30.0, 20.0, 0.0]  # No rotation
+    rotated_bbox_coords2 = [100.0, 120.0, 40.0, 25.0, math.pi / 4]  # 45 degrees
+
+    rotated_bbox_series = pl.Series(
+        [rotated_bbox_coords1, rotated_bbox_coords2], dtype=pl.Array(pl.Float32, 5)
+    )
+
+    df = pl.DataFrame(
+        {
+            "rotated_bboxes": [rotated_bbox_series],
+        }
+    )
+
+    # Create converter instance
+    converter_instance = RotatedBBoxToPolygonConverter()
+
+    # Set up field specs
+    input_rotated_bbox_field = RotatedBBoxField(
+        dtype=pl.Float32, format="cxcywhr", normalize=False, semantic=Semantic.Default
+    )
+    output_polygon_field = PolygonField(
+        dtype=pl.Float32, format="xy", normalize=False, semantic=Semantic.Default
+    )
+
+    setattr(
+        converter_instance,
+        "input_rotated_bbox",
+        AttributeSpec(name="rotated_bboxes", field=input_rotated_bbox_field),
+    )
+    setattr(
+        converter_instance,
+        "output_polygon",
+        AttributeSpec(name="polygons", field=output_polygon_field),
+    )
+
+    # Test filter - should return True when we have valid input
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    # Check that polygon column was created
+    assert "polygons" in result_df.columns
+
+    # Get the polygon data
+    polygons = result_df["polygons"][0]
+
+    # Check that we have 2 polygons
+    assert len(polygons) == 2
+
+    # Check first polygon (no rotation) - should be axis-aligned rectangle
+    polygon1 = polygons[0]
+    assert len(polygon1) == 4  # Four corners
+
+    # For no rotation, corners should be at predictable positions
+    expected_corners = [
+        [35.0, 50.0],  # bottom-left
+        [65.0, 50.0],  # bottom-right
+        [65.0, 70.0],  # top-right
+        [35.0, 70.0],  # top-left
+    ]
+
+    for expected, actual in zip(expected_corners, polygon1):
+        assert abs(actual[0] - expected[0]) < 1e-5
+        assert abs(actual[1] - expected[1]) < 1e-5
+
+    # Check second polygon (45-degree rotation)
+    polygon2 = polygons[1]
+    assert len(polygon2) == 4  # Four corners
