@@ -18,6 +18,7 @@ from datumaro.experimental.fields import (
     ImageInfoField,
     ImagePathField,
     PolygonField,
+    RotatedBBoxField,
     TensorField,
     bbox_field,
     image_bytes_field,
@@ -26,6 +27,7 @@ from datumaro.experimental.fields import (
     image_info_field,
     image_path_field,
     polygon_field,
+    rotated_bbox_field,
     tensor_field,
 )
 from datumaro.experimental.schema import AttributeInfo, Schema, Semantic
@@ -182,6 +184,60 @@ def test_bbox_field_polars_conversion():
 
     assert isinstance(reconstructed, np.ndarray)
     assert np.allclose(reconstructed, test_bbox)
+
+
+def test_rotated_bbox_field_creation():
+    """Test RotatedBBoxField creation and properties."""
+    field = rotated_bbox_field(
+        dtype=pl.Float32, format="cxcywhr", normalize=True, semantic=Semantic.Default
+    )
+
+    assert isinstance(field, RotatedBBoxField)
+    assert field.dtype == pl.Float32
+    assert field.format == "cxcywhr"
+    assert field.normalize is True
+    assert field.semantic == Semantic.Default
+
+
+def test_rotated_bbox_field_creation_defaults():
+    """Test RotatedBBoxField creation with default values."""
+    field = rotated_bbox_field(dtype=pl.Float32)
+
+    assert isinstance(field, RotatedBBoxField)
+    assert field.dtype == pl.Float32
+    assert field.format == "cxcywhr"  # Default format
+    assert field.normalize is False  # Default normalization
+    assert field.semantic == Semantic.Default  # Default semantic
+
+
+def test_rotated_bbox_field_polars_schema():
+    """Test RotatedBBoxField Polars schema generation."""
+    field = rotated_bbox_field(dtype=pl.Float32)
+    schema = field.to_polars_schema("rotated_bbox")
+
+    expected = {"rotated_bbox": pl.List(pl.Array(pl.Float32, 5))}
+    assert schema == expected
+
+
+def test_rotated_bbox_field_polars_conversion():
+    """Test RotatedBBoxField to/from Polars conversion."""
+    field = cast(RotatedBBoxField, rotated_bbox_field(dtype=pl.Float32, normalize=False))
+    # Test with rotated bboxes: [cx, cy, w, h, r]
+    test_rotated_bbox = np.array(
+        [[50.0, 60.0, 30.0, 20.0, 0.785], [100.0, 120.0, 40.0, 25.0, 1.57]], dtype=np.float32
+    )
+
+    # Test to_polars
+    polars_data = field.to_polars("rotated_bbox", test_rotated_bbox)
+    assert "rotated_bbox" in polars_data
+    assert isinstance(polars_data["rotated_bbox"], pl.Series)
+
+    # Create DataFrame and test from_polars
+    df = pl.DataFrame(polars_data)
+    reconstructed = cast(np.ndarray[Any, Any], field.from_polars("rotated_bbox", 0, df, np.ndarray))
+
+    assert isinstance(reconstructed, np.ndarray)
+    assert np.allclose(reconstructed, test_rotated_bbox)
 
 
 def test_image_info_creation():
