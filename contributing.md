@@ -38,7 +38,7 @@ To ensure our codebase remains secure, we leverage GitHub Actions for continuous
 If necessary, to suppress _false_ positives, add inline comment with specific syntax.
 Please also add a comment explaining _why_ you decided to disable a rule or provide a risk-acceptance reason.
 
-#### Bandit
+### Bandit
 
 Findings can be ignored inline with `# nosec BXXX` comments.
 
@@ -48,7 +48,7 @@ import subprocess # nosec B404 # this is actually fine
 
 [Details](https://bandit.readthedocs.io/en/latest/config.html#exclusions) in Bandit docs.
 
-#### Zizmor
+### Zizmor
 
 Findings can be ignored inline with `# zizmor: ignore[rulename]` comments.
 
@@ -58,7 +58,7 @@ uses: actions/checkout@v3 # zizmor: ignore[artipacked] this is actually fine
 
 [Details](https://woodruffw.github.io/zizmor/usage/#with-comments) in Zizmor docs.
 
-#### Semgrep
+### Semgrep
 
 Findings can be ignored inline with `# nosemgrep: rule-id` comments.
 
