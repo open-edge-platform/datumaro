@@ -721,7 +721,7 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="nf">get_schema_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AttributeInfo</span><span class="p">]:</span>
         <span class="n">attributes</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;bboxes&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">bbox_attribute</span><span class="p">}</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bbox_labels_attribute</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;bbox_labels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bbox_labels_attribute</span>
+            <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bbox_labels_attribute</span>
         <span class="k">return</span> <span class="n">attributes</span></div>
 
 
@@ -748,7 +748,7 @@ document.write(`
 
         <span class="c1"># Only add bbox_labels if we have label categories</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bbox_labels_attribute</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">result</span><span class="p">[</span><span class="s2">&quot;bbox_labels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+            <span class="n">result</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">result</span></div>
 </div>
@@ -910,7 +910,7 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="nf">get_schema_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AttributeInfo</span><span class="p">]:</span>
         <span class="n">attributes</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;polygons&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">polygon_attribute</span><span class="p">}</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">polygon_labels_attribute</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;polygon_labels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">polygon_labels_attribute</span>
+            <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">polygon_labels_attribute</span>
         <span class="k">return</span> <span class="n">attributes</span></div>
 
 
@@ -942,7 +942,7 @@ document.write(`
 
         <span class="c1"># Only add polygon_labels if we have label categories</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">polygon_labels_attribute</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">result</span><span class="p">[</span><span class="s2">&quot;polygon_labels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+            <span class="n">result</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">result</span></div>
 </div>
