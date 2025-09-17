@@ -16,6 +16,8 @@ class RestrictedUnpickler(pickle.Unpickler):
             return getattr(numpy.core.multiarray, name)
         elif module == "numpy" and name in PickleLoader.safe_numpy:
             return getattr(numpy, name)
+        # No in unpickling in this particular line
+        # nosemgrep: python.lang.security.deserialization.pickle.avoid-pickle
         raise pickle.UnpicklingError("Global '%s.%s' is forbidden" % (module, name))
 
 
