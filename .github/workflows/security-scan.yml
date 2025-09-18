@@ -89,6 +89,22 @@ jobs:
           mkdir -p trivy_input/base
           pip-compile -o trivy_input/base/requirements.txt requirements.txt
 
+          mkdir -p trivy_input/extra
+
+          pip-compile -o trivy_input/extra/requirements.txt setup.py  \
+          --extra  tf  \
+          --extra  tfds  \
+          --extra  torch  \
+          --extra  kaggle  \
+          --extra  scipy  \
+          --extra  nlp  \
+          --extra  tabulate  \
+          --extra  cli  \
+          --extra  visualizer  \
+          --extra  h5py  \
+          --extra  nibabel  \
+          --extra  protobuf  \
+
       - name: Run Trivy scan
         id: trivy
         uses: open-edge-platform/geti-ci/actions/trivy@db5335076dfe564b039b5a7480b8f6b6ae38370a
@@ -100,3 +116,21 @@ jobs:
           format: "sarif"
           timeout: "15m"
           ignore_unfixed: "false"
+
+  semgrep-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write # Needed to upload the results to code-scanning dashboard
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - name: Run Semgrep scan
+        id: semgrep
+        uses: open-edge-platform/geti-ci/actions/semgrep@353d464dd966cc07ce9c5109e70c12c17fb60942
+        with:
+          scan-scope: "all"
+          severity: "LOW"
+          fail-on-findings: false # reports only
