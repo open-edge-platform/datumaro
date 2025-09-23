@@ -19,6 +19,7 @@ from datumaro.components.annotation import (
     Points,
     Polygon,
     PolyLine,
+    RotatedBbox,
 )
 from datumaro.components.dataset_base import DatasetItem, SubsetBase
 from datumaro.components.errors import DatasetImportError
@@ -149,6 +150,7 @@ class CvatBase(SubsetBase):
                     shape["z_order"] = int(el.attrib.get("z_order", 0))
 
                     if el.tag == "box":
+                        # Get box coordinates
                         shape["points"] = list(
                             map(
                                 float,
@@ -160,6 +162,10 @@ class CvatBase(SubsetBase):
                                 ],
                             )
                         )
+
+                        # Check if rotation is present
+                        if "rotation" in el.attrib:
+                            shape["rotation"] = float(el.attrib.get("rotation", "0"))
                     elif el.tag == "mask":
                         shape["rle"] = el.attrib["rle"]
                         shape["left"] = el.attrib["left"]
@@ -303,11 +309,34 @@ class CvatBase(SubsetBase):
             )
 
         elif ann_type == "box":
-            x, y = points[0], points[1]
-            w, h = points[2] - x, points[3] - y
+            x1, y1 = points[0], points[1]  # xtl, ytl
+            x2, y2 = points[2], points[3]  # xbr, ybr
+            w = x2 - x1
+            h = y2 - y1
+
+            # If rotation is present, convert to RotatedBbox
+            if "rotation" in ann:
+                # Convert from CVAT format (xtl,ytl,xbr,ybr + rotation)
+                # to Datumaro format (cx,cy,w,h,r)
+                cx = (x1 + x2) / 2
+                cy = (y1 + y2) / 2
+                return RotatedBbox(
+                    cx,
+                    cy,
+                    w,
+                    h,
+                    float(ann["rotation"]),
+                    label=label_id,
+                    z_order=z_order,
+                    id=ann_id,
+                    attributes=attributes,
+                    group=group,
+                )
+
+            # Otherwise use regular Bbox
             return Bbox(
-                x,
-                y,
+                x1,
+                y1,
                 w,
                 h,
                 label=label_id,

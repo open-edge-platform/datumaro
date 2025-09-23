@@ -57,7 +57,7 @@ This release streamlines Datumaro by removing a number of lesser-used features, 
 
 ### New features
 - Experimental dataset class
-  (<https://github.com/open-edge-platform/datumaro/pull/1807>, <https://github.com/open-edge-platform/datumaro/pull/1810>, <https://github.com/open-edge-platform/datumaro/pull/1811>, <https://github.com/open-edge-platform/datumaro/pull/1834>, <https://github.com/open-edge-platform/datumaro/pull/1858>, <https://github.com/open-edge-platform/datumaro/pull/1845>, <https://github.com/open-edge-platform/datumaro/pull/1863>, <https://github.com/open-edge-platform/datumaro/pull/1868>, <https://github.com/open-edge-platform/datumaro/pull/1876>, <https://github.com/open-edge-platform/datumaro/pull/1877>, <https://github.com/open-edge-platform/datumaro/pull/1879>, <https://github.com/open-edge-platform/datumaro/pull/1881>)
+  (<https://github.com/open-edge-platform/datumaro/pull/1807>, <https://github.com/open-edge-platform/datumaro/pull/1810>, <https://github.com/open-edge-platform/datumaro/pull/1811>, <https://github.com/open-edge-platform/datumaro/pull/1834>, <https://github.com/open-edge-platform/datumaro/pull/1858>, <https://github.com/open-edge-platform/datumaro/pull/1845>, <https://github.com/open-edge-platform/datumaro/pull/1863>, <https://github.com/open-edge-platform/datumaro/pull/1868>, <https://github.com/open-edge-platform/datumaro/pull/1876>, <https://github.com/open-edge-platform/datumaro/pull/1877>, <https://github.com/open-edge-platform/datumaro/pull/1879>, <https://github.com/open-edge-platform/datumaro/pull/1881>, <https://github.com/open-edge-platform/datumaro/pull/1891>)
 
 ### Enhancements
 - Mark several dependencies as optional
@@ -72,6 +72,8 @@ This release streamlines Datumaro by removing a number of lesser-used features, 
   (<https://github.com/open-edge-platform/datumaro/pull/1861>)
 - Fix crashes with certain datasets in the compare command
   (<https://github.com/open-edge-platform/datumaro/pull/1892>)
+- Added Semgrep security scan in the CI
+  (<https://github.com/open-edge-platform/datumaro/pull/1883>)
 
 ## Q3 2025 Release 1.11.1
 
