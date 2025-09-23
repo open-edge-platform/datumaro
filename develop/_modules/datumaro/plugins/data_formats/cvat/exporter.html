@@ -792,6 +792,30 @@ document.write(`
                     <span class="p">]</span>
                 <span class="p">)</span>
             <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">shape</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">rotated_bbox</span><span class="p">:</span>
+            <span class="c1"># Convert from Datumaro format (cx,cy,w,h,r)</span>
+            <span class="c1"># to CVAT format (xtl,ytl,xbr,ybr + rotation)</span>
+            <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span> <span class="o">=</span> <span class="n">shape</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">shape</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">shape</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">shape</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+            <span class="n">rotation</span> <span class="o">=</span> <span class="n">shape</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+
+            <span class="c1"># Calculate corners from center coordinates</span>
+            <span class="n">xtl</span> <span class="o">=</span> <span class="n">cx</span> <span class="o">-</span> <span class="n">w</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="n">ytl</span> <span class="o">=</span> <span class="n">cy</span> <span class="o">-</span> <span class="n">h</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="n">xbr</span> <span class="o">=</span> <span class="n">cx</span> <span class="o">+</span> <span class="n">w</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="n">ybr</span> <span class="o">=</span> <span class="n">cy</span> <span class="o">+</span> <span class="n">h</span> <span class="o">/</span> <span class="mi">2</span>
+
+            <span class="n">shape_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="n">OrderedDict</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="p">(</span><span class="s2">&quot;xtl&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">xtl</span><span class="p">)),</span>
+                        <span class="p">(</span><span class="s2">&quot;ytl&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ytl</span><span class="p">)),</span>
+                        <span class="p">(</span><span class="s2">&quot;xbr&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">xbr</span><span class="p">)),</span>
+                        <span class="p">(</span><span class="s2">&quot;ybr&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ybr</span><span class="p">)),</span>
+                        <span class="p">(</span><span class="s2">&quot;rotation&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rotation</span><span class="p">)),</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
         <span class="k">elif</span> <span class="n">shape</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span><span class="p">:</span>
             <span class="c1"># From the manual test for the dataset exported from the CVAT 2.5,</span>
             <span class="c1"># the RLE encoding in the dataset has (W, H) binary 2D np.ndarray, not (H, W)</span>
@@ -829,7 +853,7 @@ document.write(`
         <span class="k">if</span> <span class="n">shape</span><span class="o">.</span><span class="n">group</span><span class="p">:</span>
             <span class="n">shape_data</span><span class="p">[</span><span class="s2">&quot;group_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">shape</span><span class="o">.</span><span class="n">group</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">shape</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">shape</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">rotated_bbox</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">open_box</span><span class="p">(</span><span class="n">shape_data</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">shape</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">polygon</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">open_polygon</span><span class="p">(</span><span class="n">shape_data</span><span class="p">)</span>
@@ -869,7 +893,7 @@ document.write(`
                         <span class="n">label_name</span><span class="p">,</span>
                     <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">shape</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">shape</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">rotated_bbox</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">close_box</span><span class="p">()</span>
         <span class="k">elif</span> <span class="n">shape</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">polygon</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">close_polygon</span><span class="p">()</span>

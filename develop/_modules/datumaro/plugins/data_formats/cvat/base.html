@@ -361,6 +361,7 @@ document.write(`
     <span class="n">Points</span><span class="p">,</span>
     <span class="n">Polygon</span><span class="p">,</span>
     <span class="n">PolyLine</span><span class="p">,</span>
+    <span class="n">RotatedBbox</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">SubsetBase</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetImportError</span>
@@ -493,6 +494,7 @@ document.write(`
                     <span class="n">shape</span><span class="p">[</span><span class="s2">&quot;z_order&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">el</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;z_order&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
 
                     <span class="k">if</span> <span class="n">el</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;box&quot;</span><span class="p">:</span>
+                        <span class="c1"># Get box coordinates</span>
                         <span class="n">shape</span><span class="p">[</span><span class="s2">&quot;points&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
                             <span class="nb">map</span><span class="p">(</span>
                                 <span class="nb">float</span><span class="p">,</span>
@@ -504,6 +506,10 @@ document.write(`
                                 <span class="p">],</span>
                             <span class="p">)</span>
                         <span class="p">)</span>
+
+                        <span class="c1"># Check if rotation is present</span>
+                        <span class="k">if</span> <span class="s2">&quot;rotation&quot;</span> <span class="ow">in</span> <span class="n">el</span><span class="o">.</span><span class="n">attrib</span><span class="p">:</span>
+                            <span class="n">shape</span><span class="p">[</span><span class="s2">&quot;rotation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">el</span><span class="o">.</span><span class="n">attrib</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;rotation&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">))</span>
                     <span class="k">elif</span> <span class="n">el</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;mask&quot;</span><span class="p">:</span>
                         <span class="n">shape</span><span class="p">[</span><span class="s2">&quot;rle&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">el</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;rle&quot;</span><span class="p">]</span>
                         <span class="n">shape</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">el</span><span class="o">.</span><span class="n">attrib</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">]</span>
@@ -647,11 +653,34 @@ document.write(`
             <span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">ann_type</span> <span class="o">==</span> <span class="s2">&quot;box&quot;</span><span class="p">:</span>
-            <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">,</span> <span class="n">points</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">y</span>
+            <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># xtl, ytl</span>
+            <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="n">points</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">points</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>  <span class="c1"># xbr, ybr</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="n">x2</span> <span class="o">-</span> <span class="n">x1</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="n">y2</span> <span class="o">-</span> <span class="n">y1</span>
+
+            <span class="c1"># If rotation is present, convert to RotatedBbox</span>
+            <span class="k">if</span> <span class="s2">&quot;rotation&quot;</span> <span class="ow">in</span> <span class="n">ann</span><span class="p">:</span>
+                <span class="c1"># Convert from CVAT format (xtl,ytl,xbr,ybr + rotation)</span>
+                <span class="c1"># to Datumaro format (cx,cy,w,h,r)</span>
+                <span class="n">cx</span> <span class="o">=</span> <span class="p">(</span><span class="n">x1</span> <span class="o">+</span> <span class="n">x2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+                <span class="n">cy</span> <span class="o">=</span> <span class="p">(</span><span class="n">y1</span> <span class="o">+</span> <span class="n">y2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+                <span class="k">return</span> <span class="n">RotatedBbox</span><span class="p">(</span>
+                    <span class="n">cx</span><span class="p">,</span>
+                    <span class="n">cy</span><span class="p">,</span>
+                    <span class="n">w</span><span class="p">,</span>
+                    <span class="n">h</span><span class="p">,</span>
+                    <span class="nb">float</span><span class="p">(</span><span class="n">ann</span><span class="p">[</span><span class="s2">&quot;rotation&quot;</span><span class="p">]),</span>
+                    <span class="n">label</span><span class="o">=</span><span class="n">label_id</span><span class="p">,</span>
+                    <span class="n">z_order</span><span class="o">=</span><span class="n">z_order</span><span class="p">,</span>
+                    <span class="nb">id</span><span class="o">=</span><span class="n">ann_id</span><span class="p">,</span>
+                    <span class="n">attributes</span><span class="o">=</span><span class="n">attributes</span><span class="p">,</span>
+                    <span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Otherwise use regular Bbox</span>
             <span class="k">return</span> <span class="n">Bbox</span><span class="p">(</span>
-                <span class="n">x</span><span class="p">,</span>
-                <span class="n">y</span><span class="p">,</span>
+                <span class="n">x1</span><span class="p">,</span>
+                <span class="n">y1</span><span class="p">,</span>
                 <span class="n">w</span><span class="p">,</span>
                 <span class="n">h</span><span class="p">,</span>
                 <span class="n">label</span><span class="o">=</span><span class="n">label_id</span><span class="p">,</span>
