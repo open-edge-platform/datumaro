@@ -51,7 +51,7 @@ This release streamlines Datumaro by removing a number of lesser-used features, 
   - Noisy label detection
     (<https://github.com/open-edge-platform/datumaro/pull/1833>)
   - Data shift analysis
-    (<https://github.com/open-edge-platform/datumaro/pull/1827>)
+    (<https://github.com/open-edge-platform/datumaro/pull/1827>, <https://github.com/open-edge-platform/datumaro/pull/1892>)
 - SAM Docker image
   (<https://github.com/open-edge-platform/datumaro/pull/1830>)
 
@@ -70,6 +70,8 @@ This release streamlines Datumaro by removing a number of lesser-used features, 
   (<https://github.com/open-edge-platform/datumaro/pull/1844>, <https://github.com/open-edge-platform/datumaro/pull/1860>, <https://github.com/open-edge-platform/datumaro/pull/1856>, <https://github.com/open-edge-platform/datumaro/pull/1847>)
 - Fix code coverage upload to Codecov in the CI
   (<https://github.com/open-edge-platform/datumaro/pull/1861>)
+- Fix crashes with certain datasets in the compare command
+  (<https://github.com/open-edge-platform/datumaro/pull/1892>)
 
 ## Q3 2025 Release 1.11.1
 
