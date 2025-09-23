@@ -105,6 +105,7 @@ setuptools.setup(
         "nibabel": ["nibabel>=3.2.1"],
         # AVA dataset
         "protobuf": ["protobuf"],
+        "experimental": ["polars>=1.31.0,<2.0.0"],
     },
     ext_modules=ext_modules,
     entry_points={
