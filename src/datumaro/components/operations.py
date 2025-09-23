@@ -48,6 +48,10 @@ class _MeanStdCounter:
         count = np.prod(item.media.size)
 
         image = item.media.data
+
+        if image is None:
+            return
+
         if len(image.shape) == 2:
             image = image[:, :, np.newaxis]
         else:
