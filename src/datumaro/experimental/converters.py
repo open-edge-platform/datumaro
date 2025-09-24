@@ -28,8 +28,10 @@ from .fields import (
     ImageInfo,
     ImageInfoField,
     ImagePathField,
+    InstanceMaskCallableField,
     InstanceMaskField,
     LabelField,
+    MaskCallableField,
     MaskField,
     PolygonField,
     RotatedBBoxField,
@@ -932,6 +934,159 @@ class ImageCallableToImageConverter(Converter):
         )
 
         return result_df
+
+
+@converter(lazy=True)
+class InstanceMaskCallableToInstanceMaskConverter(Converter):
+    """
+    Lazy converter that executes callables to generate instance mask data.
+
+    This converter takes a callable stored in a InstanceMaskCallableField and
+    executes it to get instance mask data as a 3D numpy array (N,H,W), producing
+    an InstanceMaskField output. Each mask in the output is a binary mask
+    representing a single instance.
+    """
+
+    input_callable: AttributeSpec[InstanceMaskCallableField]
+    output_mask: AttributeSpec[InstanceMaskField]
+
+    def filter_output_spec(self) -> bool:
+        """Configure output mask specification based on input."""
+        self.output_mask = AttributeSpec(
+            name=self.output_mask.name,
+            field=InstanceMaskField(
+                semantic=self.input_callable.field.semantic,
+                dtype=self.input_callable.field.dtype,  # Use dtype from callable field
+            ),
+        )
+        return True
+
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+        """
+        Execute callables to generate instance mask data.
+
+        Args:
+            df: DataFrame containing callable column
+
+        Returns:
+            DataFrame with instance mask tensor data and shape information
+        """
+        input_col = self.input_callable.name
+        output_col = self.output_mask.name
+
+        # Execute callables to generate mask data
+        mask_data: list[Any] = []
+        mask_shapes: list[list[int]] = []
+
+        for callable_obj in df[input_col]:
+            # Execute the callable to get instance mask array
+            mask_array = callable_obj()
+
+            # Validate that we got a numpy array
+            if not isinstance(mask_array, np.ndarray):
+                raise TypeError(f"Callable must return numpy.ndarray, got {type(mask_array)}")
+
+            # Check array shape - should be 3D for instance masks (N, height, width)
+            if len(mask_array.shape) != 3:
+                raise ValueError(
+                    f"Instance mask array must be 3D (N,H,W), got shape {mask_array.shape}"
+                )
+
+            # Check that the array has the expected dtype
+            expected_dtype = self.output_mask.field.dtype
+            expected_numpy_dtype = polars_to_numpy_dtype(expected_dtype)
+            if mask_array.dtype != expected_numpy_dtype:
+                raise TypeError(
+                    f"Expected {expected_numpy_dtype} mask array, got {mask_array.dtype}"
+                )
+
+            # Store flattened mask data and shape
+            mask_data.append(mask_array.flatten())
+            mask_shapes.append(list(mask_array.shape))
+
+        # Create output columns
+        return df.with_columns(
+            [
+                pl.Series(output_col, mask_data),
+                pl.Series(f"{output_col}_shape", mask_shapes),
+            ]
+        ).drop(input_col)
+
+
+@converter(lazy=True)
+class MaskCallableToMaskConverter(Converter):
+    """
+    Lazy converter that executes callables to generate mask data.
+
+    This converter takes a callable stored in a MaskCallableField and
+    executes it to get mask data as a 2D numpy array (H,W), producing
+    a MaskField output. The mask can be either a binary mask or a
+    category mask.
+    """
+
+    input_callable: AttributeSpec[MaskCallableField]
+    output_mask: AttributeSpec[MaskField]
+
+    def filter_output_spec(self) -> bool:
+        """Configure output mask specification based on input."""
+        self.output_mask = AttributeSpec(
+            name=self.output_mask.name,
+            field=MaskField(
+                semantic=self.input_callable.field.semantic,
+                dtype=self.input_callable.field.dtype,  # Use dtype from callable field
+            ),
+            categories=self.input_callable.categories,
+        )
+        return True
+
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+        """
+        Execute callables to generate mask data.
+
+        Args:
+            df: DataFrame containing callable column
+
+        Returns:
+            DataFrame with mask tensor data and shape information
+        """
+        input_col = self.input_callable.name
+        output_col = self.output_mask.name
+
+        # Execute callables to generate mask data
+        mask_data: list[Any] = []
+        mask_shapes: list[list[int]] = []
+
+        for callable_obj in df[input_col]:
+            # Execute the callable to get mask array
+            mask_array = callable_obj()
+
+            # Validate that we got a numpy array
+            if not isinstance(mask_array, np.ndarray):
+                raise TypeError(f"Callable must return numpy.ndarray, got {type(mask_array)}")
+
+            # Check array shape - should be 2D for masks (height, width)
+            if len(mask_array.shape) != 2:
+                raise ValueError(f"Mask array must be 2D (H,W), got shape {mask_array.shape}")
+
+            # Check that the array has the expected dtype
+            expected_dtype = self.output_mask.field.dtype
+            expected_numpy_dtype = polars_to_numpy_dtype(expected_dtype)
+            if mask_array.dtype != expected_numpy_dtype:
+                raise TypeError(
+                    f"Expected {expected_numpy_dtype} mask array, got {mask_array.dtype}"
+                )
+
+            # Store flattened mask data and shape
+            mask_data.append(mask_array.flatten())
+            mask_shapes.append(list(mask_array.shape))
+
+        # Create output columns
+        return df.with_columns(
+            [
+                pl.Series(output_col, mask_data),
+                pl.Series(f"{output_col}_shape", mask_shapes),
+            ]
+        ).drop(input_col)
 
 
 @converter
