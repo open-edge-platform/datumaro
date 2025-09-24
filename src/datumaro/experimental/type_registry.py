@@ -16,6 +16,8 @@ from typing import Any, Callable, Union
 import numpy as np
 import polars as pl
 
+from datumaro.components.annotation import Points
+
 
 def polars_to_numpy_dtype(polars_dtype: pl.DataType) -> np.dtype[Any]:
     """Convert a Polars dtype to the corresponding NumPy dtype.
@@ -67,6 +69,8 @@ def polars_to_numpy_dtype(polars_dtype: pl.DataType) -> np.dtype[Any]:
 _to_numpy_converters: dict[type, Callable[[Any], np.ndarray[Any, Any]]] = {
     np.ndarray: lambda x: x,
     bytes: lambda x: np.array(x),
+    list: lambda x: np.array(x),
+    Points: lambda x: np.array(x.points),
 }
 
 _from_polars_converters: dict[type, Callable[[Any], Any]] = {

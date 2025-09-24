@@ -8,7 +8,6 @@ from typing import Any, cast
 
 import numpy as np
 import polars as pl
-import pytest
 from PIL import Image as PILImage
 from typing_extensions import Annotated
 
@@ -16,18 +15,17 @@ from datumaro.components.annotation import (
     AnnotationType,
     Bbox,
     LabelCategories,
+    Points,
     Polygon,
     RotatedBbox,
 )
 from datumaro.components.dataset import Dataset as LegacyDataset
 from datumaro.components.dataset_base import CategoriesInfo, DatasetItem
-from datumaro.components.media import Image, ImageFromData, ImageFromFile, MediaElement, Video
+from datumaro.components.media import Image, ImageFromData, ImageFromFile, Video
 from datumaro.experimental.dataset import Dataset, Sample
 from datumaro.experimental.fields import (
     ImageInfo,
     bbox_field,
-    image_bytes_field,
-    image_info_field,
     image_path_field,
     label_field,
     polygon_field,
@@ -41,6 +39,7 @@ from datumaro.experimental.legacy import (
     BackwardRotatedBboxAnnotationConverter,
     ForwardBboxAnnotationConverter,
     ForwardImageMediaConverter,
+    ForwardKeypointAnnotationConverter,
     ForwardPolygonAnnotationConverter,
     ForwardRotatedBboxAnnotationConverter,
     analyze_experimental_dataset,
@@ -1728,3 +1727,42 @@ def test_rotated_bbox_conversion_without_labels():
     # Check that labels are None (since we didn't have label categories)
     for bbox in rotated_bbox_anns:
         assert bbox.label is None
+
+
+def test_keypoint_annotation_converter_convert_annotations_with_labels():
+    """Test keypoint annotation conversion with label categories."""
+    # Create label categories
+    label_categories = LabelCategories()
+    label_categories.add("person")
+    label_categories.add("bicycle")
+
+    categories: CategoriesInfo = {AnnotationType.label: label_categories}
+    converter = ForwardKeypointAnnotationConverter.create_from_categories(categories)
+    assert converter is not None
+
+    # Create test Points annotation with label and keypoint_label_ids attribute
+    points_data = [100.0, 200.0, 300.0, 400.0]  # 2 keypoints
+    visibility = [2, 1]  # visible, hidden
+    points_annotation = Points(
+        points_data,
+        visibility,
+        label=0,
+        attributes={"keypoint_label_ids": [0, 1]},  # person, bicycle
+    )
+
+    # Mock DatasetItem
+    item = DatasetItem(id="test", annotations=[points_annotation])
+
+    # Convert annotations
+    result = converter.convert_annotations([points_annotation], item)
+
+    assert "keypoints" in result
+    assert "labels" in result
+    assert result["keypoints"] == points_annotation
+    assert result["labels"] == [0, 1]
+
+
+def test_keypoint_annotation_converter_get_annotation_type():
+    """Test that keypoint converter returns correct annotation type."""
+    annotation_type = ForwardKeypointAnnotationConverter.get_annotation_type()
+    assert annotation_type == AnnotationType.points

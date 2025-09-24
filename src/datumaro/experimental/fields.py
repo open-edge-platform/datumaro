@@ -679,3 +679,118 @@ def image_callable_field(format: str = "RGB", semantic: Semantic = Semantic.Defa
         ImageCallableField instance configured with the given parameters
     """
     return ImageCallableField(semantic=semantic, format=format)
+
+
+@dataclass(frozen=True)
+class KeypointsField(Field):
+    """
+    Represents a keypoints field with coordinate and visibility information.
+
+    Handles keypoint data where each keypoint has (x, y) coordinates and a visibility state.
+    The keypoints are stored as triplets [x1, y1, v1, x2, y2, v2, ...] where each triplet
+    contains x coordinate, y coordinate, and visibility (0=absent, 1=hidden, 2=visible).
+
+    Attributes:
+        semantic: Semantic tags describing the keypoints purpose
+        dtype: Polars data type for coordinate values
+        normalize: Whether coordinates are normalized to [0,1] range
+    """
+
+    semantic: Semantic
+    dtype: PolarsDataType = pl.Float32()
+    normalize: bool = False
+
+    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+        """Generate schema for keypoints stored as x,y,v triplets."""
+        return {name: pl.List(self.dtype)}
+
+    def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
+        """Convert keypoints data to Polars format as x,y,v triplets."""
+        # Handle different input formats
+        if hasattr(value, "points") and hasattr(value, "visibility"):
+            # Points object from datumaro
+            points_data = value.points
+            visibility = [int(v) for v in value.visibility]
+        elif isinstance(value, dict) and "points" in value and "visibility" in value:
+            # Dictionary format
+            points_data = value["points"]
+            visibility = [int(v) for v in value["visibility"]]
+        elif (
+            isinstance(value, (list, tuple))
+            and len(value) == 2
+            and isinstance(value[0], (list, tuple, np.ndarray))
+            and isinstance(value[1], (list, tuple, np.ndarray))
+        ):
+            # Tuple/list of (points, visibility) - both elements must be sequences
+            points_data = value[0]
+            visibility = [int(v) for v in value[1]]
+        else:
+            # Check if it's already in x,y,v triplet format
+            if isinstance(value, (list, tuple)) and len(value) % 3 == 0:
+                # Assume it's already x,y,v triplets
+                triplets = np.array(value, dtype=np.float32)
+                return {name: pl.Series(name, [triplets.tolist()])}
+            else:
+                # Assume it's just points data, create default visibility
+                points_data = value
+                # Convert to numpy first to get length
+                if isinstance(points_data, list):
+                    points_array = np.array(points_data)
+                else:
+                    points_array = np.asarray(points_data)
+                num_points = len(points_array) // 2
+                visibility = [2] * num_points  # Default to visible
+
+        # Convert points to numpy array
+        if isinstance(points_data, list):
+            # Use numpy float32 for lists
+            points = np.array(points_data, dtype=np.float32)
+        else:
+            points = to_numpy(points_data, self.dtype)
+
+        # Validate data consistency
+        if len(points) % 2 != 0:
+            raise ValueError(f"Points array length {len(points)} is not even")
+        if len(visibility) != len(points) // 2:
+            raise ValueError(
+                f"Visibility length {len(visibility)} does not match points length {len(points) // 2}"
+            )
+
+        # Convert to x,y,v triplets
+        triplets = []
+        for i in range(0, len(points), 2):
+            x = float(points[i])
+            y = float(points[i + 1])
+            v = float(visibility[i // 2])  # Convert visibility to float for type consistency
+            triplets.extend([x, y, v])
+
+        return {name: pl.Series(name, [triplets])}
+
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+        """Reconstruct keypoints data from x,y,v triplets."""
+        triplets_data = df[name][row_index]
+
+        # Convert triplets back to separate points and visibility arrays
+        triplets = np.array(triplets_data, dtype=np.float32)
+
+        keypoints = triplets.reshape(-1, 3)
+        return from_polars_data(keypoints, target_type)
+
+
+def keypoints_field(
+    dtype: Any = pl.Float32(),
+    normalize: bool = False,
+    semantic: Semantic = Semantic.Default,
+) -> Any:
+    """
+    Create a KeypointsField instance with the specified parameters.
+
+    Args:
+        dtype: Polars data type for coordinate values (defaults to pl.Float32())
+        normalize: Whether coordinates are normalized (defaults to False)
+        semantic: Semantic tags describing the keypoints purpose (optional)
+
+    Returns:
+        KeypointsField instance configured with the given parameters
+    """
+    return KeypointsField(semantic=semantic, dtype=dtype, normalize=normalize)
