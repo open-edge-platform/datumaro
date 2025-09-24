@@ -393,6 +393,10 @@ document.write(`
         <span class="n">count</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
 
         <span class="n">image</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">data</span>
+
+        <span class="k">if</span> <span class="n">image</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
             <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>

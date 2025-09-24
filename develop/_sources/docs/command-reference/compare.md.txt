@@ -92,7 +92,6 @@ Secondly, the "Mid-level comparison" displays image means, standard deviations, 
 +--------------------------+--------------------------+--------------------------+
 ```
 
-The "Low-level comparison" provides additional analysis information.
 The results are stored in the formats of `table_compare.json` and `table_compare.txt`.
 
 - Compare two datasets for table, specify formats

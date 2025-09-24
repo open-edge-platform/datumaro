@@ -907,24 +907,39 @@ document.write(`
         <span class="k">for</span> <span class="n">subset_name</span> <span class="ow">in</span> <span class="n">subset_names</span><span class="p">:</span>
             <span class="n">first_subset_data</span> <span class="o">=</span> <span class="n">first_image_stats</span><span class="p">[</span><span class="s2">&quot;subsets&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">subset_name</span><span class="p">,</span> <span class="p">{})</span>
             <span class="n">second_subset_data</span> <span class="o">=</span> <span class="n">second_image_stats</span><span class="p">[</span><span class="s2">&quot;subsets&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">subset_name</span><span class="p">,</span> <span class="p">{})</span>
+
+            <span class="n">image_mean_array_first</span> <span class="o">=</span> <span class="n">first_subset_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;image mean (RGB)&quot;</span><span class="p">,</span> <span class="p">[])</span>
             <span class="n">mean_str_first</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">6.2f</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">first_subset_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;image mean (RGB)&quot;</span><span class="p">,</span> <span class="p">[]))</span>
-                <span class="k">if</span> <span class="s2">&quot;image mean (RGB)&quot;</span> <span class="ow">in</span> <span class="n">first_subset_data</span>
+                <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">&lt;6.2f</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">image_mean_array_first</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">image_mean_array_first</span> <span class="o">!=</span> <span class="s2">&quot;n/a&quot;</span>
+                <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image_mean_array_first</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_mean_array_first</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
                 <span class="k">else</span> <span class="s2">&quot;&quot;</span>
             <span class="p">)</span>
+
+            <span class="n">image_std_array_first</span> <span class="o">=</span> <span class="n">first_subset_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;image std (RGB)&quot;</span><span class="p">,</span> <span class="p">[])</span>
             <span class="n">std_str_first</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">6.2f</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">first_subset_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;image std (RGB)&quot;</span><span class="p">,</span> <span class="p">[]))</span>
-                <span class="k">if</span> <span class="s2">&quot;image std&quot;</span> <span class="ow">in</span> <span class="n">first_subset_data</span>
+                <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">6.2f</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">image_std_array_first</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">image_std_array_first</span> <span class="o">!=</span> <span class="s2">&quot;n/a&quot;</span>
+                <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image_std_array_first</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_std_array_first</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
                 <span class="k">else</span> <span class="s2">&quot;&quot;</span>
             <span class="p">)</span>
+            <span class="n">image_mean_array_second</span> <span class="o">=</span> <span class="n">second_subset_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;image mean (RGB)&quot;</span><span class="p">,</span> <span class="p">[])</span>
             <span class="n">mean_str_second</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">6.2f</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">second_subset_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;image mean (RGB)&quot;</span><span class="p">,</span> <span class="p">[]))</span>
-                <span class="k">if</span> <span class="s2">&quot;image mean (RGB)&quot;</span> <span class="ow">in</span> <span class="n">second_subset_data</span>
+                <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">6.2f</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">image_mean_array_second</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">image_mean_array_second</span> <span class="o">!=</span> <span class="s2">&quot;n/a&quot;</span>
+                <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image_mean_array_second</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_mean_array_second</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
                 <span class="k">else</span> <span class="s2">&quot;&quot;</span>
             <span class="p">)</span>
+
+            <span class="n">image_std_array_second</span> <span class="o">=</span> <span class="n">second_subset_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;image std (RGB)&quot;</span><span class="p">,</span> <span class="p">[])</span>
             <span class="n">std_str_second</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">6.2f</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">second_subset_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;image std&quot;</span><span class="p">,</span> <span class="p">[]))</span>
-                <span class="k">if</span> <span class="s2">&quot;image std (RGB)&quot;</span> <span class="ow">in</span> <span class="n">second_subset_data</span>
+                <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">val</span><span class="si">:</span><span class="s2">6.2f</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">image_std_array_second</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">image_std_array_second</span> <span class="o">!=</span> <span class="s2">&quot;n/a&quot;</span>
+                <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image_std_array_second</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">image_std_array_second</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
                 <span class="k">else</span> <span class="s2">&quot;&quot;</span>
             <span class="p">)</span>
             <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">subset_name</span><span class="si">}</span><span class="s2"> - Image Mean (RGB)&quot;</span><span class="p">,</span> <span class="n">mean_str_first</span><span class="p">,</span> <span class="n">mean_str_second</span><span class="p">])</span>
@@ -962,37 +977,11 @@ document.write(`
 
         <span class="k">return</span> <span class="n">table</span><span class="p">,</span> <span class="n">data_dict</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_create_low_level_comparison_table</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">first_dataset</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">second_dataset</span><span class="p">:</span> <span class="n">Dataset</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generates a low-level comparison table.</span>
-
-<span class="sd">        Note: Shift analysis functionality has been removed.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            first_dataset: The first dataset to compare.</span>
-<span class="sd">            second_dataset: The second dataset to compare.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            A tuple containing the table as a string and a dictionary representing the data</span>
-<span class="sd">            of the table.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Field&quot;</span><span class="p">,</span> <span class="s2">&quot;Value&quot;</span><span class="p">]</span>
-
-        <span class="n">rows</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">[</span><span class="s2">&quot;Note&quot;</span><span class="p">,</span> <span class="s2">&quot;Shift analysis functionality has been removed&quot;</span><span class="p">],</span>
-        <span class="p">]</span>
-
-        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_table</span><span class="p">(</span><span class="n">headers</span><span class="p">,</span> <span class="n">rows</span><span class="p">)</span>
-        <span class="n">data_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_dict</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">table</span><span class="p">,</span> <span class="n">data_dict</span>
-
 <div class="viewcode-block" id="TableComparator.compare_datasets">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.comparator.TableComparator.compare_datasets">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compare_datasets</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">first</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">second</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;all&quot;</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compares two datasets and generates comparison reports.</span>
 
 <span class="sd">        Args:</span>
@@ -1008,7 +997,6 @@ document.write(`
 
         <span class="n">high_level_table</span><span class="p">,</span> <span class="n">high_level_dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="p">{}</span>
         <span class="n">mid_level_table</span><span class="p">,</span> <span class="n">mid_level_dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="p">{}</span>
-        <span class="n">low_level_table</span><span class="p">,</span> <span class="n">low_level_dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="p">{}</span>
 
         <span class="k">if</span> <span class="n">mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;high&quot;</span><span class="p">,</span> <span class="s2">&quot;all&quot;</span><span class="p">]:</span>
             <span class="n">high_level_table</span><span class="p">,</span> <span class="n">high_level_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_high_level_comparison_table</span><span class="p">(</span>
@@ -1018,18 +1006,13 @@ document.write(`
             <span class="n">mid_level_table</span><span class="p">,</span> <span class="n">mid_level_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_mid_level_comparison_table</span><span class="p">(</span>
                 <span class="n">first_info</span><span class="p">,</span> <span class="n">second_info</span>
             <span class="p">)</span>
-        <span class="k">if</span> <span class="n">mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;low&quot;</span><span class="p">,</span> <span class="s2">&quot;all&quot;</span><span class="p">]:</span>
-            <span class="n">low_level_table</span><span class="p">,</span> <span class="n">low_level_dict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_low_level_comparison_table</span><span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">)</span>
 
-        <span class="n">comparison_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="n">high_level</span><span class="o">=</span><span class="n">high_level_dict</span><span class="p">,</span> <span class="n">mid_level</span><span class="o">=</span><span class="n">mid_level_dict</span><span class="p">,</span> <span class="n">low_level</span><span class="o">=</span><span class="n">low_level_dict</span>
-        <span class="p">)</span>
+        <span class="n">comparison_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">high_level</span><span class="o">=</span><span class="n">high_level_dict</span><span class="p">,</span> <span class="n">mid_level</span><span class="o">=</span><span class="n">mid_level_dict</span><span class="p">)</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;High-level comparison:</span><span class="se">\n</span><span class="si">{</span><span class="n">high_level_table</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mid-level comparison:</span><span class="se">\n</span><span class="si">{</span><span class="n">mid_level_table</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Low-level comparison:</span><span class="se">\n</span><span class="si">{</span><span class="n">low_level_table</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">high_level_table</span><span class="p">,</span> <span class="n">mid_level_table</span><span class="p">,</span> <span class="n">low_level_table</span><span class="p">,</span> <span class="n">comparison_dict</span></div>
+        <span class="k">return</span> <span class="n">high_level_table</span><span class="p">,</span> <span class="n">mid_level_table</span><span class="p">,</span> <span class="n">comparison_dict</span></div>
 
 
 <div class="viewcode-block" id="TableComparator.save_compare_report">
@@ -1038,7 +1021,6 @@ document.write(`
     <span class="k">def</span><span class="w"> </span><span class="nf">save_compare_report</span><span class="p">(</span>
         <span class="n">high_level_table</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">mid_level_table</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">low_level_table</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">comparison_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
         <span class="n">report_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -1047,7 +1029,6 @@ document.write(`
 <span class="sd">        Args:</span>
 <span class="sd">            high_level_table: High-level comparison table as a string.</span>
 <span class="sd">            mid_level_table: Mid-level comparison table as a string.</span>
-<span class="sd">            low_level_table: Low-level comparison table as a string.</span>
 <span class="sd">            comparison_dict: A dictionary containing the comparison data.</span>
 <span class="sd">            report_dir: A string representing the directory to save the report files.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1065,8 +1046,7 @@ document.write(`
         <span class="n">dump_json_file</span><span class="p">(</span><span class="n">json_output_file</span><span class="p">,</span> <span class="n">comparison_dict</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">txt_output_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;High-level Comparison:</span><span class="se">\n</span><span class="si">{</span><span class="n">high_level_table</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mid-level Comparison:</span><span class="se">\n</span><span class="si">{</span><span class="n">mid_level_table</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Low-level Comparison:</span><span class="se">\n</span><span class="si">{</span><span class="n">low_level_table</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mid-level Comparison:</span><span class="se">\n</span><span class="si">{</span><span class="n">mid_level_table</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
 </div>
 
 </pre></div>
