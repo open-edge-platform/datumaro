@@ -387,6 +387,30 @@ class _SubsetWriter:
                     ]
                 )
             )
+        elif shape.type == AnnotationType.rotated_bbox:
+            # Convert from Datumaro format (cx,cy,w,h,r)
+            # to CVAT format (xtl,ytl,xbr,ybr + rotation)
+            cx, cy = shape.points[0], shape.points[1]
+            w, h = shape.points[2], shape.points[3]
+            rotation = shape.points[4]
+
+            # Calculate corners from center coordinates
+            xtl = cx - w / 2
+            ytl = cy - h / 2
+            xbr = cx + w / 2
+            ybr = cy + h / 2
+
+            shape_data.update(
+                OrderedDict(
+                    [
+                        ("xtl", "{:.2f}".format(xtl)),
+                        ("ytl", "{:.2f}".format(ytl)),
+                        ("xbr", "{:.2f}".format(xbr)),
+                        ("ybr", "{:.2f}".format(ybr)),
+                        ("rotation", "{:.2f}".format(rotation)),
+                    ]
+                )
+            )
         elif shape.type == AnnotationType.mask:
             # From the manual test for the dataset exported from the CVAT 2.5,
             # the RLE encoding in the dataset has (W, H) binary 2D np.ndarray, not (H, W)
@@ -424,7 +448,7 @@ class _SubsetWriter:
         if shape.group:
             shape_data["group_id"] = str(shape.group)
 
-        if shape.type == AnnotationType.bbox:
+        if shape.type in [AnnotationType.bbox, AnnotationType.rotated_bbox]:
             self._writer.open_box(shape_data)
         elif shape.type == AnnotationType.polygon:
             self._writer.open_polygon(shape_data)
@@ -464,7 +488,7 @@ class _SubsetWriter:
                         label_name,
                     )
 
-        if shape.type == AnnotationType.bbox:
+        if shape.type in [AnnotationType.bbox, AnnotationType.rotated_bbox]:
             self._writer.close_box()
         elif shape.type == AnnotationType.polygon:
             self._writer.close_polygon()

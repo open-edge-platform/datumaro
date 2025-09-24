@@ -22,6 +22,7 @@ class CvatPath:
     }
     SUPPORTED_EXPORT_SHAPES = {
         AnnotationType.bbox,
+        AnnotationType.rotated_bbox,
         AnnotationType.polygon,
         AnnotationType.polyline,
         AnnotationType.points,
