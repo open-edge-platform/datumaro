@@ -544,8 +544,8 @@ class ForwardLabelAnnotationConverter(ForwardAnnotationConverter):
         return cls(label_attribute=label_attribute)
 
     @classmethod
-    def get_annotation_type(cls) -> AnnotationType:
-        return AnnotationType.label
+    def get_supported_annotation_types(cls) -> list[AnnotationType]:
+        return [AnnotationType.label]
 
     def get_schema_attributes(self) -> dict[str, AttributeInfo]:
         return {"label": self.label_attribute}
