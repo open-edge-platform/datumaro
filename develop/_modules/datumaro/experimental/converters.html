@@ -370,8 +370,10 @@ document.write(`
     <span class="n">ImageInfo</span><span class="p">,</span>
     <span class="n">ImageInfoField</span><span class="p">,</span>
     <span class="n">ImagePathField</span><span class="p">,</span>
+    <span class="n">InstanceMaskCallableField</span><span class="p">,</span>
     <span class="n">InstanceMaskField</span><span class="p">,</span>
     <span class="n">LabelField</span><span class="p">,</span>
+    <span class="n">MaskCallableField</span><span class="p">,</span>
     <span class="n">MaskField</span><span class="p">,</span>
     <span class="n">PolygonField</span><span class="p">,</span>
     <span class="n">RotatedBBoxField</span><span class="p">,</span>
@@ -1356,6 +1358,177 @@ document.write(`
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">result_df</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="InstanceMaskCallableToInstanceMaskConverter">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.InstanceMaskCallableToInstanceMaskConverter">[docs]</a>
+<span class="nd">@converter</span><span class="p">(</span><span class="n">lazy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">InstanceMaskCallableToInstanceMaskConverter</span><span class="p">(</span><span class="n">Converter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Lazy converter that executes callables to generate instance mask data.</span>
+
+<span class="sd">    This converter takes a callable stored in a InstanceMaskCallableField and</span>
+<span class="sd">    executes it to get instance mask data as a 3D numpy array (N,H,W), producing</span>
+<span class="sd">    an InstanceMaskField output. Each mask in the output is a binary mask</span>
+<span class="sd">    representing a single instance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">input_callable</span><span class="p">:</span> <span class="n">AttributeSpec</span><span class="p">[</span><span class="n">InstanceMaskCallableField</span><span class="p">]</span>
+    <span class="n">output_mask</span><span class="p">:</span> <span class="n">AttributeSpec</span><span class="p">[</span><span class="n">InstanceMaskField</span><span class="p">]</span>
+
+<div class="viewcode-block" id="InstanceMaskCallableToInstanceMaskConverter.filter_output_spec">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.InstanceMaskCallableToInstanceMaskConverter.filter_output_spec">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">filter_output_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Configure output mask specification based on input.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_mask</span> <span class="o">=</span> <span class="n">AttributeSpec</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_mask</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">field</span><span class="o">=</span><span class="n">InstanceMaskField</span><span class="p">(</span>
+                <span class="n">semantic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_callable</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">semantic</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_callable</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>  <span class="c1"># Use dtype from callable field</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="InstanceMaskCallableToInstanceMaskConverter.convert">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.InstanceMaskCallableToInstanceMaskConverter.convert">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Execute callables to generate instance mask data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df: DataFrame containing callable column</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            DataFrame with instance mask tensor data and shape information</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">input_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_callable</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">output_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_mask</span><span class="o">.</span><span class="n">name</span>
+
+        <span class="c1"># Execute callables to generate mask data</span>
+        <span class="n">mask_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">mask_shapes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">callable_obj</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="n">input_col</span><span class="p">]:</span>
+            <span class="c1"># Execute the callable to get instance mask array</span>
+            <span class="n">mask_array</span> <span class="o">=</span> <span class="n">callable_obj</span><span class="p">()</span>
+
+            <span class="c1"># Validate that we got a numpy array</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mask_array</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Callable must return numpy.ndarray, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">mask_array</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Check array shape - should be 3D for instance masks (N, height, width)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mask_array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Instance mask array must be 3D (N,H,W), got shape </span><span class="si">{</span><span class="n">mask_array</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Check that the array has the expected dtype</span>
+            <span class="n">expected_dtype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_mask</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">dtype</span>
+            <span class="n">expected_numpy_dtype</span> <span class="o">=</span> <span class="n">polars_to_numpy_dtype</span><span class="p">(</span><span class="n">expected_dtype</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">mask_array</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="n">expected_numpy_dtype</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="n">expected_numpy_dtype</span><span class="si">}</span><span class="s2"> mask array, got </span><span class="si">{</span><span class="n">mask_array</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Store flattened mask data and shape</span>
+            <span class="n">mask_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mask_array</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+            <span class="n">mask_shapes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">mask_array</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+
+        <span class="c1"># Create output columns</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">with_columns</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">output_col</span><span class="p">,</span> <span class="n">mask_data</span><span class="p">),</span>
+                <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">output_col</span><span class="si">}</span><span class="s2">_shape&quot;</span><span class="p">,</span> <span class="n">mask_shapes</span><span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">input_col</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="MaskCallableToMaskConverter">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.MaskCallableToMaskConverter">[docs]</a>
+<span class="nd">@converter</span><span class="p">(</span><span class="n">lazy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MaskCallableToMaskConverter</span><span class="p">(</span><span class="n">Converter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Lazy converter that executes callables to generate mask data.</span>
+
+<span class="sd">    This converter takes a callable stored in a MaskCallableField and</span>
+<span class="sd">    executes it to get mask data as a 2D numpy array (H,W), producing</span>
+<span class="sd">    a MaskField output. The mask can be either a binary mask or a</span>
+<span class="sd">    category mask.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">input_callable</span><span class="p">:</span> <span class="n">AttributeSpec</span><span class="p">[</span><span class="n">MaskCallableField</span><span class="p">]</span>
+    <span class="n">output_mask</span><span class="p">:</span> <span class="n">AttributeSpec</span><span class="p">[</span><span class="n">MaskField</span><span class="p">]</span>
+
+<div class="viewcode-block" id="MaskCallableToMaskConverter.filter_output_spec">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.MaskCallableToMaskConverter.filter_output_spec">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">filter_output_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Configure output mask specification based on input.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_mask</span> <span class="o">=</span> <span class="n">AttributeSpec</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">output_mask</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">field</span><span class="o">=</span><span class="n">MaskField</span><span class="p">(</span>
+                <span class="n">semantic</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_callable</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">semantic</span><span class="p">,</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_callable</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>  <span class="c1"># Use dtype from callable field</span>
+            <span class="p">),</span>
+            <span class="n">categories</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_callable</span><span class="o">.</span><span class="n">categories</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="MaskCallableToMaskConverter.convert">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.converters.html#datumaro.experimental.converters.MaskCallableToMaskConverter.convert">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Execute callables to generate mask data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            df: DataFrame containing callable column</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            DataFrame with mask tensor data and shape information</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">input_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_callable</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">output_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_mask</span><span class="o">.</span><span class="n">name</span>
+
+        <span class="c1"># Execute callables to generate mask data</span>
+        <span class="n">mask_data</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">mask_shapes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">callable_obj</span> <span class="ow">in</span> <span class="n">df</span><span class="p">[</span><span class="n">input_col</span><span class="p">]:</span>
+            <span class="c1"># Execute the callable to get mask array</span>
+            <span class="n">mask_array</span> <span class="o">=</span> <span class="n">callable_obj</span><span class="p">()</span>
+
+            <span class="c1"># Validate that we got a numpy array</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mask_array</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Callable must return numpy.ndarray, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">mask_array</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Check array shape - should be 2D for masks (height, width)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mask_array</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mask array must be 2D (H,W), got shape </span><span class="si">{</span><span class="n">mask_array</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Check that the array has the expected dtype</span>
+            <span class="n">expected_dtype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_mask</span><span class="o">.</span><span class="n">field</span><span class="o">.</span><span class="n">dtype</span>
+            <span class="n">expected_numpy_dtype</span> <span class="o">=</span> <span class="n">polars_to_numpy_dtype</span><span class="p">(</span><span class="n">expected_dtype</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">mask_array</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="n">expected_numpy_dtype</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Expected </span><span class="si">{</span><span class="n">expected_numpy_dtype</span><span class="si">}</span><span class="s2"> mask array, got </span><span class="si">{</span><span class="n">mask_array</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+
+            <span class="c1"># Store flattened mask data and shape</span>
+            <span class="n">mask_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mask_array</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+            <span class="n">mask_shapes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">mask_array</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+
+        <span class="c1"># Create output columns</span>
+        <span class="k">return</span> <span class="n">df</span><span class="o">.</span><span class="n">with_columns</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">output_col</span><span class="p">,</span> <span class="n">mask_data</span><span class="p">),</span>
+                <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">output_col</span><span class="si">}</span><span class="s2">_shape&quot;</span><span class="p">,</span> <span class="n">mask_shapes</span><span class="p">),</span>
+            <span class="p">]</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">input_col</span><span class="p">)</span></div>
 </div>
 
 

@@ -640,11 +640,17 @@ learning and computer vision applications.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.fields.image_path_field" title="datumaro.experimental.fields.image_path_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">image_path_field</span></code></a>([semantic])</p></td>
 <td><p>Create an ImagePathField instance with the specified semantic tags.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.experimental.fields.instance_mask_field" title="datumaro.experimental.fields.instance_mask_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">instance_mask_field</span></code></a>([dtype, semantic])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.experimental.fields.instance_mask_callable_field" title="datumaro.experimental.fields.instance_mask_callable_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">instance_mask_callable_field</span></code></a>([dtype, semantic])</p></td>
+<td><p>Create an InstanceMaskCallableField for storing instance mask-generating callables.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.fields.instance_mask_field" title="datumaro.experimental.fields.instance_mask_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">instance_mask_field</span></code></a>([dtype, semantic])</p></td>
 <td><p>Create an InstanceMaskField instance with the specified parameters.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.fields.label_field" title="datumaro.experimental.fields.label_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">label_field</span></code></a>([dtype, semantic, multi_label, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.experimental.fields.label_field" title="datumaro.experimental.fields.label_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">label_field</span></code></a>([dtype, semantic, multi_label, ...])</p></td>
 <td><p>Create a LabelField instance with the specified parameters.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.fields.mask_callable_field" title="datumaro.experimental.fields.mask_callable_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_callable_field</span></code></a>([dtype, semantic])</p></td>
+<td><p>Create a MaskCallableField for storing mask-generating callables.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#datumaro.experimental.fields.mask_field" title="datumaro.experimental.fields.mask_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_field</span></code></a>([dtype, semantic])</p></td>
 <td><p>Create a MaskField instance with the specified parameters.</p></td>
@@ -684,11 +690,17 @@ learning and computer vision applications.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.fields.ImagePathField" title="datumaro.experimental.fields.ImagePathField"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ImagePathField</span></code></a>(semantic)</p></td>
 <td><p>Represents a field containing the file path to an image on disk.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.experimental.fields.InstanceMaskField" title="datumaro.experimental.fields.InstanceMaskField"><code class="xref py py-obj docutils literal notranslate"><span class="pre">InstanceMaskField</span></code></a>(semantic[, dtype])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.experimental.fields.InstanceMaskCallableField" title="datumaro.experimental.fields.InstanceMaskCallableField"><code class="xref py py-obj docutils literal notranslate"><span class="pre">InstanceMaskCallableField</span></code></a>(semantic[, dtype])</p></td>
+<td><p>Represents a field that stores a callable which returns an instance mask as a numpy array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.fields.InstanceMaskField" title="datumaro.experimental.fields.InstanceMaskField"><code class="xref py py-obj docutils literal notranslate"><span class="pre">InstanceMaskField</span></code></a>(semantic[, dtype])</p></td>
 <td><p>Represents an instance mask tensor field for instance segmentation masks.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.fields.LabelField" title="datumaro.experimental.fields.LabelField"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LabelField</span></code></a>(semantic[, dtype, multi_label, ...])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.experimental.fields.LabelField" title="datumaro.experimental.fields.LabelField"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LabelField</span></code></a>(semantic[, dtype, multi_label, ...])</p></td>
 <td><p>Represents a unified label annotation field that supports both single and multi-label scenarios.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.fields.MaskCallableField" title="datumaro.experimental.fields.MaskCallableField"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MaskCallableField</span></code></a>(semantic[, dtype])</p></td>
+<td><p>Represents a field that stores a callable which returns a mask as a numpy array.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#datumaro.experimental.fields.MaskField" title="datumaro.experimental.fields.MaskField"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MaskField</span></code></a>(semantic[, dtype])</p></td>
 <td><p>Represents a mask tensor field for binary or indexed segmentation masks.</p></td>
@@ -1710,6 +1722,193 @@ the image data when invoked.</p>
 </dl>
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="datumaro.experimental.fields.InstanceMaskCallableField">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datumaro.experimental.fields.</span></span><span class="sig-name descname"><span class="pre">InstanceMaskCallableField</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">semantic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.experimental.schema.html#datumaro.experimental.schema.Semantic" title="datumaro.experimental.schema.Semantic"><span class="pre">Semantic</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataType</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Boolean</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/datumaro/experimental/fields.html#InstanceMaskCallableField"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.fields.InstanceMaskCallableField" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="datumaro.experimental.schema.html#datumaro.experimental.schema.Field" title="datumaro.experimental.schema.Field"><code class="xref py py-class docutils literal notranslate"><span class="pre">Field</span></code></a></p>
+<p>Represents a field that stores a callable which returns an instance mask as a numpy array.</p>
+<p>This field is useful for lazy loading scenarios where instance masks are generated
+or loaded on-demand. The callable should return a numpy array representing
+the instance mask data when invoked.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="datumaro.experimental.fields.InstanceMaskCallableField.semantic">
+<span class="sig-name descname"><span class="pre">semantic</span></span><a class="headerlink" href="#datumaro.experimental.fields.InstanceMaskCallableField.semantic" title="Link to this definition">#</a></dt>
+<dd><p>Semantic tags describing the callable’s purpose</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="datumaro.experimental.schema.html#datumaro.experimental.schema.Semantic" title="datumaro.experimental.schema.Semantic">datumaro.experimental.schema.Semantic</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="datumaro.experimental.fields.InstanceMaskCallableField.dtype">
+<span class="sig-name descname"><span class="pre">dtype</span></span><a class="headerlink" href="#datumaro.experimental.fields.InstanceMaskCallableField.dtype" title="Link to this definition">#</a></dt>
+<dd><p>Polars data type for the mask values (e.g., pl.UInt8, pl.Boolean)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>polars.datatypes.classes.DataType</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id23">
+<span class="sig-name descname"><span class="pre">semantic</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="datumaro.experimental.schema.html#datumaro.experimental.schema.Semantic" title="datumaro.experimental.schema.Semantic"><span class="pre">Semantic</span></a></em><a class="headerlink" href="#id23" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id24">
+<span class="sig-name descname"><span class="pre">dtype</span></span><a class="headerlink" href="#id24" title="Link to this definition">#</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">Boolean</span></code></p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.experimental.fields.InstanceMaskCallableField.to_polars_schema">
+<span class="sig-name descname"><span class="pre">to_polars_schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">DataType</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/fields.html#InstanceMaskCallableField.to_polars_schema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.fields.InstanceMaskCallableField.to_polars_schema" title="Link to this definition">#</a></dt>
+<dd><p>Return schema with Object type to store callable.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.experimental.fields.InstanceMaskCallableField.to_polars">
+<span class="sig-name descname"><span class="pre">to_polars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">callable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Series</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/fields.html#InstanceMaskCallableField.to_polars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.fields.InstanceMaskCallableField.to_polars" title="Link to this definition">#</a></dt>
+<dd><p>Store instance mask callable as Object in Polars series.</p>
+<p>The callable must return a 3D numpy array of shape (N, H, W) where:
+- N is the number of instances
+- H is the mask height
+- W is the mask width
+Each mask should be a binary mask for a single instance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.experimental.fields.InstanceMaskCallableField.from_polars">
+<span class="sig-name descname"><span class="pre">from_polars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">row_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><span class="pre">type</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">callable</span></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/fields.html#InstanceMaskCallableField.from_polars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.fields.InstanceMaskCallableField.from_polars" title="Link to this definition">#</a></dt>
+<dd><p>Extract instance mask callable from Polars dataframe.</p>
+<p>Returns a callable that produces a 3D numpy array of binary masks,
+one for each instance in the image.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="datumaro.experimental.fields.instance_mask_callable_field">
+<span class="sig-prename descclassname"><span class="pre">datumaro.experimental.fields.</span></span><span class="sig-name descname"><span class="pre">instance_mask_callable_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Any" title="typing.Any"><span class="pre">Any</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Boolean</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">semantic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.experimental.schema.html#datumaro.experimental.schema.Semantic" title="datumaro.experimental.schema.Semantic"><span class="pre">Semantic</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Semantic.Default</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Any" title="typing.Any"><span class="pre">Any</span></a></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/fields.html#instance_mask_callable_field"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.fields.instance_mask_callable_field" title="Link to this definition">#</a></dt>
+<dd><p>Create an InstanceMaskCallableField for storing instance mask-generating callables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dtype</strong> – Polars data type for mask values (defaults to pl.Boolean())</p></li>
+<li><p><strong>semantic</strong> – Semantic tags describing the instance mask purpose (optional)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>InstanceMaskCallableField instance configured with the given parameters</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">generate_masks</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="c1"># Example with 2 instances, 3x3 masks</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+<span class="gp">... </span>        <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span>  <span class="c1"># First instance</span>
+<span class="gp">... </span>        <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span>  <span class="c1"># Second instance</span>
+<span class="gp">... </span>    <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field</span> <span class="o">=</span> <span class="n">instance_mask_callable_field</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span> <span class="o">=</span> <span class="n">Sample</span><span class="p">(</span><span class="n">instance_masks</span><span class="o">=</span><span class="n">generate_masks</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="datumaro.experimental.fields.MaskCallableField">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datumaro.experimental.fields.</span></span><span class="sig-name descname"><span class="pre">MaskCallableField</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">semantic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.experimental.schema.html#datumaro.experimental.schema.Semantic" title="datumaro.experimental.schema.Semantic"><span class="pre">Semantic</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataType</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">UInt8</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/datumaro/experimental/fields.html#MaskCallableField"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.fields.MaskCallableField" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="datumaro.experimental.schema.html#datumaro.experimental.schema.Field" title="datumaro.experimental.schema.Field"><code class="xref py py-class docutils literal notranslate"><span class="pre">Field</span></code></a></p>
+<p>Represents a field that stores a callable which returns a mask as a numpy array.</p>
+<p>This field is useful for lazy loading scenarios where masks are generated
+or loaded on-demand. The callable should return a numpy array representing
+a single mask when invoked.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="datumaro.experimental.fields.MaskCallableField.semantic">
+<span class="sig-name descname"><span class="pre">semantic</span></span><a class="headerlink" href="#datumaro.experimental.fields.MaskCallableField.semantic" title="Link to this definition">#</a></dt>
+<dd><p>Semantic tags describing the callable’s purpose</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="datumaro.experimental.schema.html#datumaro.experimental.schema.Semantic" title="datumaro.experimental.schema.Semantic">datumaro.experimental.schema.Semantic</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="datumaro.experimental.fields.MaskCallableField.dtype">
+<span class="sig-name descname"><span class="pre">dtype</span></span><a class="headerlink" href="#datumaro.experimental.fields.MaskCallableField.dtype" title="Link to this definition">#</a></dt>
+<dd><p>Polars data type for mask values (e.g., pl.UInt8, pl.Boolean)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>polars.datatypes.classes.DataType</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id25">
+<span class="sig-name descname"><span class="pre">semantic</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="datumaro.experimental.schema.html#datumaro.experimental.schema.Semantic" title="datumaro.experimental.schema.Semantic"><span class="pre">Semantic</span></a></em><a class="headerlink" href="#id25" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id26">
+<span class="sig-name descname"><span class="pre">dtype</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataType</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">UInt8</span></em><a class="headerlink" href="#id26" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.experimental.fields.MaskCallableField.to_polars_schema">
+<span class="sig-name descname"><span class="pre">to_polars_schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">DataType</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/fields.html#MaskCallableField.to_polars_schema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.fields.MaskCallableField.to_polars_schema" title="Link to this definition">#</a></dt>
+<dd><p>Return schema with Object type to store callable.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.experimental.fields.MaskCallableField.to_polars">
+<span class="sig-name descname"><span class="pre">to_polars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">callable</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Series</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/fields.html#MaskCallableField.to_polars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.fields.MaskCallableField.to_polars" title="Link to this definition">#</a></dt>
+<dd><p>Store mask callable as Object in Polars series.</p>
+<p>The callable must return a 2D numpy array of shape (H, W) where:
+- H is the mask height
+- W is the mask width
+The array should be a binary or category mask.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.experimental.fields.MaskCallableField.from_polars">
+<span class="sig-name descname"><span class="pre">from_polars</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">row_index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><span class="pre">int</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#type" title="(in Python v3.13)"><span class="pre">type</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">callable</span></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/fields.html#MaskCallableField.from_polars"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.fields.MaskCallableField.from_polars" title="Link to this definition">#</a></dt>
+<dd><p>Extract mask callable from Polars dataframe.</p>
+<p>Returns a callable that produces a 2D numpy array representing
+a binary or category mask.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="datumaro.experimental.fields.mask_callable_field">
+<span class="sig-prename descclassname"><span class="pre">datumaro.experimental.fields.</span></span><span class="sig-name descname"><span class="pre">mask_callable_field</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Any" title="typing.Any"><span class="pre">Any</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Boolean</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">semantic</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.experimental.schema.html#datumaro.experimental.schema.Semantic" title="datumaro.experimental.schema.Semantic"><span class="pre">Semantic</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">Semantic.Default</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Any" title="typing.Any"><span class="pre">Any</span></a></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/fields.html#mask_callable_field"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.fields.mask_callable_field" title="Link to this definition">#</a></dt>
+<dd><p>Create a MaskCallableField for storing mask-generating callables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dtype</strong> – Polars data type for mask values (defaults to pl.Boolean())</p></li>
+<li><p><strong>semantic</strong> – Semantic tags describing the mask purpose (optional)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>MaskCallableField instance configured with the given parameters</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">generate_mask</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="c1"># Example 3x3 mask</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">field</span> <span class="o">=</span> <span class="n">mask_callable_field</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sample</span> <span class="o">=</span> <span class="n">Sample</span><span class="p">(</span><span class="n">mask</span><span class="o">=</span><span class="n">generate_mask</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </section>
 
 
@@ -1897,6 +2096,28 @@ the image data when invoked.</p>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.fields.image_callable_field"><code class="docutils literal notranslate"><span class="pre">image_callable_field()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.fields.InstanceMaskCallableField"><code class="docutils literal notranslate"><span class="pre">InstanceMaskCallableField</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.fields.InstanceMaskCallableField.semantic"><code class="docutils literal notranslate"><span class="pre">InstanceMaskCallableField.semantic</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.fields.InstanceMaskCallableField.dtype"><code class="docutils literal notranslate"><span class="pre">InstanceMaskCallableField.dtype</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id23"><code class="docutils literal notranslate"><span class="pre">InstanceMaskCallableField.semantic</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id24"><code class="docutils literal notranslate"><span class="pre">InstanceMaskCallableField.dtype</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.fields.InstanceMaskCallableField.to_polars_schema"><code class="docutils literal notranslate"><span class="pre">InstanceMaskCallableField.to_polars_schema()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.fields.InstanceMaskCallableField.to_polars"><code class="docutils literal notranslate"><span class="pre">InstanceMaskCallableField.to_polars()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.fields.InstanceMaskCallableField.from_polars"><code class="docutils literal notranslate"><span class="pre">InstanceMaskCallableField.from_polars()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.fields.instance_mask_callable_field"><code class="docutils literal notranslate"><span class="pre">instance_mask_callable_field()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.fields.MaskCallableField"><code class="docutils literal notranslate"><span class="pre">MaskCallableField</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.fields.MaskCallableField.semantic"><code class="docutils literal notranslate"><span class="pre">MaskCallableField.semantic</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.fields.MaskCallableField.dtype"><code class="docutils literal notranslate"><span class="pre">MaskCallableField.dtype</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id25"><code class="docutils literal notranslate"><span class="pre">MaskCallableField.semantic</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id26"><code class="docutils literal notranslate"><span class="pre">MaskCallableField.dtype</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.fields.MaskCallableField.to_polars_schema"><code class="docutils literal notranslate"><span class="pre">MaskCallableField.to_polars_schema()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.fields.MaskCallableField.to_polars"><code class="docutils literal notranslate"><span class="pre">MaskCallableField.to_polars()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.fields.MaskCallableField.from_polars"><code class="docutils literal notranslate"><span class="pre">MaskCallableField.from_polars()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.fields.mask_callable_field"><code class="docutils literal notranslate"><span class="pre">mask_callable_field()</span></code></a></li>
 </ul>
   </nav></div>
 

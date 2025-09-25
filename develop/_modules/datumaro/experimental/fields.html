@@ -1198,6 +1198,182 @@ document.write(`
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">ImageCallableField</span><span class="p">(</span><span class="n">semantic</span><span class="o">=</span><span class="n">semantic</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="nb">format</span><span class="p">)</span></div>
 
+
+
+<div class="viewcode-block" id="InstanceMaskCallableField">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.InstanceMaskCallableField">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">InstanceMaskCallableField</span><span class="p">(</span><span class="n">Field</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a field that stores a callable which returns an instance mask as a numpy array.</span>
+
+<span class="sd">    This field is useful for lazy loading scenarios where instance masks are generated</span>
+<span class="sd">    or loaded on-demand. The callable should return a numpy array representing</span>
+<span class="sd">    the instance mask data when invoked.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        semantic: Semantic tags describing the callable&#39;s purpose</span>
+<span class="sd">        dtype: Polars data type for the mask values (e.g., pl.UInt8, pl.Boolean)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">semantic</span><span class="p">:</span> <span class="n">Semantic</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataType</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">Boolean</span>
+
+<div class="viewcode-block" id="InstanceMaskCallableField.to_polars_schema">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.InstanceMaskCallableField.to_polars_schema">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_polars_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataType</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return schema with Object type to store callable.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Object</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="InstanceMaskCallableField.to_polars">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.InstanceMaskCallableField.to_polars">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_polars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Store instance mask callable as Object in Polars series.</span>
+
+<span class="sd">        The callable must return a 3D numpy array of shape (N, H, W) where:</span>
+<span class="sd">        - N is the number of instances</span>
+<span class="sd">        - H is the mask height</span>
+<span class="sd">        - W is the mask width</span>
+<span class="sd">        Each mask should be a binary mask for a single instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected callable, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="n">value</span><span class="p">])}</span></div>
+
+
+<div class="viewcode-block" id="InstanceMaskCallableField.from_polars">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.InstanceMaskCallableField.from_polars">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_polars</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">row_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">target_type</span><span class="p">:</span> <span class="nb">type</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">callable</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extract instance mask callable from Polars dataframe.</span>
+
+<span class="sd">        Returns a callable that produces a 3D numpy array of binary masks,</span>
+<span class="sd">        one for each instance in the image.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="n">row_index</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected callable in column </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="instance_mask_callable_field">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.instance_mask_callable_field">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">instance_mask_callable_field</span><span class="p">(</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">Boolean</span><span class="p">(),</span> <span class="n">semantic</span><span class="p">:</span> <span class="n">Semantic</span> <span class="o">=</span> <span class="n">Semantic</span><span class="o">.</span><span class="n">Default</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create an InstanceMaskCallableField for storing instance mask-generating callables.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dtype: Polars data type for mask values (defaults to pl.Boolean())</span>
+<span class="sd">        semantic: Semantic tags describing the instance mask purpose (optional)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        InstanceMaskCallableField instance configured with the given parameters</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; def generate_masks():</span>
+<span class="sd">        ...     # Example with 2 instances, 3x3 masks</span>
+<span class="sd">        ...     return np.array([</span>
+<span class="sd">        ...         [[1, 1, 0], [1, 1, 0], [0, 0, 0]],  # First instance</span>
+<span class="sd">        ...         [[0, 0, 1], [0, 0, 1], [1, 1, 1]],  # Second instance</span>
+<span class="sd">        ...     ], dtype=bool)</span>
+<span class="sd">        &gt;&gt;&gt; field = instance_mask_callable_field()</span>
+<span class="sd">        &gt;&gt;&gt; sample = Sample(instance_masks=generate_masks)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">InstanceMaskCallableField</span><span class="p">(</span><span class="n">semantic</span><span class="o">=</span><span class="n">semantic</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="MaskCallableField">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.MaskCallableField">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MaskCallableField</span><span class="p">(</span><span class="n">Field</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a field that stores a callable which returns a mask as a numpy array.</span>
+
+<span class="sd">    This field is useful for lazy loading scenarios where masks are generated</span>
+<span class="sd">    or loaded on-demand. The callable should return a numpy array representing</span>
+<span class="sd">    a single mask when invoked.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        semantic: Semantic tags describing the callable&#39;s purpose</span>
+<span class="sd">        dtype: Polars data type for mask values (e.g., pl.UInt8, pl.Boolean)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">semantic</span><span class="p">:</span> <span class="n">Semantic</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataType</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">UInt8</span><span class="p">()</span>
+
+<div class="viewcode-block" id="MaskCallableField.to_polars_schema">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.MaskCallableField.to_polars_schema">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_polars_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataType</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return schema with Object type to store callable.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Object</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="MaskCallableField.to_polars">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.MaskCallableField.to_polars">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_polars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Store mask callable as Object in Polars series.</span>
+
+<span class="sd">        The callable must return a 2D numpy array of shape (H, W) where:</span>
+<span class="sd">        - H is the mask height</span>
+<span class="sd">        - W is the mask width</span>
+<span class="sd">        The array should be a binary or category mask.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected callable, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">[</span><span class="n">value</span><span class="p">])}</span></div>
+
+
+<div class="viewcode-block" id="MaskCallableField.from_polars">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.MaskCallableField.from_polars">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_polars</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">row_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">target_type</span><span class="p">:</span> <span class="nb">type</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">callable</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extract mask callable from Polars dataframe.</span>
+
+<span class="sd">        Returns a callable that produces a 2D numpy array representing</span>
+<span class="sd">        a binary or category mask.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="n">row_index</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Expected callable in column </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">value</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="mask_callable_field">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.mask_callable_field">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">mask_callable_field</span><span class="p">(</span><span class="n">dtype</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">Boolean</span><span class="p">(),</span> <span class="n">semantic</span><span class="p">:</span> <span class="n">Semantic</span> <span class="o">=</span> <span class="n">Semantic</span><span class="o">.</span><span class="n">Default</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a MaskCallableField for storing mask-generating callables.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dtype: Polars data type for mask values (defaults to pl.Boolean())</span>
+<span class="sd">        semantic: Semantic tags describing the mask purpose (optional)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        MaskCallableField instance configured with the given parameters</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; def generate_mask():</span>
+<span class="sd">        ...     # Example 3x3 mask</span>
+<span class="sd">        ...     return np.array([[1, 1, 0], [1, 1, 0], [0, 0, 0]], dtype=bool)</span>
+<span class="sd">        &gt;&gt;&gt; field = mask_callable_field()</span>
+<span class="sd">        &gt;&gt;&gt; sample = Sample(mask=generate_mask)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">MaskCallableField</span><span class="p">(</span><span class="n">semantic</span><span class="o">=</span><span class="n">semantic</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span></div>
+
 </pre></div>
 
                 </article>

@@ -361,14 +361,15 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">polars</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span> <span class="k">as</span> <span class="n">PILImage</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotation</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Bbox</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotation</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">ExtractedMask</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">LabelCategories</span> <span class="k">as</span> <span class="n">LegacyLabelCategories</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Polygon</span><span class="p">,</span> <span class="n">RotatedBbox</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span> <span class="k">as</span> <span class="n">LegacyDataset</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">CategoriesInfo</span><span class="p">,</span> <span class="n">DatasetItem</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">FromDataMixin</span><span class="p">,</span> <span class="n">FromFileMixin</span><span class="p">,</span> <span class="n">Image</span><span class="p">,</span> <span class="n">MediaElement</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">.categories</span><span class="w"> </span><span class="kn">import</span> <span class="n">LabelCategories</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.categories</span><span class="w"> </span><span class="kn">import</span> <span class="n">LabelCategories</span><span class="p">,</span> <span class="n">MaskCategories</span><span class="p">,</span> <span class="n">RgbColor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.converters</span><span class="w"> </span><span class="kn">import</span> <span class="n">generate_colormap</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">Sample</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.fields</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">BBoxField</span><span class="p">,</span>
@@ -382,7 +383,9 @@ document.write(`
     <span class="n">image_callable_field</span><span class="p">,</span>
     <span class="n">image_info_field</span><span class="p">,</span>
     <span class="n">image_path_field</span><span class="p">,</span>
+    <span class="n">instance_mask_callable_field</span><span class="p">,</span>
     <span class="n">label_field</span><span class="p">,</span>
+    <span class="n">mask_callable_field</span><span class="p">,</span>
     <span class="n">polygon_field</span><span class="p">,</span>
     <span class="n">rotated_bbox_field</span><span class="p">,</span>
 <span class="p">)</span>
@@ -435,23 +438,21 @@ document.write(`
 <span class="k">class</span><span class="w"> </span><span class="nc">ForwardAnnotationConverter</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for forward annotation type converters.&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="ForwardAnnotationConverter.create_from_categories">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardAnnotationConverter.create_from_categories">[docs]</a>
+<div class="viewcode-block" id="ForwardAnnotationConverter.get_supported_annotation_types">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardAnnotationConverter.get_supported_annotation_types">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">create_from_categories</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span> <span class="n">categories</span><span class="p">:</span> <span class="n">CategoriesInfo</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ForwardAnnotationConverter | None&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create converter instance if categories support this annotation type.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_supported_annotation_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">AnnotationType</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return list of annotation types this converter can handle.&quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
 
-<div class="viewcode-block" id="ForwardAnnotationConverter.get_annotation_type">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardAnnotationConverter.get_annotation_type">[docs]</a>
+<div class="viewcode-block" id="ForwardAnnotationConverter.create">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardAnnotationConverter.create">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_annotation_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AnnotationType</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the annotation type this converter handles.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">LegacyDataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ForwardAnnotationConverter | None&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create converter instance if dataset supports this annotation type.&quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
 
@@ -494,9 +495,9 @@ document.write(`
 <span class="k">def</span><span class="w"> </span><span class="nf">register_forward_annotation_converter</span><span class="p">(</span>
     <span class="n">converter_class</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">ForwardAnnotationConverter</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Register a forward converter class for an annotation type.&quot;&quot;&quot;</span>
-    <span class="n">annotation_type</span> <span class="o">=</span> <span class="n">converter_class</span><span class="o">.</span><span class="n">get_annotation_type</span><span class="p">()</span>
-    <span class="n">_annotation_converters</span><span class="p">[</span><span class="n">annotation_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">converter_class</span></div>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Register a forward converter class for annotation types it supports.&quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">annotation_type</span> <span class="ow">in</span> <span class="n">converter_class</span><span class="o">.</span><span class="n">get_supported_annotation_types</span><span class="p">():</span>
+        <span class="n">_annotation_converters</span><span class="p">[</span><span class="n">annotation_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">converter_class</span></div>
 
 
 
@@ -519,13 +520,21 @@ document.write(`
 <div class="viewcode-block" id="get_forward_annotation_converter">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.get_forward_annotation_converter">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_forward_annotation_converter</span><span class="p">(</span>
-    <span class="n">annotation_type</span><span class="p">:</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">categories</span><span class="p">:</span> <span class="n">CategoriesInfo</span>
+    <span class="n">annotation_type</span><span class="p">:</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">LegacyDataset</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ForwardAnnotationConverter</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get forward converter for an annotation type that can handle the given categories.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get forward converter for an annotation type from the dataset.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        annotation_type: The type of annotation to get a converter for</span>
+<span class="sd">        dataset: The legacy dataset to create a converter from</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A forward converter instance if one can handle the annotation type, None otherwise</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">annotation_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_annotation_converters</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
     <span class="n">converter_class</span> <span class="o">=</span> <span class="n">_annotation_converters</span><span class="p">[</span><span class="n">annotation_type</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">converter_class</span><span class="o">.</span><span class="n">create_from_categories</span><span class="p">(</span><span class="n">categories</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">converter_class</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span></div>
 
 
 
@@ -680,13 +689,20 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">bbox_attribute</span> <span class="o">=</span> <span class="n">bbox_attribute</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bbox_labels_attribute</span> <span class="o">=</span> <span class="n">bbox_labels_attribute</span>
 
-<div class="viewcode-block" id="ForwardBboxAnnotationConverter.create_from_categories">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardBboxAnnotationConverter.create_from_categories">[docs]</a>
+<div class="viewcode-block" id="ForwardBboxAnnotationConverter.get_supported_annotation_types">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardBboxAnnotationConverter.get_supported_annotation_types">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">create_from_categories</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span> <span class="n">categories</span><span class="p">:</span> <span class="n">CategoriesInfo</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ForwardBboxAnnotationConverter | None&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_supported_annotation_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">AnnotationType</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return list of annotation types this converter can handle.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="ForwardBboxAnnotationConverter.create">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardBboxAnnotationConverter.create">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">LegacyDataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ForwardBboxAnnotationConverter | None&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create converter instance for bbox annotations.&quot;&quot;&quot;</span>
+        <span class="n">categories</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span>
         <span class="c1"># Extract label categories if available</span>
         <span class="n">legacy_label_categories</span> <span class="o">=</span> <span class="n">categories</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
@@ -707,13 +723,6 @@ document.write(`
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">bbox_attribute</span><span class="o">=</span><span class="n">bbox_attribute</span><span class="p">,</span> <span class="n">bbox_labels_attribute</span><span class="o">=</span><span class="n">bbox_labels_attribute</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="ForwardBboxAnnotationConverter.get_annotation_type">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardBboxAnnotationConverter.get_annotation_type">[docs]</a>
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_annotation_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AnnotationType</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span></div>
 
 
 <div class="viewcode-block" id="ForwardBboxAnnotationConverter.get_schema_attributes">
@@ -769,13 +778,20 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">rotated_bbox_attribute</span> <span class="o">=</span> <span class="n">rotated_bbox_attribute</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rotated_bbox_labels_attribute</span> <span class="o">=</span> <span class="n">rotated_bbox_labels_attribute</span>
 
-<div class="viewcode-block" id="ForwardRotatedBboxAnnotationConverter.create_from_categories">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardRotatedBboxAnnotationConverter.create_from_categories">[docs]</a>
+<div class="viewcode-block" id="ForwardRotatedBboxAnnotationConverter.get_supported_annotation_types">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardRotatedBboxAnnotationConverter.get_supported_annotation_types">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">create_from_categories</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span> <span class="n">categories</span><span class="p">:</span> <span class="n">CategoriesInfo</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ForwardRotatedBboxAnnotationConverter&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create converter instance from dataset categories.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_supported_annotation_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">AnnotationType</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return list of annotation types this converter can handle.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">rotated_bbox</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="ForwardRotatedBboxAnnotationConverter.create">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardRotatedBboxAnnotationConverter.create">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">LegacyDataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ForwardRotatedBboxAnnotationConverter | None&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create converter instance from dataset.&quot;&quot;&quot;</span>
+        <span class="n">categories</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span>
         <span class="c1"># Create attribute for rotated bboxes (cx, cy, w, h, r)</span>
         <span class="n">rotated_bbox_attribute</span> <span class="o">=</span> <span class="n">AttributeInfo</span><span class="p">(</span>
             <span class="nb">type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
@@ -803,13 +819,6 @@ document.write(`
             <span class="n">rotated_bbox_attribute</span><span class="o">=</span><span class="n">rotated_bbox_attribute</span><span class="p">,</span>
             <span class="n">rotated_bbox_labels_attribute</span><span class="o">=</span><span class="n">rotated_bbox_labels_attribute</span><span class="p">,</span>
         <span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="ForwardRotatedBboxAnnotationConverter.get_annotation_type">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardRotatedBboxAnnotationConverter.get_annotation_type">[docs]</a>
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_annotation_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AnnotationType</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">rotated_bbox</span></div>
 
 
 <div class="viewcode-block" id="ForwardRotatedBboxAnnotationConverter.get_schema_attributes">
@@ -865,13 +874,20 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">polygon_attribute</span> <span class="o">=</span> <span class="n">polygon_attribute</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">polygon_labels_attribute</span> <span class="o">=</span> <span class="n">polygon_labels_attribute</span>
 
-<div class="viewcode-block" id="ForwardPolygonAnnotationConverter.create_from_categories">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardPolygonAnnotationConverter.create_from_categories">[docs]</a>
+<div class="viewcode-block" id="ForwardPolygonAnnotationConverter.get_supported_annotation_types">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardPolygonAnnotationConverter.get_supported_annotation_types">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">create_from_categories</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span> <span class="n">categories</span><span class="p">:</span> <span class="n">CategoriesInfo</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ForwardPolygonAnnotationConverter | None&quot;</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_supported_annotation_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">AnnotationType</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return list of annotation types this converter can handle.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">polygon</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="ForwardPolygonAnnotationConverter.create">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardPolygonAnnotationConverter.create">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">LegacyDataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ForwardPolygonAnnotationConverter | None&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create converter instance for polygon annotations.&quot;&quot;&quot;</span>
+        <span class="n">categories</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span>
         <span class="c1"># Extract label categories if available</span>
         <span class="n">legacy_label_categories</span> <span class="o">=</span> <span class="n">categories</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
@@ -896,13 +912,6 @@ document.write(`
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
             <span class="n">polygon_attribute</span><span class="o">=</span><span class="n">polygon_attribute</span><span class="p">,</span> <span class="n">polygon_labels_attribute</span><span class="o">=</span><span class="n">polygon_labels_attribute</span>
         <span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="ForwardPolygonAnnotationConverter.get_annotation_type">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardPolygonAnnotationConverter.get_annotation_type">[docs]</a>
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_annotation_type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AnnotationType</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">polygon</span></div>
 
 
 <div class="viewcode-block" id="ForwardPolygonAnnotationConverter.get_schema_attributes">
@@ -958,6 +967,7 @@ document.write(`
     <span class="n">register_forward_media_converter</span><span class="p">(</span><span class="n">ForwardImageMediaConverter</span><span class="p">)</span>
 
     <span class="c1"># Annotation converters</span>
+    <span class="n">register_forward_annotation_converter</span><span class="p">(</span><span class="n">ForwardMaskAnnotationConverter</span><span class="p">)</span>
     <span class="n">register_forward_annotation_converter</span><span class="p">(</span><span class="n">ForwardBboxAnnotationConverter</span><span class="p">)</span>
     <span class="n">register_forward_annotation_converter</span><span class="p">(</span><span class="n">ForwardPolygonAnnotationConverter</span><span class="p">)</span>
     <span class="n">register_forward_annotation_converter</span><span class="p">(</span><span class="n">ForwardRotatedBboxAnnotationConverter</span><span class="p">)</span></div>
@@ -990,7 +1000,6 @@ document.write(`
 <span class="sd">    Returns:</span>
 <span class="sd">        AnalysisResult containing the inferred schema and converters</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">categories</span> <span class="o">=</span> <span class="n">legacy_dataset</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span>
     <span class="n">ann_types</span> <span class="o">=</span> <span class="n">legacy_dataset</span><span class="o">.</span><span class="n">ann_types</span><span class="p">()</span>
 
     <span class="n">attributes</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AttributeInfo</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
@@ -1004,7 +1013,7 @@ document.write(`
 
     <span class="c1"># Get annotation attributes from converters for each annotation type in the dataset</span>
     <span class="k">for</span> <span class="n">ann_type</span> <span class="ow">in</span> <span class="n">ann_types</span><span class="p">:</span>
-        <span class="n">converter</span> <span class="o">=</span> <span class="n">get_forward_annotation_converter</span><span class="p">(</span><span class="n">ann_type</span><span class="p">,</span> <span class="n">categories</span><span class="p">)</span>
+        <span class="n">converter</span> <span class="o">=</span> <span class="n">get_forward_annotation_converter</span><span class="p">(</span><span class="n">ann_type</span><span class="p">,</span> <span class="n">legacy_dataset</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">converter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">ann_converters</span><span class="p">[</span><span class="n">ann_type</span><span class="p">]</span> <span class="o">=</span> <span class="n">converter</span>
             <span class="n">attributes</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">converter</span><span class="o">.</span><span class="n">get_schema_attributes</span><span class="p">())</span>
@@ -1174,6 +1183,203 @@ document.write(`
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Register a backward converter class for an annotation type.&quot;&quot;&quot;</span>
     <span class="n">_backward_annotation_converter_classes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">converter_class</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ForwardMaskAnnotationConverter">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardMaskAnnotationConverter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ForwardMaskAnnotationConverter</span><span class="p">(</span><span class="n">ForwardAnnotationConverter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Forward converter for mask annotations handling both semantic and instance segmentation.</span>
+
+<span class="sd">    For semantic segmentation:</span>
+<span class="sd">    - Creates a single uint8 mask where pixel values = class labels</span>
+
+<span class="sd">    For instance segmentation:</span>
+<span class="sd">    - Creates N binary masks (N = number of instances)</span>
+<span class="sd">    - Each mask represents a single instance</span>
+<span class="sd">    - Labels array stores class label for each instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">mask_attribute</span><span class="p">:</span> <span class="n">AttributeInfo</span><span class="p">,</span>
+        <span class="n">instance_mask_attribute</span><span class="p">:</span> <span class="n">AttributeInfo</span><span class="p">,</span>
+        <span class="n">mask_labels_attribute</span><span class="p">:</span> <span class="n">AttributeInfo</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">is_semantic</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize with mask attributes and optional label attribute.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mask_attribute</span> <span class="o">=</span> <span class="n">mask_attribute</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">instance_mask_attribute</span> <span class="o">=</span> <span class="n">instance_mask_attribute</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mask_labels_attribute</span> <span class="o">=</span> <span class="n">mask_labels_attribute</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_semantic</span> <span class="o">=</span> <span class="n">is_semantic</span>
+
+<div class="viewcode-block" id="ForwardMaskAnnotationConverter.create">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardMaskAnnotationConverter.create">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">LegacyDataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ForwardMaskAnnotationConverter | None&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create converter instance for mask annotations.</span>
+
+<span class="sd">        Determines if the dataset uses semantic or instance segmentation by checking</span>
+<span class="sd">        if mask indices match their labels across all mask annotations.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">categories</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span>
+        <span class="c1"># Extract label categories if available</span>
+        <span class="n">legacy_label_categories</span> <span class="o">=</span> <span class="n">categories</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="c1"># Check all masks in the dataset to determine if semantic or instance segmentation</span>
+        <span class="n">is_semantic</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># Assume semantic until proven otherwise</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="n">ExtractedMask</span><span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="c1"># If any mask&#39;s index doesn&#39;t match its label, it&#39;s instance segmentation</span>
+                <span class="k">if</span> <span class="n">ann</span><span class="o">.</span><span class="n">label</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">ann</span><span class="o">.</span><span class="n">index</span> <span class="o">!=</span> <span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="p">:</span>
+                    <span class="n">is_semantic</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">break</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_semantic</span><span class="p">:</span>
+                <span class="k">break</span>
+
+        <span class="c1"># Create categories based on legacy label categories</span>
+        <span class="n">new_label_categories</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">legacy_label_categories</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">new_label_categories</span> <span class="o">=</span> <span class="n">LabelCategories</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">label_item</span> <span class="ow">in</span> <span class="n">legacy_label_categories</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
+                <span class="n">new_label_categories</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">label_item</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">is_semantic</span><span class="p">:</span>
+            <span class="c1"># For semantic segmentation, use MaskCategories for mask_attribute</span>
+            <span class="n">colormap</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">if</span> <span class="n">new_label_categories</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># Generate colors for all labels plus background</span>
+                <span class="n">num_classes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_label_categories</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># +1 for background</span>
+                <span class="n">colormap_dict</span> <span class="o">=</span> <span class="n">generate_colormap</span><span class="p">(</span><span class="n">num_classes</span><span class="p">,</span> <span class="n">include_background</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+                <span class="c1"># Convert colors to RgbColor</span>
+                <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="n">colormap_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                        <span class="n">colormap</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">RgbColor</span><span class="p">(</span><span class="o">*</span><span class="n">color</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">colormap</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">color</span>
+
+            <span class="n">mask_categories</span> <span class="o">=</span> <span class="n">MaskCategories</span><span class="p">(</span><span class="n">colormap</span><span class="o">=</span><span class="n">colormap</span><span class="p">)</span>
+            <span class="n">mask_attribute</span> <span class="o">=</span> <span class="n">AttributeInfo</span><span class="p">(</span>
+                <span class="nb">type</span><span class="o">=</span><span class="nb">callable</span><span class="p">,</span>
+                <span class="n">annotation</span><span class="o">=</span><span class="n">mask_callable_field</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">pl</span><span class="o">.</span><span class="n">UInt8</span><span class="p">),</span>
+                <span class="n">categories</span><span class="o">=</span><span class="n">mask_categories</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">instance_mask_attribute</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># For instance segmentation, use no categories</span>
+            <span class="n">mask_attribute</span> <span class="o">=</span> <span class="kc">None</span>
+
+            <span class="c1"># Configure instance mask attribute with Boolean dtype for binary instance masks</span>
+            <span class="n">instance_mask_attribute</span> <span class="o">=</span> <span class="n">AttributeInfo</span><span class="p">(</span>
+                <span class="nb">type</span><span class="o">=</span><span class="nb">callable</span><span class="p">,</span>
+                <span class="n">annotation</span><span class="o">=</span><span class="n">instance_mask_callable_field</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">pl</span><span class="o">.</span><span class="n">Boolean</span><span class="p">),</span>
+            <span class="p">)</span>
+
+        <span class="n">mask_labels_attribute</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># Only add mask_labels if we have label categories and using instance segmentation</span>
+        <span class="k">if</span> <span class="n">new_label_categories</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_semantic</span><span class="p">:</span>
+            <span class="n">mask_labels_attribute</span> <span class="o">=</span> <span class="n">AttributeInfo</span><span class="p">(</span>
+                <span class="nb">type</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                <span class="n">annotation</span><span class="o">=</span><span class="n">label_field</span><span class="p">(</span><span class="n">is_list</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>  <span class="c1"># Labels for each instance</span>
+                <span class="n">categories</span><span class="o">=</span><span class="n">new_label_categories</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">mask_attribute</span><span class="o">=</span><span class="n">mask_attribute</span><span class="p">,</span>
+            <span class="n">instance_mask_attribute</span><span class="o">=</span><span class="n">instance_mask_attribute</span><span class="p">,</span>
+            <span class="n">mask_labels_attribute</span><span class="o">=</span><span class="n">mask_labels_attribute</span><span class="p">,</span>
+            <span class="n">is_semantic</span><span class="o">=</span><span class="n">is_semantic</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ForwardMaskAnnotationConverter.get_supported_annotation_types">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardMaskAnnotationConverter.get_supported_annotation_types">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_supported_annotation_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">AnnotationType</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return list of annotation types this converter can handle.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="ForwardMaskAnnotationConverter.get_schema_attributes">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardMaskAnnotationConverter.get_schema_attributes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_schema_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AttributeInfo</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return schema attributes.&quot;&quot;&quot;</span>
+        <span class="n">attributes</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask_attribute</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;mask_callable&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask_attribute</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">instance_mask_attribute</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;instance_mask_callable&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">instance_mask_attribute</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask_labels_attribute</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask_labels_attribute</span>
+        <span class="k">return</span> <span class="n">attributes</span></div>
+
+
+<div class="viewcode-block" id="ForwardMaskAnnotationConverter.convert_annotations">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardMaskAnnotationConverter.convert_annotations">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert_annotations</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">annotations</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Annotation</span><span class="p">],</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert legacy mask annotations to either semantic or instance segmentation format.&quot;&quot;&quot;</span>
+        <span class="c1"># Extract mask annotations</span>
+        <span class="n">extracted_masks</span> <span class="o">=</span> <span class="p">[</span><span class="n">ann</span> <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">annotations</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="n">ExtractedMask</span><span class="p">)]</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_semantic</span><span class="p">:</span>
+            <span class="c1"># Convert to semantic segmentation mask</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">get_semantic_mask</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">extracted_masks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+
+                <span class="c1"># Initialize empty mask</span>
+                <span class="c1"># Get first mask to determine shape</span>
+                <span class="n">first_mask</span> <span class="o">=</span> <span class="n">extracted_masks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">image</span>
+                <span class="n">output_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">first_mask</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+
+                <span class="c1"># Combine all masks into a single semantic mask</span>
+                <span class="k">for</span> <span class="n">mask</span> <span class="ow">in</span> <span class="n">extracted_masks</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">mask</span><span class="o">.</span><span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">mask_data</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">image</span>
+                        <span class="n">output_mask</span><span class="p">[</span><span class="n">mask_data</span><span class="p">]</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">label</span>
+
+                <span class="k">return</span> <span class="n">output_mask</span>
+
+            <span class="n">results</span><span class="p">[</span><span class="s2">&quot;mask_callable&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_semantic_mask</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Convert to instance segmentation masks</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">get_instance_masks</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">extracted_masks</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+                <span class="c1"># Get first mask to determine shape</span>
+                <span class="n">first_mask</span> <span class="o">=</span> <span class="n">extracted_masks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">image</span>
+                <span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">extracted_masks</span><span class="p">),)</span> <span class="o">+</span> <span class="n">first_mask</span><span class="o">.</span><span class="n">shape</span>
+
+                <span class="c1"># Create array of binary instance masks</span>
+                <span class="n">instance_masks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+                <span class="c1"># Fill instance masks</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">mask</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">extracted_masks</span><span class="p">):</span>
+                    <span class="n">instance_masks</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">image</span>
+
+                <span class="k">return</span> <span class="n">instance_masks</span>
+
+            <span class="n">results</span><span class="p">[</span><span class="s2">&quot;instance_mask_callable&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_instance_masks</span>
+
+            <span class="c1"># Add instance labels</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">mask</span><span class="o">.</span><span class="n">label</span> <span class="k">if</span> <span class="n">mask</span><span class="o">.</span><span class="n">label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">mask</span> <span class="ow">in</span> <span class="n">extracted_masks</span><span class="p">]</span>
+
+            <span class="c1"># Add labels only for instance segmentation</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask_labels_attribute</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">results</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">results</span></div>
+</div>
 
 
 

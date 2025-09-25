@@ -639,6 +639,12 @@ multi-field transformations.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#datumaro.experimental.converters.ImagePathToImageConverter" title="datumaro.experimental.converters.ImagePathToImageConverter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ImagePathToImageConverter</span></code></a>(**kwargs)</p></td>
 <td><p>Lazy converter that loads images from file paths using Pillow.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.converters.InstanceMaskCallableToInstanceMaskConverter" title="datumaro.experimental.converters.InstanceMaskCallableToInstanceMaskConverter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">InstanceMaskCallableToInstanceMaskConverter</span></code></a>(...)</p></td>
+<td><p>Lazy converter that executes callables to generate instance mask data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#datumaro.experimental.converters.MaskCallableToMaskConverter" title="datumaro.experimental.converters.MaskCallableToMaskConverter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MaskCallableToMaskConverter</span></code></a>(**kwargs)</p></td>
+<td><p>Lazy converter that executes callables to generate mask data.</p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#datumaro.experimental.converters.PolygonToBBoxConverter" title="datumaro.experimental.converters.PolygonToBBoxConverter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PolygonToBBoxConverter</span></code></a>(**kwargs)</p></td>
 <td><p>Converts polygon annotations to bounding boxes.</p></td>
 </tr>
@@ -1248,6 +1254,120 @@ path, all dependent converters must also be executed lazily.</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="datumaro.experimental.converters.InstanceMaskCallableToInstanceMaskConverter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datumaro.experimental.converters.</span></span><span class="sig-name descname"><span class="pre">InstanceMaskCallableToInstanceMaskConverter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Any" title="typing.Any"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/datumaro/experimental/converters.html#InstanceMaskCallableToInstanceMaskConverter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.converters.InstanceMaskCallableToInstanceMaskConverter" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="datumaro.experimental.converter_registry.html#datumaro.experimental.converter_registry.Converter" title="datumaro.experimental.converter_registry.Converter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Converter</span></code></a></p>
+<p>Lazy converter that executes callables to generate instance mask data.</p>
+<p>This converter takes a callable stored in a InstanceMaskCallableField and
+executes it to get instance mask data as a 3D numpy array (N,H,W), producing
+an InstanceMaskField output. Each mask in the output is a binary mask
+representing a single instance.</p>
+<p>Initialize converter with input and output AttributeSpec instances.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> – AttributeSpec instances for converter inputs/outputs
+based on input_*/output_* class attributes</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="datumaro.experimental.converters.InstanceMaskCallableToInstanceMaskConverter.input_callable">
+<span class="sig-name descname"><span class="pre">input_callable</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="datumaro.experimental.converter_registry.html#datumaro.experimental.converter_registry.AttributeSpec" title="datumaro.experimental.converter_registry.AttributeSpec"><span class="pre">AttributeSpec</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="datumaro.experimental.fields.html#datumaro.experimental.fields.InstanceMaskCallableField" title="datumaro.experimental.fields.InstanceMaskCallableField"><span class="pre">InstanceMaskCallableField</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#datumaro.experimental.converters.InstanceMaskCallableToInstanceMaskConverter.input_callable" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="datumaro.experimental.converters.InstanceMaskCallableToInstanceMaskConverter.output_mask">
+<span class="sig-name descname"><span class="pre">output_mask</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="datumaro.experimental.converter_registry.html#datumaro.experimental.converter_registry.AttributeSpec" title="datumaro.experimental.converter_registry.AttributeSpec"><span class="pre">AttributeSpec</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="datumaro.experimental.fields.html#datumaro.experimental.fields.InstanceMaskField" title="datumaro.experimental.fields.InstanceMaskField"><span class="pre">InstanceMaskField</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#datumaro.experimental.converters.InstanceMaskCallableToInstanceMaskConverter.output_mask" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.experimental.converters.InstanceMaskCallableToInstanceMaskConverter.filter_output_spec">
+<span class="sig-name descname"><span class="pre">filter_output_spec</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/converters.html#InstanceMaskCallableToInstanceMaskConverter.filter_output_spec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.converters.InstanceMaskCallableToInstanceMaskConverter.filter_output_spec" title="Link to this definition">#</a></dt>
+<dd><p>Configure output mask specification based on input.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.experimental.converters.InstanceMaskCallableToInstanceMaskConverter.convert">
+<span class="sig-name descname"><span class="pre">convert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/converters.html#InstanceMaskCallableToInstanceMaskConverter.convert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.converters.InstanceMaskCallableToInstanceMaskConverter.convert" title="Link to this definition">#</a></dt>
+<dd><p>Execute callables to generate instance mask data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> – DataFrame containing callable column</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame with instance mask tensor data and shape information</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="datumaro.experimental.converters.InstanceMaskCallableToInstanceMaskConverter.lazy">
+<span class="sig-name descname"><span class="pre">lazy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#datumaro.experimental.converters.InstanceMaskCallableToInstanceMaskConverter.lazy" title="Link to this definition">#</a></dt>
+<dd><p>Whether this converter performs lazy operations.</p>
+<p>Lazy converters defer expensive operations (like loading images from disk)
+until data is actually accessed. When a lazy converter is in the conversion
+path, all dependent converters must also be executed lazily.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="datumaro.experimental.converters.MaskCallableToMaskConverter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datumaro.experimental.converters.</span></span><span class="sig-name descname"><span class="pre">MaskCallableToMaskConverter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Any" title="typing.Any"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/datumaro/experimental/converters.html#MaskCallableToMaskConverter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.converters.MaskCallableToMaskConverter" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="datumaro.experimental.converter_registry.html#datumaro.experimental.converter_registry.Converter" title="datumaro.experimental.converter_registry.Converter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Converter</span></code></a></p>
+<p>Lazy converter that executes callables to generate mask data.</p>
+<p>This converter takes a callable stored in a MaskCallableField and
+executes it to get mask data as a 2D numpy array (H,W), producing
+a MaskField output. The mask can be either a binary mask or a
+category mask.</p>
+<p>Initialize converter with input and output AttributeSpec instances.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> – AttributeSpec instances for converter inputs/outputs
+based on input_*/output_* class attributes</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="datumaro.experimental.converters.MaskCallableToMaskConverter.input_callable">
+<span class="sig-name descname"><span class="pre">input_callable</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="datumaro.experimental.converter_registry.html#datumaro.experimental.converter_registry.AttributeSpec" title="datumaro.experimental.converter_registry.AttributeSpec"><span class="pre">AttributeSpec</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="datumaro.experimental.fields.html#datumaro.experimental.fields.MaskCallableField" title="datumaro.experimental.fields.MaskCallableField"><span class="pre">MaskCallableField</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#datumaro.experimental.converters.MaskCallableToMaskConverter.input_callable" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="datumaro.experimental.converters.MaskCallableToMaskConverter.output_mask">
+<span class="sig-name descname"><span class="pre">output_mask</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="datumaro.experimental.converter_registry.html#datumaro.experimental.converter_registry.AttributeSpec" title="datumaro.experimental.converter_registry.AttributeSpec"><span class="pre">AttributeSpec</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="datumaro.experimental.fields.html#datumaro.experimental.fields.MaskField" title="datumaro.experimental.fields.MaskField"><span class="pre">MaskField</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#datumaro.experimental.converters.MaskCallableToMaskConverter.output_mask" title="Link to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.experimental.converters.MaskCallableToMaskConverter.filter_output_spec">
+<span class="sig-name descname"><span class="pre">filter_output_spec</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/converters.html#MaskCallableToMaskConverter.filter_output_spec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.converters.MaskCallableToMaskConverter.filter_output_spec" title="Link to this definition">#</a></dt>
+<dd><p>Configure output mask specification based on input.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="datumaro.experimental.converters.MaskCallableToMaskConverter.convert">
+<span class="sig-name descname"><span class="pre">convert</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="../../../_modules/datumaro/experimental/converters.html#MaskCallableToMaskConverter.convert"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.converters.MaskCallableToMaskConverter.convert" title="Link to this definition">#</a></dt>
+<dd><p>Execute callables to generate mask data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>df</strong> – DataFrame containing callable column</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame with mask tensor data and shape information</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="datumaro.experimental.converters.MaskCallableToMaskConverter.lazy">
+<span class="sig-name descname"><span class="pre">lazy</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><span class="pre">bool</span></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#datumaro.experimental.converters.MaskCallableToMaskConverter.lazy" title="Link to this definition">#</a></dt>
+<dd><p>Whether this converter performs lazy operations.</p>
+<p>Lazy converters defer expensive operations (like loading images from disk)
+until data is actually accessed. When a lazy converter is in the conversion
+path, all dependent converters must also be executed lazily.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="datumaro.experimental.converters.RotatedBBoxToPolygonConverter">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">datumaro.experimental.converters.</span></span><span class="sig-name descname"><span class="pre">RotatedBBoxToPolygonConverter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="datumaro.util.multi_procs_util.html#datumaro.util.multi_procs_util.Any" title="typing.Any"><span class="pre">Any</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/datumaro/experimental/converters.html#RotatedBBoxToPolygonConverter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#datumaro.experimental.converters.RotatedBBoxToPolygonConverter" title="Link to this definition">#</a></dt>
 <dd><p>Bases: <a class="reference internal" href="datumaro.experimental.converter_registry.html#datumaro.experimental.converter_registry.Converter" title="datumaro.experimental.converter_registry.Converter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Converter</span></code></a></p>
@@ -1429,6 +1549,22 @@ path, all dependent converters must also be executed lazily.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.ImageCallableToImageConverter.filter_output_spec"><code class="docutils literal notranslate"><span class="pre">ImageCallableToImageConverter.filter_output_spec()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.ImageCallableToImageConverter.convert"><code class="docutils literal notranslate"><span class="pre">ImageCallableToImageConverter.convert()</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.ImageCallableToImageConverter.lazy"><code class="docutils literal notranslate"><span class="pre">ImageCallableToImageConverter.lazy</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.InstanceMaskCallableToInstanceMaskConverter"><code class="docutils literal notranslate"><span class="pre">InstanceMaskCallableToInstanceMaskConverter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.InstanceMaskCallableToInstanceMaskConverter.input_callable"><code class="docutils literal notranslate"><span class="pre">InstanceMaskCallableToInstanceMaskConverter.input_callable</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.InstanceMaskCallableToInstanceMaskConverter.output_mask"><code class="docutils literal notranslate"><span class="pre">InstanceMaskCallableToInstanceMaskConverter.output_mask</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.InstanceMaskCallableToInstanceMaskConverter.filter_output_spec"><code class="docutils literal notranslate"><span class="pre">InstanceMaskCallableToInstanceMaskConverter.filter_output_spec()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.InstanceMaskCallableToInstanceMaskConverter.convert"><code class="docutils literal notranslate"><span class="pre">InstanceMaskCallableToInstanceMaskConverter.convert()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.InstanceMaskCallableToInstanceMaskConverter.lazy"><code class="docutils literal notranslate"><span class="pre">InstanceMaskCallableToInstanceMaskConverter.lazy</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.MaskCallableToMaskConverter"><code class="docutils literal notranslate"><span class="pre">MaskCallableToMaskConverter</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.MaskCallableToMaskConverter.input_callable"><code class="docutils literal notranslate"><span class="pre">MaskCallableToMaskConverter.input_callable</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.MaskCallableToMaskConverter.output_mask"><code class="docutils literal notranslate"><span class="pre">MaskCallableToMaskConverter.output_mask</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.MaskCallableToMaskConverter.filter_output_spec"><code class="docutils literal notranslate"><span class="pre">MaskCallableToMaskConverter.filter_output_spec()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.MaskCallableToMaskConverter.convert"><code class="docutils literal notranslate"><span class="pre">MaskCallableToMaskConverter.convert()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.MaskCallableToMaskConverter.lazy"><code class="docutils literal notranslate"><span class="pre">MaskCallableToMaskConverter.lazy</span></code></a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#datumaro.experimental.converters.RotatedBBoxToPolygonConverter"><code class="docutils literal notranslate"><span class="pre">RotatedBBoxToPolygonConverter</span></code></a><ul class="nav section-nav flex-column">
