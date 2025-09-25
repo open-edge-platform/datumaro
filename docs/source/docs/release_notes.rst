@@ -4,6 +4,53 @@ Release Notes
 .. toctree::
    :maxdepth: 1
 
+Release 1.12.0
+--------------
+
+This release streamlines Datumaro by removing a number of lesser-used features, helping to simplify the tool and reduce its dependencies. These changes are part of an effort to keep Datumaro focused on its core strengths: dataset management and integration with machine learning frameworks. As part of this update, inference-related features have been removed. For inference tasks, we recommend using the [OpenVINO model API](https://github.com/open-edge-platform/model_api). If you rely on a specific feature that is no longer available, you can still access it from [the previous version of Datumaro](https://github.com/open-edge-platform/datumaro/tree/v1.11.1).
+
+Removed features
+^^^^^^^^^^^^^^^^
+
+- CLI commmands:
+  - explain, explore, generate, prune
+  - model: add, remove, run, info
+  - project: add, create, export, import, remove, checkout, commit, log, info, status
+  - source: import, add, remove
+- API features:
+  - Model inference
+  - Model-based transformations
+  - Crypter
+  - Synthetic dataset generation
+  - Data exploration
+  - BBox to mask using SAM
+  - Telemetry
+  - Anchor generation
+  - Missing annotation detection
+  - Model inference explanation
+  - Near-duplicate removal
+  - Pruning
+  - Pseudo-labels
+  - Project
+  - Noisy label detection
+  - Data shift analysis
+- SAM Docker image
+
+New features
+^^^^^^^^^^^^
+
+- Experimental dataset class
+
+Enhancements
+^^^^^^^^^^^^
+- Mark several dependencies as optional
+- Removal of unneeded dependencies
+- Documentation tidy-up
+- DCO introduction; readme, PR template, and contribution guide tidy-up
+- Fix code coverage upload to Codecov in the CI
+- Fix crashes with certain datasets in the compare command
+- Added Semgrep security scan in the CI
+
 v1.11.1 (2024 Q3)
 -----------------
 
