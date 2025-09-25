@@ -19,7 +19,7 @@ import numpy as np
 import polars as pl
 from PIL import Image as PILImage
 
-from datumaro.components.annotation import Annotation, AnnotationType, Bbox
+from datumaro.components.annotation import Annotation, AnnotationType, Bbox, Label
 from datumaro.components.annotation import LabelCategories as LegacyLabelCategories
 from datumaro.components.annotation import Polygon, RotatedBbox
 from datumaro.components.dataset import Dataset as LegacyDataset
@@ -505,6 +505,54 @@ class ForwardPolygonAnnotationConverter(ForwardAnnotationConverter):
         return result
 
 
+class ForwardLabelAnnotationConverter(ForwardAnnotationConverter):
+    """Forward converter for Label (single label classification) annotations."""
+
+    def __init__(self, label_attribute: AttributeInfo):
+        """Initialize with label attribute."""
+        super().__init__()
+        self.label_attribute = label_attribute
+
+    @classmethod
+    def create_from_categories(
+        cls, categories: CategoriesInfo
+    ) -> "ForwardLabelAnnotationConverter | None":
+        """Create converter instance for label annotations."""
+        legacy_label_categories = categories.get(AnnotationType.label, None)
+
+        if legacy_label_categories is None:
+            return None
+
+        new_label_categories = LabelCategories()
+        for label_item in legacy_label_categories.items:
+            new_label_categories.add(label_item.name)
+
+        label_attribute = AttributeInfo(
+            type=int,
+            annotation=label_field(),
+            categories=new_label_categories,
+        )
+
+        return cls(label_attribute=label_attribute)
+
+    @classmethod
+    def get_annotation_type(cls) -> AnnotationType:
+        return AnnotationType.label
+
+    def get_schema_attributes(self) -> dict[str, AttributeInfo]:
+        return {"label": self.label_attribute}
+
+    def convert_annotations(
+        self, annotations: list[Annotation], item: DatasetItem
+    ) -> dict[str, Any]:
+        labels = [ann for ann in annotations if isinstance(ann, Label)]
+        result = {}
+        if len(labels) > 0:
+            # For single label classification, take the first label
+            result["label"] = labels[0].label
+        return result
+
+
 def register_builtin_forward_converters():
     """Register built-in forward converters for common types."""
 
@@ -513,6 +561,7 @@ def register_builtin_forward_converters():
 
     # Annotation converters
     register_forward_annotation_converter(ForwardBboxAnnotationConverter)
+    register_forward_annotation_converter(ForwardLabelAnnotationConverter)
     register_forward_annotation_converter(ForwardPolygonAnnotationConverter)
     register_forward_annotation_converter(ForwardRotatedBboxAnnotationConverter)
 
