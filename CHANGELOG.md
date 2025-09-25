@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased version
 
+### Experimental dataset
+
+- Support for mask callables
+  (<https://github.com/open-edge-platform/datumaro/pull/1895>)
+
+## Release 1.12.0
+
 This release streamlines Datumaro by removing a number of lesser-used features, helping to simplify the tool and reduce its dependencies. These changes are part of an effort to keep Datumaro focused on its core strengths: dataset management and integration with machine learning frameworks. As part of this update, inference-related features have been removed. For inference tasks, we recommend using the [OpenVINO model API](https://github.com/open-edge-platform/model_api). If you rely on a specific feature that is no longer available, you can still access it from [the previous version of Datumaro](https://github.com/open-edge-platform/datumaro/tree/v1.11.1).
 
 ### Removed features
@@ -58,6 +65,8 @@ This release streamlines Datumaro by removing a number of lesser-used features, 
 ### New features
 - Experimental dataset class
   (<https://github.com/open-edge-platform/datumaro/pull/1807>, <https://github.com/open-edge-platform/datumaro/pull/1810>, <https://github.com/open-edge-platform/datumaro/pull/1811>, <https://github.com/open-edge-platform/datumaro/pull/1834>, <https://github.com/open-edge-platform/datumaro/pull/1858>, <https://github.com/open-edge-platform/datumaro/pull/1845>, <https://github.com/open-edge-platform/datumaro/pull/1863>, <https://github.com/open-edge-platform/datumaro/pull/1868>, <https://github.com/open-edge-platform/datumaro/pull/1876>, <https://github.com/open-edge-platform/datumaro/pull/1877>, <https://github.com/open-edge-platform/datumaro/pull/1879>, <https://github.com/open-edge-platform/datumaro/pull/1881>, <https://github.com/open-edge-platform/datumaro/pull/1891>)
+- New OpenVino Accuracy Checker semantic segmentation format
+  (<https://github.com/open-edge-platform/datumaro/pull/1893>)
 
 ### Enhancements
 - Mark several dependencies as optional

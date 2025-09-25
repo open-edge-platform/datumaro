@@ -679,3 +679,149 @@ def image_callable_field(format: str = "RGB", semantic: Semantic = Semantic.Defa
         ImageCallableField instance configured with the given parameters
     """
     return ImageCallableField(semantic=semantic, format=format)
+
+
+@dataclass(frozen=True)
+class InstanceMaskCallableField(Field):
+    """
+    Represents a field that stores a callable which returns an instance mask as a numpy array.
+
+    This field is useful for lazy loading scenarios where instance masks are generated
+    or loaded on-demand. The callable should return a numpy array representing
+    the instance mask data when invoked.
+
+    Attributes:
+        semantic: Semantic tags describing the callable's purpose
+        dtype: Polars data type for the mask values (e.g., pl.UInt8, pl.Boolean)
+    """
+
+    semantic: Semantic
+    dtype: pl.DataType = pl.Boolean
+
+    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+        """Return schema with Object type to store callable."""
+        return {name: pl.Object}
+
+    def to_polars(self, name: str, value: callable) -> dict[str, pl.Series]:
+        """
+        Store instance mask callable as Object in Polars series.
+
+        The callable must return a 3D numpy array of shape (N, H, W) where:
+        - N is the number of instances
+        - H is the mask height
+        - W is the mask width
+        Each mask should be a binary mask for a single instance.
+        """
+        if not callable(value):
+            raise TypeError(f"Expected callable, got {type(value)}")
+        return {name: pl.Series(name, [value])}
+
+    def from_polars(
+        self, name: str, row_index: int, df: pl.DataFrame, target_type: type
+    ) -> callable:
+        """
+        Extract instance mask callable from Polars dataframe.
+
+        Returns a callable that produces a 3D numpy array of binary masks,
+        one for each instance in the image.
+        """
+        value = df[name][row_index]
+        if not callable(value):
+            raise TypeError(f"Expected callable in column {name}, got {type(value)}")
+        return value
+
+
+def instance_mask_callable_field(
+    dtype: Any = pl.Boolean(), semantic: Semantic = Semantic.Default
+) -> Any:
+    """
+    Create an InstanceMaskCallableField for storing instance mask-generating callables.
+
+    Args:
+        dtype: Polars data type for mask values (defaults to pl.Boolean())
+        semantic: Semantic tags describing the instance mask purpose (optional)
+
+    Returns:
+        InstanceMaskCallableField instance configured with the given parameters
+
+    Example:
+        >>> def generate_masks():
+        ...     # Example with 2 instances, 3x3 masks
+        ...     return np.array([
+        ...         [[1, 1, 0], [1, 1, 0], [0, 0, 0]],  # First instance
+        ...         [[0, 0, 1], [0, 0, 1], [1, 1, 1]],  # Second instance
+        ...     ], dtype=bool)
+        >>> field = instance_mask_callable_field()
+        >>> sample = Sample(instance_masks=generate_masks)
+    """
+    return InstanceMaskCallableField(semantic=semantic, dtype=dtype)
+
+
+@dataclass(frozen=True)
+class MaskCallableField(Field):
+    """
+    Represents a field that stores a callable which returns a mask as a numpy array.
+
+    This field is useful for lazy loading scenarios where masks are generated
+    or loaded on-demand. The callable should return a numpy array representing
+    a single mask when invoked.
+
+    Attributes:
+        semantic: Semantic tags describing the callable's purpose
+        dtype: Polars data type for mask values (e.g., pl.UInt8, pl.Boolean)
+    """
+
+    semantic: Semantic
+    dtype: pl.DataType = pl.UInt8()
+
+    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+        """Return schema with Object type to store callable."""
+        return {name: pl.Object}
+
+    def to_polars(self, name: str, value: callable) -> dict[str, pl.Series]:
+        """
+        Store mask callable as Object in Polars series.
+
+        The callable must return a 2D numpy array of shape (H, W) where:
+        - H is the mask height
+        - W is the mask width
+        The array should be a binary or category mask.
+        """
+        if not callable(value):
+            raise TypeError(f"Expected callable, got {type(value)}")
+        return {name: pl.Series(name, [value])}
+
+    def from_polars(
+        self, name: str, row_index: int, df: pl.DataFrame, target_type: type
+    ) -> callable:
+        """
+        Extract mask callable from Polars dataframe.
+
+        Returns a callable that produces a 2D numpy array representing
+        a binary or category mask.
+        """
+        value = df[name][row_index]
+        if not callable(value):
+            raise TypeError(f"Expected callable in column {name}, got {type(value)}")
+        return value
+
+
+def mask_callable_field(dtype: Any = pl.Boolean(), semantic: Semantic = Semantic.Default) -> Any:
+    """
+    Create a MaskCallableField for storing mask-generating callables.
+
+    Args:
+        dtype: Polars data type for mask values (defaults to pl.Boolean())
+        semantic: Semantic tags describing the mask purpose (optional)
+
+    Returns:
+        MaskCallableField instance configured with the given parameters
+
+    Example:
+        >>> def generate_mask():
+        ...     # Example 3x3 mask
+        ...     return np.array([[1, 1, 0], [1, 1, 0], [0, 0, 0]], dtype=bool)
+        >>> field = mask_callable_field()
+        >>> sample = Sample(mask=generate_mask)
+    """
+    return MaskCallableField(semantic=semantic, dtype=dtype)
