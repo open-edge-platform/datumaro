@@ -17,6 +17,10 @@ from datumaro.experimental.fields import (
     ImageInfo,
     ImageInfoField,
     ImagePathField,
+    InstanceMaskCallableField,
+    InstanceMaskField,
+    MaskCallableField,
+    MaskField,
     PolygonField,
     RotatedBBoxField,
     TensorField,
@@ -26,6 +30,10 @@ from datumaro.experimental.fields import (
     image_field,
     image_info_field,
     image_path_field,
+    instance_mask_callable_field,
+    instance_mask_field,
+    mask_callable_field,
+    mask_field,
     polygon_field,
     rotated_bbox_field,
     tensor_field,
@@ -166,6 +174,132 @@ def test_bbox_field_polars_schema():
 
     expected = {"bbox": pl.List(pl.Array(pl.Float32, 4))}
     assert schema == expected
+
+
+def test_instance_mask_field_creation():
+    """Test InstanceMaskField creation and properties."""
+    field = instance_mask_field(dtype=pl.Boolean)
+
+    assert isinstance(field, InstanceMaskField)
+    assert field.dtype == pl.Boolean
+    assert field.semantic == Semantic.Default
+
+
+def test_instance_mask_field_polars_schema():
+    """Test InstanceMaskField Polars schema generation."""
+    field = instance_mask_field(dtype=pl.Boolean)
+    schema = field.to_polars_schema("instance_mask")
+
+    expected = {
+        "instance_mask": pl.List(pl.Boolean()),
+        "instance_mask_shape": pl.List(pl.Int32()),
+    }
+    assert schema == expected
+
+
+def test_instance_mask_field_polars_conversion():
+    """Test InstanceMaskField to/from Polars conversion."""
+    field = cast(InstanceMaskField, instance_mask_field(dtype=pl.Boolean))
+    test_mask = np.array(
+        [[[True, False], [False, True]], [[False, True], [True, False]]], dtype=bool
+    )  # (2,2,2)
+
+    # Test to_polars
+    polars_data = field.to_polars("instance_mask", test_mask)
+    assert "instance_mask" in polars_data
+    assert isinstance(polars_data["instance_mask"], pl.Series)
+
+    # Create DataFrame and test from_polars
+    df = pl.DataFrame(polars_data)
+    reconstructed = cast(
+        np.ndarray[Any, Any], field.from_polars("instance_mask", 0, df, np.ndarray)
+    )
+
+    assert isinstance(reconstructed, np.ndarray)
+    assert np.array_equal(reconstructed, test_mask)
+
+
+def test_instance_mask_callable_field_creation():
+    """Test InstanceMaskCallableField creation and properties."""
+    field = instance_mask_callable_field(dtype=pl.Boolean, semantic=Semantic.Default)
+
+    assert isinstance(field, InstanceMaskCallableField)
+    assert field.dtype == pl.Boolean
+    assert field.semantic == Semantic.Default
+
+
+def test_instance_mask_callable_field_polars_schema():
+    """Test InstanceMaskCallableField Polars schema generation."""
+    field = instance_mask_callable_field(dtype=pl.Boolean, semantic=Semantic.Default)
+    schema = field.to_polars_schema("instance_mask_callable")
+
+    expected = {
+        "instance_mask_callable": pl.Object(),
+    }
+    assert schema == expected
+
+
+def test_instance_mask_callable_field_polars_conversion():
+    """Test InstanceMaskCallableField to/from Polars conversion."""
+    field = cast(
+        InstanceMaskCallableField,
+        instance_mask_callable_field(dtype=pl.Boolean, semantic=Semantic.Default),
+    )
+
+    def get_instance_masks():
+        # Return a (2,2,2) array of boolean masks
+        return np.array(
+            [[[True, False], [False, True]], [[False, True], [True, False]]], dtype=bool
+        )
+
+    # Test to_polars
+    polars_data = field.to_polars("instance_mask_callable", get_instance_masks)
+    assert "instance_mask_callable" in polars_data
+    assert callable(polars_data["instance_mask_callable"][0])
+
+    # Create DataFrame and test from_polars
+    df = pl.DataFrame(polars_data)
+    reconstructed = field.from_polars("instance_mask_callable", 0, df, callable)
+
+    assert callable(reconstructed)
+    assert np.array_equal(reconstructed(), get_instance_masks())
+
+
+def test_mask_callable_field_creation():
+    """Test MaskCallableField creation and properties."""
+    field = mask_callable_field(dtype=pl.UInt8, semantic=Semantic.Default)
+
+    assert isinstance(field, MaskCallableField)
+    assert field.dtype == pl.UInt8
+    assert field.semantic == Semantic.Default
+
+
+def test_mask_callable_field_polars_schema():
+    """Test MaskCallableField Polars schema generation."""
+    field = mask_callable_field(dtype=pl.UInt8, semantic=Semantic.Default)
+    schema = field.to_polars_schema("mask_callable")
+
+    expected = {
+        "mask_callable": pl.Object(),
+    }
+    assert schema == expected
+
+
+def test_mask_callable_field_polars_conversion():
+    """Test MaskCallableField to/from Polars conversion."""
+    field = cast(
+        MaskCallableField,
+        mask_callable_field(dtype=pl.UInt8, semantic=Semantic.Default),
+    )
+
+    def get_mask():
+        # Return a (2,2) array of uint8 mask with category IDs
+        return np.array([[1, 2], [2, 1]], dtype=np.uint8)
+
+    # Test to_polars
+    polars_data = field.to_polars("mask_callable", get_mask)
+    assert "mask_callable" in polars_data
+    assert callable(polars_data["mask_callable"][0])
 
 
 def test_bbox_field_polars_conversion():
