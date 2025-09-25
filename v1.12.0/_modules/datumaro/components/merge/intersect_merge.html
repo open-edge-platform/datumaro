@@ -1,0 +1,1083 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>datumaro.components.merge.intersect_merge &#8212; Datumaro 1.12.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=8b7c274f" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../../../../_static/documentation_options.js?v=fe8e256b"></script>
+    <script src="../../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/components/merge/intersect_merge';</script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 1.12.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 1.12.0 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../docs/index.html">
+                        Docs
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../docs/index.html">
+                        Docs
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../merge.html" class="nav-link">datumaro.components.merge</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">datumaro.com...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for datumaro.components.merge.intersect_merge</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Copyright (C) 2023 Intel Corporation</span>
+<span class="c1">#</span>
+<span class="c1"># SPDX-License-Identifier: MIT</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Sequence</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">attr</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">attr</span><span class="w"> </span><span class="kn">import</span> <span class="n">attrib</span><span class="p">,</span> <span class="n">attrs</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AnnotationType</span><span class="p">,</span>
+    <span class="n">LabelCategories</span><span class="p">,</span>
+    <span class="n">MaskCategories</span><span class="p">,</span>
+    <span class="n">PointsCategories</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotations.merger</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AnnotationMerger</span><span class="p">,</span>
+    <span class="n">BboxMerger</span><span class="p">,</span>
+    <span class="n">CaptionsMerger</span><span class="p">,</span>
+    <span class="n">Cuboid2DMerger</span><span class="p">,</span>
+    <span class="n">Cuboid3dMerger</span><span class="p">,</span>
+    <span class="n">EllipseMerger</span><span class="p">,</span>
+    <span class="n">ImageAnnotationMerger</span><span class="p">,</span>
+    <span class="n">LabelMerger</span><span class="p">,</span>
+    <span class="n">LineMerger</span><span class="p">,</span>
+    <span class="n">MaskMerger</span><span class="p">,</span>
+    <span class="n">PointsMerger</span><span class="p">,</span>
+    <span class="n">PolygonMerger</span><span class="p">,</span>
+    <span class="n">RotatedBboxMerger</span><span class="p">,</span>
+    <span class="n">TabularMerger</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">IDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_item_storage</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DatasetItemStorage</span><span class="p">,</span>
+    <span class="n">DatasetItemStorageDatasetView</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AnnotationsTooCloseError</span><span class="p">,</span>
+    <span class="n">ConflictingCategoriesError</span><span class="p">,</span>
+    <span class="n">FailedAttrVotingError</span><span class="p">,</span>
+    <span class="n">NoMatchingAnnError</span><span class="p">,</span>
+    <span class="n">NoMatchingItemError</span><span class="p">,</span>
+    <span class="n">WrongGroupError</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.merge</span><span class="w"> </span><span class="kn">import</span> <span class="n">Merger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">find</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.annotation_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_instances</span><span class="p">,</span> <span class="n">max_bbox</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.attrs_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure_cls</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;IntersectMerge&quot;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="IntersectMerge">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.merge.intersect_merge.IntersectMerge">[docs]</a>
+<span class="nd">@attrs</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">IntersectMerge</span><span class="p">(</span><span class="n">Merger</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Merge several datasets with &quot;intersect&quot; policy:</span>
+
+<span class="sd">    - If there are two or more dataset items whose (id, subset) pairs match each other,</span>
+<span class="sd">    we can consider this as having an intersection in our dataset. This method merges</span>
+<span class="sd">    the annotations of the corresponding :class:`DatasetItem` into one :class:`DatasetItem`</span>
+<span class="sd">    to handle this intersection. The rule to handle merging annotations is provided by</span>
+<span class="sd">    :class:`AnnotationMerger` according to their annotation types. For example,</span>
+<span class="sd">    DatasetItem(id=&quot;item_1&quot;, subset=&quot;train&quot;, annotations=[Bbox(0, 0, 1, 1)]) from Dataset-A and</span>
+<span class="sd">    DatasetItem(id=&quot;item_1&quot;, subset=&quot;train&quot;, annotations=[Bbox(.5, .5, 1, 1)]) from Dataset-B can be</span>
+<span class="sd">    merged into DatasetItem(id=&quot;item_1&quot;, subset=&quot;train&quot;, annotations=[Bbox(0, 0, 1, 1)]).</span>
+
+<span class="sd">    - Label categories are merged according to the union of their label names</span>
+<span class="sd">    (Same as `UnionMerge`). For example, if Dataset-A has {&quot;car&quot;, &quot;cat&quot;, &quot;dog&quot;}</span>
+<span class="sd">    and Dataset-B has {&quot;car&quot;, &quot;bus&quot;, &quot;truck&quot;} labels, the merged dataset will have</span>
+<span class="sd">    {&quot;bust&quot;, &quot;car&quot;, &quot;cat&quot;, &quot;dog&quot;, &quot;truck&quot;} labels.</span>
+
+<span class="sd">    - This merge has configuration parameters (`conf`) to control the annotation merge behaviors.</span>
+
+<span class="sd">    For example,</span>
+
+<span class="sd">    ```python</span>
+<span class="sd">    merge = IntersectMerge(</span>
+<span class="sd">        conf=IntersectMerge.Conf(</span>
+<span class="sd">            pairwise_dist=0.25,</span>
+<span class="sd">            groups=[],</span>
+<span class="sd">            output_conf_thresh=0.0,</span>
+<span class="sd">            quorum=0,</span>
+<span class="sd">        )</span>
+<span class="sd">    )</span>
+<span class="sd">    ```</span>
+
+<span class="sd">    For more details for the parameters, please refer to :class:`IntersectMerge.Conf`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">options</span><span class="p">)</span>
+
+<div class="viewcode-block" id="IntersectMerge.Conf">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.merge.intersect_merge.IntersectMerge.Conf">[docs]</a>
+    <span class="nd">@attrs</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">Conf</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pairwise_dist</span>
+<span class="sd">            IoU match threshold for segments</span>
+<span class="sd">        sigma</span>
+<span class="sd">            Parameter for Object Keypoint Similarity metric</span>
+<span class="sd">            (https://cocodataset.org/#keypoints-eval)</span>
+<span class="sd">        output_conf_thresh</span>
+<span class="sd">            Confidence threshold for output annotations</span>
+<span class="sd">        quorum</span>
+<span class="sd">            Minimum count for a label and attribute voting results to be counted</span>
+<span class="sd">        ignored_attributes</span>
+<span class="sd">            Attributes to be ignored in the merged :class:`DatasetItem`</span>
+<span class="sd">        groups</span>
+<span class="sd">            A comma-separated list of labels in annotation groups to check.</span>
+<span class="sd">            &#39;?&#39; postfix can be added to a label to make it optional in the group (repeatable)</span>
+<span class="sd">        close_distance</span>
+<span class="sd">            Distance threshold between annotations to decide their closeness. If they are decided</span>
+<span class="sd">            to be close, it will be enrolled to the error tracker.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">pairwise_dist</span> <span class="o">=</span> <span class="n">attrib</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">sigma</span> <span class="o">=</span> <span class="n">attrib</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span> <span class="n">factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+
+        <span class="n">output_conf_thresh</span> <span class="o">=</span> <span class="n">attrib</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">quorum</span> <span class="o">=</span> <span class="n">attrib</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">ignored_attributes</span> <span class="o">=</span> <span class="n">attrib</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">set</span><span class="p">,</span> <span class="n">factory</span><span class="o">=</span><span class="nb">set</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">_groups_converter</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">value</span><span class="p">:</span>
+                <span class="n">rg</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">group</span><span class="p">:</span>
+                    <span class="n">optional</span> <span class="o">=</span> <span class="n">label</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;?&quot;</span><span class="p">)</span>
+                    <span class="n">name</span> <span class="o">=</span> <span class="n">label</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">optional</span> <span class="k">else</span> <span class="n">label</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">rg</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">optional</span><span class="p">))</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rg</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">result</span>
+
+        <span class="n">groups</span> <span class="o">=</span> <span class="n">attrib</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="n">_groups_converter</span><span class="p">,</span> <span class="n">factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+        <span class="n">close_distance</span> <span class="o">=</span> <span class="n">attrib</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span></div>
+
+
+    <span class="n">conf</span> <span class="o">=</span> <span class="n">attrib</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="n">ensure_cls</span><span class="p">(</span><span class="n">Conf</span><span class="p">),</span> <span class="n">factory</span><span class="o">=</span><span class="n">Conf</span><span class="p">)</span>
+
+    <span class="c1"># Error trackers:</span>
+    <span class="n">errors</span> <span class="o">=</span> <span class="n">attrib</span><span class="p">(</span><span class="n">factory</span><span class="o">=</span><span class="nb">list</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<div class="viewcode-block" id="IntersectMerge.add_item_error">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.merge.intersect_merge.IntersectMerge.add_item_error">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_item_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">error</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_item_id</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span></div>
+
+
+    <span class="c1"># Indexes:</span>
+    <span class="n">_dataset_map</span> <span class="o">=</span> <span class="n">attrib</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># id(dataset) -&gt; (dataset, index)</span>
+    <span class="n">_item_map</span> <span class="o">=</span> <span class="n">attrib</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># id(item) -&gt; (item, id(dataset))</span>
+    <span class="n">_ann_map</span> <span class="o">=</span> <span class="n">attrib</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># id(ann) -&gt; (ann, id(item))</span>
+    <span class="n">_item_id</span> <span class="o">=</span> <span class="n">attrib</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">_item</span> <span class="o">=</span> <span class="n">attrib</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># Misc.</span>
+    <span class="n">_infos</span> <span class="o">=</span> <span class="n">attrib</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># merged infos</span>
+    <span class="n">_categories</span> <span class="o">=</span> <span class="n">attrib</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># merged categories</span>
+
+<div class="viewcode-block" id="IntersectMerge.merge">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.merge.intersect_merge.IntersectMerge.merge">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">IDataset</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">DatasetItemStorage</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">merge_infos</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">infos</span><span class="p">()</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">merge_categories</span><span class="p">([</span><span class="n">d</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">])</span>
+        <span class="n">merged</span> <span class="o">=</span> <span class="n">DatasetItemStorage</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_groups_definition</span><span class="p">()</span>
+
+        <span class="n">item_matches</span><span class="p">,</span> <span class="n">item_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_items</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_item_map</span> <span class="o">=</span> <span class="n">item_map</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dataset_map</span> <span class="o">=</span> <span class="p">{</span><span class="nb">id</span><span class="p">(</span><span class="n">d</span><span class="p">):</span> <span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sources</span><span class="p">)}</span>
+
+        <span class="k">for</span> <span class="n">item_id</span><span class="p">,</span> <span class="n">items</span> <span class="ow">in</span> <span class="n">item_matches</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_item_id</span> <span class="o">=</span> <span class="n">item_id</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">sources</span><span class="p">):</span>
+                <span class="n">missing_sources</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+                <span class="n">missing_sources</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset_map</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">missing_sources</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">add_item_error</span><span class="p">(</span><span class="n">NoMatchingItemError</span><span class="p">,</span> <span class="n">sources</span><span class="o">=</span><span class="n">missing_sources</span><span class="p">)</span>
+            <span class="n">merged</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">merge_items</span><span class="p">(</span><span class="n">items</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">merged</span></div>
+
+
+<div class="viewcode-block" id="IntersectMerge.get_ann_source">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.merge.intersect_merge.IntersectMerge.get_ann_source">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_ann_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ann_id</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item_map</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_ann_map</span><span class="p">[</span><span class="n">ann_id</span><span class="p">][</span><span class="mi">1</span><span class="p">]][</span><span class="mi">1</span><span class="p">]</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">datasets</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DatasetItemStorageDatasetView</span><span class="p">:</span>
+        <span class="c1"># TODO: self.merge() should be the first since this order matters for</span>
+        <span class="c1"># IntersectMerge.</span>
+        <span class="n">merged</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">datasets</span><span class="p">)</span>
+        <span class="n">infos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">merge_infos</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">infos</span><span class="p">()</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">datasets</span><span class="p">)</span>
+        <span class="n">categories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">merge_categories</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">datasets</span><span class="p">)</span>
+        <span class="n">media_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">merge_media_types</span><span class="p">(</span><span class="n">datasets</span><span class="p">)</span>
+        <span class="n">ann_types</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">merge_ann_types</span><span class="p">(</span><span class="n">datasets</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">DatasetItemStorageDatasetView</span><span class="p">(</span>
+            <span class="n">parent</span><span class="o">=</span><span class="n">merged</span><span class="p">,</span>
+            <span class="n">infos</span><span class="o">=</span><span class="n">infos</span><span class="p">,</span>
+            <span class="n">categories</span><span class="o">=</span><span class="n">categories</span><span class="p">,</span>
+            <span class="n">media_type</span><span class="o">=</span><span class="n">media_type</span><span class="p">,</span>
+            <span class="n">ann_types</span><span class="o">=</span><span class="n">ann_types</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="IntersectMerge.merge_categories">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.merge.intersect_merge.IntersectMerge.merge_categories">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">IDataset</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+        <span class="c1"># TODO: This is a temporary workaround to minimize code changes.</span>
+        <span class="c1"># We have to revisit it to make this class stateless.</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_categories&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span>
+
+        <span class="n">dst_categories</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">label_cat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_label_categories</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">label_cat</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">label_cat</span> <span class="o">=</span> <span class="n">LabelCategories</span><span class="p">()</span>
+        <span class="n">dst_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="n">label_cat</span>
+
+        <span class="n">points_cat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_point_categories</span><span class="p">(</span><span class="n">sources</span><span class="p">,</span> <span class="n">label_cat</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">points_cat</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dst_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">points</span><span class="p">]</span> <span class="o">=</span> <span class="n">points_cat</span>
+
+        <span class="n">mask_cat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_mask_categories</span><span class="p">(</span><span class="n">sources</span><span class="p">,</span> <span class="n">label_cat</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mask_cat</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dst_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">mask_cat</span>
+
+        <span class="k">return</span> <span class="n">dst_categories</span></div>
+
+
+<div class="viewcode-block" id="IntersectMerge.merge_items">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.merge.intersect_merge.IntersectMerge.merge_items">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">items</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">DatasetItem</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">DatasetItem</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_item</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">items</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ann_map</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">sources</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">items</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ann_map</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="nb">id</span><span class="p">(</span><span class="n">a</span><span class="p">):</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="nb">id</span><span class="p">(</span><span class="n">item</span><span class="p">))</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">})</span>
+            <span class="n">sources</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s2">&quot;Merging item </span><span class="si">%s</span><span class="s2">: source annotations </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_item_id</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">len</span><span class="p">,</span> <span class="n">sources</span><span class="p">)))</span>
+        <span class="p">)</span>
+
+        <span class="n">annotations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">merge_annotations</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span>
+
+        <span class="n">annotations</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">annotations</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">output_conf_thresh</span> <span class="o">&lt;=</span> <span class="n">a</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;score&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">]</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">annotations</span><span class="o">=</span><span class="n">annotations</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="IntersectMerge.merge_annotations">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.merge.intersect_merge.IntersectMerge.merge_annotations">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_make_mergers</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span>
+
+        <span class="n">clusters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_match_annotations</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span>
+
+        <span class="n">joined_clusters</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">clusters</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="p">[])</span>
+        <span class="n">group_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_cluster_groups</span><span class="p">(</span><span class="n">joined_clusters</span><span class="p">)</span>
+
+        <span class="n">annotations</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">clusters</span> <span class="ow">in</span> <span class="n">clusters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">cluster</span> <span class="ow">in</span> <span class="n">clusters</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_check_cluster_sources</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
+
+            <span class="n">merged_clusters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_clusters</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">clusters</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">merged_ann</span><span class="p">,</span> <span class="n">cluster</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">merged_clusters</span><span class="p">,</span> <span class="n">clusters</span><span class="p">):</span>
+                <span class="n">attributes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_cluster_attrs</span><span class="p">(</span><span class="n">cluster</span><span class="p">,</span> <span class="n">merged_ann</span><span class="p">)</span>
+                <span class="n">attributes</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">attributes</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">ignored_attributes</span>
+                <span class="p">}</span>
+                <span class="n">attributes</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">merged_ann</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span>
+                <span class="n">merged_ann</span><span class="o">.</span><span class="n">attributes</span> <span class="o">=</span> <span class="n">attributes</span>
+
+                <span class="n">new_group_id</span> <span class="o">=</span> <span class="n">find</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">group_map</span><span class="p">),</span> <span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="nb">id</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span> <span class="ow">in</span> <span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">new_group_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">new_group_id</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">new_group_id</span> <span class="o">=</span> <span class="n">new_group_id</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">merged_ann</span><span class="o">.</span><span class="n">group</span> <span class="o">=</span> <span class="n">new_group_id</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">close_distance</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_check_annotation_distance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">merged_clusters</span><span class="p">)</span>
+
+            <span class="n">annotations</span> <span class="o">+=</span> <span class="n">merged_clusters</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_check_groups</span><span class="p">(</span><span class="n">annotations</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">annotations</span></div>
+
+
+<div class="viewcode-block" id="IntersectMerge.match_items">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.merge.intersect_merge.IntersectMerge.match_items">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">match_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datasets</span><span class="p">):</span>
+        <span class="n">item_ids</span> <span class="o">=</span> <span class="nb">set</span><span class="p">((</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">datasets</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">d</span><span class="p">)</span>
+
+        <span class="n">item_map</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># id(item) -&gt; (item, id(dataset))</span>
+
+        <span class="n">matches</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">item_id</span><span class="p">,</span> <span class="n">item_subset</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">item_ids</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">e</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">items</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">datasets</span><span class="p">:</span>
+                <span class="n">item</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="n">item_subset</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">item</span><span class="p">:</span>
+                    <span class="n">items</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span> <span class="o">=</span> <span class="n">item</span>
+                    <span class="n">item_map</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">item</span><span class="p">)]</span> <span class="o">=</span> <span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">id</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
+            <span class="n">matches</span><span class="p">[(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">item_subset</span><span class="p">)]</span> <span class="o">=</span> <span class="n">items</span>
+
+        <span class="k">return</span> <span class="n">matches</span><span class="p">,</span> <span class="n">item_map</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_merge_label_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">):</span>
+        <span class="n">same</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">common</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">src_categories</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
+            <span class="n">src_cat</span> <span class="o">=</span> <span class="n">src_categories</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">common</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">common</span> <span class="o">=</span> <span class="n">src_cat</span>
+            <span class="k">elif</span> <span class="n">common</span> <span class="o">!=</span> <span class="n">src_cat</span><span class="p">:</span>
+                <span class="n">same</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">break</span>
+
+        <span class="k">if</span> <span class="n">same</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">common</span>
+
+        <span class="n">dst_cat</span> <span class="o">=</span> <span class="n">LabelCategories</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">src_id</span><span class="p">,</span> <span class="n">src_categories</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sources</span><span class="p">):</span>
+            <span class="n">src_cat</span> <span class="o">=</span> <span class="n">src_categories</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">src_cat</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">for</span> <span class="n">src_label</span> <span class="ow">in</span> <span class="n">src_cat</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
+                <span class="n">dst_label</span> <span class="o">=</span> <span class="n">dst_cat</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">src_label</span><span class="o">.</span><span class="n">name</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">dst_label</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">dst_label</span> <span class="o">!=</span> <span class="n">src_label</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="p">(</span>
+                            <span class="n">src_label</span><span class="o">.</span><span class="n">parent</span>
+                            <span class="ow">and</span> <span class="n">dst_label</span><span class="o">.</span><span class="n">parent</span>
+                            <span class="ow">and</span> <span class="n">src_label</span><span class="o">.</span><span class="n">parent</span> <span class="o">!=</span> <span class="n">dst_label</span><span class="o">.</span><span class="n">parent</span>
+                        <span class="p">):</span>
+                            <span class="k">raise</span> <span class="n">ConflictingCategoriesError</span><span class="p">(</span>
+                                <span class="s2">&quot;Can&#39;t merge label category </span><span class="si">%s</span><span class="s2"> (from #</span><span class="si">%s</span><span class="s2">): &quot;</span>
+                                <span class="s2">&quot;parent label conflict: </span><span class="si">%s</span><span class="s2"> vs. </span><span class="si">%s</span><span class="s2">&quot;</span>
+                                <span class="o">%</span> <span class="p">(</span><span class="n">src_label</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">src_id</span><span class="p">,</span> <span class="n">src_label</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="n">dst_label</span><span class="o">.</span><span class="n">parent</span><span class="p">),</span>
+                                <span class="n">sources</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">src_id</span><span class="p">)),</span>
+                            <span class="p">)</span>
+                        <span class="n">dst_label</span><span class="o">.</span><span class="n">parent</span> <span class="o">=</span> <span class="n">dst_label</span><span class="o">.</span><span class="n">parent</span> <span class="ow">or</span> <span class="n">src_label</span><span class="o">.</span><span class="n">parent</span>
+                        <span class="n">dst_label</span><span class="o">.</span><span class="n">attributes</span> <span class="o">|=</span> <span class="n">src_label</span><span class="o">.</span><span class="n">attributes</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">pass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">dst_cat</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">src_label</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">src_label</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="n">src_label</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">dst_cat</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_merge_point_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">,</span> <span class="n">label_cat</span><span class="p">):</span>
+        <span class="n">dst_point_cat</span> <span class="o">=</span> <span class="n">PointsCategories</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">src_id</span><span class="p">,</span> <span class="n">src_categories</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sources</span><span class="p">):</span>
+            <span class="n">src_label_cat</span> <span class="o">=</span> <span class="n">src_categories</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
+            <span class="n">src_point_cat</span> <span class="o">=</span> <span class="n">src_categories</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">src_label_cat</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">src_point_cat</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">for</span> <span class="n">src_label_id</span><span class="p">,</span> <span class="n">src_cat</span> <span class="ow">in</span> <span class="n">src_point_cat</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">src_label</span> <span class="o">=</span> <span class="n">src_label_cat</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="n">src_label_id</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+                <span class="n">dst_label_id</span> <span class="o">=</span> <span class="n">label_cat</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">src_label</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">dst_cat</span> <span class="o">=</span> <span class="n">dst_point_cat</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dst_label_id</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">dst_cat</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">dst_cat</span> <span class="o">!=</span> <span class="n">src_cat</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">ConflictingCategoriesError</span><span class="p">(</span>
+                            <span class="s2">&quot;Can&#39;t merge point category for label &quot;</span>
+                            <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> (from #</span><span class="si">%s</span><span class="s2">): </span><span class="si">%s</span><span class="s2"> vs. </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">src_label</span><span class="p">,</span> <span class="n">src_id</span><span class="p">,</span> <span class="n">src_cat</span><span class="p">,</span> <span class="n">dst_cat</span><span class="p">),</span>
+                            <span class="n">sources</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">src_id</span><span class="p">)),</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">pass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">dst_point_cat</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">dst_label_id</span><span class="p">,</span> <span class="n">src_cat</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span> <span class="n">src_cat</span><span class="o">.</span><span class="n">joints</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dst_point_cat</span><span class="o">.</span><span class="n">items</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">dst_point_cat</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_merge_mask_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">,</span> <span class="n">label_cat</span><span class="p">):</span>
+        <span class="n">dst_mask_cat</span> <span class="o">=</span> <span class="n">MaskCategories</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">src_id</span><span class="p">,</span> <span class="n">src_categories</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sources</span><span class="p">):</span>
+            <span class="n">src_label_cat</span> <span class="o">=</span> <span class="n">src_categories</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
+            <span class="n">src_mask_cat</span> <span class="o">=</span> <span class="n">src_categories</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">src_label_cat</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">src_mask_cat</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">for</span> <span class="n">src_label_id</span><span class="p">,</span> <span class="n">src_cat</span> <span class="ow">in</span> <span class="n">src_mask_cat</span><span class="o">.</span><span class="n">colormap</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">src_label</span> <span class="o">=</span> <span class="n">src_label_cat</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="n">src_label_id</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+                <span class="n">dst_label_id</span> <span class="o">=</span> <span class="n">label_cat</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">src_label</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">dst_cat</span> <span class="o">=</span> <span class="n">dst_mask_cat</span><span class="o">.</span><span class="n">colormap</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dst_label_id</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">dst_cat</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">dst_cat</span> <span class="o">!=</span> <span class="n">src_cat</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">ConflictingCategoriesError</span><span class="p">(</span>
+                            <span class="s2">&quot;Can&#39;t merge mask category for label &quot;</span>
+                            <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> (from #</span><span class="si">%s</span><span class="s2">): </span><span class="si">%s</span><span class="s2"> vs. </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">src_label</span><span class="p">,</span> <span class="n">src_id</span><span class="p">,</span> <span class="n">src_cat</span><span class="p">,</span> <span class="n">dst_cat</span><span class="p">),</span>
+                            <span class="n">sources</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">src_id</span><span class="p">)),</span>
+                        <span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">pass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">dst_mask_cat</span><span class="o">.</span><span class="n">colormap</span><span class="p">[</span><span class="n">dst_label_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">src_cat</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dst_mask_cat</span><span class="o">.</span><span class="n">colormap</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="k">return</span> <span class="n">dst_mask_cat</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_match_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">):</span>
+        <span class="n">all_by_type</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
+            <span class="n">src_by_type</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">s</span><span class="p">:</span>
+                <span class="n">src_by_type</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">type</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">src_by_type</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">all_by_type</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+        <span class="n">clusters</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">all_by_type</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">clusters</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="p">[])</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_match_ann_type</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">clusters</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_make_mergers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sources</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_make</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="n">kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">attr</span><span class="o">.</span><span class="n">asdict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="p">))</span>
+            <span class="n">fields</span> <span class="o">=</span> <span class="n">attr</span><span class="o">.</span><span class="n">fields_dict</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">c</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">},</span> <span class="n">context</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">_for_type</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">t</span> <span class="ow">is</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">unknown</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">_make</span><span class="p">(</span><span class="n">AnnotationMerger</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="ow">is</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">_make</span><span class="p">(</span><span class="n">LabelMerger</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="ow">is</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">_make</span><span class="p">(</span><span class="n">BboxMerger</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="ow">is</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">_make</span><span class="p">(</span><span class="n">MaskMerger</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="ow">is</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">polygon</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">_make</span><span class="p">(</span><span class="n">PolygonMerger</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="ow">is</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">polyline</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">_make</span><span class="p">(</span><span class="n">LineMerger</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="ow">is</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">points</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">_make</span><span class="p">(</span><span class="n">PointsMerger</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="ow">is</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">caption</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">_make</span><span class="p">(</span><span class="n">CaptionsMerger</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="ow">is</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">cuboid_3d</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">_make</span><span class="p">(</span><span class="n">Cuboid3dMerger</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="ow">is</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">super_resolution_annotation</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">_make</span><span class="p">(</span><span class="n">ImageAnnotationMerger</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="ow">is</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">depth_annotation</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">_make</span><span class="p">(</span><span class="n">ImageAnnotationMerger</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="ow">is</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">ellipse</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">_make</span><span class="p">(</span><span class="n">EllipseMerger</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="ow">is</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">tabular</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">_make</span><span class="p">(</span><span class="n">TabularMerger</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="ow">is</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">rotated_bbox</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">_make</span><span class="p">(</span><span class="n">RotatedBboxMerger</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">t</span> <span class="ow">is</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">cuboid_2d</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">_make</span><span class="p">(</span><span class="n">Cuboid2DMerger</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Type </span><span class="si">%s</span><span class="s2"> is not supported&quot;</span> <span class="o">%</span> <span class="n">t</span><span class="p">)</span>
+
+        <span class="n">instance_map</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
+            <span class="n">s_instances</span> <span class="o">=</span> <span class="n">find_instances</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">inst</span> <span class="ow">in</span> <span class="n">s_instances</span><span class="p">:</span>
+                <span class="n">inst_bbox</span> <span class="o">=</span> <span class="n">max_bbox</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="n">a</span>
+                        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">inst</span>
+                        <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">type</span>
+                        <span class="ow">in</span> <span class="p">{</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">polygon</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span><span class="p">}</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">inst</span><span class="p">:</span>
+                    <span class="n">instance_map</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">ann</span><span class="p">)]</span> <span class="o">=</span> <span class="p">[</span><span class="n">inst</span><span class="p">,</span> <span class="n">inst_bbox</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mergers</span> <span class="o">=</span> <span class="p">{</span><span class="n">t</span><span class="p">:</span> <span class="n">_for_type</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">instance_map</span><span class="o">=</span><span class="n">instance_map</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">AnnotationType</span><span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_match_ann_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">sources</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mergers</span><span class="p">[</span><span class="n">t</span><span class="p">]</span><span class="o">.</span><span class="n">match_annotations</span><span class="p">(</span><span class="n">sources</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_merge_clusters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">clusters</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mergers</span><span class="p">[</span><span class="n">t</span><span class="p">]</span><span class="o">.</span><span class="n">merge_clusters</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_find_cluster_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clusters</span><span class="p">):</span>
+        <span class="n">cluster_groups</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">visited</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">a_idx</span><span class="p">,</span> <span class="n">cluster_a</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">clusters</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">a_idx</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">a_idx</span><span class="p">)</span>
+
+            <span class="n">cluster_group</span> <span class="o">=</span> <span class="p">{</span><span class="nb">id</span><span class="p">(</span><span class="n">cluster_a</span><span class="p">)}</span>
+
+            <span class="c1"># find segment groups in the cluster group</span>
+            <span class="n">a_groups</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">group</span> <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">cluster_a</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">cluster_b</span> <span class="ow">in</span> <span class="n">clusters</span><span class="p">[</span><span class="n">a_idx</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]:</span>
+                <span class="n">b_groups</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">group</span> <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">cluster_b</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">a_groups</span> <span class="o">&amp;</span> <span class="n">b_groups</span><span class="p">:</span>
+                    <span class="n">a_groups</span> <span class="o">|=</span> <span class="n">b_groups</span>
+
+            <span class="c1"># now we know all the segment groups in this cluster group</span>
+            <span class="c1"># so we can find adjacent clusters</span>
+            <span class="k">for</span> <span class="n">b_idx</span><span class="p">,</span> <span class="n">cluster_b</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">clusters</span><span class="p">[</span><span class="n">a_idx</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]):</span>
+                <span class="n">b_idx</span> <span class="o">=</span> <span class="n">a_idx</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">b_idx</span>
+                <span class="n">b_groups</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">group</span> <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">cluster_b</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">a_groups</span> <span class="o">&amp;</span> <span class="n">b_groups</span><span class="p">:</span>
+                    <span class="n">cluster_group</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">cluster_b</span><span class="p">))</span>
+                    <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">b_idx</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">a_groups</span> <span class="o">==</span> <span class="p">{</span><span class="mi">0</span><span class="p">}:</span>
+                <span class="k">continue</span>  <span class="c1"># skip annotations without a group</span>
+            <span class="n">cluster_groups</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">cluster_group</span><span class="p">,</span> <span class="n">a_groups</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">cluster_groups</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_find_cluster_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster</span><span class="p">,</span> <span class="n">ann</span><span class="p">):</span>
+        <span class="n">quorum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">quorum</span> <span class="ow">or</span> <span class="mi">0</span>
+
+        <span class="c1"># TODO: when attribute types are implemented, add linear</span>
+        <span class="c1"># interpolation for contiguous values</span>
+
+        <span class="n">attr_votes</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># name -&gt; { value: score , ... }</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">cluster</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">votes</span> <span class="o">=</span> <span class="n">attr_votes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">{})</span>
+                <span class="n">votes</span><span class="p">[</span><span class="n">value</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">votes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="n">attr_votes</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">votes</span>
+
+        <span class="n">attributes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">votes</span> <span class="ow">in</span> <span class="n">attr_votes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">winner</span><span class="p">,</span> <span class="n">count</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">votes</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="n">quorum</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">votes</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">&lt;</span> <span class="n">quorum</span><span class="p">:</span>
+                    <span class="c1"># blame provokers</span>
+                    <span class="n">missing_sources</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">get_ann_source</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+                        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">cluster</span>
+                        <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">==</span> <span class="n">winner</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># blame outliers</span>
+                    <span class="n">missing_sources</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">get_ann_source</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+                        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">cluster</span>
+                        <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">!=</span> <span class="n">winner</span>
+                    <span class="p">)</span>
+                <span class="n">missing_sources</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset_map</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">missing_sources</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">add_item_error</span><span class="p">(</span>
+                    <span class="n">FailedAttrVotingError</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">votes</span><span class="p">,</span> <span class="n">ann</span><span class="p">,</span> <span class="n">sources</span><span class="o">=</span><span class="n">missing_sources</span>
+                <span class="p">)</span>
+                <span class="k">continue</span>
+            <span class="n">attributes</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">winner</span>
+
+        <span class="k">return</span> <span class="n">attributes</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_cluster_sources</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset_map</span><span class="p">):</span>
+            <span class="k">return</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">_has_item</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+            <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dataset_map</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_item_id</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="n">missing_sources</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset_map</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_ann_source</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">a</span><span class="p">))</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">cluster</span><span class="p">)</span>
+        <span class="n">missing_sources</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset_map</span><span class="p">[</span><span class="n">s</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">missing_sources</span> <span class="k">if</span> <span class="n">_has_item</span><span class="p">(</span><span class="n">s</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">missing_sources</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_item_error</span><span class="p">(</span><span class="n">NoMatchingAnnError</span><span class="p">,</span> <span class="n">cluster</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">sources</span><span class="o">=</span><span class="n">missing_sources</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_annotation_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">annotations</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">a_idx</span><span class="p">,</span> <span class="n">a_ann</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">annotations</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">b_ann</span> <span class="ow">in</span> <span class="n">annotations</span><span class="p">[</span><span class="n">a_idx</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]:</span>
+                <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mergers</span><span class="p">[</span><span class="n">t</span><span class="p">]</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="n">a_ann</span><span class="p">,</span> <span class="n">b_ann</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">close_distance</span> <span class="o">&lt;</span> <span class="n">d</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">add_item_error</span><span class="p">(</span><span class="n">AnnotationsTooCloseError</span><span class="p">,</span> <span class="n">a_ann</span><span class="p">,</span> <span class="n">b_ann</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotations</span><span class="p">):</span>
+        <span class="n">check_groups</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">check_group_raw</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
+            <span class="n">check_group</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">check_group_raw</span><span class="p">)</span>
+            <span class="n">optional</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">check_group_raw</span> <span class="k">if</span> <span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">check_groups</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">check_group</span><span class="p">,</span> <span class="n">optional</span><span class="p">))</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">_check_group</span><span class="p">(</span><span class="n">group_labels</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">check_group</span><span class="p">,</span> <span class="n">optional</span> <span class="ow">in</span> <span class="n">check_groups</span><span class="p">:</span>
+                <span class="n">common</span> <span class="o">=</span> <span class="n">check_group</span> <span class="o">&amp;</span> <span class="n">group_labels</span>
+                <span class="n">real_miss</span> <span class="o">=</span> <span class="n">check_group</span> <span class="o">-</span> <span class="n">common</span> <span class="o">-</span> <span class="n">optional</span>
+                <span class="n">extra</span> <span class="o">=</span> <span class="n">group_labels</span> <span class="o">-</span> <span class="n">check_group</span>
+                <span class="k">if</span> <span class="n">common</span> <span class="ow">and</span> <span class="p">(</span><span class="n">extra</span> <span class="ow">or</span> <span class="n">real_miss</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">add_item_error</span><span class="p">(</span><span class="n">WrongGroupError</span><span class="p">,</span> <span class="n">group_labels</span><span class="p">,</span> <span class="n">check_group</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span>
+                    <span class="k">break</span>
+
+        <span class="n">groups</span> <span class="o">=</span> <span class="n">find_instances</span><span class="p">(</span><span class="n">annotations</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">:</span>
+            <span class="n">group_labels</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">group</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_label_name</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">ann</span><span class="o">.</span><span class="n">group</span><span class="p">:</span>
+                    <span class="n">group_labels</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">_check_group</span><span class="p">({</span><span class="n">label</span><span class="p">},</span> <span class="p">[</span><span class="n">ann</span><span class="p">])</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">group_labels</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">_check_group</span><span class="p">(</span><span class="n">group_labels</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_label_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_id</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">label_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="n">label_id</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_label_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">label</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_src_label_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ann</span><span class="p">,</span> <span class="n">label_id</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">label_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">item_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ann_map</span><span class="p">[</span><span class="nb">id</span><span class="p">(</span><span class="n">ann</span><span class="p">)][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">dataset_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item_map</span><span class="p">[</span><span class="n">item_id</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dataset_map</span><span class="p">[</span><span class="n">dataset_id</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">categories</span><span class="p">()[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="n">label_id</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="IntersectMerge.get_any_label_name">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.merge.intersect_merge.IntersectMerge.get_any_label_name">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_any_label_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ann</span><span class="p">,</span> <span class="n">label_id</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">label_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_src_label_name</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="n">label_id</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_label_name</span><span class="p">(</span><span class="n">label_id</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_groups_definition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">groups</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">group</span><span class="p">:</span>
+                <span class="n">_</span><span class="p">,</span> <span class="n">entry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">entry</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="s2">&quot;Datasets do not contain &quot;</span>
+                        <span class="s2">&quot;label &#39;</span><span class="si">%s</span><span class="s2">&#39;, available labels </span><span class="si">%s</span><span class="s2">&quot;</span>
+                        <span class="o">%</span> <span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">])</span>
+                    <span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

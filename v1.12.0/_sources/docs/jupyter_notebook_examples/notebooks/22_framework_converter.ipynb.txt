@@ -1,0 +1,443 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Data Framework Convert\n",
+    "\n",
+    "In this notebook, we will demonstrate how to leverage the Datumaro to manage datasets and seamlessly integrate them into a PyTorch training pipeline. This tutorial will walk through preparing a dataset using Datumaro and converting it into a format suitable for PyTorch model training and validation.\n",
+    "\n",
+    "Specifically, we will:\n",
+    "\n",
+    "- Load and inspect a dataset using Datumaro.\n",
+    "- Convert the dataset to a PyTorch-friendly format.\n",
+    "- Implement a simple training and validation pipeline using PyTorch.\n",
+    "\n",
+    "By the end of this notebook, you will understand how Datumaro can simplify dataset management tasks and improve the efficiency of your deep learning pipelines.\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Prerequisite\n",
+    "\n",
+    "### Download dataset\n",
+    "\n",
+    "We will be using a dataset from Kaggle for this tutorial. First, we’ll download the dataset. Please refer to [this guide](20_kaggle_data_import.ipynb) on how to download datasets from Kaggle.\n",
+    "\n",
+    "In this notebook, we choose [ananthu017/emotion-detection-fer](https://www.kaggle.com/datasets/ananthu017/emotion-detection-fer/data) dataset as below."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# !kaggle datasets download ananthu017/emotion-detection-fer --unzip --path ./emotion-detection-fer"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Dataset Preparation\n",
+    "\n",
+    "### Import a dataset\n",
+    "\n",
+    "\n",
+    "The dataset is organized in the following directory structure:\n",
+    "\n",
+    "```\n",
+    ".\n",
+    "├── test\n",
+    "│   ├── angry\n",
+    "│   ├── disgusted\n",
+    "│   ├── fearful\n",
+    "│   ├── happy\n",
+    "│   ├── neutral\n",
+    "│   ├── sad\n",
+    "│   └── surprised\n",
+    "└── train\n",
+    "    ├── angry\n",
+    "    ├── disgusted\n",
+    "    ├── fearful\n",
+    "    ├── happy\n",
+    "    ├── neutral\n",
+    "    ├── sad\n",
+    "    └── surprised\n",
+    "```\n",
+    "\n",
+    "In our `emotion_detection_fer` folder, the dataset is divided into two main directories: `train` and `test`. Each of these directories contains subfolders for each emotion category, including \"angry,\" \"disgusted,\" \"fearful,\" \"happy,\" \"neutral,\" \"sad,\" and \"surprised.\" Each subfolder contains images corresponding to that emotion, allowing for organized access during training and testing phases. I used `datumaro` to inspect the dataset directory structure, and it appears that the dataset is well-structured for a classification task."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Detected data format is 'imagenet_with_subset_dirs'\n",
+      "Dataset\n",
+      "\tsize=35887\n",
+      "\tsource_path=/home/sooah/data/emotion-detection-fer\n",
+      "\tmedia_type=<class 'datumaro.components.media.Image'>\n",
+      "\tann_types={<AnnotationType.label: 1>}\n",
+      "\tannotated_items_count=35887\n",
+      "\tannotations_count=35887\n",
+      "subsets\n",
+      "\ttest: # of items=7178, # of annotated items=7178, # of annotations=7178\n",
+      "\ttrain: # of items=28709, # of annotated items=28709, # of annotations=28709\n",
+      "infos\n",
+      "\tcategories\n",
+      "\t1: ['angry', 'disgusted', 'fearful', 'happy', 'neutral', 'sad', 'surprised']\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "import datumaro as dm\n",
+    "\n",
+    "dataset_dir = \"/home/sooah/data/emotion-detection-fer\"\n",
+    "formats = dm.Dataset.detect(dataset_dir)\n",
+    "print(f\"Detected data format is '{formats}'\")\n",
+    "\n",
+    "dataset = dm.Dataset.import_from(dataset_dir, formats)\n",
+    "print(dataset)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Based on the information provided:\n",
+    "- The total size of the dataset is 35,887 items.\n",
+    "- The dataset is divided into two subsets:\n",
+    "  - The 'test' subset contains 7,178 items.\n",
+    "  - The 'train' subset contains 28,709 items.\n",
+    "\n",
+    "This breakdown gives us insight into the scale of our dataset and the distribution of items across its subsets, with a clear emphasis on a larger training set to enhance model performance.\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Convert Datumaro dataset into PyTorch dataset\n",
+    "\n",
+    "The process of converting a Datumaro dataset into a PyTorch dataset involves utilizing the `FrameworkConverter` from the Datumaro library. This allows us to seamlessly transform our dataset for compatibility with PyTorch's training and validation pipeline. In the code, we first define a set of transformations using `torchvision.transforms`, specifically converting images to tensor format. We then create PyTorch-compatible datasets for both the training and testing subsets by specifying the respective subset names and the classification task. Finally, we can check the number of items in both datasets to ensure they have been correctly prepared for model training and evaluation. This approach not only streamlines the data preprocessing step but also leverages the robust capabilities of the PyTorch framework for building and deploying deep learning models."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "2024-10-23 15:32:28.371272: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:485] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered\n",
+      "2024-10-23 15:32:28.383616: E external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:8454] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered\n",
+      "2024-10-23 15:32:28.387695: E external/local_xla/xla/stream_executor/cuda/cuda_blas.cc:1452] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered\n",
+      "2024-10-23 15:32:28.396903: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.\n",
+      "To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.\n",
+      "2024-10-23 15:32:29.470910: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT\n"
+     ]
+    },
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Converted train dataset len is '28709'\n",
+      "Converted train dataset len is '7178'\n"
+     ]
+    }
+   ],
+   "source": [
+    "from torchvision import transforms\n",
+    "from datumaro.plugins.framework_converter import FrameworkConverter\n",
+    "\n",
+    "transform = transforms.Compose([transforms.ToTensor()])\n",
+    "\n",
+    "multi_framework_dataset = FrameworkConverter(dataset, subset=\"train\", task=\"classification\")\n",
+    "train_dataset = multi_framework_dataset.to_framework(\n",
+    "    framework=\"torch\",\n",
+    "    transform=transform,\n",
+    ")\n",
+    "\n",
+    "multi_framework_dataset = FrameworkConverter(dataset, subset=\"test\", task=\"classification\")\n",
+    "val_dataset = multi_framework_dataset.to_framework(\n",
+    "    framework=\"torch\",\n",
+    "    transform=transform,\n",
+    ")\n",
+    "\n",
+    "print(f\"Converted train dataset len is '{len(train_dataset)}'\")\n",
+    "print(f\"Converted train dataset len is '{len(val_dataset)}'\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Building the PyTorch Training and Validation Pipeline\n",
+    "\n",
+    "### Creating Data Loaders for Efficient Data Handling\n",
+    "\n",
+    "In this section, we establish our data loaders for both training and validation datasets, which are essential for efficient data handling during the model training process. By utilizing PyTorch's `DataLoader`, we ensure that our training data is shuffled randomly for better generalization, while the validation data is loaded in a deterministic manner to facilitate accurate performance evaluation. The specified batch size of 4 allows for manageable processing of data during each training iteration. With these loaders in place, we can seamlessly feed our datasets into the training loop for effective model training and validation.\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Training Loader Batches: 449\n",
+      "Validation Loader Batches: 113\n"
+     ]
+    }
+   ],
+   "source": [
+    "from torch.utils.data import DataLoader\n",
+    "\n",
+    "training_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)\n",
+    "validation_loader = DataLoader(val_dataset, batch_size=64, shuffle=False)\n",
+    "\n",
+    "print(f\"Training Loader Batches: {len(training_loader)}\")\n",
+    "print(f\"Validation Loader Batches: {len(validation_loader)}\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Modeling\n",
+    "\n",
+    "### Model Architecture Definition\n",
+    "\n",
+    "In this section, we define our model architecture by leveraging the pre-trained ResNet-50 model, which is well-suited for image classification tasks. By utilizing transfer learning, we can capitalize on the learned features from the ImageNet dataset, which enhances our model's performance on the emotion detection task. We modify the final fully connected layer to match the number of classes in our specific dataset, ensuring the model outputs predictions relevant to the emotions present in the images. Finally, we transfer the model to the GPU, enabling efficient training and inference processes. This approach helps us build a robust foundation for our emotion detection pipeline."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from torchvision.models import mobilenet_v2\n",
+    "import torch\n",
+    "\n",
+    "model = mobilenet_v2(weights=\"IMAGENET1K_V1\")\n",
+    "model.features[0] = torch.nn.Conv2d(\n",
+    "    1, 32, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1), bias=False\n",
+    ")\n",
+    "# Get the number of input features for the last layer\n",
+    "num_features = model.classifier[1].in_features\n",
+    "\n",
+    "# Create a new classifier layer with the number of classes\n",
+    "num_classes = len(dataset.categories()[dm.AnnotationType.label])\n",
+    "model.classifier[1] = torch.nn.Linear(num_features, num_classes)\n",
+    "\n",
+    "# Move the model to GPU if available\n",
+    "model = model.cuda()  # If using GPU"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Training and Validation Loop\n",
+    "\n",
+    "In this section, we implement the training and validation loop for our emotion detection model. The `top_k_accuracy` function calculates the top-k accuracy for the model predictions, allowing us to evaluate performance more robustly. We define a cross-entropy loss function suitable for multi-class classification tasks and use the Stochastic Gradient Descent (SGD) optimizer to adjust the model's parameters. Throughout the training process, we report the loss for every 100 batches, providing insights into the model's learning progress. After each epoch, we evaluate the model on the validation dataset, calculating the average accuracy to gauge its effectiveness in classifying the emotions."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "EPOCH 1:\n",
+      "\t [TRAIN] batch 100 loss: 1.8547\n",
+      "\t [TRAIN] batch 200 loss: 1.7383\n",
+      "\t [TRAIN] batch 300 loss: 1.6348\n",
+      "\t [TRAIN] batch 400 loss: 1.5933\n",
+      "\t [VAL] validation accuracy: 40.84%\n",
+      "EPOCH 2:\n",
+      "\t [TRAIN] batch 100 loss: 1.4857\n",
+      "\t [TRAIN] batch 200 loss: 1.4612\n",
+      "\t [TRAIN] batch 300 loss: 1.4012\n",
+      "\t [TRAIN] batch 400 loss: 1.3967\n",
+      "\t [VAL] validation accuracy: 48.21%\n",
+      "EPOCH 3:\n",
+      "\t [TRAIN] batch 100 loss: 1.2735\n",
+      "\t [TRAIN] batch 200 loss: 1.2806\n",
+      "\t [TRAIN] batch 300 loss: 1.2650\n",
+      "\t [TRAIN] batch 400 loss: 1.2792\n",
+      "\t [VAL] validation accuracy: 51.14%\n",
+      "EPOCH 4:\n",
+      "\t [TRAIN] batch 100 loss: 1.1394\n",
+      "\t [TRAIN] batch 200 loss: 1.1445\n",
+      "\t [TRAIN] batch 300 loss: 1.1760\n",
+      "\t [TRAIN] batch 400 loss: 1.1557\n",
+      "\t [VAL] validation accuracy: 52.51%\n",
+      "EPOCH 5:\n",
+      "\t [TRAIN] batch 100 loss: 1.0302\n",
+      "\t [TRAIN] batch 200 loss: 1.0563\n",
+      "\t [TRAIN] batch 300 loss: 1.0757\n",
+      "\t [TRAIN] batch 400 loss: 1.0815\n",
+      "\t [VAL] validation accuracy: 52.39%\n",
+      "EPOCH 6:\n",
+      "\t [TRAIN] batch 100 loss: 0.9378\n",
+      "\t [TRAIN] batch 200 loss: 0.9302\n",
+      "\t [TRAIN] batch 300 loss: 1.0006\n",
+      "\t [TRAIN] batch 400 loss: 0.9811\n",
+      "\t [VAL] validation accuracy: 51.48%\n",
+      "EPOCH 7:\n",
+      "\t [TRAIN] batch 100 loss: 0.8105\n",
+      "\t [TRAIN] batch 200 loss: 0.8475\n",
+      "\t [TRAIN] batch 300 loss: 0.9001\n",
+      "\t [TRAIN] batch 400 loss: 0.9265\n",
+      "\t [VAL] validation accuracy: 54.57%\n",
+      "EPOCH 8:\n",
+      "\t [TRAIN] batch 100 loss: 0.7378\n",
+      "\t [TRAIN] batch 200 loss: 0.7624\n",
+      "\t [TRAIN] batch 300 loss: 0.8293\n",
+      "\t [TRAIN] batch 400 loss: 0.8538\n",
+      "\t [VAL] validation accuracy: 54.17%\n",
+      "EPOCH 9:\n",
+      "\t [TRAIN] batch 100 loss: 0.6630\n",
+      "\t [TRAIN] batch 200 loss: 0.6890\n",
+      "\t [TRAIN] batch 300 loss: 0.7210\n",
+      "\t [TRAIN] batch 400 loss: 0.7865\n",
+      "\t [VAL] validation accuracy: 52.42%\n",
+      "EPOCH 10:\n",
+      "\t [TRAIN] batch 100 loss: 0.5968\n",
+      "\t [TRAIN] batch 200 loss: 0.6473\n",
+      "\t [TRAIN] batch 300 loss: 0.6737\n",
+      "\t [TRAIN] batch 400 loss: 0.7167\n",
+      "\t [VAL] validation accuracy: 55.29%\n"
+     ]
+    }
+   ],
+   "source": [
+    "def top_k_accuracy(output, labels, k=1):\n",
+    "    \"\"\"Compute the top-k accuracy given model output and labels.\"\"\"\n",
+    "    with torch.no_grad():\n",
+    "        batch_size = labels.size(0)\n",
+    "        _, pred = output.topk(k, 1, True, True)\n",
+    "        pred = pred.t()\n",
+    "        correct = pred.eq(labels.view(1, -1).expand_as(pred))\n",
+    "        correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)\n",
+    "        return correct_k.mul_(100.0 / batch_size).item()\n",
+    "\n",
+    "\n",
+    "# Define loss function and optimizer\n",
+    "loss_fn = torch.nn.CrossEntropyLoss()\n",
+    "optimizer = torch.optim.SGD(model.parameters(), lr=0.001, momentum=0.9)\n",
+    "\n",
+    "EPOCHS = 10\n",
+    "for epoch in range(EPOCHS):\n",
+    "    print(f\"EPOCH {epoch + 1}:\")\n",
+    "\n",
+    "    # Training phase\n",
+    "    model.train()\n",
+    "    running_loss = 0.0\n",
+    "    for i, data in enumerate(training_loader):\n",
+    "        inputs, labels = data\n",
+    "        inputs, labels = inputs.cuda(), labels.cuda()\n",
+    "\n",
+    "        optimizer.zero_grad()\n",
+    "        outputs = model(inputs)\n",
+    "\n",
+    "        loss = loss_fn(outputs, labels)\n",
+    "        loss.backward()\n",
+    "        optimizer.step()\n",
+    "\n",
+    "        # Gather data and report\n",
+    "        running_loss += loss.item()\n",
+    "        if (i + 1) % 100 == 0:\n",
+    "            print(f\"\\t [TRAIN] batch {i + 1} loss: {running_loss / 100:.4f}\")\n",
+    "            running_loss = 0.0\n",
+    "\n",
+    "    # Validation phase\n",
+    "    model.eval()\n",
+    "    accs = 0.0\n",
+    "    with torch.no_grad():\n",
+    "        for i, vdata in enumerate(validation_loader):\n",
+    "            inputs, labels = vdata\n",
+    "            inputs, labels = inputs.cuda(), labels.cuda()\n",
+    "\n",
+    "            outputs = model(inputs)\n",
+    "            top1_acc = top_k_accuracy(outputs, labels, k=1)\n",
+    "            accs += top1_acc\n",
+    "\n",
+    "    avg_accs = accs / (i + 1)\n",
+    "    print(f\"\\t [VAL] validation accuracy: {avg_accs:.2f}%\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### Model Fine-Tuning and Further Improvements\n",
+    "\n",
+    "While MobileNetV2 provided a solid baseline performance for this emotion detection task, further fine-tuning can help improve results. Experimenting with different architectures—such as ResNet or EfficientNet—or adjusting layers and hyperparameters in MobileNetV2 could yield a better fit to the unique characteristics of the dataset. Additionally, applying transfer learning from models pretrained on large face or emotion recognition datasets might enhance the model's ability to capture subtle facial expressions, leading to higher accuracy in emotion detection."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Conclusion\n",
+    "\n",
+    "In this notebook, we explored the use of Datumaro for data management, transforming the emotion-detection-fer dataset into a PyTorch-compatible format. This process enabled us to easily handle image-based datasets, including various pre-processing steps and dataset partitioning for training and validation.\n",
+    "\n",
+    "Leveraging MobileNetV2, a lightweight yet effective model architecture, we demonstrated its application for facial emotion recognition. MobileNetV2, with its efficient design and lower computational requirements, performed well on the dataset, making it a practical choice for projects that prioritize speed and model efficiency.\n",
+    "\n",
+    "Through the completed training and validation pipeline, we showcased how MobileNetV2 can be fine-tuned for specific emotion detection tasks. Datumaro’s robust data management features allowed us to streamline the dataset preparation, ensuring efficient handling and compatibility with PyTorch.\n",
+    "\n",
+    "Future improvements could involve experimenting with data augmentation, testing more complex model architectures, or further tuning hyperparameters to optimize accuracy. We hope this notebook serves as a comprehensive guide for leveraging Datumaro and MobileNetV2 in similar emotion detection or classification tasks."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "datum",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.11.9"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
