@@ -70,7 +70,18 @@ _to_numpy_converters: dict[type, Callable[[Any], np.ndarray[Any, Any]]] = {
     np.ndarray: lambda x: x,
     bytes: lambda x: np.array(x),
     list: lambda x: np.array(x),
-    Points: lambda x: np.array(x.points),
+    Points: lambda x: np.array(
+        [
+            (
+                x.points[i * 2],
+                x.points[(i * 2) + 1],
+                x.visibility[i].value if x.visibility is not None else 2,
+            )
+            for i in range(
+                int(len(x.points) / 2)
+            )  # Extract point pairs and visibility. Default value for visibility is 2 (visible)
+        ]
+    ),
 }
 
 _from_polars_converters: dict[type, Callable[[Any], Any]] = {
@@ -221,7 +232,6 @@ try:
     )  # pyright: ignore[reportUnknownMemberType, reportUnknownLambdaType, reportUnknownArgumentType]
 except ImportError:
     pass
-
 
 # Register PIL Image converters if available
 try:
