@@ -557,8 +557,8 @@ class ForwardKeypointAnnotationConverter(ForwardAnnotationConverter):
         )
 
     @classmethod
-    def get_annotation_type(cls) -> AnnotationType:
-        return AnnotationType.points
+    def get_supported_annotation_types(cls) -> list[AnnotationType]:
+        return [AnnotationType.points]
 
     def get_schema_attributes(self) -> dict[str, AttributeInfo]:
         attributes = {"keypoints": self.keypoints_attribute}
