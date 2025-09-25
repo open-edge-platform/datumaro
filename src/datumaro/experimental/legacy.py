@@ -523,10 +523,9 @@ class ForwardLabelAnnotationConverter(ForwardAnnotationConverter):
         self.label_attribute = label_attribute
 
     @classmethod
-    def create_from_categories(
-        cls, categories: CategoriesInfo
-    ) -> "ForwardLabelAnnotationConverter | None":
+    def create(cls, dataset: LegacyDataset) -> "ForwardLabelAnnotationConverter | None":
         """Create converter instance for label annotations."""
+        categories = dataset.categories()
         legacy_label_categories = categories.get(AnnotationType.label, None)
 
         if legacy_label_categories is None:
