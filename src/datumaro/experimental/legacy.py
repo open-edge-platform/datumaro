@@ -558,6 +558,8 @@ class ForwardLabelAnnotationConverter(ForwardAnnotationConverter):
         if len(labels) > 0:
             # For single label classification, take the first label
             result["label"] = labels[0].label
+        else:
+            result["label"] = None
         return result
 
 
