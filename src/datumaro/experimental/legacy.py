@@ -527,10 +527,9 @@ class ForwardKeypointAnnotationConverter(ForwardAnnotationConverter):
         self.keypoints_labels_attribute = keypoints_labels_attribute
 
     @classmethod
-    def create_from_categories(
-        cls, categories: CategoriesInfo
-    ) -> "ForwardKeypointAnnotationConverter | None":
+    def create(cls, dataset: LegacyDataset) -> "ForwardKeypointAnnotationConverter | None":
         """Create converter instance for keypoints annotations."""
+        categories = dataset.categories()
         # Extract label categories if available
         legacy_label_categories = categories.get(AnnotationType.label, None)
 
