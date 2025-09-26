@@ -13,7 +13,19 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import IntEnum
+from functools import cache
 from typing import Dict, Iterator, List, NamedTuple, Optional, Tuple, Union
+
+
+class LabelSemantic(IntEnum):
+    """
+    Semantic meaning of a label for classification tasks.
+    NORMAL: Indicates a label representing normal/expected data.
+    ANOMALOUS: Indicates a label representing anomalous/outlier data.
+    """
+
+    NORMAL = 1
+    ANOMALOUS = 2
 
 
 class GroupType(IntEnum):
@@ -33,7 +45,7 @@ class GroupType(IntEnum):
             raise ValueError(f"Invalid GroupType: {text}")
 
 
-@dataclass
+@dataclass(frozen=True)
 class Categories:
     """
     A base class for annotation metainfo. It is supposed to include
@@ -44,57 +56,51 @@ class Categories:
     pass
 
 
-@dataclass
+@dataclass(frozen=True)
 class LabelCategories(Categories):
-    """Represents a group of labels with a specific group type."""
+    """Represents a group of labels with a specific group type and semantics."""
 
-    labels: List[str] = field(default_factory=list)
+    labels: Tuple[str, ...] = field(default_factory=tuple)
     group_type: GroupType = GroupType.EXCLUSIVE
-    _indices: Dict[str, int] = field(default_factory=dict, init=False, repr=False)
+    label_semantics: dict = field(default_factory=dict)
 
     def __post_init__(self):
-        self._reindex()
+        """Validate that there are no duplicate labels."""
+        if isinstance(self.labels, list):
+            object.__setattr__(self, "labels", tuple(self.labels))
+        elif not isinstance(self.labels, tuple):
+            raise TypeError("labels must be a tuple of strings")
 
-    def _reindex(self):
-        """Rebuild the internal index mapping names to positions."""
-        indices = {}
-        for index, label in enumerate(self.labels):
-            if label in indices:
+        seen = set()
+        for label in self.labels:
+            if label in seen:
                 raise ValueError(f"Duplicate label: {label}")
-            indices[label] = index
-        self._indices = indices
+            seen.add(label)
 
-    def add(self, label: str) -> int:
+    @property
+    @cache
+    def _index_map(self) -> Dict[str, int]:
+        """Cached mapping from label names to indices."""
+        return {label: idx for idx, label in enumerate(self.labels)}
+
+    def find(self, name_or_semantic: str) -> Tuple[Optional[int], Optional[str]]:
         """
-        Add a new label.
+        Find a label by name or LabelSemantic.
 
         Args:
-            label: The label name
-
-        Returns:
-            The index of the newly added category
-
-        Raises:
-            ValueError: If label already exists
-        """
-        if label in self.labels:
-            raise ValueError(f"Duplicate label: {label}")
-        index = len(self.labels)
-        self.labels.append(label)
-        self._indices[label] = index
-        return index
-
-    def find(self, name: str) -> Tuple[Optional[int], Optional[str]]:
-        """
-        Find a label by name.
-
-        Args:
-            name: The label name to find
+            name_or_semantic: The label name or LabelSemantic to find
 
         Returns:
             A tuple of (index, category) or (None, None) if not found
         """
-        index = self._indices.get(name)
+        if isinstance(name_or_semantic, LabelSemantic):
+            label = self.label_semantics.get(name_or_semantic)
+            if label is None:
+                return None, None
+        else:
+            label = name_or_semantic
+
+        index = self._index_map.get(name_or_semantic)
         if index is not None:
             return index, self.labels[index]
         return None, None
@@ -103,9 +109,11 @@ class LabelCategories(Categories):
         """Get category by index."""
         return self.labels[idx]
 
-    def __contains__(self, value: Union[int, str]) -> bool:
-        """Check if a label exists by name or index."""
-        if isinstance(value, str):
+    def __contains__(self, value: Union[int, str, LabelSemantic]) -> bool:
+        """Check if a label exists by name, index, or semantic."""
+        if isinstance(value, LabelSemantic):
+            return value in self.label_semantics
+        elif isinstance(value, str):
             return value in self.labels
         else:
             return 0 <= value < len(self.labels)
@@ -118,6 +126,10 @@ class LabelCategories(Categories):
         """Iterate over label."""
         return iter(self.labels)
 
+    def __hash__(self):
+        # Include label_semantics in the hash
+        return hash((self.labels, self.group_type, frozenset(self.label_semantics.items())))
+
 
 class RgbColor(NamedTuple):
     """RGB color representation with named fields."""
@@ -127,59 +139,54 @@ class RgbColor(NamedTuple):
     b: int
 
 
-@dataclass
+@dataclass(frozen=True)
 class Colormap:
     """
     A colormap that stores index-to-color mappings and provides efficient
     reverse lookup via an inverse colormap property.
     """
 
-    _data: Dict[int, RgbColor] = field(default_factory=dict)
-    _inverse_colormap: Optional[Dict[RgbColor, int]] = field(default=None, init=False, repr=False)
+    data: Dict[int, RgbColor] = field(default_factory=dict)
+
+    def __post_init__(self):
+        """Validate that there are no duplicate colors."""
+        object.__setattr__(self, "_inverse_colormap", {v: k for k, v in self.data.items()})
 
     @property
     def inverse_colormap(self) -> Dict[RgbColor, int]:
         """Get the inverse colormap (color -> index mapping)."""
-        if self._inverse_colormap is None:
-            self._inverse_colormap = {v: k for k, v in self._data.items()}
-        return self._inverse_colormap
-
-    def __setitem__(self, index: int, color: RgbColor):
-        """Set a color for an index."""
-        self._data[index] = color
-        # Invalidate cached inverse colormap
-        self._inverse_colormap = None
+        return getattr(self, "_inverse_colormap")
 
     def __getitem__(self, index: int) -> RgbColor:
         """Get color by index."""
-        return self._data[index]
+        return self.data[index]
 
     def __contains__(self, index: int) -> bool:
         """Check if an index exists in the colormap."""
-        return index in self._data
+        return index in self.data
 
     def __len__(self) -> int:
         """Get the number of colors in the colormap."""
-        return len(self._data)
+        return len(self.data)
 
     def __iter__(self) -> Iterator[Tuple[int, RgbColor]]:
         """Iterate over colormap items."""
-        return iter(self._data.items())
+        return iter(self.data.items())
 
     def get(self, index: int, default=None):
         """Get color by index with default."""
-        return self._data.get(index, default)
+        return self.data.get(index, default)
 
     def __eq__(self, other):
         """Compare with another Colormap or dictionary."""
         if isinstance(other, Colormap):
-            return self._data == other._data
+            return self.data == other.data
         elif isinstance(other, dict):
-            return self._data == other
+            return self.data == other
         return False
 
 
-@dataclass
+@dataclass(frozen=True)
 class MaskCategories(Categories):
     """
     Describes a color map for segmentation masks.
@@ -188,8 +195,11 @@ class MaskCategories(Categories):
     labels: List[str] = field(default_factory=list)
     colormap: Colormap = field(default_factory=Colormap)
 
+    def __hash__(self):
+        return hash((tuple(self.labels), frozenset(self.colormap.items())))
+
     @classmethod
-    def generate(cls, size: int = 255, include_background: bool = True) -> MaskCategories:
+    def generate(cls, size: int = 255, include_background: bool = True) -> "MaskCategories":
         """
         Generates MaskCategories with the specified size.
 
@@ -201,8 +211,9 @@ class MaskCategories(Categories):
 
         # TODO: Refactor generate_colormap to return a Colormap.
         colormap_dict = generate_colormap(size, include_background=include_background)
-        colormap = Colormap()
+        colormap_data = {}
         for index, color in colormap_dict.items():
-            colormap[index] = RgbColor(*color) if isinstance(color, tuple) else color
+            colormap_data[index] = RgbColor(*color) if isinstance(color, tuple) else color
 
+        colormap = Colormap(data=colormap_data)
         return cls(colormap=colormap)

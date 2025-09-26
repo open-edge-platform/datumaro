@@ -513,14 +513,10 @@ def test_dataset_with_categories():
         image_info: ImageInfo = image_info_field()
 
     # Create label categories
-    label_categories = LabelCategories()
-    label_categories.add("person")
-    label_categories.add("car")
+    label_categories = LabelCategories(labels=("person", "car"))
 
     # Create mask categories
-    mask_categories = MaskCategories()
-    mask_categories.colormap[0] = (0, 0, 0)
-    mask_categories.colormap[1] = (255, 0, 0)
+    mask_categories = MaskCategories(colormap={0: (0, 0, 0), 1: (255, 0, 0)})
 
     # Create dataset with categories dictionary mapping attributes to categories
     categories = {
@@ -557,8 +553,7 @@ def test_schema_copy_independence():
         bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
 
     # Create categories
-    label_categories = LabelCategories()
-    label_categories.add("person")
+    label_categories = LabelCategories(labels=("person",))
 
     # Create first dataset with categories
     dataset1 = Dataset(TestSample, categories={"bbox": label_categories})
@@ -578,9 +573,7 @@ def test_schema_copy_independence():
     assert original_schema.attributes["image"].categories is None
 
     # Create third dataset with different categories
-    label_categories2 = LabelCategories()
-    label_categories2.add("car")
-    label_categories2.add("truck")
+    label_categories2 = LabelCategories(labels=("car", "truck"))
 
     dataset3 = Dataset(TestSample, categories={"image": label_categories2})
 
