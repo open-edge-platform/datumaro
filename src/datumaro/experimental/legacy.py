@@ -307,9 +307,8 @@ class ForwardBboxAnnotationConverter(ForwardAnnotationConverter):
         # Only add bbox_labels if we have label categories
         if legacy_label_categories is not None:
             # Convert legacy label categories to new format
-            new_label_categories = LabelCategories()
-            for label_item in legacy_label_categories.items:
-                new_label_categories.add(label_item.name)
+            labels = tuple(label_item.name for label_item in legacy_label_categories.items)
+            new_label_categories = LabelCategories(labels=labels)
 
             bbox_labels_attribute = AttributeInfo(
                 type=np.ndarray,
@@ -385,9 +384,8 @@ class ForwardRotatedBboxAnnotationConverter(ForwardAnnotationConverter):
 
         if legacy_label_categories is not None and len(legacy_label_categories.items) > 0:
             # Convert legacy label categories to new format
-            new_label_categories = LabelCategories()
-            for label_item in legacy_label_categories.items:
-                new_label_categories.add(label_item.name)
+            labels = tuple(label_item.name for label_item in legacy_label_categories.items)
+            new_label_categories = LabelCategories(labels=labels)
 
             rotated_bbox_labels_attribute = AttributeInfo(
                 type=np.ndarray,
@@ -464,9 +462,8 @@ class ForwardPolygonAnnotationConverter(ForwardAnnotationConverter):
         # Only add polygon_labels if we have label categories
         if legacy_label_categories is not None:
             # Convert legacy label categories to new format
-            new_label_categories = LabelCategories()
-            for label_item in legacy_label_categories.items:
-                new_label_categories.add(label_item.name)
+            labels = tuple(label_item.name for label_item in legacy_label_categories.items)
+            new_label_categories = LabelCategories(labels=labels)
 
             polygon_labels_attribute = AttributeInfo(
                 type=np.ndarray,
@@ -532,9 +529,8 @@ class ForwardLabelAnnotationConverter(ForwardAnnotationConverter):
         if legacy_label_categories is None:
             return None
 
-        new_label_categories = LabelCategories()
-        for label_item in legacy_label_categories.items:
-            new_label_categories.add(label_item.name)
+        labels = tuple(label_item.name for label_item in legacy_label_categories.items)
+        new_label_categories = LabelCategories(labels=labels)
 
         label_attribute = AttributeInfo(
             type=int,
@@ -590,9 +586,8 @@ class ForwardKeypointAnnotationConverter(ForwardAnnotationConverter):
         # Only add keypoints_labels if we have label categories
         if legacy_label_categories is not None:
             # Convert legacy label categories to new format
-            new_label_categories = LabelCategories()
-            for label_item in legacy_label_categories.items:
-                new_label_categories.add(label_item.name)
+            labels = tuple(label_item.name for label_item in legacy_label_categories.items)
+            new_label_categories = LabelCategories(labels=labels)
 
             keypoints_labels_attribute = AttributeInfo(
                 type=np.ndarray,
@@ -871,9 +866,8 @@ class ForwardMaskAnnotationConverter(ForwardAnnotationConverter):
         # Create categories based on legacy label categories
         new_label_categories = None
         if legacy_label_categories is not None:
-            new_label_categories = LabelCategories()
-            for label_item in legacy_label_categories.items:
-                new_label_categories.add(label_item.name)
+            labels = tuple(label_item.name for label_item in legacy_label_categories.items)
+            new_label_categories = LabelCategories(labels=labels)
 
         if is_semantic:
             # For semantic segmentation, use MaskCategories for mask_attribute
