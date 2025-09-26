@@ -361,7 +361,7 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">polars</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span> <span class="k">as</span> <span class="n">PILImage</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotation</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">ExtractedMask</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Annotation</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">ExtractedMask</span><span class="p">,</span> <span class="n">Label</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">LabelCategories</span> <span class="k">as</span> <span class="n">LegacyLabelCategories</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Polygon</span><span class="p">,</span> <span class="n">RotatedBbox</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dataset</span> <span class="k">as</span> <span class="n">LegacyDataset</span>
@@ -958,6 +958,70 @@ document.write(`
 
 
 
+<div class="viewcode-block" id="ForwardLabelAnnotationConverter">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardLabelAnnotationConverter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ForwardLabelAnnotationConverter</span><span class="p">(</span><span class="n">ForwardAnnotationConverter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Forward converter for Label (single label classification) annotations.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_attribute</span><span class="p">:</span> <span class="n">AttributeInfo</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize with label attribute.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label_attribute</span> <span class="o">=</span> <span class="n">label_attribute</span>
+
+<div class="viewcode-block" id="ForwardLabelAnnotationConverter.create">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardLabelAnnotationConverter.create">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">LegacyDataset</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ForwardLabelAnnotationConverter | None&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create converter instance for label annotations.&quot;&quot;&quot;</span>
+        <span class="n">categories</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span>
+        <span class="n">legacy_label_categories</span> <span class="o">=</span> <span class="n">categories</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">legacy_label_categories</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">new_label_categories</span> <span class="o">=</span> <span class="n">LabelCategories</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">label_item</span> <span class="ow">in</span> <span class="n">legacy_label_categories</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
+            <span class="n">new_label_categories</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">label_item</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="n">label_attribute</span> <span class="o">=</span> <span class="n">AttributeInfo</span><span class="p">(</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+            <span class="n">annotation</span><span class="o">=</span><span class="n">label_field</span><span class="p">(),</span>
+            <span class="n">categories</span><span class="o">=</span><span class="n">new_label_categories</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">label_attribute</span><span class="o">=</span><span class="n">label_attribute</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ForwardLabelAnnotationConverter.get_supported_annotation_types">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardLabelAnnotationConverter.get_supported_annotation_types">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_supported_annotation_types</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">AnnotationType</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="ForwardLabelAnnotationConverter.get_schema_attributes">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardLabelAnnotationConverter.get_schema_attributes">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_schema_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">AttributeInfo</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_attribute</span><span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="ForwardLabelAnnotationConverter.convert_annotations">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.ForwardLabelAnnotationConverter.convert_annotations">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert_annotations</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">annotations</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Annotation</span><span class="p">],</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">ann</span> <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">annotations</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="n">Label</span><span class="p">)]</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># For single label classification, take the first label</span>
+            <span class="n">result</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">labels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">label</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+</div>
+
+
+
 <div class="viewcode-block" id="register_builtin_forward_converters">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.legacy.html#datumaro.experimental.legacy.register_builtin_forward_converters">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">register_builtin_forward_converters</span><span class="p">():</span>
@@ -969,6 +1033,7 @@ document.write(`
     <span class="c1"># Annotation converters</span>
     <span class="n">register_forward_annotation_converter</span><span class="p">(</span><span class="n">ForwardMaskAnnotationConverter</span><span class="p">)</span>
     <span class="n">register_forward_annotation_converter</span><span class="p">(</span><span class="n">ForwardBboxAnnotationConverter</span><span class="p">)</span>
+    <span class="n">register_forward_annotation_converter</span><span class="p">(</span><span class="n">ForwardLabelAnnotationConverter</span><span class="p">)</span>
     <span class="n">register_forward_annotation_converter</span><span class="p">(</span><span class="n">ForwardPolygonAnnotationConverter</span><span class="p">)</span>
     <span class="n">register_forward_annotation_converter</span><span class="p">(</span><span class="n">ForwardRotatedBboxAnnotationConverter</span><span class="p">)</span></div>
 
