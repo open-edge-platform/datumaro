@@ -83,9 +83,10 @@ def points_to_numpy(x: Points) -> np.ndarray:
 
 
 # Type conversion registry - extensible at runtime
-_to_numpy_converters: dict[type, Callable[[Any], np.ndarray[Any, Any]]] = {
+_to_numpy_converters: dict[type, Callable[[Any], np.ndarray[Any, Any] | None]] = {
     np.ndarray: lambda x: x,
     bytes: lambda x: np.array(x),
+    types.NoneType: lambda _: None,
     list: lambda x: np.array(x),
     Points: lambda x: points_to_numpy(x),
 }
@@ -129,7 +130,7 @@ def register_from_polars_converter(target_type: type, converter_func: Callable[[
     _from_polars_converters[target_type] = converter_func
 
 
-def to_numpy(value: Any, dtype: Any = None) -> np.ndarray[Any, Any]:
+def to_numpy(value: Any, dtype: Any = None) -> np.ndarray[Any, Any] | None:
     """Convert any registered type to numpy array with optional dtype conversion.
 
     Args:
@@ -156,6 +157,9 @@ def to_numpy(value: Any, dtype: Any = None) -> np.ndarray[Any, Any]:
 
         # Apply dtype conversion if specified
         if dtype is not None:
+            if numpy_value is None:
+                return None
+
             if numpy_value.dtype == object:
                 nested_func = np.vectorize(
                     lambda x: to_numpy(x, dtype), otypes=numpy_value.dtype.char
@@ -215,7 +219,14 @@ def from_polars_data(polars_data: Any, target_type: type) -> Any:
         pass
 
     if is_union and union_args:
-        # Try each type in the union until one succeeds
+        if types.NoneType in union_args:
+            # Handle optional types in union (e.g. A | None) when Polars data is None
+            if polars_data is None:
+                return None
+
+            union_args = tuple(arg for arg in union_args if arg is not types.NoneType)
+
+        # For non-optional Union types, try each type in the union until one succeeds
         for union_type in union_args:
             if union_type in _from_polars_converters:
                 try:

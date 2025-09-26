@@ -422,10 +422,12 @@ class ForwardRotatedBboxAnnotationConverter(ForwardAnnotationConverter):
         self,
         rotated_bbox_attribute: AttributeInfo,
         rotated_bbox_labels_attribute: AttributeInfo | None = None,
+        name_prefix: str = "",
     ):
         """Initialize converter with rotated bbox attributes."""
         self.rotated_bbox_attribute = rotated_bbox_attribute
         self.rotated_bbox_labels_attribute = rotated_bbox_labels_attribute
+        self.name_prefix = name_prefix
 
     @classmethod
     def get_supported_annotation_types(cls) -> list[AnnotationType]:
@@ -434,7 +436,7 @@ class ForwardRotatedBboxAnnotationConverter(ForwardAnnotationConverter):
 
     @classmethod
     def create(
-        cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default
+        cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
     ) -> "ForwardRotatedBboxAnnotationConverter | None":
         """Create converter instance from dataset."""
         categories = dataset.categories()
@@ -463,12 +465,13 @@ class ForwardRotatedBboxAnnotationConverter(ForwardAnnotationConverter):
         return cls(
             rotated_bbox_attribute=rotated_bbox_attribute,
             rotated_bbox_labels_attribute=rotated_bbox_labels_attribute,
+            name_prefix=name_prefix,
         )
 
     def get_schema_attributes(self) -> dict[str, AttributeInfo]:
-        attributes = {"rotated_bboxes": self.rotated_bbox_attribute}
+        attributes = {self.name_prefix + "rotated_bboxes": self.rotated_bbox_attribute}
         if self.rotated_bbox_labels_attribute is not None:
-            attributes["rotated_bbox_labels"] = self.rotated_bbox_labels_attribute
+            attributes[self.name_prefix + "labels"] = self.rotated_bbox_labels_attribute
         return attributes
 
     def convert_annotations(
@@ -489,11 +492,11 @@ class ForwardRotatedBboxAnnotationConverter(ForwardAnnotationConverter):
         if rotated_bboxes_array.shape == (0,):
             rotated_bboxes_array = rotated_bboxes_array.reshape(0, 5)
 
-        result = {"rotated_bboxes": rotated_bboxes_array}
+        result = {self.name_prefix + "rotated_bboxes": rotated_bboxes_array}
 
         # Only add rotated_bbox_labels if we have label categories
         if self.rotated_bbox_labels_attribute is not None:
-            result["rotated_bbox_labels"] = np.array(labels, dtype=np.int32)
+            result[self.name_prefix + "labels"] = np.array(labels, dtype=np.int32)
 
         return result
 
@@ -553,7 +556,7 @@ class ForwardPolygonAnnotationConverter(ForwardAnnotationConverter):
     def get_schema_attributes(self) -> dict[str, AttributeInfo]:
         attributes = {self.name_prefix + "polygons": self.polygon_attribute}
         if self.polygon_labels_attribute is not None:
-            attributes[self.name_prefix + "polygon_labels"] = self.polygon_labels_attribute
+            attributes[self.name_prefix + "labels"] = self.polygon_labels_attribute
         return attributes
 
     def convert_annotations(
@@ -582,7 +585,7 @@ class ForwardPolygonAnnotationConverter(ForwardAnnotationConverter):
 
         # Only add polygon_labels if we have label categories
         if self.polygon_labels_attribute is not None:
-            result[self.name_prefix + "polygon_labels"] = np.array(labels, dtype=np.int32)
+            result[self.name_prefix + "labels"] = np.array(labels, dtype=np.int32)
 
         return result
 
@@ -613,7 +616,7 @@ class ForwardLabelAnnotationConverter(ForwardAnnotationConverter):
         if legacy_label_categories is None:
             return None
 
-        labels = [label_item.name for label_item in legacy_label_categories.items]
+        labels = tuple(label_item.name for label_item in legacy_label_categories.items)
         new_label_categories = LabelCategories(labels=labels)
 
         label_attribute = AttributeInfo(
@@ -648,41 +651,47 @@ class ForwardKeypointAnnotationConverter(ForwardAnnotationConverter):
     """Forward converter for Points (keypoints) annotations."""
 
     def __init__(
-        self, keypoints_attribute: AttributeInfo, keypoints_labels_attribute: AttributeInfo | None
+        self,
+        keypoints_attribute: AttributeInfo,
+        keypoints_labels_attribute: AttributeInfo | None,
+        name_prefix: str,
     ):
         """Initialize with keypoints attributes and label attribute name."""
         super().__init__()
         self.keypoints_attribute = keypoints_attribute
         self.keypoints_labels_attribute = keypoints_labels_attribute
+        self.name_prefix = name_prefix
 
     @classmethod
-    def create(cls, dataset: LegacyDataset) -> "ForwardKeypointAnnotationConverter | None":
+    def create(
+        cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+    ) -> "ForwardKeypointAnnotationConverter | None":
         """Create converter instance for keypoints annotations."""
         categories = dataset.categories()
         # Extract label categories if available
         legacy_label_categories = categories.get(AnnotationType.label, None)
 
         keypoints_attribute = AttributeInfo(
-            type=np.ndarray, annotation=keypoints_field(dtype=pl.Float32)
+            type=np.ndarray, annotation=keypoints_field(dtype=pl.Float32, semantic=semantic)
         )
 
         keypoints_labels_attribute = None
         # Only add keypoints_labels if we have label categories
         if legacy_label_categories is not None:
             # Convert legacy label categories to new format
-            new_label_categories = LabelCategories()
-            for label_item in legacy_label_categories.items:
-                new_label_categories.add(label_item.name)
+            labels = tuple(label_item.name for label_item in legacy_label_categories.items)
+            new_label_categories = LabelCategories(labels=labels)
 
             keypoints_labels_attribute = AttributeInfo(
                 type=np.ndarray,
-                annotation=label_field(is_list=True),
+                annotation=label_field(is_list=True, semantic=semantic),
                 categories=new_label_categories,
             )
 
         return cls(
             keypoints_attribute=keypoints_attribute,
             keypoints_labels_attribute=keypoints_labels_attribute,
+            name_prefix=name_prefix,
         )
 
     @classmethod
@@ -690,9 +699,9 @@ class ForwardKeypointAnnotationConverter(ForwardAnnotationConverter):
         return [AnnotationType.points]
 
     def get_schema_attributes(self) -> dict[str, AttributeInfo]:
-        attributes = {"keypoints": self.keypoints_attribute}
+        attributes = {self.name_prefix + "keypoints": self.keypoints_attribute}
         if self.keypoints_labels_attribute is not None:
-            attributes["labels"] = self.keypoints_labels_attribute
+            attributes[self.name_prefix + "labels"] = self.keypoints_labels_attribute
         return attributes
 
     def convert_annotations(
@@ -701,15 +710,12 @@ class ForwardKeypointAnnotationConverter(ForwardAnnotationConverter):
         keypoints = [ann for ann in annotations if isinstance(ann, Points)]
         # KeypointsField expects individual Points objects, not arrays
         # Only supports single keypoint case
-        result = {}
+        result = {self.name_prefix + "labels": None, self.name_prefix + "keypoints": None}
+
         if len(keypoints) > 0:
             result["keypoints"] = keypoints[0]  # Pass the Points object directly
             if self.keypoints_labels_attribute is not None:
-                result["labels"] = keypoints[0].attributes["keypoint_label_ids"]
-            else:
-                result["labels"] = None
-        else:
-            result["keypoints"] = None
+                result[self.name_prefix + "labels"] = keypoints[0].attributes["keypoint_label_ids"]
 
         return result
 
@@ -986,7 +992,7 @@ class ForwardMaskAnnotationConverter(ForwardAnnotationConverter):
         # Create categories based on legacy label categories
         new_label_categories = None
         if legacy_label_categories is not None:
-            labels = [label_item.name for label_item in legacy_label_categories.items]
+            labels = tuple(label_item.name for label_item in legacy_label_categories.items)
             new_label_categories = LabelCategories(labels=labels)
 
         if is_semantic:
