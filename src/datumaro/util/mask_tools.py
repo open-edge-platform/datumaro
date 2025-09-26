@@ -9,7 +9,6 @@ from typing import Dict, Optional, Tuple
 import numpy as np
 from pycocotools import mask as pycocotools_mask
 
-from datumaro._capi import encode
 from datumaro.util.image import lazy_image, load_image
 
 
@@ -221,7 +220,12 @@ def lazy_mask(path, inverse_colormap=None):
 
 
 def mask_to_rle(binary_mask):
-    return encode(binary_mask)
+    try:
+        from datumaro._capi import encode
+
+        return encode(binary_mask)
+    except (ImportError, NameError, AttributeError):
+        return mask_to_rle_py(binary_mask)
 
 
 def mask_to_rle_py(binary_mask):

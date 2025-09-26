@@ -2,6 +2,129 @@
 requires = ["setuptools", "wheel", "pybind11", "setuptools-rust"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools]
+package-dir = {"" = "src"}
+include-package-data = true
+zip-safe = false
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["datumaro*"]
+
+[tool.setuptools.dynamic]
+version = {attr = "datumaro.version.__version__"}
+
+[tool.pybind11.ext_modules]
+"datumaro._capi" = { sources = ["src/datumaro/capi/pybind.cpp"], extra_compile_args = ["-O3"] }
+
+[[tool.setuptools-rust.ext-modules]]
+target = "datumaro.rust_api"
+path = "rust/Cargo.toml"
+binding = "PyO3"
+
+[project]
+name = "datumaro"
+dynamic = ["version"]
+description = "Dataset Management Framework (Datumaro)"
+authors = [
+    {name = "Intel", email = "emily.chun@intel.com"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "attrs>=21.3.0",
+    "defusedxml>=0.7.0",
+    "imagesize>=1.4.1",
+    "lxml<7,>=5.2.0",
+    "numpy>=1.23.4,<2.2.0",
+    "orjson>=3.10.0",
+    "Pillow>=10.3.0",
+    "ruamel.yaml>=0.17.0",
+    "shapely>=1.7",
+    "typing_extensions>=3.7.4.3",
+    "tqdm>=4.67.1",
+    "pycocotools>=2.0.4",
+    "PyYAML==6.0.2",
+    "pandas>=1.4.0",
+    "pyarrow",
+    "json-stream",
+    "opencv-python-headless>=4.11.0.86",
+]
+
+[project.scripts]
+datum = "datumaro.cli.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/open-edge-platform/datumaro"
+
+[project.optional-dependencies]
+dev = [
+    "pre-commit",
+    "ruff",
+]
+
+test = [
+    "pytest>=5.3.5",
+    "pytest-cov>=4.0.0",
+    "pytest-stress",
+    "pytest-html",
+    "coverage",
+    "pytest-csv",
+    "dill",
+    "tifffile",
+]
+
+# Tensorflow support
+# Exclude Tensorflow from Python 3.13 as it is not supported yet
+# Also exclude TensorFlow from the MacOS checks due to the following issue:
+# https://github.com/tensorflow/tensorflow/issues/98563
+tf = [
+    "tensorflow; python_version < '3.13' and sys_platform != 'darwin'",
+]
+# TODO: Reenable tfds
+#tfds = [
+#    "tensorflow-datasets; python_version < '3.13' and sys_platform != 'darwin'",
+#    "absl-py>=0.12.0; python_version < '3.13' and sys_platform != 'darwin'",
+#]
+
+# PyTorch support
+torch = ["torch", "torchvision"]
+
+# Kaggle download support
+kaggle = ["kaggle"]
+
+# NDR, mpii file format, missing value detection in tabular data
+scipy = ["scipy"]
+
+# Tabular data processing
+nlp = ["nltk", "tokenizers", "portalocker"]
+
+# Comparator
+tabulate = ["tabulate"]
+
+# Any dependencies needed by the CLI
+# 2.3 has an unlisted dependency on PyTorch, which we don't need
+cli = ["tensorboardX>=1.8,!=2.3", "tabulate", "scipy", "matplotlib>=3.3.1"]
+
+# Visualizer
+visualizer = ["matplotlib>=3.3.1"]
+
+# NYU Depth Dataset v2 file format
+h5py = ["h5py>=2.10.0"]
+
+# BraTS file format
+nibabel = ["nibabel>=3.2.1"]
+
+# AVA dataset
+protobuf = ["protobuf"]
+
+experimental = ["polars>=1.31.0,<2.0.0"]
+
 [tool.isort]
 profile = "black"
 forced_separate = ["tests"]
@@ -9,7 +132,6 @@ line_length = 100
 
 [tool.coverage.run]
 branch = true
-# relative_files = true # does not work?
 
 source = [
     "src/",
@@ -23,7 +145,7 @@ omit = [
 
 [tool.cibuildwheel]
 # reference docs - https://cibuildwheel.readthedocs.io/en/stable/options/#build-skip
-build = "cp39-*_x86_64 cp310-*_x86_64 cp311-*_x86_64 cp312-*_x86_64 cp313-*_x86_64 cp39-*_amd64 cp310-*_amd64 cp311-*_amd64 cp312-*_amd64 cp313-*_amd64 cp39-*_arm64 cp310-*_arm64 cp311-*_arm64 cp312-*_arm64 cp313-*_arm64"
+build = "cp310-*_x86_64 cp311-*_x86_64 cp312-*_x86_64 cp313-*_x86_64 cp310-*_amd64 cp311-*_amd64 cp312-*_amd64 cp313-*_amd64 cp310-*_arm64 cp311-*_arm64 cp312-*_arm64 cp313-*_arm64"
 
 [tool.cibuildwheel.linux]
 before-all = [
@@ -117,7 +239,7 @@ line-length = 120
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 # minimum target version
-target-version = "py39"
+target-version = "py310"
 
 # ignore-init-module-imports = true
 
