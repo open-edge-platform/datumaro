@@ -832,8 +832,8 @@ class KeypointsField(Field):
     """
     Represents a keypoints field with coordinate and visibility information.
 
-    Handles keypoint data where each keypoint has (x, y) coordinates and a visibility state.
-    The keypoints are stored as triplets [x1, y1, v1, x2, y2, v2, ...] where each triplet
+    Handles keypoint data where each keypoint has (x, y) coordinates and a (v) visibility state.
+    The keypoints are stored as triplets [[x1, y1, v1], [x2, y2, v2], ...] where each triplet
     contains x coordinate, y coordinate, and visibility (0=absent, 1=hidden, 2=visible).
 
     Attributes:
@@ -847,22 +847,25 @@ class KeypointsField(Field):
     normalize: bool = False
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
-        """Generate schema for keypoints stored as x,y,v triplets."""
-        return {name: pl.List(self.dtype)}
+        """Generate schema for keypoints as list of 3-element arrays (x, y, visibility)."""
+        return {name: pl.List(pl.Array(self.dtype, 3))}
 
     def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
+        """Convert keypoints tensor to Polars list format."""
         numpy_value = to_numpy(value, self.dtype)
-        return {name: pl.Series(name, [numpy_value.reshape(-1)])}
+
+        return {
+            name: pl.Series(
+                name,
+                numpy_value.reshape(1, -1, 3),
+                dtype=pl.List(pl.Array(self.dtype, 3)),
+            )
+        }
 
     def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
-        """Reconstruct keypoints data from x,y,v triplets."""
-        triplets_data = df[name][row_index]
-
-        # Convert triplets back to separate points and visibility arrays
-        triplets = np.array(triplets_data, dtype=np.float32)
-
-        keypoints = triplets.reshape(-1, 3)
-        return from_polars_data(keypoints, target_type)
+        """Reconstruct keypoints tensor from Polars data."""
+        polars_data = df[name][row_index]
+        return from_polars_data(polars_data, target_type)  # type: ignore
 
 
 def keypoints_field(
