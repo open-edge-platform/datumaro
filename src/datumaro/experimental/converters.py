@@ -893,6 +893,12 @@ class ImageCallableToImageConverter(Converter):
                 # Execute the callable to get image array
                 img_array = callable_obj()
 
+                if img_array is None:
+                    image_data.append(None)
+                    image_shapes.append(None)
+                    image_infos.append(None)
+                    continue
+
                 # Validate that we got a numpy array
                 if not isinstance(img_array, np.ndarray):
                     raise TypeError(f"Callable must return numpy.ndarray, got {type(img_array)}")
@@ -982,6 +988,11 @@ class InstanceMaskCallableToInstanceMaskConverter(Converter):
             # Execute the callable to get instance mask array
             mask_array = callable_obj()
 
+            if mask_array is None:
+                mask_data.append(None)
+                mask_shapes.append(None)
+                continue
+
             # Validate that we got a numpy array
             if not isinstance(mask_array, np.ndarray):
                 raise TypeError(f"Callable must return numpy.ndarray, got {type(mask_array)}")
@@ -1059,6 +1070,11 @@ class MaskCallableToMaskConverter(Converter):
         for callable_obj in df[input_col]:
             # Execute the callable to get mask array
             mask_array = callable_obj()
+
+            if mask_array is None:
+                mask_data.append(None)
+                mask_shapes.append(None)
+                continue
 
             # Validate that we got a numpy array
             if not isinstance(mask_array, np.ndarray):
