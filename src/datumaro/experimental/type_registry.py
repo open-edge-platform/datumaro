@@ -224,7 +224,7 @@ def from_polars_data(polars_data: Any, target_type: type) -> Any:
             if polars_data is None:
                 return None
 
-            union_args = (arg for arg in union_args if arg is not types.NoneType)
+            union_args = tuple(arg for arg in union_args if arg is not types.NoneType)
 
         # For non-optional Union types, try each type in the union until one succeeds
         for union_type in union_args:

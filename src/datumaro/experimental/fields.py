@@ -598,7 +598,11 @@ class MaskField(Field):
         """Reconstruct mask tensor from flattened data using stored shape."""
         flat_data = df[name][row_index]
         shape = df[name + "_shape"][row_index]
-        numpy_data = np.array(flat_data).reshape(shape) if flat_data is not None else None
+        numpy_data = (
+            np.array(flat_data).reshape(shape)
+            if flat_data is not None and shape is not None
+            else None
+        )
         return from_polars_data(numpy_data, target_type)  # type: ignore
 
 
@@ -657,7 +661,11 @@ class InstanceMaskField(Field):
         """Reconstruct instance mask tensor from flattened data using stored shape."""
         flat_data = df[name][row_index]
         shape = df[name + "_shape"][row_index]
-        numpy_data = np.array(flat_data).reshape(shape) if flat_data is not None else None
+        numpy_data = (
+            np.array(flat_data).reshape(shape)
+            if flat_data is not None and shape is not None
+            else None
+        )
         return from_polars_data(numpy_data, target_type)  # type: ignore
 
 
