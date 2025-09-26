@@ -21,7 +21,7 @@ from PIL import Image as PILImage
 
 from datumaro.components.annotation import Annotation, AnnotationType, Bbox, ExtractedMask, Label
 from datumaro.components.annotation import LabelCategories as LegacyLabelCategories
-from datumaro.components.annotation import Polygon, RotatedBbox
+from datumaro.components.annotation import Points, Polygon, RotatedBbox
 from datumaro.components.dataset import Dataset as LegacyDataset
 from datumaro.components.dataset_base import CategoriesInfo, DatasetItem
 from datumaro.components.media import FromDataMixin, FromFileMixin, Image, MediaElement
@@ -42,6 +42,7 @@ from .fields import (
     image_info_field,
     image_path_field,
     instance_mask_callable_field,
+    keypoints_field,
     label_field,
     mask_callable_field,
     polygon_field,
@@ -563,6 +564,76 @@ class ForwardLabelAnnotationConverter(ForwardAnnotationConverter):
         return result
 
 
+class ForwardKeypointAnnotationConverter(ForwardAnnotationConverter):
+    """Forward converter for Points (keypoints) annotations."""
+
+    def __init__(
+        self, keypoints_attribute: AttributeInfo, keypoints_labels_attribute: AttributeInfo | None
+    ):
+        """Initialize with keypoints attributes and label attribute name."""
+        super().__init__()
+        self.keypoints_attribute = keypoints_attribute
+        self.keypoints_labels_attribute = keypoints_labels_attribute
+
+    @classmethod
+    def create(cls, dataset: LegacyDataset) -> "ForwardKeypointAnnotationConverter | None":
+        """Create converter instance for keypoints annotations."""
+        categories = dataset.categories()
+        # Extract label categories if available
+        legacy_label_categories = categories.get(AnnotationType.label, None)
+
+        keypoints_attribute = AttributeInfo(
+            type=np.ndarray, annotation=keypoints_field(dtype=pl.Float32)
+        )
+
+        keypoints_labels_attribute = None
+        # Only add keypoints_labels if we have label categories
+        if legacy_label_categories is not None:
+            # Convert legacy label categories to new format
+            new_label_categories = LabelCategories()
+            for label_item in legacy_label_categories.items:
+                new_label_categories.add(label_item.name)
+
+            keypoints_labels_attribute = AttributeInfo(
+                type=np.ndarray,
+                annotation=label_field(is_list=True),
+                categories=new_label_categories,
+            )
+
+        return cls(
+            keypoints_attribute=keypoints_attribute,
+            keypoints_labels_attribute=keypoints_labels_attribute,
+        )
+
+    @classmethod
+    def get_supported_annotation_types(cls) -> list[AnnotationType]:
+        return [AnnotationType.points]
+
+    def get_schema_attributes(self) -> dict[str, AttributeInfo]:
+        attributes = {"keypoints": self.keypoints_attribute}
+        if self.keypoints_labels_attribute is not None:
+            attributes["labels"] = self.keypoints_labels_attribute
+        return attributes
+
+    def convert_annotations(
+        self, annotations: list[Annotation], item: DatasetItem
+    ) -> dict[str, Any]:
+        keypoints = [ann for ann in annotations if isinstance(ann, Points)]
+        # KeypointsField expects individual Points objects, not arrays
+        # Only supports single keypoint case
+        result = {}
+        if len(keypoints) > 0:
+            result["keypoints"] = keypoints[0]  # Pass the Points object directly
+            if self.keypoints_labels_attribute is not None:
+                result["labels"] = keypoints[0].attributes["keypoint_label_ids"]
+            else:
+                result["labels"] = None
+        else:
+            result["keypoints"] = None
+
+        return result
+
+
 def register_builtin_forward_converters():
     """Register built-in forward converters for common types."""
 
@@ -573,6 +644,7 @@ def register_builtin_forward_converters():
     register_forward_annotation_converter(ForwardMaskAnnotationConverter)
     register_forward_annotation_converter(ForwardBboxAnnotationConverter)
     register_forward_annotation_converter(ForwardLabelAnnotationConverter)
+    register_forward_annotation_converter(ForwardKeypointAnnotationConverter)
     register_forward_annotation_converter(ForwardPolygonAnnotationConverter)
     register_forward_annotation_converter(ForwardRotatedBboxAnnotationConverter)
 
