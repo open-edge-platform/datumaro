@@ -185,7 +185,7 @@ def test_points_converter_functionality():
 
     # Create Points object
     points_data = [10.0, 20.0, 30.0, 40.0]
-    visibility = [2, 1]
+    visibility = [Points.Visibility.visible, Points.Visibility.hidden]
     points_obj = Points(points_data, visibility=visibility)
 
     # Test Points to numpy conversion

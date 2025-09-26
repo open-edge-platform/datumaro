@@ -643,6 +643,8 @@ def register_builtin_forward_converters():
     # Annotation converters
     register_forward_annotation_converter(ForwardMaskAnnotationConverter)
     register_forward_annotation_converter(ForwardBboxAnnotationConverter)
+    register_forward_annotation_converter(ForwardLabelAnnotationConverter)
+    register_forward_annotation_converter(ForwardKeypointAnnotationConverter)
     register_forward_annotation_converter(ForwardPolygonAnnotationConverter)
     register_forward_annotation_converter(ForwardRotatedBboxAnnotationConverter)
 
