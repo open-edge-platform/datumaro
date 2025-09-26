@@ -1870,7 +1870,9 @@ def test_keypoint_annotation_converter_convert_annotations_with_labels():
     label_categories.add("bicycle")
 
     categories: CategoriesInfo = {AnnotationType.label: label_categories}
-    converter = ForwardKeypointAnnotationConverter.create_from_categories(categories)
+    # Create a dataset with the categories
+    dataset = LegacyDataset.from_iterable([], categories=categories)
+    converter = ForwardKeypointAnnotationConverter.create(dataset)
     assert converter is not None
 
     # Create test Points annotation with label and keypoint_label_ids attribute
@@ -1897,5 +1899,5 @@ def test_keypoint_annotation_converter_convert_annotations_with_labels():
 
 def test_keypoint_annotation_converter_get_annotation_type():
     """Test that keypoint converter returns correct annotation type."""
-    annotation_type = ForwardKeypointAnnotationConverter.get_annotation_type()
-    assert annotation_type == AnnotationType.points
+    annotation_types = ForwardKeypointAnnotationConverter.get_supported_annotation_types()
+    assert annotation_types == [AnnotationType.points]
