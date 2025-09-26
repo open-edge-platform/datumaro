@@ -4,7 +4,7 @@ Installation
 Dependencies
 ------------
 
-- Python (3.9+)
+- Python (3.10+)
 - Optional: OpenVINO, TensorFlow, PyTorch, MxNet, Caffe, Git
 
 Installation steps
@@ -63,21 +63,6 @@ These components are only required for plugins and not installed by default:
 
 Customizing installation
 ^^^^^^^^^^^^^^^^^^^^^^^^
-
-- Datumaro has the following installation options:
-
-  In some cases, installing just the core library may be not enough,
-  because there can be limited options of installing graphical libraries
-  in the system (various Docker environments, servers etc). You can select
-  between using ``opencv-python`` and ``opencv-python-headless`` by setting the
-  ``DATUMARO_HEADLESS`` environment variable to ``0`` or ``1`` before installing
-  the package. It requires installation from sources (using ``--no-binary``):
-  This option can't be covered by extras due to Python packaging system limitations.
-
-.. code-block::
-
-    DATUMARO_HEADLESS=1 pip install datumaro --no-binary=datumaro
-
 - When installing directly from the repository, you can change the
   installation branch with ``...@<branch_name>``. Also use ``--force-reinstall``
   parameter in this case. It can be useful for testing of unreleased
