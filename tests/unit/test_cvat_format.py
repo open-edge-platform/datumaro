@@ -14,6 +14,7 @@ from datumaro.components.annotation import (
     Points,
     Polygon,
     PolyLine,
+    RotatedBbox,
 )
 from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
@@ -355,6 +356,14 @@ class CvatExporterTest(TestCase):
                     media=Image.from_numpy(data=np.zeros((5, 10, 3))),
                     annotations=[Mask(image=mask, z_order=1, label=3, group=4)],
                 ),
+                DatasetItem(
+                    id=4,
+                    subset="s4",
+                    media=Image.from_numpy(data=np.ones((5, 10, 3))),
+                    annotations=[
+                        RotatedBbox(1, 10, 5, 5, 45, label=0, attributes={"occluded": False}),
+                    ],
+                ),
             ],
             categories={AnnotationType.label: src_label_cat},
         )
@@ -427,6 +436,15 @@ class CvatExporterTest(TestCase):
                             group=4,
                             attributes={"occluded": False},
                         )
+                    ],
+                    attributes={"frame": 0},
+                ),
+                DatasetItem(
+                    id=4,
+                    subset="s4",
+                    media=Image.from_numpy(data=np.ones((5, 10, 3))),
+                    annotations=[
+                        RotatedBbox(1, 10, 5, 5, 45, label=0, attributes={"occluded": False}),
                     ],
                     attributes={"frame": 0},
                 ),

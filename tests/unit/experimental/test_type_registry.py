@@ -162,3 +162,33 @@ def test_numpy_converter_functionality():
     result = to_numpy(np.array(data))
     assert isinstance(result, np.ndarray)
     np.testing.assert_array_equal(result, np.array(data))
+
+
+def test_list_converter_functionality():
+    """Test the list to numpy converter registration and usage."""
+    # Test list to numpy conversion
+    data = [1, 2, 3, 4]
+    result = to_numpy(data)
+    assert isinstance(result, np.ndarray)
+    np.testing.assert_array_equal(result, np.array([1, 2, 3, 4]))
+
+    # Test nested list conversion
+    nested_data = [[1, 2], [3, 4]]
+    result = to_numpy(nested_data)
+    assert isinstance(result, np.ndarray)
+    np.testing.assert_array_equal(result, np.array([[1, 2], [3, 4]]))
+
+
+def test_points_converter_functionality():
+    """Test the Points to numpy converter registration and usage."""
+    from datumaro.components.annotation import Points
+
+    # Create Points object
+    points_data = [10.0, 20.0, 30.0, 40.0]
+    visibility = [Points.Visibility.visible, Points.Visibility.hidden]
+    points_obj = Points(points_data, visibility=visibility)
+
+    # Test Points to numpy conversion
+    result = to_numpy(points_obj)
+    assert isinstance(result, np.ndarray)
+    np.testing.assert_array_equal(result, np.array([[10.0, 20.0, 2.0], [30.0, 40.0, 1.0]]))

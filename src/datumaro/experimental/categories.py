@@ -185,6 +185,7 @@ class MaskCategories(Categories):
     Describes a color map for segmentation masks.
     """
 
+    labels: List[str] = field(default_factory=list)
     colormap: Colormap = field(default_factory=Colormap)
 
     @classmethod

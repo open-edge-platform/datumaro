@@ -89,6 +89,17 @@ def validate_command(args):
     validator = validator_type(**extra_args)
     reports = validator.validate(dataset)
 
+    def _make_serializable(d):
+        for key, val in list(d.items()):
+            # tuple key to str
+            if isinstance(key, tuple) or isinstance(key, int):
+                d[str(key)] = val
+                d.pop(key)
+            if isinstance(val, dict):
+                _make_serializable(val)
+
+    _make_serializable(reports)
+
     # Save the validation report
     dst_file = generate_next_file_name("validation_report", ext=".json")
     log.info("Writing validation report to '%s'" % dst_file)

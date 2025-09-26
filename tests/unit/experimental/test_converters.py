@@ -9,6 +9,7 @@ import numpy as np
 import polars as pl
 import pytest
 
+from datumaro.experimental.categories import LabelCategories, MaskCategories
 from datumaro.experimental.converter_registry import (
     AttributeRemapperConverter,
     AttributeSpec,
@@ -20,18 +21,39 @@ from datumaro.experimental.converter_registry import (
 )
 from datumaro.experimental.converters import (
     BBoxCoordinateConverter,
+    ImageBytesToImageConverter,
+    ImageCallableToImageConverter,
     ImagePathToImageConverter,
+    InstanceMaskCallableToInstanceMaskConverter,
+    MaskCallableToMaskConverter,
+    PolygonToBBoxConverter,
+    PolygonToInstanceMaskConverter,
+    PolygonToMaskConverter,
     RGBToBGRConverter,
+    RotatedBBoxToPolygonConverter,
     UInt8ToFloat32Converter,
 )
 from datumaro.experimental.fields import (
     BBoxField,
     Field,
+    ImageBytesField,
+    ImageCallableField,
     ImageField,
+    ImageInfoField,
     ImagePathField,
+    InstanceMaskCallableField,
+    InstanceMaskField,
+    LabelField,
+    MaskCallableField,
+    MaskField,
+    PolygonField,
+    RotatedBBoxField,
     bbox_field,
     image_field,
     image_info_field,
+    mask_callable_field,
+    mask_field,
+    rotated_bbox_field,
 )
 from datumaro.experimental.schema import AttributeInfo, Schema, Semantic
 
@@ -216,6 +238,7 @@ def test_image_path_to_image_converter():
         # Set up converter attributes
         input_field = ImagePathField(semantic=Semantic.Default)
         output_field = ImageField(dtype=pl.UInt8, format="RGB", semantic=Semantic.Default)
+        output_info_field = ImageInfoField(semantic=Semantic.Default)
 
         setattr(
             converter_instance,
@@ -227,6 +250,11 @@ def test_image_path_to_image_converter():
             "output_image",
             AttributeSpec(name="image", field=output_field),
         )
+        setattr(
+            converter_instance,
+            "output_info",
+            AttributeSpec(name="image_info", field=output_info_field),
+        )
 
         # Test filter - should return True for path->image conversion
         assert converter_instance.filter_output_spec() is True
@@ -236,10 +264,83 @@ def test_image_path_to_image_converter():
 
         assert "image" in result_df.columns
         assert "image_shape" in result_df.columns
+        assert "image_info" in result_df.columns
 
         # Check that image was loaded correctly
         result_shape = list(result_df["image_shape"][0])
         assert result_shape == [50, 75, 3]  # height, width, channels
+
+        # Check that image info was created correctly (only width and height)
+        image_info = result_df["image_info"][0]
+        assert "width" in image_info
+        assert "height" in image_info
+        assert image_info["width"] == 75  # width
+        assert image_info["height"] == 50  # height
+
+
+def test_image_bytes_to_image_converter():
+    """Test ImageBytesToImageConverter functionality."""
+    import numpy as np
+
+    from datumaro.util.image import encode_image
+
+    converter_instance = ImageBytesToImageConverter()  # type: ignore[call-arg]
+
+    # Create test image data
+    test_image = np.random.randint(0, 256, (32, 48, 3), dtype=np.uint8)
+    image_bytes = encode_image(test_image, ".png")
+
+    # Create test data
+    df = pl.DataFrame({"image_bytes": [image_bytes]})
+
+    # Set up converter attributes
+    from datumaro.experimental.fields import image_bytes_field
+
+    input_field = ImageBytesField(semantic=Semantic.Default)
+    output_field = ImageField(dtype=pl.UInt8, format="RGB", semantic=Semantic.Default)
+    output_info_field = ImageInfoField(semantic=Semantic.Default)
+
+    setattr(
+        converter_instance,
+        "input_bytes",
+        AttributeSpec(name="image_bytes", field=input_field),
+    )
+    setattr(
+        converter_instance,
+        "output_image",
+        AttributeSpec(name="image", field=output_field),
+    )
+    setattr(
+        converter_instance,
+        "output_info",
+        AttributeSpec(name="image_info", field=output_info_field),
+    )
+
+    # Test filter - should return True for bytes->image conversion
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    assert "image" in result_df.columns
+    assert "image_shape" in result_df.columns
+    assert "image_info" in result_df.columns
+
+    # Check that image was loaded correctly
+    result_shape = tuple(result_df["image_shape"][0])
+    assert result_shape == (32, 48, 3)  # height, width, channels
+
+    # Check that image info was created correctly (only width and height)
+    image_info = result_df["image_info"][0]
+    assert "width" in image_info
+    assert "height" in image_info
+    assert image_info["width"] == 48  # width
+    assert image_info["height"] == 32  # height
+
+    # Check that the actual image data is correct (approximately, since PNG compression may cause slight differences)
+    result_image = result_df["image"][0].to_numpy().reshape(result_shape)
+    assert result_image.shape == test_image.shape
+    assert result_image.dtype == np.uint8
 
 
 def test_find_conversion_path():
@@ -263,7 +364,7 @@ def test_find_conversion_path():
     )
 
     # This should find a conversion path (UInt8 -> Float32)
-    path = find_conversion_path(source_schema, target_schema)
+    path, _ = find_conversion_path(source_schema, target_schema)
     assert len(path.batch_converters) == 2
     assert type(path.batch_converters[0]) is UInt8ToFloat32Converter
     assert type(path.batch_converters[1]) is AttributeRemapperConverter
@@ -295,7 +396,7 @@ def test_convert_dataframe():
     )
 
     # Get conversion path and apply it manually
-    conversion_paths = find_conversion_path(source_schema, target_schema)
+    conversion_paths, _ = find_conversion_path(source_schema, target_schema)
 
     # Apply batch converters first
     result_df = df
@@ -394,7 +495,7 @@ def test_multiple_converter_chaining():
     # 2. UInt8 -> Float32 (dtype)
     # 3. absolute -> normalized bbox (with image as auxiliary)
 
-    path = find_conversion_path(source_schema, target_schema)
+    path, _ = find_conversion_path(source_schema, target_schema)
     # If successful, should have multiple steps
     assert len(path.batch_converters) == 4
     assert type(path.batch_converters[0]) is BBoxCoordinateConverter
@@ -458,7 +559,7 @@ def test_astar_direct_conversion():
     )
 
     # Test finding conversion path
-    path = find_conversion_path(from_schema, to_schema)
+    path, _ = find_conversion_path(from_schema, to_schema)
     assert len(path.batch_converters) == 2
     assert type(path.batch_converters[0]) is ExtractImageSizeConverter
     assert type(path.batch_converters[1]) is AttributeRemapperConverter
@@ -562,7 +663,7 @@ def test_astar_chained_conversion():
     )
 
     # Test finding conversion path
-    path = find_conversion_path(from_schema, to_schema)
+    path, _ = find_conversion_path(from_schema, to_schema)
     # Should need 2 converters: ImageField -> ImageSizeField, then NormalizedBbox -> AbsoluteBbox
     assert len(path.batch_converters) == 3
     assert type(path.batch_converters[0]) is ExtractImageSizeChainConverter
@@ -589,7 +690,7 @@ def test_astar_no_conversion_needed():
         }
     )
 
-    path = find_conversion_path(schema, schema)
+    path, _ = find_conversion_path(schema, schema)
     total_converters = len(path.batch_converters) + len(path.lazy_converters)
     assert (
         total_converters == 0
@@ -703,7 +804,7 @@ def test_optimal_path_selection():
         }
     )
 
-    path = find_conversion_path(from_schema, to_schema)
+    path, _ = find_conversion_path(from_schema, to_schema)
     assert len(path.batch_converters) == 2
     assert type(path.batch_converters[0]) is AToCDirectConverter
     assert type(path.batch_converters[1]) is AttributeRemapperConverter
@@ -739,7 +840,7 @@ def test_generator_converter():
         }
     )
 
-    path = find_conversion_path(from_schema, to_schema)
+    path, _ = find_conversion_path(from_schema, to_schema)
     assert len(path.batch_converters) == 2
     assert type(path.batch_converters[0]) is GenerateBConverter
     assert type(path.batch_converters[1]) is AttributeRemapperConverter
@@ -798,7 +899,7 @@ def test_multiple_output_converter():
         }
     )
 
-    path = find_conversion_path(from_schema, to_schema)
+    path, _ = find_conversion_path(from_schema, to_schema)
     assert len(path.batch_converters) == 2
     assert type(path.batch_converters[0]) is AToMultiConverter
     assert type(path.batch_converters[1]) is AttributeRemapperConverter
@@ -850,7 +951,7 @@ def test_partial_schema_matching():
         }
     )
 
-    path = find_conversion_path(from_schema, to_schema)
+    path, _ = find_conversion_path(from_schema, to_schema)
     assert len(path.batch_converters) == 2
     assert type(path.batch_converters[0]) is AToCPartialConverter
     assert type(path.batch_converters[1]) is AttributeRemapperConverter
@@ -879,7 +980,7 @@ def test_attribute_renaming():
     )
 
     # Find conversion path - should include a remapper converter
-    path = find_conversion_path(source_schema, target_schema)
+    path, _ = find_conversion_path(source_schema, target_schema)
 
     # Should have exactly one batch converter for renaming
     assert len(path.batch_converters) == 1
@@ -934,7 +1035,7 @@ def test_attribute_deletion():
     )
 
     # Find conversion path - should include a remapper converter that only keeps image
-    path = find_conversion_path(source_schema, target_schema)
+    path, _ = find_conversion_path(source_schema, target_schema)
 
     # Should have exactly one batch converter for selection/deletion
     assert len(path.batch_converters) == 1
@@ -995,7 +1096,7 @@ def test_combined_rename_and_delete():
     )
 
     # Find conversion path - should include a single remapper converter that handles both operations
-    path = find_conversion_path(source_schema, target_schema)
+    path, _ = find_conversion_path(source_schema, target_schema)
 
     # Should have exactly one batch converter that handles both renaming and deletion
     assert len(path.batch_converters) == 1
@@ -1061,3 +1162,985 @@ def test_attribute_remapping_converter():
     assert result_df["new_image"].to_list() == [[1, 2, 3]]
     assert result_df["new_image_shape"].to_list() == [[3]]
     assert result_df["new_bbox"].to_list() == [[[1, 2, 3, 4]]]
+
+
+def test_polygon_to_mask_converter():
+    """Test conversion from polygon coordinates to mask format."""
+    converter_instance = PolygonToMaskConverter()  # type: ignore[call-arg]
+
+    # Create test data with polygon coordinates and labels
+    # Triangle polygon: (10,10) -> (30,10) -> (20,30) -> (10,10)
+    polygon_coords1 = [[10.0, 10.0], [30.0, 10.0], [20.0, 30.0]]
+
+    # Rectangle polygon: (40,40) -> (60,40) -> (60,60) -> (40,60) -> (40,40)
+    polygon_coords2 = [[40.0, 40.0], [60.0, 40.0], [60.0, 60.0], [40.0, 60.0], [40.0, 40.0]]
+
+    # Pentagon polygon: (70,10) -> (85,5) -> (90,20) -> (80,35) -> (65,25)
+    polygon_coords3 = [[70.0, 10.0], [85.0, 5.0], [90.0, 20.0], [80.0, 35.0], [65.0, 25.0]]
+
+    polygon_series = pl.Series(
+        [polygon_coords1, polygon_coords2, polygon_coords3], dtype=pl.List(pl.Array(pl.Float32, 2))
+    )
+
+    df = pl.DataFrame(
+        {
+            "polygons": [polygon_series],  # List of three polygons
+            "labels": [[0, 1, 2]],  # Corresponding labels for each polygon
+            "image_info": [{"width": 100, "height": 100}],  # Image dimensions
+        }
+    )
+
+    # Set up converter attributes
+    input_polygon_field = PolygonField(
+        dtype=pl.Float32, format="xy", normalize=False, semantic=Semantic.Default
+    )
+    input_labels_field = LabelField(dtype=pl.Int32, semantic=Semantic.Default, multi_label=True)
+    image_info_field = ImageInfoField(semantic=Semantic.Default)
+    output_mask_field = MaskField(dtype=pl.UInt8, semantic=Semantic.Default)
+
+    setattr(
+        converter_instance,
+        "input_polygon",
+        AttributeSpec(name="polygons", field=input_polygon_field),
+    )
+    setattr(
+        converter_instance,
+        "input_labels",
+        AttributeSpec(name="labels", field=input_labels_field),
+    )
+    setattr(
+        converter_instance,
+        "input_image_info",
+        AttributeSpec(name="image_info", field=image_info_field),
+    )
+    setattr(
+        converter_instance,
+        "output_mask",
+        AttributeSpec(name="mask", field=output_mask_field),
+    )
+
+    # Test filter - should return True when we have valid input
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    # Check that mask column was created
+    assert "mask" in result_df.columns
+    assert "mask_shape" in result_df.columns
+
+    # Get the mask data and reshape it
+    mask_data = np.array(result_df["mask"][0])
+    mask_shape = result_df["mask_shape"][0]
+    mask = mask_data.reshape(mask_shape)
+
+    # Check mask properties
+    assert mask.shape == (100, 100)  # Should match image dimensions
+    assert mask.dtype == np.uint8
+
+    # Check that polygons were filled with correct labels
+    # Triangle should have label 1, rectangle should have label 2, pentagon should have label 3
+    # Background should be 0
+
+    # Check that triangle area has label 0 (stored as mask value 1)
+    assert mask[15, 20] == 1  # Point inside triangle
+
+    # Check that rectangle area has label 1 (stored as mask value 2)
+    assert mask[50, 50] == 2  # Point inside rectangle
+
+    # Check that pentagon area has label 2 (stored as mask value 3)
+    assert mask[20, 75] == 3  # Point inside pentagon
+
+    # Check background area has label 0
+    assert mask[5, 5] == 0  # Point outside all polygons
+    assert mask[95, 95] == 0  # Another background point
+
+    # Check that mask contains the expected label values
+    unique_labels = np.unique(mask)
+    assert 0 in unique_labels  # Background
+    assert 1 in unique_labels  # First polygon label (triangle)
+    assert 2 in unique_labels  # Second polygon label (rectangle)
+    assert 3 in unique_labels  # Third polygon label (pentagon)
+
+
+def test_polygon_to_mask_converter_normalized():
+    """Test conversion with normalized polygon coordinates."""
+    converter_instance = PolygonToMaskConverter()  # type: ignore[call-arg]
+
+    # Create test data with normalized coordinates (0.0 to 1.0 range)
+    # Small triangle in normalized coordinates
+    polygon_coords = [[0.1, 0.1], [0.3, 0.1], [0.2, 0.3]]  # Normalized coordinates
+    polygon_series = pl.Series([polygon_coords], dtype=pl.List(pl.Array(pl.Float32, 2)))
+
+    df = pl.DataFrame(
+        {
+            "polygons": [polygon_series],
+            "labels": [[5]],  # Label 5 for this polygon
+            "image_info": [{"width": 100, "height": 100}],
+        }
+    )
+
+    # Set up converter attributes with normalization enabled
+    input_polygon_field = PolygonField(
+        dtype=pl.Float32,
+        format="xy",
+        normalize=True,  # Enable normalization
+        semantic=Semantic.Default,
+    )
+    input_labels_field = LabelField(dtype=pl.Int32, semantic=Semantic.Default, multi_label=True)
+    image_info_field = ImageInfoField(semantic=Semantic.Default)
+    output_mask_field = MaskField(dtype=pl.UInt8, semantic=Semantic.Default)
+
+    setattr(
+        converter_instance,
+        "input_polygon",
+        AttributeSpec(name="polygons", field=input_polygon_field),
+    )
+    setattr(
+        converter_instance, "input_labels", AttributeSpec(name="labels", field=input_labels_field)
+    )
+    setattr(
+        converter_instance,
+        "input_image_info",
+        AttributeSpec(name="image_info", field=image_info_field),
+    )
+    setattr(converter_instance, "output_mask", AttributeSpec(name="mask", field=output_mask_field))
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    # Get the mask and check it
+    mask_data = np.array(result_df["mask"][0])
+    mask_shape = result_df["mask_shape"][0]
+    mask = mask_data.reshape(mask_shape)
+
+    # Check that polygon was filled with label 5 (stored as mask value 6)
+    # Normalized coordinates should be scaled: 0.2 * 100 = 20, 0.1 * 100 = 10, etc.
+    assert mask[15, 20] == 6  # Point inside the scaled triangle (5+1=6)
+    assert mask[5, 5] == 0  # Background point
+
+
+def test_find_conversion_path_inferred_categories():
+    """Test that find_conversion_path returns inferred categories."""
+
+    # Create test data for polygon to mask conversion
+    df = pl.DataFrame(
+        {
+            "polygons": [[[10, 20, 30, 25, 20, 40]]],  # Triangle coordinates
+            "labels": [[2]],  # Label 2
+            "image_info": [{"width": 100, "height": 100}],
+        },
+        schema=pl.Schema(
+            {
+                "polygons": pl.List(pl.List(pl.Float32)),
+                "labels": pl.List(pl.Int32),
+                "image_info": pl.Struct({"width": pl.Int32, "height": pl.Int32}),
+            }
+        ),
+    )
+
+    # Create source schema with label categories
+    label_categories = LabelCategories(labels=["cat", "dog", "bird"])
+    source_schema = Schema(
+        attributes={
+            "polygons": AttributeInfo(
+                type=list,
+                annotation=PolygonField(dtype=pl.Float32, semantic=Semantic.Default),
+                categories=None,
+            ),
+            "labels": AttributeInfo(
+                type=list,
+                annotation=LabelField(semantic=Semantic.Default),
+                categories=label_categories,
+            ),
+            "image_info": AttributeInfo(
+                type=dict, annotation=ImageInfoField(semantic=Semantic.Default)
+            ),
+        }
+    )
+
+    # Create target schema (polygon to mask conversion)
+    target_schema = Schema(
+        attributes={
+            "mask": AttributeInfo(
+                type=np.ndarray, annotation=MaskField(dtype=pl.UInt8, semantic=Semantic.Default)
+            )
+        }
+    )
+
+    # Get conversion path and check inferred categories
+    conversion_paths, inferred_categories = find_conversion_path(source_schema, target_schema)
+
+    # Should have converters for polygon to mask conversion
+    total_converters = len(conversion_paths.batch_converters) + len(
+        conversion_paths.lazy_converters
+    )
+    assert total_converters > 0
+
+    # Check that mask categories were inferred
+    assert "mask" in inferred_categories
+    mask_categories = inferred_categories["mask"]
+    assert isinstance(mask_categories, MaskCategories)
+
+    # Check that the mask categories include background + original labels
+    expected_labels = ["background", "cat", "dog", "bird"]
+    assert mask_categories.labels == expected_labels
+
+
+def test_polygon_to_instance_mask_converter():
+    """Test conversion from polygon coordinates to instance mask format."""
+    # Create test data with triangle, rectangle, and pentagon polygons
+    polygon_coords1 = [[10.0, 10.0], [20.0, 10.0], [15.0, 20.0]]
+    polygon_coords2 = [[30.0, 30.0], [40.0, 30.0], [40.0, 40.0], [30.0, 40.0]]
+    polygon_coords3 = [[50.0, 50.0], [60.0, 50.0], [65.0, 60.0], [55.0, 70.0], [45.0, 60.0]]
+
+    polygon_series = pl.Series(
+        [polygon_coords1, polygon_coords2, polygon_coords3], dtype=pl.List(pl.Array(pl.Float32, 2))
+    )
+
+    df = pl.DataFrame(
+        {
+            "polygons": [polygon_series],
+            "image_info": [{"width": 100, "height": 100}],
+        }
+    )
+
+    # Create converter instance
+    converter_instance = PolygonToInstanceMaskConverter()
+
+    # Set up field specs
+    input_polygon_field = PolygonField(
+        dtype=pl.Float32, format="xy", normalize=False, semantic=Semantic.Default
+    )
+    image_info_field = ImageInfoField(semantic=Semantic.Default)
+    output_instance_mask_field = InstanceMaskField(dtype=pl.Boolean, semantic=Semantic.Default)
+
+    setattr(
+        converter_instance,
+        "input_polygon",
+        AttributeSpec(name="polygons", field=input_polygon_field),
+    )
+    setattr(
+        converter_instance,
+        "input_image_info",
+        AttributeSpec(name="image_info", field=image_info_field),
+    )
+    setattr(
+        converter_instance,
+        "output_instance_mask",
+        AttributeSpec(name="instance_mask", field=output_instance_mask_field),
+    )
+
+    # Test filter - should return True when we have valid input
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    # Check that instance mask column was created
+    assert "instance_mask" in result_df.columns
+    assert "instance_mask_shape" in result_df.columns
+
+    # Get the mask data and reshape it
+    mask_data = np.array(result_df["instance_mask"][0])
+    mask_shape = result_df["instance_mask_shape"][0]
+    masks = mask_data.reshape(mask_shape)
+
+    # Check mask properties
+    assert masks.shape == (3, 100, 100)  # 3 instances, 100x100 image
+    assert masks.dtype == bool
+
+    # Check that each instance is properly filled
+    # Triangle should be in first mask
+    assert masks[0, 15, 15] == True  # Point inside triangle
+    assert masks[0, 5, 5] == False  # Point outside triangle
+
+    # Rectangle should be in second mask
+    assert masks[1, 35, 35] == True  # Point inside rectangle
+    assert masks[1, 5, 5] == False  # Point outside rectangle
+
+    # Pentagon should be in third mask
+    assert masks[2, 55, 55] == True  # Point inside pentagon
+    assert masks[2, 5, 5] == False  # Point outside pentagon
+
+    # No overlap between instances
+    assert not np.any(masks[0] & masks[1])  # Triangle and rectangle don't overlap
+    assert not np.any(masks[0] & masks[2])  # Triangle and pentagon don't overlap
+    assert not np.any(masks[1] & masks[2])  # Rectangle and pentagon don't overlap
+
+
+def test_polygon_to_instance_mask_converter_normalized():
+    """Test conversion with normalized polygon coordinates."""
+    # Create test data with normalized coordinates (0-1 range)
+    polygon_coords1 = [[0.1, 0.1], [0.2, 0.1], [0.15, 0.2]]
+    polygon_coords2 = [[0.3, 0.3], [0.4, 0.3], [0.4, 0.4], [0.3, 0.4]]
+
+    polygon_series = pl.Series(
+        [polygon_coords1, polygon_coords2], dtype=pl.List(pl.Array(pl.Float32, 2))
+    )
+
+    df = pl.DataFrame(
+        {
+            "polygons": [polygon_series],
+            "image_info": [{"width": 100, "height": 100}],
+        }
+    )
+
+    # Create converter instance with normalized coordinates
+    converter_instance = PolygonToInstanceMaskConverter()
+
+    # Set up field specs
+    input_polygon_field = PolygonField(
+        dtype=pl.Float32, format="xy", normalize=True, semantic=Semantic.Default
+    )
+    image_info_field = ImageInfoField(semantic=Semantic.Default)
+    output_instance_mask_field = InstanceMaskField(dtype=pl.Boolean, semantic=Semantic.Default)
+
+    setattr(
+        converter_instance,
+        "input_polygon",
+        AttributeSpec(name="polygons", field=input_polygon_field),
+    )
+    setattr(
+        converter_instance,
+        "input_image_info",
+        AttributeSpec(name="image_info", field=image_info_field),
+    )
+    setattr(
+        converter_instance,
+        "output_instance_mask",
+        AttributeSpec(name="instance_mask", field=output_instance_mask_field),
+    )
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    # Get the mask and check it
+    mask_data = np.array(result_df["instance_mask"][0])
+    mask_shape = result_df["instance_mask_shape"][0]
+    masks = mask_data.reshape(mask_shape)
+
+    # Check mask properties
+    assert masks.shape == (2, 100, 100)
+
+    # Check that polygons were filled correctly after denormalization
+    # Triangle: 0.1 * 100 = 10, 0.2 * 100 = 20, etc.
+    assert masks[0, 15, 15] == True  # Point inside the scaled triangle
+    assert masks[0, 5, 5] == False  # Background point
+
+    # Rectangle: 0.3 * 100 = 30, 0.4 * 100 = 40, etc.
+    assert masks[1, 35, 35] == True  # Point inside the scaled rectangle
+    assert masks[1, 5, 5] == False  # Background point
+
+
+def test_instance_mask_callable_to_instance_mask_converter():
+    """Test InstanceMaskCallableToInstanceMaskConverter conversion."""
+    converter_instance = InstanceMaskCallableToInstanceMaskConverter()  # type: ignore[call-arg]
+
+    # Create a test callable that returns instance masks
+    def get_instance_masks():
+        return np.array(
+            [[[True, False], [False, True]], [[False, True], [True, False]]], dtype=bool
+        )  # (2,2,2)
+
+    df = pl.DataFrame(
+        {
+            "instance_mask_callable": [get_instance_masks],
+        },
+        schema=pl.Schema({"instance_mask_callable": pl.Object}),
+    )
+
+    # Set up converter attributes
+    input_field = InstanceMaskCallableField(dtype=pl.Boolean, semantic=Semantic.Default)
+    output_field = InstanceMaskField(dtype=pl.Boolean, semantic=Semantic.Default)
+
+    setattr(
+        converter_instance,
+        "input_callable",
+        AttributeSpec(
+            name="instance_mask_callable",
+            field=input_field,
+        ),
+    )
+    setattr(
+        converter_instance,
+        "output_mask",
+        AttributeSpec(
+            name="instance_mask",
+            field=output_field,
+        ),
+    )
+
+    # Convert
+    result_df = converter_instance.convert(df)
+
+    # Check result
+    assert "instance_mask" in result_df.columns
+    assert "instance_mask_shape" in result_df.columns
+
+    # Verify shape
+    expected_shape = [2, 2, 2]  # N, H, W
+    assert result_df["instance_mask_shape"][0].to_list() == expected_shape
+
+    # Check instance masks
+    expected_masks = get_instance_masks()
+    result_masks = np.array(result_df["instance_mask"][0]).reshape(expected_shape)
+    assert np.array_equal(result_masks, expected_masks)
+
+
+def test_instance_mask_callable_to_instance_mask_converter_validation():
+    """Test validation in InstanceMaskCallableToInstanceMaskConverter."""
+    converter_instance = InstanceMaskCallableToInstanceMaskConverter()  # type: ignore[call-arg]
+
+    # Create an invalid test callable that returns wrong shape
+    def get_invalid_masks():
+        return np.array([[True, False], [False, True]], dtype=bool)  # 2D instead of 3D
+
+    df = pl.DataFrame(
+        {
+            "instance_mask_callable": [get_invalid_masks],
+        },
+        schema=pl.Schema({"instance_mask_callable": pl.Object}),
+    )
+
+    # Set up converter attributes
+    input_field = InstanceMaskCallableField(dtype=pl.Boolean, semantic=Semantic.Default)
+    output_field = InstanceMaskField(dtype=pl.Boolean, semantic=Semantic.Default)
+
+    setattr(
+        converter_instance,
+        "input_callable",
+        AttributeSpec(
+            name="instance_mask_callable",
+            field=input_field,
+        ),
+    )
+    setattr(
+        converter_instance,
+        "output_mask",
+        AttributeSpec(
+            name="instance_mask",
+            field=output_field,
+        ),
+    )
+
+    # Conversion should raise error due to wrong shape
+    with pytest.raises(ValueError):
+        converter_instance.convert(df)
+
+
+def test_mask_callable_to_mask_converter():
+    """Test MaskCallableToMaskConverter conversion."""
+    converter_instance = MaskCallableToMaskConverter()  # type: ignore[call-arg]
+
+    # Create a test callable that returns a mask with category IDs
+    def get_mask():
+        return np.array([[1, 2], [2, 1]], dtype=np.uint8)  # (2,2)
+
+    df = pl.DataFrame(
+        {
+            "mask_callable": [get_mask],
+        },
+        schema=pl.Schema({"mask_callable": pl.Object}),
+    )
+
+    # Set up converter attributes
+    input_field = MaskCallableField(dtype=pl.UInt8, semantic=Semantic.Default)
+    output_field = MaskField(dtype=pl.UInt8, semantic=Semantic.Default)
+
+    setattr(
+        converter_instance,
+        "input_callable",
+        AttributeSpec(
+            name="mask_callable",
+            field=input_field,
+        ),
+    )
+    setattr(
+        converter_instance,
+        "output_mask",
+        AttributeSpec(
+            name="mask",
+            field=output_field,
+        ),
+    )
+
+    # Convert
+    result_df = converter_instance.convert(df)
+
+    # Check result
+    assert "mask" in result_df.columns
+    assert "mask_shape" in result_df.columns
+
+    # Verify shape
+    expected_shape = [2, 2]  # H, W
+    assert result_df["mask_shape"][0].to_list() == expected_shape
+
+    # Check mask
+    expected_mask = get_mask()
+    result_mask = np.array(result_df["mask"][0]).reshape(expected_shape)
+    assert np.array_equal(result_mask, expected_mask)
+
+
+def test_mask_callable_to_mask_converter_validation():
+    """Test validation in MaskCallableToMaskConverter."""
+    converter_instance = MaskCallableToMaskConverter()  # type: ignore[call-arg]
+
+    # Create an invalid test callable that returns wrong shape
+    def get_invalid_mask():
+        return np.array([[[True, False], [False, True]]], dtype=np.uint8)
+
+    df = pl.DataFrame(
+        {
+            "mask_callable": [get_invalid_mask],
+        },
+        schema=pl.Schema({"mask_callable": pl.Object}),
+    )
+
+    # Set up converter attributes
+    input_field = MaskCallableField(dtype=pl.Boolean, semantic=Semantic.Default)
+    output_field = InstanceMaskField(dtype=pl.Boolean, semantic=Semantic.Default)
+
+    setattr(
+        converter_instance,
+        "input_callable",
+        AttributeSpec(
+            name="mask_callable",
+            field=input_field,
+        ),
+    )
+    setattr(
+        converter_instance,
+        "output_mask",
+        AttributeSpec(
+            name="mask",
+            field=output_field,
+        ),
+    )
+
+    # Check that it raises error for invalid shape
+    with pytest.raises(ValueError, match="Mask array must be 2D \(H,W\), got shape \(1, 2, 2\)"):
+        converter_instance.convert(df)
+
+
+def test_polygon_to_bbox_converter():
+    """Test conversion from polygon coordinates to bounding box format."""
+    # Create test data with triangle and rectangle polygons
+    polygon_coords1 = [[10.0, 10.0], [20.0, 10.0], [15.0, 20.0]]
+    polygon_coords2 = [[30.0, 30.0], [40.0, 30.0], [40.0, 40.0], [30.0, 40.0]]
+
+    polygon_series = pl.Series(
+        [polygon_coords1, polygon_coords2], dtype=pl.List(pl.Array(pl.Float32, 2))
+    )
+
+    df = pl.DataFrame(
+        {
+            "polygons": [polygon_series],
+        }
+    )
+
+    # Create converter instance
+    converter_instance = PolygonToBBoxConverter()
+
+    # Set up field specs
+    input_polygon_field = PolygonField(
+        dtype=pl.Float32, format="xy", normalize=False, semantic=Semantic.Default
+    )
+    output_bbox_field = BBoxField(
+        dtype=pl.Float32, format="x1y1x2y2", normalize=False, semantic=Semantic.Default
+    )
+
+    setattr(
+        converter_instance,
+        "input_polygon",
+        AttributeSpec(name="polygons", field=input_polygon_field),
+    )
+    setattr(
+        converter_instance,
+        "output_bbox",
+        AttributeSpec(name="bboxes", field=output_bbox_field),
+    )
+
+    # Test filter - should return True when we have valid input
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    # Check that bbox column was created
+    assert "bboxes" in result_df.columns
+
+    # Get the bbox data
+    bboxes = result_df["bboxes"][0]
+
+    # Check that we have 2 bounding boxes (triangle and rectangle)
+    assert len(bboxes) == 2
+
+    # Check triangle bbox (x1y1x2y2 format)
+    triangle_bbox = bboxes[0]
+    assert triangle_bbox[0] == 10.0  # x1 (min x)
+    assert triangle_bbox[1] == 10.0  # y1 (min y)
+    assert triangle_bbox[2] == 20.0  # x2 (max x)
+    assert triangle_bbox[3] == 20.0  # y2 (max y)
+
+    # Check rectangle bbox
+    rectangle_bbox = bboxes[1]
+    assert rectangle_bbox[0] == 30.0  # x1
+    assert rectangle_bbox[1] == 30.0  # y1
+    assert rectangle_bbox[2] == 40.0  # x2
+    assert rectangle_bbox[3] == 40.0  # y2
+
+
+def test_polygon_to_bbox_converter_xywh():
+    """Test conversion to xywh bbox format."""
+    # Create test data with rectangle polygon
+    polygon_coords = [[30.0, 30.0], [40.0, 30.0], [40.0, 40.0], [30.0, 40.0]]
+
+    polygon_series = pl.Series([polygon_coords], dtype=pl.List(pl.Array(pl.Float32, 2)))
+
+    df = pl.DataFrame(
+        {
+            "polygons": [polygon_series],
+        }
+    )
+
+    # Create converter instance
+    converter_instance = PolygonToBBoxConverter()
+
+    # Set up field specs for xywh format
+    input_polygon_field = PolygonField(
+        dtype=pl.Float32, format="xy", normalize=False, semantic=Semantic.Default
+    )
+    output_bbox_field = BBoxField(
+        dtype=pl.Float32, format="xywh", normalize=False, semantic=Semantic.Default
+    )
+
+    setattr(
+        converter_instance,
+        "input_polygon",
+        AttributeSpec(name="polygons", field=input_polygon_field),
+    )
+    setattr(
+        converter_instance,
+        "output_bbox",
+        AttributeSpec(name="bboxes", field=output_bbox_field),
+    )
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    # Get the bbox data
+    bboxes = result_df["bboxes"][0]
+
+    # Check rectangle bbox in xywh format
+    rectangle_bbox = bboxes[0]
+    assert rectangle_bbox[0] == 30.0  # x (min x)
+    assert rectangle_bbox[1] == 30.0  # y (min y)
+    assert rectangle_bbox[2] == 10.0  # w (width)
+    assert rectangle_bbox[3] == 10.0  # h (height)
+
+
+def test_polygon_to_bbox_converter_normalized():
+    """Test conversion with normalized polygon coordinates."""
+    # Create test data with normalized coordinates (0-1 range)
+    polygon_coords = [[0.3, 0.3], [0.4, 0.3], [0.4, 0.4], [0.3, 0.4]]
+
+    polygon_series = pl.Series([polygon_coords], dtype=pl.List(pl.Array(pl.Float32, 2)))
+
+    df = pl.DataFrame(
+        {
+            "polygons": [polygon_series],
+        }
+    )
+
+    # Create converter instance
+    converter_instance = PolygonToBBoxConverter()
+
+    # Set up field specs with normalized coordinates
+    input_polygon_field = PolygonField(
+        dtype=pl.Float32, format="xy", normalize=True, semantic=Semantic.Default
+    )
+    output_bbox_field = BBoxField(
+        dtype=pl.Float32, format="x1y1x2y2", normalize=True, semantic=Semantic.Default
+    )
+
+    setattr(
+        converter_instance,
+        "input_polygon",
+        AttributeSpec(name="polygons", field=input_polygon_field),
+    )
+    setattr(
+        converter_instance,
+        "output_bbox",
+        AttributeSpec(name="bboxes", field=output_bbox_field),
+    )
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    # Get the bbox data
+    bboxes = result_df["bboxes"][0]
+
+    # Check rectangle bbox with normalized coordinates
+    rectangle_bbox = bboxes[0]
+    assert abs(rectangle_bbox[0] - 0.3) < 1e-6  # x1 (normalized)
+    assert abs(rectangle_bbox[1] - 0.3) < 1e-6  # y1 (normalized)
+    assert abs(rectangle_bbox[2] - 0.4) < 1e-6  # x2 (normalized)
+    assert abs(rectangle_bbox[3] - 0.4) < 1e-6  # y2 (normalized)
+
+
+def test_image_callable_to_image_converter():
+    """Test ImageCallableToImageConverter functionality."""
+    import numpy as np
+
+    # Create a callable that returns a test image
+    def create_test_image():
+        return np.array(
+            [
+                [[255, 0, 0], [0, 255, 0], [0, 0, 255]],
+                [[255, 255, 0], [255, 0, 255], [0, 255, 255]],
+                [[128, 128, 128], [64, 64, 64], [192, 192, 192]],
+            ],
+            dtype=np.uint8,
+        )
+
+    # Create input DataFrame with callable
+    df = pl.DataFrame({"my_callable": [create_test_image]}, schema={"my_callable": pl.Object})
+
+    # Create converter instance
+    converter_instance = ImageCallableToImageConverter()  # type: ignore[call-arg]
+
+    # Set up converter attributes
+    input_field = ImageCallableField(format="RGB", semantic=Semantic.Default)
+    output_field = ImageField(dtype=pl.UInt8, format="RGB", semantic=Semantic.Default)
+    output_info_field = ImageInfoField(semantic=Semantic.Default)
+
+    setattr(
+        converter_instance,
+        "input_callable",
+        AttributeSpec(name="my_callable", field=input_field),
+    )
+    setattr(
+        converter_instance,
+        "output_image",
+        AttributeSpec(name="output_image", field=output_field),
+    )
+    setattr(
+        converter_instance,
+        "output_info",
+        AttributeSpec(name="output_info", field=output_info_field),
+    )
+
+    # Test filter - should return True
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    # Check expected columns exist
+    assert "output_image" in result_df.columns
+    assert "output_image_shape" in result_df.columns
+    assert "output_info" in result_df.columns
+
+    # Check image shape
+    image_shape = result_df["output_image_shape"][0]
+    assert list(image_shape) == [3, 3, 3]  # height, width, channels
+
+    # Check image info
+    image_info = result_df["output_info"][0]
+    assert image_info["width"] == 3
+    assert image_info["height"] == 3
+
+    # Check image data can be reconstructed
+    image_data = result_df["output_image"][0]
+    reconstructed = np.array(image_data, dtype=np.uint8).reshape(list(image_shape))
+    assert reconstructed.shape == (3, 3, 3)
+    assert reconstructed.dtype == np.uint8
+
+
+def test_image_callable_converter_error_handling():
+    """Test error handling in ImageCallableToImageConverter."""
+    import numpy as np
+
+    # Test with callable that returns non-numpy array
+    def bad_callable_1():
+        return "not an array"
+
+    # Test with callable that returns wrong shape
+    def bad_callable_2():
+        return np.array([1, 2, 3, 4])  # 1D array
+
+    # Test with callable that raises exception
+    def bad_callable_3():
+        raise ValueError("Something went wrong")
+
+    # Create converter instance
+    converter_instance = ImageCallableToImageConverter()  # type: ignore[call-arg]
+
+    # Set up converter attributes
+    input_field = ImageCallableField(format="RGB", semantic=Semantic.Default)
+    output_field = ImageField(dtype=pl.UInt8, format="RGB", semantic=Semantic.Default)
+    output_info_field = ImageInfoField(semantic=Semantic.Default)
+
+    setattr(
+        converter_instance,
+        "input_callable",
+        AttributeSpec(name="my_callable", field=input_field),
+    )
+    setattr(
+        converter_instance,
+        "output_image",
+        AttributeSpec(name="output_image", field=output_field),
+    )
+    setattr(
+        converter_instance,
+        "output_info",
+        AttributeSpec(name="output_info", field=output_info_field),
+    )
+
+    # Test TypeError for non-numpy return
+    df1 = pl.DataFrame({"my_callable": [bad_callable_1]}, schema={"my_callable": pl.Object})
+    with pytest.raises(RuntimeError, match="must return numpy.ndarray"):
+        converter_instance.convert(df1)
+
+    # Test ValueError for wrong shape
+    df2 = pl.DataFrame({"my_callable": [bad_callable_2]}, schema={"my_callable": pl.Object})
+    with pytest.raises(RuntimeError, match="must be 3D"):
+        converter_instance.convert(df2)
+
+    # Test exception propagation
+    df3 = pl.DataFrame({"my_callable": [bad_callable_3]}, schema={"my_callable": pl.Object})
+    with pytest.raises(RuntimeError, match="Error executing callable"):
+        converter_instance.convert(df3)
+
+
+def test_image_callable_converter_dtype_handling():
+    """Test dtype handling in ImageCallableToImageConverter."""
+    import numpy as np
+
+    # Test with uint8 image (should work)
+    def uint8_callable():
+        return np.array([[[255, 0, 128]]], dtype=np.uint8)
+
+    # Test with float32 image
+    def float32_callable():
+        return np.array([[[1.0, 0.5, 0.25]]], dtype=np.float32)
+
+    # Create converter instance
+    converter_instance = ImageCallableToImageConverter()  # type: ignore[call-arg]
+
+    # Set up converter attributes for uint8
+    input_field = ImageCallableField(format="RGB", semantic=Semantic.Default)
+    output_field = ImageField(dtype=pl.UInt8, format="RGB", semantic=Semantic.Default)
+    output_info_field = ImageInfoField(semantic=Semantic.Default)
+
+    setattr(
+        converter_instance, "input_callable", AttributeSpec(name="my_callable", field=input_field)
+    )
+    setattr(
+        converter_instance, "output_image", AttributeSpec(name="output_image", field=output_field)
+    )
+    setattr(
+        converter_instance,
+        "output_info",
+        AttributeSpec(name="output_info", field=output_info_field),
+    )
+
+    # Test uint8 image
+    df1 = pl.DataFrame({"my_callable": [uint8_callable]}, schema={"my_callable": pl.Object})
+    result1 = converter_instance.convert(df1)
+    image_data1 = np.array(result1["output_image"][0], dtype=np.uint8).reshape([1, 1, 3])
+    assert image_data1.dtype == np.uint8
+    assert image_data1[0, 0, 0] == 255
+    assert image_data1[0, 0, 1] == 0
+    assert image_data1[0, 0, 2] == 128
+
+    # Test float32 image with different output field
+    output_field_f32 = ImageField(dtype=pl.Float32, format="RGB", semantic=Semantic.Default)
+    setattr(
+        converter_instance,
+        "output_image",
+        AttributeSpec(name="output_image", field=output_field_f32),
+    )
+
+    df2 = pl.DataFrame({"my_callable": [float32_callable]}, schema={"my_callable": pl.Object})
+    result2 = converter_instance.convert(df2)
+    image_info2 = result2["output_info"][0]
+    assert image_info2["width"] == 1  # width
+    assert image_info2["height"] == 1  # height
+
+
+def test_rotated_bbox_to_polygon_converter():
+    """Test conversion from rotated bounding box to polygon format."""
+    import math
+
+    # Create test data with rotated bboxes: [cx, cy, w, h, r]
+    rotated_bbox_coords1 = [50.0, 60.0, 30.0, 20.0, 0.0]  # No rotation
+    rotated_bbox_coords2 = [100.0, 120.0, 40.0, 25.0, math.pi / 4]  # 45 degrees
+
+    rotated_bbox_series = pl.Series(
+        [rotated_bbox_coords1, rotated_bbox_coords2], dtype=pl.Array(pl.Float32, 5)
+    )
+
+    df = pl.DataFrame(
+        {
+            "rotated_bboxes": [rotated_bbox_series],
+        }
+    )
+
+    # Create converter instance
+    converter_instance = RotatedBBoxToPolygonConverter()
+
+    # Set up field specs
+    input_rotated_bbox_field = RotatedBBoxField(
+        dtype=pl.Float32, format="cxcywhr", normalize=False, semantic=Semantic.Default
+    )
+    output_polygon_field = PolygonField(
+        dtype=pl.Float32, format="xy", normalize=False, semantic=Semantic.Default
+    )
+
+    setattr(
+        converter_instance,
+        "input_rotated_bbox",
+        AttributeSpec(name="rotated_bboxes", field=input_rotated_bbox_field),
+    )
+    setattr(
+        converter_instance,
+        "output_polygon",
+        AttributeSpec(name="polygons", field=output_polygon_field),
+    )
+
+    # Test filter - should return True when we have valid input
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    # Check that polygon column was created
+    assert "polygons" in result_df.columns
+
+    # Get the polygon data
+    polygons = result_df["polygons"][0]
+
+    # Check that we have 2 polygons
+    assert len(polygons) == 2
+
+    # Check first polygon (no rotation) - should be axis-aligned rectangle
+    polygon1 = polygons[0]
+    assert len(polygon1) == 4  # Four corners
+
+    # For no rotation, corners should be at predictable positions
+    expected_corners = [
+        [35.0, 50.0],  # bottom-left
+        [65.0, 50.0],  # bottom-right
+        [65.0, 70.0],  # top-right
+        [35.0, 70.0],  # top-left
+    ]
+
+    for expected, actual in zip(expected_corners, polygon1):
+        assert abs(actual[0] - expected[0]) < 1e-5
+        assert abs(actual[1] - expected[1]) < 1e-5
+
+    # Check second polygon (45-degree rotation)
+    polygon2 = polygons[1]
+    assert len(polygon2) == 4  # Four corners

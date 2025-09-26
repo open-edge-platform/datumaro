@@ -16,9 +16,78 @@ from typing import Any, Callable, Union
 import numpy as np
 import polars as pl
 
+from datumaro.components.annotation import Points
+
+
+def polars_to_numpy_dtype(polars_dtype: pl.DataType) -> np.dtype[Any]:
+    """Convert a Polars dtype to the corresponding NumPy dtype.
+
+    Args:
+        polars_dtype: Polars data type to convert
+
+    Returns:
+        Corresponding NumPy dtype
+
+    Raises:
+        TypeError: If no mapping exists for the given Polars dtype
+
+    Example:
+        >>> numpy_dtype = polars_to_numpy_dtype(pl.Float32)
+        >>> numpy_dtype == np.float32
+        True
+    """
+    # Basic numeric types
+    if polars_dtype == pl.Float32:
+        return np.dtype(np.float32)
+    elif polars_dtype == pl.Float64:
+        return np.dtype(np.float64)
+    elif polars_dtype == pl.Int8:
+        return np.dtype(np.int8)
+    elif polars_dtype == pl.Int16:
+        return np.dtype(np.int16)
+    elif polars_dtype == pl.Int32:
+        return np.dtype(np.int32)
+    elif polars_dtype == pl.Int64:
+        return np.dtype(np.int64)
+    elif polars_dtype == pl.UInt8:
+        return np.dtype(np.uint8)
+    elif polars_dtype == pl.UInt16:
+        return np.dtype(np.uint16)
+    elif polars_dtype == pl.UInt32:
+        return np.dtype(np.uint32)
+    elif polars_dtype == pl.UInt64:
+        return np.dtype(np.uint64)
+    elif polars_dtype == pl.Boolean:
+        return np.dtype(np.bool_)
+    elif polars_dtype == pl.Binary:
+        return np.dtype(np.bytes_)
+    else:
+        raise TypeError(f"No NumPy dtype mapping for Polars dtype: {polars_dtype}")
+
+
+def points_to_numpy(x: Points) -> np.ndarray:
+    """
+    Convert a Points object to a numpy array with shape (N, 3),
+    where each row is (x, y, visibility). Default value for points visibility is 2 (visible) if not provided.
+    """
+    return np.array(
+        [
+            (
+                x.points[i * 2],
+                x.points[(i * 2) + 1],
+                x.visibility[i].value if x.visibility is not None else 2,
+            )
+            for i in range(int(len(x.points) / 2))
+        ]
+    )
+
+
 # Type conversion registry - extensible at runtime
 _to_numpy_converters: dict[type, Callable[[Any], np.ndarray[Any, Any]]] = {
     np.ndarray: lambda x: x,
+    bytes: lambda x: np.array(x),
+    list: lambda x: np.array(x),
+    Points: lambda x: points_to_numpy(x),
 }
 
 _from_polars_converters: dict[type, Callable[[Any], Any]] = {
@@ -26,6 +95,7 @@ _from_polars_converters: dict[type, Callable[[Any], Any]] = {
     int: lambda x: int(x),
     float: lambda x: float(x),
     str: lambda x: str(x),
+    bytes: lambda x: bytes(x),
 }
 
 
@@ -86,14 +156,14 @@ def to_numpy(value: Any, dtype: Any = None) -> np.ndarray[Any, Any]:
 
         # Apply dtype conversion if specified
         if dtype is not None:
-            if dtype == pl.Float32:
-                numpy_value = numpy_value.astype(np.float32)
-            elif dtype == pl.Float64:
-                numpy_value = numpy_value.astype(np.float64)
-            elif dtype == pl.Int32:
-                numpy_value = numpy_value.astype(np.int32)
-            elif dtype == pl.Int64:
-                numpy_value = numpy_value.astype(np.int64)
+            if numpy_value.dtype == object:
+                nested_func = np.vectorize(
+                    lambda x: to_numpy(x, dtype), otypes=numpy_value.dtype.char
+                )
+                numpy_value = nested_func(numpy_value)
+            else:
+                target_numpy_dtype = polars_to_numpy_dtype(dtype)
+                numpy_value = numpy_value.astype(target_numpy_dtype)
 
         return numpy_value
 
@@ -168,7 +238,6 @@ try:
     )  # pyright: ignore[reportUnknownMemberType, reportUnknownLambdaType, reportUnknownArgumentType]
 except ImportError:
     pass
-
 
 # Register PIL Image converters if available
 try:

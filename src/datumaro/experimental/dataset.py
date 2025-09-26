@@ -46,6 +46,11 @@ class Sample:
         for key, value in kwargs.items():
             setattr(self, key, value)
 
+        self.__post_init__()
+
+    def __post_init__(self) -> None:
+        pass
+
     def __repr__(self):
         """Return a string representation of the sample."""
         fields = ", ".join(f"{key}={getattr(self, key)}" for key in self.__dict__)
@@ -202,7 +207,12 @@ class Dataset(Generic[DType]):
             series_data.update(attr_info.annotation.to_polars(key, getattr(sample, key)))
 
         new_row = pl.DataFrame(series_data).cast(dict(self.df.schema))  # type: ignore
-        self.df.extend(new_row)
+
+        # Use vstack instead of extend for object columns since extend doesn't support them
+        if any(dtype == pl.Object for dtype in self.df.schema.values()):
+            self.df = self.df.vstack(new_row)
+        else:
+            self.df.extend(new_row)
 
     def __getitem__(self, row_idx: int) -> DType:
         """
@@ -318,16 +328,19 @@ class Dataset(Generic[DType]):
             return Dataset.from_dataframe(self.df, target_dtype_or_schema)
 
         # Find the optimal conversion path using A* search
-        conversion_paths = find_conversion_path(self._schema, target_schema)
+        conversion_paths, inferred_categories = find_conversion_path(self._schema, target_schema)
 
         # Apply batch converters immediately
         converted_df = self.df.clone()
         for converter in conversion_paths.batch_converters:
             converted_df = converter.convert(converted_df)
 
-        # Create new dataset with converted data and new schema using from_dataframe
+        # Create new dataset with converted data and inferred categories
         return Dataset.from_dataframe(
-            converted_df, target_dtype_or_schema, conversion_paths.lazy_converters
+            converted_df,
+            target_dtype_or_schema,
+            conversion_paths.lazy_converters,
+            categories=inferred_categories,
         )
 
 

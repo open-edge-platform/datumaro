@@ -1,25 +1,49 @@
 """Unit tests for legacy dataset conversion functionality."""
 
+import io
+import math
 import tempfile
 from pathlib import Path
 from typing import Any, cast
 
 import numpy as np
 import polars as pl
-import pytest
+from PIL import Image as PILImage
 from typing_extensions import Annotated
 
-from datumaro.components.annotation import AnnotationType, Bbox
+from datumaro.components.annotation import (
+    AnnotationType,
+    Bbox,
+    ExtractedMask,
+    LabelCategories,
+    Points,
+    Polygon,
+    RotatedBbox,
+)
 from datumaro.components.dataset import Dataset as LegacyDataset
 from datumaro.components.dataset_base import CategoriesInfo, DatasetItem
-from datumaro.components.media import Image, ImageFromFile
+from datumaro.components.media import Image, ImageFromData, ImageFromFile, Video
 from datumaro.experimental.dataset import Dataset, Sample
-from datumaro.experimental.fields import bbox_field, image_path_field, tensor_field
+from datumaro.experimental.fields import (
+    ImageInfo,
+    bbox_field,
+    image_path_field,
+    label_field,
+    polygon_field,
+    rotated_bbox_field,
+    tensor_field,
+)
 from datumaro.experimental.legacy import (
     BackwardBboxAnnotationConverter,
     BackwardImageMediaConverter,
+    BackwardPolygonAnnotationConverter,
+    BackwardRotatedBboxAnnotationConverter,
     ForwardBboxAnnotationConverter,
     ForwardImageMediaConverter,
+    ForwardKeypointAnnotationConverter,
+    ForwardMaskAnnotationConverter,
+    ForwardPolygonAnnotationConverter,
+    ForwardRotatedBboxAnnotationConverter,
     analyze_experimental_dataset,
     analyze_legacy_dataset,
     convert_from_legacy,
@@ -29,11 +53,19 @@ from datumaro.experimental.legacy import (
     register_forward_annotation_converter,
     register_forward_media_converter,
 )
+from datumaro.experimental.schema import AttributeInfo, Schema
+from datumaro.util.image import encode_image
 
 
 def test_image_media_converter_get_schema_attributes():
     """Test schema attribute generation for images."""
-    converter = ForwardImageMediaConverter()
+    # Create a simple dataset with file-based images to get the converter
+    items = [DatasetItem(id="test", media=Image.from_file("/path/to/image.jpg"))]
+    dataset = LegacyDataset.from_iterable(items)
+
+    converter = ForwardImageMediaConverter.create(dataset)
+    assert converter is not None
+
     attributes = converter.get_schema_attributes()
 
     assert "image_path" in attributes
@@ -42,7 +74,12 @@ def test_image_media_converter_get_schema_attributes():
 
 def test_image_media_converter_convert_item_media_with_path_and_size():
     """Test media conversion with path and size."""
-    converter = ForwardImageMediaConverter()
+    # Create a dataset to get the converter
+    items = [DatasetItem(id="test", media=Image.from_file("/path/to/image.jpg"))]
+    dataset = LegacyDataset.from_iterable(items)
+
+    converter = ForwardImageMediaConverter.create(dataset)
+    assert converter is not None
 
     image_media = Image.from_file(
         "/path/to/image.jpg", size=(480, 640)
@@ -56,7 +93,12 @@ def test_image_media_converter_convert_item_media_with_path_and_size():
 
 def test_image_media_converter_convert_item_media_with_path_only():
     """Test media conversion with only path."""
-    converter = ForwardImageMediaConverter()
+    # Create a dataset to get the converter
+    items = [DatasetItem(id="test", media=Image.from_file("/path/to/image.jpg"))]
+    dataset = LegacyDataset.from_iterable(items)
+
+    converter = ForwardImageMediaConverter.create(dataset)
+    assert converter is not None
 
     image_media = Image.from_file("/path/to/image.jpg")  # pyright: ignore[reportUnknownMemberType]
 
@@ -68,29 +110,427 @@ def test_image_media_converter_convert_item_media_with_path_only():
 
 def test_image_media_converter_convert_item_media_no_media():
     """Test media conversion with no media."""
-    converter = ForwardImageMediaConverter()
+    # Create a dataset to get the converter
+    items = [DatasetItem(id="test", media=Image.from_file("/path/to/image.jpg"))]
+    dataset = LegacyDataset.from_iterable(items)
+
+    converter = ForwardImageMediaConverter.create(dataset)
+    assert converter is not None
+
     item = DatasetItem(id="test", media=None)
     result = converter.convert_item_media(item)
 
     assert result == {}
 
 
+def test_image_bytes_media_converter_get_schema_attributes():
+    """Test schema attribute generation for image bytes."""
+    # Create test image data
+    test_image = np.random.randint(0, 256, (32, 32, 3), dtype=np.uint8)
+    image_bytes = encode_image(test_image, ".png")
+
+    # Create a dataset with ImageFromBytes media
+    items = [DatasetItem(id="test", media=Image.from_bytes(image_bytes))]
+    dataset = LegacyDataset.from_iterable(items)
+
+    converter = ForwardImageMediaConverter.create(dataset)
+    assert converter is not None
+
+    attributes = converter.get_schema_attributes()
+
+    assert "image_bytes" in attributes
+    assert attributes["image_bytes"].type == bytes
+
+
+def test_image_bytes_media_converter_convert_item_media():
+    """Test media conversion with image bytes."""
+    # Create test image data
+    test_image = np.random.randint(0, 256, (32, 32, 3), dtype=np.uint8)
+    image_bytes = encode_image(test_image, ".png")
+
+    # Create a dataset to get the converter
+    items = [DatasetItem(id="test", media=Image.from_bytes(image_bytes))]
+    dataset = LegacyDataset.from_iterable(items)
+
+    converter = ForwardImageMediaConverter.create(dataset)
+    assert converter is not None
+
+    image_media = Image.from_bytes(image_bytes)
+    item = DatasetItem(id="test", media=image_media)
+    result = converter.convert_item_media(item)
+
+    assert "image_bytes" in result
+    assert isinstance(result["image_bytes"], (bytes, np.ndarray))
+
+
+def test_image_bytes_media_converter_convert_item_media_with_numpy():
+    """Test media conversion with numpy-based image."""
+    # Create test image data
+    test_image = np.random.randint(0, 256, (32, 32, 3), dtype=np.uint8)
+
+    # Create a dataset with ImageFromNumpy media
+    items = [DatasetItem(id="test", media=Image.from_numpy(test_image))]
+    dataset = LegacyDataset.from_iterable(items)
+
+    converter = ForwardImageMediaConverter.create(dataset)
+    assert converter is not None
+
+    image_media = Image.from_numpy(test_image)
+    item = DatasetItem(id="test", media=image_media)
+    result = converter.convert_item_media(item)
+
+    assert "image_bytes" in result
+    assert isinstance(result["image_bytes"], np.ndarray)
+    np.testing.assert_array_equal(result["image_bytes"], test_image)
+
+
+def test_unified_image_converter_handles_file_based_images():
+    """Test that the unified ForwardImageMediaConverter handles file-based images."""
+    # Create a dataset with file-based images
+    items = [DatasetItem(id="test", media=Image.from_file("/path/to/image.jpg"))]
+    dataset = LegacyDataset.from_iterable(items)
+
+    converter = ForwardImageMediaConverter.create(dataset)
+    assert converter is not None
+
+    # Should generate image_path attributes for file-based images
+    attributes = converter.get_schema_attributes()
+    assert "image_path" in attributes
+
+
+def test_unified_image_converter_handles_data_based_images():
+    """Test that the unified ForwardImageMediaConverter handles data-based images."""
+    # Create test image data
+    test_image = np.random.randint(0, 256, (32, 32, 3), dtype=np.uint8)
+    image_bytes = encode_image(test_image, ".png")
+
+    # Create a dataset with data-based images
+    items = [DatasetItem(id="test", media=Image.from_bytes(image_bytes))]
+    dataset = LegacyDataset.from_iterable(items)
+
+    converter = ForwardImageMediaConverter.create(dataset)
+    assert converter is not None
+
+    # Should generate image_bytes attributes for data-based images
+    attributes = converter.get_schema_attributes()
+    assert "image_bytes" in attributes
+
+
+def test_image_converter_with_size_info_includes_image_info_field():
+    """Test that ForwardImageMediaConverter includes ImageInfoField when all images have size."""
+    # Create images with size information
+    items = [
+        DatasetItem(id="test1", media=Image.from_file("/path/to/image1.jpg", size=(480, 640))),
+        DatasetItem(id="test2", media=Image.from_file("/path/to/image2.jpg", size=(720, 1280))),
+    ]
+    dataset = LegacyDataset.from_iterable(items)
+
+    converter = ForwardImageMediaConverter.create(dataset)
+    assert converter is not None
+    assert converter.has_image_info is True
+
+    # Should include both image_path and image_info attributes
+    attributes = converter.get_schema_attributes()
+    assert "image_path" in attributes
+    assert "image_info" in attributes
+    assert attributes["image_info"].type == ImageInfo
+
+
+def test_image_converter_without_size_info_excludes_image_info_field():
+    """Test that ForwardImageMediaConverter excludes ImageInfoField when images don't have size."""
+    # Create images without size information
+    items = [
+        DatasetItem(id="test1", media=Image.from_file("/path/to/image1.jpg")),
+        DatasetItem(id="test2", media=Image.from_file("/path/to/image2.jpg")),
+    ]
+    dataset = LegacyDataset.from_iterable(items)
+
+    converter = ForwardImageMediaConverter.create(dataset)
+    assert converter is not None
+    assert converter.has_image_info is False
+
+    # Should only include image_path attribute, not image_info
+    attributes = converter.get_schema_attributes()
+    assert "image_path" in attributes
+    assert "image_info" not in attributes
+
+
+def test_image_converter_mixed_size_info_excludes_image_info_field():
+    """Test that ForwardImageMediaConverter excludes ImageInfoField when some images lack size."""
+    # Create mixed dataset - some images with size, some without
+    items = [
+        DatasetItem(id="test1", media=Image.from_file("/path/to/image1.jpg", size=(480, 640))),
+        DatasetItem(id="test2", media=Image.from_file("/path/to/image2.jpg")),  # No size
+    ]
+    dataset = LegacyDataset.from_iterable(items)
+
+    converter = ForwardImageMediaConverter.create(dataset)
+    assert converter is not None
+    assert converter.has_image_info is False
+
+    # Should only include image_path attribute, not image_info
+    attributes = converter.get_schema_attributes()
+    assert "image_path" in attributes
+    assert "image_info" not in attributes
+
+
+def test_image_converter_converts_size_info():
+    """Test that ForwardImageMediaConverter properly converts size information."""
+    # Create images with size information
+    items = [DatasetItem(id="test", media=Image.from_file("/path/to/image.jpg", size=(480, 640)))]
+    dataset = LegacyDataset.from_iterable(items)
+
+    converter = ForwardImageMediaConverter.create(dataset)
+    assert converter is not None
+    assert converter.has_image_info is True
+
+    # Test conversion
+    image_media = Image.from_file("/path/to/image.jpg", size=(480, 640))
+    item = DatasetItem(id="test", media=image_media)
+    result = converter.convert_item_media(item)
+
+    assert "image_path" in result
+    assert "image_info" in result
+    assert result["image_path"] == "/path/to/image.jpg"
+    assert isinstance(result["image_info"], ImageInfo)
+    assert result["image_info"].width == 640
+    assert result["image_info"].height == 480
+
+
+def test_image_converter_bytes_with_size_info():
+    """Test ForwardImageMediaConverter with image bytes that have size information."""
+    # Create test image data with size
+    test_image = np.random.randint(0, 256, (64, 128, 3), dtype=np.uint8)
+    image_bytes = encode_image(test_image, ".png")
+
+    # Create images from bytes - they should have size info when loaded
+    items = [DatasetItem(id="test", media=Image.from_bytes(image_bytes))]
+    dataset = LegacyDataset.from_iterable(items)
+
+    converter = ForwardImageMediaConverter.create(dataset)
+    assert converter is not None
+
+    # Test conversion - the exact behavior depends on whether from_bytes has size info
+    image_media = Image.from_bytes(image_bytes)
+    item = DatasetItem(id="test", media=image_media)
+    result = converter.convert_item_media(item)
+
+    assert "image_bytes" in result
+
+    # If the image has size info, it should be included
+    if converter.has_image_info and image_media.has_size:
+        assert "image_info" in result
+        assert isinstance(result["image_info"], ImageInfo)
+        # Note: Image size is (H, W) but ImageInfo expects (width, height)
+        height, width = image_media.size
+        assert result["image_info"].width == width
+        assert result["image_info"].height == height
+
+
+def test_convert_from_legacy_with_image_bytes():
+    """Test full conversion pipeline with ImageFromData images."""
+    # Create test images
+    test_image1 = np.random.randint(0, 256, (32, 32, 3), dtype=np.uint8)
+    test_image2 = np.random.randint(0, 256, (64, 64, 3), dtype=np.uint8)
+
+    # Encode images as bytes
+    image_bytes1 = encode_image(test_image1, ".png")
+    image_bytes2 = encode_image(test_image2, ".jpg")
+
+    # Create dataset items with ImageFromBytes media
+    items = [
+        DatasetItem(id="item1", media=Image.from_bytes(image_bytes1), annotations=[]),
+        DatasetItem(id="item2", media=Image.from_bytes(image_bytes2), annotations=[]),
+    ]
+
+    # Create legacy dataset
+    legacy_dataset = LegacyDataset.from_iterable(items)
+
+    # Convert to experimental format
+    experimental_dataset = convert_from_legacy(legacy_dataset)
+
+    # Verify conversion
+    assert "image_bytes" in experimental_dataset.schema.attributes
+    assert "image_path" not in experimental_dataset.schema.attributes
+
+    # Verify samples
+    assert len(experimental_dataset) == 2
+
+    sample1 = experimental_dataset[0]
+    sample2 = experimental_dataset[1]
+
+    # Check that image_bytes are present
+    assert hasattr(sample1, "image_bytes")
+    assert hasattr(sample2, "image_bytes")
+
+
+def test_convert_from_legacy_with_image_paths():
+    """Test that file-based images still use ImagePathField correctly."""
+    # Create dataset items with ImageFromFile media
+    items = [
+        DatasetItem(id="item1", media=Image.from_file("test1.jpg"), annotations=[]),
+        DatasetItem(id="item2", media=Image.from_file("test2.png"), annotations=[]),
+    ]
+
+    # Create legacy dataset
+    legacy_dataset = LegacyDataset.from_iterable(items)
+
+    # Convert to experimental format
+    experimental_dataset = convert_from_legacy(legacy_dataset)
+
+    # Verify conversion
+    assert "image_path" in experimental_dataset.schema.attributes
+    assert "image_bytes" not in experimental_dataset.schema.attributes
+
+    # Verify samples
+    assert len(experimental_dataset) == 2
+
+    sample1 = experimental_dataset[0]
+    sample2 = experimental_dataset[1]
+
+    # Check that image_path are present
+    assert hasattr(sample1, "image_path")
+    assert hasattr(sample2, "image_path")
+
+
+def test_convert_from_legacy_with_callable_image_data():
+    """Test conversion with ImageFromData containing callable _data."""
+
+    # Create test image bytes
+    test_image1 = np.random.randint(0, 256, (32, 32, 3), dtype=np.uint8)
+    test_image2 = np.random.randint(0, 256, (64, 64, 3), dtype=np.uint8)
+
+    # Create bytes using PIL
+    def create_image_bytes(img_array):
+        pil_image = PILImage.fromarray(img_array)
+        img_bytes = io.BytesIO()
+        pil_image.save(img_bytes, format="PNG")
+        return img_bytes.getvalue()
+
+    image_bytes1 = create_image_bytes(test_image1)
+    image_bytes2 = create_image_bytes(test_image2)
+
+    # Create callables that return these bytes
+    def get_image_bytes1():
+        return image_bytes1
+
+    def get_image_bytes2():
+        return image_bytes2
+
+    # Create dataset items with ImageFromData containing callable _data
+    items = [
+        DatasetItem(id="item1", media=ImageFromData(data=get_image_bytes1), annotations=[]),
+        DatasetItem(id="item2", media=ImageFromData(data=get_image_bytes2), annotations=[]),
+    ]
+
+    # Create legacy dataset
+    legacy_dataset = LegacyDataset.from_iterable(items)
+
+    # Convert to experimental format
+    experimental_dataset = convert_from_legacy(legacy_dataset)
+
+    # Verify conversion uses callable field instead of bytes field
+    assert "image_callable" in experimental_dataset.schema.attributes
+    assert "image_bytes" not in experimental_dataset.schema.attributes
+    assert "image_path" not in experimental_dataset.schema.attributes
+
+    # Verify samples
+    assert len(experimental_dataset) == 2
+
+    sample1 = experimental_dataset[0]
+    sample2 = experimental_dataset[1]
+
+    # Check that image_callable are present and work
+    assert hasattr(sample1, "image_callable")
+    assert hasattr(sample2, "image_callable")
+    assert callable(sample1.image_callable)
+    assert callable(sample2.image_callable)
+
+    # Test that callables return proper image arrays
+    result1 = sample1.image_callable()
+    result2 = sample2.image_callable()
+
+    assert isinstance(result1, np.ndarray)
+    assert isinstance(result2, np.ndarray)
+    assert result1.dtype == np.uint8
+    assert result2.dtype == np.uint8
+    assert result1.shape == (32, 32, 3)
+    assert result2.shape == (64, 64, 3)
+
+
+def test_image_converter_with_mixed_callable_and_bytes_data():
+    """Test that mixed callable and non-callable data uses callable field."""
+
+    # Create test image bytes
+    test_image = np.random.randint(0, 256, (16, 16, 3), dtype=np.uint8)
+    pil_image = PILImage.fromarray(test_image)
+    img_bytes = io.BytesIO()
+    pil_image.save(img_bytes, format="PNG")
+    image_bytes = img_bytes.getvalue()
+
+    def get_image_bytes():
+        return image_bytes
+
+    # Create dataset with mixed callable and non-callable data
+    items = [
+        DatasetItem(
+            id="item1", media=ImageFromData(data=get_image_bytes), annotations=[]
+        ),  # callable
+        DatasetItem(
+            id="item2", media=ImageFromData(data=image_bytes), annotations=[]
+        ),  # non-callable
+    ]
+
+    legacy_dataset = LegacyDataset.from_iterable(items)
+    experimental_dataset = convert_from_legacy(legacy_dataset)
+
+    # Should use callable field (callable takes precedence)
+    assert "image_callable" in experimental_dataset.schema.attributes
+    assert "image_bytes" not in experimental_dataset.schema.attributes
+
+    # Both samples should have working callables
+    sample1 = experimental_dataset[0]
+    sample2 = experimental_dataset[1]
+
+    assert hasattr(sample1, "image_callable")
+    assert hasattr(sample2, "image_callable")
+
+    result1 = sample1.image_callable()
+    result2 = sample2.image_callable()
+
+    assert isinstance(result1, np.ndarray)
+    assert isinstance(result2, np.ndarray)
+    assert result1.shape == (16, 16, 3)
+    assert result2.shape == (16, 16, 3)
+
+
 def test_bbox_annotation_converter_get_schema_attributes():
     """Test schema attribute generation for bboxes."""
-    converter = ForwardBboxAnnotationConverter()
-    categories: CategoriesInfo = {}  # Empty categories
+    # Create a dataset with empty categories
+    dataset = LegacyDataset.from_iterable([], categories={})
+    converter = ForwardBboxAnnotationConverter.create(dataset)
+    assert converter is not None
 
-    attributes = converter.get_schema_attributes(categories)
+    attributes = converter.get_schema_attributes()
 
     assert "bboxes" in attributes
-    assert "bbox_labels" in attributes
+    # bbox_labels should not be present when there are no label categories
+    assert "bbox_labels" not in attributes
     assert attributes["bboxes"].type == np.ndarray
-    assert attributes["bbox_labels"].type == np.ndarray
 
 
 def test_bbox_annotation_converter_convert_annotations_single_bbox():
     """Test conversion of single bbox annotation."""
-    converter = ForwardBboxAnnotationConverter()
+
+    # Create categories with labels to test with labels
+    label_categories = LabelCategories()
+    label_categories.add("class_1")
+    categories: CategoriesInfo = {AnnotationType.label: label_categories}
+
+    # Create a dataset with the categories
+    dataset = LegacyDataset.from_iterable([], categories=categories)
+    converter = ForwardBboxAnnotationConverter.create(dataset)
+    assert converter is not None
 
     bbox = Bbox(10, 20, 30, 40, label=1)  # x=10, y=20, w=30, h=40
     item = DatasetItem(id="test")
@@ -101,12 +541,22 @@ def test_bbox_annotation_converter_convert_annotations_single_bbox():
     expected_labels = np.array([1], dtype=np.int32)
 
     np.testing.assert_array_equal(result["bboxes"], expected_bbox)
-    np.testing.assert_array_equal(result["bbox_labels"], expected_labels)
+    np.testing.assert_array_equal(result["labels"], expected_labels)
 
 
 def test_bbox_annotation_converter_convert_annotations_multiple_bboxes():
     """Test conversion of multiple bbox annotations."""
-    converter = ForwardBboxAnnotationConverter()
+
+    # Create categories with labels
+    label_categories = LabelCategories()
+    label_categories.add("class_1")
+    label_categories.add("class_2")
+    categories: CategoriesInfo = {AnnotationType.label: label_categories}
+
+    # Create a dataset with the categories
+    dataset = LegacyDataset.from_iterable([], categories=categories)
+    converter = ForwardBboxAnnotationConverter.create(dataset)
+    assert converter is not None
 
     bbox1 = Bbox(10, 20, 30, 40, label=1)
     bbox2 = Bbox(50, 60, 70, 80, label=2)
@@ -124,12 +574,15 @@ def test_bbox_annotation_converter_convert_annotations_multiple_bboxes():
     expected_labels = np.array([1, 2], dtype=np.int32)
 
     np.testing.assert_array_equal(result["bboxes"], expected_bboxes)
-    np.testing.assert_array_equal(result["bbox_labels"], expected_labels)
+    np.testing.assert_array_equal(result["labels"], expected_labels)
 
 
 def test_bbox_annotation_converter_convert_annotations_empty_list():
     """Test conversion of empty annotation list."""
-    converter = ForwardBboxAnnotationConverter()
+    # Create a dataset with empty categories
+    dataset = LegacyDataset.from_iterable([], categories={})
+    converter = ForwardBboxAnnotationConverter.create(dataset)
+    assert converter is not None
     item = DatasetItem(id="test")
 
     result = converter.convert_annotations([], item)
@@ -137,8 +590,8 @@ def test_bbox_annotation_converter_convert_annotations_empty_list():
     # Empty arrays with proper shapes
     assert result["bboxes"].shape == (0, 4)
     assert result["bboxes"].dtype == np.float32
-    assert result["bbox_labels"].shape == (0,)
-    assert result["bbox_labels"].dtype == np.int32
+    # No bbox_labels should be present when there are no categories
+    assert "bbox_labels" not in result
 
 
 # Converter registry tests
@@ -146,34 +599,43 @@ def test_bbox_annotation_converter_convert_annotations_empty_list():
 
 def test_register_and_get_media_converter():
     """Test media converter registration and retrieval."""
-    converter = ForwardImageMediaConverter()
-    register_forward_media_converter(Image, converter)
+    register_forward_media_converter(ForwardImageMediaConverter)
 
-    retrieved = get_forward_media_converter(Image)
-    assert retrieved is converter
+    # Create a dataset with file-based images
+    items = [DatasetItem(id="test", media=Image.from_file("/path/to/image.jpg"))]
+    dataset = LegacyDataset.from_iterable(items)
+
+    retrieved = get_forward_media_converter(dataset)
+    assert retrieved is not None
+    assert isinstance(retrieved, ForwardImageMediaConverter)
 
 
 def test_register_and_get_annotation_converter():
     """Test annotation converter registration and retrieval."""
-    converter = ForwardBboxAnnotationConverter()
-    register_forward_annotation_converter(AnnotationType.bbox, converter)
+    register_forward_annotation_converter(ForwardBboxAnnotationConverter)
 
-    retrieved = get_forward_annotation_converter(AnnotationType.bbox)
-    assert retrieved is converter
+    # Create a dataset with empty categories
+    dataset = LegacyDataset.from_iterable([], categories={})
+    retrieved = get_forward_annotation_converter(AnnotationType.bbox, dataset)
+    assert retrieved is not None
+    assert isinstance(retrieved, ForwardBboxAnnotationConverter)
 
 
 def test_get_nonexistent_media_converter():
-    """Test getting converter for unregistered media type."""
-    from datumaro.components.media import Video
+    """Test getting converter for unsupported dataset."""
+    # Create a dataset with Video media (not supported by current converters)
+    items = [DatasetItem(id="test", media=Video("/path/to/video.mp4"))]
+    dataset = LegacyDataset.from_iterable(items, media_type=Video)
 
-    with pytest.raises(ValueError, match="No converter registered for media type"):
-        get_forward_media_converter(Video)
+    retrieved = get_forward_media_converter(dataset)
+    assert retrieved is None
 
 
 def test_get_nonexistent_annotation_converter():
     """Test getting converter for unregistered annotation type."""
-    with pytest.raises(ValueError, match="No converter registered for annotation type"):
-        get_forward_annotation_converter(AnnotationType.polygon)
+    dataset = LegacyDataset.from_iterable([], categories={})
+    converter = get_forward_annotation_converter(AnnotationType.unknown, dataset)
+    assert converter is None
 
 
 def test_analyze_image_and_bbox_dataset():
@@ -188,8 +650,15 @@ def test_analyze_image_and_bbox_dataset():
         bbox = Bbox(10, 20, 30, 40, label=1)
         item = DatasetItem(id="item1", media=image_media, annotations=[bbox])
 
+        # Create dataset with label categories
+        label_categories = LabelCategories()
+        label_categories.add("background")
+        label_categories.add("class_1")
+
         dataset = LegacyDataset.from_iterable(
-            [item], ann_types={AnnotationType.bbox}
+            [item],
+            ann_types={AnnotationType.bbox},
+            categories={AnnotationType.label: label_categories},
         )  # pyright: ignore[reportUnknownMemberType]
 
         analysis_result = analyze_legacy_dataset(dataset)
@@ -197,7 +666,7 @@ def test_analyze_image_and_bbox_dataset():
         # Should have image and bbox attributes
         assert "image_path" in analysis_result.schema.attributes
         assert "bboxes" in analysis_result.schema.attributes
-        assert "bbox_labels" in analysis_result.schema.attributes
+        assert "labels" in analysis_result.schema.attributes
 
 
 def test_analyze_image_only_dataset():
@@ -226,25 +695,25 @@ def test_analyze_unknown_annotation_type():
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_path = Path(temp_dir)
 
-        # Polygon annotation (not registered)
-        from datumaro.components.annotation import Polygon
-
         image_path = str(temp_path / "image1.jpg")
         image_media = Image.from_file(
             image_path, size=(480, 640)
         )  # pyright: ignore[reportUnknownMemberType]
-        polygon = Polygon([10, 20, 30, 40, 50, 60], label=1)
-        item = DatasetItem(id="item1", media=image_media, annotations=[polygon])
 
-        dataset = LegacyDataset.from_iterable(
-            [item], ann_types={AnnotationType.polygon}
-        )  # pyright: ignore[reportUnknownMemberType]
+        class UnknownAnnotation(Bbox):
+            _type = AnnotationType.unknown
+
+        bbox = UnknownAnnotation(10, 20, 30, 40, label=1)
+        item = DatasetItem(id="item1", media=image_media, annotations=[bbox])
+
+        dataset = LegacyDataset.from_iterable([item])  # pyright: ignore[reportUnknownMemberType]
 
         analysis_result = analyze_legacy_dataset(dataset)
 
         # Should skip unknown annotation type
         assert "image_path" in analysis_result.schema.attributes
-        assert len(analysis_result.schema.attributes) == 1  # Only image_path field
+        assert "image_info" in analysis_result.schema.attributes
+        assert len(analysis_result.schema.attributes) == 2  # Only image_path and image_info field
 
 
 def test_convert_simple_bbox_dataset():
@@ -262,8 +731,16 @@ def test_convert_simple_bbox_dataset():
 
         item1 = DatasetItem(id="item1", media=image_media, annotations=[bbox1, bbox2])
 
+        # Create dataset with label categories so bbox_labels will be present
+        label_categories = LabelCategories()
+        label_categories.add("background")
+        label_categories.add("class_1")
+        label_categories.add("class_2")
+
         dataset = LegacyDataset.from_iterable(
-            [item1], ann_types={AnnotationType.bbox}
+            [item1],
+            ann_types={AnnotationType.bbox},
+            categories={AnnotationType.label: label_categories},
         )  # pyright: ignore[reportUnknownMemberType]
 
         # Convert dataset
@@ -277,7 +754,7 @@ def test_convert_simple_bbox_dataset():
         assert hasattr(sample, "image_path")
         assert Path(getattr(sample, "image_path")) == Path(image_path)
         assert hasattr(sample, "bboxes")
-        assert hasattr(sample, "bbox_labels")
+        assert hasattr(sample, "labels")
 
         expected_bboxes = np.array(
             [
@@ -289,7 +766,44 @@ def test_convert_simple_bbox_dataset():
         expected_labels = np.array([1, 2], dtype=np.int32)
 
         np.testing.assert_array_equal(getattr(sample, "bboxes"), expected_bboxes)
-        np.testing.assert_array_equal(getattr(sample, "bbox_labels"), expected_labels)
+        np.testing.assert_array_equal(getattr(sample, "labels"), expected_labels)
+
+
+def test_convert_mask_dataset():
+    """Test conversion of dataset with semantic segmentation masks."""
+    # Create a simple mask annotation
+    mask_data = np.array([[0, 1], [1, 2]], dtype=np.uint8)
+    mask1 = ExtractedMask(index_mask=mask_data, index=1, label=1)
+    mask2 = ExtractedMask(index_mask=mask_data, index=2, label=2)
+
+    # Create annotations list
+    annotations = [mask1, mask2]
+
+    # Create label categories
+    categories = {AnnotationType.label: LabelCategories.from_iterable(["bg", "cat", "dog"])}
+
+    # Create dataset item with the mask
+    item = DatasetItem(id="item1", annotations=annotations)
+    dataset = LegacyDataset.from_iterable(
+        [item], categories=categories
+    )  # pyright: ignore[reportUnknownMemberType]
+
+    # Convert to experimental dataset
+    experimental_ds = convert_from_legacy(dataset)
+
+    # Check conversion results
+    assert len(experimental_ds.df) == 1
+    sample = experimental_ds[0]
+
+    # Should have mask_callable and labels attributes
+    assert hasattr(sample, "mask_callable")
+    assert callable(getattr(sample, "mask_callable"))
+    assert not hasattr(sample, "labels")
+
+    # Verify mask data
+    mask_callable = getattr(sample, "mask_callable")
+    output_mask_data = mask_callable()
+    np.testing.assert_array_equal(mask_data, output_mask_data)
 
 
 def test_convert_empty_dataset():
@@ -327,10 +841,16 @@ def test_convert_image_only_dataset():
 
 def test_builtin_converters_registration():
     """Test that built-in converters are registered on import."""
-    image_converter = get_forward_media_converter(Image)
+    # Create a dataset with file-based images
+    items = [DatasetItem(id="test", media=Image.from_file("/path/to/image.jpg"))]
+    dataset = LegacyDataset.from_iterable(items)
+
+    image_converter = get_forward_media_converter(dataset)
+    assert image_converter is not None
     assert isinstance(image_converter, ForwardImageMediaConverter)
 
-    bbox_converter = get_forward_annotation_converter(AnnotationType.bbox)
+    bbox_converter = get_forward_annotation_converter(AnnotationType.bbox, dataset)
+    assert bbox_converter is not None
     assert isinstance(bbox_converter, ForwardBboxAnnotationConverter)
 
 
@@ -340,7 +860,19 @@ class DetectionSample(Sample):
     bboxes: Annotated[
         np.ndarray[Any, np.dtype[np.float32]], bbox_field(dtype=pl.Float32, format="x1y1x2y2")
     ]
-    bbox_labels: Annotated[np.ndarray[Any, np.dtype[np.int32]], tensor_field(dtype=pl.Int32)]
+    bbox_labels: Annotated[
+        np.ndarray[Any, np.dtype[np.int32]], label_field(dtype=pl.Int32, multi_label=True)
+    ]
+
+
+class RotatedDetectionSample(Sample):
+    image_path: Annotated[str, image_path_field()]
+    rotated_bboxes: Annotated[
+        np.ndarray[Any, np.dtype[np.float32]], rotated_bbox_field(dtype=pl.Float32)
+    ]
+    rotated_bbox_labels: Annotated[
+        np.ndarray[Any, np.dtype[np.int32]], label_field(dtype=pl.Int32, multi_label=True)
+    ]
 
 
 def test_convert_to_legacy_simple():
@@ -443,8 +975,6 @@ def test_backward_image_media_converter_create_from_schema():
 
 def test_backward_image_media_converter_create_from_schema_no_image_field():
     """Test BackwardImageMediaConverter with schema that has no image field."""
-    from datumaro.experimental.fields import tensor_field
-    from datumaro.experimental.schema import AttributeInfo, Schema
 
     # Create schema without image_path field
     schema = Schema(
@@ -498,8 +1028,6 @@ def test_backward_bbox_annotation_converter_create_from_schema():
 
 def test_backward_bbox_annotation_converter_create_from_schema_missing_fields():
     """Test BackwardBboxAnnotationConverter with incomplete schema."""
-    from datumaro.experimental.fields import image_path_field
-    from datumaro.experimental.schema import AttributeInfo, Schema
 
     # Create schema without bbox fields
     schema = Schema(
@@ -508,6 +1036,87 @@ def test_backward_bbox_annotation_converter_create_from_schema_missing_fields():
 
     converter = BackwardBboxAnnotationConverter.create_from_schema(schema)
     assert converter is None
+
+
+def test_forward_instance_mask_annotation_converter():
+    """Test instance mask annotation forward conversion."""
+    # Create a sample mask and index
+    index_mask_data = np.array([[0, 1], [1, 2]], dtype=np.uint8)
+    mask1 = ExtractedMask(index_mask=index_mask_data, index=1, label=0)
+    mask2 = ExtractedMask(index_mask=index_mask_data, index=2, label=1)
+
+    # Create annotations list
+    annotations = [mask1, mask2]
+
+    # Create test item
+    item = DatasetItem(id="test", annotations=annotations)
+
+    # Create label categories
+    label_categories = LabelCategories()
+    label_categories.add("class_0")
+    label_categories.add("class_1")
+    categories = {AnnotationType.label: label_categories}
+
+    # Create a dataset with the categories
+    dataset = LegacyDataset.from_iterable([item], categories=categories)
+    converter = ForwardMaskAnnotationConverter.create(dataset)
+    assert converter is not None
+
+    # Get schema attributes
+    attributes = converter.get_schema_attributes()
+    assert "instance_mask_callable" in attributes
+    assert "labels" in attributes
+
+    # Convert annotations
+    result = converter.convert_annotations(annotations, item)
+
+    # Check result
+    assert "instance_mask_callable" in result
+    assert "labels" in result
+
+    # Test instance mask callables
+    assert callable(result["instance_mask_callable"])  # One callable for shared index mask
+    instance_masks = result["instance_mask_callable"]()
+
+    # Verify shape and content of instance masks
+    assert instance_masks.shape == (2, 2, 2)  # (N=2 instances, H=2, W=2)
+    assert np.array_equal(instance_masks[0], index_mask_data == 1)  # First instance
+    assert np.array_equal(instance_masks[1], index_mask_data == 2)  # Second instance
+
+    # Verify labels
+    print("RESULT", result["labels"])
+    assert np.array_equal(result["labels"], np.array([0, 1], dtype=np.int32))
+
+
+def test_forward_mask_annotation_converter_empty():
+    """Test instance mask annotation forward conversion with no masks."""
+    # Create empty annotations list
+    annotations: list = []
+
+    # Create test item
+    item = DatasetItem(id="test", annotations=annotations)
+
+    # Create label categories
+    label_categories = LabelCategories()
+    label_categories.add("class_0")
+    categories = {AnnotationType.label: label_categories}
+
+    # Create a dataset with the categories
+    dataset = LegacyDataset.from_iterable([], categories=categories)
+    converter = ForwardMaskAnnotationConverter.create(dataset)
+    assert converter is not None
+
+    # Convert annotations
+    result = converter.convert_annotations(annotations, item)
+
+    # Check result
+    assert "instance_mask_callable" not in result
+    assert "mask_callable" in result
+    assert "labels" not in result
+
+    mask = result["mask_callable"]()
+
+    assert mask.shape == (0, 0)  # No callables for empty masks
 
 
 def test_backward_bbox_annotation_converter_convert_to_legacy_annotations():
@@ -638,7 +1247,6 @@ def test_analyze_experimental_dataset():
 
 def test_analyze_experimental_dataset_no_compatible_converters():
     """Test analysis with dataset that has no compatible backward converters."""
-    from datumaro.experimental.fields import tensor_field
 
     # Create a custom sample type without image_path or bbox fields
     class CustomSample(Sample):
@@ -663,7 +1271,6 @@ def test_analyze_experimental_dataset_no_compatible_converters():
 
 def test_convert_to_legacy_with_only_images():
     """Test convert_to_legacy with dataset containing only images."""
-    from datumaro.experimental.fields import image_path_field
 
     # Define schema with only image_path
     class ImageOnlySample(Sample):
@@ -698,3 +1305,598 @@ def test_convert_to_legacy_with_only_images():
     assert isinstance(second_item_media, ImageFromFile)
     assert second_item_media.path == "/path/to/image2.jpg"
     assert len(second_item.annotations) == 0
+
+
+def test_forward_polygon_annotation_converter_get_schema_attributes():
+    """Test schema attribute generation for polygons."""
+    # Create a dataset with empty categories
+    dataset = LegacyDataset.from_iterable([], categories={})
+    converter = ForwardPolygonAnnotationConverter.create(dataset)
+    assert converter is not None
+    attributes = converter.get_schema_attributes()
+
+    assert "polygons" in attributes
+    # polygon_labels should not be present when there are no label categories
+    assert "polygon_labels" not in attributes
+    assert attributes["polygons"].type == np.ndarray
+
+
+def test_forward_polygon_annotation_converter_convert_annotations():
+    """Test polygon annotation conversion."""
+
+    # Create categories with labels
+    label_categories = LabelCategories()
+    label_categories.add("class_1")
+    label_categories.add("class_2")
+    categories: CategoriesInfo = {AnnotationType.label: label_categories}
+
+    # Create a dataset with the categories
+    dataset = LegacyDataset.from_iterable([], categories=categories)
+    converter = ForwardPolygonAnnotationConverter.create(dataset)
+    assert converter is not None
+
+    # Create polygon annotations with flat coordinates
+    triangle = Polygon(points=[0, 0, 10, 0, 5, 10], label=1)  # Triangle as flat list
+    rectangle = Polygon(points=[20, 20, 30, 20, 30, 30, 20, 30], label=2)  # Rectangle as flat list
+
+    annotations = [triangle, rectangle]
+    item = DatasetItem(id="test")
+
+    result = converter.convert_annotations(annotations, item)
+
+    assert "polygons" in result
+    assert "labels" in result
+
+    # Check polygon data
+    polygons = result["polygons"]
+    assert len(polygons) == 2
+
+    # First polygon (triangle): [0,0,10,0,5,10] -> [0,0,10,0,5,10]
+    assert np.all(polygons[0] == [[0, 0], [10, 0], [5, 10]])
+
+    # Second polygon (rectangle): [20,20,30,20,30,30,20,30] -> [20,20,30,20,30,30,20,30]
+    assert np.all(polygons[1] == [[20, 20], [30, 20], [30, 30], [20, 30]])
+
+    # Check labels
+    labels = result["labels"]
+    assert len(labels) == 2
+    assert labels[0] == 1
+    assert labels[1] == 2
+
+
+def test_backward_polygon_annotation_converter_create_from_schema():
+    """Test BackwardPolygonAnnotationConverter schema detection."""
+
+    # Create schema with polygon fields
+    schema = Schema(
+        attributes={
+            "polygons": AttributeInfo(type=list, annotation=polygon_field(dtype=pl.Float32)),
+            "polygon_labels": AttributeInfo(
+                type=np.ndarray, annotation=label_field(dtype=pl.Int32, multi_label=True)
+            ),
+        }
+    )
+
+    converter = BackwardPolygonAnnotationConverter.create_from_schema(schema)
+    assert converter is not None
+    assert converter.polygons_attr == "polygons"
+    assert converter.polygon_labels_attr == "polygon_labels"
+
+
+def test_backward_polygon_annotation_converter_convert_to_legacy():
+    """Test conversion from experimental to legacy polygon annotations."""
+    converter = BackwardPolygonAnnotationConverter("polygons", "polygon_labels")
+
+    # Create sample with polygon data
+    class TestSample(Sample):
+        pass
+
+    sample = TestSample()
+    # Simulate polygon data: triangle and rectangle
+    sample.polygons = np.array(
+        [
+            np.array([[0, 0], [10, 0], [5, 10]], dtype=np.float32),
+            np.array([[20, 20], [30, 20], [30, 30], [20, 30]], dtype=np.float32),
+        ],
+        dtype=object,
+    )
+    sample.polygon_labels = np.array([1, 2], dtype=np.int32)
+
+    categories: CategoriesInfo = {}
+    result = converter.convert_to_legacy_annotations(sample, categories)
+
+    assert len(result) == 2
+
+    # Check first polygon (triangle)
+    poly1 = result[0]
+    assert isinstance(poly1, Polygon)
+    assert poly1.points == [0.0, 0.0, 10.0, 0.0, 5.0, 10.0]  # Flat coordinate format
+    assert poly1.label == 1
+
+    # Check second polygon (rectangle)
+    poly2 = result[1]
+    assert isinstance(poly2, Polygon)
+    assert poly2.points == [
+        20.0,
+        20.0,
+        30.0,
+        20.0,
+        30.0,
+        30.0,
+        20.0,
+        30.0,
+    ]  # Flat coordinate format
+    assert poly2.label == 2
+
+
+def test_polygon_conversion_with_labels():
+    """Test polygon conversion between legacy and experimental formats with label categories."""
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_path = Path(temp_dir)
+
+        # Create an image file for the test
+        image_path = str(temp_path / "image1.jpg")
+        image_media = Image.from_file(
+            image_path, size=(480, 640)
+        )  # pyright: ignore[reportUnknownMemberType]
+
+        # Create polygon annotations with different shapes
+        triangle = Polygon(points=[10, 20, 30, 25, 20, 40], label=1)  # Triangle
+        rectangle = Polygon(points=[50, 60, 80, 60, 80, 90, 50, 90], label=2)  # Rectangle
+
+        item = DatasetItem(id="polygon_test", media=image_media, annotations=[triangle, rectangle])
+
+        # Create label categories
+
+        label_categories = LabelCategories()
+        label_categories.add("background")
+        label_categories.add("triangle_class")
+        label_categories.add("rectangle_class")
+
+        # Create legacy dataset with categories
+        legacy_dataset = LegacyDataset.from_iterable(
+            [item],
+            ann_types={AnnotationType.polygon},
+            categories={AnnotationType.label: label_categories},
+        )  # pyright: ignore[reportUnknownMemberType]
+
+        # Convert to experimental format
+        experimental_dataset = convert_from_legacy(legacy_dataset)
+
+        # Verify experimental dataset structure
+        assert len(experimental_dataset) == 1
+        exp_sample = experimental_dataset[0]
+
+        # Check that polygons and labels are present
+        assert hasattr(exp_sample, "polygons")
+        assert hasattr(exp_sample, "labels")
+
+        # Check polygon data
+        assert len(exp_sample.polygons) == 2
+        assert np.all(exp_sample.polygons[0] == [[10, 20], [30, 25], [20, 40]])  # Triangle
+        assert np.all(
+            exp_sample.polygons[1] == [[50, 60], [80, 60], [80, 90], [50, 90]]
+        )  # Rectangle
+
+        # Check labels
+        np.testing.assert_array_equal(exp_sample.labels, [1, 2])
+
+        # Convert back to legacy format
+        restored_legacy_dataset = convert_to_legacy(experimental_dataset)
+
+        # Verify restored dataset
+        restored_items = list(restored_legacy_dataset)
+        assert len(restored_items) == 1
+
+        restored_item = restored_items[0]
+        assert len(restored_item.annotations) == 2
+
+        # Check restored polygons
+        polygon_anns = [ann for ann in restored_item.annotations if isinstance(ann, Polygon)]
+        assert len(polygon_anns) == 2
+
+        # Sort by label for consistent comparison
+        polygon_anns.sort(key=lambda x: x.label)
+
+        # Verify triangle
+        assert polygon_anns[0].points == [10, 20, 30, 25, 20, 40]
+        assert polygon_anns[0].label == 1
+
+        # Verify rectangle
+        assert polygon_anns[1].points == [50, 60, 80, 60, 80, 90, 50, 90]
+        assert polygon_anns[1].label == 2
+
+
+def test_polygon_conversion_without_labels():
+    """Test polygon conversion when no label categories are present."""
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_path = Path(temp_dir)
+
+        # Create an image file for the test
+        image_path = str(temp_path / "image1.jpg")
+        image_media = Image.from_file(
+            image_path, size=(480, 640)
+        )  # pyright: ignore[reportUnknownMemberType]
+
+        # Create polygon annotation without label categories
+        triangle = Polygon(points=[10, 20, 30, 25, 20, 40])  # No label
+
+        item = DatasetItem(id="polygon_no_labels", media=image_media, annotations=[triangle])
+
+        # Create legacy dataset without label categories
+        legacy_dataset = LegacyDataset.from_iterable(
+            [item], ann_types={AnnotationType.polygon}
+        )  # pyright: ignore[reportUnknownMemberType]
+
+        # Convert to experimental format
+        experimental_dataset = convert_from_legacy(legacy_dataset)
+
+        # Verify experimental dataset structure
+        assert len(experimental_dataset) == 1
+        exp_sample = experimental_dataset[0]
+
+        # Check that polygons is present but polygon_labels is not
+        assert hasattr(exp_sample, "polygons")
+        assert not hasattr(exp_sample, "polygon_labels")
+
+        # Check polygon data
+        assert len(exp_sample.polygons) == 1
+        assert np.all(exp_sample.polygons[0] == [[10, 20], [30, 25], [20, 40]])
+
+        # Convert back to legacy format
+        restored_legacy_dataset = convert_to_legacy(experimental_dataset)
+
+        # Verify restored dataset
+        restored_items = list(restored_legacy_dataset)
+        assert len(restored_items) == 1
+
+        restored_item = restored_items[0]
+        assert len(restored_item.annotations) == 1
+
+        # Check restored polygon
+        polygon_anns = [ann for ann in restored_item.annotations if isinstance(ann, Polygon)]
+        assert len(polygon_anns) == 1
+
+        restored_polygon = polygon_anns[0]
+        assert restored_polygon.points == [10, 20, 30, 25, 20, 40]
+        assert restored_polygon.label is None
+
+
+def test_forward_rotated_bbox_annotation_converter_get_schema_attributes():
+    """Test schema attribute generation for rotated bboxes."""
+    # Create a dataset with empty categories
+    dataset = LegacyDataset.from_iterable([], categories={})
+    converter = ForwardRotatedBboxAnnotationConverter.create(dataset)
+    assert converter is not None
+    attributes = converter.get_schema_attributes()
+
+    assert "rotated_bboxes" in attributes
+    # rotated_bbox_labels should not be present when there are no label categories
+    assert "rotated_bbox_labels" not in attributes
+    assert attributes["rotated_bboxes"].type == np.ndarray
+
+
+def test_forward_rotated_bbox_annotation_converter_convert_annotations():
+    """Test rotated bbox annotation conversion."""
+
+    # Create categories with labels
+    label_categories = LabelCategories()
+    label_categories.add("class_1")
+    label_categories.add("class_2")
+    categories: CategoriesInfo = {AnnotationType.label: label_categories}
+
+    # Create a dataset with the categories
+    dataset = LegacyDataset.from_iterable([], categories=categories)
+    converter = ForwardRotatedBboxAnnotationConverter.create(dataset)
+    assert converter is not None
+
+    # Create rotated bbox annotations: RotatedBbox(cx, cy, w, h, r_degrees, ...)
+    rotated_bbox1 = RotatedBbox(50, 60, 30, 20, 45.0, label=0)  # 45 degrees
+    rotated_bbox2 = RotatedBbox(100, 120, 40, 25, -30.0, label=1)  # -30 degrees
+
+    annotations = [rotated_bbox1, rotated_bbox2]
+    item = DatasetItem(id="test")
+
+    result = converter.convert_annotations(annotations, item)
+
+    assert "rotated_bboxes" in result
+    assert "rotated_bbox_labels" in result
+
+    # Check rotated bbox data (should be converted to radians)
+    rotated_bboxes = result["rotated_bboxes"]
+    assert len(rotated_bboxes) == 2
+
+    # First rotated bbox: (50, 60, 30, 20, 45°) -> (50, 60, 30, 20, π/4 radians)
+    assert abs(rotated_bboxes[0, 0] - 50.0) < 1e-6
+    assert abs(rotated_bboxes[0, 1] - 60.0) < 1e-6
+    assert abs(rotated_bboxes[0, 2] - 30.0) < 1e-6
+    assert abs(rotated_bboxes[0, 3] - 20.0) < 1e-6
+    assert abs(rotated_bboxes[0, 4] - math.radians(45.0)) < 1e-6
+
+    # Second rotated bbox: (100, 120, 40, 25, -30°) -> (100, 120, 40, 25, -π/6 radians)
+    assert abs(rotated_bboxes[1, 0] - 100.0) < 1e-6
+    assert abs(rotated_bboxes[1, 1] - 120.0) < 1e-6
+    assert abs(rotated_bboxes[1, 2] - 40.0) < 1e-6
+    assert abs(rotated_bboxes[1, 3] - 25.0) < 1e-6
+    assert abs(rotated_bboxes[1, 4] - math.radians(-30.0)) < 1e-6
+
+    # Check labels
+    labels = result["rotated_bbox_labels"]
+    assert len(labels) == 2
+    assert labels[0] == 0
+    assert labels[1] == 1
+
+
+def test_backward_rotated_bbox_annotation_converter_create_from_schema():
+    """Test backward rotated bbox converter creation from schema."""
+
+    # Create schema with rotated bbox attributes
+    attributes = {
+        "rotated_bboxes": AttributeInfo(
+            type=np.ndarray,
+            annotation=rotated_bbox_field(dtype=pl.Float32),
+        ),
+        "rotated_bbox_labels": AttributeInfo(
+            type=np.ndarray,
+            annotation=label_field(is_list=True),
+        ),
+    }
+    schema = Schema(attributes=attributes)
+
+    converter = BackwardRotatedBboxAnnotationConverter.create_from_schema(schema)
+    assert converter is not None
+    assert converter.rotated_bboxes_attr == "rotated_bboxes"
+    assert converter.rotated_bbox_labels_attr == "rotated_bbox_labels"
+
+
+def test_backward_rotated_bbox_annotation_converter_convert_to_legacy():
+    """Test backward conversion from experimental to legacy rotated bbox format."""
+
+    # Create experimental dataset with rotated bbox data
+    rotated_bbox_data = np.array(
+        [
+            [50.0, 60.0, 30.0, 20.0, math.radians(45.0)],  # 45 degrees in radians
+            [100.0, 120.0, 40.0, 25.0, math.radians(-30.0)],  # -30 degrees in radians
+        ],
+        dtype=np.float32,
+    )
+
+    label_data = np.array([0, 1], dtype=np.int32)
+
+    # Create experimental dataset and add sample with rotated bbox data
+    experimental_dataset = Dataset(RotatedDetectionSample)
+
+    sample = RotatedDetectionSample(
+        image_path="/path/to/test.jpg",
+        rotated_bboxes=rotated_bbox_data,
+        rotated_bbox_labels=label_data,
+    )
+    experimental_dataset.append(sample)
+
+    # Create categories for testing
+    categories: CategoriesInfo = {
+        AnnotationType.label: LabelCategories(),
+    }
+
+    # Create converter
+    attributes = {
+        "rotated_bboxes": AttributeInfo(
+            type=np.ndarray,
+            annotation=rotated_bbox_field(dtype=pl.Float32),
+        ),
+        "rotated_bbox_labels": AttributeInfo(
+            type=np.ndarray,
+            annotation=label_field(is_list=True),
+        ),
+    }
+    schema = Schema(attributes=attributes)
+
+    converter = BackwardRotatedBboxAnnotationConverter.create_from_schema(schema)
+    assert converter is not None
+
+    # Convert to legacy annotations
+    annotations = converter.convert_to_legacy_annotations(sample, categories)
+
+    # Check results
+    assert len(annotations) == 2
+
+    # Check first rotated bbox (should be converted back to degrees)
+    rotated_bbox1 = annotations[0]
+    assert isinstance(rotated_bbox1, RotatedBbox)
+    assert abs(rotated_bbox1.cx - 50.0) < 1e-5
+    assert abs(rotated_bbox1.cy - 60.0) < 1e-5
+    assert abs(rotated_bbox1.w - 30.0) < 1e-5
+    assert abs(rotated_bbox1.h - 20.0) < 1e-5
+    assert abs(rotated_bbox1.r - 45.0) < 1e-5  # Back to degrees
+    assert rotated_bbox1.label == 0
+
+    # Check second rotated bbox
+    rotated_bbox2 = annotations[1]
+    assert isinstance(rotated_bbox2, RotatedBbox)
+    assert abs(rotated_bbox2.cx - 100.0) < 1e-5
+    assert abs(rotated_bbox2.cy - 120.0) < 1e-5
+    assert abs(rotated_bbox2.w - 40.0) < 1e-5
+    assert abs(rotated_bbox2.h - 25.0) < 1e-5
+    assert abs(rotated_bbox2.r - (-30.0)) < 1e-5  # Back to degrees
+    assert rotated_bbox2.label == 1
+
+
+def test_rotated_bbox_conversion_with_labels():
+    """Test end-to-end rotated bbox conversion with labels."""
+
+    # Create legacy dataset with rotated bbox and label categories
+    label_categories = LabelCategories()
+    label_categories.add("person")
+    label_categories.add("car")
+
+    items = [
+        DatasetItem(
+            id="test_item",
+            media=Image.from_file("test.jpg", size=(200, 150)),
+            annotations=[
+                RotatedBbox(75, 50, 40, 30, 30.0, label=0),  # person
+                RotatedBbox(125, 100, 60, 40, -45.0, label=1),  # car
+            ],
+        )
+    ]
+
+    legacy_dataset = LegacyDataset.from_iterable(
+        items,
+        ann_types={AnnotationType.rotated_bbox},
+        categories={AnnotationType.label: label_categories},
+    )
+
+    # Convert to experimental format
+    experimental_dataset = convert_from_legacy(legacy_dataset)
+
+    # Check experimental dataset
+    assert len(experimental_dataset) == 1
+    exp_sample = experimental_dataset[0]
+
+    # Check rotated bbox data
+    assert hasattr(exp_sample, "rotated_bboxes")
+    assert hasattr(exp_sample, "rotated_bbox_labels")
+
+    rotated_bboxes = exp_sample.rotated_bboxes
+    labels = exp_sample.rotated_bbox_labels
+
+    assert len(rotated_bboxes) == 2
+    assert len(labels) == 2
+
+    # Verify first rotated bbox (converted to radians)
+    assert abs(rotated_bboxes[0, 0] - 75.0) < 1e-6  # cx
+    assert abs(rotated_bboxes[0, 1] - 50.0) < 1e-6  # cy
+    assert abs(rotated_bboxes[0, 2] - 40.0) < 1e-6  # w
+    assert abs(rotated_bboxes[0, 3] - 30.0) < 1e-6  # h
+    assert abs(rotated_bboxes[0, 4] - math.radians(30.0)) < 1e-6  # r in radians
+    assert labels[0] == 0
+
+    # Verify second rotated bbox
+    assert abs(rotated_bboxes[1, 0] - 125.0) < 1e-6  # cx
+    assert abs(rotated_bboxes[1, 1] - 100.0) < 1e-6  # cy
+    assert abs(rotated_bboxes[1, 2] - 60.0) < 1e-6  # w
+    assert abs(rotated_bboxes[1, 3] - 40.0) < 1e-6  # h
+    assert abs(rotated_bboxes[1, 4] - math.radians(-45.0)) < 1e-6  # r in radians
+    assert labels[1] == 1
+
+    # Convert back to legacy format
+    restored_legacy_dataset = convert_to_legacy(experimental_dataset)
+
+    # Verify restored dataset
+    restored_items = list(restored_legacy_dataset)
+    assert len(restored_items) == 1
+
+    restored_item = restored_items[0]
+    rotated_bbox_anns = [ann for ann in restored_item.annotations if isinstance(ann, RotatedBbox)]
+    assert len(rotated_bbox_anns) == 2
+
+    # Check restored first rotated bbox (should be back to degrees)
+    restored_bbox1 = rotated_bbox_anns[0]
+    assert abs(restored_bbox1.cx - 75.0) < 1e-5
+    assert abs(restored_bbox1.cy - 50.0) < 1e-5
+    assert abs(restored_bbox1.w - 40.0) < 1e-5
+    assert abs(restored_bbox1.h - 30.0) < 1e-5
+    assert abs(restored_bbox1.r - 30.0) < 1e-5  # Back to degrees
+    assert restored_bbox1.label == 0
+
+    # Check restored second rotated bbox
+    restored_bbox2 = rotated_bbox_anns[1]
+    assert abs(restored_bbox2.cx - 125.0) < 1e-5
+    assert abs(restored_bbox2.cy - 100.0) < 1e-5
+    assert abs(restored_bbox2.w - 60.0) < 1e-5
+    assert abs(restored_bbox2.h - 40.0) < 1e-5
+    assert abs(restored_bbox2.r - (-45.0)) < 1e-5  # Back to degrees
+    assert restored_bbox2.label == 1
+
+
+def test_rotated_bbox_conversion_without_labels():
+    """Test rotated bbox conversion without label categories."""
+
+    # Create legacy dataset with rotated bbox but no label categories
+    items = [
+        DatasetItem(
+            id="test_item",
+            media=Image.from_file("test.jpg", size=(100, 100)),
+            annotations=[
+                RotatedBbox(50, 50, 20, 30, 0.0),  # No label, no rotation
+                RotatedBbox(25, 75, 10, 15, 90.0),  # No label, 90 degrees
+            ],
+        )
+    ]
+
+    legacy_dataset = LegacyDataset.from_iterable(items, ann_types={AnnotationType.rotated_bbox})
+
+    # Convert to experimental format
+    experimental_dataset = convert_from_legacy(legacy_dataset)
+
+    # Check experimental dataset
+    assert len(experimental_dataset) == 1
+    exp_sample = experimental_dataset[0]
+
+    # Should have rotated_bboxes but not rotated_bbox_labels
+    assert hasattr(exp_sample, "rotated_bboxes")
+    assert not hasattr(exp_sample, "rotated_bbox_labels")
+
+    rotated_bboxes = exp_sample.rotated_bboxes
+    assert len(rotated_bboxes) == 2
+
+    # Verify rotated bbox data
+    assert abs(rotated_bboxes[0, 0] - 50.0) < 1e-6  # cx
+    assert abs(rotated_bboxes[0, 1] - 50.0) < 1e-6  # cy
+    assert abs(rotated_bboxes[1, 4] - math.radians(90.0)) < 1e-6  # 90 degrees in radians
+
+    # Convert back to legacy format
+    restored_legacy_dataset = convert_to_legacy(experimental_dataset)
+
+    # Verify restored dataset
+    restored_items = list(restored_legacy_dataset)
+    assert len(restored_items) == 1
+
+    restored_item = restored_items[0]
+    rotated_bbox_anns = [ann for ann in restored_item.annotations if isinstance(ann, RotatedBbox)]
+    assert len(rotated_bbox_anns) == 2
+
+    # Check that labels are None (since we didn't have label categories)
+    for bbox in rotated_bbox_anns:
+        assert bbox.label is None
+
+
+def test_keypoint_annotation_converter_convert_annotations_with_labels():
+    """Test keypoint annotation conversion with label categories."""
+    # Create label categories
+    label_categories = LabelCategories()
+    label_categories.add("person")
+    label_categories.add("bicycle")
+
+    categories: CategoriesInfo = {AnnotationType.label: label_categories}
+    # Create a dataset with the categories
+    dataset = LegacyDataset.from_iterable([], categories=categories)
+    converter = ForwardKeypointAnnotationConverter.create(dataset)
+    assert converter is not None
+
+    # Create test Points annotation with label and keypoint_label_ids attribute
+    points_data = [100.0, 200.0, 300.0, 400.0]  # 2 keypoints
+    visibility = [2, 1]  # visible, hidden
+    points_annotation = Points(
+        points_data,
+        visibility,
+        label=0,
+        attributes={"keypoint_label_ids": [0, 1]},  # person, bicycle
+    )
+
+    # Mock DatasetItem
+    item = DatasetItem(id="test", annotations=[points_annotation])
+
+    # Convert annotations
+    result = converter.convert_annotations([points_annotation], item)
+
+    assert "keypoints" in result
+    assert "labels" in result
+    assert result["keypoints"] == points_annotation
+    assert result["labels"] == [0, 1]
+
+
+def test_keypoint_annotation_converter_get_annotation_type():
+    """Test that keypoint converter returns correct annotation type."""
+    annotation_types = ForwardKeypointAnnotationConverter.get_supported_annotation_types()
+    assert annotation_types == [AnnotationType.points]
