@@ -186,9 +186,9 @@ def test_points_converter_functionality():
     # Create Points object
     points_data = [10.0, 20.0, 30.0, 40.0]
     visibility = [2, 1]
-    points_obj = Points(points_data, visibility)
+    points_obj = Points(points_data, visibility=visibility)
 
     # Test Points to numpy conversion
     result = to_numpy(points_obj)
     assert isinstance(result, np.ndarray)
-    np.testing.assert_array_equal(result, np.array(points_data))
+    np.testing.assert_array_equal(result, np.array([[10.0, 20.0, 2.0], [30.0, 40.0, 1.0]]))
