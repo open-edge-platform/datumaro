@@ -1374,6 +1374,81 @@ document.write(`
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">MaskCallableField</span><span class="p">(</span><span class="n">semantic</span><span class="o">=</span><span class="n">semantic</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span></div>
 
+
+
+<div class="viewcode-block" id="KeypointsField">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.KeypointsField">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">KeypointsField</span><span class="p">(</span><span class="n">Field</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents a keypoints field with coordinate and visibility information.</span>
+
+<span class="sd">    Handles keypoint data where each keypoint has (x, y) coordinates and a (v) visibility state.</span>
+<span class="sd">    The keypoints are stored as triplets [[x1, y1, v1], [x2, y2, v2], ...] where each triplet</span>
+<span class="sd">    contains x coordinate, y coordinate, and visibility (0=absent, 1=hidden, 2=visible).</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        semantic: Semantic tags describing the keypoints purpose</span>
+<span class="sd">        dtype: Polars data type for coordinate values</span>
+<span class="sd">        normalize: Whether coordinates are normalized to [0,1] range</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">semantic</span><span class="p">:</span> <span class="n">Semantic</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">PolarsDataType</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float32</span><span class="p">()</span>
+    <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="KeypointsField.to_polars_schema">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.KeypointsField.to_polars_schema">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_polars_schema</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataType</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate schema for keypoints as list of 3-element arrays (x, y, visibility).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">Array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="mi">3</span><span class="p">))}</span></div>
+
+
+<div class="viewcode-block" id="KeypointsField.to_polars">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.KeypointsField.to_polars">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_polars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert keypoints tensor to Polars list format.&quot;&quot;&quot;</span>
+        <span class="n">numpy_value</span> <span class="o">=</span> <span class="n">to_numpy</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">name</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span>
+                <span class="n">name</span><span class="p">,</span>
+                <span class="n">numpy_value</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">pl</span><span class="o">.</span><span class="n">List</span><span class="p">(</span><span class="n">pl</span><span class="o">.</span><span class="n">Array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span>
+            <span class="p">)</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="KeypointsField.from_polars">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.KeypointsField.from_polars">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_polars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">row_index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">df</span><span class="p">:</span> <span class="n">pl</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">target_type</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reconstruct keypoints tensor from Polars data.&quot;&quot;&quot;</span>
+        <span class="n">polars_data</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">name</span><span class="p">][</span><span class="n">row_index</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">from_polars_data</span><span class="p">(</span><span class="n">polars_data</span><span class="p">,</span> <span class="n">target_type</span><span class="p">)</span>  <span class="c1"># type: ignore</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="keypoints_field">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.fields.html#datumaro.experimental.fields.keypoints_field">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">keypoints_field</span><span class="p">(</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">Float32</span><span class="p">(),</span>
+    <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">semantic</span><span class="p">:</span> <span class="n">Semantic</span> <span class="o">=</span> <span class="n">Semantic</span><span class="o">.</span><span class="n">Default</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a KeypointsField instance with the specified parameters.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dtype: Polars data type for coordinate values (defaults to pl.Float32())</span>
+<span class="sd">        normalize: Whether coordinates are normalized (defaults to False)</span>
+<span class="sd">        semantic: Semantic tags describing the keypoints purpose (optional)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        KeypointsField instance configured with the given parameters</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">KeypointsField</span><span class="p">(</span><span class="n">semantic</span><span class="o">=</span><span class="n">semantic</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="n">normalize</span><span class="p">)</span></div>
+
 </pre></div>
 
                 </article>

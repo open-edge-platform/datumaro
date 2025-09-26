@@ -358,6 +358,8 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">polars</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pl</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Points</span>
+
 
 <div class="viewcode-block" id="polars_to_numpy_dtype">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.type_registry.html#datumaro.experimental.type_registry.polars_to_numpy_dtype">[docs]</a>
@@ -408,10 +410,32 @@ document.write(`
 
 
 
+<div class="viewcode-block" id="points_to_numpy">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.experimental.type_registry.html#datumaro.experimental.type_registry.points_to_numpy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">points_to_numpy</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Points</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a Points object to a numpy array with shape (N, 3),</span>
+<span class="sd">    where each row is (x, y, visibility). Default value for points visibility is 2 (visible) if not provided.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="p">(</span>
+                <span class="n">x</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="n">i</span> <span class="o">*</span> <span class="mi">2</span><span class="p">],</span>
+                <span class="n">x</span><span class="o">.</span><span class="n">points</span><span class="p">[(</span><span class="n">i</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+                <span class="n">x</span><span class="o">.</span><span class="n">visibility</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">visibility</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">points</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="p">]</span>
+    <span class="p">)</span></div>
+
+
+
 <span class="c1"># Type conversion registry - extensible at runtime</span>
 <span class="n">_to_numpy_converters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="p">{</span>
     <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span>
     <span class="nb">bytes</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
+    <span class="nb">list</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
+    <span class="n">Points</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">points_to_numpy</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
 <span class="p">}</span>
 
 <span class="n">_from_polars_converters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Any</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
@@ -574,7 +598,6 @@ document.write(`
     <span class="p">)</span>  <span class="c1"># pyright: ignore[reportUnknownMemberType, reportUnknownLambdaType, reportUnknownArgumentType]</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
     <span class="k">pass</span>
-
 
 <span class="c1"># Register PIL Image converters if available</span>
 <span class="k">try</span><span class="p">:</span>
