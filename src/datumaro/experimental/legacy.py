@@ -529,7 +529,7 @@ class ForwardLabelAnnotationConverter(ForwardAnnotationConverter):
         if legacy_label_categories is None:
             return None
 
-        labels = [label_item.name for label_item in legacy_label_categories.items]
+        labels = tuple(label_item.name for label_item in legacy_label_categories.items)
         new_label_categories = LabelCategories(labels=labels)
 
         label_attribute = AttributeInfo(
@@ -586,7 +586,7 @@ class ForwardKeypointAnnotationConverter(ForwardAnnotationConverter):
         # Only add keypoints_labels if we have label categories
         if legacy_label_categories is not None:
             # Convert legacy label categories to new format
-            labels = [label_item.name for label_item in legacy_label_categories.items]
+            labels = tuple(label_item.name for label_item in legacy_label_categories.items)
             new_label_categories = LabelCategories(labels=labels)
 
             keypoints_labels_attribute = AttributeInfo(
@@ -866,7 +866,7 @@ class ForwardMaskAnnotationConverter(ForwardAnnotationConverter):
         # Create categories based on legacy label categories
         new_label_categories = None
         if legacy_label_categories is not None:
-            labels = [label_item.name for label_item in legacy_label_categories.items]
+            labels = tuple(label_item.name for label_item in legacy_label_categories.items)
             new_label_categories = LabelCategories(labels=labels)
 
         if is_semantic:

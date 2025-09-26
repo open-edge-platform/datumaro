@@ -100,7 +100,7 @@ class LabelCategories(Categories):
         else:
             label = name_or_semantic
 
-        index = self._index_map.get(name_or_semantic)
+        index = self._index_map.get(label)
         if index is not None:
             return index, self.labels[index]
         return None, None
