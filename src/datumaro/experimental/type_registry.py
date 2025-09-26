@@ -65,23 +65,29 @@ def polars_to_numpy_dtype(polars_dtype: pl.DataType) -> np.dtype[Any]:
         raise TypeError(f"No NumPy dtype mapping for Polars dtype: {polars_dtype}")
 
 
-# Type conversion registry - extensible at runtime
-_to_numpy_converters: dict[type, Callable[[Any], np.ndarray[Any, Any]]] = {
-    np.ndarray: lambda x: x,
-    bytes: lambda x: np.array(x),
-    list: lambda x: np.array(x),
-    Points: lambda x: np.array(
+def points_to_numpy(x: Points) -> np.ndarray:
+    """
+    Convert a Points object to a numpy array with shape (N, 3),
+    where each row is (x, y, visibility). Default value for points visibility is 2 (visible) if not provided.
+    """
+    return np.array(
         [
             (
                 x.points[i * 2],
                 x.points[(i * 2) + 1],
                 x.visibility[i].value if x.visibility is not None else 2,
             )
-            for i in range(
-                int(len(x.points) / 2)
-            )  # Extract point pairs and visibility. Default value for visibility is 2 (visible)
+            for i in range(int(len(x.points) / 2))
         ]
-    ),
+    )
+
+
+# Type conversion registry - extensible at runtime
+_to_numpy_converters: dict[type, Callable[[Any], np.ndarray[Any, Any]]] = {
+    np.ndarray: lambda x: x,
+    bytes: lambda x: np.array(x),
+    list: lambda x: np.array(x),
+    Points: lambda x: points_to_numpy(x),
 }
 
 _from_polars_converters: dict[type, Callable[[Any], Any]] = {

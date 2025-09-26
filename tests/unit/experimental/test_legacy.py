@@ -16,7 +16,6 @@ from datumaro.components.annotation import (
     Bbox,
     ExtractedMask,
     LabelCategories,
-    MaskCategories,
     Points,
     Polygon,
     RotatedBbox,

@@ -620,16 +620,17 @@ class ForwardKeypointAnnotationConverter(ForwardAnnotationConverter):
     ) -> dict[str, Any]:
         keypoints = [ann for ann in annotations if isinstance(ann, Points)]
         # KeypointsField expects individual Points objects, not arrays
-        # For now, handle single keypoint case
+        # Only supports single keypoint case
         result = {}
         if len(keypoints) > 0:
             result["keypoints"] = keypoints[0]  # Pass the Points object directly
+            if self.keypoints_labels_attribute is not None:
+                result["labels"] = keypoints[0].attributes["keypoint_label_ids"]
+            else:
+                result["labels"] = None
         else:
             result["keypoints"] = None
-        if self.keypoints_labels_attribute is not None:
-            result["labels"] = keypoints[0].attributes["keypoint_label_ids"]
-        else:
-            result["labels"] = None
+
         return result
 
 
