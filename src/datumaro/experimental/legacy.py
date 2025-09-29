@@ -619,7 +619,10 @@ class ForwardKeypointAnnotationConverter(ForwardAnnotationConverter):
         result = {}
         if len(keypoints) > 0:
             result["keypoints"] = keypoints[0]  # Pass the Points object directly
-            if self.keypoints_labels_attribute is not None:
+            if (
+                self.keypoints_labels_attribute is not None
+                and "keypoint_label_ids" in keypoints[0].attributes
+            ):
                 result["labels"] = keypoints[0].attributes["keypoint_label_ids"]
             else:
                 result["labels"] = None
