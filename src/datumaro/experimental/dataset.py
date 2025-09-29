@@ -122,6 +122,67 @@ class Sample:
         return Schema(attributes=attributes)
 
 
+@dataclass
+class LazyState:
+    dataframe: pl.DataFrame
+    schema: Schema
+    lazy_converters: dict[str, list[Converter]]
+    applied_converters: set[int]
+
+
+class LazyDescriptor:
+    def __init__(self, attr_name, state: LazyState):
+        self.attr_name = attr_name
+        self._state = state
+
+    def __get__(self, instance, _):
+        """
+        Create a lazy property that applies converters on demand.
+
+        Args:
+            attr_name: Name of the attribute
+            attr_info: AttributeInfo for the attribute
+
+        Returns:
+            The computed value for the attribute
+        """
+
+        lazy_converters = self._state.lazy_converters
+        applied_converters = self._state.applied_converters
+        schema = self._state.schema
+
+        # Check if we have any lazy converters for this attribute
+        if self.attr_name not in lazy_converters:
+            raise AttributeError(
+                f"Attribute '{self.attr_name}' not available in dataframe and no converters provided"
+            )
+
+        attr_info = schema.attributes[self.attr_name]
+
+        # Apply ALL lazy converters to maintain the dependency chain
+        # but only apply converters that haven't been applied yet
+        working_df = self._state.dataframe
+
+        # Apply converters in dependency order (the first converter should be the earliest dependency)
+        for converter in lazy_converters[self.attr_name]:
+            converter_id = id(converter)
+            if converter_id not in applied_converters:
+                working_df = converter.convert(working_df)
+                applied_converters.add(converter_id)
+
+        # Update the dataframe for future use with all new columns
+        self._state.dataframe = working_df
+
+        # Now extract the value from the converted dataframe
+        value = attr_info.annotation.from_polars(self.attr_name, 0, working_df, attr_info.type)
+
+        # Cache the value and set it as a real attribute
+        setattr(instance, self.attr_name, value)
+        del lazy_converters[self.attr_name]
+
+        return value
+
+
 DType = TypeVar("DType", bound=Sample)
 DTargetType = TypeVar("DTargetType", bound=Sample)
 
@@ -250,76 +311,11 @@ class Dataset(Generic[DType]):
                     key, 0, row_df, attr_info.type
                 )
 
-        # Create the sample with direct attributes, dataframe, and lazy converter info
-        lazy_converters = self._lazy_converters
+        # If there are lazy converters, create a dynamic class with descriptors
         dtype = self._dtype
 
-        # If there are lazy converters, create a dynamic class with descriptors
-        if lazy_converters:
-
-            @dataclass
-            class LazyState:
-                dataframe: pl.DataFrame
-                schema: Schema
-                lazy_converters: dict[str, list[Converter]]
-                applied_converters: set[int]
-
-            class LazyDescriptor:
-                def __init__(self, attr_name, state: LazyState):
-                    self.attr_name = attr_name
-                    self._state = state
-
-                def __get__(self, instance, _):
-                    """
-                    Create a lazy property that applies converters on demand.
-
-                    Args:
-                        attr_name: Name of the attribute
-                        attr_info: AttributeInfo for the attribute
-
-                    Returns:
-                        The computed value for the attribute
-                    """
-
-                    lazy_converters = self._state.lazy_converters
-                    applied_converters = self._state.applied_converters
-                    schema = self._state.schema
-
-                    # Check if we have any lazy converters for this attribute
-                    if self.attr_name not in lazy_converters:
-                        raise AttributeError(
-                            f"Attribute '{self.attr_name}' not available in dataframe and no converters provided"
-                        )
-
-                    attr_info = schema.attributes[self.attr_name]
-
-                    # Apply ALL lazy converters to maintain the dependency chain
-                    # but only apply converters that haven't been applied yet
-                    working_df = self._state.dataframe
-
-                    # Apply converters in dependency order (the first converter should be the earliest dependency)
-                    for converter in lazy_converters[self.attr_name]:
-                        converter_id = id(converter)
-                        if converter_id not in applied_converters:
-                            working_df = converter.convert(working_df)
-                            applied_converters.add(converter_id)
-
-                    # Update the dataframe for future use with all new columns
-                    self._state.dataframe = working_df
-
-                    # Now extract the value from the converted dataframe
-                    value = attr_info.annotation.from_polars(
-                        self.attr_name, 0, working_df, attr_info.type
-                    )
-
-                    # Cache the value and set it as a real attribute
-                    setattr(instance, self.attr_name, value)
-                    del lazy_converters[self.attr_name]
-
-                    return value
-
-            # Create a new dynamic class inheriting from dtype
-            lazy_converters = lazy_converters.copy()
+        if self.lazy_converters:
+            lazy_converters = self.lazy_converters.copy()
             applied_converters: Set[int] = set()
             attrs = {}
             state = LazyState(
@@ -330,6 +326,8 @@ class Dataset(Generic[DType]):
             )
             for lazy_attr in lazy_converters:
                 attrs[lazy_attr] = LazyDescriptor(lazy_attr, state)
+
+            # Create a new dynamic class inheriting from dtype
             dtype = type(dtype.__name__, (dtype,), attrs)
 
         sample = dtype(
