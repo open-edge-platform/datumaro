@@ -47,16 +47,26 @@ class TensorField(Field):
     def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
         """Convert tensor to flattened data and shape information."""
         numpy_value = to_numpy(value, self.dtype)
+        schema = self.to_polars_schema("tensor")
+
+        numpy_value_shape: Any | None = None
+        if numpy_value is not None:
+            numpy_value_shape = numpy_value.shape
+            numpy_value = numpy_value.reshape(-1)
+
         return {
-            name: pl.Series(name, [numpy_value.reshape(-1)]),
-            name + "_shape": pl.Series(name + "_shape", [numpy_value.shape]),
+            name: pl.Series(name, [numpy_value], dtype=schema["tensor"]),
+            name
+            + "_shape": pl.Series(
+                name + "_shape", [numpy_value_shape], dtype=schema["tensor_shape"]
+            ),
         }
 
     def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
         """Reconstruct tensor from flattened data using stored shape."""
         flat_data = df[name][row_index]
         shape = df[name + "_shape"][row_index]
-        numpy_data = np.array(flat_data).reshape(shape)
+        numpy_data = np.array(flat_data).reshape(shape) if flat_data is not None else None
         return from_polars_data(numpy_data, target_type)  # type: ignore
 
 
@@ -128,7 +138,8 @@ class ImageBytesField(Field):
     def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
         """Convert image data to bytes and store in Polars series."""
         numpy_value = to_numpy(value, pl.Binary)
-        return {name: pl.Series(name, [bytes(numpy_value)])}
+        bytes_value = bytes(numpy_value) if numpy_value is not None else None
+        return {name: pl.Series(name, [bytes_value], dtype=pl.Binary())}
 
     def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
         """Reconstruct image from bytes data."""
@@ -177,10 +188,15 @@ class BBoxField(Field):
         """Convert bounding box tensor to Polars list format."""
         numpy_value = to_numpy(value, self.dtype)
 
+        if numpy_value is not None:
+            data: Any = numpy_value.reshape(1, -1, 4)
+        else:
+            data = [None]
+
         return {
             name: pl.Series(
                 name,
-                numpy_value.reshape(1, -1, 4),
+                data,
                 dtype=pl.List(pl.Array(self.dtype, 4)),
             )
         }
@@ -241,10 +257,15 @@ class RotatedBBoxField(Field):
         """Convert rotated bounding box tensor to Polars list format."""
         numpy_value = to_numpy(value, self.dtype)
 
+        if numpy_value is not None:
+            data: Any = numpy_value.reshape(1, -1, 5)
+        else:
+            data = [None]
+
         return {
             name: pl.Series(
                 name,
-                numpy_value.reshape(1, -1, 5),
+                data,
                 dtype=pl.List(pl.Array(self.dtype, 5)),
             )
         }
@@ -295,15 +316,22 @@ class ImageInfoField(Field):
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         return {name: pl.Struct([pl.Field("width", pl.Int32()), pl.Field("height", pl.Int32())])}
 
-    def to_polars(self, name: str, value: ImageInfo) -> dict[str, pl.Series]:
-        return {name: pl.Series(name, [{"width": value.width, "height": value.height}])}
+    def to_polars(self, name: str, value: ImageInfo | None) -> dict[str, pl.Series]:
+        schema = self.to_polars_schema("info")
+        if value is not None:
+            data = [{"width": value.width, "height": value.height}]
+        else:
+            data = [None]
+        return {name: pl.Series(name, data, dtype=schema["info"])}
 
     def from_polars(
         self, name: str, row_index: int, df: pl.DataFrame, target_type: type
-    ) -> ImageInfo:
+    ) -> ImageInfo | None:
         if not issubclass(target_type, ImageInfo):
             raise TypeError(f"Expected target_type to be ImageInfo, got {target_type}")
         struct_val = df[name][row_index]
+        if struct_val is None:
+            return None
         return ImageInfo(width=struct_val["width"], height=struct_val["height"])
 
 
@@ -340,11 +368,12 @@ class ImagePathField(Field):
 
     def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
         """Convert path string to Polars series."""
-        return {name: pl.Series(name, [str(value)])}
+        return {name: pl.Series(name, [str(value) if value is not None else None])}
 
     def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type):
         """Extract path string from Polars data."""
-        return target_type(df[name][row_index])
+        data = df[name][row_index]
+        return target_type(data) if data is not None else None
 
 
 def image_path_field(semantic: Semantic = Semantic.Default) -> Any:
@@ -463,7 +492,7 @@ def convert_numpy_object_array_to_series(data: np.ndarray) -> pl.Series:
                 [6 7 8 9]
         ]
     """
-    if data.dtype == object:
+    if data is not None and data.dtype == object:
         return pl.Series([convert_numpy_object_array_to_series(elem) for elem in data])
     return pl.Series(data)
 
@@ -552,16 +581,28 @@ class MaskField(Field):
     def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
         """Convert mask tensor to flattened data and shape information."""
         numpy_value = to_numpy(value, self.dtype)
+        schema = self.to_polars_schema("mask")
+
+        numpy_value_shape: Any | None = None
+        if numpy_value is not None:
+            numpy_value_shape = numpy_value.shape
+            numpy_value = numpy_value.reshape(-1)
+
         return {
-            name: pl.Series(name, [numpy_value.reshape(-1)]),
-            name + "_shape": pl.Series(name + "_shape", [numpy_value.shape]),
+            name: pl.Series(name, [numpy_value], dtype=schema["mask"]),
+            name
+            + "_shape": pl.Series(name + "_shape", [numpy_value_shape], dtype=schema["mask_shape"]),
         }
 
     def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
         """Reconstruct mask tensor from flattened data using stored shape."""
         flat_data = df[name][row_index]
         shape = df[name + "_shape"][row_index]
-        numpy_data = np.array(flat_data).reshape(shape)
+        numpy_data = (
+            np.array(flat_data).reshape(shape)
+            if flat_data is not None and shape is not None
+            else None
+        )
         return from_polars_data(numpy_data, target_type)  # type: ignore
 
 
@@ -603,16 +644,28 @@ class InstanceMaskField(Field):
     def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
         """Convert instance mask tensor to flattened data and shape information."""
         numpy_value = to_numpy(value, self.dtype)
+        schema = self.to_polars_schema("mask")
+
+        numpy_value_shape: Any | None = None
+        if numpy_value is not None:
+            numpy_value_shape = numpy_value.shape
+            numpy_value = numpy_value.reshape(-1)
+
         return {
-            name: pl.Series(name, [numpy_value.reshape(-1)]),
-            name + "_shape": pl.Series(name + "_shape", [numpy_value.shape]),
+            name: pl.Series(name, [numpy_value], dtype=schema["mask"]),
+            name
+            + "_shape": pl.Series(name + "_shape", [numpy_value_shape], dtype=schema["mask_shape"]),
         }
 
     def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
         """Reconstruct instance mask tensor from flattened data using stored shape."""
         flat_data = df[name][row_index]
         shape = df[name + "_shape"][row_index]
-        numpy_data = np.array(flat_data).reshape(shape)
+        numpy_data = (
+            np.array(flat_data).reshape(shape)
+            if flat_data is not None and shape is not None
+            else None
+        )
         return from_polars_data(numpy_data, target_type)  # type: ignore
 
 
@@ -653,7 +706,7 @@ class ImageCallableField(Field):
 
     def to_polars(self, name: str, value: callable) -> dict[str, pl.Series]:
         """Store callable as Object in Polars series."""
-        if not callable(value):
+        if not callable(value) and value is not None:
             raise TypeError(f"Expected callable, got {type(value)}")
         return {name: pl.Series(name, [value])}
 
@@ -662,7 +715,7 @@ class ImageCallableField(Field):
     ) -> callable:
         """Extract callable from Polars dataframe."""
         value = df[name][row_index]
-        if not callable(value):
+        if not callable(value) and value is not None:
             raise TypeError(f"Expected callable in column {name}, got {type(value)}")
         return value
 
@@ -679,3 +732,209 @@ def image_callable_field(format: str = "RGB", semantic: Semantic = Semantic.Defa
         ImageCallableField instance configured with the given parameters
     """
     return ImageCallableField(semantic=semantic, format=format)
+
+
+@dataclass(frozen=True)
+class InstanceMaskCallableField(Field):
+    """
+    Represents a field that stores a callable which returns an instance mask as a numpy array.
+
+    This field is useful for lazy loading scenarios where instance masks are generated
+    or loaded on-demand. The callable should return a numpy array representing
+    the instance mask data when invoked.
+
+    Attributes:
+        semantic: Semantic tags describing the callable's purpose
+        dtype: Polars data type for the mask values (e.g., pl.UInt8, pl.Boolean)
+    """
+
+    semantic: Semantic
+    dtype: pl.DataType = pl.Boolean
+
+    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+        """Return schema with Object type to store callable."""
+        return {name: pl.Object}
+
+    def to_polars(self, name: str, value: callable) -> dict[str, pl.Series]:
+        """
+        Store instance mask callable as Object in Polars series.
+
+        The callable must return a 3D numpy array of shape (N, H, W) where:
+        - N is the number of instances
+        - H is the mask height
+        - W is the mask width
+        Each mask should be a binary mask for a single instance.
+        """
+        if not callable(value):
+            raise TypeError(f"Expected callable, got {type(value)}")
+        return {name: pl.Series(name, [value])}
+
+    def from_polars(
+        self, name: str, row_index: int, df: pl.DataFrame, target_type: type
+    ) -> callable:
+        """
+        Extract instance mask callable from Polars dataframe.
+
+        Returns a callable that produces a 3D numpy array of binary masks,
+        one for each instance in the image.
+        """
+        value = df[name][row_index]
+        if not callable(value):
+            raise TypeError(f"Expected callable in column {name}, got {type(value)}")
+        return value
+
+
+def instance_mask_callable_field(
+    dtype: Any = pl.Boolean(), semantic: Semantic = Semantic.Default
+) -> Any:
+    """
+    Create an InstanceMaskCallableField for storing instance mask-generating callables.
+
+    Args:
+        dtype: Polars data type for mask values (defaults to pl.Boolean())
+        semantic: Semantic tags describing the instance mask purpose (optional)
+
+    Returns:
+        InstanceMaskCallableField instance configured with the given parameters
+
+    Example:
+        >>> def generate_masks():
+        ...     # Example with 2 instances, 3x3 masks
+        ...     return np.array([
+        ...         [[1, 1, 0], [1, 1, 0], [0, 0, 0]],  # First instance
+        ...         [[0, 0, 1], [0, 0, 1], [1, 1, 1]],  # Second instance
+        ...     ], dtype=bool)
+        >>> field = instance_mask_callable_field()
+        >>> sample = Sample(instance_masks=generate_masks)
+    """
+    return InstanceMaskCallableField(semantic=semantic, dtype=dtype)
+
+
+@dataclass(frozen=True)
+class MaskCallableField(Field):
+    """
+    Represents a field that stores a callable which returns a mask as a numpy array.
+
+    This field is useful for lazy loading scenarios where masks are generated
+    or loaded on-demand. The callable should return a numpy array representing
+    a single mask when invoked.
+
+    Attributes:
+        semantic: Semantic tags describing the callable's purpose
+        dtype: Polars data type for mask values (e.g., pl.UInt8, pl.Boolean)
+    """
+
+    semantic: Semantic
+    dtype: pl.DataType = pl.UInt8()
+
+    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+        """Return schema with Object type to store callable."""
+        return {name: pl.Object}
+
+    def to_polars(self, name: str, value: callable) -> dict[str, pl.Series]:
+        """
+        Store mask callable as Object in Polars series.
+
+        The callable must return a 2D numpy array of shape (H, W) where:
+        - H is the mask height
+        - W is the mask width
+        The array should be a binary or category mask.
+        """
+        if not callable(value):
+            raise TypeError(f"Expected callable, got {type(value)}")
+        return {name: pl.Series(name, [value])}
+
+    def from_polars(
+        self, name: str, row_index: int, df: pl.DataFrame, target_type: type
+    ) -> callable:
+        """
+        Extract mask callable from Polars dataframe.
+
+        Returns a callable that produces a 2D numpy array representing
+        a binary or category mask.
+        """
+        value = df[name][row_index]
+        if not callable(value):
+            raise TypeError(f"Expected callable in column {name}, got {type(value)}")
+        return value
+
+
+def mask_callable_field(dtype: Any = pl.Boolean(), semantic: Semantic = Semantic.Default) -> Any:
+    """
+    Create a MaskCallableField for storing mask-generating callables.
+
+    Args:
+        dtype: Polars data type for mask values (defaults to pl.Boolean())
+        semantic: Semantic tags describing the mask purpose (optional)
+
+    Returns:
+        MaskCallableField instance configured with the given parameters
+
+    Example:
+        >>> def generate_mask():
+        ...     # Example 3x3 mask
+        ...     return np.array([[1, 1, 0], [1, 1, 0], [0, 0, 0]], dtype=bool)
+        >>> field = mask_callable_field()
+        >>> sample = Sample(mask=generate_mask)
+    """
+    return MaskCallableField(semantic=semantic, dtype=dtype)
+
+
+@dataclass(frozen=True)
+class KeypointsField(Field):
+    """
+    Represents a keypoints field with coordinate and visibility information.
+
+    Handles keypoint data where each keypoint has (x, y) coordinates and a (v) visibility state.
+    The keypoints are stored as triplets [[x1, y1, v1], [x2, y2, v2], ...] where each triplet
+    contains x coordinate, y coordinate, and visibility (0=absent, 1=hidden, 2=visible).
+
+    Attributes:
+        semantic: Semantic tags describing the keypoints purpose
+        dtype: Polars data type for coordinate values
+        normalize: Whether coordinates are normalized to [0,1] range
+    """
+
+    semantic: Semantic
+    dtype: PolarsDataType = pl.Float32()
+    normalize: bool = False
+
+    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+        """Generate schema for keypoints as list of 3-element arrays (x, y, visibility)."""
+        return {name: pl.List(pl.Array(self.dtype, 3))}
+
+    def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
+        """Convert keypoints tensor to Polars list format."""
+        numpy_value = to_numpy(value, self.dtype)
+
+        return {
+            name: pl.Series(
+                name,
+                numpy_value.reshape(1, -1, 3),
+                dtype=pl.List(pl.Array(self.dtype, 3)),
+            )
+        }
+
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+        """Reconstruct keypoints tensor from Polars data."""
+        polars_data = df[name][row_index]
+        return from_polars_data(polars_data, target_type)  # type: ignore
+
+
+def keypoints_field(
+    dtype: Any = pl.Float32(),
+    normalize: bool = False,
+    semantic: Semantic = Semantic.Default,
+) -> Any:
+    """
+    Create a KeypointsField instance with the specified parameters.
+
+    Args:
+        dtype: Polars data type for coordinate values (defaults to pl.Float32())
+        normalize: Whether coordinates are normalized (defaults to False)
+        semantic: Semantic tags describing the keypoints purpose (optional)
+
+    Returns:
+        KeypointsField instance configured with the given parameters
+    """
+    return KeypointsField(semantic=semantic, dtype=dtype, normalize=normalize)

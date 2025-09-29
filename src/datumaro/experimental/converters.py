@@ -28,13 +28,109 @@ from .fields import (
     ImageInfo,
     ImageInfoField,
     ImagePathField,
+    InstanceMaskCallableField,
     InstanceMaskField,
     LabelField,
+    MaskCallableField,
     MaskField,
     PolygonField,
     RotatedBBoxField,
 )
 from .type_registry import polars_to_numpy_dtype
+
+
+@converter
+class LabelIndexConverter(Converter):
+    """
+    Converter for updating label indices when label categories change.
+
+    This converter handles remapping label values in LabelField when the order
+    of labels has changed between input and output categories. It only applies
+    when both input and output categories are LabelCategories and have different
+    label orders but the same set of labels.
+    """
+
+    input_labels: AttributeSpec[LabelField]
+    output_labels: AttributeSpec[LabelField]
+
+    def filter_output_spec(self) -> bool:
+        """
+        Check if this converter is applicable based on input/output categories.
+
+        Returns True only if:
+        1. Both input and output have LabelCategories
+        2. The categories have the same set of labels but different order
+        3. The field types are the same (no field conversion needed)
+        """
+        # Check that both specs have categories
+        if self.input_labels.categories is None or self.output_labels.categories is None:
+            return False
+
+        # Check that both are LabelCategories
+        if not isinstance(self.input_labels.categories, LabelCategories) or not isinstance(
+            self.output_labels.categories, LabelCategories
+        ):
+            return False
+
+        input_cats = self.input_labels.categories
+        output_cats = self.output_labels.categories
+
+        # Check that the sets of labels are the same but order might differ
+        input_labels_set = set(input_cats.labels)
+        output_labels_set = set(output_cats.labels)
+
+        if input_labels_set != output_labels_set:
+            return False
+
+        # Only apply if the order actually differs
+        if input_cats.labels == output_cats.labels:
+            return False
+
+        index_mapping = {}
+        for old_idx, label in enumerate(input_cats.labels):
+            semantic = None
+            for sem, lbl in input_cats.label_semantics.items():
+                if lbl == label:
+                    semantic = sem
+                    break
+            if semantic is not None:
+                new_label = output_cats.label_semantics[semantic]
+                new_idx, _ = output_cats.find(new_label)
+            else:
+                new_idx, _ = output_cats.find(label)
+            if new_idx is not None:
+                index_mapping[old_idx] = new_idx
+        self._index_mapping = index_mapping
+        return True
+
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+        """
+        Convert label indices based on category mapping.
+
+        If label semantics are defined, use them to match input and output labels for mapping.
+        Otherwise, fall back to label name.
+        """
+        # Use the precomputed index mapping from filter_output_spec
+        index_mapping = getattr(self, "_index_mapping", None)
+        if index_mapping is None:
+            raise RuntimeError("index_mapping not computed. Call filter_output_spec first.")
+
+        input_col = self.input_labels.name
+        output_col = self.output_labels.name
+        field = self.input_labels.field
+
+        if field.multi_label or field.is_list:
+            mapping_expr = pl.col(input_col).list.eval(
+                pl.element().replace(
+                    list(index_mapping.keys()), list(index_mapping.values()), default=None
+                )
+            )
+        else:
+            mapping_expr = pl.col(input_col).replace(
+                list(index_mapping.keys()), list(index_mapping.values()), default=None
+            )
+
+        return df.with_columns(mapping_expr.alias(output_col))
 
 
 @converter
@@ -501,16 +597,11 @@ class PolygonToMaskConverter(Converter):
                 # Generate colors for all labels plus background
                 num_classes = len(self.input_labels.categories) + 1  # +1 for background
                 colormap_dict = generate_colormap(num_classes, include_background=True)
+                colormap_struct_dict = {i: RgbColor(*color) for i, color in colormap_dict.items()}
 
                 # Create mask categories with the generated colormap
-                mask_categories = MaskCategories()
-                for index, color in colormap_dict.items():
-                    if isinstance(color, tuple):
-                        mask_categories.colormap[index] = RgbColor(*color)
-                    else:
-                        mask_categories.colormap[index] = color
-
-                mask_categories.labels = ["background"] + self.input_labels.categories.labels
+                labels = ("background",) + self.input_labels.categories.labels
+                mask_categories = MaskCategories(colormap=colormap_struct_dict, labels=labels)
 
         # Configure output for mask format
         self.output_mask = AttributeSpec(
@@ -895,6 +986,12 @@ class ImageCallableToImageConverter(Converter):
                 # Execute the callable to get image array
                 img_array = callable_obj()
 
+                if img_array is None:
+                    image_data.append(None)
+                    image_shapes.append(None)
+                    image_infos.append(None)
+                    continue
+
                 # Validate that we got a numpy array
                 if not isinstance(img_array, np.ndarray):
                     raise TypeError(f"Callable must return numpy.ndarray, got {type(img_array)}")
@@ -936,6 +1033,169 @@ class ImageCallableToImageConverter(Converter):
         )
 
         return result_df
+
+
+@converter(lazy=True)
+class InstanceMaskCallableToInstanceMaskConverter(Converter):
+    """
+    Lazy converter that executes callables to generate instance mask data.
+
+    This converter takes a callable stored in a InstanceMaskCallableField and
+    executes it to get instance mask data as a 3D numpy array (N,H,W), producing
+    an InstanceMaskField output. Each mask in the output is a binary mask
+    representing a single instance.
+    """
+
+    input_callable: AttributeSpec[InstanceMaskCallableField]
+    output_mask: AttributeSpec[InstanceMaskField]
+
+    def filter_output_spec(self) -> bool:
+        """Configure output mask specification based on input."""
+        self.output_mask = AttributeSpec(
+            name=self.output_mask.name,
+            field=InstanceMaskField(
+                semantic=self.input_callable.field.semantic,
+                dtype=self.input_callable.field.dtype,  # Use dtype from callable field
+            ),
+        )
+        return True
+
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+        """
+        Execute callables to generate instance mask data.
+
+        Args:
+            df: DataFrame containing callable column
+
+        Returns:
+            DataFrame with instance mask tensor data and shape information
+        """
+        input_col = self.input_callable.name
+        output_col = self.output_mask.name
+
+        # Execute callables to generate mask data
+        mask_data: list[Any] = []
+        mask_shapes: list[list[int]] = []
+
+        for callable_obj in df[input_col]:
+            # Execute the callable to get instance mask array
+            mask_array = callable_obj()
+
+            if mask_array is None:
+                mask_data.append(None)
+                mask_shapes.append(None)
+                continue
+
+            # Validate that we got a numpy array
+            if not isinstance(mask_array, np.ndarray):
+                raise TypeError(f"Callable must return numpy.ndarray, got {type(mask_array)}")
+
+            # Check array shape - should be 3D for instance masks (N, height, width)
+            if len(mask_array.shape) != 3:
+                raise ValueError(
+                    f"Instance mask array must be 3D (N,H,W), got shape {mask_array.shape}"
+                )
+
+            # Check that the array has the expected dtype
+            expected_dtype = self.output_mask.field.dtype
+            expected_numpy_dtype = polars_to_numpy_dtype(expected_dtype)
+            if mask_array.dtype != expected_numpy_dtype:
+                raise TypeError(
+                    f"Expected {expected_numpy_dtype} mask array, got {mask_array.dtype}"
+                )
+
+            # Store flattened mask data and shape
+            mask_data.append(mask_array.flatten())
+            mask_shapes.append(list(mask_array.shape))
+
+        # Create output columns
+        return df.with_columns(
+            [
+                pl.Series(output_col, mask_data),
+                pl.Series(f"{output_col}_shape", mask_shapes),
+            ]
+        ).drop(input_col)
+
+
+@converter(lazy=True)
+class MaskCallableToMaskConverter(Converter):
+    """
+    Lazy converter that executes callables to generate mask data.
+
+    This converter takes a callable stored in a MaskCallableField and
+    executes it to get mask data as a 2D numpy array (H,W), producing
+    a MaskField output. The mask can be either a binary mask or a
+    category mask.
+    """
+
+    input_callable: AttributeSpec[MaskCallableField]
+    output_mask: AttributeSpec[MaskField]
+
+    def filter_output_spec(self) -> bool:
+        """Configure output mask specification based on input."""
+        self.output_mask = AttributeSpec(
+            name=self.output_mask.name,
+            field=MaskField(
+                semantic=self.input_callable.field.semantic,
+                dtype=self.input_callable.field.dtype,  # Use dtype from callable field
+            ),
+            categories=self.input_callable.categories,
+        )
+        return True
+
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+        """
+        Execute callables to generate mask data.
+
+        Args:
+            df: DataFrame containing callable column
+
+        Returns:
+            DataFrame with mask tensor data and shape information
+        """
+        input_col = self.input_callable.name
+        output_col = self.output_mask.name
+
+        # Execute callables to generate mask data
+        mask_data: list[Any] = []
+        mask_shapes: list[list[int]] = []
+
+        for callable_obj in df[input_col]:
+            # Execute the callable to get mask array
+            mask_array = callable_obj()
+
+            if mask_array is None:
+                mask_data.append(None)
+                mask_shapes.append(None)
+                continue
+
+            # Validate that we got a numpy array
+            if not isinstance(mask_array, np.ndarray):
+                raise TypeError(f"Callable must return numpy.ndarray, got {type(mask_array)}")
+
+            # Check array shape - should be 2D for masks (height, width)
+            if len(mask_array.shape) != 2:
+                raise ValueError(f"Mask array must be 2D (H,W), got shape {mask_array.shape}")
+
+            # Check that the array has the expected dtype
+            expected_dtype = self.output_mask.field.dtype
+            expected_numpy_dtype = polars_to_numpy_dtype(expected_dtype)
+            if mask_array.dtype != expected_numpy_dtype:
+                raise TypeError(
+                    f"Expected {expected_numpy_dtype} mask array, got {mask_array.dtype}"
+                )
+
+            # Store flattened mask data and shape
+            mask_data.append(mask_array.flatten())
+            mask_shapes.append(list(mask_array.shape))
+
+        # Create output columns
+        return df.with_columns(
+            [
+                pl.Series(output_col, mask_data),
+                pl.Series(f"{output_col}_shape", mask_shapes),
+            ]
+        ).drop(input_col)
 
 
 @converter

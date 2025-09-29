@@ -392,14 +392,12 @@ class TableComparatorTest(unittest.TestCase):
         (
             high_level_table,
             mid_level_table,
-            low_level_table,
             comparison_dict,
         ) = table_comparator.compare_datasets(first_dataset, second_dataset)
 
         # Assert that the return values are not empty
         self.assertIsNotNone(high_level_table)
         self.assertIsNotNone(mid_level_table)
-        self.assertIsNotNone(low_level_table)
         self.assertIsNotNone(comparison_dict)
 
     # Mocking is used to replace parts of the system that are being tested with mock objects.
@@ -413,7 +411,6 @@ class TableComparatorTest(unittest.TestCase):
         # Define mock variables
         mock_high_level_table = "High-level table"
         mock_mid_level_table = "Mid-level table"
-        mock_low_level_table = "Low-level table"
         mock_comparison_dict = {"comparison": "data"}
         mock_report_dir = "/mock/dir"
         mock_json_output_file = "/mock/dir/table_compare_1.json"
@@ -424,7 +421,6 @@ class TableComparatorTest(unittest.TestCase):
         TableComparator.save_compare_report(
             mock_high_level_table,
             mock_mid_level_table,
-            mock_low_level_table,
             mock_comparison_dict,
             mock_report_dir,
         )
@@ -442,7 +438,6 @@ class TableComparatorTest(unittest.TestCase):
             [
                 call(f"High-level Comparison:\n{mock_high_level_table}\n\n"),
                 call(f"Mid-level Comparison:\n{mock_mid_level_table}\n\n"),
-                call(f"Low-level Comparison:\n{mock_low_level_table}\n\n"),
             ]
         )
 

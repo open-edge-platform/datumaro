@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased version
+## Release 1.12.0
 
 This release streamlines Datumaro by removing a number of lesser-used features, helping to simplify the tool and reduce its dependencies. These changes are part of an effort to keep Datumaro focused on its core strengths: dataset management and integration with machine learning frameworks. As part of this update, inference-related features have been removed. For inference tasks, we recommend using the [OpenVINO model API](https://github.com/open-edge-platform/model_api). If you rely on a specific feature that is no longer available, you can still access it from [the previous version of Datumaro](https://github.com/open-edge-platform/datumaro/tree/v1.11.1).
 
@@ -51,13 +51,15 @@ This release streamlines Datumaro by removing a number of lesser-used features, 
   - Noisy label detection
     (<https://github.com/open-edge-platform/datumaro/pull/1833>)
   - Data shift analysis
-    (<https://github.com/open-edge-platform/datumaro/pull/1827>)
+    (<https://github.com/open-edge-platform/datumaro/pull/1827>, <https://github.com/open-edge-platform/datumaro/pull/1892>)
 - SAM Docker image
   (<https://github.com/open-edge-platform/datumaro/pull/1830>)
 
 ### New features
 - Experimental dataset class
-  (<https://github.com/open-edge-platform/datumaro/pull/1807>, <https://github.com/open-edge-platform/datumaro/pull/1810>, <https://github.com/open-edge-platform/datumaro/pull/1811>, <https://github.com/open-edge-platform/datumaro/pull/1834>, <https://github.com/open-edge-platform/datumaro/pull/1858>, <https://github.com/open-edge-platform/datumaro/pull/1845>, <https://github.com/open-edge-platform/datumaro/pull/1863>, <https://github.com/open-edge-platform/datumaro/pull/1868>, <https://github.com/open-edge-platform/datumaro/pull/1876>, <https://github.com/open-edge-platform/datumaro/pull/1877>, <https://github.com/open-edge-platform/datumaro/pull/1879>, <https://github.com/open-edge-platform/datumaro/pull/1881>)
+  (<https://github.com/open-edge-platform/datumaro/pull/1807>, <https://github.com/open-edge-platform/datumaro/pull/1810>, <https://github.com/open-edge-platform/datumaro/pull/1811>, <https://github.com/open-edge-platform/datumaro/pull/1834>, <https://github.com/open-edge-platform/datumaro/pull/1858>, <https://github.com/open-edge-platform/datumaro/pull/1845>, <https://github.com/open-edge-platform/datumaro/pull/1863>, <https://github.com/open-edge-platform/datumaro/pull/1868>, <https://github.com/open-edge-platform/datumaro/pull/1876>, <https://github.com/open-edge-platform/datumaro/pull/1877>, <https://github.com/open-edge-platform/datumaro/pull/1879>, <https://github.com/open-edge-platform/datumaro/pull/1881>, <https://github.com/open-edge-platform/datumaro/pull/1891>)
+- New OpenVino Accuracy Checker semantic segmentation format
+  (<https://github.com/open-edge-platform/datumaro/pull/1893>)
 
 ### Enhancements
 - Mark several dependencies as optional
@@ -70,6 +72,10 @@ This release streamlines Datumaro by removing a number of lesser-used features, 
   (<https://github.com/open-edge-platform/datumaro/pull/1844>, <https://github.com/open-edge-platform/datumaro/pull/1860>, <https://github.com/open-edge-platform/datumaro/pull/1856>, <https://github.com/open-edge-platform/datumaro/pull/1847>)
 - Fix code coverage upload to Codecov in the CI
   (<https://github.com/open-edge-platform/datumaro/pull/1861>)
+- Fix crashes with certain datasets in the compare command
+  (<https://github.com/open-edge-platform/datumaro/pull/1892>)
+- Added Semgrep security scan in the CI
+  (<https://github.com/open-edge-platform/datumaro/pull/1883>)
 
 ## Q3 2025 Release 1.11.1
 

@@ -24,6 +24,9 @@ from datumaro.experimental.converters import (
     ImageBytesToImageConverter,
     ImageCallableToImageConverter,
     ImagePathToImageConverter,
+    InstanceMaskCallableToInstanceMaskConverter,
+    LabelIndexConverter,
+    MaskCallableToMaskConverter,
     PolygonToBBoxConverter,
     PolygonToInstanceMaskConverter,
     PolygonToMaskConverter,
@@ -39,14 +42,18 @@ from datumaro.experimental.fields import (
     ImageField,
     ImageInfoField,
     ImagePathField,
+    InstanceMaskCallableField,
     InstanceMaskField,
     LabelField,
+    MaskCallableField,
     MaskField,
     PolygonField,
     RotatedBBoxField,
     bbox_field,
     image_field,
     image_info_field,
+    mask_callable_field,
+    mask_field,
     rotated_bbox_field,
 )
 from datumaro.experimental.schema import AttributeInfo, Schema, Semantic
@@ -1309,7 +1316,7 @@ def test_find_conversion_path_inferred_categories():
     assert isinstance(mask_categories, MaskCategories)
 
     # Check that the mask categories include background + original labels
-    expected_labels = ["background", "cat", "dog", "bird"]
+    expected_labels = ("background", "cat", "dog", "bird")
     assert mask_categories.labels == expected_labels
 
 
@@ -1457,6 +1464,196 @@ def test_polygon_to_instance_mask_converter_normalized():
     # Rectangle: 0.3 * 100 = 30, 0.4 * 100 = 40, etc.
     assert masks[1, 35, 35] == True  # Point inside the scaled rectangle
     assert masks[1, 5, 5] == False  # Background point
+
+
+def test_instance_mask_callable_to_instance_mask_converter():
+    """Test InstanceMaskCallableToInstanceMaskConverter conversion."""
+    converter_instance = InstanceMaskCallableToInstanceMaskConverter()  # type: ignore[call-arg]
+
+    # Create a test callable that returns instance masks
+    def get_instance_masks():
+        return np.array(
+            [[[True, False], [False, True]], [[False, True], [True, False]]], dtype=bool
+        )  # (2,2,2)
+
+    df = pl.DataFrame(
+        {
+            "instance_mask_callable": [get_instance_masks],
+        },
+        schema=pl.Schema({"instance_mask_callable": pl.Object}),
+    )
+
+    # Set up converter attributes
+    input_field = InstanceMaskCallableField(dtype=pl.Boolean, semantic=Semantic.Default)
+    output_field = InstanceMaskField(dtype=pl.Boolean, semantic=Semantic.Default)
+
+    setattr(
+        converter_instance,
+        "input_callable",
+        AttributeSpec(
+            name="instance_mask_callable",
+            field=input_field,
+        ),
+    )
+    setattr(
+        converter_instance,
+        "output_mask",
+        AttributeSpec(
+            name="instance_mask",
+            field=output_field,
+        ),
+    )
+
+    # Convert
+    result_df = converter_instance.convert(df)
+
+    # Check result
+    assert "instance_mask" in result_df.columns
+    assert "instance_mask_shape" in result_df.columns
+
+    # Verify shape
+    expected_shape = [2, 2, 2]  # N, H, W
+    assert result_df["instance_mask_shape"][0].to_list() == expected_shape
+
+    # Check instance masks
+    expected_masks = get_instance_masks()
+    result_masks = np.array(result_df["instance_mask"][0]).reshape(expected_shape)
+    assert np.array_equal(result_masks, expected_masks)
+
+
+def test_instance_mask_callable_to_instance_mask_converter_validation():
+    """Test validation in InstanceMaskCallableToInstanceMaskConverter."""
+    converter_instance = InstanceMaskCallableToInstanceMaskConverter()  # type: ignore[call-arg]
+
+    # Create an invalid test callable that returns wrong shape
+    def get_invalid_masks():
+        return np.array([[True, False], [False, True]], dtype=bool)  # 2D instead of 3D
+
+    df = pl.DataFrame(
+        {
+            "instance_mask_callable": [get_invalid_masks],
+        },
+        schema=pl.Schema({"instance_mask_callable": pl.Object}),
+    )
+
+    # Set up converter attributes
+    input_field = InstanceMaskCallableField(dtype=pl.Boolean, semantic=Semantic.Default)
+    output_field = InstanceMaskField(dtype=pl.Boolean, semantic=Semantic.Default)
+
+    setattr(
+        converter_instance,
+        "input_callable",
+        AttributeSpec(
+            name="instance_mask_callable",
+            field=input_field,
+        ),
+    )
+    setattr(
+        converter_instance,
+        "output_mask",
+        AttributeSpec(
+            name="instance_mask",
+            field=output_field,
+        ),
+    )
+
+    # Conversion should raise error due to wrong shape
+    with pytest.raises(ValueError):
+        converter_instance.convert(df)
+
+
+def test_mask_callable_to_mask_converter():
+    """Test MaskCallableToMaskConverter conversion."""
+    converter_instance = MaskCallableToMaskConverter()  # type: ignore[call-arg]
+
+    # Create a test callable that returns a mask with category IDs
+    def get_mask():
+        return np.array([[1, 2], [2, 1]], dtype=np.uint8)  # (2,2)
+
+    df = pl.DataFrame(
+        {
+            "mask_callable": [get_mask],
+        },
+        schema=pl.Schema({"mask_callable": pl.Object}),
+    )
+
+    # Set up converter attributes
+    input_field = MaskCallableField(dtype=pl.UInt8, semantic=Semantic.Default)
+    output_field = MaskField(dtype=pl.UInt8, semantic=Semantic.Default)
+
+    setattr(
+        converter_instance,
+        "input_callable",
+        AttributeSpec(
+            name="mask_callable",
+            field=input_field,
+        ),
+    )
+    setattr(
+        converter_instance,
+        "output_mask",
+        AttributeSpec(
+            name="mask",
+            field=output_field,
+        ),
+    )
+
+    # Convert
+    result_df = converter_instance.convert(df)
+
+    # Check result
+    assert "mask" in result_df.columns
+    assert "mask_shape" in result_df.columns
+
+    # Verify shape
+    expected_shape = [2, 2]  # H, W
+    assert result_df["mask_shape"][0].to_list() == expected_shape
+
+    # Check mask
+    expected_mask = get_mask()
+    result_mask = np.array(result_df["mask"][0]).reshape(expected_shape)
+    assert np.array_equal(result_mask, expected_mask)
+
+
+def test_mask_callable_to_mask_converter_validation():
+    """Test validation in MaskCallableToMaskConverter."""
+    converter_instance = MaskCallableToMaskConverter()  # type: ignore[call-arg]
+
+    # Create an invalid test callable that returns wrong shape
+    def get_invalid_mask():
+        return np.array([[[True, False], [False, True]]], dtype=np.uint8)
+
+    df = pl.DataFrame(
+        {
+            "mask_callable": [get_invalid_mask],
+        },
+        schema=pl.Schema({"mask_callable": pl.Object}),
+    )
+
+    # Set up converter attributes
+    input_field = MaskCallableField(dtype=pl.Boolean, semantic=Semantic.Default)
+    output_field = InstanceMaskField(dtype=pl.Boolean, semantic=Semantic.Default)
+
+    setattr(
+        converter_instance,
+        "input_callable",
+        AttributeSpec(
+            name="mask_callable",
+            field=input_field,
+        ),
+    )
+    setattr(
+        converter_instance,
+        "output_mask",
+        AttributeSpec(
+            name="mask",
+            field=output_field,
+        ),
+    )
+
+    # Check that it raises error for invalid shape
+    with pytest.raises(ValueError, match="Mask array must be 2D \(H,W\), got shape \(1, 2, 2\)"):
+        converter_instance.convert(df)
 
 
 def test_polygon_to_bbox_converter():
@@ -1804,6 +2001,206 @@ def test_image_callable_converter_dtype_handling():
     image_info2 = result2["output_info"][0]
     assert image_info2["width"] == 1  # width
     assert image_info2["height"] == 1  # height
+
+
+def test_rotated_bbox_to_polygon_converter():
+    """Test conversion from RotatedBBox to Polygon format."""
+    converter_instance = RotatedBBoxToPolygonConverter()
+
+    input_bbox = np.array([[100, 200, 50, 30, 45]], dtype=np.float32)
+    df = pl.DataFrame({"bbox": [input_bbox]}, schema={"bbox": pl.Array(pl.Float32, 5)})
+
+    input_field = RotatedBBoxField(semantic=Semantic.Default)
+    output_field = PolygonField(semantic=Semantic.Default)
+
+    setattr(converter_instance, "input_bbox", AttributeSpec("bbox", input_field))
+    setattr(converter_instance, "output_polygon", AttributeSpec("polygon", output_field))
+
+    assert converter_instance.filter_output_spec() is True
+
+    result_df = converter_instance.convert(df)
+    points = result_df["polygon"][0]
+
+    # Should output 4 points (8 coordinates)
+    assert len(points) == 8
+
+
+def test_label_index_converter():
+    """Test LabelIndexConverter functionality for remapping label indices."""
+
+    # Create input and output specs with different label orders
+    input_categories = LabelCategories(labels=("cat", "dog", "bird"))
+    output_categories = LabelCategories(labels=("bird", "cat", "dog"))  # Different order
+
+    input_spec = AttributeSpec(
+        name="label",
+        field=LabelField(semantic=Semantic.Default, dtype=pl.Int32, multi_label=False),
+        categories=input_categories,
+    )
+
+    output_spec = AttributeSpec(
+        name="label",
+        field=LabelField(semantic=Semantic.Default, dtype=pl.Int32, multi_label=False),
+        categories=output_categories,
+    )
+
+    # Create converter
+    converter = LabelIndexConverter(input_labels=input_spec, output_labels=output_spec)
+
+    # Test filter - should return True for valid category remapping
+    assert converter.filter_output_spec() is True
+
+    # Test data with original label indices
+    test_df = pl.DataFrame({"label": [0, 1, 2, 0, 1]})  # cat=0, dog=1, bird=2 in input
+
+    # Convert
+    result_df = converter.convert(test_df)
+
+    # Verify the mapping: cat(0->1), dog(1->2), bird(2->0)
+    expected = [1, 2, 0, 1, 2]  # cat=1, dog=2, bird=0 in output
+    actual = result_df["label"].to_list()
+
+    assert actual == expected
+
+
+def test_label_index_converter_multi_label():
+    """Test LabelIndexConverter functionality for multi-label scenarios."""
+
+    # Create input and output specs with different label orders
+    input_categories = LabelCategories(labels=("cat", "dog", "bird"))
+    output_categories = LabelCategories(labels=("bird", "cat", "dog"))  # Different order
+
+    input_spec = AttributeSpec(
+        name="labels",
+        field=LabelField(semantic=Semantic.Default, dtype=pl.Int32, multi_label=True),
+        categories=input_categories,
+    )
+
+    output_spec = AttributeSpec(
+        name="labels",
+        field=LabelField(semantic=Semantic.Default, dtype=pl.Int32, multi_label=True),
+        categories=output_categories,
+    )
+
+    # Create converter
+    converter = LabelIndexConverter(input_labels=input_spec, output_labels=output_spec)
+
+    # Test filter - should return True for valid category remapping
+    assert converter.filter_output_spec() is True
+
+    # Test multi-label data
+    test_df = pl.DataFrame({"labels": [[0, 1], [2], [0, 2], [1]]})  # Multiple labels per row
+
+    # Convert
+    result_df = converter.convert(test_df)
+
+    # Verify multi-label mapping
+    expected = [[1, 2], [0], [1, 0], [2]]
+    actual = result_df["labels"].to_list()
+
+    assert actual == expected
+
+
+def test_label_index_converter_same_categories():
+    """Test LabelIndexConverter with identical categories (should not apply)."""
+
+    # Create identical input and output categories
+    categories = LabelCategories(labels=("cat", "dog", "bird"))
+
+    input_spec = AttributeSpec(
+        name="label",
+        field=LabelField(semantic=Semantic.Default, dtype=pl.Int32, multi_label=False),
+        categories=categories,
+    )
+
+    output_spec = AttributeSpec(
+        name="label",
+        field=LabelField(semantic=Semantic.Default, dtype=pl.Int32, multi_label=False),
+        categories=categories,
+    )
+
+    # Create converter
+    converter = LabelIndexConverter(input_labels=input_spec, output_labels=output_spec)
+
+    # Test filter - should return False for identical categories
+    assert converter.filter_output_spec() is False
+
+
+def test_label_index_converter_different_labels():
+    """Test LabelIndexConverter with different label sets (should not apply)."""
+
+    # Create categories with different label sets
+    input_categories = LabelCategories(labels=("cat", "dog", "bird"))
+    output_categories = LabelCategories(labels=("horse", "cow", "sheep"))  # Different labels
+
+    input_spec = AttributeSpec(
+        name="label",
+        field=LabelField(semantic=Semantic.Default, dtype=pl.Int32, multi_label=False),
+        categories=input_categories,
+    )
+
+    output_spec = AttributeSpec(
+        name="label",
+        field=LabelField(semantic=Semantic.Default, dtype=pl.Int32, multi_label=False),
+        categories=output_categories,
+    )
+
+    # Create converter
+    converter = LabelIndexConverter(input_labels=input_spec, output_labels=output_spec)
+
+    # Test filter - should return False for different label sets
+    assert converter.filter_output_spec() is False
+
+
+def test_label_index_converter_missing_categories():
+    """Test LabelIndexConverter with missing categories (should not apply)."""
+
+    # Create specs where one is missing categories
+    input_categories = LabelCategories(labels=("cat", "dog", "bird"))
+
+    input_spec = AttributeSpec(
+        name="label",
+        field=LabelField(semantic=Semantic.Default, dtype=pl.Int32, multi_label=False),
+        categories=input_categories,
+    )
+
+    output_spec = AttributeSpec(
+        name="label",
+        field=LabelField(semantic=Semantic.Default, dtype=pl.Int32, multi_label=False),
+        categories=None,  # Missing categories
+    )
+
+    # Create converter
+    converter = LabelIndexConverter(input_labels=input_spec, output_labels=output_spec)
+
+    # Test filter - should return False when categories are missing
+    assert converter.filter_output_spec() is False
+
+
+def test_label_index_converter_unmapped_labels():
+    """Test LabelIndexConverter with unmapped labels using None default."""
+
+    # Create input and output specs where input has extra labels not in output
+    input_categories = LabelCategories(labels=("cat", "dog", "bird", "fish"))
+    output_categories = LabelCategories(labels=("bird", "cat"))  # Missing dog and fish
+
+    input_spec = AttributeSpec(
+        name="label",
+        field=LabelField(semantic=Semantic.Default, dtype=pl.Int32, multi_label=False),
+        categories=input_categories,
+    )
+
+    output_spec = AttributeSpec(
+        name="label",
+        field=LabelField(semantic=Semantic.Default, dtype=pl.Int32, multi_label=False),
+        categories=output_categories,
+    )
+
+    # Create converter
+    converter = LabelIndexConverter(input_labels=input_spec, output_labels=output_spec)
+
+    # This should return False because the label sets are different
+    assert converter.filter_output_spec() is False
 
 
 def test_rotated_bbox_to_polygon_converter():

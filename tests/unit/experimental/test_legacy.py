@@ -8,26 +8,25 @@ from typing import Any, cast
 
 import numpy as np
 import polars as pl
-import pytest
 from PIL import Image as PILImage
 from typing_extensions import Annotated
 
 from datumaro.components.annotation import (
     AnnotationType,
     Bbox,
+    ExtractedMask,
     LabelCategories,
+    Points,
     Polygon,
     RotatedBbox,
 )
 from datumaro.components.dataset import Dataset as LegacyDataset
 from datumaro.components.dataset_base import CategoriesInfo, DatasetItem
-from datumaro.components.media import Image, ImageFromData, ImageFromFile, MediaElement, Video
+from datumaro.components.media import Image, ImageFromData, ImageFromFile, Video
 from datumaro.experimental.dataset import Dataset, Sample
 from datumaro.experimental.fields import (
     ImageInfo,
     bbox_field,
-    image_bytes_field,
-    image_info_field,
     image_path_field,
     label_field,
     polygon_field,
@@ -41,6 +40,8 @@ from datumaro.experimental.legacy import (
     BackwardRotatedBboxAnnotationConverter,
     ForwardBboxAnnotationConverter,
     ForwardImageMediaConverter,
+    ForwardKeypointAnnotationConverter,
+    ForwardMaskAnnotationConverter,
     ForwardPolygonAnnotationConverter,
     ForwardRotatedBboxAnnotationConverter,
     analyze_experimental_dataset,
@@ -505,8 +506,9 @@ def test_image_converter_with_mixed_callable_and_bytes_data():
 
 def test_bbox_annotation_converter_get_schema_attributes():
     """Test schema attribute generation for bboxes."""
-    categories: CategoriesInfo = {}  # Empty categories
-    converter = ForwardBboxAnnotationConverter.create_from_categories(categories)
+    # Create a dataset with empty categories
+    dataset = LegacyDataset.from_iterable([], categories={})
+    converter = ForwardBboxAnnotationConverter.create(dataset)
     assert converter is not None
 
     attributes = converter.get_schema_attributes()
@@ -525,7 +527,9 @@ def test_bbox_annotation_converter_convert_annotations_single_bbox():
     label_categories.add("class_1")
     categories: CategoriesInfo = {AnnotationType.label: label_categories}
 
-    converter = ForwardBboxAnnotationConverter.create_from_categories(categories)
+    # Create a dataset with the categories
+    dataset = LegacyDataset.from_iterable([], categories=categories)
+    converter = ForwardBboxAnnotationConverter.create(dataset)
     assert converter is not None
 
     bbox = Bbox(10, 20, 30, 40, label=1)  # x=10, y=20, w=30, h=40
@@ -549,7 +553,9 @@ def test_bbox_annotation_converter_convert_annotations_multiple_bboxes():
     label_categories.add("class_2")
     categories: CategoriesInfo = {AnnotationType.label: label_categories}
 
-    converter = ForwardBboxAnnotationConverter.create_from_categories(categories)
+    # Create a dataset with the categories
+    dataset = LegacyDataset.from_iterable([], categories=categories)
+    converter = ForwardBboxAnnotationConverter.create(dataset)
     assert converter is not None
 
     bbox1 = Bbox(10, 20, 30, 40, label=1)
@@ -573,8 +579,9 @@ def test_bbox_annotation_converter_convert_annotations_multiple_bboxes():
 
 def test_bbox_annotation_converter_convert_annotations_empty_list():
     """Test conversion of empty annotation list."""
-    categories: CategoriesInfo = {}  # Empty categories
-    converter = ForwardBboxAnnotationConverter.create_from_categories(categories)
+    # Create a dataset with empty categories
+    dataset = LegacyDataset.from_iterable([], categories={})
+    converter = ForwardBboxAnnotationConverter.create(dataset)
     assert converter is not None
     item = DatasetItem(id="test")
 
@@ -607,8 +614,9 @@ def test_register_and_get_annotation_converter():
     """Test annotation converter registration and retrieval."""
     register_forward_annotation_converter(ForwardBboxAnnotationConverter)
 
-    categories: CategoriesInfo = {}
-    retrieved = get_forward_annotation_converter(AnnotationType.bbox, categories)
+    # Create a dataset with empty categories
+    dataset = LegacyDataset.from_iterable([], categories={})
+    retrieved = get_forward_annotation_converter(AnnotationType.bbox, dataset)
     assert retrieved is not None
     assert isinstance(retrieved, ForwardBboxAnnotationConverter)
 
@@ -625,8 +633,8 @@ def test_get_nonexistent_media_converter():
 
 def test_get_nonexistent_annotation_converter():
     """Test getting converter for unregistered annotation type."""
-    categories: CategoriesInfo = {}
-    converter = get_forward_annotation_converter(AnnotationType.unknown, categories)
+    dataset = LegacyDataset.from_iterable([], categories={})
+    converter = get_forward_annotation_converter(AnnotationType.unknown, dataset)
     assert converter is None
 
 
@@ -761,6 +769,43 @@ def test_convert_simple_bbox_dataset():
         np.testing.assert_array_equal(getattr(sample, "labels"), expected_labels)
 
 
+def test_convert_mask_dataset():
+    """Test conversion of dataset with semantic segmentation masks."""
+    # Create a simple mask annotation
+    mask_data = np.array([[0, 1], [1, 2]], dtype=np.uint8)
+    mask1 = ExtractedMask(index_mask=mask_data, index=1, label=1)
+    mask2 = ExtractedMask(index_mask=mask_data, index=2, label=2)
+
+    # Create annotations list
+    annotations = [mask1, mask2]
+
+    # Create label categories
+    categories = {AnnotationType.label: LabelCategories.from_iterable(["bg", "cat", "dog"])}
+
+    # Create dataset item with the mask
+    item = DatasetItem(id="item1", annotations=annotations)
+    dataset = LegacyDataset.from_iterable(
+        [item], categories=categories
+    )  # pyright: ignore[reportUnknownMemberType]
+
+    # Convert to experimental dataset
+    experimental_ds = convert_from_legacy(dataset)
+
+    # Check conversion results
+    assert len(experimental_ds.df) == 1
+    sample = experimental_ds[0]
+
+    # Should have mask_callable and labels attributes
+    assert hasattr(sample, "mask_callable")
+    assert callable(getattr(sample, "mask_callable"))
+    assert not hasattr(sample, "labels")
+
+    # Verify mask data
+    mask_callable = getattr(sample, "mask_callable")
+    output_mask_data = mask_callable()
+    np.testing.assert_array_equal(mask_data, output_mask_data)
+
+
 def test_convert_empty_dataset():
     """Test conversion of empty dataset."""
     dataset = LegacyDataset.from_iterable([])  # pyright: ignore[reportUnknownMemberType]
@@ -804,8 +849,7 @@ def test_builtin_converters_registration():
     assert image_converter is not None
     assert isinstance(image_converter, ForwardImageMediaConverter)
 
-    categories: CategoriesInfo = {}
-    bbox_converter = get_forward_annotation_converter(AnnotationType.bbox, categories)
+    bbox_converter = get_forward_annotation_converter(AnnotationType.bbox, dataset)
     assert bbox_converter is not None
     assert isinstance(bbox_converter, ForwardBboxAnnotationConverter)
 
@@ -992,6 +1036,87 @@ def test_backward_bbox_annotation_converter_create_from_schema_missing_fields():
 
     converter = BackwardBboxAnnotationConverter.create_from_schema(schema)
     assert converter is None
+
+
+def test_forward_instance_mask_annotation_converter():
+    """Test instance mask annotation forward conversion."""
+    # Create a sample mask and index
+    index_mask_data = np.array([[0, 1], [1, 2]], dtype=np.uint8)
+    mask1 = ExtractedMask(index_mask=index_mask_data, index=1, label=0)
+    mask2 = ExtractedMask(index_mask=index_mask_data, index=2, label=1)
+
+    # Create annotations list
+    annotations = [mask1, mask2]
+
+    # Create test item
+    item = DatasetItem(id="test", annotations=annotations)
+
+    # Create label categories
+    label_categories = LabelCategories()
+    label_categories.add("class_0")
+    label_categories.add("class_1")
+    categories = {AnnotationType.label: label_categories}
+
+    # Create a dataset with the categories
+    dataset = LegacyDataset.from_iterable([item], categories=categories)
+    converter = ForwardMaskAnnotationConverter.create(dataset)
+    assert converter is not None
+
+    # Get schema attributes
+    attributes = converter.get_schema_attributes()
+    assert "instance_mask_callable" in attributes
+    assert "labels" in attributes
+
+    # Convert annotations
+    result = converter.convert_annotations(annotations, item)
+
+    # Check result
+    assert "instance_mask_callable" in result
+    assert "labels" in result
+
+    # Test instance mask callables
+    assert callable(result["instance_mask_callable"])  # One callable for shared index mask
+    instance_masks = result["instance_mask_callable"]()
+
+    # Verify shape and content of instance masks
+    assert instance_masks.shape == (2, 2, 2)  # (N=2 instances, H=2, W=2)
+    assert np.array_equal(instance_masks[0], index_mask_data == 1)  # First instance
+    assert np.array_equal(instance_masks[1], index_mask_data == 2)  # Second instance
+
+    # Verify labels
+    print("RESULT", result["labels"])
+    assert np.array_equal(result["labels"], np.array([0, 1], dtype=np.int32))
+
+
+def test_forward_mask_annotation_converter_empty():
+    """Test instance mask annotation forward conversion with no masks."""
+    # Create empty annotations list
+    annotations: list = []
+
+    # Create test item
+    item = DatasetItem(id="test", annotations=annotations)
+
+    # Create label categories
+    label_categories = LabelCategories()
+    label_categories.add("class_0")
+    categories = {AnnotationType.label: label_categories}
+
+    # Create a dataset with the categories
+    dataset = LegacyDataset.from_iterable([], categories=categories)
+    converter = ForwardMaskAnnotationConverter.create(dataset)
+    assert converter is not None
+
+    # Convert annotations
+    result = converter.convert_annotations(annotations, item)
+
+    # Check result
+    assert "instance_mask_callable" not in result
+    assert "mask_callable" in result
+    assert "labels" not in result
+
+    mask = result["mask_callable"]()
+
+    assert mask.shape == (0, 0)  # No callables for empty masks
 
 
 def test_backward_bbox_annotation_converter_convert_to_legacy_annotations():
@@ -1184,8 +1309,9 @@ def test_convert_to_legacy_with_only_images():
 
 def test_forward_polygon_annotation_converter_get_schema_attributes():
     """Test schema attribute generation for polygons."""
-    categories: CategoriesInfo = {}  # Empty categories
-    converter = ForwardPolygonAnnotationConverter.create_from_categories(categories)
+    # Create a dataset with empty categories
+    dataset = LegacyDataset.from_iterable([], categories={})
+    converter = ForwardPolygonAnnotationConverter.create(dataset)
     assert converter is not None
     attributes = converter.get_schema_attributes()
 
@@ -1204,7 +1330,9 @@ def test_forward_polygon_annotation_converter_convert_annotations():
     label_categories.add("class_2")
     categories: CategoriesInfo = {AnnotationType.label: label_categories}
 
-    converter = ForwardPolygonAnnotationConverter.create_from_categories(categories)
+    # Create a dataset with the categories
+    dataset = LegacyDataset.from_iterable([], categories=categories)
+    converter = ForwardPolygonAnnotationConverter.create(dataset)
     assert converter is not None
 
     # Create polygon annotations with flat coordinates
@@ -1436,8 +1564,9 @@ def test_polygon_conversion_without_labels():
 
 def test_forward_rotated_bbox_annotation_converter_get_schema_attributes():
     """Test schema attribute generation for rotated bboxes."""
-    categories: CategoriesInfo = {}  # Empty categories
-    converter = ForwardRotatedBboxAnnotationConverter.create_from_categories(categories)
+    # Create a dataset with empty categories
+    dataset = LegacyDataset.from_iterable([], categories={})
+    converter = ForwardRotatedBboxAnnotationConverter.create(dataset)
     assert converter is not None
     attributes = converter.get_schema_attributes()
 
@@ -1456,7 +1585,9 @@ def test_forward_rotated_bbox_annotation_converter_convert_annotations():
     label_categories.add("class_2")
     categories: CategoriesInfo = {AnnotationType.label: label_categories}
 
-    converter = ForwardRotatedBboxAnnotationConverter.create_from_categories(categories)
+    # Create a dataset with the categories
+    dataset = LegacyDataset.from_iterable([], categories=categories)
+    converter = ForwardRotatedBboxAnnotationConverter.create(dataset)
     assert converter is not None
 
     # Create rotated bbox annotations: RotatedBbox(cx, cy, w, h, r_degrees, ...)
@@ -1728,3 +1859,44 @@ def test_rotated_bbox_conversion_without_labels():
     # Check that labels are None (since we didn't have label categories)
     for bbox in rotated_bbox_anns:
         assert bbox.label is None
+
+
+def test_keypoint_annotation_converter_convert_annotations_with_labels():
+    """Test keypoint annotation conversion with label categories."""
+    # Create label categories
+    label_categories = LabelCategories()
+    label_categories.add("person")
+    label_categories.add("bicycle")
+
+    categories: CategoriesInfo = {AnnotationType.label: label_categories}
+    # Create a dataset with the categories
+    dataset = LegacyDataset.from_iterable([], categories=categories)
+    converter = ForwardKeypointAnnotationConverter.create(dataset)
+    assert converter is not None
+
+    # Create test Points annotation with label and keypoint_label_ids attribute
+    points_data = [100.0, 200.0, 300.0, 400.0]  # 2 keypoints
+    visibility = [2, 1]  # visible, hidden
+    points_annotation = Points(
+        points_data,
+        visibility,
+        label=0,
+        attributes={"keypoint_label_ids": [0, 1]},  # person, bicycle
+    )
+
+    # Mock DatasetItem
+    item = DatasetItem(id="test", annotations=[points_annotation])
+
+    # Convert annotations
+    result = converter.convert_annotations([points_annotation], item)
+
+    assert "keypoints" in result
+    assert "labels" in result
+    assert result["keypoints"] == points_annotation
+    assert result["labels"] == [0, 1]
+
+
+def test_keypoint_annotation_converter_get_annotation_type():
+    """Test that keypoint converter returns correct annotation type."""
+    annotation_types = ForwardKeypointAnnotationConverter.get_supported_annotation_types()
+    assert annotation_types == [AnnotationType.points]

@@ -48,6 +48,10 @@ class _MeanStdCounter:
         count = np.prod(item.media.size)
 
         image = item.media.data
+
+        if image is None:
+            return
+
         if len(image.shape) == 2:
             image = image[:, :, np.newaxis]
         else:
@@ -368,6 +372,7 @@ class _ItemMatcher:
             return None
 
         # Disable B303:md5, because the hash is not used in a security context
+        # nosemgrep: python.lang.security.insecure-hash-algorithms-md5.insecure-hash-algorithm-md5
         return hashlib.md5(item.media.data.tobytes()).hexdigest()  # nosec
 
     def __init__(self, item_hash: Optional[Callable] = None):

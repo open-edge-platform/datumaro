@@ -513,14 +513,10 @@ def test_dataset_with_categories():
         image_info: ImageInfo = image_info_field()
 
     # Create label categories
-    label_categories = LabelCategories()
-    label_categories.add("person")
-    label_categories.add("car")
+    label_categories = LabelCategories(labels=("person", "car"))
 
     # Create mask categories
-    mask_categories = MaskCategories()
-    mask_categories.colormap[0] = (0, 0, 0)
-    mask_categories.colormap[1] = (255, 0, 0)
+    mask_categories = MaskCategories(colormap={0: (0, 0, 0), 1: (255, 0, 0)})
 
     # Create dataset with categories dictionary mapping attributes to categories
     categories = {
@@ -557,8 +553,7 @@ def test_schema_copy_independence():
         bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
 
     # Create categories
-    label_categories = LabelCategories()
-    label_categories.add("person")
+    label_categories = LabelCategories(labels=("person",))
 
     # Create first dataset with categories
     dataset1 = Dataset(TestSample, categories={"bbox": label_categories})
@@ -578,9 +573,7 @@ def test_schema_copy_independence():
     assert original_schema.attributes["image"].categories is None
 
     # Create third dataset with different categories
-    label_categories2 = LabelCategories()
-    label_categories2.add("car")
-    label_categories2.add("truck")
+    label_categories2 = LabelCategories(labels=("car", "truck"))
 
     dataset3 = Dataset(TestSample, categories={"image": label_categories2})
 
@@ -627,3 +620,44 @@ def test_union_type_handling():
     result2 = from_polars_data(polars_data, union_type_typing)
     assert isinstance(result2, torch.Tensor)
     assert result2.tolist() == [1.0, 2.0, 3.0]
+
+
+def test_dataset_with_optional_field():
+    """Test dataset with np.ndarray | None field using mask_field, mixing None and array values."""
+    from datumaro.experimental.fields import mask_field
+
+    class TestSample(Sample):
+        mask: np.ndarray | None = mask_field(dtype=pl.UInt8)
+
+    dataset = Dataset(TestSample)
+
+    # Add samples with both None and ndarray values
+    samples = [
+        TestSample(mask=None),
+        TestSample(mask=np.array([[1, 0, 1], [0, 1, 0]], dtype=np.uint8)),
+        TestSample(mask=None),
+        TestSample(mask=np.array([[255, 128, 64]], dtype=np.uint8)),
+    ]
+    for s in samples:
+        dataset.append(s)
+
+    # Check that values are preserved correctly
+    assert len(dataset) == 4
+
+    # First sample should have None mask
+    sample_0 = dataset[0]
+    assert sample_0.mask is None
+
+    # Second sample should have the array
+    sample_1 = dataset[1]
+    assert sample_1.mask is not None
+    np.testing.assert_array_equal(sample_1.mask, np.array([[1, 0, 1], [0, 1, 0]], dtype=np.uint8))
+
+    # Third sample should have None mask
+    sample_2 = dataset[2]
+    assert sample_2.mask is None
+
+    # Fourth sample should have the array
+    sample_3 = dataset[3]
+    assert sample_3.mask is not None
+    np.testing.assert_array_equal(sample_3.mask, np.array([[255, 128, 64]], dtype=np.uint8))

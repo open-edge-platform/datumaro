@@ -14,5 +14,4 @@ Depends on #1000 (for series of dependent commits).
 ### Checklist
 <!-- Put an 'x' in all the boxes that apply -->
 - [ ] I have added tests to cover my changes or documented any manual tests.
-- [ ] I have added the description of my changes into [CHANGELOG](https://github.com/open-edge-platform/datumaro/blob/develop/CHANGELOG.md).
 - [ ] I have updated the [documentation](https://github.com/open-edge-platform/datumaro/tree/develop/docs) accordingly

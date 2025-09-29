@@ -436,8 +436,9 @@ class _SchemaState:
         # Hash only field types and their properties, not names
         field_items = []
         for field_type, attr_spec in self.field_to_attr_spec.items():
-            # Hash field type and field properties, but not the attribute name
-            field_items.append((field_type, attr_spec.field))
+            # Hash field type, field properties, and categories,
+            # but not the attribute name
+            field_items.append((field_type, attr_spec.field, attr_spec.categories))
         return hash(tuple(field_items))
 
     def __eq__(self, other: object) -> bool:
@@ -449,9 +450,19 @@ class _SchemaState:
             return False
 
         for field_type in self.field_to_attr_spec.keys():
+            self_attr_spec = self.field_to_attr_spec[field_type]
+            other_attr_spec = other.field_to_attr_spec[field_type]
+
+            # Compare field properties
+            if self_attr_spec.field != other_attr_spec.field:
+                return False
+
+            # Compare categories only if both are not None (per requirements)
+            # This is because None categories mean "don't care" in this context
             if (
-                self.field_to_attr_spec[field_type].field
-                != other.field_to_attr_spec[field_type].field
+                self_attr_spec.categories is not None
+                and other_attr_spec.categories is not None
+                and self_attr_spec.categories != other_attr_spec.categories
             ):
                 return False
 
@@ -490,6 +501,7 @@ def _heuristic_cost(current_state: _SchemaState, target_state: _SchemaState) -> 
     This counts both:
     1. Missing field types that need to be created
     2. Field differences where the type exists but properties differ (dtype, format, semantic, etc.)
+    3. Category differences where both input and output categories are not None but differ
 
     Note: Attribute names are ignored in the heuristic as they can be fixed in post-processing.
     """
@@ -510,6 +522,14 @@ def _heuristic_cost(current_state: _SchemaState, target_state: _SchemaState) -> 
 
         # Compare field properties (ignoring names) - if they differ, we need conversion
         if current_attr_spec.field != target_attr_spec.field:
+            cost += 1
+
+        # Compare categories only if both are not None (per requirements)
+        elif (
+            current_attr_spec.categories is not None
+            and target_attr_spec.categories is not None
+            and current_attr_spec.categories != target_attr_spec.categories
+        ):
             cost += 1
 
     return cost
@@ -802,11 +822,15 @@ def find_conversion_path(
         all_converters.extend(semantic_converters)
 
     # Reconstruct the updated schema with inferred categories
+    # Use the list of attributes from to_schema rather than just the target_groups
+    # because the target_groups may include attributes which are deleted in the final to_schema.
+    # We do not want to include those attributes into the inferred_categories.
     inferred_categories: dict[str, Categories] = {}
-    for semantic, updated_target_state in target_groups.items():
-        for attr_spec in updated_target_state.field_to_attr_spec.values():
-            if attr_spec.categories is not None:
-                inferred_categories[attr_spec.name] = attr_spec.categories
+    for attr_name, attr_info in to_schema.attributes.items():
+        semantic = attr_info.annotation.semantic
+        attr_spec = target_groups[semantic].field_to_attr_spec[type(attr_info.annotation)]
+        if attr_spec.categories is not None:
+            inferred_categories[attr_name] = attr_spec.categories
 
     # Separate batch and lazy converters
     conversion_paths = _separate_batch_and_lazy_converters(all_converters)

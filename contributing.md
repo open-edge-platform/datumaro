@@ -16,7 +16,62 @@ For feature requests and issues, please feel free to create a GitHub Issue in th
 
 ## Security
 
-Read the [`Security Policy`](security.md)
+To ensure our codebase remains secure, we leverage GitHub Actions for continuous security scanning (on pre-commit, PR and periodically) with the following tools:
+
+- [CodeQL](https://docs.github.com/en/code-security/code-scanning/introduction-to-code-scanning/about-code-scanning-with-codeql): static analysis tool to check Python, Rust code and GitHub Actions workflows
+- [Semgrep](https://github.com/semgrep/semgrep): static analysis tool to check Python code; ML-specific Semgrep rules developed by [Trail of Bits](https://github.com/trailofbits/semgrep-rules?tab=readme-ov-file#python) are used
+- [Bandit](https://github.com/PyCQA/bandit): Static analysis tool to check Python code
+- [Zizmor](https://github.com/woodruffw/zizmor): Static analysis tool to check GitHub Actions workflows
+- [Trivy](https://github.com/aquasecurity/trivy): Check misconfigurations and detect security issues in dependencies
+
+| Tool    | Pre-commit | PR-checks | Periodic |
+| ------- | ---------- | --------- | -------- |
+| CodeQL  |            | ✅        | ✅       |
+| Semgrep |            |           | ✅       |
+| Bandit  | ✅         | ✅        | ✅       |
+| Zizmor  | ✅         | ✅        | ✅       |
+| Trivy   |            |           | ✅       |
+
+<details>
+<summary>Suppressing False Positives</summary>
+
+If necessary, to suppress _false_ positives, add inline comment with specific syntax.
+Please also add a comment explaining _why_ you decided to disable a rule or provide a risk-acceptance reason.
+
+### Bandit
+
+Findings can be ignored inline with `# nosec BXXX` comments.
+
+```python
+import subprocess # nosec B404 # this is actually fine
+```
+
+[Details](https://bandit.readthedocs.io/en/latest/config.html#exclusions) in Bandit docs.
+
+### Zizmor
+
+Findings can be ignored inline with `# zizmor: ignore[rulename]` comments.
+
+```yaml
+uses: actions/checkout@v3 # zizmor: ignore[artipacked] this is actually fine
+```
+
+[Details](https://woodruffw.github.io/zizmor/usage/#with-comments) in Zizmor docs.
+
+### Semgrep
+
+Findings can be ignored inline with `# nosemgrep: rule-id` comments.
+
+```python
+    # nosemgrep: python.lang.security.audit.dangerous-system-call.dangerous-system-call # this is actually fine
+    r = os.system(' '.join(command))
+```
+
+[Details](https://semgrep.dev/docs/ignoring-files-folders-code) in Semgrep docs.
+
+</details>
+
+Read additional details in the [`Security Policy`](security.md)
 
 ## How to Contribute
 
@@ -55,7 +110,7 @@ Before submitting a pull request, ensure you follow these guidelines:
 ## Development Guidelines
 
 ### Prerequisites
-- Python (3.9+)
+- Python (3.10+)
 
 To set up your development environment, please follow the steps below.
 
@@ -64,43 +119,40 @@ To set up your development environment, please follow the steps below.
 1. Fork the [repo](https://github.com/open-edge-platform/datumaro).
 
 2. Clone the forked repo.
-    ``` bash
-    git clone <forked_repo>
-    ```
-3. Optionally, install a virtual environment (recommended):
-    ``` bash
-    python -m pip install virtualenv
-    python -m virtualenv venv
-    . venv/bin/activate
-    ```
+   ```bash
+   git clone <forked_repo>
+   ```
+3. Install uv: https://docs.astral.sh/uv/getting-started/installation/
 
 4. Install Datumaro with the following optional dependencies:
     ``` bash
     cd /path/to/the/cloned/repo/
-    pip install -e .[tf,tfds,torch]
+    uv sync --extra tf --extra tfds --extra torch
     ```
 
 5. Install development dependencies:
     ``` bash
-    pip install -r requirements-dev.txt
+    uv sync --extra dev
     ```
 
 6. Set up pre-commit hooks in the repo. See [Code style](#code-style).
     ``` bash
     pre-commit install
-    pre-commit run
     ```
 
 7. Create your branch based off the `develop` branch and make changes.
 
 8. Verify your code by running unit tests and integration tests. See [Testing](#testing)
-    ``` bash
-    pytest -v
-    ```
-    or
-    ``` bash
-    python -m pytest -v
-    ```
+
+   ```bash
+   pytest -v
+   ```
+
+   or
+
+   ```bash
+   python -m pytest -v
+   ```
 
 9. Push your changes.
 
@@ -128,11 +180,13 @@ Currently, we use [`pytest`](https://docs.pytest.org/) for testing.
 
 To run tests use:
 
-``` bash
+```bash
 pytest -v
 ```
+
 or
-``` bash
+
+```bash
 python -m pytest -v
 ```
 

@@ -16,6 +16,8 @@ from typing import Any, Callable, Union
 import numpy as np
 import polars as pl
 
+from datumaro.components.annotation import Points
+
 
 def polars_to_numpy_dtype(polars_dtype: pl.DataType) -> np.dtype[Any]:
     """Convert a Polars dtype to the corresponding NumPy dtype.
@@ -63,10 +65,30 @@ def polars_to_numpy_dtype(polars_dtype: pl.DataType) -> np.dtype[Any]:
         raise TypeError(f"No NumPy dtype mapping for Polars dtype: {polars_dtype}")
 
 
+def points_to_numpy(x: Points) -> np.ndarray:
+    """
+    Convert a Points object to a numpy array with shape (N, 3),
+    where each row is (x, y, visibility). Default value for points visibility is 2 (visible) if not provided.
+    """
+    return np.array(
+        [
+            (
+                x.points[i * 2],
+                x.points[(i * 2) + 1],
+                x.visibility[i].value if x.visibility is not None else 2,
+            )
+            for i in range(int(len(x.points) / 2))
+        ]
+    )
+
+
 # Type conversion registry - extensible at runtime
-_to_numpy_converters: dict[type, Callable[[Any], np.ndarray[Any, Any]]] = {
+_to_numpy_converters: dict[type, Callable[[Any], np.ndarray[Any, Any] | None]] = {
     np.ndarray: lambda x: x,
     bytes: lambda x: np.array(x),
+    types.NoneType: lambda _: None,
+    list: lambda x: np.array(x),
+    Points: lambda x: points_to_numpy(x),
 }
 
 _from_polars_converters: dict[type, Callable[[Any], Any]] = {
@@ -108,7 +130,7 @@ def register_from_polars_converter(target_type: type, converter_func: Callable[[
     _from_polars_converters[target_type] = converter_func
 
 
-def to_numpy(value: Any, dtype: Any = None) -> np.ndarray[Any, Any]:
+def to_numpy(value: Any, dtype: Any = None) -> np.ndarray[Any, Any] | None:
     """Convert any registered type to numpy array with optional dtype conversion.
 
     Args:
@@ -135,6 +157,9 @@ def to_numpy(value: Any, dtype: Any = None) -> np.ndarray[Any, Any]:
 
         # Apply dtype conversion if specified
         if dtype is not None:
+            if numpy_value is None:
+                return None
+
             if numpy_value.dtype == object:
                 nested_func = np.vectorize(
                     lambda x: to_numpy(x, dtype), otypes=numpy_value.dtype.char
@@ -194,7 +219,14 @@ def from_polars_data(polars_data: Any, target_type: type) -> Any:
         pass
 
     if is_union and union_args:
-        # Try each type in the union until one succeeds
+        if types.NoneType in union_args:
+            # Handle optional types in union (e.g. A | None) when Polars data is None
+            if polars_data is None:
+                return None
+
+            union_args = tuple(arg for arg in union_args if arg is not types.NoneType)
+
+        # For non-optional Union types, try each type in the union until one succeeds
         for union_type in union_args:
             if union_type in _from_polars_converters:
                 try:
@@ -217,7 +249,6 @@ try:
     )  # pyright: ignore[reportUnknownMemberType, reportUnknownLambdaType, reportUnknownArgumentType]
 except ImportError:
     pass
-
 
 # Register PIL Image converters if available
 try:
