@@ -146,9 +146,12 @@ def test_lazy_loading_nonexistent_file():
     path_dataset.append(PathSample(image_path="/nonexistent/path/to/image.jpg"))
 
     image_dataset = path_dataset.convert_to_schema(ImageSample)
-    # If conversion succeeds, accessing the sample should raise an error
+    # With lazy loading, conversion should succeed
+    sample = image_dataset[0]
+
+    # But accessing the lazy image attribute should raise an error
     with pytest.raises(FileNotFoundError):
-        image_dataset[0]
+        _ = sample.image
 
 
 def test_lazy_loading_with_semantic_fields():
