@@ -397,7 +397,9 @@ class Dataset(Generic[DType]):
         )
 
     def convert_to_schema(
-        self, target_dtype_or_schema: Union[Schema, Type[DTargetType]]
+        self,
+        target_dtype_or_schema: Union[Schema, Type[DTargetType]],
+        target_categories: Dict[str, Categories] = None,
     ) -> "Dataset[DTargetType]":
         """
         Convert this dataset to a new schema using registered converters.
@@ -416,6 +418,9 @@ class Dataset(Generic[DType]):
             target_schema = target_dtype_or_schema
         else:
             target_schema = target_dtype_or_schema.infer_schema()
+
+        if target_categories is not None:
+            target_schema = target_schema.with_categories(target_categories)
 
         # Early return if schemas are already compatible
         if has_schema(self, target_dtype_or_schema):
