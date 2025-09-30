@@ -25,6 +25,80 @@ PolarsDataType: TypeAlias = Union[type[pl.DataType], pl.DataType]
 
 
 @dataclass(frozen=True)
+class TileInfo:
+    """Information about a single tile within a larger image or data."""
+
+    source_sample_idx: int  # ID of the source image this tile comes from
+    x: int  # Top-left x coordinate of the tile
+    y: int  # Top-left y coordinate of the tile
+    width: int  # Width of the tile
+    height: int  # Height of the tile
+
+
+@dataclass(frozen=True)
+class TileField(Field):
+    """
+    Represents a tile field storing information about how data was tiled.
+
+    This field contains information about the source data index and
+    the tile's position and dimensions within the source data.
+
+    Attributes:
+        semantic: Semantic tags describing the tile's purpose
+    """
+
+    semantic: Semantic
+
+    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+        """Generate Polars schema for tile information."""
+        return {
+            name: pl.Struct(
+                [
+                    pl.Field("source_sample_idx", pl.Int32()),
+                    pl.Field("x", pl.Int32()),
+                    pl.Field("y", pl.Int32()),
+                    pl.Field("width", pl.Int32()),
+                    pl.Field("height", pl.Int32()),
+                ]
+            )
+        }
+
+    def to_polars(self, name: str, value: TileInfo | None) -> dict[str, pl.Series]:
+        """Convert tile info to Polars series."""
+        schema = self.to_polars_schema("tile")
+        if value is not None:
+            data = [
+                {
+                    "source_sample_idx": value.source_sample_idx,
+                    "x": value.x,
+                    "y": value.y,
+                    "width": value.width,
+                    "height": value.height,
+                }
+            ]
+        else:
+            data = [None]
+        return {name: pl.Series(name, data, dtype=schema["tile"])}
+
+    def from_polars(
+        self, name: str, row_index: int, df: pl.DataFrame, target_type: type
+    ) -> TileInfo | None:
+        """Convert Polars data back to TileInfo."""
+        if not issubclass(target_type, TileInfo):
+            raise TypeError(f"Expected target_type to be TileInfo, got {target_type}")
+        struct_val = df[name][row_index]
+        if struct_val is None:
+            return None
+        return TileInfo(
+            source_sample_idx=struct_val["source_sample_idx"],
+            x=struct_val["x"],
+            y=struct_val["y"],
+            width=struct_val["width"],
+            height=struct_val["height"],
+        )
+
+
+@dataclass(frozen=True)
 class TensorField(Field):
     """
     Represents a tensor field with semantic tags and data type information.
@@ -346,6 +420,19 @@ def image_info_field(semantic: Semantic = Semantic.Default) -> Any:
         ImageInfoField instance configured with the given semantic tags
     """
     return ImageInfoField(semantic=semantic)
+
+
+def tile_field(semantic: Semantic = Semantic.Default) -> Any:
+    """
+    Create a TileField instance for storing tile information.
+
+    Args:
+        semantic: Optional semantic tags for disambiguation (defaults to Semantic.Default)
+
+    Returns:
+        TileField instance configured with the given semantic tags
+    """
+    return TileField(semantic=semantic)
 
 
 @dataclass(frozen=True)

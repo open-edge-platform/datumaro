@@ -20,7 +20,6 @@ from typing import (
     Any,
     Callable,
     Dict,
-    Generic,
     List,
     NamedTuple,
     Optional,
@@ -37,7 +36,7 @@ import polars as pl
 from typing_extensions import cast, dataclass_transform
 
 from .categories import Categories
-from .schema import Field, Schema, Semantic
+from .schema import AttributeSpec, Field, Schema, Semantic
 
 TField = TypeVar("TField", bound=Field)
 
@@ -52,28 +51,6 @@ class ConversionPaths(NamedTuple):
 
     batch_converters: List["Converter"]
     lazy_converters: Dict[str, List["Converter"]]
-
-
-@dataclass(frozen=True)
-class AttributeSpec(Generic[TField]):
-    """
-    Specification for an attribute used in converters.
-
-    Links an attribute name with its corresponding field type definition,
-    providing the complete specification needed for converter operations.
-
-    Args:
-        TField: The specific Field type, defaults to Field
-
-    Attributes:
-        name: The attribute name
-        field: The field type specification
-        categories: Optional categories information (e.g., LabelCategories, MaskCategories)
-    """
-
-    name: str
-    field: TField
-    categories: Optional[Categories] = None
 
 
 @dataclass_transform()

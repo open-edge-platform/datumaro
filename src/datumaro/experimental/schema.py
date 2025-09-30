@@ -8,12 +8,11 @@ Schema definitions for the dataset system.
 import copy
 from dataclasses import dataclass, field
 from enum import Flag, auto
-from typing import TYPE_CHECKING, Any, Dict, Optional
+from typing import Any, Dict, Generic, Optional, TypeVar
 
 import polars as pl
 
-if TYPE_CHECKING:
-    from .categories import Categories
+from .categories import Categories
 
 
 class Semantic(Flag):
@@ -95,6 +94,31 @@ class AttributeInfo:
     type: type
     annotation: Field
     categories: Optional["Categories"] = None
+
+
+TField = TypeVar("TField", bound=Field)
+
+
+@dataclass(frozen=True)
+class AttributeSpec(Generic[TField]):
+    """
+    Specification for an attribute used in converters.
+
+    Links an attribute name with its corresponding field type definition,
+    providing the complete specification needed for converter operations.
+
+    Args:
+        TField: The specific Field type, defaults to Field
+
+    Attributes:
+        name: The attribute name
+        field: The field type specification
+        categories: Optional categories information (e.g., LabelCategories, MaskCategories)
+    """
+
+    name: str
+    field: TField
+    categories: Optional[Categories] = None
 
 
 @dataclass
