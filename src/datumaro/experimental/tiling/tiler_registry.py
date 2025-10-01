@@ -13,17 +13,39 @@ import copy
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Type
+from typing import Callable, Dict, List, Optional, Sequence, Type
 
 import polars as pl
 
 from ..fields import ImageInfoField, TileField, TileInfo
 from ..schema import AttributeInfo, AttributeSpec, Field, Schema, Semantic
+from ..transform import Transform
 
 
 @dataclass
 class TilingConfig:
-    """Configuration for tiling operations."""
+    """Configuration for tiling operations.
+
+    This class defines the parameters for how an image or other 2D data should be
+    divided into tiles. It supports both regular tiling and overlapping tiles.
+
+    Attributes:
+        tile_width: Width of each tile in pixels
+        tile_height: Height of each tile in pixels
+        overlap_x: Horizontal overlap between adjacent tiles in pixels
+        overlap_y: Vertical overlap between adjacent tiles in pixels
+
+    Example:
+        ```python
+        # Create config for 512x512 tiles with 64px overlap
+        config = TilingConfig(
+            tile_width=512,
+            tile_height=512,
+            overlap_x=64,
+            overlap_y=64
+        )
+        ```
+    """
 
     tile_width: int
     tile_height: int
@@ -31,7 +53,7 @@ class TilingConfig:
     overlap_y: int = 0
 
 
-def calculate_tiles(
+def _calculate_tiles(
     df: pl.DataFrame,
     config: TilingConfig,
     image_info_spec: AttributeSpec[ImageInfoField],
@@ -39,14 +61,23 @@ def calculate_tiles(
 ) -> pl.DataFrame:
     """Calculate tile parameters for each image in the dataset.
 
+    This function divides each image into tiles according to the provided configuration,
+    handling edge cases and overlaps. For each tile, it calculates the position and
+    dimensions while ensuring tiles don't exceed image boundaries.
+
     Args:
-        df: Input DataFrame containing image info
-        config: Tiling configuration
-        image_info_spec: Specification for the input image info field
-        tile_info_spec: Specification for the output tile info field
+        df: Input DataFrame containing image info. Must have columns for image
+            dimensions (height, width) under the image_info_spec field.
+        config: Tiling configuration specifying tile sizes and overlap.
+        image_info_spec: Specification for the input image info field, used to
+            extract image dimensions.
+        tile_info_spec: Specification for the output tile info field, defines
+            the structure of the tile parameters.
 
     Returns:
-        DataFrame containing tile parameters using TileInfo structure
+        DataFrame containing tile parameters using TileInfo structure. Each row
+        represents one tile with its position (x, y), dimensions (width, height)
+        and reference to the source image (source_sample_idx).
     """
     tiles = []
     field = tile_info_spec.field
@@ -83,9 +114,37 @@ def calculate_tiles(
 
 
 class Tiler(ABC):
-    """Base class for all tilers."""
+    """Base class for all tilers.
+
+    A Tiler is responsible for processing a specific type of field (images, masks,
+    annotations, etc.) during the tiling operation. Each tiler implements the logic
+    for how its field type should be divided across tiles.
+
+    Tilers can optionally support filtering by implementing is_filterable() and
+    providing a 'keep' column in their output DataFrame. This is useful for
+    annotations like polygons or bounding boxes that may or may not be present
+    in each tile.
+
+    Attributes:
+        field_spec: Specification of the field this tiler handles
+
+    Example:
+        ```python
+        @TilerRegistry.register(ImageField)
+        class ImageTiler(Tiler):
+            def tile(self, df, tiles_df):
+                # Implementation for tiling image data
+                ...
+        ```
+    """
 
     def is_filterable(self) -> bool:
+        """Whether this tiler supports element filtering.
+
+        Returns:
+            True if the tiler produces a 'keep' column indicating which elements
+            should be kept in each tile, False otherwise.
+        """
         return False
 
     @abstractmethod
@@ -104,13 +163,51 @@ class Tiler(ABC):
 
 
 class TilerRegistry:
-    """Registry for tiler implementations."""
+    """Registry for tiler implementations.
+
+    This class provides a central registry for all tiler implementations, mapping
+    field types to their corresponding tilers. It uses a decorator pattern for
+    registration, making it easy to add new tilers for different field types.
+
+    The registry is used by the tiling system to automatically find and instantiate
+    the appropriate tiler for each field in a dataset.
+
+    Example:
+        ```python
+        @TilerRegistry.register(ImageField)
+        class ImageTiler(Tiler):
+            def tile(self, df, tiles_df):
+                # Implementation for tiling image data
+                ...
+
+        # Later, get tiler for field type
+        tiler_cls = TilerRegistry.get_tiler(ImageField)
+        ```
+    """
 
     _tilers: Dict[Type[Field], Type[Tiler]] = {}
 
     @classmethod
     def register(cls, field_type: Type[Field]):
-        """Decorator to register a tiler for a specific field type."""
+        """Decorator to register a tiler for a specific field type.
+
+        This decorator associates a Tiler implementation with a specific Field type.
+        When the tiling system encounters a field of this type, it will use the
+        registered tiler to process it.
+
+        Args:
+            field_type: The Field subclass this tiler handles
+
+        Returns:
+            Decorator function that registers the tiler class
+
+        Example:
+            ```python
+            @TilerRegistry.register(ImageField)
+            class ImageTiler(Tiler):
+                ...
+            ```
+        """
 
         def wrapper(tiler_cls: Type[Tiler]):
             cls._tilers[field_type] = tiler_cls
@@ -120,7 +217,15 @@ class TilerRegistry:
 
     @classmethod
     def get_tiler(cls, field_type: Type[Field]) -> Optional[Type[Tiler]]:
-        """Get the registered tiler for a field type."""
+        """Get the registered tiler for a field type.
+
+        Args:
+            field_type: The Field type to get a tiler for
+
+        Returns:
+            The registered Tiler class for the field type, or None if no
+            tiler is registered
+        """
         return cls._tilers.get(field_type)
 
 
@@ -129,12 +234,28 @@ def create_tilers(
 ) -> Dict[Semantic, List[tuple[str, Tiler]]]:
     """Create tiler instances based on schema fields.
 
+    This function instantiates appropriate tilers for each field in the schema,
+    organizing them by their semantic type (e.g., annotations, metadata).
+    Each tiler is configured with its field specification and annotation
+    dropping threshold.
+
     Args:
-        schema: Input schema defining the DataFrame structure
-        config: Tiling configuration
+        schema: Input schema defining the DataFrame structure. Each field
+               in the schema may have a corresponding tiler.
+        threshold_drop_ann: Threshold for dropping annotations. If an annotation's
+                          area within a tile is below this ratio, it will be
+                          dropped.
 
     Returns:
-        List of instantiated tilers for the given schema
+        Dictionary mapping semantic types to lists of (field_name, tiler) pairs.
+        This allows processing fields with similar semantics together.
+
+    Example:
+        ```python
+        schema = Schema(...)
+        tilers = create_tilers(schema, threshold_drop_ann=0.5)
+        annotation_tilers = tilers[Semantic.Annotation]
+        ```
     """
     tilers = defaultdict(list)
 
@@ -151,25 +272,13 @@ def create_tilers(
     return tilers
 
 
-from typing import Callable
-
-
-def list_zip(
-    list_col: str,
-    ref_col: str,
-    op: Callable[[pl.Expr, pl.Expr], pl.Expr],
-) -> pl.Expr:
+def zip_list(op: Callable[[pl.Expr, pl.Expr], pl.Expr], *args: str) -> pl.Expr:
     """
-    Apply an operation element-wise between a list column and a reference column.
-
-    This helper function enables operations between elements of a list column
-    and values from a reference column, returning a new list column with
-    the results.
+    Apply an operation element-wise between a set of columns.
 
     Args:
-        list_col: Name of the list column
-        ref_col: Name of the reference column
-        op: Operation function to apply between list elements and reference values
+        op: Operation function to apply element-wise
+        args: List of columns to zip together
 
     Returns:
         Polars expression for the computed list column
@@ -177,16 +286,40 @@ def list_zip(
     Note:
         See https://github.com/pola-rs/polars/issues/7210 for implementation details
     """
-    return pl.concat_list(pl.struct(list_col, ref_col)).list.eval(
-        op(
-            pl.element().struct.field(list_col).explode(),
-            pl.element().struct.field(ref_col).explode(),
-        )
+    return pl.concat_list(pl.struct(*args)).list.eval(
+        op(pl.element().struct.field(arg).explode() for arg in args)
     )
 
 
 @dataclass
 class TilingPlan:
+    """Stores the complete plan for executing tiling operations.
+
+    This class organizes all the components needed for tiling a dataset:
+    - Tiler grouping for coordinated filtering
+    - Field specifications
+    - Target schema
+    - Tiling configuration
+
+    The plan is created by _create_tiling_plan() and used by the tiling transform
+    to execute the tiling operation.
+
+    Attributes:
+        tilers_filter_group_id: Maps field names to their filter group IDs.
+            Fields in the same group are filtered together.
+        tilers_by_group_id: Maps group IDs to lists of field names in that group.
+            Used to coordinate filtering operations.
+        tilers_instance_by_name: Maps field names to their tiler instances.
+            Contains the actual objects that perform tiling.
+        image_info_spec: Specification for the image info field, used to
+            get image dimensions.
+        tile_info_spec: Specification for the tile info field that will
+            store tile parameters.
+        target_schema: The schema for the output DataFrame after tiling.
+            Includes all original fields plus tile information.
+        config: The configuration controlling tile sizes and overlaps.
+    """
+
     tilers_filter_group_id: dict[str, int]
     tilers_by_group_id: defaultdict[int, list[str]]
     tilers_instance_by_name: dict[str, Tiler]
@@ -196,7 +329,36 @@ class TilingPlan:
     config: TilingConfig
 
 
-def create_tiling_plan(schema: Schema, config: TilingConfig, threshold_drop_ann: float = 0.8):
+def _create_tiling_plan(schema: Schema, config: TilingConfig, threshold_drop_ann: float = 0.8):
+    """Create a plan for tiling operations on a dataset.
+
+    This function analyzes the schema, identifies relevant fields, and creates
+    a structured plan for how to tile the dataset. It handles:
+    1. Finding the image info field
+    2. Creating tiler instances
+    3. Grouping tilers for coordinated filtering
+    4. Preparing the output schema
+
+    Args:
+        schema: The input dataset's schema, defining all fields.
+        config: Configuration specifying tile sizes and overlaps.
+        threshold_drop_ann: Threshold for dropping annotations. Annotations with
+            area ratios below this threshold will be dropped from tiles.
+            Defaults to 0.8 (80% of original area must be in tile).
+
+    Returns:
+        A TilingPlan containing all information needed for the tiling operation.
+
+    Raises:
+        ValueError: If the schema does not contain an ImageInfoField.
+
+    Example:
+        ```python
+        schema = Schema(...)  # Your dataset schema
+        config = TilingConfig(tile_width=512, tile_height=512)
+        plan = _create_tiling_plan(schema, config)
+        ```
+    """
     # Find image info field in schema
     image_info_spec = None
     for field_name, field in schema.attributes.items():
@@ -242,18 +404,41 @@ def create_tiling_plan(schema: Schema, config: TilingConfig, threshold_drop_ann:
     )
 
 
-def apply_tiling(
+def _apply_tiling(
     input_df: pl.DataFrame, output_df: pl.DataFrame | None, plan: TilingPlan, fields: set[str]
 ) -> tuple[pl.DataFrame, set[str]]:
-    """Apply tiling operations to a DataFrame.
+    """Apply tiling operations to a DataFrame according to the tiling plan.
+
+    This function executes the tiling plan on the input data, handling:
+    1. Field group expansion (ensuring related fields are tiled and filtered together)
+    2. Tile parameter calculation
+    3. Individual field tiling
+    4. Coordinated filtering of related fields
+    5. Result combination
 
     Args:
-        df: Input DataFrame to tile
-        schema: Schema describing the DataFrame structure
-        config: Tiling configuration
+        input_df: Source DataFrame containing the data to tile
+        output_df: Optional pre-existing output DataFrame with tile parameters.
+                  If None, tile parameters will be calculated.
+        plan: The TilingPlan containing all tiling specifications
+        fields: Set of field names to process in this operation
 
     Returns:
-        Tiled DataFrame
+        A tuple of:
+        - The output DataFrame containing all tiled data
+        - Set of field names that were actually processed (may include
+          additional fields from the same groups)
+
+    Example:
+        ```python
+        plan = _create_tiling_plan(schema, config)
+        output_df, processed_fields = _apply_tiling(
+            input_df,
+            None,
+            plan,
+            {"image", "masks", "polygons"}
+        )
+        ```
     """
     fields_set = set(fields)
 
@@ -264,7 +449,7 @@ def apply_tiling(
             fields_set.update(plan.tilers_by_group_id[group_id])
 
     if output_df is None:
-        output_df = calculate_tiles(
+        output_df = _calculate_tiles(
             input_df, plan.config, plan.image_info_spec, plan.tile_info_spec
         )
 
@@ -294,7 +479,7 @@ def apply_tiling(
                 # Update keep_mask at list element level
                 keep_mask = keep_mask_by_group_id[group_id]
                 keep_mask = tiled_df.with_columns(keep_mask=keep_mask).with_columns(
-                    keep_mask=list_zip("keep", "keep_mask", lambda a, b: a & b)
+                    keep_mask=zip_list(lambda a, b: a & b, "keep", "keep_mask")
                 )["keep_mask"]
                 keep_mask_by_group_id[group_id] = keep_mask
 
@@ -319,7 +504,7 @@ def apply_tiling(
         columns_to_filter = keep_mask_by_group_id[group_id]
 
         output_df = output_df.with_columns(keep=keep_mask).with_columns(
-            list_zip(col, "keep", lambda a, b: pl.struct(a, b))
+            zip_list(lambda a, b: pl.struct(a, b), col, "keep")
             .list.filter(pl.element().struct["keep"])
             .list.eval(pl.element().struct[col])
             .alias(col)
@@ -330,22 +515,48 @@ def apply_tiling(
     return output_df, fields_set
 
 
-from typing import Sequence
-
-from datumaro.experimental.transform import Transform
-
-
 class TilingTransform(Transform):
+    """Transform that implements tiling operations on a dataset.
+
+    This transform divides dataset items into tiles according to a tiling plan.
+    It handles:
+    - Lazy evaluation of fields when possible
+    - Batch-based tile parameter calculation
+    - Proper slicing of tiled datasets
+    - Coordinated filtering of related fields
+
+    The transform maintains state about which fields have been processed and
+    caches intermediate results to avoid redundant computation.
+
+    Example:
+        ```python
+        # Create configuration and transform
+        config = TilingConfig(tile_width=512, tile_height=512)
+        transform = create_tiling_transform(config)
+
+        # Apply to dataset
+        tiled_dataset = dataset.transform(transform)
+        ```
+    """
+
     def __init__(self, parent: Transform, tiling_plan: TilingPlan):
+        """Initialize tiling transform.
+
+        Args:
+            parent: The parent transform providing input data
+            tiling_plan: The plan specifying how to tile the data
+        """
         super().__init__(tiling_plan.target_schema)
 
         # Tiling does not support a lazy image info field
-        # because we need it at construction.
+        # so remove it from the list of lazy outputs.
         lazy_outputs = parent.get_lazy_attributes()
         lazy_outputs.discard(tiling_plan.image_info_spec.name)
 
         self._lazy_outputs = lazy_outputs
 
+        # Add image info to the list of batch outputs to compute immediately.
+        # It is needed inside apply() to calculate the list of tiles.
         batch_outputs = self.get_batch_attributes()
         batch_outputs.add(tiling_plan.image_info_spec.name)
 
@@ -360,13 +571,18 @@ class TilingTransform(Transform):
 
     def apply(self, fields: Sequence[str]) -> pl.DataFrame:
         fields_set = set(fields)
+
+        # Do not request the tile_info from the parent transform as it is generated by this transform.
         fields_set.discard(self._tiling_plan.tile_info_spec.name)
         fields_set -= self._applied_tilers
 
+        # Request all required attributes from the parent transform
         input_df = self._parent.apply(list(fields_set))
 
-        self._df, fields_set = apply_tiling(input_df, self._df, self._tiling_plan, fields_set)
+        # Apply tiling
+        self._df, fields_set = _apply_tiling(input_df, self._df, self._tiling_plan, fields_set)
 
+        # Update the list of applied attributes to avoid recomputing them.
         self._applied_tilers.update(fields_set)
         return self._df
 
@@ -379,6 +595,7 @@ class TilingTransform(Transform):
         if self._df is None:
             raise RuntimeError("apply() should have been called in the constructor.")
 
+        # Find the start and end of this slice in the source dataset
         source_sample_offset = self._df[offset, self._tiling_plan.tile_info_spec.name][
             "source_sample_idx"
         ]
@@ -391,7 +608,10 @@ class TilingTransform(Transform):
             ]["source_sample_idx"]
             source_sample_length = source_sample_last - source_sample_offset + 1
 
+        # Slice the parent transform based on the source offset and length
         instance._parent = self._parent.slice(source_sample_offset, source_sample_length)
+
+        # Slice the output dataframe
         instance._applied_tilers = copy.copy(self._applied_tilers)
         instance._df = self._df.slice(offset, length)
         return instance
@@ -401,8 +621,34 @@ class TilingTransform(Transform):
 
 
 def create_tiling_transform(config: TilingConfig, threshold_drop_ann: float = 0.8):
+    """Create a transform factory for tiling operations.
+
+    This is the main entry point for creating a tiling transform. It returns
+    a factory function that will create TilingTransform instances when needed.
+    This pattern allows the transform to be used in dataset pipelines.
+
+    Args:
+        config: The configuration specifying tile sizes and overlaps
+        threshold_drop_ann: Threshold for dropping annotations. Annotations with
+            area ratios below this threshold will be dropped from tiles.
+            Defaults to 0.8 (80% of original area must be in tile).
+
+    Returns:
+        A factory function that creates TilingTransform instances.
+
+    Example:
+        ```python
+        # Create the transform factory
+        config = TilingConfig(tile_width=512, tile_height=512)
+        tiling_transform = create_tiling_transform(config)
+
+        # Use in a dataset pipeline
+        dataset = dataset.transform(tiling_transform)
+        ```
+    """
+
     def factory(parent: Transform):
-        plan = create_tiling_plan(parent.schema, config, threshold_drop_ann)
+        plan = _create_tiling_plan(parent.schema, config, threshold_drop_ann)
         return TilingTransform(parent, plan)
 
     return factory

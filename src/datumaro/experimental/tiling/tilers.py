@@ -112,18 +112,13 @@ class InstanceMaskTiler(Tiler):
         )
 
 
-def list_zip_any(op: Callable[[pl.Expr, pl.Expr], pl.Expr], *args: str) -> pl.Expr:
+def zip_list(op: Callable[[pl.Expr, pl.Expr], pl.Expr], *args: str) -> pl.Expr:
     """
-    Apply an operation element-wise between a list column and a reference column.
-
-    This helper function enables operations between elements of a list column
-    and values from a reference column, returning a new list column with
-    the results.
+    Apply an operation element-wise between a set of columns.
 
     Args:
-        list_col: Name of the list column
-        ref_col: Name of the reference column
-        op: Operation function to apply between list elements and reference values
+        op: Operation function to apply element-wise
+        args: List of columns to zip together
 
     Returns:
         Polars expression for the computed list column
