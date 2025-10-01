@@ -31,7 +31,7 @@
   // `matchBaseBranches` in specific rule
   baseBranches: ["develop"],
 
-  //  enabledManagers: ["github-actions", "pep621"], TODO
+  enabledManagers: ["github-actions", "pep621", "cargo", "pip_requirements"]
 
   // Set limit to 10
   ignorePresets: [":prHourlyLimit2"],
@@ -42,6 +42,12 @@
       enabled: true,
       matchManagers: ["pep621"],
       schedule: ["* * * * 0"], // weekly
+    },
+
+    // Disable non-security upgrades for docs/requirements.txt
+    {
+      enabled: false,
+      matchManagers: ["pip_requirements"],
     },
 
     // Group GitHub Actions updates
