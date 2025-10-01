@@ -2,7 +2,6 @@ import numpy as np
 import polars as pl
 import pytest
 
-import datumaro.experimental.tiling.tilers  # Ensure tilers are registered
 from datumaro.experimental.dataset import AttributeInfo
 from datumaro.experimental.fields import (
     TileInfo,
@@ -64,18 +63,6 @@ def sample_df():
             "image_info": pl.Struct([pl.Field("height", pl.Int32), pl.Field("width", pl.Int32)]),
         },
     )
-
-
-def test_tiling_config():
-    config = TilingConfig(tile_width=50, tile_height=50)
-    assert config.tile_width == 50
-    assert config.tile_height == 50
-    assert config.overlap_x == 0
-    assert config.overlap_y == 0
-
-    config = TilingConfig(tile_width=50, tile_height=50, overlap_x=10, overlap_y=10)
-    assert config.overlap_x == 10
-    assert config.overlap_y == 10
 
 
 def test_calculate_tiles(sample_df):

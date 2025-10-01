@@ -4,7 +4,6 @@ import numpy as np
 import polars as pl
 import pytest
 
-import datumaro.experimental.tiling.tilers  # Ensure tilers are registered
 from datumaro.experimental.dataset import Dataset, Sample
 from datumaro.experimental.fields import ImageInfo, image_field, image_info_field
 from datumaro.experimental.tiling.tiler_registry import TilingConfig, create_tiling_transform

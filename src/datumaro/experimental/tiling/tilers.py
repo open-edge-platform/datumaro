@@ -130,6 +130,10 @@ class BboxTiler(Tiler):
     def tile(self, df: pl.DataFrame, tiles_df: pl.DataFrame) -> pl.DataFrame:
         """Process bounding boxes for each tile."""
         column_name = self.field_spec.name
+
+        if self.field_spec.field.format != "x1y1x2y2":
+            raise RuntimeError(f"The format {self.field_spec.field.format} is not supported.")
+
         results = []
 
         for tile_row in tiles_df["tile"]:

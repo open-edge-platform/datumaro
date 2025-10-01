@@ -404,9 +404,6 @@ class Dataset(Generic[DType]):
         Returns:
             A new Dataset instance with the converted schema
         """
-        # Import the converter implementations to register them
-        import datumaro.experimental.converters  # type: ignore[import]  # noqa: F401
-
         # Determine target schema
         if isinstance(target_dtype_or_schema, Schema):
             target_schema = target_dtype_or_schema

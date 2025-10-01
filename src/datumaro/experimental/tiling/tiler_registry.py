@@ -13,7 +13,7 @@ import copy
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Callable, Dict, List, Optional, Sequence, Type
+from typing import Callable, Dict, List, NamedTuple, Optional, Sequence, Type
 
 import polars as pl
 
@@ -229,9 +229,12 @@ class TilerRegistry:
         return cls._tilers.get(field_type)
 
 
-def create_tilers(
-    schema: Schema, threshold_drop_ann: float
-) -> Dict[Semantic, List[tuple[str, Tiler]]]:
+class TilerEntry(NamedTuple):
+    field_name: str
+    tiler: Tiler
+
+
+def create_tilers(schema: Schema, threshold_drop_ann: float) -> Dict[Semantic, List[TilerEntry]]:
     """Create tiler instances based on schema fields.
 
     This function instantiates appropriate tilers for each field in the schema,
@@ -247,14 +250,20 @@ def create_tilers(
                           dropped.
 
     Returns:
-        Dictionary mapping semantic types to lists of (field_name, tiler) pairs.
+        Dictionary mapping semantic types to lists of TilerEntry objects.
+        Each TilerEntry contains:
+        - field_name: Name of the field this tiler handles
+        - tiler: The configured tiler instance
         This allows processing fields with similar semantics together.
 
     Example:
         ```python
         schema = Schema(...)
         tilers = create_tilers(schema, threshold_drop_ann=0.5)
-        annotation_tilers = tilers[Semantic.Annotation]
+        # Access annotation tilers
+        for entry in tilers[Semantic.Annotation]:
+            print(f"Field: {entry.field_name}")
+            print(f"Tiler: {entry.tiler.__class__.__name__}")
         ```
     """
     tilers = defaultdict(list)
@@ -267,7 +276,7 @@ def create_tilers(
             tiler = tiler_cls()
             setattr(tiler, "field_spec", field_spec)  # Set the field spec
             setattr(tiler, "threshold_drop_ann", threshold_drop_ann)  # Set the threshold
-            tilers[field.annotation.semantic].append((field_name, tiler))
+            tilers[field.annotation.semantic].append(TilerEntry(field_name, tiler))
 
     return tilers
 
@@ -381,12 +390,12 @@ def _create_tiling_plan(schema: Schema, config: TilingConfig, threshold_drop_ann
 
     # Group filterable tilers
     for semantic_tilers in tilers.values():
-        filterable_tilers = [tiler for tiler in semantic_tilers if tiler[1].is_filterable()]
+        filterable_tilers = [tiler for tiler in semantic_tilers if tiler.tiler.is_filterable()]
 
         group_id = id(filterable_tilers)
-        tilers_filter_group_id.update((tiler[0], group_id) for tiler in filterable_tilers)
-        tilers_by_group_id[group_id] = [tiler[0] for tiler in filterable_tilers]
-        tilers_instance_by_name.update(semantic_tilers)
+        tilers_filter_group_id.update((tiler.field_name, group_id) for tiler in filterable_tilers)
+        tilers_by_group_id[group_id] = [tiler.field_name for tiler in filterable_tilers]
+        tilers_instance_by_name.update((tiler.field_name, tiler.tiler) for tiler in semantic_tilers)
 
     # Update schema with tile information
     new_fields = dict(schema.attributes)
