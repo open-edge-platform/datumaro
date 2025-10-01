@@ -1,16 +1,14 @@
 name: PR Test
 on:
-  push:
-    branches:
-      - "master"
-      - "develop"
-      - "releases/*"
   pull_request:
-    types:
-      - opened
-      - synchronize
-      - reopened
-      - ready_for_review
+    branches:
+      - main
+      - release**
+  merge_group:
+    branches:
+      - main
+      - release**
+
 permissions:
   # The id-token permission is required by Codecov to use OIDC
   id-token: write
