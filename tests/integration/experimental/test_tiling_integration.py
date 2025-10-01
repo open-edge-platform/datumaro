@@ -7,7 +7,7 @@ import pytest
 import datumaro.experimental.tiling.tilers  # Ensure tilers are registered
 from datumaro.experimental.dataset import Dataset, Sample
 from datumaro.experimental.fields import ImageInfo, image_field, image_info_field
-from datumaro.experimental.tiling.tiler_registry import TilingConfig, apply_tiling
+from datumaro.experimental.tiling.tiler_registry import TilingConfig, create_tiling_transform
 
 
 class TiledSample(Sample):
@@ -39,11 +39,9 @@ def test_dataset_tiling(sample_dataset):
     # Create tiling config
     config = TilingConfig(tile_width=100, tile_height=100, overlap_x=20, overlap_y=20)
 
-    # Apply tiling to dataset
-    tiled_df, tiled_schema = apply_tiling(sample_dataset.df, sample_dataset.schema, config)
-
-    # Create new dataset with tiled data
-    tiled_dataset = Dataset.from_dataframe(tiled_df, tiled_schema)
+    # Create and apply tiling transform
+    tiling_transform = create_tiling_transform(config)
+    tiled_dataset = sample_dataset.transform(tiling_transform)
 
     # Check that we have the expected number of tiles
     # With 100x100 tiles and 20px overlap:
@@ -60,8 +58,6 @@ def test_dataset_tiling(sample_dataset):
     assert "image" in tiled_dataset.schema.attributes
     assert "image_info" in tiled_dataset.schema.attributes
 
-    image_infos = []
-
     # Verify tile properties
     for item in tiled_dataset:
         # Check tile size constraints
@@ -76,10 +72,9 @@ def test_dataset_tiling_edge_case(sample_dataset):
     # Test with tile size equal to image size
     config = TilingConfig(tile_width=400, tile_height=300)
 
-    tiled_df, tiled_schema = apply_tiling(
-        sample_dataset.df.slice(0, 1), sample_dataset.schema, config
-    )
-    tiled_dataset = Dataset.from_dataframe(tiled_df, tiled_schema)
+    # Create and apply tiling transform to first image only
+    tiling_transform = create_tiling_transform(config)
+    tiled_dataset = sample_dataset.slice(0, 1).transform(tiling_transform)
 
     # Should have exactly one tile per image
     assert len(tiled_dataset) == 1

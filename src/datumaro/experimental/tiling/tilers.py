@@ -148,6 +148,9 @@ class BboxTiler(Tiler):
 
     field_spec: AttributeSpec[BBoxField]
 
+    def is_filterable(self) -> bool:
+        return True
+
     def tile(self, df: pl.DataFrame, tiles_df: pl.DataFrame) -> pl.DataFrame:
         """Process bounding boxes for each tile."""
         column_name = self.field_spec.name
@@ -209,6 +212,9 @@ class LabelTiler(Tiler):
     """
 
     field_spec: AttributeSpec[LabelField]
+
+    def is_filterable(self) -> bool:
+        return self.field_spec.field.is_list
 
     def tile(self, df: pl.DataFrame, tiles_df: pl.DataFrame) -> pl.DataFrame:
         """Process labels, adding keep column for list fields."""
@@ -337,6 +343,9 @@ class PolygonTiler(Tiler):
 
     field_spec: AttributeSpec[PolygonField]
     threshold_drop_ann: float = 0.5  # Proportion of area below which to drop annotation
+
+    def is_filterable(self) -> bool:
+        return True
 
     def tile(self, df: pl.DataFrame, tiles_df: pl.DataFrame) -> pl.DataFrame:
         """Tile polygon annotations in the DataFrame.
