@@ -1,17 +1,10 @@
 # How to build Datumaro docs
 ## Prerequisite
 
-1. You should install the dependencies for building documents.
+1. Install the dependencies for building documents.
 
     ```console
-    pip install -r docs/requirements.txt
-    ```
-
-2. You should install `graphviz` and `pandoc` to build our documents.
-
-    ```console
-    sudo apt install graphviz
-    sudo apt install pandoc
+    uv pip install -r docs/requirements.txt
     ```
 
 ## Tips

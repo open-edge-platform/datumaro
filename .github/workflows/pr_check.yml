@@ -30,17 +30,6 @@ jobs:
       matrix:
         os: ["ubuntu-24.04", "windows-2022", "macos-15"]
         python-version: ["3.10", "3.13"]
-        include:
-          - python-version: "3.10"
-            tox-env-py: "310"
-          - python-version: "3.13"
-            tox-env-py: "313"
-          - os: "ubuntu-24.04"
-            tox-env-os: "lin"
-          - os: "windows-2022"
-            tox-env-os: "win"
-          - os: "macos-15"
-            tox-env-os: "mac"
     name: pr test (${{ matrix.os }}, Python ${{ matrix.python-version }})
     runs-on: ${{ matrix.os }}
     steps:
@@ -68,11 +57,8 @@ jobs:
       - name: Installing dependencies
         run: uv sync --locked --all-extras --dev
 
-      - name: Unit testing
-        run: uv run pytest tests/unit --cov --cov-report=xml
-
-      - name: Integration testing
-        run: uv run pytest tests/integration
+      - name: Tests
+        run: uv run pytest --cov --cov-report=xml
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
