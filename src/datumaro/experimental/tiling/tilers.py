@@ -7,7 +7,7 @@ Implementations of tilers for specific field types.
 """
 
 import operator
-from typing import Callable, Tuple
+from typing import Tuple
 
 import numpy as np
 import polars as pl
@@ -110,25 +110,6 @@ class InstanceMaskTiler(Tiler):
                 shape_column: results_shape,
             }
         )
-
-
-def zip_list(op: Callable[[pl.Expr, pl.Expr], pl.Expr], *args: str) -> pl.Expr:
-    """
-    Apply an operation element-wise between a set of columns.
-
-    Args:
-        op: Operation function to apply element-wise
-        args: List of columns to zip together
-
-    Returns:
-        Polars expression for the computed list column
-
-    Note:
-        See https://github.com/pola-rs/polars/issues/7210 for implementation details
-    """
-    return pl.concat_list(pl.struct(*args)).list.eval(
-        op(pl.element().struct.field(arg).explode() for arg in args)
-    )
 
 
 @TilerRegistry.register(BBoxField)

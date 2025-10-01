@@ -127,15 +127,15 @@ def test_apply_tiling(sample_df, sample_schema):
 
     # Apply tiling
     plan = _create_tiling_plan(sample_schema, config)
-    result_df, result_schema = _apply_tiling(sample_df, None, plan, ["tile", "image_info"])
+    result_df, result_fields = _apply_tiling(sample_df, None, plan, ["image", "image_info"])
 
-    # Check schema
-    assert "tile" in result_schema.attributes
-    assert "image_info" in result_schema.attributes
+    # Check the generated fields
+    result_fields == {"tile", "image", "image_info"}
 
     # Check DataFrame
     assert "tile" in result_df.columns
     assert "image_info" in result_df.columns
+    assert "image" in result_df.columns
     assert len(result_df) == 16  # Same as test_calculate_tiles
 
     # Check image info field values
@@ -147,16 +147,13 @@ def test_apply_tiling(sample_df, sample_schema):
         # Should track original image
         assert "source_sample_idx" in tile_info
 
-    # Check that we maintained original data
-    assert "image" in result_df.columns
-    assert "image_info" in result_df.columns
-
 
 def test_tiling_with_overlap(sample_df, sample_schema):
     config = TilingConfig(tile_width=50, tile_height=50, overlap_x=10, overlap_y=10)
 
     # Apply tiling
-    result_df, result_schema = _apply_tiling(sample_df, sample_schema, config)
+    plan = _create_tiling_plan(sample_schema, config)
+    result_df, _ = _apply_tiling(sample_df, None, plan, [])
 
     # Convert tile data to TileInfo objects
     tiles = [TileInfo(**row["tile"]) for row in result_df.to_dicts()]
@@ -192,7 +189,7 @@ def test_invalid_schema():
 
     # Should raise error due to missing ImageInfoField
     with pytest.raises(ValueError, match="Schema must contain an ImageInfoField"):
-        _apply_tiling(df, invalid_schema, config)
+        _create_tiling_plan(invalid_schema, config)
 
 
 def test_mask_tiling():
@@ -231,7 +228,8 @@ def test_mask_tiling():
     config = TilingConfig(tile_width=50, tile_height=50)
 
     # Apply tiling
-    result_df, result_schema = _apply_tiling(df, schema, config)
+    plan = _create_tiling_plan(schema, config)
+    result_df, _ = _apply_tiling(df, None, plan, ["segmentation", "instances"])
 
     # There should be 4 tiles (2x2 grid)
     assert len(result_df) == 4
@@ -297,7 +295,8 @@ def test_bbox_tiling():
     config = TilingConfig(tile_width=50, tile_height=50)
 
     # Apply tiling
-    result_df, result_schema = _apply_tiling(df, schema, config, threshold_drop_ann=0.0)
+    plan = _create_tiling_plan(schema, config, threshold_drop_ann=0.0)
+    result_df, _ = _apply_tiling(df, None, plan, ["bboxes"])
 
     # There should be 4 tiles (2x2 grid)
     assert len(result_df) == 4
@@ -345,7 +344,8 @@ def test_polygon_and_label_tiling():
     config = TilingConfig(tile_width=50, tile_height=50)
 
     # Apply tiling
-    result_df, result_schema = _apply_tiling(df, schema, config, threshold_drop_ann=0.1)
+    plan = _create_tiling_plan(schema, config, threshold_drop_ann=0.1)
+    result_df, result_schema = _apply_tiling(df, None, plan, ["polygons", "labels"])
 
     # There should be 4 tiles (2x2 grid)
     assert len(result_df) == 4

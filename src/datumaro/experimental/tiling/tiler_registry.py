@@ -287,7 +287,7 @@ def zip_list(op: Callable[[pl.Expr, pl.Expr], pl.Expr], *args: str) -> pl.Expr:
         See https://github.com/pola-rs/polars/issues/7210 for implementation details
     """
     return pl.concat_list(pl.struct(*args)).list.eval(
-        op(pl.element().struct.field(arg).explode() for arg in args)
+        op(*(pl.element().struct.field(arg).explode() for arg in args))
     )
 
 
@@ -501,7 +501,7 @@ def _apply_tiling(
 
     # Apply list filtering if we have a keep mask
     for group_id, keep_mask in keep_mask_by_group_id.items():
-        columns_to_filter = keep_mask_by_group_id[group_id]
+        columns_to_filter = columns_to_filter_by_group_id[group_id]
 
         output_df = output_df.with_columns(keep=keep_mask).with_columns(
             zip_list(lambda a, b: pl.struct(a, b), col, "keep")
