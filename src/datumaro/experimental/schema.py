@@ -102,7 +102,10 @@ TField = TypeVar("TField", bound=Field)
 @dataclass(frozen=True)
 class AttributeSpec(Generic[TField]):
     """
-    Specification for an attribute used in converters.
+    Specification for an attribute used in converters, tilers, etc.
+
+    This class is not part of the schema, but rather used a convenient container
+    for passing attribute specifications around in transforms.
 
     Links an attribute name with its corresponding field type definition,
     providing the complete specification needed for converter operations.

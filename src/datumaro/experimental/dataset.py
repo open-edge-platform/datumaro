@@ -4,7 +4,6 @@
 
 from __future__ import annotations
 
-import copy
 import sys
 import types
 from functools import cache
@@ -15,9 +14,6 @@ from typing import (
     Callable,
     Dict,
     Generic,
-    List,
-    Optional,
-    Set,
     Type,
     Union,
     cast,
@@ -28,75 +24,12 @@ from typing import (
 import polars as pl
 from typing_extensions import TypeGuard, TypeVar, dataclass_transform
 
-from .converter_registry import Converter, find_conversion_path
+from .converter_registry import ConverterTransform, find_conversion_path
 from .schema import AttributeInfo, Field, Schema
+from .transform import IdentityTransform, Transform
 
 if TYPE_CHECKING:
     from .categories import Categories
-
-from typing import Sequence
-
-from .converter_registry import ConversionPaths
-from .transform import IdentityTransform, Transform
-
-
-class ConverterTransform(Transform):
-    def __init__(self, parent: Transform, schema: Schema, conversion_paths: ConversionPaths):
-        super().__init__(schema)
-
-        lazy_inputs = parent.get_lazy_attributes()
-
-        lazy_outputs = set(conversion_paths.lazy_outputs)
-        for input in lazy_inputs:
-            lazy_outputs.update(conversion_paths.dependent_outputs_by_input[input])
-        self._lazy_outputs = lazy_outputs
-
-        batch_outputs = self.get_batch_attributes()
-
-        self._parent = parent
-        self._conversion_paths = conversion_paths
-        self._df_input_columns = set()
-        self._df = pl.DataFrame()
-        self._applied_converters = set()
-
-        self.apply(batch_outputs)
-
-    def apply(self, fields: Sequence[str]) -> pl.DataFrame:
-        required_inputs = set()
-        for field in fields:
-            if field in self._conversion_paths.converters:
-                required_inputs.update(self._conversion_paths.required_inputs_by_output[field])
-
-        parent_df = self._parent.apply(required_inputs)
-        input_columns = set(parent_df.columns)
-        new_columns = set(parent_df.columns) - self._df_input_columns
-
-        self._df = self._df.with_columns(parent_df.select(new_columns))
-        self._df_input_columns = input_columns
-
-        for field in fields:
-            converters = self._conversion_paths.converters.get(field, None)
-
-            if converters is not None:
-                for converter in converters:
-                    if id(converter) not in self._applied_converters:
-                        self._df = converter.convert(self._df)
-                        self._applied_converters.add(id(converter))
-
-        return self._df
-
-    def get_lazy_attributes(self) -> set[str]:
-        return self._lazy_outputs
-
-    def slice(self, offset: int, length: int | None = None) -> "Transform":
-        instance = copy.copy(self)
-        instance._parent = self._parent.slice(offset, length)
-        instance._applied_converters = copy.copy(self._applied_converters)
-        instance._df = self._df.slice(offset, length)
-        return instance
-
-    def __len__(self):
-        return len(self._df)
 
 
 @dataclass_transform()
@@ -110,14 +43,6 @@ class Sample:
 
     def __init__(self, **kwargs: Any):
         """Initialize sample with provided attributes."""
-        # Store dataframe and lazy converters for dynamic property loading
-        self._dataframe: Optional[pl.DataFrame] = kwargs.pop("_dataframe", None)
-        self._lazy_converters: Dict[str, List["Converter"]] = kwargs.pop("_lazy_converters", {})
-        self._applied_converters: Set[int] = set()  # Track which converters have been applied
-        self._schema: Optional["Schema"] = kwargs.pop(
-            "_schema", None
-        )  # Store schema for lazy attributes
-
         for key, value in kwargs.items():
             setattr(self, key, value)
 

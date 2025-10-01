@@ -11,6 +11,7 @@ path discovery using graph algorithms.
 
 from __future__ import annotations
 
+import copy
 import heapq
 import itertools
 from abc import ABC, abstractmethod
@@ -38,6 +39,7 @@ from typing_extensions import cast, dataclass_transform
 
 from .categories import Categories
 from .schema import AttributeSpec, Field, Schema, Semantic
+from .transform import Transform
 
 TField = TypeVar("TField", bound=Field)
 
@@ -912,3 +914,62 @@ def _separate_batch_and_lazy_converters(
         required_inputs_by_output=required_inputs_by_output,
         dependent_outputs_by_input=dependents_by_output,
     )
+
+
+class ConverterTransform(Transform):
+    def __init__(self, parent: Transform, schema: Schema, conversion_paths: ConversionPaths):
+        super().__init__(schema)
+
+        lazy_inputs = parent.get_lazy_attributes()
+
+        lazy_outputs = set(conversion_paths.lazy_outputs)
+        for input in lazy_inputs:
+            lazy_outputs.update(conversion_paths.dependent_outputs_by_input[input])
+        self._lazy_outputs = lazy_outputs
+
+        batch_outputs = self.get_batch_attributes()
+
+        self._parent = parent
+        self._conversion_paths = conversion_paths
+        self._df_input_columns = set()
+        self._df = pl.DataFrame()
+        self._applied_converters = set()
+
+        self.apply(batch_outputs)
+
+    def apply(self, fields: Sequence[str]) -> pl.DataFrame:
+        required_inputs = set()
+        for field in fields:
+            if field in self._conversion_paths.converters:
+                required_inputs.update(self._conversion_paths.required_inputs_by_output[field])
+
+        parent_df = self._parent.apply(required_inputs)
+        input_columns = set(parent_df.columns)
+        new_columns = set(parent_df.columns) - self._df_input_columns
+
+        self._df = self._df.with_columns(parent_df.select(new_columns))
+        self._df_input_columns = input_columns
+
+        for field in fields:
+            converters = self._conversion_paths.converters.get(field, None)
+
+            if converters is not None:
+                for converter in converters:
+                    if id(converter) not in self._applied_converters:
+                        self._df = converter.convert(self._df)
+                        self._applied_converters.add(id(converter))
+
+        return self._df
+
+    def get_lazy_attributes(self) -> set[str]:
+        return self._lazy_outputs
+
+    def slice(self, offset: int, length: int | None = None) -> "Transform":
+        instance = copy.copy(self)
+        instance._parent = self._parent.slice(offset, length)
+        instance._applied_converters = copy.copy(self._applied_converters)
+        instance._df = self._df.slice(offset, length)
+        return instance
+
+    def __len__(self):
+        return len(self._df)
