@@ -53,6 +53,22 @@
       matchPackagePatterns: ["*"],
       schedule: ["* * 1 * *"], // every month
     },
+
+    // uv version used in GitHub Actions is updated manually
+    {
+      enabled: false,
+      matchDatasources: ["github-releases"],
+      matchDepNames: ["astral-sh/uv"],
+      matchDepTypes: ["uses-with"],
+    },
+
+    // python version used in GitHub Actions is updated manually
+    {
+      enabled: false,
+      matchDatasources: ["github-releases"],
+      matchDepNames: ["python"],
+      matchDepTypes: ["uses-with"],
+    },
   ],
 
   // Enable security upgrades
