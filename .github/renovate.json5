@@ -50,20 +50,11 @@
       matchManagers: ["pip_requirements"],
     },
 
-    // Group Go version upgrades
-    {
-      enabled: true,
-      matchPackageNames: ["golang", "go"],
-      matchDatasource: ["crate"],
-      allowedVersions: "<1.24",
-      schedule: ["* * * * 0"], // weekly
-    },
-
     // Disable derive_more major upgrades to prevent regressions
     // Will be enabled in a next step
     {
       enabled: false,
-      matchDatasource: ["crate"],
+      matchDatasources: ["crate"],
       matchPackageNames: ["derive_more"],
       matchUpdateTypes: ["major"],
     },
