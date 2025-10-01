@@ -397,7 +397,10 @@ class LabelField(Field):
             return {name: pl.Series(name, [None], dtype=pl_type)}
 
         if self.multi_label:
-            return {name: pl.Series(name, [to_numpy(value)], dtype=pl.List(self.dtype))}
+            # Handle single label as a list for multi-label fields
+            if not isinstance(value, list):
+                value = [value]
+            return {name: pl.Series(name, [value], dtype=pl_type)}
 
         return {name: pl.Series(name, [value], dtype=pl_type)}
 

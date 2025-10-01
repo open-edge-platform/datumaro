@@ -557,8 +557,10 @@ class ForwardLabelAnnotationConverter(ForwardAnnotationConverter):
         labels = [ann for ann in annotations if isinstance(ann, Label)]
         result = {}
         if len(labels) > 0:
-            # For single label classification, take the first label
-            result["label"] = labels[0].label
+            if "multi_label_ids" in labels[0].attributes:
+                result["label"] = labels[0].attributes["multi_label_ids"]
+            else:
+                result["label"] = labels[0].label
         else:
             result["label"] = None
         return result
@@ -720,12 +722,14 @@ def _convert_legacy_item(item: DatasetItem, analysis_result: AnalysisResult) -> 
     return attributes
 
 
-def convert_from_legacy(legacy_dataset: LegacyDataset) -> Dataset[Sample]:
+def convert_from_legacy(
+    legacy_dataset: LegacyDataset, multi_label: bool = False
+) -> Dataset[Sample]:
     """Convert legacy dataset to experimental format with automatic schema inference.
 
     Args:
         legacy_dataset: The legacy Datumaro dataset to convert
-
+        multi_label: If true, configure label_field with multi_label=True
     Returns:
         A new experimental Dataset with inferred schema and converted data
 
@@ -739,7 +743,8 @@ def convert_from_legacy(legacy_dataset: LegacyDataset) -> Dataset[Sample]:
 
     # Step 1: Analyze dataset to infer schema
     analysis_result = analyze_legacy_dataset(legacy_dataset)
-
+    if multi_label:
+        analysis_result.schema.attributes["label"].annotation = label_field(multi_label=True)
     # Step 2: Create experimental dataset with inferred schema
     experimental_dataset = Dataset(analysis_result.schema)
 
