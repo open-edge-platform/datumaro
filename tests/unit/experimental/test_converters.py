@@ -36,10 +36,12 @@ from datumaro.experimental.converters import (
 )
 from datumaro.experimental.fields import (
     BBoxField,
+    BBoxFormat,
     Field,
     ImageBytesField,
     ImageCallableField,
     ImageField,
+    ImageFormat,
     ImageInfoField,
     ImagePathField,
     InstanceMaskCallableField,
@@ -52,9 +54,6 @@ from datumaro.experimental.fields import (
     bbox_field,
     image_field,
     image_info_field,
-    mask_callable_field,
-    mask_field,
-    rotated_bbox_field,
 )
 from datumaro.experimental.schema import AttributeInfo, Schema, Semantic
 
@@ -136,8 +135,8 @@ def test_uint8_to_float32_converter():
     )
 
     # Set up converter attributes
-    input_field = ImageField(dtype=pl.UInt8, format="RGB", semantic=Semantic.Default)
-    output_field = ImageField(dtype=pl.Float32, format="RGB", semantic=Semantic.Default)
+    input_field = ImageField(dtype=pl.UInt8, format=ImageFormat.RGB, semantic=Semantic.Default)
+    output_field = ImageField(dtype=pl.Float32, format=ImageFormat.RGB, semantic=Semantic.Default)
 
     setattr(
         converter_instance,
@@ -181,12 +180,14 @@ def test_bbox_coordinate_converter():
 
     # Set up converter for absolute to normalized conversion
     input_bbox_field = BBoxField(
-        dtype=pl.Float32, format="x1y1x2y2", normalize=False, semantic=Semantic.Default
+        dtype=pl.Float32, format=BBoxFormat.X1Y1X2Y2, normalize=False, semantic=Semantic.Default
     )
     output_bbox_field = BBoxField(
-        dtype=pl.Float32, format="x1y1x2y2", normalize=True, semantic=Semantic.Default
+        dtype=pl.Float32, format=BBoxFormat.X1Y1X2Y2, normalize=True, semantic=Semantic.Default
     )
-    input_image_field = ImageField(dtype=pl.UInt8, format="RGB", semantic=Semantic.Default)
+    input_image_field = ImageField(
+        dtype=pl.UInt8, format=ImageFormat.RGB, semantic=Semantic.Default
+    )
 
     setattr(
         converter_instance,
@@ -238,7 +239,7 @@ def test_image_path_to_image_converter():
 
         # Set up converter attributes
         input_field = ImagePathField(semantic=Semantic.Default)
-        output_field = ImageField(dtype=pl.UInt8, format="RGB", semantic=Semantic.Default)
+        output_field = ImageField(dtype=pl.UInt8, format=ImageFormat.RGB, semantic=Semantic.Default)
         output_info_field = ImageInfoField(semantic=Semantic.Default)
 
         setattr(

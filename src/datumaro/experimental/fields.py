@@ -10,6 +10,7 @@ learning and computer vision applications.
 """
 
 from dataclasses import dataclass
+from enum import Enum
 from typing import Any, TypeVar, Union
 
 import numpy as np
@@ -18,6 +19,37 @@ from typing_extensions import TypeAlias
 
 from .schema import Field, Semantic
 from .type_registry import from_polars_data, to_numpy
+
+
+class BBoxFormat(Enum):
+    """Enumeration of bounding box coordinate formats."""
+
+    X1Y1X2Y2 = "x1y1x2y2"  # (x1, y1, x2, y2) - top-left and bottom-right corners
+    XYWH = "xywh"  # (x, y, w, h) - top-left corner and dimensions
+
+
+class RotatedBBoxFormat(Enum):
+    """Enumeration of rotated bounding box coordinate formats."""
+
+    CXCYWHR = "cxcywhr"  # (cx, cy, w, h, r) - center point, dimensions, rotation in radians
+    CXCYWHA = "cxcywha"  # (cx, cy, w, h, a) - center point, dimensions, rotation in degrees
+
+
+class ImageFormat(Enum):
+    """Enumeration of image color formats."""
+
+    RGB = "RGB"  # Red, Green, Blue
+    BGR = "BGR"  # Blue, Green, Red
+    RGBA = "RGBA"  # Red, Green, Blue, Alpha
+    GRAYSCALE = "GRAYSCALE"  # Single channel grayscale
+
+
+class PolygonFormat(Enum):
+    """Enumeration of polygon coordinate formats."""
+
+    XY = "xy"  # (x, y) coordinate pairs
+    YX = "yx"  # (y, x) coordinate pairs
+
 
 T = TypeVar("T")
 
@@ -93,19 +125,21 @@ class ImageField(TensorField):
     color format (RGB, BGR, etc.).
 
     Attributes:
-        format: Image color format (e.g., "RGB", "BGR", "RGBA")
+        format: Image color format (e.g., ImageFormat.RGB, ImageFormat.BGR)
     """
 
-    format: str = "RGB"
+    format: ImageFormat = ImageFormat.RGB
 
 
-def image_field(dtype: Any, format: str = "RGB", semantic: Semantic = Semantic.Default) -> Any:
+def image_field(
+    dtype: Any, format: ImageFormat = ImageFormat.RGB, semantic: Semantic = Semantic.Default
+) -> Any:
     """
     Create an ImageField instance with the specified parameters.
 
     Args:
         dtype: Polars data type for pixel values
-        format: Image color format (defaults to "RGB")
+        format: Image color format (defaults to ImageFormat.RGB)
         semantic: Semantic tags describing the image's purpose (optional)
 
     Returns:
@@ -171,13 +205,13 @@ class BBoxField(Field):
     Attributes:
         semantic: Semantic tags describing the bounding box purpose
         dtype: Polars data type for coordinate values
-        format: Coordinate format (e.g., "x1y1x2y2", "xywh")
+        format: Coordinate format (e.g., BBoxFormat.X1Y1X2Y2, BBoxFormat.XYWH)
         normalize: Whether coordinates are normalized to [0,1] range
     """
 
     semantic: Semantic
     dtype: PolarsDataType = pl.Float32()
-    format: str = "x1y1x2y2"
+    format: BBoxFormat = BBoxFormat.X1Y1X2Y2
     normalize: bool = False
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
@@ -209,7 +243,7 @@ class BBoxField(Field):
 
 def bbox_field(
     dtype: Any,
-    format: str = "x1y1x2y2",
+    format: BBoxFormat = BBoxFormat.X1Y1X2Y2,
     normalize: bool = False,
     semantic: Semantic = Semantic.Default,
 ) -> Any:
@@ -218,7 +252,7 @@ def bbox_field(
 
     Args:
         dtype: Polars data type for coordinate values
-        format: Coordinate format (defaults to "x1y1x2y2")
+        format: Coordinate format (defaults to BBoxFormat.X1Y1X2Y2)
         normalize: Whether coordinates are normalized (defaults to False)
         semantic: Semantic tags describing the bounding box purpose (optional)
 
@@ -240,13 +274,13 @@ class RotatedBBoxField(Field):
     Attributes:
         semantic: Semantic tags describing the rotated bounding box purpose
         dtype: Polars data type for coordinate values
-        format: Coordinate format (e.g., "cxcywhr", "cxcywha" for angle in degrees)
+        format: Coordinate format (e.g., RotatedBBoxFormat.CXCYWHR, RotatedBBoxFormat.CXCYWHA)
         normalize: Whether coordinates are normalized to [0,1] range
     """
 
     semantic: Semantic
     dtype: PolarsDataType = pl.Float32()
-    format: str = "cxcywhr"
+    format: RotatedBBoxFormat = RotatedBBoxFormat.CXCYWHR
     normalize: bool = False
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
@@ -278,7 +312,7 @@ class RotatedBBoxField(Field):
 
 def rotated_bbox_field(
     dtype: Any,
-    format: str = "cxcywhr",
+    format: RotatedBBoxFormat = RotatedBBoxFormat.CXCYWHR,
     normalize: bool = False,
     semantic: Semantic = Semantic.Default,
 ) -> Any:
@@ -287,7 +321,7 @@ def rotated_bbox_field(
 
     Args:
         dtype: Polars data type for coordinate values
-        format: Coordinate format (defaults to "cxcywhr" for cx,cy,w,h,rotation_radians)
+        format: Coordinate format (defaults to RotatedBBoxFormat.CXCYWHR)
         normalize: Whether coordinates are normalized (defaults to False)
         semantic: Semantic tags describing the rotated bounding box purpose (optional)
 
@@ -509,13 +543,13 @@ class PolygonField(Field):
     Attributes:
         semantic: Semantic tags describing the polygon purpose
         dtype: Polars data type for coordinate values
-        format: Coordinate format (e.g., "xy", "yx")
+        format: Coordinate format (e.g., PolygonFormat.XY, PolygonFormat.YX)
         normalize: Whether coordinates are normalized to [0,1] range
     """
 
     semantic: Semantic
     dtype: PolarsDataType = pl.Float32()
-    format: str = "xy"
+    format: PolygonFormat = PolygonFormat.XY
     normalize: bool = False
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
@@ -538,7 +572,7 @@ class PolygonField(Field):
 
 def polygon_field(
     dtype: Any,
-    format: str = "xy",
+    format: PolygonFormat = PolygonFormat.XY,
     normalize: bool = False,
     semantic: Semantic = Semantic.Default,
 ) -> Any:
@@ -547,7 +581,7 @@ def polygon_field(
 
     Args:
         dtype: Polars data type for coordinate values
-        format: Coordinate format (defaults to "xy")
+        format: Coordinate format (defaults to PolygonFormat.XY)
         normalize: Whether coordinates are normalized (defaults to False)
         semantic: Semantic tags describing the polygon purpose (optional)
 
@@ -694,11 +728,11 @@ class ImageCallableField(Field):
 
     Attributes:
         semantic: Semantic tags describing the callable's purpose
-        format: Expected image color format (e.g., "RGB", "BGR", "RGBA")
+        format: Expected image color format (e.g., ImageFormat.RGB, ImageFormat.BGR)
     """
 
     semantic: Semantic
-    format: str = "RGB"
+    format: ImageFormat = ImageFormat.RGB
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Return schema with Object type to store callable."""
@@ -720,12 +754,14 @@ class ImageCallableField(Field):
         return value
 
 
-def image_callable_field(format: str = "RGB", semantic: Semantic = Semantic.Default) -> Any:
+def image_callable_field(
+    format: ImageFormat = ImageFormat.RGB, semantic: Semantic = Semantic.Default
+) -> Any:
     """
     Create an ImageCallableField instance for storing image-generating callables.
 
     Args:
-        format: Expected image color format (defaults to "RGB")
+        format: Expected image color format (defaults to ImageFormat.RGB)
         semantic: Semantic tags describing the callable's purpose (optional)
 
     Returns:

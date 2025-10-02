@@ -22,6 +22,7 @@ from .categories import LabelCategories, MaskCategories, RgbColor
 from .converter_registry import AttributeSpec, Converter, converter
 from .fields import (
     BBoxField,
+    BBoxFormat,
     ImageBytesField,
     ImageCallableField,
     ImageField,
@@ -903,10 +904,10 @@ class PolygonToBBoxConverter(Converter):
         )
 
         # Format according to output bbox format
-        if self.output_bbox.field.format == "x1y1x2y2":
+        if self.output_bbox.field.format == BBoxFormat.X1Y1X2Y2:
             # Already in this format
             pass
-        elif self.output_bbox.field.format == "xywh":
+        elif self.output_bbox.field.format == BBoxFormat.XYWH:
             df = df.with_columns(
                 pl.col(output_column_name).list.eval(
                     pl.concat_arr(
