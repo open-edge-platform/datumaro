@@ -1116,7 +1116,7 @@ def test_forward_mask_annotation_converter_empty():
 
     mask = result["mask_callable"]()
 
-    assert mask.shape == (0, 0)  # No callables for empty masks
+    assert mask is None  # No callables for empty masks
 
 
 def test_backward_bbox_annotation_converter_convert_to_legacy_annotations():
@@ -1600,7 +1600,7 @@ def test_forward_rotated_bbox_annotation_converter_convert_annotations():
     result = converter.convert_annotations(annotations, item)
 
     assert "rotated_bboxes" in result
-    assert "rotated_bbox_labels" in result
+    assert "labels" in result
 
     # Check rotated bbox data (should be converted to radians)
     rotated_bboxes = result["rotated_bboxes"]
@@ -1621,7 +1621,7 @@ def test_forward_rotated_bbox_annotation_converter_convert_annotations():
     assert abs(rotated_bboxes[1, 4] - math.radians(-30.0)) < 1e-6
 
     # Check labels
-    labels = result["rotated_bbox_labels"]
+    labels = result["labels"]
     assert len(labels) == 2
     assert labels[0] == 0
     assert labels[1] == 1
@@ -1755,10 +1755,10 @@ def test_rotated_bbox_conversion_with_labels():
 
     # Check rotated bbox data
     assert hasattr(exp_sample, "rotated_bboxes")
-    assert hasattr(exp_sample, "rotated_bbox_labels")
+    assert hasattr(exp_sample, "labels")
 
     rotated_bboxes = exp_sample.rotated_bboxes
-    labels = exp_sample.rotated_bbox_labels
+    labels = exp_sample.labels
 
     assert len(rotated_bboxes) == 2
     assert len(labels) == 2
@@ -1835,7 +1835,7 @@ def test_rotated_bbox_conversion_without_labels():
 
     # Should have rotated_bboxes but not rotated_bbox_labels
     assert hasattr(exp_sample, "rotated_bboxes")
-    assert not hasattr(exp_sample, "rotated_bbox_labels")
+    assert not hasattr(exp_sample, "labels")
 
     rotated_bboxes = exp_sample.rotated_bboxes
     assert len(rotated_bboxes) == 2

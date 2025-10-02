@@ -26,6 +26,7 @@ class Semantic(Flag):
     Default = auto()
     Left = auto()
     Right = auto()
+    Anomaly = auto()
 
 
 class Field:

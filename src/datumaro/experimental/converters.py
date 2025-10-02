@@ -40,6 +40,100 @@ from .type_registry import polars_to_numpy_dtype
 
 
 @converter
+class LabelIndexConverter(Converter):
+    """
+    Converter for updating label indices when label categories change.
+
+    This converter handles remapping label values in LabelField when the order
+    of labels has changed between input and output categories. It only applies
+    when both input and output categories are LabelCategories and have different
+    label orders but the same set of labels.
+    """
+
+    input_labels: AttributeSpec[LabelField]
+    output_labels: AttributeSpec[LabelField]
+
+    def filter_output_spec(self) -> bool:
+        """
+        Check if this converter is applicable based on input/output categories.
+
+        Returns True only if:
+        1. Both input and output have LabelCategories
+        2. The categories have the same set of labels but different order
+        3. The field types are the same (no field conversion needed)
+        """
+        # Check that both specs have categories
+        if self.input_labels.categories is None or self.output_labels.categories is None:
+            return False
+
+        # Check that both are LabelCategories
+        if not isinstance(self.input_labels.categories, LabelCategories) or not isinstance(
+            self.output_labels.categories, LabelCategories
+        ):
+            return False
+
+        input_cats = self.input_labels.categories
+        output_cats = self.output_labels.categories
+
+        # Check that the sets of labels are the same but order might differ
+        input_labels_set = set(input_cats.labels)
+        output_labels_set = set(output_cats.labels)
+
+        if input_labels_set != output_labels_set:
+            return False
+
+        # Only apply if the order actually differs
+        if input_cats.labels == output_cats.labels:
+            return False
+
+        index_mapping = {}
+        for old_idx, label in enumerate(input_cats.labels):
+            semantic = None
+            for sem, lbl in input_cats.label_semantics.items():
+                if lbl == label:
+                    semantic = sem
+                    break
+            if semantic is not None:
+                new_label = output_cats.label_semantics[semantic]
+                new_idx, _ = output_cats.find(new_label)
+            else:
+                new_idx, _ = output_cats.find(label)
+            if new_idx is not None:
+                index_mapping[old_idx] = new_idx
+        self._index_mapping = index_mapping
+        return True
+
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+        """
+        Convert label indices based on category mapping.
+
+        If label semantics are defined, use them to match input and output labels for mapping.
+        Otherwise, fall back to label name.
+        """
+        # Use the precomputed index mapping from filter_output_spec
+        index_mapping = getattr(self, "_index_mapping", None)
+        if index_mapping is None:
+            raise RuntimeError("index_mapping not computed. Call filter_output_spec first.")
+
+        input_col = self.input_labels.name
+        output_col = self.output_labels.name
+        field = self.input_labels.field
+
+        if field.multi_label or field.is_list:
+            mapping_expr = pl.col(input_col).list.eval(
+                pl.element().replace(
+                    list(index_mapping.keys()), list(index_mapping.values()), default=None
+                )
+            )
+        else:
+            mapping_expr = pl.col(input_col).replace(
+                list(index_mapping.keys()), list(index_mapping.values()), default=None
+            )
+
+        return df.with_columns(mapping_expr.alias(output_col))
+
+
+@converter
 class RGBToBGRConverter(Converter):
     """
     Converter that transforms RGB image format to BGR format.
@@ -227,19 +321,23 @@ class ImagePathToImageConverter(Converter):
 
                 # Convert to numpy array
                 img_array = np.array(img, dtype=np.uint8)
-                image_data.append(img_array.flatten().tolist())
+                image_data.append(img_array.flatten())
                 image_shapes.append(list(img_array.shape))
 
                 # Create image info with just width and height
                 image_infos.append(ImageInfo(width=img_array.shape[1], height=img_array.shape[0]))
 
         # Create output DataFrame
+        image_schema = self.output_image.field.to_polars_schema("image")
+        image_info_schema = self.output_image.field.to_polars_schema("image_info")
+
         result_df = df.clone()
+
         result_df = result_df.with_columns(
             [
-                pl.Series(output_col, image_data),
-                pl.Series(output_col + "_shape", image_shapes),
-                pl.Series(output_info_col, image_infos),
+                pl.Series(output_col, image_data, dtype=image_schema["image"]),
+                pl.Series(output_col + "_shape", image_shapes, dtype=image_schema["image_shape"]),
+                pl.Series(output_info_col, image_infos, dtype=image_info_schema["image_info"]),
             ]
         )
 
@@ -499,16 +597,11 @@ class PolygonToMaskConverter(Converter):
                 # Generate colors for all labels plus background
                 num_classes = len(self.input_labels.categories) + 1  # +1 for background
                 colormap_dict = generate_colormap(num_classes, include_background=True)
+                colormap_struct_dict = {i: RgbColor(*color) for i, color in colormap_dict.items()}
 
                 # Create mask categories with the generated colormap
-                mask_categories = MaskCategories()
-                for index, color in colormap_dict.items():
-                    if isinstance(color, tuple):
-                        mask_categories.colormap[index] = RgbColor(*color)
-                    else:
-                        mask_categories.colormap[index] = color
-
-                mask_categories.labels = ["background"] + self.input_labels.categories.labels
+                labels = ("background",) + self.input_labels.categories.labels
+                mask_categories = MaskCategories(colormap=colormap_struct_dict, labels=labels)
 
         # Configure output for mask format
         self.output_mask = AttributeSpec(
@@ -893,6 +986,12 @@ class ImageCallableToImageConverter(Converter):
                 # Execute the callable to get image array
                 img_array = callable_obj()
 
+                if img_array is None:
+                    image_data.append(None)
+                    image_shapes.append(None)
+                    image_infos.append(None)
+                    continue
+
                 # Validate that we got a numpy array
                 if not isinstance(img_array, np.ndarray):
                     raise TypeError(f"Callable must return numpy.ndarray, got {type(img_array)}")
@@ -982,6 +1081,11 @@ class InstanceMaskCallableToInstanceMaskConverter(Converter):
             # Execute the callable to get instance mask array
             mask_array = callable_obj()
 
+            if mask_array is None:
+                mask_data.append(None)
+                mask_shapes.append(None)
+                continue
+
             # Validate that we got a numpy array
             if not isinstance(mask_array, np.ndarray):
                 raise TypeError(f"Callable must return numpy.ndarray, got {type(mask_array)}")
@@ -1059,6 +1163,11 @@ class MaskCallableToMaskConverter(Converter):
         for callable_obj in df[input_col]:
             # Execute the callable to get mask array
             mask_array = callable_obj()
+
+            if mask_array is None:
+                mask_data.append(None)
+                mask_shapes.append(None)
+                continue
 
             # Validate that we got a numpy array
             if not isinstance(mask_array, np.ndarray):

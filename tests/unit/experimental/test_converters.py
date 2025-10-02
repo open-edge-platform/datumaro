@@ -25,6 +25,7 @@ from datumaro.experimental.converters import (
     ImageCallableToImageConverter,
     ImagePathToImageConverter,
     InstanceMaskCallableToInstanceMaskConverter,
+    LabelIndexConverter,
     MaskCallableToMaskConverter,
     PolygonToBBoxConverter,
     PolygonToInstanceMaskConverter,
@@ -365,9 +366,8 @@ def test_find_conversion_path():
 
     # This should find a conversion path (UInt8 -> Float32)
     path, _ = find_conversion_path(source_schema, target_schema)
-    assert len(path.batch_converters) == 2
+    assert len(path.batch_converters) == 1
     assert type(path.batch_converters[0]) is UInt8ToFloat32Converter
-    assert type(path.batch_converters[1]) is AttributeRemapperConverter
 
 
 def test_convert_dataframe():
@@ -497,11 +497,10 @@ def test_multiple_converter_chaining():
 
     path, _ = find_conversion_path(source_schema, target_schema)
     # If successful, should have multiple steps
-    assert len(path.batch_converters) == 4
+    assert len(path.batch_converters) == 3
     assert type(path.batch_converters[0]) is BBoxCoordinateConverter
     assert type(path.batch_converters[1]) is RGBToBGRConverter
     assert type(path.batch_converters[2]) is UInt8ToFloat32Converter
-    assert type(path.batch_converters[3]) is AttributeRemapperConverter
 
 
 def test_astar_direct_conversion():
@@ -560,10 +559,9 @@ def test_astar_direct_conversion():
 
     # Test finding conversion path
     path, _ = find_conversion_path(from_schema, to_schema)
-    assert len(path.batch_converters) == 2
+    assert len(path.batch_converters) == 1
     assert type(path.batch_converters[0]) is ExtractImageSizeConverter
-    assert type(path.batch_converters[1]) is AttributeRemapperConverter
-    assert path.lazy_converters == []
+    assert path.lazy_converters == {}
 
 
 def test_astar_chained_conversion():
@@ -665,10 +663,9 @@ def test_astar_chained_conversion():
     # Test finding conversion path
     path, _ = find_conversion_path(from_schema, to_schema)
     # Should need 2 converters: ImageField -> ImageSizeField, then NormalizedBbox -> AbsoluteBbox
-    assert len(path.batch_converters) == 3
+    assert len(path.batch_converters) == 2
     assert type(path.batch_converters[0]) is ExtractImageSizeChainConverter
     assert type(path.batch_converters[1]) is NormalizeToAbsoluteBboxConverter
-    assert type(path.batch_converters[2]) is AttributeRemapperConverter
     assert len(path.lazy_converters) == 0
 
 
@@ -805,9 +802,8 @@ def test_optimal_path_selection():
     )
 
     path, _ = find_conversion_path(from_schema, to_schema)
-    assert len(path.batch_converters) == 2
+    assert len(path.batch_converters) == 1
     assert type(path.batch_converters[0]) is AToCDirectConverter
-    assert type(path.batch_converters[1]) is AttributeRemapperConverter
     assert len(path.lazy_converters) == 0
 
 
@@ -841,9 +837,8 @@ def test_generator_converter():
     )
 
     path, _ = find_conversion_path(from_schema, to_schema)
-    assert len(path.batch_converters) == 2
+    assert len(path.batch_converters) == 1
     assert type(path.batch_converters[0]) is GenerateBConverter
-    assert type(path.batch_converters[1]) is AttributeRemapperConverter
     assert len(path.lazy_converters) == 0
 
 
@@ -900,9 +895,8 @@ def test_multiple_output_converter():
     )
 
     path, _ = find_conversion_path(from_schema, to_schema)
-    assert len(path.batch_converters) == 2
+    assert len(path.batch_converters) == 1
     assert type(path.batch_converters[0]) is AToMultiConverter
-    assert type(path.batch_converters[1]) is AttributeRemapperConverter
     assert len(path.lazy_converters) == 0
 
 
@@ -952,9 +946,8 @@ def test_partial_schema_matching():
     )
 
     path, _ = find_conversion_path(from_schema, to_schema)
-    assert len(path.batch_converters) == 2
+    assert len(path.batch_converters) == 1
     assert type(path.batch_converters[0]) is AToCPartialConverter
-    assert type(path.batch_converters[1]) is AttributeRemapperConverter
     assert len(path.lazy_converters) == 0
 
 
@@ -1010,66 +1003,6 @@ def test_attribute_renaming():
     assert result_df["output_image_shape"][0].to_list() == list(test_data.shape)
 
 
-def test_attribute_deletion():
-    """Test attribute deletion functionality using AttributeRenameConverter."""
-
-    # Create source schema with two fields
-    source_schema = Schema(
-        {
-            "image": AttributeInfo(
-                type=str, annotation=image_field(dtype=pl.UInt8(), format="RGB")
-            ),
-            "bbox": AttributeInfo(
-                type=str, annotation=bbox_field(dtype=pl.Float32(), format="x1y1x2y2")
-            ),
-        }
-    )
-
-    # Create target schema with only the image field (bbox should be deleted)
-    target_schema = Schema(
-        {
-            "image": AttributeInfo(
-                type=str, annotation=image_field(dtype=pl.UInt8(), format="RGB")
-            ),
-        }
-    )
-
-    # Find conversion path - should include a remapper converter that only keeps image
-    path, _ = find_conversion_path(source_schema, target_schema)
-
-    # Should have exactly one batch converter for selection/deletion
-    assert len(path.batch_converters) == 1
-    assert isinstance(path.batch_converters[0], AttributeRemapperConverter)
-    assert len(path.lazy_converters) == 0
-
-    # Test the remapper converter functionality
-    remapper_converter = path.batch_converters[0]
-
-    # Create test DataFrame with both columns
-    test_image = np.random.randint(0, 255, (10, 10, 3), dtype=np.uint8)
-    test_bbox = np.array([[10.0, 20.0, 30.0, 40.0]], dtype=np.float32)
-
-    df = pl.DataFrame(
-        {
-            "image": test_image.reshape(1, -1),
-            "image_shape": [list(test_image.shape)],
-            "bbox": test_bbox.reshape(1, -1, 4),
-        }
-    )
-
-    # Apply the remapper converter
-    result_df = remapper_converter.convert(df)
-
-    # Check that bbox column was removed but image columns remain
-    assert "image" in result_df.columns
-    assert "image_shape" in result_df.columns
-    assert "bbox" not in result_df.columns
-
-    # Check that image data was preserved
-    assert result_df["image"][0].to_list() == test_image.flatten().tolist()
-    assert result_df["image_shape"][0].to_list() == list(test_image.shape)
-
-
 def test_combined_rename_and_delete():
     """Test scenario with both renaming and deletion operations."""
 
@@ -1111,15 +1044,15 @@ def test_combined_rename_and_delete():
         {
             "old_image": [[1, 2, 3, 4, 5, 6]],  # Sample image data
             "old_image_shape": [[2, 3]],  # Sample shape data
-            "other_field": ["should_be_deleted"],  # Should be deleted
+            "other_field": ["should_not_change"],  # Should not be changed
         }
     )
 
     # Apply the converter
     result_df = remapper_converter.convert(test_df)
 
-    # Check that only the renamed fields are present
-    expected_columns = {"new_image", "new_image_shape"}
+    # Check that only the renamed fields and the unmodified ones are present
+    expected_columns = {"new_image", "new_image_shape", "other_field"}
     assert set(result_df.columns) == expected_columns
 
     # Check that data is preserved correctly
@@ -1154,8 +1087,8 @@ def test_attribute_remapping_converter():
     converter = AttributeRemapperConverter(attr_mappings=attr_mappings)
     result_df = converter.convert(df)
 
-    # Check that columns were remapped correctly (should only have remapped columns)
-    expected_columns = {"new_image", "new_image_shape", "new_bbox"}
+    # Check that columns were remapped correctly
+    expected_columns = {"new_image", "new_image_shape", "new_bbox", "other_field"}
     assert set(result_df.columns) == expected_columns
 
     # Check that data is preserved
@@ -1383,7 +1316,7 @@ def test_find_conversion_path_inferred_categories():
     assert isinstance(mask_categories, MaskCategories)
 
     # Check that the mask categories include background + original labels
-    expected_labels = ["background", "cat", "dog", "bird"]
+    expected_labels = ("background", "cat", "dog", "bird")
     assert mask_categories.labels == expected_labels
 
 
@@ -2068,6 +2001,206 @@ def test_image_callable_converter_dtype_handling():
     image_info2 = result2["output_info"][0]
     assert image_info2["width"] == 1  # width
     assert image_info2["height"] == 1  # height
+
+
+def test_rotated_bbox_to_polygon_converter():
+    """Test conversion from RotatedBBox to Polygon format."""
+    converter_instance = RotatedBBoxToPolygonConverter()
+
+    input_bbox = np.array([[100, 200, 50, 30, 45]], dtype=np.float32)
+    df = pl.DataFrame({"bbox": [input_bbox]}, schema={"bbox": pl.Array(pl.Float32, 5)})
+
+    input_field = RotatedBBoxField(semantic=Semantic.Default)
+    output_field = PolygonField(semantic=Semantic.Default)
+
+    setattr(converter_instance, "input_bbox", AttributeSpec("bbox", input_field))
+    setattr(converter_instance, "output_polygon", AttributeSpec("polygon", output_field))
+
+    assert converter_instance.filter_output_spec() is True
+
+    result_df = converter_instance.convert(df)
+    points = result_df["polygon"][0]
+
+    # Should output 4 points (8 coordinates)
+    assert len(points) == 8
+
+
+def test_label_index_converter():
+    """Test LabelIndexConverter functionality for remapping label indices."""
+
+    # Create input and output specs with different label orders
+    input_categories = LabelCategories(labels=("cat", "dog", "bird"))
+    output_categories = LabelCategories(labels=("bird", "cat", "dog"))  # Different order
+
+    input_spec = AttributeSpec(
+        name="label",
+        field=LabelField(semantic=Semantic.Default, dtype=pl.Int32, multi_label=False),
+        categories=input_categories,
+    )
+
+    output_spec = AttributeSpec(
+        name="label",
+        field=LabelField(semantic=Semantic.Default, dtype=pl.Int32, multi_label=False),
+        categories=output_categories,
+    )
+
+    # Create converter
+    converter = LabelIndexConverter(input_labels=input_spec, output_labels=output_spec)
+
+    # Test filter - should return True for valid category remapping
+    assert converter.filter_output_spec() is True
+
+    # Test data with original label indices
+    test_df = pl.DataFrame({"label": [0, 1, 2, 0, 1]})  # cat=0, dog=1, bird=2 in input
+
+    # Convert
+    result_df = converter.convert(test_df)
+
+    # Verify the mapping: cat(0->1), dog(1->2), bird(2->0)
+    expected = [1, 2, 0, 1, 2]  # cat=1, dog=2, bird=0 in output
+    actual = result_df["label"].to_list()
+
+    assert actual == expected
+
+
+def test_label_index_converter_multi_label():
+    """Test LabelIndexConverter functionality for multi-label scenarios."""
+
+    # Create input and output specs with different label orders
+    input_categories = LabelCategories(labels=("cat", "dog", "bird"))
+    output_categories = LabelCategories(labels=("bird", "cat", "dog"))  # Different order
+
+    input_spec = AttributeSpec(
+        name="labels",
+        field=LabelField(semantic=Semantic.Default, dtype=pl.Int32, multi_label=True),
+        categories=input_categories,
+    )
+
+    output_spec = AttributeSpec(
+        name="labels",
+        field=LabelField(semantic=Semantic.Default, dtype=pl.Int32, multi_label=True),
+        categories=output_categories,
+    )
+
+    # Create converter
+    converter = LabelIndexConverter(input_labels=input_spec, output_labels=output_spec)
+
+    # Test filter - should return True for valid category remapping
+    assert converter.filter_output_spec() is True
+
+    # Test multi-label data
+    test_df = pl.DataFrame({"labels": [[0, 1], [2], [0, 2], [1]]})  # Multiple labels per row
+
+    # Convert
+    result_df = converter.convert(test_df)
+
+    # Verify multi-label mapping
+    expected = [[1, 2], [0], [1, 0], [2]]
+    actual = result_df["labels"].to_list()
+
+    assert actual == expected
+
+
+def test_label_index_converter_same_categories():
+    """Test LabelIndexConverter with identical categories (should not apply)."""
+
+    # Create identical input and output categories
+    categories = LabelCategories(labels=("cat", "dog", "bird"))
+
+    input_spec = AttributeSpec(
+        name="label",
+        field=LabelField(semantic=Semantic.Default, dtype=pl.Int32, multi_label=False),
+        categories=categories,
+    )
+
+    output_spec = AttributeSpec(
+        name="label",
+        field=LabelField(semantic=Semantic.Default, dtype=pl.Int32, multi_label=False),
+        categories=categories,
+    )
+
+    # Create converter
+    converter = LabelIndexConverter(input_labels=input_spec, output_labels=output_spec)
+
+    # Test filter - should return False for identical categories
+    assert converter.filter_output_spec() is False
+
+
+def test_label_index_converter_different_labels():
+    """Test LabelIndexConverter with different label sets (should not apply)."""
+
+    # Create categories with different label sets
+    input_categories = LabelCategories(labels=("cat", "dog", "bird"))
+    output_categories = LabelCategories(labels=("horse", "cow", "sheep"))  # Different labels
+
+    input_spec = AttributeSpec(
+        name="label",
+        field=LabelField(semantic=Semantic.Default, dtype=pl.Int32, multi_label=False),
+        categories=input_categories,
+    )
+
+    output_spec = AttributeSpec(
+        name="label",
+        field=LabelField(semantic=Semantic.Default, dtype=pl.Int32, multi_label=False),
+        categories=output_categories,
+    )
+
+    # Create converter
+    converter = LabelIndexConverter(input_labels=input_spec, output_labels=output_spec)
+
+    # Test filter - should return False for different label sets
+    assert converter.filter_output_spec() is False
+
+
+def test_label_index_converter_missing_categories():
+    """Test LabelIndexConverter with missing categories (should not apply)."""
+
+    # Create specs where one is missing categories
+    input_categories = LabelCategories(labels=("cat", "dog", "bird"))
+
+    input_spec = AttributeSpec(
+        name="label",
+        field=LabelField(semantic=Semantic.Default, dtype=pl.Int32, multi_label=False),
+        categories=input_categories,
+    )
+
+    output_spec = AttributeSpec(
+        name="label",
+        field=LabelField(semantic=Semantic.Default, dtype=pl.Int32, multi_label=False),
+        categories=None,  # Missing categories
+    )
+
+    # Create converter
+    converter = LabelIndexConverter(input_labels=input_spec, output_labels=output_spec)
+
+    # Test filter - should return False when categories are missing
+    assert converter.filter_output_spec() is False
+
+
+def test_label_index_converter_unmapped_labels():
+    """Test LabelIndexConverter with unmapped labels using None default."""
+
+    # Create input and output specs where input has extra labels not in output
+    input_categories = LabelCategories(labels=("cat", "dog", "bird", "fish"))
+    output_categories = LabelCategories(labels=("bird", "cat"))  # Missing dog and fish
+
+    input_spec = AttributeSpec(
+        name="label",
+        field=LabelField(semantic=Semantic.Default, dtype=pl.Int32, multi_label=False),
+        categories=input_categories,
+    )
+
+    output_spec = AttributeSpec(
+        name="label",
+        field=LabelField(semantic=Semantic.Default, dtype=pl.Int32, multi_label=False),
+        categories=output_categories,
+    )
+
+    # Create converter
+    converter = LabelIndexConverter(input_labels=input_spec, output_labels=output_spec)
+
+    # This should return False because the label sets are different
+    assert converter.filter_output_spec() is False
 
 
 def test_rotated_bbox_to_polygon_converter():

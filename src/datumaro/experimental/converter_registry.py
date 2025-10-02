@@ -51,7 +51,7 @@ class ConversionPaths(NamedTuple):
     """
 
     batch_converters: List["Converter"]
-    lazy_converters: List["Converter"]
+    lazy_converters: Dict[str, List["Converter"]]
 
 
 @dataclass(frozen=True)
@@ -408,22 +408,16 @@ class AttributeRemapperConverter(Converter):
 
     def convert(self, df: pl.DataFrame) -> pl.DataFrame:
         """
-        Select and rename columns according to column_map.
-        Columns not in the mapping are dropped.
+        Rename columns according to column_map and keep all other columns.
 
         Args:
             df: Input DataFrame
 
         Returns:
-            DataFrame with only the selected/renamed columns
+            DataFrame with renamed columns
         """
-        # Build selection expressions for all columns we want to keep
-        select_exprs = {}
-
-        for old_name, new_name in self.column_map.items():
-            select_exprs[new_name] = pl.col(old_name)
-
-        return df.select(**select_exprs)
+        # Apply all renames
+        return df.rename(self.column_map)
 
     def filter_output_spec(self) -> bool:
         """Always return True as renaming is always applicable."""
@@ -442,8 +436,9 @@ class _SchemaState:
         # Hash only field types and their properties, not names
         field_items = []
         for field_type, attr_spec in self.field_to_attr_spec.items():
-            # Hash field type and field properties, but not the attribute name
-            field_items.append((field_type, attr_spec.field))
+            # Hash field type, field properties, and categories,
+            # but not the attribute name
+            field_items.append((field_type, attr_spec.field, attr_spec.categories))
         return hash(tuple(field_items))
 
     def __eq__(self, other: object) -> bool:
@@ -455,9 +450,19 @@ class _SchemaState:
             return False
 
         for field_type in self.field_to_attr_spec.keys():
+            self_attr_spec = self.field_to_attr_spec[field_type]
+            other_attr_spec = other.field_to_attr_spec[field_type]
+
+            # Compare field properties
+            if self_attr_spec.field != other_attr_spec.field:
+                return False
+
+            # Compare categories only if both are not None (per requirements)
+            # This is because None categories mean "don't care" in this context
             if (
-                self.field_to_attr_spec[field_type].field
-                != other.field_to_attr_spec[field_type].field
+                self_attr_spec.categories is not None
+                and other_attr_spec.categories is not None
+                and self_attr_spec.categories != other_attr_spec.categories
             ):
                 return False
 
@@ -496,6 +501,7 @@ def _heuristic_cost(current_state: _SchemaState, target_state: _SchemaState) -> 
     This counts both:
     1. Missing field types that need to be created
     2. Field differences where the type exists but properties differ (dtype, format, semantic, etc.)
+    3. Category differences where both input and output categories are not None but differ
 
     Note: Attribute names are ignored in the heuristic as they can be fixed in post-processing.
     """
@@ -516,6 +522,14 @@ def _heuristic_cost(current_state: _SchemaState, target_state: _SchemaState) -> 
 
         # Compare field properties (ignoring names) - if they differ, we need conversion
         if current_attr_spec.field != target_attr_spec.field:
+            cost += 1
+
+        # Compare categories only if both are not None (per requirements)
+        elif (
+            current_attr_spec.categories is not None
+            and target_attr_spec.categories is not None
+            and current_attr_spec.categories != target_attr_spec.categories
+        ):
             cost += 1
 
     return cost
@@ -572,9 +586,9 @@ def _get_applicable_converters(
                 output_field = field_type(semantic=semantic)
                 output_categories = None
 
-            # Add the iteration count at the end to ensure uniqueness
-            # and avoid any conflict with existing attribute names
-            output_name = f"{output_name}_temp_{iteration}"
+                # Add the iteration count at the end to ensure uniqueness
+                # and avoid any conflict with existing attribute names
+                output_name = f"{output_name}_temp_{iteration}"
 
             output_attr_spec = AttributeSpec(
                 name=output_name, field=output_field, categories=output_categories
@@ -635,63 +649,52 @@ def _group_fields_by_semantic(schema: Schema) -> dict[Semantic, _SchemaState]:
     }
 
 
-def _create_post_processing_for_semantic(
-    final_state: _SchemaState, target_state: _SchemaState
-) -> Tuple[List[Converter], _SchemaState]:
+def _create_initial_renaming_converter(
+    start_state: _SchemaState, target_state: _SchemaState
+) -> Tuple[Optional[AttributeRemapperConverter], _SchemaState]:
     """
-    Create post-processing converters for a single semantic group.
+    Create an initial AttributeRemapperConverter to handle renaming at the beginning.
 
     Args:
-        final_state: Final state reached after conversions
+        start_state: Starting state of the schema
         target_state: Target state for this semantic group
 
     Returns:
-        Tuple of (list of post-processing converters, updated_state_after_processing)
-        where updated_state_after_processing reflects the state after renaming/deletion
+        Tuple of (optional AttributeRemapperConverter, updated_start_state after renaming)
     """
-    # Build attribute mappings: include only attributes that should be kept
+
     attr_mappings = []
-
-    # Determine if a converter is needed (i.e. at least one attribute has been renamed or deleted)
     converter_needed = False
+    updated_field_to_attr_spec = dict(start_state.field_to_attr_spec)
 
-    for field_type, target_attr_spec in target_state.field_to_attr_spec.items():
-        if field_type in final_state.field_to_attr_spec:
-            final_attr_spec = final_state.field_to_attr_spec[field_type]
+    # Used to check for conflicts when renaming
+    used_names = set(
+        updated_field_to_attr_spec[field_type].name for field_type in updated_field_to_attr_spec
+    )
 
-            if final_attr_spec.name != target_attr_spec.name:
+    for field_type, start_attr_spec in start_state.field_to_attr_spec.items():
+        if field_type in target_state.field_to_attr_spec:
+            target_attr_spec = target_state.field_to_attr_spec[field_type]
+            if start_attr_spec.name != target_attr_spec.name:
                 converter_needed = True
+                new_name = target_attr_spec.name
+                # If the new name would conflict with another attribute in the target_state, use a temporary name
+                if new_name in used_names:
+                    new_name = f"{new_name}_temp_{id(start_attr_spec)}"
+                renamed_attr_spec = AttributeSpec(
+                    name=new_name,
+                    field=start_attr_spec.field,
+                    categories=start_attr_spec.categories,
+                )
+                attr_mappings.append((start_attr_spec, renamed_attr_spec))
+                updated_field_to_attr_spec[field_type] = renamed_attr_spec
 
-            # Add the mapping from final to target attribute spec
-            attr_mappings.append((final_attr_spec, target_attr_spec))
-
-    # Check if any fields need to be deleted (exist in final but not in target)
-    for field_type, final_attr_spec in final_state.field_to_attr_spec.items():
-        if field_type not in target_state.field_to_attr_spec:
-            # If the field is not in the target state, it should be deleted
-            converter_needed = True
-
-    # Create a single remapper converter that handles both renaming and deletion
     if converter_needed:
-        # Create the updated state after processing by applying the attr_mappings to final_state
-        # This preserves the categories from final_state but with the target names/structure
-        updated_field_to_attr_spec = {}
-
-        for final_attr_spec, target_attr_spec in attr_mappings:
-            # Use the target name and field type, but preserve categories from final state
-            updated_field_to_attr_spec[type(target_attr_spec.field)] = AttributeSpec(
-                name=target_attr_spec.name,
-                field=target_attr_spec.field,
-                categories=final_attr_spec.categories,  # Preserve inferred categories
-            )
-
-        updated_state_after_processing = _SchemaState(updated_field_to_attr_spec)
-        return [
-            AttributeRemapperConverter(attr_mappings=attr_mappings)
-        ], updated_state_after_processing
-
-    # No converter needed, return the final state as-is
-    return [], final_state
+        converter = AttributeRemapperConverter(attr_mappings=attr_mappings)
+        updated_start_state = _SchemaState(updated_field_to_attr_spec)
+        return converter, updated_start_state
+    else:
+        return None, start_state
 
 
 def _find_conversion_path_for_semantic(
@@ -711,19 +714,25 @@ def _find_conversion_path_for_semantic(
     Raises:
         ConversionError: If no conversion path is found for this semantic
     """
-    # If we already have all required fields, check if we need renaming/deletion
-    if start_state == target_state:
-        return _create_post_processing_for_semantic(start_state, target_state)
+    # Apply initial renaming at the beginning if needed
+    initial_converter, effective_start_state = _create_initial_renaming_converter(
+        start_state, target_state
+    )
+    initial_converters = [initial_converter] if initial_converter else []
 
-    # Initialize A* search
+    # If we already have all required fields after initial renaming, we might be done
+    if effective_start_state == target_state:
+        return initial_converters, target_state
+
+    # Initialize A* search from the effective start state
     open_set: List[_SearchNode] = []
     closed_set: Set[_SchemaState] = set()
 
     start_node = _SearchNode(
-        state=start_state,
-        path=[],
-        g_cost=0,
-        h_cost=_heuristic_cost(start_state, target_state),
+        state=effective_start_state,
+        path=initial_converters,  # Add initial converters to the start node path
+        g_cost=len(initial_converters),  # Account for initial converters in cost
+        h_cost=_heuristic_cost(effective_start_state, target_state),
     )
 
     heapq.heappush(open_set, start_node)
@@ -738,11 +747,8 @@ def _find_conversion_path_for_semantic(
 
         # Check if we've reached the goal - all target fields must match exactly
         if _heuristic_cost(current_node.state, target_state) == 0:
-            # Add post-processing converters for final renaming and deletion
-            post_processing, final_state = _create_post_processing_for_semantic(
-                current_node.state, target_state
-            )
-            return current_node.path + post_processing, final_state
+            # We've reached the goal, return the path
+            return current_node.path, current_node.state
 
         # Explore neighbors
         for converter, new_state in _get_applicable_converters(
@@ -766,7 +772,7 @@ def _find_conversion_path_for_semantic(
 
     # No path found
     missing_fields = set(target_state.field_to_attr_spec.keys()) - set(
-        start_state.field_to_attr_spec.keys()
+        effective_start_state.field_to_attr_spec.keys()
     )
     raise ConversionError(
         f"No conversion path found for semantic {semantic}. " f"Missing fields: {missing_fields}"
@@ -800,8 +806,6 @@ def find_conversion_path(
     # Collect all converters needed across all semantic groups
     all_converters: List[Converter] = []
 
-    attr_mappings = []
-
     # Process each semantic group in the target schema
     for semantic, target_state in target_groups.items():
         # Get corresponding source state for this semantic (if any)
@@ -815,22 +819,18 @@ def find_conversion_path(
         # Update the target state with any inferred categories
         target_groups[semantic] = updated_target_state
 
-        # Merge all the attribute remappers into a single one. If any, the remapper is always the last step.
-        if semantic_converters and isinstance(semantic_converters[-1], AttributeRemapperConverter):
-            attr_mappings += semantic_converters[-1].attr_mappings
-            semantic_converters = semantic_converters[:-1]
-
         all_converters.extend(semantic_converters)
 
-    if attr_mappings:
-        all_converters.append(AttributeRemapperConverter(attr_mappings=attr_mappings))
-
     # Reconstruct the updated schema with inferred categories
+    # Use the list of attributes from to_schema rather than just the target_groups
+    # because the target_groups may include attributes which are deleted in the final to_schema.
+    # We do not want to include those attributes into the inferred_categories.
     inferred_categories: dict[str, Categories] = {}
-    for semantic, updated_target_state in target_groups.items():
-        for attr_spec in updated_target_state.field_to_attr_spec.values():
-            if attr_spec.categories is not None:
-                inferred_categories[attr_spec.name] = attr_spec.categories
+    for attr_name, attr_info in to_schema.attributes.items():
+        semantic = attr_info.annotation.semantic
+        attr_spec = target_groups[semantic].field_to_attr_spec[type(attr_info.annotation)]
+        if attr_spec.categories is not None:
+            inferred_categories[attr_name] = attr_spec.categories
 
     # Separate batch and lazy converters
     conversion_paths = _separate_batch_and_lazy_converters(all_converters)
@@ -845,6 +845,7 @@ def _separate_batch_and_lazy_converters(
     Separate converters into batch and lazy lists based on dependencies.
 
     If a converter is lazy, all converters that depend on its output must also be lazy.
+    Also tracks which lazy converters are required for each output attribute.
 
     Args:
         conversion_path: The complete conversion path from A* search
@@ -853,7 +854,7 @@ def _separate_batch_and_lazy_converters(
         ConversionPaths with separated batch and lazy converter lists
     """
     if not conversion_path:
-        return ConversionPaths(batch_converters=[], lazy_converters=[])
+        return ConversionPaths(batch_converters=[], lazy_converters={})
 
     # Track which converters must be lazy
     lazy_indices: Set[int] = set()
@@ -884,14 +885,40 @@ def _separate_batch_and_lazy_converters(
             for attr_spec in output_specs:
                 lazy_fields[attr_spec.name] = True
 
-    # Separate into batch and lazy lists
+    # Collect batch converters (non-lazy ones)
     batch_converters: List[Converter] = []
-    lazy_converters: List[Converter] = []
-
     for i, converter in enumerate(conversion_path):
-        if i in lazy_indices:
-            lazy_converters.append(converter)
-        else:
+        if i not in lazy_indices:
             batch_converters.append(converter)
 
-    return ConversionPaths(batch_converters=batch_converters, lazy_converters=lazy_converters)
+    # Collect lazy converters by output attribute
+    lazy_converters_by_output: Dict[str, List[Converter]] = defaultdict(list)
+
+    # Iterate through converters in reverse to propagate output dependencies
+    dependents_by_output: Dict[str, Set[Converter]] = defaultdict(set)
+
+    for i, converter in reversed(list(enumerate(conversion_path))):
+        if i in lazy_indices:
+            # This is a lazy converter - track its outputs
+            dependents = set()
+
+            output_specs = converter.get_output_attr_specs()
+            for attr_spec in output_specs:
+                dependents.update(dependents_by_output.get(attr_spec.name, []))
+                dependents.add(attr_spec.name)
+
+            for dependent in dependents:
+                lazy_converters_by_output[dependent].append(converter)
+
+            # Propagate dependencies from outputs to inputs
+            input_specs = converter.get_input_attr_specs()
+            for input_spec in input_specs:
+                dependents_by_output[input_spec.name].update(dependents)
+
+    # Reverse all chains to get dependencies-first order
+    for output_name, chain in lazy_converters_by_output.items():
+        lazy_converters_by_output[output_name] = list(reversed(chain))
+
+    return ConversionPaths(
+        batch_converters=batch_converters, lazy_converters=lazy_converters_by_output
+    )
