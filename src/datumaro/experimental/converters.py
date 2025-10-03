@@ -26,6 +26,7 @@ from .fields import (
     ImageBytesField,
     ImageCallableField,
     ImageField,
+    ImageFormat,
     ImageInfo,
     ImageInfoField,
     ImagePathField,
@@ -35,7 +36,9 @@ from .fields import (
     MaskCallableField,
     MaskField,
     PolygonField,
+    PolygonFormat,
     RotatedBBoxField,
+    RotatedBBoxFormat,
 )
 from .type_registry import polars_to_numpy_dtype
 
@@ -1265,5 +1268,462 @@ class RotatedBBoxToPolygonConverter(Converter):
             )
             .alias(output_column_name)
         )
+
+        return df
+
+
+@converter
+class BBoxFormatConverter(Converter):
+    """
+    Converter for switching between different bounding box coordinate formats.
+
+    Supports conversion between:
+    - X1Y1X2Y2: (x1, y1, x2, y2) - top-left and bottom-right corners
+    - XYWH: (x, y, w, h) - top-left corner and dimensions
+    """
+
+    input_bbox: AttributeSpec[BBoxField]
+    output_bbox: AttributeSpec[BBoxField]
+
+    def filter_output_spec(self) -> bool:
+        """
+        Check if this converter should be applied for bbox format conversion.
+
+        Returns True if input and output have different bbox formats.
+        """
+        input_format = self.input_bbox.field.format
+        output_format = self.output_bbox.field.format
+
+        # Only apply if formats are different
+        if input_format == output_format:
+            return False
+
+        # Configure output specification
+        self.output_bbox = AttributeSpec(
+            name=self.output_bbox.name,
+            field=BBoxField(
+                semantic=self.input_bbox.field.semantic,
+                dtype=self.input_bbox.field.dtype,
+                format=output_format,
+                normalize=self.input_bbox.field.normalize,
+            ),
+        )
+
+        # Check if conversion is supported
+        supported_conversions = {
+            (BBoxFormat.X1Y1X2Y2, BBoxFormat.XYWH),
+            (BBoxFormat.XYWH, BBoxFormat.X1Y1X2Y2),
+        }
+
+        return (input_format, output_format) in supported_conversions
+
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+        """
+        Convert between bbox coordinate formats.
+
+        Args:
+            df: DataFrame with bbox coordinates in input format
+
+        Returns:
+            DataFrame with bbox coordinates in output format
+        """
+        input_col = self.input_bbox.name
+        output_col = self.output_bbox.name
+        input_format = self.input_bbox.field.format
+        output_format = self.output_bbox.field.format
+
+        if input_format == BBoxFormat.X1Y1X2Y2 and output_format == BBoxFormat.XYWH:
+            # Convert (x1, y1, x2, y2) to (x, y, w, h)
+            df = df.with_columns(
+                pl.col(input_col)
+                .list.eval(
+                    pl.concat_arr(
+                        [
+                            pl.element().arr.get(0),  # x = x1
+                            pl.element().arr.get(1),  # y = y1
+                            pl.element().arr.get(2) - pl.element().arr.get(0),  # w = x2 - x1
+                            pl.element().arr.get(3) - pl.element().arr.get(1),  # h = y2 - y1
+                        ]
+                    )
+                )
+                .alias(output_col)
+            )
+        elif input_format == BBoxFormat.XYWH and output_format == BBoxFormat.X1Y1X2Y2:
+            # Convert (x, y, w, h) to (x1, y1, x2, y2)
+            df = df.with_columns(
+                pl.col(input_col)
+                .list.eval(
+                    pl.concat_arr(
+                        [
+                            pl.element().arr.get(0),  # x1 = x
+                            pl.element().arr.get(1),  # y1 = y
+                            pl.element().arr.get(0) + pl.element().arr.get(2),  # x2 = x + w
+                            pl.element().arr.get(1) + pl.element().arr.get(3),  # y2 = y + h
+                        ]
+                    )
+                )
+                .alias(output_col)
+            )
+        else:
+            raise NotImplementedError(
+                f"Conversion from {input_format} to {output_format} is not yet implemented"
+            )
+
+        return df
+
+
+@converter
+class RotatedBBoxFormatConverter(Converter):
+    """
+    Converter for switching between different rotated bounding box formats.
+
+    Supports conversion between:
+    - CXCYWHR: (cx, cy, w, h, r) - rotation in radians
+    - CXCYWHA: (cx, cy, w, h, a) - rotation in degrees
+    """
+
+    input_rotated_bbox: AttributeSpec[RotatedBBoxField]
+    output_rotated_bbox: AttributeSpec[RotatedBBoxField]
+
+    def filter_output_spec(self) -> bool:
+        """
+        Check if this converter should be applied for rotated bbox format conversion.
+
+        Returns True if input and output have different rotated bbox formats.
+        """
+        input_format = self.input_rotated_bbox.field.format
+        output_format = self.output_rotated_bbox.field.format
+
+        # Only apply if formats are different
+        if input_format == output_format:
+            return False
+
+        # Configure output specification
+        self.output_rotated_bbox = AttributeSpec(
+            name=self.output_rotated_bbox.name,
+            field=RotatedBBoxField(
+                semantic=self.input_rotated_bbox.field.semantic,
+                dtype=self.input_rotated_bbox.field.dtype,
+                format=output_format,
+                normalize=self.input_rotated_bbox.field.normalize,
+            ),
+        )
+
+        # Check if conversion is supported
+        supported_conversions = {
+            (RotatedBBoxFormat.CXCYWHR, RotatedBBoxFormat.CXCYWHA),
+            (RotatedBBoxFormat.CXCYWHA, RotatedBBoxFormat.CXCYWHR),
+        }
+
+        return (input_format, output_format) in supported_conversions
+
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+        """
+        Convert between rotated bbox formats (radians ↔ degrees).
+
+        Args:
+            df: DataFrame with rotated bbox coordinates in input format
+
+        Returns:
+            DataFrame with rotated bbox coordinates in output format
+        """
+        input_col = self.input_rotated_bbox.name
+        output_col = self.output_rotated_bbox.name
+        input_format = self.input_rotated_bbox.field.format
+        output_format = self.output_rotated_bbox.field.format
+
+        if input_format == RotatedBBoxFormat.CXCYWHR and output_format == RotatedBBoxFormat.CXCYWHA:
+            # Convert radians to degrees: multiply rotation by 180/π
+            df = df.with_columns(
+                pl.col(input_col)
+                .list.eval(
+                    pl.concat_arr(
+                        [
+                            pl.element().arr.get(0),  # cx unchanged
+                            pl.element().arr.get(1),  # cy unchanged
+                            pl.element().arr.get(2),  # w unchanged
+                            pl.element().arr.get(3),  # h unchanged
+                            pl.element().arr.get(4) * 180.0 / np.pi,  # r (radians) -> a (degrees)
+                        ]
+                    )
+                )
+                .alias(output_col)
+            )
+        elif (
+            input_format == RotatedBBoxFormat.CXCYWHA and output_format == RotatedBBoxFormat.CXCYWHR
+        ):
+            # Convert degrees to radians: multiply rotation by π/180
+            df = df.with_columns(
+                pl.col(input_col)
+                .list.eval(
+                    pl.concat_arr(
+                        [
+                            pl.element().arr.get(0),  # cx unchanged
+                            pl.element().arr.get(1),  # cy unchanged
+                            pl.element().arr.get(2),  # w unchanged
+                            pl.element().arr.get(3),  # h unchanged
+                            pl.element().arr.get(4) * np.pi / 180.0,  # a (degrees) -> r (radians)
+                        ]
+                    )
+                )
+                .alias(output_col)
+            )
+        else:
+            raise NotImplementedError(
+                f"Conversion from {input_format} to {output_format} is not yet implemented"
+            )
+
+        return df
+
+
+@converter
+class PolygonFormatConverter(Converter):
+    """
+    Converter for switching between different polygon coordinate formats.
+
+    Supports conversion between:
+    - XY: (x, y) coordinate pairs
+    - YX: (y, x) coordinate pairs (swaps x and y coordinates)
+    """
+
+    input_polygon: AttributeSpec[PolygonField]
+    output_polygon: AttributeSpec[PolygonField]
+
+    def filter_output_spec(self) -> bool:
+        """
+        Check if this converter should be applied for polygon format conversion.
+
+        Returns True if input and output have different polygon formats.
+        """
+        input_format = self.input_polygon.field.format
+        output_format = self.output_polygon.field.format
+
+        # Only apply if formats are different
+        if input_format == output_format:
+            return False
+
+        # Configure output specification
+        self.output_polygon = AttributeSpec(
+            name=self.output_polygon.name,
+            field=PolygonField(
+                semantic=self.input_polygon.field.semantic,
+                dtype=self.input_polygon.field.dtype,
+                format=output_format,
+                normalize=self.input_polygon.field.normalize,
+            ),
+        )
+
+        # Check if conversion is supported
+        supported_conversions = {
+            (PolygonFormat.XY, PolygonFormat.YX),
+            (PolygonFormat.YX, PolygonFormat.XY),
+        }
+
+        return (input_format, output_format) in supported_conversions
+
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+        """
+        Convert between polygon coordinate formats by swapping x and y coordinates.
+
+        Args:
+            df: DataFrame with polygon coordinates in input format
+
+        Returns:
+            DataFrame with polygon coordinates in output format
+        """
+        input_col = self.input_polygon.name
+        output_col = self.output_polygon.name
+        input_format = self.input_polygon.field.format
+        output_format = self.output_polygon.field.format
+
+        if (input_format == PolygonFormat.XY and output_format == PolygonFormat.YX) or (
+            input_format == PolygonFormat.YX and output_format == PolygonFormat.XY
+        ):
+            # Swap x and y coordinates: [x, y] ↔ [y, x]
+            df = df.with_columns(
+                pl.col(input_col)
+                .list.eval(
+                    pl.element().list.eval(
+                        pl.concat_arr(
+                            [
+                                pl.element().arr.get(1),  # y becomes first
+                                pl.element().arr.get(0),  # x becomes second
+                            ]
+                        )
+                    )
+                )
+                .alias(output_col)
+            )
+        else:
+            raise NotImplementedError(
+                f"Conversion from {input_format} to {output_format} is not yet implemented"
+            )
+
+        return df
+
+
+@converter
+class ImageFormatConverter(Converter):
+    """
+    Converter for switching between different image color formats.
+
+    Supports conversion between:
+    - RGB ↔ BGR (swaps red and blue channels)
+    - RGB/BGR ↔ GRAYSCALE (converts color to grayscale)
+    - RGB/BGR ↔ RGBA (adds alpha channel)
+    """
+
+    input_image: AttributeSpec[ImageField]
+    output_image: AttributeSpec[ImageField]
+
+    def filter_output_spec(self) -> bool:
+        """
+        Check if this converter should be applied for image format conversion.
+
+        Returns True if input and output have different image formats.
+        """
+        input_format = self.input_image.field.format
+        output_format = self.output_image.field.format
+
+        # Only apply if formats are different
+        if input_format == output_format:
+            return False
+
+        # Configure output specification
+        self.output_image = AttributeSpec(
+            name=self.output_image.name,
+            field=ImageField(
+                semantic=self.input_image.field.semantic,
+                dtype=self.input_image.field.dtype,
+                format=output_format,
+            ),
+        )
+
+        # Check if conversion is supported
+        supported_conversions = {
+            (ImageFormat.RGB, ImageFormat.BGR),
+            (ImageFormat.BGR, ImageFormat.RGB),
+            (ImageFormat.RGB, ImageFormat.GRAYSCALE),
+            (ImageFormat.BGR, ImageFormat.GRAYSCALE),
+            (ImageFormat.GRAYSCALE, ImageFormat.RGB),
+            (ImageFormat.GRAYSCALE, ImageFormat.BGR),
+            (ImageFormat.RGB, ImageFormat.RGBA),
+            (ImageFormat.BGR, ImageFormat.RGBA),
+            (ImageFormat.RGBA, ImageFormat.RGB),
+            (ImageFormat.RGBA, ImageFormat.BGR),
+        }
+
+        return (input_format, output_format) in supported_conversions
+
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+        """
+        Convert between image color formats.
+
+        Args:
+            df: DataFrame with image data in input format
+
+        Returns:
+            DataFrame with image data in output format
+        """
+        input_col = self.input_image.name
+        output_col = self.output_image.name
+        input_format = self.input_image.field.format
+        output_format = self.output_image.field.format
+
+        # RGB ↔ BGR conversion (swap red and blue channels)
+        if (input_format == ImageFormat.RGB and output_format == ImageFormat.BGR) or (
+            input_format == ImageFormat.BGR and output_format == ImageFormat.RGB
+        ):
+            # For image data stored as flattened arrays, we need to reshape, swap channels, and flatten back
+            def swap_rgb_bgr(tensor_data) -> Any:
+                """Convert RGB tensor data to BGR by swapping R and B channels."""
+                if tensor_data is None:
+                    return None
+                data = np.array(tensor_data).copy()
+                # Reshape to (height * width, 3) for channel operations
+                data = data.reshape(-1, 3)
+                # Swap R and B channels: [R,G,B] -> [B,G,R]
+                data[:, [0, 2]] = data[:, [2, 0]]  # Swap columns 0 and 2
+                return data.reshape(-1).tolist()  # Flatten back and return as list
+
+            dtype = df.schema[input_col]
+            df = df.with_columns(
+                pl.col(input_col).map_elements(swap_rgb_bgr, return_dtype=dtype).alias(output_col)
+            )
+
+        # Color to Grayscale conversion (RGB/BGR → GRAYSCALE)
+        elif (
+            input_format == ImageFormat.RGB or input_format == ImageFormat.BGR
+        ) and output_format == ImageFormat.GRAYSCALE:
+            if input_format == ImageFormat.RGB:
+                # RGB to Grayscale: 0.299*R + 0.587*G + 0.114*B
+                df = df.with_columns(
+                    pl.col(input_col)
+                    .list.eval(
+                        (
+                            pl.element().arr.slice(0, 1).cast(pl.Float32) * 0.299
+                            + pl.element().arr.slice(1, 1).cast(pl.Float32) * 0.587  # R
+                            + pl.element().arr.slice(2, 1).cast(pl.Float32) * 0.114  # G
+                        ).cast(  # B
+                            self.output_image.field.dtype
+                        )
+                    )
+                    .alias(output_col)
+                )
+            else:  # BGR
+                # BGR to Grayscale: 0.299*R + 0.587*G + 0.114*B (R is at index 2)
+                df = df.with_columns(
+                    pl.col(input_col)
+                    .list.eval(
+                        (
+                            pl.element().arr.slice(2, 1).cast(pl.Float32) * 0.299
+                            + pl.element().arr.slice(1, 1).cast(pl.Float32)  # R (at index 2)
+                            * 0.587
+                            + pl.element().arr.slice(0, 1).cast(pl.Float32) * 0.114  # G
+                        ).cast(  # B (at index 0)
+                            self.output_image.field.dtype
+                        )
+                    )
+                    .alias(output_col)
+                )
+
+        # Grayscale to Color conversion (GRAYSCALE → RGB/BGR)
+        elif input_format == ImageFormat.GRAYSCALE and (
+            output_format == ImageFormat.RGB or output_format == ImageFormat.BGR
+        ):
+            # Replicate grayscale value across all 3 channels
+            df = df.with_columns(
+                pl.col(input_col)
+                .list.eval(pl.element().extend(pl.element()).extend(pl.element()))  # [G] → [G,G,G]
+                .alias(output_col)
+            )
+
+        # Add alpha channel (RGB/BGR → RGBA)
+        elif (
+            input_format == ImageFormat.RGB or input_format == ImageFormat.BGR
+        ) and output_format == ImageFormat.RGBA:
+            # Add fully opaque alpha channel (255)
+            alpha_value = 255 if self.output_image.field.dtype == pl.UInt8() else 1.0
+            df = df.with_columns(
+                pl.col(input_col)
+                .list.eval(pl.element().extend(pl.Series([alpha_value])))  # Add alpha
+                .alias(output_col)
+            )
+
+        # Remove alpha channel (RGBA → RGB/BGR)
+        elif input_format == ImageFormat.RGBA and (
+            output_format == ImageFormat.RGB or output_format == ImageFormat.BGR
+        ):
+            # Keep only first 3 channels, drop alpha
+            df = df.with_columns(
+                pl.col(input_col)
+                .list.eval(pl.element().arr.slice(0, 3))  # Keep R,G,B or B,G,R
+                .alias(output_col)
+            )
+
+        else:
+            raise NotImplementedError(
+                f"Conversion from {input_format} to {output_format} is not yet implemented"
+            )
 
         return df

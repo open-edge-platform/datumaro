@@ -21,16 +21,20 @@ from datumaro.experimental.converter_registry import (
 )
 from datumaro.experimental.converters import (
     BBoxCoordinateConverter,
+    BBoxFormatConverter,
     ImageBytesToImageConverter,
     ImageCallableToImageConverter,
+    ImageFormatConverter,
     ImagePathToImageConverter,
     InstanceMaskCallableToInstanceMaskConverter,
     LabelIndexConverter,
     MaskCallableToMaskConverter,
+    PolygonFormatConverter,
     PolygonToBBoxConverter,
     PolygonToInstanceMaskConverter,
     PolygonToMaskConverter,
     RGBToBGRConverter,
+    RotatedBBoxFormatConverter,
     RotatedBBoxToPolygonConverter,
     UInt8ToFloat32Converter,
 )
@@ -50,7 +54,9 @@ from datumaro.experimental.fields import (
     MaskCallableField,
     MaskField,
     PolygonField,
+    PolygonFormat,
     RotatedBBoxField,
+    RotatedBBoxFormat,
     bbox_field,
     image_field,
     image_info_field,
@@ -2278,3 +2284,391 @@ def test_rotated_bbox_to_polygon_converter():
     # Check second polygon (45-degree rotation)
     polygon2 = polygons[1]
     assert len(polygon2) == 4  # Four corners
+
+
+def test_bbox_format_converter_x1y1x2y2_to_xywh():
+    """Test BBoxFormatConverter conversion from X1Y1X2Y2 to XYWH format."""
+    # Create test data: (x1, y1, x2, y2) format
+    test_data = [[10.0, 20.0, 50.0, 70.0], [0.0, 0.0, 100.0, 200.0]]
+
+    df = pl.DataFrame({"bboxes": [test_data]}, schema={"bboxes": pl.List(pl.Array(pl.Float32, 4))})
+
+    converter_instance = BBoxFormatConverter()
+
+    # Set up converter attributes
+    input_bbox_field = BBoxField(
+        dtype=pl.Float32, format=BBoxFormat.X1Y1X2Y2, normalize=False, semantic=Semantic.Default
+    )
+    output_bbox_field = BBoxField(
+        dtype=pl.Float32, format=BBoxFormat.XYWH, normalize=False, semantic=Semantic.Default
+    )
+
+    setattr(converter_instance, "input_bbox", AttributeSpec(name="bboxes", field=input_bbox_field))
+    setattr(
+        converter_instance,
+        "output_bbox",
+        AttributeSpec(name="bboxes_xywh", field=output_bbox_field),
+    )
+
+    # Test filter
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    assert "bboxes_xywh" in result_df.columns
+    result_bboxes = result_df["bboxes_xywh"][0]
+
+    # First bbox: (10, 20, 50, 70) -> (10, 20, 40, 50)
+    expected_bbox1 = [10.0, 20.0, 40.0, 50.0]  # x, y, w=50-10, h=70-20
+    # Second bbox: (0, 0, 100, 200) -> (0, 0, 100, 200)
+    expected_bbox2 = [0.0, 0.0, 100.0, 200.0]  # x, y, w=100-0, h=200-0
+
+    assert np.allclose(result_bboxes[0], expected_bbox1)
+    assert np.allclose(result_bboxes[1], expected_bbox2)
+
+
+def test_bbox_format_converter_xywh_to_x1y1x2y2():
+    """Test BBoxFormatConverter conversion from XYWH to X1Y1X2Y2 format."""
+    # Create test data: (x, y, w, h) format
+    test_data = [[10.0, 20.0, 40.0, 50.0], [0.0, 0.0, 100.0, 200.0]]
+
+    df = pl.DataFrame({"bboxes": [test_data]}, schema={"bboxes": pl.List(pl.Array(pl.Float32, 4))})
+
+    converter_instance = BBoxFormatConverter()
+
+    # Set up converter attributes
+    input_bbox_field = BBoxField(
+        dtype=pl.Float32, format=BBoxFormat.XYWH, normalize=False, semantic=Semantic.Default
+    )
+    output_bbox_field = BBoxField(
+        dtype=pl.Float32, format=BBoxFormat.X1Y1X2Y2, normalize=False, semantic=Semantic.Default
+    )
+
+    setattr(converter_instance, "input_bbox", AttributeSpec(name="bboxes", field=input_bbox_field))
+    setattr(
+        converter_instance,
+        "output_bbox",
+        AttributeSpec(name="bboxes_xyxy", field=output_bbox_field),
+    )
+
+    # Test filter
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    assert "bboxes_xyxy" in result_df.columns
+    result_bboxes = result_df["bboxes_xyxy"][0]
+
+    # First bbox: (10, 20, 40, 50) -> (10, 20, 50, 70)
+    expected_bbox1 = [10.0, 20.0, 50.0, 70.0]  # x1, y1, x2=x+w, y2=y+h
+    # Second bbox: (0, 0, 100, 200) -> (0, 0, 100, 200)
+    expected_bbox2 = [0.0, 0.0, 100.0, 200.0]  # x1, y1, x2=x+w, y2=y+h
+
+    assert np.allclose(result_bboxes[0], expected_bbox1)
+    assert np.allclose(result_bboxes[1], expected_bbox2)
+
+
+def test_rotated_bbox_format_converter_radians_to_degrees():
+    """Test RotatedBBoxFormatConverter conversion from radians to degrees."""
+    # Create test data: (cx, cy, w, h, r) format with radians
+    test_data = [
+        [50.0, 60.0, 30.0, 20.0, 0.0],  # 0 radians
+        [100.0, 120.0, 40.0, 25.0, np.pi / 2],  # π/2 radians = 90 degrees
+        [150.0, 180.0, 50.0, 30.0, np.pi],  # π radians = 180 degrees
+    ]
+
+    df = pl.DataFrame(
+        {"rotated_bboxes": [test_data]}, schema={"rotated_bboxes": pl.List(pl.Array(pl.Float32, 5))}
+    )
+
+    converter_instance = RotatedBBoxFormatConverter()
+
+    # Set up converter attributes
+    input_field = RotatedBBoxField(
+        dtype=pl.Float32,
+        format=RotatedBBoxFormat.CXCYWHR,
+        normalize=False,
+        semantic=Semantic.Default,
+    )
+    output_field = RotatedBBoxField(
+        dtype=pl.Float32,
+        format=RotatedBBoxFormat.CXCYWHA,
+        normalize=False,
+        semantic=Semantic.Default,
+    )
+
+    setattr(
+        converter_instance,
+        "input_rotated_bbox",
+        AttributeSpec(name="rotated_bboxes", field=input_field),
+    )
+    setattr(
+        converter_instance,
+        "output_rotated_bbox",
+        AttributeSpec(name="rotated_bboxes_degrees", field=output_field),
+    )
+
+    # Test filter
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    assert "rotated_bboxes_degrees" in result_df.columns
+    result_bboxes = result_df["rotated_bboxes_degrees"][0]
+
+    # Check conversions
+    expected_results = [
+        [50.0, 60.0, 30.0, 20.0, 0.0],  # 0 radians -> 0 degrees
+        [100.0, 120.0, 40.0, 25.0, 90.0],  # π/2 radians -> 90 degrees
+        [150.0, 180.0, 50.0, 30.0, 180.0],  # π radians -> 180 degrees
+    ]
+
+    for i, expected in enumerate(expected_results):
+        assert np.allclose(result_bboxes[i], expected, atol=1e-6)
+
+
+def test_rotated_bbox_format_converter_degrees_to_radians():
+    """Test RotatedBBoxFormatConverter conversion from degrees to radians."""
+    # Create test data: (cx, cy, w, h, a) format with degrees
+    test_data = [
+        [50.0, 60.0, 30.0, 20.0, 0.0],  # 0 degrees
+        [100.0, 120.0, 40.0, 25.0, 90.0],  # 90 degrees
+        [150.0, 180.0, 50.0, 30.0, 180.0],  # 180 degrees
+    ]
+
+    df = pl.DataFrame(
+        {"rotated_bboxes": [test_data]}, schema={"rotated_bboxes": pl.List(pl.Array(pl.Float32, 5))}
+    )
+
+    converter_instance = RotatedBBoxFormatConverter()
+
+    # Set up converter attributes
+    input_field = RotatedBBoxField(
+        dtype=pl.Float32,
+        format=RotatedBBoxFormat.CXCYWHA,
+        normalize=False,
+        semantic=Semantic.Default,
+    )
+    output_field = RotatedBBoxField(
+        dtype=pl.Float32,
+        format=RotatedBBoxFormat.CXCYWHR,
+        normalize=False,
+        semantic=Semantic.Default,
+    )
+
+    setattr(
+        converter_instance,
+        "input_rotated_bbox",
+        AttributeSpec(name="rotated_bboxes", field=input_field),
+    )
+    setattr(
+        converter_instance,
+        "output_rotated_bbox",
+        AttributeSpec(name="rotated_bboxes_radians", field=output_field),
+    )
+
+    # Test filter
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    assert "rotated_bboxes_radians" in result_df.columns
+    result_bboxes = result_df["rotated_bboxes_radians"][0]
+
+    # Check conversions
+    expected_results = [
+        [50.0, 60.0, 30.0, 20.0, 0.0],  # 0 degrees -> 0 radians
+        [100.0, 120.0, 40.0, 25.0, np.pi / 2],  # 90 degrees -> π/2 radians
+        [150.0, 180.0, 50.0, 30.0, np.pi],  # 180 degrees -> π radians
+    ]
+
+    for i, expected in enumerate(expected_results):
+        assert np.allclose(result_bboxes[i], expected, atol=1e-6)
+
+
+def test_polygon_format_converter_xy_to_yx():
+    """Test PolygonFormatConverter conversion from XY to YX format."""
+    # Create test polygon data: [(x1, y1), (x2, y2), (x3, y3)]
+    polygon1 = [[10.0, 20.0], [30.0, 40.0], [50.0, 60.0]]
+    polygon2 = [[100.0, 200.0], [300.0, 400.0]]
+
+    df = pl.DataFrame(
+        {"polygons": [[polygon1, polygon2]]},
+        schema={"polygons": pl.List(pl.List(pl.Array(pl.Float32, 2)))},
+    )
+
+    converter_instance = PolygonFormatConverter()
+
+    # Set up converter attributes
+    input_field = PolygonField(
+        dtype=pl.Float32, format=PolygonFormat.XY, normalize=False, semantic=Semantic.Default
+    )
+    output_field = PolygonField(
+        dtype=pl.Float32, format=PolygonFormat.YX, normalize=False, semantic=Semantic.Default
+    )
+
+    setattr(converter_instance, "input_polygon", AttributeSpec(name="polygons", field=input_field))
+    setattr(
+        converter_instance, "output_polygon", AttributeSpec(name="polygons_yx", field=output_field)
+    )
+
+    # Test filter
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    assert "polygons_yx" in result_df.columns
+    result_polygons = result_df["polygons_yx"][0]
+
+    # Check that coordinates are swapped: (x, y) -> (y, x)
+    expected_polygon1 = [[20.0, 10.0], [40.0, 30.0], [60.0, 50.0]]  # Swapped coordinates
+    expected_polygon2 = [[200.0, 100.0], [400.0, 300.0]]  # Swapped coordinates
+
+    assert len(result_polygons) == 2
+    assert np.allclose(result_polygons[0], expected_polygon1)
+    assert np.allclose(result_polygons[1], expected_polygon2)
+
+
+def test_image_format_converter_rgb_to_bgr():
+    """Test ImageFormatConverter conversion from RGB to BGR format."""
+    # Create test RGB image data: shape (height, width, channels)
+    rgb_data = np.array(
+        [
+            [[255, 0, 0], [0, 255, 0]],  # Red pixel, Green pixel
+            [[0, 0, 255], [128, 128, 128]],  # Blue pixel, Gray pixel
+        ],
+        dtype=np.uint8,
+    ).flatten()  # Flatten for storage
+
+    df = pl.DataFrame({"image": [rgb_data], "image_shape": [[2, 2, 3]]})  # height, width, channels
+
+    converter_instance = ImageFormatConverter()
+
+    # Set up converter attributes
+    input_field = ImageField(dtype=pl.UInt8, format=ImageFormat.RGB, semantic=Semantic.Default)
+    output_field = ImageField(dtype=pl.UInt8, format=ImageFormat.BGR, semantic=Semantic.Default)
+
+    setattr(converter_instance, "input_image", AttributeSpec(name="image", field=input_field))
+    setattr(converter_instance, "output_image", AttributeSpec(name="image_bgr", field=output_field))
+
+    # Test filter
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    assert "image_bgr" in result_df.columns
+    result_image = result_df["image_bgr"][0].to_numpy()
+
+    # Reshape back to original shape for comparison
+    result_image_reshaped = result_image.reshape(2, 2, 3)
+
+    # Expected BGR data: channels swapped from RGB
+    expected_bgr = np.array(
+        [
+            [[0, 0, 255], [0, 255, 0]],  # Blue pixel, Green pixel (R&B swapped)
+            [[255, 0, 0], [128, 128, 128]],  # Red pixel (R&B swapped), Gray pixel (unchanged)
+        ],
+        dtype=np.uint8,
+    )
+
+    assert np.array_equal(result_image_reshaped, expected_bgr)
+
+
+def test_image_format_converter_rgb_to_grayscale():
+    """Test ImageFormatConverter conversion from RGB to Grayscale format."""
+    # Create test RGB image data
+    rgb_data = np.array(
+        [
+            [[255, 0, 0], [0, 255, 0]],  # Red pixel, Green pixel
+            [[0, 0, 255], [255, 255, 255]],  # Blue pixel, White pixel
+        ],
+        dtype=np.uint8,
+    ).flatten()
+
+    df = pl.DataFrame({"image": [rgb_data], "image_shape": [[2, 2, 3]]})
+
+    converter_instance = ImageFormatConverter()
+
+    # Set up converter attributes
+    input_field = ImageField(dtype=pl.UInt8, format=ImageFormat.RGB, semantic=Semantic.Default)
+    output_field = ImageField(
+        dtype=pl.UInt8, format=ImageFormat.GRAYSCALE, semantic=Semantic.Default
+    )
+
+    setattr(converter_instance, "input_image", AttributeSpec(name="image", field=input_field))
+    setattr(
+        converter_instance, "output_image", AttributeSpec(name="image_gray", field=output_field)
+    )
+
+    # Test filter
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    assert "image_gray" in result_df.columns
+    result_image = result_df["image_gray"][0].to_numpy()
+
+    # Expected grayscale values using standard weights: 0.299*R + 0.587*G + 0.114*B
+    expected_gray = np.array(
+        [
+            int(0.299 * 255 + 0.587 * 0 + 0.114 * 0),  # Red -> ~76
+            int(0.299 * 0 + 0.587 * 255 + 0.114 * 0),  # Green -> ~150
+            int(0.299 * 0 + 0.587 * 0 + 0.114 * 255),  # Blue -> ~29
+            int(0.299 * 255 + 0.587 * 255 + 0.114 * 255),  # White -> ~255
+        ],
+        dtype=np.uint8,
+    )
+
+    # Allow some tolerance for floating point conversion
+    assert np.allclose(result_image, expected_gray, atol=1)
+
+
+def test_format_converters_same_format_no_conversion():
+    """Test that format converters don't apply when input and output formats are the same."""
+
+    # Test BBoxFormatConverter
+    bbox_converter = BBoxFormatConverter()
+    bbox_field = BBoxField(dtype=pl.Float32, format=BBoxFormat.X1Y1X2Y2, semantic=Semantic.Default)
+    setattr(bbox_converter, "input_bbox", AttributeSpec(name="bbox", field=bbox_field))
+    setattr(bbox_converter, "output_bbox", AttributeSpec(name="bbox_out", field=bbox_field))
+    assert bbox_converter.filter_output_spec() is False
+
+    # Test RotatedBBoxFormatConverter
+    rotated_converter = RotatedBBoxFormatConverter()
+    rotated_field = RotatedBBoxField(
+        dtype=pl.Float32, format=RotatedBBoxFormat.CXCYWHR, semantic=Semantic.Default
+    )
+    setattr(
+        rotated_converter, "input_rotated_bbox", AttributeSpec(name="rotated", field=rotated_field)
+    )
+    setattr(
+        rotated_converter,
+        "output_rotated_bbox",
+        AttributeSpec(name="rotated_out", field=rotated_field),
+    )
+    assert rotated_converter.filter_output_spec() is False
+
+    # Test PolygonFormatConverter
+    polygon_converter = PolygonFormatConverter()
+    polygon_field = PolygonField(
+        dtype=pl.Float32, format=PolygonFormat.XY, semantic=Semantic.Default
+    )
+    setattr(polygon_converter, "input_polygon", AttributeSpec(name="polygon", field=polygon_field))
+    setattr(
+        polygon_converter, "output_polygon", AttributeSpec(name="polygon_out", field=polygon_field)
+    )
+    assert polygon_converter.filter_output_spec() is False
+
+    # Test ImageFormatConverter
+    image_converter = ImageFormatConverter()
+    image_field = ImageField(dtype=pl.UInt8, format=ImageFormat.RGB, semantic=Semantic.Default)
+    setattr(image_converter, "input_image", AttributeSpec(name="image", field=image_field))
+    setattr(image_converter, "output_image", AttributeSpec(name="image_out", field=image_field))
+    assert image_converter.filter_output_spec() is False
