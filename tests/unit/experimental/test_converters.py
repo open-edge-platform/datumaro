@@ -690,7 +690,7 @@ def test_astar_no_conversion_needed():
     path, _ = find_conversion_path(schema, schema)
     assert (
         len(path.converters) == 0
-    ), f"Expected 0 converters for identical schemas, got {total_converters}"
+    ), f"Expected 0 converters for identical schemas, got {len(path.converters)}"
 
 
 def test_astar_impossible_conversion():

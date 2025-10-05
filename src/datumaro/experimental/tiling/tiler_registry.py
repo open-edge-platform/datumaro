@@ -333,7 +333,7 @@ class TilingPlan:
     tilers_by_group_id: defaultdict[int, list[str]]
     tilers_instance_by_name: dict[str, Tiler]
     image_info_spec: AttributeSpec[ImageInfoField]
-    tile_info_spec: AttributeSpec[ImageInfoField]
+    tile_info_spec: AttributeSpec[TileField]
     target_schema: Schema
     config: TilingConfig
 

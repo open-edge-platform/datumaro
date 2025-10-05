@@ -117,7 +117,7 @@ def test_apply_tiling(sample_df, sample_schema):
     result_df, result_fields = _apply_tiling(sample_df, None, plan, ["image", "image_info"])
 
     # Check the generated fields
-    result_fields == {"tile", "image", "image_info"}
+    assert result_fields == {"image", "image_info"}
 
     # Check DataFrame
     assert "tile" in result_df.columns

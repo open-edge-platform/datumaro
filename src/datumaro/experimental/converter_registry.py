@@ -874,7 +874,7 @@ def _separate_batch_and_lazy_converters(
         required_inputs = [
             required_inputs_by_output[attr_spec.name]
             if attr_spec.name in required_inputs_by_output
-            else attr_spec.name
+            else {attr_spec.name}
             for attr_spec in input_specs
         ]
         flattened_required_inputs = set(itertools.chain(*required_inputs))

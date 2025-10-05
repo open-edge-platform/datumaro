@@ -138,8 +138,7 @@ class BboxTiler(Tiler):
 
         for tile_row in tiles_df["tile"]:
             image_id = tile_row["source_sample_idx"]
-            boxes = df[column_name][image_id]  # List of [x1, y1, x2, y2]
-            boxes = df[image_id].select("bboxes").explode("bboxes")
+            boxes = df[image_id].select(column_name).explode(column_name)
 
             # Get tile coordinates
             tile_x = tile_row["x"]
@@ -372,7 +371,9 @@ class PolygonTiler(Tiler):
                         (geom, geom.area) for geom in list(intersection.geoms) if geom.is_valid
                     ]
                     if not shapes:
-                        return None
+                        tiled_polygons.append(None)  # Placeholder for dropped polygon
+                        polygon_keeps.append(False)
+                        continue
 
                     intersection, _ = max(shapes, key=operator.itemgetter(1))
 
