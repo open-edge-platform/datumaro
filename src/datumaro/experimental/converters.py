@@ -1782,10 +1782,9 @@ class ImageFormatConverter(Converter):
                 .alias(output_col)
             )
 
-        # Add alpha channel (RGB/BGR → RGBA)
+        # Add alpha channel (RGB → RGBA)
         elif (
-            input_format == ImageFormat.RGB or input_format == ImageFormat.BGR
-        ) and output_format == ImageFormat.RGBA:
+            input_format == ImageFormat.RGB and output_format == ImageFormat.RGBA:
             # Add fully opaque alpha channel (255)
             alpha_value = 255 if self.output_image.field.dtype == pl.UInt8() else 1.0
             df = df.with_columns(
@@ -1794,14 +1793,12 @@ class ImageFormatConverter(Converter):
                 .alias(output_col)
             )
 
-        # Remove alpha channel (RGBA → RGB/BGR)
-        elif input_format == ImageFormat.RGBA and (
-            output_format == ImageFormat.RGB or output_format == ImageFormat.BGR
-        ):
+        # Remove alpha channel (RGBA → RGB)
+        elif input_format == ImageFormat.RGBA and output_format == ImageFormat.RGB:
             # Keep only first 3 channels, drop alpha
             df = df.with_columns(
                 pl.col(input_col)
-                .list.eval(pl.element().arr.slice(0, 3))  # Keep R,G,B or B,G,R
+                .list.eval(pl.element().arr.slice(0, 3))  # Keep R,G,B
                 .alias(output_col)
             )
 
