@@ -1,6 +1,6 @@
 
 
-<!-- Contributing guide: https://github.com/open-edge-platform/datumaro/blob/develop/CONTRIBUTING.md -->
+<!-- Contributing guide: https://github.com/open-edge-platform/datumaro/blob/develop/contributing.md -->
 
 <!--
 Please add a summary of changes. You may use Copilot to auto-generate the PR description but please consider including any other relevant facts which Copilot may be unaware of (such as design choices and testing procedure).
