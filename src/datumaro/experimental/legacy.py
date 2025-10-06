@@ -642,6 +642,8 @@ class ForwardLabelAnnotationConverter(ForwardAnnotationConverter):
         if len(labels) > 0:
             if "multi_label_ids" in labels[0].attributes:
                 result[self.name_prefix + "label"] = labels[0].attributes["multi_label_ids"]
+            elif self.label_attribute.annotation.multi_label:
+                result[self.name_prefix + "label"] = [labels[0].label]
             else:
                 result[self.name_prefix + "label"] = labels[0].label
         else:
