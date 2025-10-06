@@ -329,7 +329,7 @@ class ImagePathToImageConverter(Converter):
 
         # Create output DataFrame
         image_schema = self.output_image.field.to_polars_schema("image")
-        image_info_schema = self.output_image.field.to_polars_schema("image_info")
+        image_info_schema = self.output_info.field.to_polars_schema("image_info")
 
         result_df = df.clone()
 
@@ -561,6 +561,90 @@ class BBoxCoordinateConverter(Converter):
         result_df = result_df.drop([temp_width_col, temp_height_col])
 
         return result_df
+
+
+@converter
+class BBoxDtypeConverter(Converter):
+    """
+    Convert BBox field between different data types.
+    """
+
+    input_bbox: AttributeSpec[BBoxField]
+    output_bbox: AttributeSpec[BBoxField]
+
+    def filter_output_spec(self) -> bool:
+        """Configure output bbox specification with target dtype."""
+        self.output_bbox = AttributeSpec(
+            name=self.output_bbox.name,
+            field=BBoxField(
+                semantic=self.input_bbox.field.semantic,
+                dtype=self.output_bbox.field.dtype,  # Use target dtype
+                format=self.input_bbox.field.format,
+                normalize=self.input_bbox.field.normalize,
+            ),
+        )
+
+        # Apply converter only if dtypes are different
+        return self.input_bbox.field.dtype != self.output_bbox.field.dtype
+
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+        """Convert bbox data to target dtype."""
+        input_col = self.input_bbox.name
+        output_col = self.output_bbox.name
+
+        # Cast bbox values to target dtype by converting each element
+        return df.with_columns(
+            pl.col(input_col)
+            .list.eval(
+                pl.element()
+                .arr.to_list()
+                .list.eval(pl.element().cast(self.output_bbox.field.dtype))
+            )
+            .alias(output_col)
+        )
+
+
+@converter
+class LabelDtypeConverter(Converter):
+    """
+    Convert Label field between different data types.
+    """
+
+    input_label: AttributeSpec[LabelField]
+    output_label: AttributeSpec[LabelField]
+
+    def filter_output_spec(self) -> bool:
+        """Configure output label specification with target dtype."""
+        self.output_label = AttributeSpec(
+            name=self.output_label.name,
+            field=LabelField(
+                semantic=self.input_label.field.semantic,
+                dtype=self.output_label.field.dtype,  # Use target dtype
+                multi_label=self.input_label.field.multi_label,
+                is_list=self.input_label.field.is_list,
+            ),
+        )
+
+        # Apply converter only if dtypes are different
+        return self.input_label.field.dtype != self.output_label.field.dtype
+
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+        """Convert label data to target dtype."""
+        input_col = self.input_label.name
+        output_col = self.output_label.name
+
+        if self.input_label.field.is_list:
+            # Handle list of labels
+            return df.with_columns(
+                pl.col(input_col)
+                .list.eval(pl.element().cast(self.output_label.field.dtype))
+                .alias(output_col)
+            )
+        else:
+            # Handle single label
+            return df.with_columns(
+                pl.col(input_col).cast(self.output_label.field.dtype).alias(output_col)
+            )
 
 
 @converter(lazy=True)
