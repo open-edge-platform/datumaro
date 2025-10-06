@@ -1654,7 +1654,7 @@ class ImageFormatConverter(Converter):
     Supports conversion between:
     - RGB ↔ BGR (swaps red and blue channels)
     - RGB/BGR ↔ GRAYSCALE (converts color to grayscale)
-    - RGB/BGR ↔ RGBA (adds alpha channel)
+    - RGB ↔ RGBA (adds/removes alpha channel)
     """
 
     input_image: AttributeSpec[ImageField]
@@ -1692,9 +1692,7 @@ class ImageFormatConverter(Converter):
             (ImageFormat.GRAYSCALE, ImageFormat.RGB),
             (ImageFormat.GRAYSCALE, ImageFormat.BGR),
             (ImageFormat.RGB, ImageFormat.RGBA),
-            (ImageFormat.BGR, ImageFormat.RGBA),
             (ImageFormat.RGBA, ImageFormat.RGB),
-            (ImageFormat.RGBA, ImageFormat.BGR),
         }
 
         return (input_format, output_format) in supported_conversions
@@ -1746,27 +1744,21 @@ class ImageFormatConverter(Converter):
                     .list.eval(
                         (
                             pl.element().arr.slice(0, 1).cast(pl.Float32) * 0.299
-                            + pl.element().arr.slice(1, 1).cast(pl.Float32) * 0.587  # R
-                            + pl.element().arr.slice(2, 1).cast(pl.Float32) * 0.114  # G
-                        ).cast(  # B
-                            self.output_image.field.dtype
-                        )
+                            + pl.element().arr.slice(1, 1).cast(pl.Float32) * 0.587
+                            + pl.element().arr.slice(2, 1).cast(pl.Float32) * 0.114
+                        ).cast(self.output_image.field.dtype)
                     )
                     .alias(output_col)
                 )
-            else:  # BGR
-                # BGR to Grayscale: 0.299*R + 0.587*G + 0.114*B (R is at index 2)
+            else:  # BGR to Grayscale: 0.299*R + 0.587*G + 0.114*B (R is at index 2)
                 df = df.with_columns(
                     pl.col(input_col)
                     .list.eval(
                         (
                             pl.element().arr.slice(2, 1).cast(pl.Float32) * 0.299
-                            + pl.element().arr.slice(1, 1).cast(pl.Float32)  # R (at index 2)
-                            * 0.587
-                            + pl.element().arr.slice(0, 1).cast(pl.Float32) * 0.114  # G
-                        ).cast(  # B (at index 0)
-                            self.output_image.field.dtype
-                        )
+                            + pl.element().arr.slice(1, 1).cast(pl.Float32) * 0.587
+                            + pl.element().arr.slice(0, 1).cast(pl.Float32) * 0.114
+                        ).cast(self.output_image.field.dtype)
                     )
                     .alias(output_col)
                 )
@@ -1783,8 +1775,7 @@ class ImageFormatConverter(Converter):
             )
 
         # Add alpha channel (RGB → RGBA)
-        elif (
-            input_format == ImageFormat.RGB and output_format == ImageFormat.RGBA:
+        elif input_format == ImageFormat.RGB and output_format == ImageFormat.RGBA:
             # Add fully opaque alpha channel (255)
             alpha_value = 255 if self.output_image.field.dtype == pl.UInt8() else 1.0
             df = df.with_columns(
