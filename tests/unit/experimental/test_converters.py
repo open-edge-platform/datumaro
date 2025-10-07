@@ -965,7 +965,7 @@ def test_attribute_renaming():
     source_schema = Schema(
         {
             "input_image": AttributeInfo(
-                type=str, annotation=image_field(dtype=pl.UInt8(), format="RGB")
+                type=str, annotation=image_field(dtype=pl.UInt8(), format=ImageFormat.RGB)
             ),
         }
     )
@@ -974,7 +974,7 @@ def test_attribute_renaming():
     target_schema = Schema(
         {
             "output_image": AttributeInfo(
-                type=str, annotation=image_field(dtype=pl.UInt8(), format="RGB")
+                type=str, annotation=image_field(dtype=pl.UInt8(), format=ImageFormat.RGB)
             ),
         }
     )
@@ -1017,10 +1017,10 @@ def test_combined_rename_and_delete():
     source_schema = Schema(
         {
             "old_image": AttributeInfo(
-                type=str, annotation=image_field(dtype=pl.UInt8(), format="RGB")
+                type=str, annotation=image_field(dtype=pl.UInt8(), format=ImageFormat.RGB)
             ),
             "bbox": AttributeInfo(
-                type=str, annotation=bbox_field(dtype=pl.Float32(), format="x1y1x2y2")
+                type=str, annotation=bbox_field(dtype=pl.Float32(), format=BBoxFormat.X1Y1X2Y2)
             ),
             "extra_field": AttributeInfo(type=str, annotation=image_info_field()),
         }
@@ -1030,7 +1030,7 @@ def test_combined_rename_and_delete():
     target_schema = Schema(
         {
             "new_image": AttributeInfo(
-                type=str, annotation=image_field(dtype=pl.UInt8(), format="RGB")
+                type=str, annotation=image_field(dtype=pl.UInt8(), format=ImageFormat.RGB)
             ),
         }
     )
@@ -1132,7 +1132,7 @@ def test_polygon_to_mask_converter():
 
     # Set up converter attributes
     input_polygon_field = PolygonField(
-        dtype=pl.Float32, format="xy", normalize=False, semantic=Semantic.Default
+        dtype=pl.Float32, format=PolygonFormat.XY, normalize=False, semantic=Semantic.Default
     )
     input_labels_field = LabelField(dtype=pl.Int32, semantic=Semantic.Default, multi_label=True)
     image_info_field = ImageInfoField(semantic=Semantic.Default)
@@ -1223,7 +1223,7 @@ def test_polygon_to_mask_converter_normalized():
     # Set up converter attributes with normalization enabled
     input_polygon_field = PolygonField(
         dtype=pl.Float32,
-        format="xy",
+        format=PolygonFormat.XY,
         normalize=True,  # Enable normalization
         semantic=Semantic.Default,
     )
@@ -1350,7 +1350,7 @@ def test_polygon_to_instance_mask_converter():
 
     # Set up field specs
     input_polygon_field = PolygonField(
-        dtype=pl.Float32, format="xy", normalize=False, semantic=Semantic.Default
+        dtype=pl.Float32, format=PolygonFormat.XY, normalize=False, semantic=Semantic.Default
     )
     image_info_field = ImageInfoField(semantic=Semantic.Default)
     output_instance_mask_field = InstanceMaskField(dtype=pl.Boolean, semantic=Semantic.Default)
@@ -1431,7 +1431,7 @@ def test_polygon_to_instance_mask_converter_normalized():
 
     # Set up field specs
     input_polygon_field = PolygonField(
-        dtype=pl.Float32, format="xy", normalize=True, semantic=Semantic.Default
+        dtype=pl.Float32, format=PolygonFormat.XY, normalize=True, semantic=Semantic.Default
     )
     image_info_field = ImageInfoField(semantic=Semantic.Default)
     output_instance_mask_field = InstanceMaskField(dtype=pl.Boolean, semantic=Semantic.Default)
@@ -1684,10 +1684,10 @@ def test_polygon_to_bbox_converter():
 
     # Set up field specs
     input_polygon_field = PolygonField(
-        dtype=pl.Float32, format="xy", normalize=False, semantic=Semantic.Default
+        dtype=pl.Float32, format=PolygonFormat.XY, normalize=False, semantic=Semantic.Default
     )
     output_bbox_field = BBoxField(
-        dtype=pl.Float32, format="x1y1x2y2", normalize=False, semantic=Semantic.Default
+        dtype=pl.Float32, format=BBoxFormat.X1Y1X2Y2, normalize=False, semantic=Semantic.Default
     )
 
     setattr(
@@ -1749,10 +1749,10 @@ def test_polygon_to_bbox_converter_xywh():
 
     # Set up field specs for xywh format
     input_polygon_field = PolygonField(
-        dtype=pl.Float32, format="xy", normalize=False, semantic=Semantic.Default
+        dtype=pl.Float32, format=PolygonFormat.XY, normalize=False, semantic=Semantic.Default
     )
     output_bbox_field = BBoxField(
-        dtype=pl.Float32, format="xywh", normalize=False, semantic=Semantic.Default
+        dtype=pl.Float32, format=BBoxFormat.XYWH, normalize=False, semantic=Semantic.Default
     )
 
     setattr(
@@ -1798,10 +1798,10 @@ def test_polygon_to_bbox_converter_normalized():
 
     # Set up field specs with normalized coordinates
     input_polygon_field = PolygonField(
-        dtype=pl.Float32, format="xy", normalize=True, semantic=Semantic.Default
+        dtype=pl.Float32, format=PolygonFormat.XY, normalize=True, semantic=Semantic.Default
     )
     output_bbox_field = BBoxField(
-        dtype=pl.Float32, format="x1y1x2y2", normalize=True, semantic=Semantic.Default
+        dtype=pl.Float32, format=BBoxFormat.X1Y1X2Y2, normalize=True, semantic=Semantic.Default
     )
 
     setattr(
