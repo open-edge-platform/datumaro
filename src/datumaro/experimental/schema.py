@@ -85,6 +85,20 @@ class Field:
         """
         return target_type(df[name][row_index])
 
+    def __set_name__(self, _, name):
+        object.__setattr__(self, "_name", name)
+
+    def __get__(self, instance, _):
+        if instance is None:
+            return self
+
+        value = instance.evaluate_lazy_field(getattr(self, "_name"))
+
+        # Cache the value and set it as a real attribute
+        setattr(instance, self._attr_name, value)
+
+        return value
+
 
 @dataclass
 class AttributeInfo:

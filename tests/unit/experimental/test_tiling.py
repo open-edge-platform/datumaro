@@ -82,7 +82,7 @@ def test_calculate_tiles(sample_df):
     tile_info_spec = AttributeSpec(name="tile", field=schema.attributes["tile"].annotation)
 
     # Calculate tiles
-    tiles_df = _calculate_tiles(sample_df, config, image_info_spec, tile_info_spec)
+    tiles_df = _calculate_tiles(sample_df, config, image_info_spec, tile_info_spec, 0)
 
     # Check that we have the right number of tiles
     # First image (100x100) should have 4 tiles (2x2 grid)
@@ -136,7 +136,7 @@ def test_apply_tiling(sample_df, sample_schema):
 
 
 def test_tiling_with_overlap(sample_df, sample_schema):
-    config = TilingConfig(tile_width=50, tile_height=50, overlap_x=10, overlap_y=10)
+    config = TilingConfig(tile_width=50, tile_height=50, overlap_x=0.2, overlap_y=0.2)
 
     # Apply tiling
     plan = _create_tiling_plan(sample_schema, config)
@@ -152,12 +152,12 @@ def test_tiling_with_overlap(sample_df, sample_schema):
 
         # If tiles are from the same row
         if tile.source_sample_idx == next_tile.source_sample_idx and tile.y == next_tile.y:
-            overlap = (tile.x + tile.width) - next_tile.x
+            overlap = ((tile.x + tile.width) - next_tile.x) / tile.width
             assert overlap == config.overlap_x
 
         # If tiles are from the same column
         elif tile.source_sample_idx == next_tile.source_sample_idx and tile.x == next_tile.x:
-            overlap = (tile.y + tile.height) - next_tile.y
+            overlap = ((tile.y + tile.height) - next_tile.y) / tile.height
             assert overlap == config.overlap_y
 
 
@@ -259,6 +259,9 @@ def test_bbox_tiling():
         }
     )
 
+    polars_schema = schema.attributes["image_info"].annotation.to_polars_schema("image_info")
+    polars_schema.update(schema.attributes["bboxes"].annotation.to_polars_schema("bboxes"))
+
     # Create sample data with bounding boxes
     df = pl.DataFrame(
         {
@@ -275,7 +278,8 @@ def test_bbox_tiling():
                     [48, 48, 52, 52],
                 ]
             ],
-        }
+        },
+        schema=polars_schema,
     )
 
     # Configure tiling to create 50x50 tiles

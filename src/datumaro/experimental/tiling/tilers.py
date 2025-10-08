@@ -7,7 +7,7 @@ Implementations of tilers for specific field types.
 """
 
 import operator
-from typing import Tuple
+from typing import Any, Tuple
 
 import numpy as np
 import polars as pl
@@ -23,8 +23,27 @@ from ..fields import (
     LabelField,
     MaskField,
     PolygonField,
+    SubsetField,
 )
 from .tiler_registry import Tiler, TilerRegistry
+
+
+@TilerRegistry.register(SubsetField)
+class PassthroughTiler(Tiler):
+    """Tiler for fields which do not require any changes (e.g. subset)."""
+
+    field_spec: AttributeSpec[Any]
+
+    def tile(self, df: pl.DataFrame, tiles_df: pl.DataFrame, slice_offset: int = 0) -> pl.DataFrame:
+        """Process labels, adding keep column for list fields."""
+        column_name = self.field_spec.name
+        source_sample_idx = (
+            tiles_df.select(pl.col("tile").struct["source_sample_idx"])["source_sample_idx"]
+            - slice_offset
+        )
+
+        # Just a passthrough of the data
+        return pl.DataFrame({column_name: df[column_name].gather(source_sample_idx)})
 
 
 @TilerRegistry.register(MaskField)
@@ -37,7 +56,7 @@ class MaskTiler(Tiler):
 
     field_spec: AttributeSpec[MaskField]
 
-    def tile(self, df: pl.DataFrame, tiles_df: pl.DataFrame) -> pl.DataFrame:
+    def tile(self, df: pl.DataFrame, tiles_df: pl.DataFrame, slice_offset: int = 0) -> pl.DataFrame:
         """Extract mask regions for each tile."""
         column_name = self.field_spec.name
         shape_column = f"{column_name}_shape"
@@ -45,7 +64,7 @@ class MaskTiler(Tiler):
         results_shape = []
 
         for tile_row in tiles_df["tile"]:
-            image_id = tile_row["source_sample_idx"]
+            image_id = tile_row["source_sample_idx"] - slice_offset
             mask_data = df[column_name][image_id]
             mask_shape = df[shape_column][image_id]
 
@@ -76,7 +95,7 @@ class InstanceMaskTiler(Tiler):
 
     field_spec: AttributeSpec[InstanceMaskField]
 
-    def tile(self, df: pl.DataFrame, tiles_df: pl.DataFrame) -> pl.DataFrame:
+    def tile(self, df: pl.DataFrame, tiles_df: pl.DataFrame, slice_offset: int = 0) -> pl.DataFrame:
         """Extract instance mask regions for each tile."""
         column_name = self.field_spec.name
         shape_column = f"{column_name}_shape"
@@ -84,7 +103,7 @@ class InstanceMaskTiler(Tiler):
         results_shape = []
 
         for tile_row in tiles_df["tile"]:
-            image_id = tile_row["source_sample_idx"]
+            image_id = tile_row["source_sample_idx"] - slice_offset
             instances_data = df[column_name][image_id]  # Flattened 3D array
             instances_shape = df[shape_column][image_id]  # (num_instances, height, width)
 
@@ -127,7 +146,7 @@ class BboxTiler(Tiler):
     def is_filterable(self) -> bool:
         return True
 
-    def tile(self, df: pl.DataFrame, tiles_df: pl.DataFrame) -> pl.DataFrame:
+    def tile(self, df: pl.DataFrame, tiles_df: pl.DataFrame, slice_offset: int = 0) -> pl.DataFrame:
         """Process bounding boxes for each tile."""
         column_name = self.field_spec.name
 
@@ -137,7 +156,7 @@ class BboxTiler(Tiler):
         results = []
 
         for tile_row in tiles_df["tile"]:
-            image_id = tile_row["source_sample_idx"]
+            image_id = tile_row["source_sample_idx"] - slice_offset
             boxes = df[image_id].select(column_name).explode(column_name)
 
             # Get tile coordinates
@@ -150,10 +169,10 @@ class BboxTiler(Tiler):
 
             # Process each bbox
             boxes = boxes.with_columns(
-                x1=pl.col(column_name).list.get(0),
-                y1=pl.col(column_name).list.get(1),
-                x2=pl.col(column_name).list.get(2),
-                y2=pl.col(column_name).list.get(3),
+                x1=pl.col(column_name).arr.get(0),
+                y1=pl.col(column_name).arr.get(1),
+                x2=pl.col(column_name).arr.get(2),
+                y2=pl.col(column_name).arr.get(3),
             )
 
             # Check if box intersects with tile
@@ -195,7 +214,7 @@ class LabelTiler(Tiler):
     def is_filterable(self) -> bool:
         return self.field_spec.field.is_list
 
-    def tile(self, df: pl.DataFrame, tiles_df: pl.DataFrame) -> pl.DataFrame:
+    def tile(self, df: pl.DataFrame, tiles_df: pl.DataFrame, slice_offset: int = 0) -> pl.DataFrame:
         """Process labels, adding keep column for list fields."""
         column_name = self.field_spec.name
 
@@ -204,7 +223,7 @@ class LabelTiler(Tiler):
             keeps = []
             labels = []
             for tile_row in tiles_df["tile"]:
-                source_sample_idx = tile_row["source_sample_idx"]
+                source_sample_idx = tile_row["source_sample_idx"] - slice_offset
                 source_labels = df[source_sample_idx, column_name]
                 # Create list of True values matching label list length
                 keeps.append([True] * len(source_labels))
@@ -226,14 +245,14 @@ class ImageInfoTiler(Tiler):
 
     field_spec: AttributeSpec[ImageInfoField]
 
-    def tile(self, df: pl.DataFrame, tiles_df: pl.DataFrame) -> pl.DataFrame:
+    def tile(self, df: pl.DataFrame, tiles_df: pl.DataFrame, slice_offset: int = 0) -> pl.DataFrame:
         """Update image info for each tile."""
         results = []
 
         # Process each tile
         for tile_row in tiles_df["tile"]:
             # Get basic tile info
-            source_sample_idx = tile_row["source_sample_idx"]
+            source_sample_idx = tile_row["source_sample_idx"] - slice_offset
             tile_width = tile_row["width"]
             tile_height = tile_row["height"]
 
@@ -263,7 +282,7 @@ class ImageTiler(Tiler):
 
     field_spec: AttributeSpec[ImageField]
 
-    def tile(self, df: pl.DataFrame, tiles_df: pl.DataFrame) -> pl.DataFrame:
+    def tile(self, df: pl.DataFrame, tiles_df: pl.DataFrame, slice_offset: int = 0) -> pl.DataFrame:
         """Tile images in the DataFrame."""
 
         column_name = self.field_spec.name
@@ -291,7 +310,7 @@ class ImageTiler(Tiler):
         results_data = []
         results_shape = []
         for tile_row in tiles_df["tile"]:
-            source_idx = tile_row["source_sample_idx"]
+            source_idx = tile_row["source_sample_idx"] - slice_offset
 
             # Get image data and shape
             image_data = df[source_idx, column_name]
@@ -326,12 +345,15 @@ class PolygonTiler(Tiler):
     def is_filterable(self) -> bool:
         return True
 
-    def tile(self, df: pl.DataFrame, tiles_df: pl.DataFrame) -> pl.DataFrame:
+    def tile(self, df: pl.DataFrame, tiles_df: pl.DataFrame, slice_offset: int = 0) -> pl.DataFrame:
         """Tile polygon annotations in the DataFrame.
 
         Args:
             df: Input DataFrame containing polygon annotations
             tiles_df: DataFrame containing tile parameters
+            slice_offset: Integer offset to subtract when accessing df based on
+                        source_sample_idx. Used when df is a subset of another
+                        DataFrame. Defaults to 0.
 
         Returns:
             DataFrame containing:
@@ -344,8 +366,8 @@ class PolygonTiler(Tiler):
         column_name = self.field_spec.name
 
         for tile_row in tiles_df["tile"]:
-            source_idx = tile_row["source_sample_idx"]
-            source_row = df.row(source_idx, named=True)
+            source_idx = tile_row["source_sample_idx"] - slice_offset
+            source_polygons = df[source_idx, column_name]
 
             # Create tile polygon
             tile_poly = sg.box(
@@ -359,7 +381,7 @@ class PolygonTiler(Tiler):
             tiled_polygons = []
             polygon_keeps = []  # Track which polygons to keep
 
-            for poly_coords in source_row[column_name]:
+            for poly_coords in source_polygons:
                 polygon = sg.Polygon(poly_coords)
 
                 # Get intersection and apply offset
@@ -399,7 +421,14 @@ class PolygonTiler(Tiler):
                 polygon_keeps.append(True)
 
             # Always create output row
-            results.append(pl.Series([pl.Series(polygon) for polygon in tiled_polygons]))
+            results.append(
+                pl.Series(
+                    [
+                        pl.Series(polygon, dtype=pl.Array(self.field_spec.field.dtype, 2))
+                        for polygon in tiled_polygons
+                    ]
+                )
+            )
             keeps.append(polygon_keeps)
 
         # Create DataFrame with results and keep column as List[Boolean]

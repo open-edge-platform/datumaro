@@ -111,6 +111,15 @@ class Sample:
             attributes[name] = AttributeInfo(type=final_type, annotation=field_annotation)
         return Schema(attributes=attributes)
 
+    def evaluate_lazy_field(self, name: str) -> Any:
+        row_df = self._transforms.apply([name])
+
+        # Now extract the value from the converted dataframe
+        attr_info = self._transforms.schema.attributes[name]
+        value = attr_info.annotation.from_polars(name, 0, row_df, attr_info.type)
+
+        return value
+
 
 class LazyDescriptor:
     def __init__(self, attr_name, transforms: Transform):
@@ -161,6 +170,7 @@ class Dataset(Generic[DType]):
         self,
         dtype_or_schema: Union[Schema, Type[DType]],
         categories: dict[str, Categories] = None,
+        schema: Schema | None = None,
     ):
         """
         Initialize dataset with either a schema or sample type.
@@ -168,12 +178,13 @@ class Dataset(Generic[DType]):
         Args:
             dtype_or_schema: Either a Schema instance or a Sample class type
             categories: Optional dictionary mapping attribute names to categories
+            schema: Optional schema if a dtype is provided
         """
         if isinstance(dtype_or_schema, Schema):
             self._schema = dtype_or_schema
             self._dtype = cast(Type[DType], Sample)
         else:
-            self._schema = dtype_or_schema.infer_schema()
+            self._schema = dtype_or_schema.infer_schema() if schema is None else schema
             self._dtype = dtype_or_schema
 
         # Apply categories if provided
@@ -190,6 +201,7 @@ class Dataset(Generic[DType]):
         dtype_or_schema: Union[Schema, Type[DTargetType]],
         transforms: Transform | None = None,
         categories: Dict[str, Categories] = None,
+        schema: Schema | None = None,
     ) -> "Dataset[DTargetType]":
         """
         Create a Dataset from an existing DataFrame and lazy converters.
@@ -203,7 +215,7 @@ class Dataset(Generic[DType]):
         Returns:
             A new Dataset instance with the provided DataFrame and converters
         """
-        dataset = Dataset(dtype_or_schema, categories)
+        dataset = Dataset(dtype_or_schema, categories, schema)
         dataset.df = df
         dataset._transforms = transforms
         return dataset
@@ -212,6 +224,11 @@ class Dataset(Generic[DType]):
     def schema(self) -> Schema:
         """Get the schema of this dataset."""
         return self._schema
+
+    @property
+    def dtype(self) -> Type[DType]:
+        """Get the sample type of this dataset."""
+        return self._dtype
 
     def _generate_polars_schema(self) -> pl.Schema:
         """Generate a Polars schema from the dataset's field definitions."""
@@ -300,12 +317,14 @@ class Dataset(Generic[DType]):
         dtype = self._dtype
 
         if lazy_attributes:
-            attrs = {}
-            for lazy_attr in lazy_attributes:
-                attrs[lazy_attr] = LazyDescriptor(lazy_attr, transforms)
+            direct_attributes["_transforms"] = transforms
+            # attrs = {}
+            # for lazy_attr in lazy_attributes:
+            #    attrs[lazy_attr] = LazyDescriptor(lazy_attr, transforms)
 
-            # Create a new dynamic class inheriting from dtype
-            dtype = type(dtype.__name__, (dtype,), attrs)
+            ## Create a new dynamic class inheriting from dtype
+            # dtype = type(dtype.__name__, (dtype,), attrs)
+            # dtype.__annotations__ = self._dtype.__annotations__
 
         sample = dtype(
             **direct_attributes,
@@ -379,18 +398,30 @@ class Dataset(Generic[DType]):
             for c in self.df.columns
         )
 
-    def transform(self, transform_factory: Callable[[Transform], Transform]) -> Dataset:
+    def transform(
+        self,
+        transform_factory: Callable[[Transform], Transform],
+        dtype: Type[DTargetType] | None = None,
+    ) -> Dataset[DTargetType]:
         transforms = self._transforms
         if transforms is None:
             transforms = IdentityTransform(self.df, self.schema)
 
         transforms = transform_factory(transforms)
 
-        return Dataset.from_dataframe(
-            self.df,
-            transforms.schema,
-            transforms,
-        )
+        if dtype is None:
+            return Dataset.from_dataframe(
+                self.df,
+                transforms.schema,
+                transforms,
+            )
+        else:
+            return Dataset.from_dataframe(
+                self.df,
+                dtype,
+                transforms,
+                schema=transforms.schema,
+            )
 
     def convert_to_schema(
         self,

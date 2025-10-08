@@ -49,8 +49,8 @@ class TilingConfig:
 
     tile_width: int
     tile_height: int
-    overlap_x: int = 0
-    overlap_y: int = 0
+    overlap_x: float = 0.0
+    overlap_y: float = 0.0
 
 
 def _calculate_tiles(
@@ -58,6 +58,7 @@ def _calculate_tiles(
     config: TilingConfig,
     image_info_spec: AttributeSpec[ImageInfoField],
     tile_info_spec: AttributeSpec[TileField],
+    slice_offset: int,
 ) -> pl.DataFrame:
     """Calculate tile parameters for each image in the dataset.
 
@@ -91,14 +92,17 @@ def _calculate_tiles(
         height = image_info["height"]
         width = image_info["width"]
 
-        for y in range(0, height, config.tile_height - config.overlap_y):
-            for x in range(0, width, config.tile_width - config.overlap_x):
+        increment_x = int(config.tile_width * (1 - config.overlap_x))
+        increment_y = int(config.tile_height * (1 - config.overlap_y))
+
+        for y in range(0, height, increment_y):
+            for x in range(0, width, increment_x):
                 # Ensure tiles don't exceed image boundaries
                 tile_width = min(config.tile_width, width - x)
                 tile_height = min(config.tile_height, height - y)
 
                 tile_info = TileInfo(
-                    source_sample_idx=idx,
+                    source_sample_idx=idx + slice_offset,
                     x=x,
                     y=y,
                     width=tile_width,
@@ -148,12 +152,15 @@ class Tiler(ABC):
         return False
 
     @abstractmethod
-    def tile(self, df: pl.DataFrame, tiles_df: pl.DataFrame) -> pl.DataFrame:
+    def tile(self, df: pl.DataFrame, tiles_df: pl.DataFrame, slice_offset: int = 0) -> pl.DataFrame:
         """Apply tiling operation to a DataFrame.
 
         Args:
             df: Input DataFrame containing the data to tile
             tiles_df: DataFrame containing tile parameters
+            slice_offset: Integer offset to subtract when accessing df based on
+                        source_sample_idx. Used when df is a subset of another
+                        DataFrame. Defaults to 0.
 
         Returns:
             DataFrame with tiled data. The output will have the same
@@ -414,7 +421,11 @@ def _create_tiling_plan(schema: Schema, config: TilingConfig, threshold_drop_ann
 
 
 def _apply_tiling(
-    input_df: pl.DataFrame, output_df: pl.DataFrame | None, plan: TilingPlan, fields: set[str]
+    input_df: pl.DataFrame,
+    output_df: pl.DataFrame | None,
+    plan: TilingPlan,
+    fields: set[str],
+    slice_offset: int = 0,
 ) -> tuple[pl.DataFrame, set[str]]:
     """Apply tiling operations to a DataFrame according to the tiling plan.
 
@@ -431,6 +442,9 @@ def _apply_tiling(
                   If None, tile parameters will be calculated.
         plan: The TilingPlan containing all tiling specifications
         fields: Set of field names to process in this operation
+        slice_offset: Integer offset to subtract when accessing input_df based on
+                     source_sample_idx. Used when input_df is a subset of another
+                     DataFrame to identify the start of the subset. Defaults to 0.
 
     Returns:
         A tuple of:
@@ -459,7 +473,7 @@ def _apply_tiling(
 
     if output_df is None:
         output_df = _calculate_tiles(
-            input_df, plan.config, plan.image_info_spec, plan.tile_info_spec
+            input_df, plan.config, plan.image_info_spec, plan.tile_info_spec, slice_offset
         )
 
     # Apply each tiler and collect keep flags and columns to filter
@@ -469,8 +483,7 @@ def _apply_tiling(
 
     for field_name in fields_set:
         tiler = plan.tilers_instance_by_name[field_name]
-
-        tiled_df = tiler.tile(input_df, output_df)
+        tiled_df = tiler.tile(input_df, output_df, slice_offset)
 
         # If tiler provides a keep column, update our mask and track columns
         if tiler.is_filterable():
@@ -572,6 +585,7 @@ class TilingTransform(Transform):
         self._parent = parent
         self._tiling_plan = tiling_plan
         self._df = None
+        self._slice_offset = 0
 
         # Calculate tile parameters
         self._applied_tilers = set()
@@ -589,7 +603,9 @@ class TilingTransform(Transform):
         input_df = self._parent.apply(list(fields_set))
 
         # Apply tiling
-        self._df, fields_set = _apply_tiling(input_df, self._df, self._tiling_plan, fields_set)
+        self._df, fields_set = _apply_tiling(
+            input_df, self._df, self._tiling_plan, fields_set, self._slice_offset
+        )
 
         # Update the list of applied attributes to avoid recomputing them.
         self._applied_tilers.update(fields_set)
@@ -623,6 +639,7 @@ class TilingTransform(Transform):
         # Slice the output dataframe
         instance._applied_tilers = copy.copy(self._applied_tilers)
         instance._df = self._df.slice(offset, length)
+        instance._slice_offset += source_sample_offset
         return instance
 
     def __len__(self):

@@ -36,7 +36,7 @@ def sample_dataset():
 
 def test_dataset_tiling(sample_dataset):
     # Create tiling config
-    config = TilingConfig(tile_width=100, tile_height=100, overlap_x=20, overlap_y=20)
+    config = TilingConfig(tile_width=100, tile_height=100, overlap_x=0.2, overlap_y=0.2)
 
     # Create and apply tiling transform
     tiling_transform = create_tiling_transform(config)
