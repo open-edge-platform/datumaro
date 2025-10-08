@@ -265,18 +265,10 @@ def test_image_path_to_image_converter():
 
         assert "image" in result_df.columns
         assert "image_shape" in result_df.columns
-        assert "image_info" in result_df.columns
 
         # Check that image was loaded correctly
         result_shape = list(result_df["image_shape"][0])
         assert result_shape == [50, 75, 3]  # height, width, channels
-
-        # Check that image info was created correctly (only width and height)
-        image_info = result_df["image_info"][0]
-        assert "width" in image_info
-        assert "height" in image_info
-        assert image_info["width"] == 75  # width
-        assert image_info["height"] == 50  # height
 
 
 def test_image_bytes_to_image_converter():
@@ -325,18 +317,10 @@ def test_image_bytes_to_image_converter():
 
     assert "image" in result_df.columns
     assert "image_shape" in result_df.columns
-    assert "image_info" in result_df.columns
 
     # Check that image was loaded correctly
     result_shape = tuple(result_df["image_shape"][0])
     assert result_shape == (32, 48, 3)  # height, width, channels
-
-    # Check that image info was created correctly (only width and height)
-    image_info = result_df["image_info"][0]
-    assert "width" in image_info
-    assert "height" in image_info
-    assert image_info["width"] == 48  # width
-    assert image_info["height"] == 32  # height
 
     # Check that the actual image data is correct (approximately, since PNG compression may cause slight differences)
     result_image = result_df["image"][0].to_numpy().reshape(result_shape)
@@ -497,10 +481,20 @@ def test_multiple_converter_chaining():
 
     path, _ = find_conversion_path(source_schema, target_schema)
     # If successful, should have multiple steps
-    assert len(path.batch_converters) == 3
-    assert type(path.batch_converters[0]) is BBoxCoordinateConverter
-    assert type(path.batch_converters[1]) is RGBToBGRConverter
-    assert type(path.batch_converters[2]) is UInt8ToFloat32Converter
+    assert len(path.converters["image"]) == 2
+    assert type(path.converters["image"][0]) is UInt8ToFloat32Converter
+    assert type(path.converters["image"][1]) is RGBToBGRConverter
+
+    # FIXME(gdlg): the BBoxCoordinateConverter needs an image
+    # and it does not matter if the image is 8 bits or 32 bits,
+    # so converting the image then the bbox is correct, hence the dependency.
+    # The problem is that this is not desirable as it creates a spurious dependency
+    # on the 32 bits conversion even though it is not needed.
+    # To fix this, we need to adjust the weights to favour applying image conversions
+    # after the bbox ones.
+    assert len(path.converters["bbox"]) == 2
+    assert type(path.converters["bbox"][0]) is UInt8ToFloat32Converter
+    assert type(path.converters["bbox"][1]) is BBoxCoordinateConverter
 
 
 def test_astar_direct_conversion():
@@ -1873,16 +1867,10 @@ def test_image_callable_to_image_converter():
     # Check expected columns exist
     assert "output_image" in result_df.columns
     assert "output_image_shape" in result_df.columns
-    assert "output_info" in result_df.columns
 
     # Check image shape
     image_shape = result_df["output_image_shape"][0]
     assert list(image_shape) == [3, 3, 3]  # height, width, channels
-
-    # Check image info
-    image_info = result_df["output_info"][0]
-    assert image_info["width"] == 3
-    assert image_info["height"] == 3
 
     # Check image data can be reconstructed
     image_data = result_df["output_image"][0]
@@ -1998,9 +1986,11 @@ def test_image_callable_converter_dtype_handling():
 
     df2 = pl.DataFrame({"my_callable": [float32_callable]}, schema={"my_callable": pl.Object})
     result2 = converter_instance.convert(df2)
-    image_info2 = result2["output_info"][0]
-    assert image_info2["width"] == 1  # width
-    assert image_info2["height"] == 1  # height
+    image_data2 = np.array(result2["output_image"][0], dtype=np.float32).reshape([1, 1, 3])
+    assert image_data2.dtype == np.float32
+    assert image_data2[0, 0, 0] == 1.0
+    assert image_data2[0, 0, 1] == 0.5
+    assert image_data2[0, 0, 2] == 0.25
 
 
 def test_rotated_bbox_to_polygon_converter():
