@@ -774,10 +774,16 @@ def analyze_legacy_dataset(
     ann_types = legacy_dataset.ann_types()
 
     attributes: dict[str, AttributeInfo] = {}
-    media_converter: ForwardMediaConverter | None = None
     ann_converters: dict[AnnotationType, ForwardAnnotationConverter] = {}
 
-    # Get media attributes from converter
+    label_groups = legacy_dataset.categories()[AnnotationType.label].label_groups
+    label_group_names = (
+        [group for group in label_groups if group.name.startswith("Classification labels__")]
+        if label_groups
+        else []
+    )
+    multi_label = len(label_group_names) > 1
+
     media_converter = get_forward_media_converter(legacy_dataset, semantic)
     if media_converter is not None:
         attributes.update(media_converter.get_schema_attributes())
@@ -797,9 +803,9 @@ def analyze_legacy_dataset(
         if converter is not None:
             ann_converters[ann_type] = converter
             ann_attributes = converter.get_schema_attributes()
-
+            if multi_label:
+                ann_attributes[AnnotationType.label.name].annotation = label_field(multi_label=True)
             attributes.update(ann_attributes)
-
     schema = Schema(attributes=attributes)
     return AnalysisResult(
         schema=schema,
@@ -825,14 +831,11 @@ def _convert_legacy_item(item: DatasetItem, analysis_result: AnalysisResult) -> 
     return attributes
 
 
-def convert_from_legacy(
-    legacy_dataset: LegacyDataset, multi_label: bool = False
-) -> Dataset[Sample]:
+def convert_from_legacy(legacy_dataset: LegacyDataset) -> Dataset[Sample]:
     """Convert legacy dataset to experimental format with automatic schema inference.
 
     Args:
         legacy_dataset: The legacy Datumaro dataset to convert
-        multi_label: If true, configure label_field with multi_label=True
     Returns:
         A new experimental Dataset with inferred schema and converted data
 
@@ -846,8 +849,7 @@ def convert_from_legacy(
 
     # Step 1: Analyze dataset to infer schema
     analysis_result = analyze_legacy_dataset(legacy_dataset)
-    if multi_label:
-        analysis_result.schema.attributes["label"].annotation = label_field(multi_label=True)
+
     # Step 2: Create experimental dataset with inferred schema
     experimental_dataset = Dataset(analysis_result.schema)
 
