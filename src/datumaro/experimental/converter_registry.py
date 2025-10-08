@@ -679,6 +679,116 @@ def _create_initial_renaming_converter(
         return None, start_state
 
 
+def _can_lazy_converter_handle_conversion(
+    from_field_type: Type[Field], to_field_type: Type[Field], semantic: Semantic
+) -> bool:
+    """
+    Check if any lazy converter can handle the conversion from one field type to another.
+
+    Args:
+        from_field_type: Source field type
+        to_field_type: Target field type
+        semantic: The semantic context
+
+    Returns:
+        True if a lazy converter can handle this conversion, False otherwise
+    """
+    for converter_class in ConverterRegistry.list_converters():
+        # Only consider lazy converters
+        if not getattr(converter_class, "lazy", False):
+            continue
+
+        from_types = converter_class.get_from_types()
+        to_types = converter_class.get_to_types()
+
+        # Check if this converter takes the from_field_type as input and produces to_field_type as output
+        if from_field_type in from_types.values() and to_field_type in to_types.values():
+            return True
+
+    return False
+
+
+def _create_conversion_error_message(
+    effective_start_state: _SchemaState, target_state: _SchemaState, semantic: Semantic
+) -> str:
+    """
+    Create a detailed error message when no conversion path is found.
+
+    Args:
+        effective_start_state: The effective source state after initial renaming
+        target_state: Target state for this semantic
+        semantic: The semantic tag being processed
+
+    Returns:
+        Formatted error message string
+    """
+    available_source_fields = {
+        field_type: attr_spec.field
+        for field_type, attr_spec in effective_start_state.field_to_attr_spec.items()
+    }
+    required_target_fields = {
+        field_type: attr_spec.field
+        for field_type, attr_spec in target_state.field_to_attr_spec.items()
+    }
+
+    if available_source_fields:
+        available_msg = f"Available source fields: {list(available_source_fields.values())}"
+    else:
+        available_msg = "No source fields available"
+
+    required_msg = f"Required target fields: {list(required_target_fields.values())}"
+
+    # Check if fields exist by name but need type/dtype conversion
+    source_field_names = set(
+        attr_spec.name for attr_spec in effective_start_state.field_to_attr_spec.values()
+    )
+
+    type_conversion_issues = []
+    truly_missing_fields = []
+
+    for field_type, target_attr_spec in target_state.field_to_attr_spec.items():
+        if target_attr_spec.name in source_field_names:
+            # Find the source field with same name
+            for src_field_type, src_attr_spec in effective_start_state.field_to_attr_spec.items():
+                if src_attr_spec.name == target_attr_spec.name:
+                    if src_attr_spec.field != target_attr_spec.field:
+                        # Check if a lazy converter can handle this field property conversion
+                        if not _can_lazy_converter_handle_conversion(
+                            type(src_attr_spec.field), type(target_attr_spec.field), semantic
+                        ):
+                            type_conversion_issues.append(
+                                f"'{target_attr_spec.name}': {src_attr_spec.field} → {target_attr_spec.field}"
+                            )
+                    break
+        else:
+            truly_missing_fields.append(target_attr_spec.name)
+
+    # Create appropriate error message based on the type of issue
+    if type_conversion_issues and not truly_missing_fields:
+        missing_section = "\nMissing converters for type/dtype conversions:\n" + "\n".join(
+            f"  - {issue}" for issue in type_conversion_issues
+        )
+    elif truly_missing_fields and not type_conversion_issues:
+        missing_section = "\nMissing field types:\n" + "\n".join(
+            f"  - {field}" for field in truly_missing_fields
+        )
+    elif type_conversion_issues and truly_missing_fields:
+        missing_section = (
+            "\nMissing field types:\n"
+            + "\n".join(f"  - {field}" for field in truly_missing_fields)
+            + "\n\nMissing converters for type/dtype conversions:\n"
+            + "\n".join(f"  - {issue}" for issue in type_conversion_issues)
+        )
+    else:
+        missing_section = "\nAll required field types are available but conversion failed"
+
+    # Format the complete error message with clear sections
+    return f"""No conversion path found.
+    
+    {available_msg}
+    {required_msg}{missing_section}"""
+
+
 def _find_conversion_path_for_semantic(
     start_state: _SchemaState, target_state: _SchemaState, semantic: Semantic
 ) -> Tuple[List[Converter], _SchemaState]:
@@ -752,13 +862,9 @@ def _find_conversion_path_for_semantic(
 
             heapq.heappush(open_set, new_node)
 
-    # No path found
-    missing_fields = set(target_state.field_to_attr_spec.keys()) - set(
-        effective_start_state.field_to_attr_spec.keys()
-    )
-    raise ConversionError(
-        f"No conversion path found for semantic {semantic}. " f"Missing fields: {missing_fields}"
-    )
+    # No path found - create a more informative error message
+    error_msg = _create_conversion_error_message(effective_start_state, target_state, semantic)
+    raise ConversionError(error_msg)
 
 
 def find_conversion_path(

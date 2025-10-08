@@ -26,7 +26,7 @@ from datumaro.components.dataset import Dataset as LegacyDataset
 from datumaro.components.dataset_base import CategoriesInfo, DatasetItem
 from datumaro.components.media import FromDataMixin, FromFileMixin, Image, MediaElement
 
-from .categories import LabelCategories, MaskCategories, RgbColor
+from .categories import LabelCategories, LabelSemantic, MaskCategories, RgbColor
 from .converters import generate_colormap
 from .dataset import Dataset, Sample
 from .fields import (
@@ -48,7 +48,7 @@ from .fields import (
     polygon_field,
     rotated_bbox_field,
 )
-from .schema import AttributeInfo, Schema
+from .schema import AttributeInfo, Schema, Semantic
 
 
 class ForwardMediaConverter(ABC):
@@ -62,8 +62,16 @@ class ForwardMediaConverter(ABC):
 
     @classmethod
     @abstractmethod
-    def create(cls, dataset: LegacyDataset) -> "ForwardMediaConverter | None":
-        """Create converter instance if dataset is supported, None otherwise."""
+    def create(
+        cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+    ) -> "ForwardMediaConverter | None":
+        """Create converter instance if dataset is supported, None otherwise.
+
+        Args:
+            dataset: Legacy dataset to create converter from
+            semantic: The semantic type for the converted fields
+            name_prefix: Prefix to prepend to all field names
+        """
         pass
 
     @abstractmethod
@@ -88,8 +96,16 @@ class ForwardAnnotationConverter(ABC):
 
     @classmethod
     @abstractmethod
-    def create(cls, dataset: LegacyDataset) -> "ForwardAnnotationConverter | None":
-        """Create converter instance if dataset supports this annotation type."""
+    def create(
+        cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+    ) -> "ForwardAnnotationConverter | None":
+        """Create converter instance if dataset supports this annotation type.
+
+        Args:
+            dataset: Legacy dataset to create converter from
+            semantic: The semantic type for the converted fields
+            name_prefix: Prefix to prepend to all field names
+        """
         pass
 
     @abstractmethod
@@ -124,27 +140,40 @@ def register_forward_annotation_converter(
         _annotation_converters[annotation_type] = converter_class
 
 
-def get_forward_media_converter(dataset: LegacyDataset) -> ForwardMediaConverter | None:
-    """Get forward converter for a dataset by trying registered converters."""
+def get_forward_media_converter(
+    dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+) -> ForwardMediaConverter | None:
+    """Get forward converter for a dataset by trying registered converters.
+
+    Args:
+        dataset: Legacy dataset to create converter from
+        semantic: The semantic type for the converted fields
+        name_prefix: Prefix to prepend to all field names
+    """
     # Get the dataset's media type
     media_type = cast(Type[MediaElement[Any]], dataset.media_type())
 
     # Try converter registered for this specific media type
     if media_type in _media_converter_classes:
         converter_class = _media_converter_classes[media_type]
-        return converter_class.create(dataset)
+        return converter_class.create(dataset, semantic, name_prefix)
 
     return None
 
 
 def get_forward_annotation_converter(
-    annotation_type: AnnotationType, dataset: LegacyDataset
+    annotation_type: AnnotationType,
+    dataset: LegacyDataset,
+    semantic: Semantic = Semantic.Default,
+    name_prefix: str = "",
 ) -> ForwardAnnotationConverter | None:
     """Get forward converter for an annotation type from the dataset.
 
     Args:
         annotation_type: The type of annotation to get a converter for
         dataset: The legacy dataset to create a converter from
+        semantic: The semantic type for the converted fields
+        name_prefix: Prefix to prepend to all field names
 
     Returns:
         A forward converter instance if one can handle the annotation type, None otherwise
@@ -152,17 +181,26 @@ def get_forward_annotation_converter(
     if annotation_type not in _annotation_converters:
         return None
     converter_class = _annotation_converters[annotation_type]
-    return converter_class.create(dataset)
+    return converter_class.create(dataset, semantic, name_prefix)
 
 
 class ForwardImageMediaConverter(ForwardMediaConverter):
     """Forward converter for Image media type supporting both file paths and byte data."""
 
-    def __init__(self, media_mixin: type, has_image_info: bool, has_callable_data: bool = False):
+    def __init__(
+        self,
+        media_mixin: type,
+        has_image_info: bool,
+        semantic: Semantic = Semantic.Default,
+        name_prefix: str = "",
+        has_callable_data: bool = False,
+    ):
         """Initialize converter with format preference and image info availability."""
         self.media_mixin = media_mixin
         self.has_image_info = has_image_info
         self.has_callable_data = has_callable_data
+        self.semantic = semantic
+        self.name_prefix = name_prefix
 
     @classmethod
     def get_supported_media_types(cls) -> list[Type[MediaElement[Any]]]:
@@ -170,8 +208,15 @@ class ForwardImageMediaConverter(ForwardMediaConverter):
         return [Image]
 
     @classmethod
-    def create(cls, dataset: LegacyDataset) -> "ForwardImageMediaConverter | None":
-        """Create converter instance, detecting whether to use paths or bytes."""
+    def create(
+        cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+    ) -> "ForwardImageMediaConverter | None":
+        """Create converter instance, detecting whether to use paths or bytes.
+
+        Args:
+            dataset: Legacy dataset to create converter from
+            semantic: The semantic type for the converted fields
+        """
         found_media_type: Optional[type] = None
         has_image_info = True  # Assume all images have size until proven otherwise
         has_callable_data = False  # Track if any FromDataMixin has callable _data
@@ -208,6 +253,8 @@ class ForwardImageMediaConverter(ForwardMediaConverter):
         return cls(
             media_mixin=media_mixin,
             has_image_info=has_image_info,
+            semantic=semantic,
+            name_prefix=name_prefix,
             has_callable_data=has_callable_data,
         )
 
@@ -216,21 +263,25 @@ class ForwardImageMediaConverter(ForwardMediaConverter):
 
         if self.media_mixin == FromDataMixin:
             if self.has_callable_data:
-                attributes["image_callable"] = AttributeInfo(
-                    type=callable, annotation=image_callable_field()
+                attributes[self.name_prefix + "image_callable"] = AttributeInfo(
+                    type=callable, annotation=image_callable_field(semantic=self.semantic)
                 )
             else:
-                attributes["image_bytes"] = AttributeInfo(
-                    type=bytes, annotation=image_bytes_field()
+                attributes[self.name_prefix + "image_bytes"] = AttributeInfo(
+                    type=bytes, annotation=image_bytes_field(semantic=self.semantic)
                 )
         elif self.media_mixin == FromFileMixin:
-            attributes["image_path"] = AttributeInfo(type=str, annotation=image_path_field())
+            attributes[self.name_prefix + "image_path"] = AttributeInfo(
+                type=str, annotation=image_path_field(semantic=self.semantic)
+            )
         else:
             raise RuntimeError(f"Media mixin not implemented: {self.media_mixin}")
 
         # Add image info field if all images have size
         if self.has_image_info:
-            attributes["image_info"] = AttributeInfo(type=ImageInfo, annotation=image_info_field())
+            attributes[self.name_prefix + "image_info"] = AttributeInfo(
+                type=ImageInfo, annotation=image_info_field(semantic=self.semantic)
+            )
 
         return attributes
 
@@ -264,18 +315,18 @@ class ForwardImageMediaConverter(ForwardMediaConverter):
 
                         return get_image_array
 
-                    result["image_callable"] = create_image_callable(item.media)
+                    result[self.name_prefix + "image_callable"] = create_image_callable(item.media)
                 else:
-                    result["image_bytes"] = item.media._data
+                    result[self.name_prefix + "image_bytes"] = item.media._data
             elif self.media_mixin == FromFileMixin:
-                result["image_path"] = item.media.path
+                result[self.name_prefix + "image_path"] = item.media.path
             else:
                 raise RuntimeError(f"Media mixin not implemented: {self.media_mixin}")
 
             # Add image info if available
             if self.has_image_info and item.media.has_size:
                 height, width = item.media.size  # size returns (H, W)
-                result["image_info"] = ImageInfo(width=width, height=height)
+                result[self.name_prefix + "image_info"] = ImageInfo(width=width, height=height)
 
         return result
 
@@ -283,11 +334,17 @@ class ForwardImageMediaConverter(ForwardMediaConverter):
 class ForwardBboxAnnotationConverter(ForwardAnnotationConverter):
     """Forward converter for Bbox annotations."""
 
-    def __init__(self, bbox_attribute: AttributeInfo, bbox_labels_attribute: AttributeInfo | None):
+    def __init__(
+        self,
+        bbox_attribute: AttributeInfo,
+        bbox_labels_attribute: AttributeInfo | None,
+        name_prefix: str,
+    ):
         """Initialize with bbox attributes and label attribute name."""
         super().__init__()
         self.bbox_attribute = bbox_attribute
         self.bbox_labels_attribute = bbox_labels_attribute
+        self.name_prefix = name_prefix
 
     @classmethod
     def get_supported_annotation_types(cls) -> list[AnnotationType]:
@@ -295,13 +352,17 @@ class ForwardBboxAnnotationConverter(ForwardAnnotationConverter):
         return [AnnotationType.bbox]
 
     @classmethod
-    def create(cls, dataset: LegacyDataset) -> "ForwardBboxAnnotationConverter | None":
+    def create(
+        cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+    ) -> "ForwardBboxAnnotationConverter | None":
         """Create converter instance for bbox annotations."""
         categories = dataset.categories()
         # Extract label categories if available
         legacy_label_categories = categories.get(AnnotationType.label, None)
 
-        bbox_attribute = AttributeInfo(type=np.ndarray, annotation=bbox_field(dtype=pl.Float32))
+        bbox_attribute = AttributeInfo(
+            type=np.ndarray, annotation=bbox_field(dtype=pl.Float32, semantic=semantic)
+        )
 
         bbox_labels_attribute = None
         # Only add bbox_labels if we have label categories
@@ -312,16 +373,20 @@ class ForwardBboxAnnotationConverter(ForwardAnnotationConverter):
 
             bbox_labels_attribute = AttributeInfo(
                 type=np.ndarray,
-                annotation=label_field(is_list=True),
+                annotation=label_field(is_list=True, semantic=semantic),
                 categories=new_label_categories,
             )
 
-        return cls(bbox_attribute=bbox_attribute, bbox_labels_attribute=bbox_labels_attribute)
+        return cls(
+            bbox_attribute=bbox_attribute,
+            bbox_labels_attribute=bbox_labels_attribute,
+            name_prefix=name_prefix,
+        )
 
     def get_schema_attributes(self) -> dict[str, AttributeInfo]:
-        attributes = {"bboxes": self.bbox_attribute}
+        attributes = {self.name_prefix + "bboxes": self.bbox_attribute}
         if self.bbox_labels_attribute is not None:
-            attributes["labels"] = self.bbox_labels_attribute
+            attributes[self.name_prefix + "labels"] = self.bbox_labels_attribute
         return attributes
 
     def convert_annotations(
@@ -341,11 +406,11 @@ class ForwardBboxAnnotationConverter(ForwardAnnotationConverter):
         if bboxes_array.shape == (0,):
             bboxes_array = bboxes_array.reshape(0, 4)
 
-        result = {"bboxes": bboxes_array}
+        result = {self.name_prefix + "bboxes": bboxes_array}
 
         # Only add bbox_labels if we have label categories
         if self.bbox_labels_attribute is not None:
-            result["labels"] = np.array(labels, dtype=np.int32)
+            result[self.name_prefix + "labels"] = np.array(labels, dtype=np.int32)
 
         return result
 
@@ -357,10 +422,12 @@ class ForwardRotatedBboxAnnotationConverter(ForwardAnnotationConverter):
         self,
         rotated_bbox_attribute: AttributeInfo,
         rotated_bbox_labels_attribute: AttributeInfo | None = None,
+        name_prefix: str = "",
     ):
         """Initialize converter with rotated bbox attributes."""
         self.rotated_bbox_attribute = rotated_bbox_attribute
         self.rotated_bbox_labels_attribute = rotated_bbox_labels_attribute
+        self.name_prefix = name_prefix
 
     @classmethod
     def get_supported_annotation_types(cls) -> list[AnnotationType]:
@@ -368,13 +435,15 @@ class ForwardRotatedBboxAnnotationConverter(ForwardAnnotationConverter):
         return [AnnotationType.rotated_bbox]
 
     @classmethod
-    def create(cls, dataset: LegacyDataset) -> "ForwardRotatedBboxAnnotationConverter | None":
+    def create(
+        cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+    ) -> "ForwardRotatedBboxAnnotationConverter | None":
         """Create converter instance from dataset."""
         categories = dataset.categories()
         # Create attribute for rotated bboxes (cx, cy, w, h, r)
         rotated_bbox_attribute = AttributeInfo(
             type=np.ndarray,
-            annotation=rotated_bbox_field(dtype=pl.Float32),
+            annotation=rotated_bbox_field(dtype=pl.Float32, semantic=semantic),
         )
 
         # Create attribute for labels if we have label categories
@@ -389,19 +458,20 @@ class ForwardRotatedBboxAnnotationConverter(ForwardAnnotationConverter):
 
             rotated_bbox_labels_attribute = AttributeInfo(
                 type=np.ndarray,
-                annotation=label_field(is_list=True),
+                annotation=label_field(is_list=True, semantic=semantic),
                 categories=new_label_categories,
             )
 
         return cls(
             rotated_bbox_attribute=rotated_bbox_attribute,
             rotated_bbox_labels_attribute=rotated_bbox_labels_attribute,
+            name_prefix=name_prefix,
         )
 
     def get_schema_attributes(self) -> dict[str, AttributeInfo]:
-        attributes = {"rotated_bboxes": self.rotated_bbox_attribute}
+        attributes = {self.name_prefix + "rotated_bboxes": self.rotated_bbox_attribute}
         if self.rotated_bbox_labels_attribute is not None:
-            attributes["rotated_bbox_labels"] = self.rotated_bbox_labels_attribute
+            attributes[self.name_prefix + "labels"] = self.rotated_bbox_labels_attribute
         return attributes
 
     def convert_annotations(
@@ -422,11 +492,11 @@ class ForwardRotatedBboxAnnotationConverter(ForwardAnnotationConverter):
         if rotated_bboxes_array.shape == (0,):
             rotated_bboxes_array = rotated_bboxes_array.reshape(0, 5)
 
-        result = {"rotated_bboxes": rotated_bboxes_array}
+        result = {self.name_prefix + "rotated_bboxes": rotated_bboxes_array}
 
         # Only add rotated_bbox_labels if we have label categories
         if self.rotated_bbox_labels_attribute is not None:
-            result["rotated_bbox_labels"] = np.array(labels, dtype=np.int32)
+            result[self.name_prefix + "labels"] = np.array(labels, dtype=np.int32)
 
         return result
 
@@ -435,12 +505,15 @@ class ForwardPolygonAnnotationConverter(ForwardAnnotationConverter):
     """Forward converter for Polygon annotations."""
 
     def __init__(
-        self, polygon_attribute: AttributeInfo, polygon_labels_attribute: AttributeInfo | None
+        self,
+        polygon_attribute: AttributeInfo,
+        polygon_labels_attribute: AttributeInfo | None,
+        name_prefix: str,
     ):
         """Initialize with polygon attributes and label attribute."""
-        super().__init__()
         self.polygon_attribute = polygon_attribute
         self.polygon_labels_attribute = polygon_labels_attribute
+        self.name_prefix = name_prefix
 
     @classmethod
     def get_supported_annotation_types(cls) -> list[AnnotationType]:
@@ -448,14 +521,17 @@ class ForwardPolygonAnnotationConverter(ForwardAnnotationConverter):
         return [AnnotationType.polygon]
 
     @classmethod
-    def create(cls, dataset: LegacyDataset) -> "ForwardPolygonAnnotationConverter | None":
+    def create(
+        cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+    ) -> "ForwardPolygonAnnotationConverter | None":
         """Create converter instance for polygon annotations."""
         categories = dataset.categories()
         # Extract label categories if available
         legacy_label_categories = categories.get(AnnotationType.label, None)
 
         polygon_attribute = AttributeInfo(
-            type=np.ndarray, annotation=polygon_field(dtype=pl.Float32, format="xy")
+            type=np.ndarray,
+            annotation=polygon_field(dtype=pl.Float32, format="xy", semantic=semantic),
         )
 
         polygon_labels_attribute = None
@@ -467,18 +543,20 @@ class ForwardPolygonAnnotationConverter(ForwardAnnotationConverter):
 
             polygon_labels_attribute = AttributeInfo(
                 type=np.ndarray,
-                annotation=label_field(is_list=True),
+                annotation=label_field(is_list=True, semantic=semantic),
                 categories=new_label_categories,
             )
 
         return cls(
-            polygon_attribute=polygon_attribute, polygon_labels_attribute=polygon_labels_attribute
+            polygon_attribute=polygon_attribute,
+            polygon_labels_attribute=polygon_labels_attribute,
+            name_prefix=name_prefix,
         )
 
     def get_schema_attributes(self) -> dict[str, AttributeInfo]:
-        attributes = {"polygons": self.polygon_attribute}
+        attributes = {self.name_prefix + "polygons": self.polygon_attribute}
         if self.polygon_labels_attribute is not None:
-            attributes["labels"] = self.polygon_labels_attribute
+            attributes[self.name_prefix + "labels"] = self.polygon_labels_attribute
         return attributes
 
     def convert_annotations(
@@ -503,11 +581,11 @@ class ForwardPolygonAnnotationConverter(ForwardAnnotationConverter):
         # In the meantime, create an empty array, then assign to avoid the corner case
         polygons_array = np.empty((len(polygons),), dtype=object)
         polygons_array[:] = polygons
-        result = {"polygons": polygons_array}
+        result = {self.name_prefix + "polygons": polygons_array}
 
         # Only add polygon_labels if we have label categories
         if self.polygon_labels_attribute is not None:
-            result["labels"] = np.array(labels, dtype=np.int32)
+            result[self.name_prefix + "labels"] = np.array(labels, dtype=np.int32)
 
         return result
 
@@ -515,13 +593,22 @@ class ForwardPolygonAnnotationConverter(ForwardAnnotationConverter):
 class ForwardLabelAnnotationConverter(ForwardAnnotationConverter):
     """Forward converter for Label (single label classification) annotations."""
 
-    def __init__(self, label_attribute: AttributeInfo):
+    def __init__(
+        self,
+        label_attribute: AttributeInfo,
+        semantic: Semantic = Semantic.Default,
+        name_prefix: str = "",
+    ):
         """Initialize with label attribute."""
         super().__init__()
         self.label_attribute = label_attribute
+        self.semantic = semantic
+        self.name_prefix = name_prefix
 
     @classmethod
-    def create(cls, dataset: LegacyDataset) -> "ForwardLabelAnnotationConverter | None":
+    def create(
+        cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+    ) -> "ForwardLabelAnnotationConverter | None":
         """Create converter instance for label annotations."""
         categories = dataset.categories()
         legacy_label_categories = categories.get(AnnotationType.label, None)
@@ -534,18 +621,18 @@ class ForwardLabelAnnotationConverter(ForwardAnnotationConverter):
 
         label_attribute = AttributeInfo(
             type=int,
-            annotation=label_field(),
+            annotation=label_field(semantic=semantic),
             categories=new_label_categories,
         )
 
-        return cls(label_attribute=label_attribute)
+        return cls(label_attribute=label_attribute, semantic=semantic, name_prefix=name_prefix)
 
     @classmethod
     def get_supported_annotation_types(cls) -> list[AnnotationType]:
         return [AnnotationType.label]
 
     def get_schema_attributes(self) -> dict[str, AttributeInfo]:
-        return {"label": self.label_attribute}
+        return {self.name_prefix + "label": self.label_attribute}
 
     def convert_annotations(
         self, annotations: list[Annotation], item: DatasetItem
@@ -554,9 +641,9 @@ class ForwardLabelAnnotationConverter(ForwardAnnotationConverter):
         result = {}
         if len(labels) > 0:
             # For single label classification, take the first label
-            result["label"] = labels[0].label
+            result[self.name_prefix + "label"] = labels[0].label
         else:
-            result["label"] = None
+            result[self.name_prefix + "label"] = None
         return result
 
 
@@ -564,22 +651,28 @@ class ForwardKeypointAnnotationConverter(ForwardAnnotationConverter):
     """Forward converter for Points (keypoints) annotations."""
 
     def __init__(
-        self, keypoints_attribute: AttributeInfo, keypoints_labels_attribute: AttributeInfo | None
+        self,
+        keypoints_attribute: AttributeInfo,
+        keypoints_labels_attribute: AttributeInfo | None,
+        name_prefix: str,
     ):
         """Initialize with keypoints attributes and label attribute name."""
         super().__init__()
         self.keypoints_attribute = keypoints_attribute
         self.keypoints_labels_attribute = keypoints_labels_attribute
+        self.name_prefix = name_prefix
 
     @classmethod
-    def create(cls, dataset: LegacyDataset) -> "ForwardKeypointAnnotationConverter | None":
+    def create(
+        cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+    ) -> "ForwardKeypointAnnotationConverter | None":
         """Create converter instance for keypoints annotations."""
         categories = dataset.categories()
         # Extract label categories if available
         legacy_label_categories = categories.get(AnnotationType.label, None)
 
         keypoints_attribute = AttributeInfo(
-            type=np.ndarray, annotation=keypoints_field(dtype=pl.Float32)
+            type=np.ndarray, annotation=keypoints_field(dtype=pl.Float32, semantic=semantic)
         )
 
         keypoints_labels_attribute = None
@@ -591,13 +684,14 @@ class ForwardKeypointAnnotationConverter(ForwardAnnotationConverter):
 
             keypoints_labels_attribute = AttributeInfo(
                 type=np.ndarray,
-                annotation=label_field(is_list=True),
+                annotation=label_field(is_list=True, semantic=semantic),
                 categories=new_label_categories,
             )
 
         return cls(
             keypoints_attribute=keypoints_attribute,
             keypoints_labels_attribute=keypoints_labels_attribute,
+            name_prefix=name_prefix,
         )
 
     @classmethod
@@ -605,9 +699,9 @@ class ForwardKeypointAnnotationConverter(ForwardAnnotationConverter):
         return [AnnotationType.points]
 
     def get_schema_attributes(self) -> dict[str, AttributeInfo]:
-        attributes = {"keypoints": self.keypoints_attribute}
+        attributes = {self.name_prefix + "keypoints": self.keypoints_attribute}
         if self.keypoints_labels_attribute is not None:
-            attributes["labels"] = self.keypoints_labels_attribute
+            attributes[self.name_prefix + "labels"] = self.keypoints_labels_attribute
         return attributes
 
     def convert_annotations(
@@ -616,18 +710,19 @@ class ForwardKeypointAnnotationConverter(ForwardAnnotationConverter):
         keypoints = [ann for ann in annotations if isinstance(ann, Points)]
         # KeypointsField expects individual Points objects, not arrays
         # Only supports single keypoint case
-        result = {}
+        result = {self.name_prefix + "labels": None, self.name_prefix + "keypoints": None}
+
         if len(keypoints) > 0:
             result["keypoints"] = keypoints[0]  # Pass the Points object directly
             if (
                 self.keypoints_labels_attribute is not None
                 and "keypoint_label_ids" in keypoints[0].attributes
             ):
-                result["labels"] = keypoints[0].attributes["keypoint_label_ids"]
+                result[self.name_prefix + "labels"] = keypoints[0].attributes["keypoint_label_ids"]
             else:
-                result["labels"] = None
+                result[self._name_prefix + "labels"] = None
         else:
-            result["keypoints"] = None
+            result[self.name_prefix + "keypoints"] = None
 
         return result
 
@@ -657,13 +752,17 @@ class AnalysisResult:
     schema: Schema
     media_converter: ForwardMediaConverter | None
     ann_converters: dict[AnnotationType, ForwardAnnotationConverter]
+    is_anomaly: bool
 
 
-def analyze_legacy_dataset(legacy_dataset: LegacyDataset) -> AnalysisResult:
+def analyze_legacy_dataset(
+    legacy_dataset: LegacyDataset, semantic: Semantic = Semantic.Default
+) -> AnalysisResult:
     """Analyze legacy dataset and generate schema using registered converters.
 
     Args:
         legacy_dataset: The legacy Datumaro dataset to analyze
+        semantic: The semantic type for the converted fields
 
     Returns:
         AnalysisResult containing the inferred schema and converters
@@ -675,20 +774,34 @@ def analyze_legacy_dataset(legacy_dataset: LegacyDataset) -> AnalysisResult:
     ann_converters: dict[AnnotationType, ForwardAnnotationConverter] = {}
 
     # Get media attributes from converter
-    media_converter = get_forward_media_converter(legacy_dataset)
+    media_converter = get_forward_media_converter(legacy_dataset, semantic)
     if media_converter is not None:
         attributes.update(media_converter.get_schema_attributes())
 
-    # Get annotation attributes from converters for each annotation type in the dataset
+    # If we have a label converter plus other converters, assume that this is an anomaly task.
+    # To avoid conflicts between the label attribute and the other ones, use semantic to distinguish them.
+    is_anomaly = AnnotationType.label in ann_types and len(ann_types) > 1
+
     for ann_type in ann_types:
-        converter = get_forward_annotation_converter(ann_type, legacy_dataset)
+        ann_semantic = (
+            Semantic.Anomaly if is_anomaly and ann_type != AnnotationType.label else semantic
+        )
+        name_prefix = "anomaly_" if is_anomaly and ann_type != AnnotationType.label else ""
+        converter = get_forward_annotation_converter(
+            ann_type, legacy_dataset, ann_semantic, name_prefix
+        )
         if converter is not None:
             ann_converters[ann_type] = converter
-            attributes.update(converter.get_schema_attributes())
+            ann_attributes = converter.get_schema_attributes()
+
+            attributes.update(ann_attributes)
 
     schema = Schema(attributes=attributes)
     return AnalysisResult(
-        schema=schema, media_converter=media_converter, ann_converters=ann_converters
+        schema=schema,
+        media_converter=media_converter,
+        ann_converters=ann_converters,
+        is_anomaly=is_anomaly,
     )
 
 
@@ -701,19 +814,9 @@ def _convert_legacy_item(item: DatasetItem, analysis_result: AnalysisResult) -> 
     if analysis_result.media_converter:
         attributes.update(analysis_result.media_converter.convert_item_media(item))
 
-    # Group annotations by type
-    annotations_by_type: dict[AnnotationType, list[Annotation]] = {}
-    for ann in item.annotations:
-        ann_type = ann.type
-        if ann_type not in annotations_by_type:
-            annotations_by_type[ann_type] = []
-        annotations_by_type[ann_type].append(ann)
-
     # Convert each annotation type using the analyzed converters
-    for ann_type, anns in annotations_by_type.items():
-        if ann_type in analysis_result.ann_converters:
-            ann_converter = analysis_result.ann_converters[ann_type]
-            attributes.update(ann_converter.convert_annotations(anns, item))
+    for ann_converter in analysis_result.ann_converters.values():
+        attributes.update(ann_converter.convert_annotations(item.annotations, item))
 
     return attributes
 
@@ -749,6 +852,29 @@ def convert_from_legacy(legacy_dataset: LegacyDataset) -> Dataset[Sample]:
         # Create sample and add to dataset
         sample = Sample(**sample_data)
         experimental_dataset.append(sample)
+
+    if analysis_result.is_anomaly:
+        categories = experimental_dataset.schema.attributes["label"].categories
+        if not isinstance(categories, LabelCategories):
+            raise ValueError("Expected label categories for anomaly detection.")
+
+        good_categories = [
+            index for index, label in enumerate(categories.labels) if label == "good"
+        ]
+
+        if len(good_categories) != 1:
+            raise ValueError("Expected exactly one 'good' label for anomaly detection.")
+
+        good_category_index = good_categories[0]
+
+        new_categories = LabelCategories(
+            labels=["normal", "anomalous"],
+            label_semantics={LabelSemantic.NORMAL: "normal", LabelSemantic.ANOMALOUS: "anomalous"},
+        )
+        experimental_dataset.schema.attributes["label"].categories = new_categories
+        experimental_dataset.df = experimental_dataset.df.with_columns(
+            pl.col("label").replace([good_category_index], [0], default=1)
+        )
 
     return experimental_dataset
 
@@ -835,15 +961,19 @@ class ForwardMaskAnnotationConverter(ForwardAnnotationConverter):
         instance_mask_attribute: AttributeInfo,
         mask_labels_attribute: AttributeInfo | None,
         is_semantic: bool,
+        name_prefix: str,
     ):
         """Initialize with mask attributes and optional label attribute."""
         self.mask_attribute = mask_attribute
         self.instance_mask_attribute = instance_mask_attribute
         self.mask_labels_attribute = mask_labels_attribute
         self.is_semantic = is_semantic
+        self.name_prefix = name_prefix
 
     @classmethod
-    def create(cls, dataset: LegacyDataset) -> "ForwardMaskAnnotationConverter | None":
+    def create(
+        cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+    ) -> "ForwardMaskAnnotationConverter | None":
         """Create converter instance for mask annotations.
 
         Determines if the dataset uses semantic or instance segmentation by checking
@@ -890,7 +1020,7 @@ class ForwardMaskAnnotationConverter(ForwardAnnotationConverter):
             mask_categories = MaskCategories(colormap=colormap)
             mask_attribute = AttributeInfo(
                 type=callable,
-                annotation=mask_callable_field(dtype=pl.UInt8),
+                annotation=mask_callable_field(dtype=pl.UInt8, semantic=semantic),
                 categories=mask_categories,
             )
             instance_mask_attribute = None
@@ -901,7 +1031,7 @@ class ForwardMaskAnnotationConverter(ForwardAnnotationConverter):
             # Configure instance mask attribute with Boolean dtype for binary instance masks
             instance_mask_attribute = AttributeInfo(
                 type=callable,
-                annotation=instance_mask_callable_field(dtype=pl.Boolean),
+                annotation=instance_mask_callable_field(dtype=pl.Boolean, semantic=semantic),
             )
 
         mask_labels_attribute = None
@@ -909,7 +1039,7 @@ class ForwardMaskAnnotationConverter(ForwardAnnotationConverter):
         if new_label_categories is not None and not is_semantic:
             mask_labels_attribute = AttributeInfo(
                 type=np.ndarray,
-                annotation=label_field(is_list=True),  # Labels for each instance
+                annotation=label_field(is_list=True, semantic=semantic),  # Labels for each instance
                 categories=new_label_categories,
             )
 
@@ -918,6 +1048,7 @@ class ForwardMaskAnnotationConverter(ForwardAnnotationConverter):
             instance_mask_attribute=instance_mask_attribute,
             mask_labels_attribute=mask_labels_attribute,
             is_semantic=is_semantic,
+            name_prefix=name_prefix,
         )
 
     @classmethod
@@ -930,11 +1061,11 @@ class ForwardMaskAnnotationConverter(ForwardAnnotationConverter):
         attributes = {}
 
         if self.mask_attribute is not None:
-            attributes["mask_callable"] = self.mask_attribute
+            attributes[self.name_prefix + "mask_callable"] = self.mask_attribute
         if self.instance_mask_attribute is not None:
-            attributes["instance_mask_callable"] = self.instance_mask_attribute
+            attributes[self.name_prefix + "instance_mask_callable"] = self.instance_mask_attribute
         if self.mask_labels_attribute is not None:
-            attributes["labels"] = self.mask_labels_attribute
+            attributes[self.name_prefix + "labels"] = self.mask_labels_attribute
         return attributes
 
     def convert_annotations(
@@ -950,7 +1081,7 @@ class ForwardMaskAnnotationConverter(ForwardAnnotationConverter):
             # Convert to semantic segmentation mask
             def get_semantic_mask() -> np.ndarray:
                 if len(extracted_masks) == 0:
-                    return np.zeros((0, 0), dtype=np.uint8)
+                    return None
 
                 # Initialize empty mask
                 # Get first mask to determine shape
@@ -965,7 +1096,7 @@ class ForwardMaskAnnotationConverter(ForwardAnnotationConverter):
 
                 return output_mask
 
-            results["mask_callable"] = get_semantic_mask
+            results[self.name_prefix + "mask_callable"] = get_semantic_mask
 
         else:
             # Convert to instance segmentation masks
@@ -986,14 +1117,14 @@ class ForwardMaskAnnotationConverter(ForwardAnnotationConverter):
 
                 return instance_masks
 
-            results["instance_mask_callable"] = get_instance_masks
+            results[self.name_prefix + "instance_mask_callable"] = get_instance_masks
 
             # Add instance labels
             labels = [mask.label if mask.label is not None else 0 for mask in extracted_masks]
 
             # Add labels only for instance segmentation
             if self.mask_labels_attribute is not None:
-                results["labels"] = np.array(labels, dtype=np.int32)
+                results[self.name_prefix + "labels"] = np.array(labels, dtype=np.int32)
 
         return results
 

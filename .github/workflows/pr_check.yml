@@ -1,16 +1,18 @@
 name: PR Test
 on:
+  pull_request:
+    branches:
+      - develop
+      - release**
+  merge_group:
+    branches:
+      - develop
+      - release**
   push:
     branches:
-      - "master"
-      - "develop"
-      - "releases/*"
-  pull_request:
-    types:
-      - opened
-      - synchronize
-      - reopened
-      - ready_for_review
+      - develop
+      - release**
+
 permissions:
   # The id-token permission is required by Codecov to use OIDC
   id-token: write
@@ -30,17 +32,6 @@ jobs:
       matrix:
         os: ["ubuntu-24.04", "windows-2022", "macos-15"]
         python-version: ["3.10", "3.13"]
-        include:
-          - python-version: "3.10"
-            tox-env-py: "310"
-          - python-version: "3.13"
-            tox-env-py: "313"
-          - os: "ubuntu-24.04"
-            tox-env-os: "lin"
-          - os: "windows-2022"
-            tox-env-os: "win"
-          - os: "macos-15"
-            tox-env-os: "mac"
     name: pr test (${{ matrix.os }}, Python ${{ matrix.python-version }})
     runs-on: ${{ matrix.os }}
     steps:
@@ -59,7 +50,7 @@ jobs:
           toolchain: stable
 
       - name: Install uv and set the python version
-        uses: astral-sh/setup-uv@557e51de59eb14aaaba2ed9621916900a91d50c6 # v6.6.1
+        uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6.8.0
         with:
           enable-cache: false
           python-version: ${{ matrix.python-version }}
@@ -68,11 +59,8 @@ jobs:
       - name: Installing dependencies
         run: uv sync --locked --all-extras --dev
 
-      - name: Unit testing
-        run: uv run pytest tests/unit --cov --cov-report=xml
-
-      - name: Integration testing
-        run: uv run pytest tests/integration
+      - name: Tests
+        run: uv run pytest --cov --cov-report=xml
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
