@@ -92,10 +92,11 @@ class Field:
         if instance is None:
             return self
 
-        value = instance.evaluate_lazy_field(getattr(self, "_name"))
+        name = getattr(self, "_name")
+        value = instance.evaluate_lazy_field(name)
 
         # Cache the value and set it as a real attribute
-        setattr(instance, self._attr_name, value)
+        setattr(instance, name, value)
 
         return value
 
