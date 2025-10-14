@@ -715,7 +715,9 @@ def test_analyze_unknown_annotation_type():
         # Should skip unknown annotation type
         assert "image_path" in analysis_result.schema.attributes
         assert "image_info" in analysis_result.schema.attributes
-        assert len(analysis_result.schema.attributes) == 2  # Only image_path and image_info field
+        assert (
+            len(analysis_result.schema.attributes) == 3
+        )  # Only image_path, image_info, and subset fields
 
 
 def test_convert_simple_bbox_dataset():

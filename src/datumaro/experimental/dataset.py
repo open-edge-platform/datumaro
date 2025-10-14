@@ -6,17 +6,14 @@ from __future__ import annotations
 
 import sys
 import types
-from dataclasses import dataclass
 from functools import cache
 from typing import (
     TYPE_CHECKING,
     Annotated,
     Any,
+    Callable,
     Dict,
     Generic,
-    List,
-    Optional,
-    Set,
     Type,
     Union,
     cast,
@@ -27,8 +24,9 @@ from typing import (
 import polars as pl
 from typing_extensions import TypeGuard, TypeVar, dataclass_transform
 
-from .converter_registry import Converter, find_conversion_path
+from .converter_registry import ConverterTransform, find_conversion_path
 from .schema import AttributeInfo, Field, Schema
+from .transform import IdentityTransform, Transform
 
 if TYPE_CHECKING:
     from .categories import Categories
@@ -45,14 +43,6 @@ class Sample:
 
     def __init__(self, **kwargs: Any):
         """Initialize sample with provided attributes."""
-        # Store dataframe and lazy converters for dynamic property loading
-        self._dataframe: Optional[pl.DataFrame] = kwargs.pop("_dataframe", None)
-        self._lazy_converters: Dict[str, List["Converter"]] = kwargs.pop("_lazy_converters", {})
-        self._applied_converters: Set[int] = set()  # Track which converters have been applied
-        self._schema: Optional["Schema"] = kwargs.pop(
-            "_schema", None
-        )  # Store schema for lazy attributes
-
         for key, value in kwargs.items():
             setattr(self, key, value)
 
@@ -121,19 +111,20 @@ class Sample:
             attributes[name] = AttributeInfo(type=final_type, annotation=field_annotation)
         return Schema(attributes=attributes)
 
+    def evaluate_lazy_field(self, name: str) -> Any:
+        row_df = self._transforms.apply([name])
 
-@dataclass
-class LazyState:
-    dataframe: pl.DataFrame
-    schema: Schema
-    lazy_converters: dict[str, list[Converter]]
-    applied_converters: set[int]
+        # Now extract the value from the converted dataframe
+        attr_info = self._transforms.schema.attributes[name]
+        value = attr_info.annotation.from_polars(name, 0, row_df, attr_info.type)
+
+        return value
 
 
 class LazyDescriptor:
-    def __init__(self, attr_name, state: LazyState):
-        self.attr_name = attr_name
-        self._state = state
+    def __init__(self, attr_name, transforms: Transform):
+        self._attr_name = attr_name
+        self._transforms = transforms
 
     def __get__(self, instance, _):
         """
@@ -147,38 +138,14 @@ class LazyDescriptor:
             The computed value for the attribute
         """
 
-        lazy_converters = self._state.lazy_converters
-        applied_converters = self._state.applied_converters
-        schema = self._state.schema
-
-        # Check if we have any lazy converters for this attribute
-        if self.attr_name not in lazy_converters:
-            raise AttributeError(
-                f"Attribute '{self.attr_name}' not available in dataframe and no converters provided"
-            )
-
-        attr_info = schema.attributes[self.attr_name]
-
-        # Apply ALL lazy converters to maintain the dependency chain
-        # but only apply converters that haven't been applied yet
-        working_df = self._state.dataframe
-
-        # Apply converters in dependency order (the first converter should be the earliest dependency)
-        for converter in lazy_converters[self.attr_name]:
-            converter_id = id(converter)
-            if converter_id not in applied_converters:
-                working_df = converter.convert(working_df)
-                applied_converters.add(converter_id)
-
-        # Update the dataframe for future use with all new columns
-        self._state.dataframe = working_df
+        row_df = self._transforms.apply([self._attr_name])
 
         # Now extract the value from the converted dataframe
-        value = attr_info.annotation.from_polars(self.attr_name, 0, working_df, attr_info.type)
+        attr_info = self._transforms.schema.attributes[self._attr_name]
+        value = attr_info.annotation.from_polars(self._attr_name, 0, row_df, attr_info.type)
 
         # Cache the value and set it as a real attribute
-        setattr(instance, self.attr_name, value)
-        del lazy_converters[self.attr_name]
+        setattr(instance, self._attr_name, value)
 
         return value
 
@@ -203,6 +170,7 @@ class Dataset(Generic[DType]):
         self,
         dtype_or_schema: Union[Schema, Type[DType]],
         categories: dict[str, Categories] = None,
+        schema: Schema | None = None,
     ):
         """
         Initialize dataset with either a schema or sample type.
@@ -210,12 +178,13 @@ class Dataset(Generic[DType]):
         Args:
             dtype_or_schema: Either a Schema instance or a Sample class type
             categories: Optional dictionary mapping attribute names to categories
+            schema: Optional schema if a dtype is provided
         """
         if isinstance(dtype_or_schema, Schema):
             self._schema = dtype_or_schema
             self._dtype = cast(Type[DType], Sample)
         else:
-            self._schema = dtype_or_schema.infer_schema()
+            self._schema = dtype_or_schema.infer_schema() if schema is None else schema
             self._dtype = dtype_or_schema
 
         # Apply categories if provided
@@ -223,15 +192,16 @@ class Dataset(Generic[DType]):
             self._schema = self._schema.with_categories(categories)
 
         self.df = pl.DataFrame(schema=self._generate_polars_schema())
-        self._lazy_converters: Dict[str, List[Converter]] = {}
+        self._transforms: Transform | None = None
 
     @classmethod
     def from_dataframe(
         cls,
         df: pl.DataFrame,
         dtype_or_schema: Union[Schema, Type[DTargetType]],
-        lazy_converters: Dict[str, List[Converter]] | None = None,
+        transforms: Transform | None = None,
         categories: Dict[str, Categories] = None,
+        schema: Schema | None = None,
     ) -> "Dataset[DTargetType]":
         """
         Create a Dataset from an existing DataFrame and lazy converters.
@@ -239,16 +209,15 @@ class Dataset(Generic[DType]):
         Args:
             df: The Polars DataFrame containing the data
             dtype_or_schema: Either a Schema instance or a Sample class type
-            lazy_converters: Optional dict mapping attribute names to lists of
-                             lazy converters to apply during sample access
+            transforms: Optional Transform instance to apply during sample access
             categories: Optional dictionary mapping attribute names to categories
 
         Returns:
             A new Dataset instance with the provided DataFrame and converters
         """
-        dataset = Dataset(dtype_or_schema, categories)
+        dataset = Dataset(dtype_or_schema, categories, schema)
         dataset.df = df
-        dataset._lazy_converters = lazy_converters or {}
+        dataset._transforms = transforms
         return dataset
 
     @property
@@ -257,9 +226,9 @@ class Dataset(Generic[DType]):
         return self._schema
 
     @property
-    def lazy_converters(self) -> Dict[str, List["Converter"]]:
-        """Get the dictionary of lazy converters applied to this dataset."""
-        return self._lazy_converters
+    def dtype(self) -> Type[DType]:
+        """Get the sample type of this dataset."""
+        return self._dtype
 
     def _generate_polars_schema(self) -> pl.Schema:
         """Generate a Polars schema from the dataset's field definitions."""
@@ -275,6 +244,8 @@ class Dataset(Generic[DType]):
         Args:
             sample: The sample instance to add to the dataset
         """
+        if self._transforms is not None:
+            raise RuntimeError("Transformed dataset are immutable.")
 
         series_data: dict[str, pl.Series] = {}
         for key, attr_info in self._schema.attributes.items():
@@ -288,6 +259,30 @@ class Dataset(Generic[DType]):
         else:
             self.df.extend(new_row)
 
+    def slice(self, offset: int, length: int | None = None) -> Dataset[DType]:
+        """
+        Create a new dataset that is a slice of this dataset.
+
+        Args:
+            offset: The starting index of the slice
+            length: The number of samples to include in the slice
+        """
+        if self._transforms is None:
+            slice_df = self.df.slice(offset, length)
+            transforms = None
+        else:
+            transforms = self._transforms.slice(offset, length)
+            slice_df = pl.DataFrame()
+
+        dataset = Dataset.from_dataframe(
+            slice_df,
+            self._dtype,
+            transforms,
+        )
+        dataset._dtype = self._dtype
+
+        return dataset
+
     def __getitem__(self, row_idx: int) -> DType:
         """
         Retrieve a sample from the dataset by index.
@@ -299,13 +294,20 @@ class Dataset(Generic[DType]):
             The sample instance at the specified index
         """
         # Extract the row as a single-row DataFrame
-        row_df = self.df.slice(row_idx, 1)
+        if self._transforms is None:
+            row_df = self.df.slice(row_idx, 1)
+            lazy_attributes = set()
+            transforms = None
+        else:
+            transforms = self._transforms.slice(row_idx, 1)
+            row_df = transforms.apply(transforms.get_batch_attributes())
+            lazy_attributes = transforms.get_lazy_attributes()
 
         # Separate attributes into those available directly and those requiring lazy conversion
         direct_attributes = {}
 
         for key, attr_info in self._schema.attributes.items():
-            if key not in self._lazy_converters:
+            if key not in lazy_attributes:
                 # This attribute is directly available
                 direct_attributes[key] = attr_info.annotation.from_polars(
                     key, 0, row_df, attr_info.type
@@ -314,21 +316,15 @@ class Dataset(Generic[DType]):
         # If there are lazy converters, create a dynamic class with descriptors
         dtype = self._dtype
 
-        if self.lazy_converters:
-            lazy_converters = self.lazy_converters.copy()
-            applied_converters: Set[int] = set()
-            attrs = {}
-            state = LazyState(
-                dataframe=row_df,
-                schema=self._schema,
-                lazy_converters=lazy_converters,
-                applied_converters=applied_converters,
-            )
-            for lazy_attr in lazy_converters:
-                attrs[lazy_attr] = LazyDescriptor(lazy_attr, state)
+        if lazy_attributes:
+            direct_attributes["_transforms"] = transforms
+            # attrs = {}
+            # for lazy_attr in lazy_attributes:
+            #    attrs[lazy_attr] = LazyDescriptor(lazy_attr, transforms)
 
-            # Create a new dynamic class inheriting from dtype
-            dtype = type(dtype.__name__, (dtype,), attrs)
+            ## Create a new dynamic class inheriting from dtype
+            # dtype = type(dtype.__name__, (dtype,), attrs)
+            # dtype.__annotations__ = self._dtype.__annotations__
 
         sample = dtype(
             **direct_attributes,
@@ -342,7 +338,7 @@ class Dataset(Generic[DType]):
         Returns:
             The number of samples (rows) in the dataset
         """
-        return len(self.df)
+        return len(self.df) if self._transforms is None else len(self._transforms)
 
     def __iter__(self):
         """
@@ -364,6 +360,9 @@ class Dataset(Generic[DType]):
         Raises:
             IndexError: If the row index is out of bounds
         """
+        if self._transforms is not None:
+            raise RuntimeError("Transformed dataset are immutable.")
+
         if row_idx < 0 or row_idx >= len(self.df):
             raise IndexError("Row index out of bounds.")
 
@@ -381,6 +380,9 @@ class Dataset(Generic[DType]):
         Raises:
             IndexError: If the row index is out of bounds
         """
+        if self._transforms is not None:
+            raise RuntimeError("Transformed dataset are immutable.")
+
         if row_idx < 0 or row_idx >= len(self.df):
             raise IndexError("Row index out of bounds.")
 
@@ -396,6 +398,31 @@ class Dataset(Generic[DType]):
             for c in self.df.columns
         )
 
+    def transform(
+        self,
+        transform_factory: Callable[[Transform], Transform],
+        dtype: Type[DTargetType] | None = None,
+    ) -> Dataset[DTargetType]:
+        transforms = self._transforms
+        if transforms is None:
+            transforms = IdentityTransform(self.df, self.schema)
+
+        transforms = transform_factory(transforms)
+
+        if dtype is None:
+            return Dataset.from_dataframe(
+                self.df,
+                transforms.schema,
+                transforms,
+            )
+        else:
+            return Dataset.from_dataframe(
+                self.df,
+                dtype,
+                transforms,
+                schema=transforms.schema,
+            )
+
     def convert_to_schema(
         self,
         target_dtype_or_schema: Union[Schema, Type[DTargetType]],
@@ -410,9 +437,6 @@ class Dataset(Generic[DType]):
         Returns:
             A new Dataset instance with the converted schema
         """
-        # Import the converter implementations to register them
-        import datumaro.experimental.converters  # type: ignore[import]  # noqa: F401
-
         # Determine target schema
         if isinstance(target_dtype_or_schema, Schema):
             target_schema = target_dtype_or_schema
@@ -430,16 +454,18 @@ class Dataset(Generic[DType]):
         # Find the optimal conversion path using A* search
         conversion_paths, inferred_categories = find_conversion_path(self._schema, target_schema)
 
-        # Apply batch converters immediately
-        converted_df = self.df.clone()
-        for converter in conversion_paths.batch_converters:
-            converted_df = converter.convert(converted_df)
+        # Create a converter transform
+        transforms = self._transforms
+        if transforms is None:
+            transforms = IdentityTransform(self.df, self.schema)
+
+        transforms = ConverterTransform(transforms, target_schema, conversion_paths)
 
         # Create new dataset with converted data and inferred categories
         return Dataset.from_dataframe(
-            converted_df,
+            self.df,
             target_dtype_or_schema,
-            conversion_paths.lazy_converters,
+            transforms,
             categories=inferred_categories,
         )
 

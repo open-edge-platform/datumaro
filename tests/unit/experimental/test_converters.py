@@ -265,18 +265,10 @@ def test_image_path_to_image_converter():
 
         assert "image" in result_df.columns
         assert "image_shape" in result_df.columns
-        assert "image_info" in result_df.columns
 
         # Check that image was loaded correctly
         result_shape = list(result_df["image_shape"][0])
         assert result_shape == [50, 75, 3]  # height, width, channels
-
-        # Check that image info was created correctly (only width and height)
-        image_info = result_df["image_info"][0]
-        assert "width" in image_info
-        assert "height" in image_info
-        assert image_info["width"] == 75  # width
-        assert image_info["height"] == 50  # height
 
 
 def test_image_bytes_to_image_converter():
@@ -325,18 +317,10 @@ def test_image_bytes_to_image_converter():
 
     assert "image" in result_df.columns
     assert "image_shape" in result_df.columns
-    assert "image_info" in result_df.columns
 
     # Check that image was loaded correctly
     result_shape = tuple(result_df["image_shape"][0])
     assert result_shape == (32, 48, 3)  # height, width, channels
-
-    # Check that image info was created correctly (only width and height)
-    image_info = result_df["image_info"][0]
-    assert "width" in image_info
-    assert "height" in image_info
-    assert image_info["width"] == 48  # width
-    assert image_info["height"] == 32  # height
 
     # Check that the actual image data is correct (approximately, since PNG compression may cause slight differences)
     result_image = result_df["image"][0].to_numpy().reshape(result_shape)
@@ -366,8 +350,8 @@ def test_find_conversion_path():
 
     # This should find a conversion path (UInt8 -> Float32)
     path, _ = find_conversion_path(source_schema, target_schema)
-    assert len(path.batch_converters) == 1
-    assert type(path.batch_converters[0]) is UInt8ToFloat32Converter
+    assert len(path.converters["image"]) == 1
+    assert type(path.converters["image"][0]) is UInt8ToFloat32Converter
 
 
 def test_convert_dataframe():
@@ -400,7 +384,7 @@ def test_convert_dataframe():
 
     # Apply batch converters first
     result_df = df
-    for converter in conversion_paths.batch_converters:
+    for converter in conversion_paths.converters["image"]:
         result_df = converter.convert(result_df)
 
     # For this test with identical schemas, there should be no converters needed
@@ -497,10 +481,20 @@ def test_multiple_converter_chaining():
 
     path, _ = find_conversion_path(source_schema, target_schema)
     # If successful, should have multiple steps
-    assert len(path.batch_converters) == 3
-    assert type(path.batch_converters[0]) is BBoxCoordinateConverter
-    assert type(path.batch_converters[1]) is RGBToBGRConverter
-    assert type(path.batch_converters[2]) is UInt8ToFloat32Converter
+    assert len(path.converters["image"]) == 2
+    assert type(path.converters["image"][0]) is UInt8ToFloat32Converter
+    assert type(path.converters["image"][1]) is RGBToBGRConverter
+
+    # FIXME(gdlg): the BBoxCoordinateConverter needs an image
+    # and it does not matter if the image is 8 bits or 32 bits,
+    # so converting the image then the bbox is correct, hence the dependency.
+    # The problem is that this is not desirable as it creates a spurious dependency
+    # on the 32 bits conversion even though it is not needed.
+    # To fix this, we need to adjust the weights to favour applying image conversions
+    # after the bbox ones.
+    assert len(path.converters["bbox"]) == 2
+    assert type(path.converters["bbox"][0]) is UInt8ToFloat32Converter
+    assert type(path.converters["bbox"][1]) is BBoxCoordinateConverter
 
 
 def test_astar_direct_conversion():
@@ -559,9 +553,8 @@ def test_astar_direct_conversion():
 
     # Test finding conversion path
     path, _ = find_conversion_path(from_schema, to_schema)
-    assert len(path.batch_converters) == 1
-    assert type(path.batch_converters[0]) is ExtractImageSizeConverter
-    assert path.lazy_converters == {}
+    assert len(path.converters["image_size"]) == 1
+    assert type(path.converters["image_size"][0]) is ExtractImageSizeConverter
 
 
 def test_astar_chained_conversion():
@@ -663,10 +656,9 @@ def test_astar_chained_conversion():
     # Test finding conversion path
     path, _ = find_conversion_path(from_schema, to_schema)
     # Should need 2 converters: ImageField -> ImageSizeField, then NormalizedBbox -> AbsoluteBbox
-    assert len(path.batch_converters) == 2
-    assert type(path.batch_converters[0]) is ExtractImageSizeChainConverter
-    assert type(path.batch_converters[1]) is NormalizeToAbsoluteBboxConverter
-    assert len(path.lazy_converters) == 0
+    assert len(path.converters["absolute_bbox"]) == 2
+    assert type(path.converters["absolute_bbox"][0]) is ExtractImageSizeChainConverter
+    assert type(path.converters["absolute_bbox"][1]) is NormalizeToAbsoluteBboxConverter
 
 
 def test_astar_no_conversion_needed():
@@ -688,10 +680,9 @@ def test_astar_no_conversion_needed():
     )
 
     path, _ = find_conversion_path(schema, schema)
-    total_converters = len(path.batch_converters) + len(path.lazy_converters)
     assert (
-        total_converters == 0
-    ), f"Expected 0 converters for identical schemas, got {total_converters}"
+        len(path.converters) == 0
+    ), f"Expected 0 converters for identical schemas, got {len(path.converters)}"
 
 
 def test_astar_impossible_conversion():
@@ -802,9 +793,8 @@ def test_optimal_path_selection():
     )
 
     path, _ = find_conversion_path(from_schema, to_schema)
-    assert len(path.batch_converters) == 1
-    assert type(path.batch_converters[0]) is AToCDirectConverter
-    assert len(path.lazy_converters) == 0
+    assert len(path.converters["field_c"]) == 1
+    assert type(path.converters["field_c"][0]) is AToCDirectConverter
 
 
 def test_generator_converter():
@@ -837,9 +827,8 @@ def test_generator_converter():
     )
 
     path, _ = find_conversion_path(from_schema, to_schema)
-    assert len(path.batch_converters) == 1
-    assert type(path.batch_converters[0]) is GenerateBConverter
-    assert len(path.lazy_converters) == 0
+    assert len(path.converters["field_b"]) == 1
+    assert type(path.converters["field_b"][0]) is GenerateBConverter
 
 
 def test_multiple_output_converter():
@@ -895,9 +884,10 @@ def test_multiple_output_converter():
     )
 
     path, _ = find_conversion_path(from_schema, to_schema)
-    assert len(path.batch_converters) == 1
-    assert type(path.batch_converters[0]) is AToMultiConverter
-    assert len(path.lazy_converters) == 0
+    assert len(path.converters["multi1"]) == 1
+    assert type(path.converters["multi1"][0]) is AToMultiConverter
+    assert len(path.converters["multi2"]) == 1
+    assert type(path.converters["multi2"][0]) is AToMultiConverter
 
 
 def test_partial_schema_matching():
@@ -946,9 +936,8 @@ def test_partial_schema_matching():
     )
 
     path, _ = find_conversion_path(from_schema, to_schema)
-    assert len(path.batch_converters) == 1
-    assert type(path.batch_converters[0]) is AToCPartialConverter
-    assert len(path.lazy_converters) == 0
+    assert len(path.converters["field_c"]) == 1
+    assert type(path.converters["field_c"][0]) is AToCPartialConverter
 
 
 def test_attribute_renaming():
@@ -976,12 +965,11 @@ def test_attribute_renaming():
     path, _ = find_conversion_path(source_schema, target_schema)
 
     # Should have exactly one batch converter for renaming
-    assert len(path.batch_converters) == 1
-    assert isinstance(path.batch_converters[0], AttributeRemapperConverter)
-    assert len(path.lazy_converters) == 0
+    assert len(path.converters["output_image"]) == 1
+    assert isinstance(path.converters["output_image"][0], AttributeRemapperConverter)
 
     # Test the remapper converter functionality
-    remapper_converter = path.batch_converters[0]
+    remapper_converter = path.converters["output_image"][0]
 
     # Create test DataFrame with the source column
     test_data = np.random.randint(0, 255, (10, 10, 3), dtype=np.uint8)
@@ -1032,12 +1020,11 @@ def test_combined_rename_and_delete():
     path, _ = find_conversion_path(source_schema, target_schema)
 
     # Should have exactly one batch converter that handles both renaming and deletion
-    assert len(path.batch_converters) == 1
-    assert isinstance(path.batch_converters[0], AttributeRemapperConverter)
-    assert len(path.lazy_converters) == 0
+    assert len(path.converters["new_image"]) == 1
+    assert isinstance(path.converters["new_image"][0], AttributeRemapperConverter)
 
     # Check that the remapper handles the conversion correctly by testing on sample data
-    remapper_converter = path.batch_converters[0]
+    remapper_converter = path.converters["new_image"][0]
 
     # Create test DataFrame
     test_df = pl.DataFrame(
@@ -1305,10 +1292,7 @@ def test_find_conversion_path_inferred_categories():
     conversion_paths, inferred_categories = find_conversion_path(source_schema, target_schema)
 
     # Should have converters for polygon to mask conversion
-    total_converters = len(conversion_paths.batch_converters) + len(
-        conversion_paths.lazy_converters
-    )
-    assert total_converters > 0
+    assert len(conversion_paths.converters) > 0
 
     # Check that mask categories were inferred
     assert "mask" in inferred_categories
@@ -1873,16 +1857,10 @@ def test_image_callable_to_image_converter():
     # Check expected columns exist
     assert "output_image" in result_df.columns
     assert "output_image_shape" in result_df.columns
-    assert "output_info" in result_df.columns
 
     # Check image shape
     image_shape = result_df["output_image_shape"][0]
     assert list(image_shape) == [3, 3, 3]  # height, width, channels
-
-    # Check image info
-    image_info = result_df["output_info"][0]
-    assert image_info["width"] == 3
-    assert image_info["height"] == 3
 
     # Check image data can be reconstructed
     image_data = result_df["output_image"][0]
@@ -1998,9 +1976,11 @@ def test_image_callable_converter_dtype_handling():
 
     df2 = pl.DataFrame({"my_callable": [float32_callable]}, schema={"my_callable": pl.Object})
     result2 = converter_instance.convert(df2)
-    image_info2 = result2["output_info"][0]
-    assert image_info2["width"] == 1  # width
-    assert image_info2["height"] == 1  # height
+    image_data2 = np.array(result2["output_image"][0], dtype=np.float32).reshape([1, 1, 3])
+    assert image_data2.dtype == np.float32
+    assert image_data2[0, 0, 0] == 1.0
+    assert image_data2[0, 0, 1] == 0.5
+    assert image_data2[0, 0, 2] == 0.25
 
 
 def test_rotated_bbox_to_polygon_converter():

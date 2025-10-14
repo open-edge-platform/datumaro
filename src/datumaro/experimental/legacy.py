@@ -43,6 +43,7 @@ from .fields import (
     LabelField,
     PolygonField,
     RotatedBBoxField,
+    Subset,
     bbox_field,
     image_bytes_field,
     image_callable_field,
@@ -54,6 +55,7 @@ from .fields import (
     mask_callable_field,
     polygon_field,
     rotated_bbox_field,
+    subset_field,
 )
 from .schema import AttributeInfo, Schema, Semantic
 
@@ -763,6 +765,7 @@ class AnalysisResult:
     schema: Schema
     media_converter: ForwardMediaConverter | None
     ann_converters: dict[AnnotationType, ForwardAnnotationConverter]
+    subset_converter: SubsetConverter
     is_anomaly: bool
     is_hierarchical: bool
 
@@ -799,6 +802,10 @@ def analyze_legacy_dataset(
     media_converter = get_forward_media_converter(legacy_dataset, semantic)
     if media_converter is not None:
         attributes.update(media_converter.get_schema_attributes())
+
+    # Add SubsetConverter since it's always needed and not tied to specific annotation types
+    subset_converter = SubsetConverter(semantic=semantic)
+    attributes.update(subset_converter.get_schema_attributes())
 
     # If we have a label converter plus other converters, assume that this is an anomaly task.
     # To avoid conflicts between the label attribute and the other ones, use semantic to distinguish them.
@@ -838,6 +845,7 @@ def analyze_legacy_dataset(
         schema=schema,
         media_converter=media_converter,
         ann_converters=ann_converters,
+        subset_converter=subset_converter,
         is_anomaly=is_anomaly,
         is_hierarchical=is_hierarchical,
     )
@@ -882,6 +890,9 @@ def _convert_legacy_item(item: DatasetItem, analysis_result: AnalysisResult) -> 
     # Convert media using the analyzed converter
     if analysis_result.media_converter:
         attributes.update(analysis_result.media_converter.convert_item_media(item))
+
+    # Convert subset using the subset converter
+    attributes.update(analysis_result.subset_converter.convert_annotations(item.annotations, item))
 
     # Convert each annotation type using the analyzed converters
     for ann_converter in analysis_result.ann_converters.values():
@@ -1069,26 +1080,32 @@ class ForwardMaskAnnotationConverter(ForwardAnnotationConverter):
 
         # Create categories based on legacy label categories
         new_label_categories = None
+        labels = []
         if legacy_label_categories is not None:
             labels = tuple(label_item.name for label_item in legacy_label_categories.items)
-            new_label_categories = LabelCategories(labels=labels)
+
+        mask_labels_attribute = None
 
         if is_semantic:
             # For semantic segmentation, use MaskCategories for mask_attribute
             colormap = {}
-            if new_label_categories is not None:
-                # Generate colors for all labels plus background
-                num_classes = len(new_label_categories) + 1  # +1 for background
-                colormap_dict = generate_colormap(num_classes, include_background=True)
 
-                # Convert colors to RgbColor
-                for index, color in colormap_dict.items():
-                    if isinstance(color, tuple):
-                        colormap[index] = RgbColor(*color)
-                    else:
-                        colormap[index] = color
+            # Have at least one label for the background
+            if len(labels) == 0:
+                labels = ("background",)
 
-            mask_categories = MaskCategories(colormap=colormap)
+            # Generate colors for all labels plus background
+            num_classes = len(labels)
+            colormap_dict = generate_colormap(num_classes, include_background=True)
+
+            # Convert colors to RgbColor
+            for index, color in colormap_dict.items():
+                if isinstance(color, tuple):
+                    colormap[index] = RgbColor(*color)
+                else:
+                    colormap[index] = color
+
+            mask_categories = MaskCategories(labels=labels, colormap=colormap)
             mask_attribute = AttributeInfo(
                 type=callable,
                 annotation=mask_callable_field(dtype=pl.UInt8, semantic=semantic),
@@ -1105,14 +1122,17 @@ class ForwardMaskAnnotationConverter(ForwardAnnotationConverter):
                 annotation=instance_mask_callable_field(dtype=pl.Boolean, semantic=semantic),
             )
 
-        mask_labels_attribute = None
-        # Only add mask_labels if we have label categories and using instance segmentation
-        if new_label_categories is not None and not is_semantic:
-            mask_labels_attribute = AttributeInfo(
-                type=np.ndarray,
-                annotation=label_field(is_list=True, semantic=semantic),  # Labels for each instance
-                categories=new_label_categories,
-            )
+            # Only add mask_labels if we have label categories
+            if len(labels) > 0:
+                new_label_categories = LabelCategories(labels=labels)
+
+                mask_labels_attribute = AttributeInfo(
+                    type=np.ndarray,
+                    annotation=label_field(
+                        is_list=True, semantic=semantic
+                    ),  # Labels for each instance
+                    categories=new_label_categories,
+                )
 
         return cls(
             mask_attribute=mask_attribute,
@@ -1575,6 +1595,90 @@ def convert_to_legacy(experimental_dataset: Dataset[Sample]) -> LegacyDataset:
     )
 
     return legacy_dataset
+
+
+class SubsetConverter(ForwardAnnotationConverter):
+    """Converts legacy subset strings to Subset enum values.
+
+    This converter handles mapping of legacy subset strings to their standardized
+    Subset enum values while preserving unrecognized values as strings.
+
+    The following mappings are supported:
+    - Train: "train", "TRAINING" -> Subset.Training
+    - Validation: "val", "VALIDATION" -> Subset.Validation
+    - Test: "test", "TEST" -> Subset.Testing
+    """
+
+    # Combined lookup table mapping strings to enum values
+    _SUBSET_MAP = (
+        {name: Subset.Training for name in {"train", "TRAINING"}}
+        | {name: Subset.Validation for name in {"val", "VALIDATION"}}
+        | {name: Subset.Testing for name in {"test", "TEST"}}
+    )
+
+    def __init__(self, semantic: Semantic = Semantic.Default, name_prefix: str = ""):
+        """Initialize the converter.
+
+        Args:
+            semantic: The semantic type for the converted fields
+            name_prefix: Prefix to prepend to all field names
+        """
+        self._semantic = semantic
+        self._name_prefix = name_prefix
+
+    @classmethod
+    def get_supported_annotation_types(cls) -> list[AnnotationType]:
+        """Return list of annotation types this converter can handle."""
+        return []  # Subset conversion does not handle any specific annotation type
+
+    @classmethod
+    def create(
+        cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+    ) -> "ForwardAnnotationConverter | None":
+        """Create converter instance if dataset supports this annotation type.
+
+        Args:
+            dataset: Legacy dataset to create converter from
+            semantic: The semantic type for the converted fields
+            name_prefix: Prefix to prepend to all field names
+        """
+        return cls(semantic=semantic, name_prefix=name_prefix)
+
+    def get_schema_attributes(self) -> dict[str, AttributeInfo]:
+        """Return schema attributes for this annotation type.
+
+        Returns:
+            A dictionary with a single entry for the subset field, using SubsetField
+            with the configured semantic type.
+        """
+        field_name = f"{self._name_prefix}subset" if self._name_prefix else "subset"
+        return {
+            field_name: AttributeInfo(
+                type=str,
+                annotation=subset_field(semantic=self._semantic),
+            )
+        }
+
+    def convert_annotations(
+        self, annotations: list[Annotation], item: DatasetItem
+    ) -> dict[str, Any]:
+        """Convert dataset item subset to standardized format.
+
+        Args:
+            annotations: List of annotations (not used by this converter)
+            item: Legacy dataset item containing the subset information
+
+        Returns:
+            Dict containing the converted subset field
+        """
+        subset = item.subset
+        if subset is None:
+            return {}
+
+        # Convert legacy subset name to standardized format
+        converted_subset = self._SUBSET_MAP.get(subset, subset)
+        field_name = f"{self._name_prefix}subset" if self._name_prefix else "subset"
+        return {field_name: converted_subset}
 
 
 def register_builtin_backward_converters():

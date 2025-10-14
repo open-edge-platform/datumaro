@@ -11,7 +11,9 @@ path discovery using graph algorithms.
 
 from __future__ import annotations
 
+import copy
 import heapq
+import itertools
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass
@@ -20,7 +22,6 @@ from typing import (
     Any,
     Callable,
     Dict,
-    Generic,
     List,
     NamedTuple,
     Optional,
@@ -37,7 +38,8 @@ import polars as pl
 from typing_extensions import cast, dataclass_transform
 
 from .categories import Categories
-from .schema import Field, Schema, Semantic
+from .schema import AttributeSpec, Field, Schema, Semantic
+from .transform import Transform
 
 TField = TypeVar("TField", bound=Field)
 
@@ -50,30 +52,10 @@ class ConversionPaths(NamedTuple):
     while lazy converters must be deferred and applied at sample access time.
     """
 
-    batch_converters: List["Converter"]
-    lazy_converters: Dict[str, List["Converter"]]
-
-
-@dataclass(frozen=True)
-class AttributeSpec(Generic[TField]):
-    """
-    Specification for an attribute used in converters.
-
-    Links an attribute name with its corresponding field type definition,
-    providing the complete specification needed for converter operations.
-
-    Args:
-        TField: The specific Field type, defaults to Field
-
-    Attributes:
-        name: The attribute name
-        field: The field type specification
-        categories: Optional categories information (e.g., LabelCategories, MaskCategories)
-    """
-
-    name: str
-    field: TField
-    categories: Optional[Categories] = None
+    converters: Dict[str, List["Converter"]]
+    lazy_outputs: Dict[str, List["Converter"]]
+    required_inputs_by_output: dict[str, set[str]]
+    dependent_outputs_by_input: dict[str, set[str]]
 
 
 @dataclass_transform()
@@ -697,6 +679,116 @@ def _create_initial_renaming_converter(
         return None, start_state
 
 
+def _can_lazy_converter_handle_conversion(
+    from_field_type: Type[Field], to_field_type: Type[Field], semantic: Semantic
+) -> bool:
+    """
+    Check if any lazy converter can handle the conversion from one field type to another.
+
+    Args:
+        from_field_type: Source field type
+        to_field_type: Target field type
+        semantic: The semantic context
+
+    Returns:
+        True if a lazy converter can handle this conversion, False otherwise
+    """
+    for converter_class in ConverterRegistry.list_converters():
+        # Only consider lazy converters
+        if not getattr(converter_class, "lazy", False):
+            continue
+
+        from_types = converter_class.get_from_types()
+        to_types = converter_class.get_to_types()
+
+        # Check if this converter takes the from_field_type as input and produces to_field_type as output
+        if from_field_type in from_types.values() and to_field_type in to_types.values():
+            return True
+
+    return False
+
+
+def _create_conversion_error_message(
+    effective_start_state: _SchemaState, target_state: _SchemaState, semantic: Semantic
+) -> str:
+    """
+    Create a detailed error message when no conversion path is found.
+
+    Args:
+        effective_start_state: The effective source state after initial renaming
+        target_state: Target state for this semantic
+        semantic: The semantic tag being processed
+
+    Returns:
+        Formatted error message string
+    """
+    available_source_fields = {
+        field_type: attr_spec.field
+        for field_type, attr_spec in effective_start_state.field_to_attr_spec.items()
+    }
+    required_target_fields = {
+        field_type: attr_spec.field
+        for field_type, attr_spec in target_state.field_to_attr_spec.items()
+    }
+
+    if available_source_fields:
+        available_msg = f"Available source fields: {list(available_source_fields.values())}"
+    else:
+        available_msg = "No source fields available"
+
+    required_msg = f"Required target fields: {list(required_target_fields.values())}"
+
+    # Check if fields exist by name but need type/dtype conversion
+    source_field_names = set(
+        attr_spec.name for attr_spec in effective_start_state.field_to_attr_spec.values()
+    )
+
+    type_conversion_issues = []
+    truly_missing_fields = []
+
+    for field_type, target_attr_spec in target_state.field_to_attr_spec.items():
+        if target_attr_spec.name in source_field_names:
+            # Find the source field with same name
+            for src_field_type, src_attr_spec in effective_start_state.field_to_attr_spec.items():
+                if src_attr_spec.name == target_attr_spec.name:
+                    if src_attr_spec.field != target_attr_spec.field:
+                        # Check if a lazy converter can handle this field property conversion
+                        if not _can_lazy_converter_handle_conversion(
+                            type(src_attr_spec.field), type(target_attr_spec.field), semantic
+                        ):
+                            type_conversion_issues.append(
+                                f"'{target_attr_spec.name}': {src_attr_spec.field} → {target_attr_spec.field}"
+                            )
+                    break
+        else:
+            truly_missing_fields.append(target_attr_spec.name)
+
+    # Create appropriate error message based on the type of issue
+    if type_conversion_issues and not truly_missing_fields:
+        missing_section = "\nMissing converters for type/dtype conversions:\n" + "\n".join(
+            f"  - {issue}" for issue in type_conversion_issues
+        )
+    elif truly_missing_fields and not type_conversion_issues:
+        missing_section = "\nMissing field types:\n" + "\n".join(
+            f"  - {field}" for field in truly_missing_fields
+        )
+    elif type_conversion_issues and truly_missing_fields:
+        missing_section = (
+            "\nMissing field types:\n"
+            + "\n".join(f"  - {field}" for field in truly_missing_fields)
+            + "\n\nMissing converters for type/dtype conversions:\n"
+            + "\n".join(f"  - {issue}" for issue in type_conversion_issues)
+        )
+    else:
+        missing_section = "\nAll required field types are available but conversion failed"
+
+    # Format the complete error message with clear sections
+    return f"""No conversion path found.
+    
+    {available_msg}
+    {required_msg}{missing_section}"""
+
+
 def _find_conversion_path_for_semantic(
     start_state: _SchemaState, target_state: _SchemaState, semantic: Semantic
 ) -> Tuple[List[Converter], _SchemaState]:
@@ -770,13 +862,9 @@ def _find_conversion_path_for_semantic(
 
             heapq.heappush(open_set, new_node)
 
-    # No path found
-    missing_fields = set(target_state.field_to_attr_spec.keys()) - set(
-        effective_start_state.field_to_attr_spec.keys()
-    )
-    raise ConversionError(
-        f"No conversion path found for semantic {semantic}. " f"Missing fields: {missing_fields}"
-    )
+    # No path found - create a more informative error message
+    error_msg = _create_conversion_error_message(effective_start_state, target_state, semantic)
+    raise ConversionError(error_msg)
 
 
 def find_conversion_path(
@@ -854,71 +942,140 @@ def _separate_batch_and_lazy_converters(
         ConversionPaths with separated batch and lazy converter lists
     """
     if not conversion_path:
-        return ConversionPaths(batch_converters=[], lazy_converters={})
+        return ConversionPaths(
+            converters={},
+            lazy_outputs={},
+            required_inputs_by_output={},
+            dependent_outputs_by_input={},
+        )
 
-    # Track which converters must be lazy
-    lazy_indices: Set[int] = set()
-
+    # Track which outputs must be lazy
     lazy_fields: dict[str, bool] = defaultdict(
         bool
     )  # Maps fields whether they were produced lazily
 
+    required_inputs_by_output: dict[str, set[str]] = defaultdict(set)
+
     for i, converter in enumerate(conversion_path):
         lazy = False
+        input_specs = converter.get_input_attr_specs()
 
         if converter.lazy:
             # Mark all intrinsically lazy converters as lazy
             lazy = True
         else:
             # Check whether the converter depends on a lazy converter
-            input_specs = converter.get_input_attr_specs()
             for attr_spec in input_specs:
                 if attr_spec.name in lazy_fields:
                     lazy = True
                     break
 
-        if lazy:
-            lazy_indices.add(i)
+        output_specs = converter.get_output_attr_specs()
 
+        if lazy:
             # Mark all output fields as lazy
-            output_specs = converter.get_output_attr_specs()
             for attr_spec in output_specs:
                 lazy_fields[attr_spec.name] = True
 
-    # Collect batch converters (non-lazy ones)
-    batch_converters: List[Converter] = []
-    for i, converter in enumerate(conversion_path):
-        if i not in lazy_indices:
-            batch_converters.append(converter)
+        required_inputs = [
+            required_inputs_by_output[attr_spec.name]
+            if attr_spec.name in required_inputs_by_output
+            else {attr_spec.name}
+            for attr_spec in input_specs
+        ]
+        flattened_required_inputs = set(itertools.chain(*required_inputs))
+        for attr_spec in output_specs:
+            required_inputs_by_output[attr_spec.name] = flattened_required_inputs
 
     # Collect lazy converters by output attribute
-    lazy_converters_by_output: Dict[str, List[Converter]] = defaultdict(list)
+    converters_by_output: Dict[str, List[Converter]] = defaultdict(list)
 
     # Iterate through converters in reverse to propagate output dependencies
-    dependents_by_output: Dict[str, Set[Converter]] = defaultdict(set)
+    dependents_by_output: Dict[str, Set[str]] = defaultdict(set)
 
     for i, converter in reversed(list(enumerate(conversion_path))):
-        if i in lazy_indices:
-            # This is a lazy converter - track its outputs
-            dependents = set()
+        # This is a lazy converter - track its outputs
+        dependents = set()
 
-            output_specs = converter.get_output_attr_specs()
-            for attr_spec in output_specs:
-                dependents.update(dependents_by_output.get(attr_spec.name, []))
-                dependents.add(attr_spec.name)
+        output_specs = converter.get_output_attr_specs()
+        for attr_spec in output_specs:
+            dependents.update(dependents_by_output.get(attr_spec.name, []))
+            dependents.add(attr_spec.name)
 
-            for dependent in dependents:
-                lazy_converters_by_output[dependent].append(converter)
+        for dependent in dependents:
+            converters_by_output[dependent].append(converter)
 
-            # Propagate dependencies from outputs to inputs
-            input_specs = converter.get_input_attr_specs()
-            for input_spec in input_specs:
-                dependents_by_output[input_spec.name].update(dependents)
+        # Propagate dependencies from outputs to inputs
+        input_specs = converter.get_input_attr_specs()
+        for input_spec in input_specs:
+            dependents_by_output[input_spec.name].update(dependents)
 
     # Reverse all chains to get dependencies-first order
-    for output_name, chain in lazy_converters_by_output.items():
-        lazy_converters_by_output[output_name] = list(reversed(chain))
+    for output_name, chain in converters_by_output.items():
+        converters_by_output[output_name] = list(reversed(chain))
 
     return ConversionPaths(
-        batch_converters=batch_converters, lazy_converters=lazy_converters_by_output
+        converters=converters_by_output,
+        lazy_outputs=lazy_fields,
+        required_inputs_by_output=required_inputs_by_output,
+        dependent_outputs_by_input=dependents_by_output,
     )
+
+
+class ConverterTransform(Transform):
+    def __init__(self, parent: Transform, schema: Schema, conversion_paths: ConversionPaths):
+        super().__init__(schema)
+
+        lazy_inputs = parent.get_lazy_attributes()
+
+        lazy_outputs = set(conversion_paths.lazy_outputs)
+        for input in lazy_inputs:
+            lazy_outputs.update(conversion_paths.dependent_outputs_by_input[input])
+        self._lazy_outputs = lazy_outputs
+
+        batch_outputs = self.get_batch_attributes()
+
+        self._parent = parent
+        self._conversion_paths = conversion_paths
+        self._df_input_columns = set()
+        self._df = pl.DataFrame()
+        self._applied_converters = set()
+
+        self.apply(batch_outputs)
+
+    def apply(self, fields: Sequence[str]) -> pl.DataFrame:
+        required_inputs = set()
+        for field in fields:
+            if field in self._conversion_paths.converters:
+                required_inputs.update(self._conversion_paths.required_inputs_by_output[field])
+
+        parent_df = self._parent.apply(required_inputs)
+        input_columns = set(parent_df.columns)
+        new_columns = set(parent_df.columns) - self._df_input_columns
+
+        self._df = self._df.with_columns(parent_df.select(new_columns))
+        self._df_input_columns = input_columns
+
+        for field in fields:
+            converters = self._conversion_paths.converters.get(field, None)
+
+            if converters is not None:
+                for converter in converters:
+                    if id(converter) not in self._applied_converters:
+                        self._df = converter.convert(self._df)
+                        self._applied_converters.add(id(converter))
+
+        return self._df
+
+    def get_lazy_attributes(self) -> set[str]:
+        return self._lazy_outputs
+
+    def slice(self, offset: int, length: int | None = None) -> "Transform":
+        instance = copy.copy(self)
+        instance._parent = self._parent.slice(offset, length)
+        instance._applied_converters = copy.copy(self._applied_converters)
+        instance._df = self._df.slice(offset, length)
+        return instance
+
+    def __len__(self):
+        return len(self._df)
