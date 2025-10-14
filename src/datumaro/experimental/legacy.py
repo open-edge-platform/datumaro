@@ -1533,9 +1533,9 @@ class SubsetConverter(ForwardAnnotationConverter):
     Subset enum values while preserving unrecognized values as strings.
 
     The following mappings are supported:
-    - TRAINING: "train", "training" -> Subset.Training
-    - VALIDATION: "val", "validation" -> Subset.Validation
-    - TESTING: "test", "testing" -> Subset.Testing
+    - TRAINING: "train", "training" -> Subset.TRAINING
+    - VALIDATION: "val", "validation" -> Subset.VALIDATION
+    - TESTING: "test", "testing" -> Subset.TESTING
     """
 
     # Case-insensitive + synonym lookup table mapping strings to enum values
