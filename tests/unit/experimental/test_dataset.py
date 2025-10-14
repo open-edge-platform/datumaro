@@ -312,21 +312,6 @@ def test_dataset_polars_schema_generation():
     assert polars_schema["bbox"] == pl.List(pl.Array(pl.Float32, 4))
 
 
-def test_dataset_lazy_converters_property():
-    """Test lazy converters property."""
-
-    class TestSample(Sample):
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
-
-    dataset = Dataset(TestSample)
-    lazy_converters = dataset.lazy_converters
-
-    assert isinstance(lazy_converters, dict)
-    # Initially should be empty
-    assert len(lazy_converters) == 0
-
-
 def test_dataset_len():
     """Test __len__ method returns correct dataset size."""
 

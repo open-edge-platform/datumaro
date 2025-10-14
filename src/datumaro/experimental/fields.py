@@ -10,7 +10,8 @@ learning and computer vision applications.
 """
 
 from dataclasses import dataclass
-from typing import Any, TypeVar, Union
+from enum import Enum, auto
+from typing import Any, Optional, TypeVar, Union
 
 import numpy as np
 import polars as pl
@@ -19,9 +20,92 @@ from typing_extensions import TypeAlias
 from .schema import Field, Semantic
 from .type_registry import from_polars_data, to_numpy
 
+
+class Subset(Enum):
+    """Standard dataset subset values."""
+
+    Training = auto()
+    Validation = auto()
+    Testing = auto()
+
+
 T = TypeVar("T")
 
 PolarsDataType: TypeAlias = Union[type[pl.DataType], pl.DataType]
+
+
+@dataclass(frozen=True)
+class TileInfo:
+    """Information about a single tile within a larger image or data."""
+
+    source_sample_idx: int  # ID of the source image this tile comes from
+    x: int  # Top-left x coordinate of the tile
+    y: int  # Top-left y coordinate of the tile
+    width: int  # Width of the tile
+    height: int  # Height of the tile
+
+
+@dataclass(frozen=True)
+class TileField(Field):
+    """
+    Represents a tile field storing information about how data was tiled.
+
+    This field contains information about the source data index and
+    the tile's position and dimensions within the source data.
+
+    Attributes:
+        semantic: Semantic tags describing the tile's purpose
+    """
+
+    semantic: Semantic
+
+    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+        """Generate Polars schema for tile information."""
+        return {
+            name: pl.Struct(
+                [
+                    pl.Field("source_sample_idx", pl.Int32()),
+                    pl.Field("x", pl.Int32()),
+                    pl.Field("y", pl.Int32()),
+                    pl.Field("width", pl.Int32()),
+                    pl.Field("height", pl.Int32()),
+                ]
+            )
+        }
+
+    def to_polars(self, name: str, value: TileInfo | None) -> dict[str, pl.Series]:
+        """Convert tile info to Polars series."""
+        schema = self.to_polars_schema("tile")
+        if value is not None:
+            data = [
+                {
+                    "source_sample_idx": value.source_sample_idx,
+                    "x": value.x,
+                    "y": value.y,
+                    "width": value.width,
+                    "height": value.height,
+                }
+            ]
+        else:
+            data = [None]
+        return {name: pl.Series(name, data, dtype=schema["tile"])}
+
+    def from_polars(
+        self, name: str, row_index: int, df: pl.DataFrame, target_type: type
+    ) -> TileInfo | None:
+        """Convert Polars data back to TileInfo."""
+        if not issubclass(target_type, TileInfo):
+            raise TypeError(f"Expected target_type to be TileInfo, got {target_type}")
+        struct_val = df[name][row_index]
+        if struct_val is None:
+            return None
+        return TileInfo(
+            source_sample_idx=struct_val["source_sample_idx"],
+            x=struct_val["x"],
+            y=struct_val["y"],
+            width=struct_val["width"],
+            height=struct_val["height"],
+        )
 
 
 @dataclass(frozen=True)
@@ -35,10 +119,12 @@ class TensorField(Field):
     Attributes:
         semantic: Semantic tags describing the tensor's purpose
         dtype: Polars data type for tensor elements
+        channels_first: Whether the tensor uses channels-first format (C, H, W) vs channels-last (H, W, C)
     """
 
     semantic: Semantic
     dtype: PolarsDataType = pl.UInt8()
+    channels_first: bool = False
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Generate Polars schema with separate columns for data and shape."""
@@ -47,6 +133,10 @@ class TensorField(Field):
     def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
         """Convert tensor to flattened data and shape information."""
         numpy_value = to_numpy(value, self.dtype)
+
+        if self.channels_first and numpy_value is not None:
+            numpy_value = numpy_value.swapaxes(0, -1)
+
         schema = self.to_polars_schema("tensor")
 
         numpy_value_shape: Any | None = None
@@ -67,6 +157,10 @@ class TensorField(Field):
         flat_data = df[name][row_index]
         shape = df[name + "_shape"][row_index]
         numpy_data = np.array(flat_data).reshape(shape) if flat_data is not None else None
+
+        if self.channels_first and numpy_data is not None:
+            numpy_data = numpy_data.swapaxes(0, -1)
+
         return from_polars_data(numpy_data, target_type)  # type: ignore
 
 
@@ -99,7 +193,12 @@ class ImageField(TensorField):
     format: str = "RGB"
 
 
-def image_field(dtype: Any, format: str = "RGB", semantic: Semantic = Semantic.Default) -> Any:
+def image_field(
+    dtype: Any,
+    format: str = "RGB",
+    channels_first: bool = False,
+    semantic: Semantic = Semantic.Default,
+) -> Any:
     """
     Create an ImageField instance with the specified parameters.
 
@@ -111,7 +210,7 @@ def image_field(dtype: Any, format: str = "RGB", semantic: Semantic = Semantic.D
     Returns:
         ImageField instance configured with the given parameters
     """
-    return ImageField(semantic=semantic, dtype=dtype, format=format)
+    return ImageField(semantic=semantic, dtype=dtype, format=format, channels_first=channels_first)
 
 
 @dataclass(frozen=True)
@@ -348,6 +447,19 @@ def image_info_field(semantic: Semantic = Semantic.Default) -> Any:
     return ImageInfoField(semantic=semantic)
 
 
+def tile_field(semantic: Semantic = Semantic.Default) -> Any:
+    """
+    Create a TileField instance for storing tile information.
+
+    Args:
+        semantic: Optional semantic tags for disambiguation (defaults to Semantic.Default)
+
+    Returns:
+        TileField instance configured with the given semantic tags
+    """
+    return TileField(semantic=semantic)
+
+
 @dataclass(frozen=True)
 class ImagePathField(Field):
     """
@@ -569,10 +681,14 @@ class MaskField(Field):
     Attributes:
         semantic: Semantic tags describing the mask purpose
         dtype: Polars data type for mask values (defaults to uint8)
+        channels_first: Whether the mask uses channels-first format (C, H, W) vs channels-last (H, W, C)
+        has_channels_dim: Whether the mask includes a channels dimension (e.g., (H,t
     """
 
     semantic: Semantic
     dtype: PolarsDataType = pl.UInt8()
+    channels_first: bool = False
+    has_channels_dim: bool = False
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Generate Polars schema with separate columns for data and shape."""
@@ -585,6 +701,11 @@ class MaskField(Field):
 
         numpy_value_shape: Any | None = None
         if numpy_value is not None:
+            if self.has_channels_dim:
+                if self.channels_first:
+                    numpy_value = numpy_value.squeeze(axis=0)
+                else:
+                    numpy_value = numpy_value.squeeze(axis=-1)
             numpy_value_shape = numpy_value.shape
             numpy_value = numpy_value.reshape(-1)
 
@@ -603,10 +724,22 @@ class MaskField(Field):
             if flat_data is not None and shape is not None
             else None
         )
+
+        if numpy_data is not None and self.has_channels_dim:
+            if self.channels_first:
+                numpy_data = numpy_data[np.newaxis, ...]
+            else:
+                numpy_data = numpy_data[..., np.newaxis]
+
         return from_polars_data(numpy_data, target_type)  # type: ignore
 
 
-def mask_field(dtype: Any = pl.UInt8(), semantic: Semantic = Semantic.Default) -> Any:
+def mask_field(
+    dtype: Any = pl.UInt8(),
+    channels_first: bool = False,
+    has_channels_dim: bool = False,
+    semantic: Semantic = Semantic.Default,
+) -> Any:
     """
     Create a MaskField instance with the specified parameters.
 
@@ -617,7 +750,12 @@ def mask_field(dtype: Any = pl.UInt8(), semantic: Semantic = Semantic.Default) -
     Returns:
         MaskField instance configured with the given parameters
     """
-    return MaskField(semantic=semantic, dtype=dtype)
+    return MaskField(
+        semantic=semantic,
+        dtype=dtype,
+        channels_first=channels_first,
+        has_channels_dim=has_channels_dim,
+    )
 
 
 @dataclass(frozen=True)
@@ -938,3 +1076,73 @@ def keypoints_field(
         KeypointsField instance configured with the given parameters
     """
     return KeypointsField(semantic=semantic, dtype=dtype, normalize=normalize)
+
+
+@dataclass(frozen=True)
+class SubsetField(Field):
+    """
+    A field for storing subset information in a dataset.
+
+    This field supports both Enum and string values for subsets, storing them
+    as Polars categorical type for efficient memory usage and type safety.
+    When using an Enum type, the field maintains type safety by ensuring values
+    match the Enum. When using strings, any string value is accepted.
+
+    Attributes:
+        semantic: Semantic tags for the field
+        subset_type: Optional type hint for the subset values (Enum or str)
+        categories: Optional list of valid category values, required for categorical type
+    """
+
+    semantic: Semantic
+    categories: Optional[list[str]] = None
+
+    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+        """Generate schema with categorical type for subset values."""
+        return {name: pl.Categorical()}
+
+    def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
+        """Convert subset value to Polars categorical type.
+
+        If value is an Enum, uses the enum name. Otherwise, uses string representation.
+        """
+        if value is None:
+            polars_value = None
+        elif isinstance(value, Enum):
+            polars_value = value.name
+        else:
+            polars_value = str(value)
+
+        # Create categorical series with predefined categories if available
+        return {name: pl.Series(name, [polars_value], dtype=pl.Categorical)}
+
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+        """Reconstruct subset value from Polars data.
+
+        If target_type is an Enum, converts string back to enum value.
+        Otherwise, returns the string value directly.
+        """
+        value = df[name][row_index]
+
+        if value is None:
+            return None  # type: ignore
+
+        if issubclass(target_type, Enum):
+            # Convert string back to enum value
+            return target_type[value]  # type: ignore
+
+        # For string type or no type specified, return the string value
+        return value  # type: ignore
+
+
+def subset_field(subset_type: Optional[type] = None, semantic: Semantic = Semantic.Default) -> Any:
+    """
+    Create a SubsetField instance for storing dataset subset information.
+
+    Args:
+        semantic: Semantic tags for the field (defaults to Semantic.Default)
+
+    Returns:
+        SubsetField instance configured with the given parameters
+    """
+    return SubsetField(semantic=semantic)
