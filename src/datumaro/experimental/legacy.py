@@ -1533,17 +1533,25 @@ class SubsetConverter(ForwardAnnotationConverter):
     Subset enum values while preserving unrecognized values as strings.
 
     The following mappings are supported:
-    - Train: "train", "TRAINING" -> Subset.Training
-    - Validation: "val", "VALIDATION" -> Subset.Validation
-    - Test: "test", "TEST" -> Subset.Testing
+    - TRAINING: "train", "training" -> Subset.TRAINING
+    - VALIDATION: "val", "validation" -> Subset.VALIDATION
+    - TESTING: "test", "testing" -> Subset.TESTING
     """
 
-    # Combined lookup table mapping strings to enum values
-    _SUBSET_MAP = (
-        {name: Subset.Training for name in {"train", "TRAINING"}}
-        | {name: Subset.Validation for name in {"val", "VALIDATION"}}
-        | {name: Subset.Testing for name in {"test", "TEST"}}
-    )
+    # Case-insensitive + synonym lookup table mapping strings to enum values
+    _BASE_SUBSET_SYNONYMS = {
+        "train": Subset.TRAINING,
+        "training": Subset.TRAINING,
+        "val": Subset.VALIDATION,
+        "validation": Subset.VALIDATION,
+        "test": Subset.TESTING,
+        "testing": Subset.TESTING,
+    }
+
+    _SUBSET_MAP: dict[str, Subset] = {}
+    for key, value in _BASE_SUBSET_SYNONYMS.items():
+        for variant in {key, key.upper(), key.capitalize()}:
+            _SUBSET_MAP[variant] = value
 
     def __init__(self, semantic: Semantic = Semantic.Default, name_prefix: str = ""):
         """Initialize the converter.

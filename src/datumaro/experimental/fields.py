@@ -24,9 +24,9 @@ from .type_registry import from_polars_data, to_numpy
 class Subset(Enum):
     """Standard dataset subset values."""
 
-    Training = auto()
-    Validation = auto()
-    Testing = auto()
+    TRAINING = auto()
+    VALIDATION = auto()
+    TESTING = auto()
 
 
 T = TypeVar("T")
