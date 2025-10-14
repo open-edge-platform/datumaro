@@ -246,8 +246,8 @@ def test_mask_tiling():
     assert result_df[3, "instances"].shape == (2 * 50 * 50,)
     assert tuple(result_df[3, "instances_shape"]) == (2, 50, 50)
     instances = result_df[3, "instances"].reshape((2, 50, 50)).to_numpy()
-    assert np.any(instances[0])  # First instance not present
-    assert np.any(instances[1])  # Second instance present
+    assert np.any(instances[0])  # First (large) instance spans all tiles, so present here
+    assert np.any(instances[1])  # Second (small corner) instance present only in this tile
 
 
 def test_bbox_tiling():

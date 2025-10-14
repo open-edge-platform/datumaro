@@ -119,6 +119,7 @@ class TensorField(Field):
     Attributes:
         semantic: Semantic tags describing the tensor's purpose
         dtype: Polars data type for tensor elements
+        channels_first: Whether the tensor uses channels-first format (C, H, W) vs channels-last (H, W, C)
     """
 
     semantic: Semantic
@@ -680,6 +681,8 @@ class MaskField(Field):
     Attributes:
         semantic: Semantic tags describing the mask purpose
         dtype: Polars data type for mask values (defaults to uint8)
+        channels_first: Whether the mask uses channels-first format (C, H, W) vs channels-last (H, W, C)
+        has_channels_dim: Whether the mask includes a channels dimension (e.g., (H,t
     """
 
     semantic: Semantic
