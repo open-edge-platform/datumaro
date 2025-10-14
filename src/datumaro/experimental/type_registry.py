@@ -250,6 +250,34 @@ try:
 except ImportError:
     pass
 
+# Register torchvision converters if available
+try:
+    from torchvision import tv_tensors  # pyright: ignore[reportMissingImports]
+
+    register_numpy_converter(
+        tv_tensors.Image, lambda x: x.detach().cpu().numpy()
+    )  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+
+    register_numpy_converter(
+        tv_tensors.BoundingBoxes, lambda x: x.detach().cpu().numpy()
+    )  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+
+    register_numpy_converter(
+        tv_tensors.Mask, lambda x: x.detach().cpu().numpy()
+    )  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+
+    # Conversion from Polars to tv_tensors BoundingBoxes and Keypoints are not supported
+    # because tv_tensors BoundingBoxes and Keypoints require the image size which is not available during conversion.
+    register_from_polars_converter(
+        tv_tensors.Image, lambda x: tv_tensors.Image(x)
+    )  # pyright: ignore[reportUnknownMemberType, reportUnknownLambdaType, reportUnknownArgumentType]
+
+    register_from_polars_converter(
+        tv_tensors.Mask, lambda x: tv_tensors.Mask(x)
+    )  # pyright: ignore[reportUnknownMemberType, reportUnknownLambdaType, reportUnknownArgumentType]
+except ImportError:
+    pass
+
 # Register PIL Image converters if available
 try:
     from PIL import Image

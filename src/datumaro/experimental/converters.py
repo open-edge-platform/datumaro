@@ -25,7 +25,6 @@ from .fields import (
     ImageBytesField,
     ImageCallableField,
     ImageField,
-    ImageInfo,
     ImageInfoField,
     ImagePathField,
     InstanceMaskCallableField,
@@ -161,6 +160,7 @@ class RGBToBGRConverter(Converter):
             field=ImageField(
                 semantic=self.input_image.field.semantic,
                 dtype=self.input_image.field.dtype,
+                channels_first=self.output_image.field.channels_first,
                 format="BGR",  # Set output format to BGR
             ),
         )
@@ -227,6 +227,7 @@ class UInt8ToFloat32Converter(Converter):
                 semantic=self.input_image.field.semantic,
                 dtype=pl.Float32,
                 format=self.input_image.field.format,
+                channels_first=self.output_image.field.channels_first,
             ),
         )
         return self.input_image.field.dtype == pl.UInt8
@@ -271,7 +272,6 @@ class ImagePathToImageConverter(Converter):
 
     input_path: AttributeSpec[ImagePathField]
     output_image: AttributeSpec[ImageField]
-    output_info: AttributeSpec[ImageInfoField]
 
     def filter_output_spec(self) -> bool:
         """Configure output image specification based on input."""
@@ -282,13 +282,7 @@ class ImagePathToImageConverter(Converter):
                 semantic=self.input_path.field.semantic,
                 dtype=pl.UInt8,  # Default to UInt8 for loaded images
                 format="RGB",  # Default to RGB format
-            ),
-        )
-        # Configure output info specification
-        self.output_info = AttributeSpec(
-            name=self.output_info.name,
-            field=ImageInfoField(
-                semantic=self.input_path.field.semantic,
+                channels_first=self.output_image.field.channels_first,
             ),
         )
         return True
@@ -305,12 +299,10 @@ class ImagePathToImageConverter(Converter):
         """
         input_col = self.input_path.name
         output_col = self.output_image.name
-        output_info_col = self.output_info.name
 
         # Load images from paths
         image_data: list[Any] = []
         image_shapes: list[list[int]] = []
-        image_infos: list[ImageInfo] = []
 
         for path in df[input_col]:
             # Load image using PIL
@@ -324,12 +316,8 @@ class ImagePathToImageConverter(Converter):
                 image_data.append(img_array.flatten())
                 image_shapes.append(list(img_array.shape))
 
-                # Create image info with just width and height
-                image_infos.append(ImageInfo(width=img_array.shape[1], height=img_array.shape[0]))
-
         # Create output DataFrame
         image_schema = self.output_image.field.to_polars_schema("image")
-        image_info_schema = self.output_info.field.to_polars_schema("image_info")
 
         result_df = df.clone()
 
@@ -337,8 +325,55 @@ class ImagePathToImageConverter(Converter):
             [
                 pl.Series(output_col, image_data, dtype=image_schema["image"]),
                 pl.Series(output_col + "_shape", image_shapes, dtype=image_schema["image_shape"]),
-                pl.Series(output_info_col, image_infos, dtype=image_info_schema["image_info"]),
             ]
+        )
+
+        return result_df
+
+
+@converter
+class ImageToImageInfo(Converter):
+    """
+    Lazy converter that loads images from file paths using Pillow.
+
+    This converter reads image files from disk and converts them to tensor format.
+    It's marked as lazy to defer the expensive I/O operation until the data
+    is actually accessed.
+    """
+
+    input_image: AttributeSpec[ImageField]
+    output_info: AttributeSpec[ImageInfoField]
+
+    def filter_output_spec(self) -> bool:
+        """Configure output image specification based on input."""
+        # Configure output info specification
+        self.output_info = AttributeSpec(
+            name=self.output_info.name,
+            field=ImageInfoField(
+                semantic=self.input_image.field.semantic,
+            ),
+        )
+        return True
+
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+        """
+        Convert image paths to loaded image tensors and image info.
+
+        Args:
+            df: DataFrame containing image path column
+
+        Returns:
+            DataFrame with loaded image data, shape information, and image info
+        """
+        input_col = self.input_image.name + "_shape"
+        output_col = self.output_info.name
+
+        # Set image info
+        result_df = df.with_columns(
+            pl.struct(
+                pl.col(input_col).list.get(0).alias("height"),
+                pl.col(input_col).list.get(1).alias("width"),
+            ).alias(output_col)
         )
 
         return result_df
@@ -356,7 +391,6 @@ class ImageBytesToImageConverter(Converter):
 
     input_bytes: AttributeSpec[ImageBytesField]
     output_image: AttributeSpec[ImageField]
-    output_info: AttributeSpec[ImageInfoField]
 
     def filter_output_spec(self) -> bool:
         """Configure output image specification based on input."""
@@ -367,13 +401,7 @@ class ImageBytesToImageConverter(Converter):
                 semantic=self.input_bytes.field.semantic,
                 dtype=pl.UInt8,  # Default to UInt8 for decoded images
                 format="RGB",  # Default to RGB format
-            ),
-        )
-        # Configure output info specification
-        self.output_info = AttributeSpec(
-            name=self.output_info.name,
-            field=ImageInfoField(
-                semantic=self.input_bytes.field.semantic,
+                channels_first=self.output_image.field.channels_first,
             ),
         )
         return True
@@ -390,12 +418,10 @@ class ImageBytesToImageConverter(Converter):
         """
         input_col = self.input_bytes.name
         output_col = self.output_image.name
-        output_info_col = self.output_info.name
 
         # Decode images from bytes
         image_data: list[np.ndarray] = []
         image_shapes: list[list[int]] = []
-        image_infos: list[ImageInfo] = []
 
         for image_bytes in df[input_col]:
             # Decode image using PIL
@@ -411,16 +437,12 @@ class ImageBytesToImageConverter(Converter):
                 image_data.append(img_array.reshape(-1))
                 image_shapes.append(list(img_array.shape))
 
-                # Create image info with just width and height
-                image_infos.append(ImageInfo(width=img_array.shape[1], height=img_array.shape[0]))
-
         # Create output DataFrame
         result_df = df.clone()
         result_df = result_df.with_columns(
             [
                 pl.Series(output_col, image_data),
                 pl.Series(output_col + "_shape", image_shapes),
-                pl.Series(output_info_col, image_infos),
             ]
         )
 
@@ -693,6 +715,8 @@ class PolygonToMaskConverter(Converter):
             field=MaskField(
                 semantic=self.input_polygon.field.semantic,
                 dtype=self.output_mask.field.dtype,
+                channels_first=self.output_mask.field.channels_first,
+                has_channels_dim=self.output_mask.field.has_channels_dim,
             ),
             categories=mask_categories,
         )
@@ -1024,7 +1048,6 @@ class ImageCallableToImageConverter(Converter):
 
     input_callable: AttributeSpec[ImageCallableField]
     output_image: AttributeSpec[ImageField]
-    output_info: AttributeSpec[ImageInfoField]
 
     def filter_output_spec(self) -> bool:
         """Configure output image and info specifications based on input."""
@@ -1035,13 +1058,7 @@ class ImageCallableToImageConverter(Converter):
                 semantic=self.input_callable.field.semantic,
                 dtype=pl.UInt8,  # Default to UInt8 for image data
                 format=self.input_callable.field.format,  # Use format from callable field
-            ),
-        )
-        # Configure output info specification
-        self.output_info = AttributeSpec(
-            name=self.output_info.name,
-            field=ImageInfoField(
-                semantic=self.input_callable.field.semantic,
+                channels_first=self.output_image.field.channels_first,
             ),
         )
         return True
@@ -1058,12 +1075,10 @@ class ImageCallableToImageConverter(Converter):
         """
         input_col = self.input_callable.name
         output_col = self.output_image.name
-        output_info_col = self.output_info.name
 
         # Execute callables to generate image data
         image_data: list[Any] = []
         image_shapes: list[list[int]] = []
-        image_infos: list[ImageInfo] = []
 
         for callable_obj in df[input_col]:
             try:
@@ -1073,7 +1088,6 @@ class ImageCallableToImageConverter(Converter):
                 if img_array is None:
                     image_data.append(None)
                     image_shapes.append(None)
-                    image_infos.append(None)
                     continue
 
                 # Validate that we got a numpy array
@@ -1099,10 +1113,6 @@ class ImageCallableToImageConverter(Converter):
                 image_data.append(img_array.flatten())
                 image_shapes.append(list(img_array.shape))
 
-                # Create image info with width and height from 3D array
-                height, width = img_array.shape[:2]
-                image_infos.append(ImageInfo(width=width, height=height))
-
             except Exception as e:
                 raise RuntimeError(f"Error executing callable for image generation: {e}") from e
 
@@ -1112,7 +1122,6 @@ class ImageCallableToImageConverter(Converter):
             [
                 pl.Series(output_col, image_data),
                 pl.Series(output_col + "_shape", image_shapes),
-                pl.Series(output_info_col, image_infos),
             ]
         )
 
@@ -1222,6 +1231,8 @@ class MaskCallableToMaskConverter(Converter):
             field=MaskField(
                 semantic=self.input_callable.field.semantic,
                 dtype=self.input_callable.field.dtype,  # Use dtype from callable field
+                channels_first=self.output_mask.field.channels_first,
+                has_channels_dim=self.output_mask.field.has_channels_dim,
             ),
             categories=self.input_callable.categories,
         )
