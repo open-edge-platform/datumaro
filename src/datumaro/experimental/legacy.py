@@ -1550,7 +1550,7 @@ class SubsetConverter(ForwardAnnotationConverter):
 
     _SUBSET_MAP: dict[str, Subset] = {}
     for key, value in _BASE_SUBSET_SYNONYMS.items():
-        for variant in {key, key.lower(), key.upper(), key.capitalize()}:
+        for variant in {key, key.upper(), key.capitalize()}:
             _SUBSET_MAP[variant] = value
 
     def __init__(self, semantic: Semantic = Semantic.Default, name_prefix: str = ""):
