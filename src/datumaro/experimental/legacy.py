@@ -851,7 +851,7 @@ def _attributes_to_dict(attributes) -> dict[str, str]:
             try:
                 attr_values = attr.split("__")
                 attr_dict[attr_values[1]] = attr_values[2]
-            except:  # noqa: E722
+            except IndexError:
                 pass
     return attr_dict
 
