@@ -420,15 +420,7 @@ class LabelField(Field):
 
     def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
         """Convert label(s) to Polars format for single or multi-label cases."""
-        pl_type = self._pl_type
-
-        if value is None:
-            return {name: pl.Series(name, [None], dtype=pl_type)}
-
-        if self.multi_label:
-            return {name: pl.Series(name, [value], dtype=pl_type)}
-
-        return {name: pl.Series(name, [value], dtype=pl_type)}
+        return {name: pl.Series(name, [value], dtype=self._pl_type)}
 
     def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
         """Reconstruct label(s) from Polars data."""

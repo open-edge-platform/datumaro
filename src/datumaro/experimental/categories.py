@@ -14,7 +14,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import IntEnum
 from functools import cache
-from typing import Dict, Iterator, List, NamedTuple, Optional, Tuple, Union
+from typing import Any, Dict, Iterable, Iterator, List, NamedTuple, Optional, Tuple, Union
 
 
 class LabelSemantic(IntEnum):
@@ -33,6 +33,7 @@ class GroupType(IntEnum):
 
     EXCLUSIVE = 0  # Only one label from the group can be assigned
     INCLUSIVE = 1  # Multiple labels from the group can be assigned
+    RESTRICTED = 2  # For empty labels
 
     def to_str(self) -> str:
         return self.name.lower()
@@ -45,7 +46,7 @@ class GroupType(IntEnum):
             raise ValueError(f"Invalid GroupType: {text}")
 
 
-@dataclass(frozen=True)
+@dataclass()
 class Categories:
     """
     A base class for annotation metainfo. It is supposed to include
@@ -56,9 +57,11 @@ class Categories:
     pass
 
 
-@dataclass(frozen=True)
+@dataclass()
 class LabelCategories(Categories):
-    """Represents a group of labels with a specific group type and semantics."""
+    """Represents a group of labels with a specific group type and semantics.
+    Use this for simple, non-hierarchical classification tasks.
+    """
 
     labels: Tuple[str, ...] = field(default_factory=tuple)
     group_type: GroupType = GroupType.EXCLUSIVE
@@ -131,6 +134,231 @@ class LabelCategories(Categories):
         return hash((self.labels, self.group_type, frozenset(self.label_semantics.items())))
 
 
+@dataclass()
+class HierarchicalLabelCategory:
+    """Represents a single label category with hierarchical support."""
+
+    name: str
+    parent: str = field(default="")
+    label_semantics: dict = field(default_factory=dict)
+
+    def __post_init__(self):
+        """Validate that name is not empty."""
+        if not self.name:
+            raise ValueError("Label name cannot be empty")
+
+    def __hash__(self):
+        return hash((self.name, self.parent, frozenset(self.label_semantics.items())))
+
+
+@dataclass()
+class LabelGroup:
+    """Represents a group of labels with a specific group type."""
+
+    name: str
+    labels: Tuple[str, ...] = field(default_factory=tuple)
+    group_type: GroupType = GroupType.EXCLUSIVE
+
+    def __post_init__(self):
+        """Validate that name is not empty and labels is a tuple."""
+        if not self.name:
+            raise ValueError("Label group name cannot be empty")
+        if isinstance(self.labels, list):
+            object.__setattr__(self, "labels", tuple(self.labels))
+        elif not isinstance(self.labels, tuple):
+            raise TypeError("labels must be a tuple of strings")
+
+
+@dataclass()
+class HierarchicalLabelCategories(Categories):
+    """Represents hierarchical label categories with groups and parent-child relationships.
+    Use this for complex hierarchical classification tasks.
+    """
+
+    items: Tuple[HierarchicalLabelCategory, ...] = field(default_factory=tuple)
+    label_groups: Tuple[LabelGroup, ...] = field(default_factory=tuple)
+    label_semantics: dict = field(default_factory=dict)
+
+    def __post_init__(self):
+        """Validate that there are no duplicate labels and build indices."""
+        # Convert lists to tuples if needed
+        if isinstance(self.items, list):
+            object.__setattr__(self, "items", tuple(self.items))
+        if isinstance(self.label_groups, list):
+            object.__setattr__(self, "label_groups", tuple(self.label_groups))
+
+        # Force each group's labels to tuple in case construction happened before class reload
+        for group in self.label_groups:
+            if isinstance(group.labels, list):  # resilience against stale instances
+                object.__setattr__(group, "labels", tuple(group.labels))
+
+        # Validate no duplicate names
+        seen_names = set()
+        for item in self.items:
+            if item.name in seen_names:
+                raise ValueError(f"Duplicate label name: {item.name}")
+            seen_names.add(item.name)
+
+            # Also check for name label_semantics
+            # TODO: Remove this check after migrating completely to new system
+            if "name" in item.label_semantics:
+                name = item.label_semantics["name"]
+                if name not in seen_names:
+                    seen_names.add(name)
+
+        # Validate that all parents exist
+        for item in self.items:
+            if item.parent and item.parent not in seen_names:
+                raise ValueError(f"Parent '{item.parent}' not found for label '{item.name}'")
+
+        # Validate that all labels in groups exist
+        for group in self.label_groups:
+            for label_name in group.labels:
+                if label_name not in seen_names:
+                    raise ValueError(
+                        f"Label '{label_name}' in group '{group.name}' not found in items"
+                    )
+
+    @property
+    @cache
+    def _index_map(self) -> Dict[str, int]:
+        """Cached mapping from label names to indices."""
+        return {item.name: idx for idx, item in enumerate(self.items)}
+
+    @property
+    @cache
+    def _children_map(self) -> Dict[str, Tuple[str, ...]]:
+        """Cached mapping from parent names to child names."""
+        children_map: Dict[str, List[str]] = {}
+        for item in self.items:
+            if item.parent:
+                if item.parent not in children_map:
+                    children_map[item.parent] = []
+                children_map[item.parent].append(item.name)
+        return {parent: tuple(children) for parent, children in children_map.items()}
+
+    @property
+    def labels(self) -> Tuple[str, ...]:
+        """Get all label names for compatibility."""
+        return tuple(item.name for item in self.items)
+
+    def find(self, name: str) -> Tuple[Optional[int], Optional[HierarchicalLabelCategory]]:
+        """
+        Find a label by name.
+
+        Args:
+            name: The label name to find
+
+        Returns:
+            A tuple of (index, category) or (None, None) if not found
+        """
+        index = self._index_map.get(name)
+        if index is not None:
+            return index, self.items[index]
+        return None, None
+
+    def get_children(self, parent_name: str) -> Tuple[str, ...]:
+        """
+        Get all children of a parent label.
+
+        Args:
+            parent_name: The name of the parent label
+
+        Returns:
+            Tuple of child label names
+        """
+        return self._children_map.get(parent_name, ())
+
+    def get_parent(self, label_name: str) -> Optional[str]:
+        """
+        Get the parent of a label.
+
+        Args:
+            label_name: The name of the label
+
+        Returns:
+            Parent name or None if no parent
+        """
+        index = self._index_map.get(label_name)
+        if index is not None:
+            return self.items[index].parent
+        return None
+
+    def get_hierarchy_level(self, label_name: str) -> int:
+        """
+        Get the hierarchy level of a label (0 for root, 1 for first level children, etc.)
+
+        Args:
+            label_name: The name of the label
+
+        Returns:
+            Hierarchy level
+        """
+        level = 0
+        current = label_name
+        while True:
+            parent = self.get_parent(current)
+            if not parent:
+                break
+            level += 1
+            current = parent
+        return level
+
+    def __getitem__(self, idx: int) -> HierarchicalLabelCategory:
+        """Get category by index."""
+        return self.items[idx]
+
+    def __contains__(self, value: Union[int, str]) -> bool:
+        """Check if a label exists by name or index."""
+        if isinstance(value, str):
+            return value in self._index_map
+        else:
+            return 0 <= value < len(self.items)
+
+    def __len__(self) -> int:
+        """Get the number of labels."""
+        return len(self.items)
+
+    def __iter__(self) -> Iterator[HierarchicalLabelCategory]:
+        """Iterate over label categories."""
+        return iter(self.items)
+
+    def __hash__(self):
+        # Hash label_groups via value-based representation to avoid relying on their own hash implementation.
+        lg_repr = tuple((lg.name, tuple(lg.labels), lg.group_type) for lg in self.label_groups)
+        return hash((self.items, lg_repr, frozenset(self.label_semantics.items())))
+
+    @classmethod
+    def from_iterable(
+        cls,
+        iterable: Iterable[
+            Union[
+                str,
+                Tuple[str],
+                Tuple[str, str],
+                Tuple[str, str, Dict[str, Any]],
+            ]
+        ],
+    ) -> "HierarchicalLabelCategories":
+        """
+        Creates a HierarchicalLabelCategories from iterable.
+
+        Args:
+            iterable: This iterable object can be:
+                - a list of str - will be interpreted as list of Category names
+                - a list of positional arguments - will generate Categories with these arguments
+
+        Returns: a HierarchicalLabelCategories object
+        """
+        items = []
+        for category in iterable:
+            if isinstance(category, str):
+                items.append(HierarchicalLabelCategory(category))
+            else:
+                items.append(HierarchicalLabelCategory(*category))
+        return cls(items=tuple(items))
+
+
 class RgbColor(NamedTuple):
     """RGB color representation with named fields."""
 
@@ -139,7 +367,7 @@ class RgbColor(NamedTuple):
     b: int
 
 
-@dataclass(frozen=True)
+@dataclass()
 class Colormap:
     """
     A colormap that stores index-to-color mappings and provides efficient
@@ -186,7 +414,7 @@ class Colormap:
         return False
 
 
-@dataclass(frozen=True)
+@dataclass()
 class MaskCategories(Categories):
     """
     Describes a color map for segmentation masks.

@@ -26,7 +26,14 @@ from datumaro.components.dataset import Dataset as LegacyDataset
 from datumaro.components.dataset_base import CategoriesInfo, DatasetItem
 from datumaro.components.media import FromDataMixin, FromFileMixin, Image, MediaElement
 
-from .categories import LabelCategories, LabelSemantic, MaskCategories, RgbColor
+from .categories import (
+    HierarchicalLabelCategories,
+    HierarchicalLabelCategory,
+    LabelCategories,
+    LabelSemantic,
+    MaskCategories,
+    RgbColor,
+)
 from .converters import generate_colormap
 from .dataset import Dataset, Sample
 from .fields import (
@@ -757,6 +764,7 @@ class AnalysisResult:
     media_converter: ForwardMediaConverter | None
     ann_converters: dict[AnnotationType, ForwardAnnotationConverter]
     is_anomaly: bool
+    is_hierarchical: bool
 
 
 def analyze_legacy_dataset(
@@ -777,12 +785,16 @@ def analyze_legacy_dataset(
     ann_converters: dict[AnnotationType, ForwardAnnotationConverter] = {}
 
     label_groups = legacy_dataset.categories()[AnnotationType.label].label_groups
-    label_group_names = (
-        [group for group in label_groups if group.name.startswith("Classification labels__")]
-        if label_groups
-        else []
-    )
-    multi_label = len(label_group_names) > 1
+    label_group_names = [group.name for group in label_groups] if label_groups else []
+
+    # Check if project has a hierarchical structure
+    is_hierarchical = _has_derived_labels(label_group_names)
+
+    # Look for multi label classification groups
+    multi_label_group_names = [
+        name for name in label_group_names if name.startswith("Classification labels__")
+    ]
+    is_multi_label = len(multi_label_group_names) > 1 and not is_hierarchical
 
     media_converter = get_forward_media_converter(legacy_dataset, semantic)
     if media_converter is not None:
@@ -803,8 +815,23 @@ def analyze_legacy_dataset(
         if converter is not None:
             ann_converters[ann_type] = converter
             ann_attributes = converter.get_schema_attributes()
-            if multi_label:
+            if is_multi_label:
                 ann_attributes[AnnotationType.label.name].annotation = label_field(multi_label=True)
+            if is_hierarchical:
+                ann_attributes[AnnotationType.label.name].annotation = label_field(is_list=True)
+                categories = legacy_dataset.categories()[AnnotationType.label].items
+                label_categories = tuple(
+                    HierarchicalLabelCategory(
+                        name=category.name,
+                        parent=category.parent,
+                        label_semantics=_attributes_to_dict(category.attributes),
+                    )
+                    for category in categories
+                )
+                hierarchical_categories = HierarchicalLabelCategories(
+                    items=label_categories, label_groups=label_groups
+                )
+                ann_attributes[AnnotationType.label.name].categories = hierarchical_categories
             attributes.update(ann_attributes)
     schema = Schema(attributes=attributes)
     return AnalysisResult(
@@ -812,7 +839,39 @@ def analyze_legacy_dataset(
         media_converter=media_converter,
         ann_converters=ann_converters,
         is_anomaly=is_anomaly,
+        is_hierarchical=is_hierarchical,
     )
+
+
+def _attributes_to_dict(attributes) -> dict[str, str]:
+    """Convert a list of Attribute objects to a dictionary. Used for hierarchical label legacy conversion"""
+    attr_dict = {}
+    for attr in attributes:
+        if "__" in attr:
+            try:
+                attr_values = attr.split("__")
+                attr_dict[attr_values[1]] = attr_values[2]
+            except:  # noqa: E722
+                pass
+    return attr_dict
+
+
+def _has_derived_labels(labels) -> bool:
+    """
+    Check if any item in the list is any other label + "__" + anything. This indicates that the
+    labels are from a hierarchical structure
+
+    Args:
+        labels: List of label strings
+
+    Returns:
+        bool: True if any derived labels exist, False otherwise
+    """
+    for i in range(len(labels)):
+        for j in range(len(labels)):
+            if i != j and labels[i].startswith(labels[j] + "__"):
+                return True
+    return False
 
 
 def _convert_legacy_item(item: DatasetItem, analysis_result: AnalysisResult) -> dict[str, Any]:
@@ -857,7 +916,10 @@ def convert_from_legacy(legacy_dataset: LegacyDataset) -> Dataset[Sample]:
     for legacy_item in legacy_dataset:
         # Convert legacy item to experimental sample
         sample_data = _convert_legacy_item(legacy_item, analysis_result)
-
+        if analysis_result.is_hierarchical:
+            # Convert single labels in hierarchical project to be a list
+            if isinstance(sample_data["label"], int):
+                sample_data["label"] = [sample_data["label"]]
         # Create sample and add to dataset
         sample = Sample(**sample_data)
         experimental_dataset.append(sample)
