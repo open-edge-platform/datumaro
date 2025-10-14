@@ -27,9 +27,11 @@ from datumaro.components.dataset_base import CategoriesInfo, DatasetItem
 from datumaro.components.media import FromDataMixin, FromFileMixin, Image, MediaElement
 
 from .categories import (
+    GroupType,
     HierarchicalLabelCategories,
     HierarchicalLabelCategory,
     LabelCategories,
+    LabelGroup,
     LabelSemantic,
     MaskCategories,
     RgbColor,
@@ -788,6 +790,13 @@ def analyze_legacy_dataset(
     ann_converters: dict[AnnotationType, ForwardAnnotationConverter] = {}
 
     label_groups = legacy_dataset.categories()[AnnotationType.label].label_groups
+    # Convert to new label group class
+    label_groups = [
+        LabelGroup(
+            name=group.name, labels=group.labels, group_type=GroupType[group.group_type.name]
+        )
+        for group in label_groups
+    ]
     label_group_names = [group.name for group in label_groups] if label_groups else []
 
     # Check if project has a hierarchical structure
