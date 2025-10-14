@@ -7,7 +7,7 @@ Implementations of tilers for specific field types.
 """
 
 import operator
-from typing import Tuple
+from typing import Any, Tuple
 
 import numpy as np
 import polars as pl
@@ -23,26 +23,27 @@ from ..fields import (
     LabelField,
     MaskField,
     PolygonField,
+    SubsetField,
 )
 from .tiler_registry import Tiler, TilerRegistry
 
-# TODO(gdlg): Uncomment when support for subset fields is added
-# @TilerRegistry.register(SubsetField)
-# class PassthroughTiler(Tiler):
-#    """Tiler for fields which do not require any changes (e.g. subset)."""
-#
-#    field_spec: AttributeSpec[Any]
-#
-#    def tile(self, df: pl.DataFrame, tiles_df: pl.DataFrame, slice_offset: int = 0) -> pl.DataFrame:
-#        """Process labels, adding keep column for list fields."""
-#        column_name = self.field_spec.name
-#        source_sample_idx = (
-#            tiles_df.select(pl.col("tile").struct["source_sample_idx"])["source_sample_idx"]
-#            - slice_offset
-#        )
-#
-#        # Just a passthrough of the data
-#        return pl.DataFrame({column_name: df[column_name].gather(source_sample_idx)})
+
+@TilerRegistry.register(SubsetField)
+class PassthroughTiler(Tiler):
+    """Tiler for fields which do not require any changes (e.g. subset)."""
+
+    field_spec: AttributeSpec[Any]
+
+    def tile(self, df: pl.DataFrame, tiles_df: pl.DataFrame, slice_offset: int = 0) -> pl.DataFrame:
+        """Process labels, adding keep column for list fields."""
+        column_name = self.field_spec.name
+        source_sample_idx = (
+            tiles_df.select(pl.col("tile").struct["source_sample_idx"])["source_sample_idx"]
+            - slice_offset
+        )
+
+        # Just a passthrough of the data
+        return pl.DataFrame({column_name: df[column_name].gather(source_sample_idx)})
 
 
 @TilerRegistry.register(MaskField)
