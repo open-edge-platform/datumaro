@@ -789,24 +789,31 @@ def analyze_legacy_dataset(
     attributes: dict[str, AttributeInfo] = {}
     ann_converters: dict[AnnotationType, ForwardAnnotationConverter] = {}
 
-    label_groups = legacy_dataset.categories()[AnnotationType.label].label_groups
-    # Convert to new label group class
-    label_groups = [
-        LabelGroup(
-            name=group.name, labels=group.labels, group_type=GroupType[group.group_type.name]
-        )
-        for group in label_groups
-    ]
-    label_group_names = [group.name for group in label_groups] if label_groups else []
+    if AnnotationType.label in legacy_dataset.categories():
+        label_groups = legacy_dataset.categories()[AnnotationType.label].label_groups
+        # Convert to new label group class
+        label_groups = [
+            LabelGroup(
+                name=group.name, labels=group.labels, group_type=GroupType[group.group_type.name]
+            )
+            for group in label_groups
+        ]
+        label_group_names = [group.name for group in label_groups] if label_groups else []
 
-    # Check if project has a hierarchical structure
-    is_hierarchical = _has_derived_labels(label_group_names)
+        # Check if project has a hierarchical structure
+        label_names = [
+            item.name for item in legacy_dataset.categories()[AnnotationType.label].items
+        ]
+        is_hierarchical = _has_derived_labels(label_group_names) or _has_derived_labels(label_names)
 
-    # Look for multi label classification groups
-    multi_label_group_names = [
-        name for name in label_group_names if name.startswith("Classification labels__")
-    ]
-    is_multi_label = len(multi_label_group_names) > 1 and not is_hierarchical
+        # Look for multi label classification groups
+        multi_label_group_names = [
+            name for name in label_group_names if name.startswith("Classification labels__")
+        ]
+        is_multi_label = len(multi_label_group_names) > 1 and not is_hierarchical
+    else:
+        is_hierarchical = False
+        is_multi_label = False
 
     media_converter = get_forward_media_converter(legacy_dataset, semantic)
     if media_converter is not None:
@@ -845,7 +852,7 @@ def analyze_legacy_dataset(
                     for category in categories
                 )
                 hierarchical_categories = HierarchicalLabelCategories(
-                    items=label_categories, label_groups=label_groups
+                    items=label_categories, label_groups=tuple(label_groups)
                 )
                 ann_attributes[AnnotationType.label.name].categories = hierarchical_categories
             attributes.update(ann_attributes)
