@@ -14,7 +14,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import IntEnum
 from functools import cache
-from typing import Any, Dict, Iterable, Iterator, List, NamedTuple, Optional, Tuple, Union
+from typing import Dict, Iterator, List, NamedTuple, Optional, Tuple, Union
 
 
 class LabelSemantic(IntEnum):
@@ -46,7 +46,7 @@ class GroupType(IntEnum):
             raise ValueError(f"Invalid GroupType: {text}")
 
 
-@dataclass()
+@dataclass(frozen=True)
 class Categories:
     """
     A base class for annotation metainfo. It is supposed to include
@@ -57,10 +57,11 @@ class Categories:
     pass
 
 
-@dataclass()
+@dataclass(frozen=True)
 class LabelCategories(Categories):
-    """Represents a group of labels with a specific group type and semantics.
-    Use this for simple, non-hierarchical classification tasks.
+    """
+    Represents a group of labels with a specific group type and semantics.
+    Use this for simple, non-hierarchical tasks.
     """
 
     labels: Tuple[str, ...] = field(default_factory=tuple)
@@ -134,7 +135,7 @@ class LabelCategories(Categories):
         return hash((self.labels, self.group_type, frozenset(self.label_semantics.items())))
 
 
-@dataclass()
+@dataclass(frozen=True)
 class HierarchicalLabelCategory:
     """Represents a single label category with hierarchical support."""
 
@@ -151,7 +152,7 @@ class HierarchicalLabelCategory:
         return hash((self.name, self.parent, frozenset(self.label_semantics.items())))
 
 
-@dataclass()
+@dataclass(frozen=True)
 class LabelGroup:
     """Represents a group of labels with a specific group type."""
 
@@ -163,15 +164,12 @@ class LabelGroup:
         """Validate that name is not empty and labels is a tuple."""
         if not self.name:
             raise ValueError("Label group name cannot be empty")
-        if isinstance(self.labels, list):
-            object.__setattr__(self, "labels", tuple(self.labels))
-        elif not isinstance(self.labels, tuple):
-            raise TypeError("labels must be a tuple of strings")
 
 
-@dataclass()
+@dataclass(frozen=True)
 class HierarchicalLabelCategories(Categories):
-    """Represents hierarchical label categories with groups and parent-child relationships.
+    """
+    Represents hierarchical label categories with groups and parent-child relationships.
     Use this for complex hierarchical classification tasks.
     """
 
@@ -180,18 +178,6 @@ class HierarchicalLabelCategories(Categories):
     label_semantics: dict = field(default_factory=dict)
 
     def __post_init__(self):
-        """Validate that there are no duplicate labels and build indices."""
-        # Convert lists to tuples if needed
-        if isinstance(self.items, list):
-            object.__setattr__(self, "items", tuple(self.items))
-        if isinstance(self.label_groups, list):
-            object.__setattr__(self, "label_groups", tuple(self.label_groups))
-
-        # Force each group's labels to tuple in case construction happened before class reload
-        for group in self.label_groups:
-            if isinstance(group.labels, list):  # resilience against stale instances
-                object.__setattr__(group, "labels", tuple(group.labels))
-
         # Validate no duplicate names
         seen_names = set()
         for item in self.items:
@@ -328,36 +314,6 @@ class HierarchicalLabelCategories(Categories):
         lg_repr = tuple((lg.name, tuple(lg.labels), lg.group_type) for lg in self.label_groups)
         return hash((self.items, lg_repr, frozenset(self.label_semantics.items())))
 
-    @classmethod
-    def from_iterable(
-        cls,
-        iterable: Iterable[
-            Union[
-                str,
-                Tuple[str],
-                Tuple[str, str],
-                Tuple[str, str, Dict[str, Any]],
-            ]
-        ],
-    ) -> "HierarchicalLabelCategories":
-        """
-        Creates a HierarchicalLabelCategories from iterable.
-
-        Args:
-            iterable: This iterable object can be:
-                - a list of str - will be interpreted as list of Category names
-                - a list of positional arguments - will generate Categories with these arguments
-
-        Returns: a HierarchicalLabelCategories object
-        """
-        items = []
-        for category in iterable:
-            if isinstance(category, str):
-                items.append(HierarchicalLabelCategory(category))
-            else:
-                items.append(HierarchicalLabelCategory(*category))
-        return cls(items=tuple(items))
-
 
 class RgbColor(NamedTuple):
     """RGB color representation with named fields."""
@@ -367,7 +323,7 @@ class RgbColor(NamedTuple):
     b: int
 
 
-@dataclass()
+@dataclass(frozen=True)
 class Colormap:
     """
     A colormap that stores index-to-color mappings and provides efficient
@@ -414,7 +370,7 @@ class Colormap:
         return False
 
 
-@dataclass()
+@dataclass(frozen=True)
 class MaskCategories(Categories):
     """
     Describes a color map for segmentation masks.

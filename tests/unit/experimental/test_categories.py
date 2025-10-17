@@ -356,39 +356,3 @@ def test_hierarchical_label_categories_hash():
 
     assert hash(cat1) == hash(cat2)
     assert hash(cat1) != hash(cat3)
-
-
-def test_hierarchical_label_categories_from_iterable():
-    """Test creation from iterable."""
-    # From strings
-    categories = HierarchicalLabelCategories.from_iterable(["cat", "dog", "bird"])
-    assert len(categories) == 3
-    assert categories.labels == ("cat", "dog", "bird")
-
-    # From tuples with names only
-    categories = HierarchicalLabelCategories.from_iterable([("cat",), ("dog",)])
-    assert len(categories) == 2
-    assert categories.labels == ("cat", "dog")
-
-    # From tuples with names and parents
-    categories = HierarchicalLabelCategories.from_iterable(
-        [
-            ("animal",),
-            ("dog", "animal"),
-            ("cat", "animal"),
-        ]
-    )
-    assert len(categories) == 3
-    assert categories.get_parent("dog") == "animal"
-    assert categories.get_parent("cat") == "animal"
-
-    # From tuples with names, parents, and semantics
-    categories = HierarchicalLabelCategories.from_iterable(
-        [
-            ("animal", "", {"type": "living"}),
-            ("dog", "animal", {"breed": "unknown"}),
-        ]
-    )
-    assert len(categories) == 2
-    assert categories[0].label_semantics == {"type": "living"}
-    assert categories[1].label_semantics == {"breed": "unknown"}
