@@ -11,6 +11,7 @@ instead of attrs, taking inspiration from the original Categories implementation
 
 from __future__ import annotations
 
+from collections import defaultdict
 from dataclasses import dataclass, field
 from enum import IntEnum
 from functools import cache
@@ -220,8 +221,6 @@ class HierarchicalLabelCategories(Categories):
     @cache
     def _children_map(self) -> Dict[str, Tuple[str, ...]]:
         """Cached mapping from parent names to child names."""
-        from collections import defaultdict
-
         children_map: defaultdict[str, List[str]] = defaultdict(list)
         for item in self.items:
             if item.parent:
