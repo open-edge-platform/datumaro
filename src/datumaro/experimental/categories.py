@@ -145,8 +145,8 @@ class HierarchicalLabelCategory:
 
     def __post_init__(self):
         """Validate that name is not empty."""
-        if not self.name:
-            raise ValueError("Label name cannot be empty")
+        if not self.name or not isinstance(self.name, str):
+            raise ValueError("Label name cannot be empty and must be a string")
 
     def __hash__(self):
         return hash((self.name, self.parent, frozenset(self.label_semantics.items())))
@@ -162,8 +162,8 @@ class LabelGroup:
 
     def __post_init__(self):
         """Validate that name is not empty and labels is a tuple."""
-        if not self.name:
-            raise ValueError("Label group name cannot be empty")
+        if not self.name or not isinstance(self.name, str):
+            raise ValueError("Label group name cannot be empty and must be a string")
 
 
 @dataclass(frozen=True)
