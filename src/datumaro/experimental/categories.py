@@ -178,6 +178,11 @@ class HierarchicalLabelCategories(Categories):
     label_semantics: dict = field(default_factory=dict)
 
     def __post_init__(self):
+        if not isinstance(self.items, tuple):
+            raise TypeError("items must be a tuple of HierarchicalLabelCategory")
+        if not isinstance(self.label_groups, tuple):
+            raise TypeError("label_groups must be a tuple of LabelGroup")
+
         # Validate no duplicate names
         seen_names = set()
         for item in self.items:
@@ -215,11 +220,11 @@ class HierarchicalLabelCategories(Categories):
     @cache
     def _children_map(self) -> Dict[str, Tuple[str, ...]]:
         """Cached mapping from parent names to child names."""
-        children_map: Dict[str, List[str]] = {}
+        from collections import defaultdict
+
+        children_map: defaultdict[str, List[str]] = defaultdict(list)
         for item in self.items:
             if item.parent:
-                if item.parent not in children_map:
-                    children_map[item.parent] = []
                 children_map[item.parent].append(item.name)
         return {parent: tuple(children) for parent, children in children_map.items()}
 

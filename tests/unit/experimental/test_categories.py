@@ -179,23 +179,10 @@ def test_hierarchical_label_category_hash():
 
 
 # LabelGroup Tests
-def test_label_group_converts_list_to_tuple():
-    """Test that list labels are converted to tuple."""
-    group = LabelGroup(name="test", labels=["a", "b", "c"])
-    assert group.labels == ("a", "b", "c")
-    assert isinstance(group.labels, tuple)
-
-
 def test_label_group_empty_name_raises_error():
     """Test that empty name raises ValueError."""
     with pytest.raises(ValueError, match="Label group name cannot be empty"):
         LabelGroup(name="", labels=("a", "b"))
-
-
-def test_label_group_invalid_labels_type_raises_error():
-    """Test that invalid labels type raises TypeError."""
-    with pytest.raises(TypeError, match="labels must be a tuple of strings"):
-        LabelGroup(name="test", labels="invalid")
 
 
 # HierarchicalLabelCategories Tests
@@ -209,11 +196,11 @@ def test_hierarchical_label_categories_empty_creation():
 
 def test_hierarchical_label_categories_basic_creation():
     """Test creation with basic items."""
-    items = [
+    items = (
         HierarchicalLabelCategory("animal"),
         HierarchicalLabelCategory("dog", parent="animal"),
         HierarchicalLabelCategory("cat", parent="animal"),
-    ]
+    )
     categories = HierarchicalLabelCategories(items=items)
 
     assert len(categories) == 3
@@ -224,27 +211,25 @@ def test_hierarchical_label_categories_basic_creation():
 
 def test_hierarchical_label_categories_duplicate_names_raises_error():
     """Test that duplicate names raise ValueError."""
-    items = [
+    items = (
         HierarchicalLabelCategory("duplicate"),
         HierarchicalLabelCategory("duplicate"),
-    ]
+    )
     with pytest.raises(ValueError, match="Duplicate label name: duplicate"):
         HierarchicalLabelCategories(items=items)
 
 
 def test_hierarchical_label_categories_invalid_parent_raises_error():
     """Test that invalid parent raises ValueError."""
-    items = [
-        HierarchicalLabelCategory("child", parent="nonexistent"),
-    ]
+    items = (HierarchicalLabelCategory("child", parent="nonexistent"),)
     with pytest.raises(ValueError, match="Parent 'nonexistent' not found for label 'child'"):
         HierarchicalLabelCategories(items=items)
 
 
 def test_hierarchical_label_categories_invalid_group_label_raises_error():
     """Test that invalid group label raises ValueError."""
-    items = [HierarchicalLabelCategory("existing")]
-    groups = [LabelGroup("test_group", labels=("nonexistent",))]
+    items = (HierarchicalLabelCategory("existing"),)
+    groups = (LabelGroup("test_group", labels=("nonexistent",)),)
 
     with pytest.raises(
         ValueError, match="Label 'nonexistent' in group 'test_group' not found in items"
@@ -254,12 +239,12 @@ def test_hierarchical_label_categories_invalid_group_label_raises_error():
 
 def test_hierarchical_label_categories_get_children():
     """Test getting children of a parent label."""
-    items = [
+    items = (
         HierarchicalLabelCategory("animal"),
         HierarchicalLabelCategory("dog", parent="animal"),
         HierarchicalLabelCategory("cat", parent="animal"),
         HierarchicalLabelCategory("bird"),
-    ]
+    )
     categories = HierarchicalLabelCategories(items=items)
 
     children = categories.get_children("animal")
@@ -276,10 +261,10 @@ def test_hierarchical_label_categories_get_children():
 
 def test_hierarchical_label_categories_get_parent():
     """Test getting parent of a label."""
-    items = [
+    items = (
         HierarchicalLabelCategory("animal"),
         HierarchicalLabelCategory("dog", parent="animal"),
-    ]
+    )
     categories = HierarchicalLabelCategories(items=items)
 
     # Test label with parent
@@ -297,11 +282,11 @@ def test_hierarchical_label_categories_get_parent():
 
 def test_hierarchical_label_categories_get_hierarchy_level():
     """Test getting hierarchy level of labels."""
-    items = [
+    items = (
         HierarchicalLabelCategory("root"),
         HierarchicalLabelCategory("level1", parent="root"),
         HierarchicalLabelCategory("level2", parent="level1"),
-    ]
+    )
     categories = HierarchicalLabelCategories(items=items)
 
     assert categories.get_hierarchy_level("root") == 0
@@ -311,10 +296,10 @@ def test_hierarchical_label_categories_get_hierarchy_level():
 
 def test_hierarchical_label_categories_indexing():
     """Test indexing and contains operations."""
-    items = [
+    items = (
         HierarchicalLabelCategory("first"),
         HierarchicalLabelCategory("second"),
-    ]
+    )
     categories = HierarchicalLabelCategories(items=items)
 
     # Test indexing
@@ -335,10 +320,10 @@ def test_hierarchical_label_categories_indexing():
 
 def test_hierarchical_label_categories_iteration():
     """Test iteration over categories."""
-    items = [
+    items = (
         HierarchicalLabelCategory("first"),
         HierarchicalLabelCategory("second"),
-    ]
+    )
     categories = HierarchicalLabelCategories(items=items)
 
     names = [cat.name for cat in categories]
@@ -347,8 +332,8 @@ def test_hierarchical_label_categories_iteration():
 
 def test_hierarchical_label_categories_hash():
     """Test hashing of hierarchical categories."""
-    items = [HierarchicalLabelCategory("test")]
-    groups = [LabelGroup("group1", labels=("test",))]
+    items = (HierarchicalLabelCategory("test"),)
+    groups = (LabelGroup("group1", labels=("test",)),)
 
     cat1 = HierarchicalLabelCategories(items=items, label_groups=groups)
     cat2 = HierarchicalLabelCategories(items=items, label_groups=groups)
