@@ -14,6 +14,7 @@ from typing_extensions import Annotated
 from datumaro.components.annotation import (
     AnnotationType,
     Bbox,
+    Ellipse,
     ExtractedMask,
     LabelCategories,
     Points,
@@ -39,6 +40,7 @@ from datumaro.experimental.legacy import (
     BackwardPolygonAnnotationConverter,
     BackwardRotatedBboxAnnotationConverter,
     ForwardBboxAnnotationConverter,
+    ForwardEllipseAnnotationConverter,
     ForwardImageMediaConverter,
     ForwardKeypointAnnotationConverter,
     ForwardMaskAnnotationConverter,
@@ -594,6 +596,96 @@ def test_bbox_annotation_converter_convert_annotations_empty_list():
     assert result["bboxes"].dtype == np.float32
     # No bbox_labels should be present when there are no categories
     assert "bbox_labels" not in result
+
+
+def test_ellipse_annotation_converter_get_schema_attributes():
+    """Test schema attribute generation for ellipses."""
+    # Create a dataset with empty categories
+    dataset = LegacyDataset.from_iterable([], categories={})
+    converter = ForwardEllipseAnnotationConverter.create(dataset)
+    assert converter is not None
+
+    attributes = converter.get_schema_attributes()
+
+    assert "ellipses" in attributes
+    # bbox_labels should not be present when there are no label categories
+    assert "ellipses_labels" not in attributes
+    assert attributes["ellipses"].type == np.ndarray
+
+
+def test_ellipses_annotation_converter_convert_annotations_single_ellipse():
+    """Test conversion of single ellipse annotation."""
+
+    # Create categories with labels to test with labels
+    label_categories = LabelCategories()
+    label_categories.add("class_1")
+    categories: CategoriesInfo = {AnnotationType.label: label_categories}
+
+    # Create a dataset with the categories
+    dataset = LegacyDataset.from_iterable([], categories=categories)
+    converter = ForwardEllipseAnnotationConverter.create(dataset)
+    assert converter is not None
+
+    ellipse = Ellipse(10, 20, 30, 40, label=1)  # x=10, y=20, w=30, h=40
+    item = DatasetItem(id="test")
+
+    result = converter.convert_annotations([ellipse], item)
+
+    expected_ellipse = np.array([[10, 20, 30, 40]], dtype=np.float32)  # x1,y1,x2,y2 format
+    expected_labels = np.array([1], dtype=np.int32)
+
+    np.testing.assert_array_equal(result["ellipses"], expected_ellipse)
+    np.testing.assert_array_equal(result["labels"], expected_labels)
+
+
+def test_ellipse_annotation_converter_convert_annotations_multiple_ellipses():
+    """Test conversion of multiple ellipse annotations."""
+
+    # Create categories with labels
+    label_categories = LabelCategories()
+    label_categories.add("class_1")
+    label_categories.add("class_2")
+    categories: CategoriesInfo = {AnnotationType.label: label_categories}
+
+    # Create a dataset with the categories
+    dataset = LegacyDataset.from_iterable([], categories=categories)
+    converter = ForwardEllipseAnnotationConverter.create(dataset)
+    assert converter is not None
+
+    ellipse1 = Ellipse(10, 20, 30, 40, label=1)
+    ellipse2 = Ellipse(50, 60, 70, 80, label=2)
+    item = DatasetItem(id="test")
+
+    result = converter.convert_annotations([ellipse1, ellipse2], item)
+
+    expected_ellipses = np.array(
+        [
+            [10, 20, 30, 40],  # x1,y1,x2,y2 for first ellipse
+            [50, 60, 70, 80],  # x1,y1,x2,y2 for second ellipse
+        ],
+        dtype=np.float32,
+    )
+    expected_labels = np.array([1, 2], dtype=np.int32)
+
+    np.testing.assert_array_equal(result["ellipses"], expected_ellipses)
+    np.testing.assert_array_equal(result["labels"], expected_labels)
+
+
+def test_ellipse_annotation_converter_convert_annotations_empty_list():
+    """Test conversion of empty annotation list."""
+    # Create a dataset with empty categories
+    dataset = LegacyDataset.from_iterable([], categories={})
+    converter = ForwardEllipseAnnotationConverter.create(dataset)
+    assert converter is not None
+    item = DatasetItem(id="test")
+
+    result = converter.convert_annotations([], item)
+
+    # Empty arrays with proper shapes
+    assert result["ellipses"].shape == (0, 4)
+    assert result["ellipses"].dtype == np.float32
+    # No ellipse_labels should be present when there are no categories
+    assert "ellipse_labels" not in result
 
 
 # Converter registry tests
