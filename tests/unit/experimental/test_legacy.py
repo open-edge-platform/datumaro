@@ -44,6 +44,8 @@ from datumaro.experimental.legacy import (
     ForwardMaskAnnotationConverter,
     ForwardPolygonAnnotationConverter,
     ForwardRotatedBboxAnnotationConverter,
+    _attributes_to_dict,
+    _has_derived_labels,
     analyze_experimental_dataset,
     analyze_legacy_dataset,
     convert_from_legacy,
@@ -713,7 +715,9 @@ def test_analyze_unknown_annotation_type():
         # Should skip unknown annotation type
         assert "image_path" in analysis_result.schema.attributes
         assert "image_info" in analysis_result.schema.attributes
-        assert len(analysis_result.schema.attributes) == 2  # Only image_path and image_info field
+        assert (
+            len(analysis_result.schema.attributes) == 3
+        )  # Only image_path, image_info, and subset fields
 
 
 def test_convert_simple_bbox_dataset():
@@ -861,7 +865,7 @@ class DetectionSample(Sample):
         np.ndarray[Any, np.dtype[np.float32]], bbox_field(dtype=pl.Float32, format="x1y1x2y2")
     ]
     bbox_labels: Annotated[
-        np.ndarray[Any, np.dtype[np.int32]], label_field(dtype=pl.Int32, multi_label=True)
+        np.ndarray[Any, np.dtype[np.int32]], label_field(dtype=pl.Int32, is_list=True)
     ]
 
 
@@ -871,7 +875,7 @@ class RotatedDetectionSample(Sample):
         np.ndarray[Any, np.dtype[np.float32]], rotated_bbox_field(dtype=pl.Float32)
     ]
     rotated_bbox_labels: Annotated[
-        np.ndarray[Any, np.dtype[np.int32]], label_field(dtype=pl.Int32, multi_label=True)
+        np.ndarray[Any, np.dtype[np.int32]], label_field(dtype=pl.Int32, is_list=True)
     ]
 
 
@@ -1900,3 +1904,102 @@ def test_keypoint_annotation_converter_get_annotation_type():
     """Test that keypoint converter returns correct annotation type."""
     annotation_types = ForwardKeypointAnnotationConverter.get_supported_annotation_types()
     assert annotation_types == [AnnotationType.points]
+
+
+# Tests for new hierarchical legacy conversion functionality
+def test_attributes_to_dict():
+    """Test _attributes_to_dict helper function."""
+    # Test with valid attribute format
+    attributes = ["some_attr", "__color__red", "__type__human", "invalid_format"]
+    result = _attributes_to_dict(attributes)
+
+    expected = {"color": "red", "type": "human"}
+    assert result == expected
+
+    # Test with empty attributes
+    result = _attributes_to_dict([])
+    assert result == {}
+
+
+def test_has_derived_labels():
+    """Test _has_derived_labels helper function."""
+    # Test with hierarchical labels (derived labels exist)
+    labels = ["animal", "animal__dog", "animal__cat", "vehicle"]
+    assert _has_derived_labels(labels) is True
+
+    # Test with more complex hierarchy
+    labels = ["root", "root__child", "root__child__grandchild"]
+    assert _has_derived_labels(labels) is True
+
+    # Test with no hierarchical structure
+    labels = ["cat", "dog", "bird"]
+    assert _has_derived_labels(labels) is False
+
+    # Test with empty list
+    assert _has_derived_labels([]) is False
+
+    # Test with single label
+    assert _has_derived_labels(["single"]) is False
+
+    # Test with labels that look similar but aren't hierarchical
+    labels = ["test", "testing", "tester"]
+    assert _has_derived_labels(labels) is False
+
+
+def test_analyze_legacy_dataset_hierarchical():
+    """Test analyze_legacy_dataset with hierarchical labels."""
+    from datumaro.components.annotation import Label
+    from datumaro.components.annotation import LabelCategories as LegacyLabelCategories
+    from datumaro.components.dataset import Dataset as LegacyDataset
+    from datumaro.components.dataset_base import DatasetItem
+    from datumaro.experimental.categories import HierarchicalLabelCategories
+
+    # Create legacy label categories with hierarchical structure
+    legacy_categories = LegacyLabelCategories()
+    legacy_categories.add("animal")
+    legacy_categories.add("animal__dog")
+    legacy_categories.add("animal__cat")
+    legacy_categories.add("vehicle")
+
+    # Create item with label annotation
+    item = DatasetItem(id="test", annotations=[Label(label=1)])
+    legacy_dataset = LegacyDataset.from_iterable(
+        [item], categories={AnnotationType.label: legacy_categories}
+    )
+
+    # Analyze the dataset
+    analysis_result = analyze_legacy_dataset(legacy_dataset)
+
+    # Should detect hierarchical structure
+    assert analysis_result.is_hierarchical is True
+    assert analysis_result.is_anomaly is False
+
+    # Check that hierarchical categories were created
+    label_attr = analysis_result.schema.attributes[AnnotationType.label.name]
+    assert isinstance(label_attr.categories, HierarchicalLabelCategories)
+    assert label_attr.annotation.is_list is True
+
+
+def test_analyze_legacy_dataset_non_hierarchical():
+    """Test analyze_legacy_dataset with non-hierarchical labels."""
+    from datumaro.components.annotation import LabelCategories as LegacyLabelCategories
+    from datumaro.components.dataset import Dataset as LegacyDataset
+    from datumaro.components.dataset_base import DatasetItem
+
+    # Create legacy label categories without hierarchical structure
+    legacy_categories = LegacyLabelCategories()
+    legacy_categories.add("cat")
+    legacy_categories.add("dog")
+    legacy_categories.add("bird")
+
+    # Create a simple item
+    item = DatasetItem(id="test", annotations=[])
+    legacy_dataset = LegacyDataset.from_iterable(
+        [item], categories={AnnotationType.label: legacy_categories}
+    )
+
+    # Analyze the dataset
+    analysis_result = analyze_legacy_dataset(legacy_dataset)
+
+    # Should not detect hierarchical structure
+    assert analysis_result.is_hierarchical is False
