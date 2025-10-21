@@ -1165,7 +1165,7 @@ class EllipseField(Field):
         return {name: pl.List(pl.Array(self.dtype, 4))}
 
     def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
-        """Convert bounding box tensor to Polars list format."""
+        """Convert ellipse tensor to Polars list format."""
         numpy_value = to_numpy(value, self.dtype)
 
         if numpy_value is not None:
