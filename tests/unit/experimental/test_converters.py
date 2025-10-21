@@ -24,7 +24,6 @@ from datumaro.experimental.converters import (
     BBoxFormatConverter,
     ImageBytesToImageConverter,
     ImageCallableToImageConverter,
-    ImageFormatConverter,
     ImagePathToImageConverter,
     InstanceMaskCallableToInstanceMaskConverter,
     LabelIndexConverter,
