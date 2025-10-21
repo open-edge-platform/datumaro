@@ -1145,7 +1145,7 @@ class EllipseField(Field):
     """
     Represents an ellipse field with format and normalization options.
 
-    Handles ellipse  data with support for different coordinate formats
+    Handles ellipse data with support for different coordinate formats
     and optional normalization to [0,1] range.
 
     Attributes:
