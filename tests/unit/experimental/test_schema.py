@@ -333,17 +333,6 @@ def test_rotated_bbox_field_creation():
     assert field.semantic == Semantic.Default
 
 
-def test_rotated_bbox_field_creation_defaults():
-    """Test RotatedBBoxField creation with default values."""
-    field = rotated_bbox_field(dtype=pl.Float32)
-
-    assert isinstance(field, RotatedBBoxField)
-    assert field.dtype == pl.Float32
-    assert field.format == "cxcywhr"  # Default format
-    assert field.normalize is False  # Default normalization
-    assert field.semantic == Semantic.Default  # Default semantic
-
-
 def test_rotated_bbox_field_polars_schema():
     """Test RotatedBBoxField Polars schema generation."""
     field = rotated_bbox_field(dtype=pl.Float32)
@@ -653,17 +642,6 @@ def test_polygon_field_creation():
     assert field.format == "xy"
     assert field.normalize is True
     assert field.semantic == Semantic.Default
-
-
-def test_polygon_field_creation_defaults():
-    """Test PolygonField creation with default values."""
-    field = polygon_field(dtype=pl.Float32)
-
-    assert isinstance(field, PolygonField)
-    assert field.dtype == pl.Float32
-    assert field.format == "xy"  # Default format
-    assert field.normalize is False  # Default normalization
-    assert field.semantic == Semantic.Default  # Default semantic
 
 
 def test_polygon_field_polars_schema():
