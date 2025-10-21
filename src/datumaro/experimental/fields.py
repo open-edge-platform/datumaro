@@ -40,8 +40,6 @@ class ImageFormat(Enum):
 
     RGB = "RGB"  # Red, Green, Blue
     BGR = "BGR"  # Blue, Green, Red
-    RGBA = "RGBA"  # Red, Green, Blue, Alpha
-    GRAYSCALE = "GRAYSCALE"  # Single channel grayscale
 
 
 class PolygonFormat(Enum):
