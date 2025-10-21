@@ -1140,6 +1140,7 @@ def subset_field(subset_type: Optional[type] = None, semantic: Semantic = Semant
     return SubsetField(semantic=semantic)
 
 
+@dataclass(frozen=True)
 class EllipseField(Field):
     """
     Represents an ellipse field with format and normalization options.
