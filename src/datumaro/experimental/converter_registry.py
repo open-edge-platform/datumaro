@@ -48,7 +48,7 @@ class ConversionPaths(NamedTuple):
     """
     Container for separated batch and lazy conversion paths.
 
-    The batch converters can be applied immediately to the entire DataFrame,
+    The converters can be applied immediately to the entire DataFrame,
     while lazy converters must be deferred and applied at sample access time.
     """
 

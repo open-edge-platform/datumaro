@@ -88,6 +88,10 @@ _to_numpy_converters: dict[type, Callable[[Any], np.ndarray[Any, Any] | None]] =
     bytes: lambda x: np.array(x),
     types.NoneType: lambda _: None,
     list: lambda x: np.array(x),
+    int: lambda x: np.array(x),
+    float: lambda x: np.array(x),
+    bool: lambda x: np.array(x),
+    str: lambda x: np.array(x),
     Points: lambda x: points_to_numpy(x),
 }
 
