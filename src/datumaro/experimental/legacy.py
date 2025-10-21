@@ -760,7 +760,7 @@ class ForwardEllipseAnnotationConverter(ForwardAnnotationConverter):
         ellipse_labels_attribute: AttributeInfo | None,
         name_prefix: str,
     ):
-        """Initialize with bbox attributes and label attribute name."""
+        """Initialize with ellipse attributes and ellipse label attribute name."""
         super().__init__()
         self.ellipse_attribute = ellipse_attribute
         self.ellipse_labels_attribute = ellipse_labels_attribute

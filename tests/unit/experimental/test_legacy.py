@@ -608,7 +608,7 @@ def test_ellipse_annotation_converter_get_schema_attributes():
     attributes = converter.get_schema_attributes()
 
     assert "ellipses" in attributes
-    # bbox_labels should not be present when there are no label categories
+    # ellipses_labels should not be present when there are no label categories
     assert "ellipses_labels" not in attributes
     assert attributes["ellipses"].type == np.ndarray
 
@@ -684,8 +684,8 @@ def test_ellipse_annotation_converter_convert_annotations_empty_list():
     # Empty arrays with proper shapes
     assert result["ellipses"].shape == (0, 4)
     assert result["ellipses"].dtype == np.float32
-    # No ellipse_labels should be present when there are no categories
-    assert "ellipse_labels" not in result
+    # No labels should be present when there are no categories
+    assert "labels" not in result
 
 
 # Converter registry tests
