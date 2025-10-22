@@ -5,12 +5,14 @@
 import pytest
 
 from datumaro.experimental.categories import (
+    Categories,
     Colormap,
     GroupType,
     HierarchicalLabelCategories,
     HierarchicalLabelCategory,
     LabelCategories,
     LabelGroup,
+    LabelSemantic,
     MaskCategories,
     RgbColor,
 )
@@ -341,3 +343,79 @@ def test_hierarchical_label_categories_hash():
 
     assert hash(cat1) == hash(cat2)
     assert hash(cat1) != hash(cat3)
+
+
+def test_label_categories_json_roundtrip_with_semantics():
+    cats = LabelCategories(
+        labels=("normal", "anomaly"),
+        group_type=GroupType.INCLUSIVE,
+        label_semantics={LabelSemantic.NORMAL: "normal", LabelSemantic.ANOMALOUS: "anomaly"},
+    )
+    payload = cats.to_json_obj()
+    # basic shape
+    assert payload["type"] == "LabelCategories"
+    assert payload["group_type"] == GroupType.INCLUSIVE.to_str()
+    # semantics keys serialized by name
+    assert payload["label_semantics"]["NORMAL"] == "normal"
+    assert payload["label_semantics"]["ANOMALOUS"] == "anomaly"
+
+    restored = LabelCategories.from_json_obj(payload)
+    assert restored.labels == cats.labels
+    assert restored.group_type == cats.group_type
+    # semantics keys restored back to LabelSemantic enums
+    assert restored.label_semantics[LabelSemantic.NORMAL] == "normal"
+    assert restored.label_semantics[LabelSemantic.ANOMALOUS] == "anomaly"
+
+    # find and contains using LabelSemantic
+    idx, name = restored.find(LabelSemantic.NORMAL)
+    assert idx == 0 and name == "normal"
+    assert LabelSemantic.ANOMALOUS in restored
+
+
+def test_categories_serialize_and_deserialize_map_with_unknown_entries():
+    # prepare a map with known and an intentionally malformed payload
+    known = LabelCategories(labels=("a",))
+    m = {"label": known}
+    data = Categories.serialize_map(m)
+    # inject an unknown type entry
+    data["attributes"]["weird"] = {"type": "UnknownType", "foo": 1}
+
+    restored = Categories.deserialize_map(data)
+    # unknown should be skipped, known restored
+    assert set(restored.keys()) == {"label"}
+    assert isinstance(restored["label"], LabelCategories)
+    assert restored["label"].labels == ("a",)
+
+
+def test_hierarchical_label_categories_json_roundtrip_with_groups_and_semantics():
+    items = (
+        HierarchicalLabelCategory("root", label_semantics={LabelSemantic.NORMAL: True}),
+        HierarchicalLabelCategory("child", parent="root", label_semantics={"custom": 1}),
+    )
+    groups = (LabelGroup(name="g1", labels=("root", "child"), group_type=GroupType.EXCLUSIVE),)
+    hc = HierarchicalLabelCategories(
+        items=items, label_groups=groups, label_semantics={LabelSemantic.ANOMALOUS: False}
+    )
+
+    payload = hc.to_json_obj()
+    assert payload["type"] == "HierarchicalLabelCategories"
+    # group_type serialized as string
+    assert payload["label_groups"][0]["group_type"] == GroupType.EXCLUSIVE.to_str()
+    # label semantics keys serialized by name
+    assert payload["items"][0]["label_semantics"]["NORMAL"] is True
+    assert payload["items"][1]["label_semantics"]["custom"] == 1
+    assert payload["label_semantics"]["ANOMALOUS"] is False
+
+    restored = HierarchicalLabelCategories.from_json_obj(payload)
+    # Verify items restored correctly
+    assert restored.labels == ("root", "child")
+    # Verify groups restored
+    assert len(restored.label_groups) == 1
+    assert restored.label_groups[0].name == "g1"
+    assert restored.label_groups[0].labels == ("root", "child")
+    assert restored.label_groups[0].group_type == GroupType.EXCLUSIVE
+    # Verify semantics restored with enums where applicable
+    idx_root, root = restored.find("root")
+    assert idx_root == 0 and isinstance(root, HierarchicalLabelCategory)
+    assert root.label_semantics[LabelSemantic.NORMAL] is True
+    assert restored.label_semantics[LabelSemantic.ANOMALOUS] is False

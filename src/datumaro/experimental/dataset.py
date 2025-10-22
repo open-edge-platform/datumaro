@@ -4,32 +4,21 @@
 
 from __future__ import annotations
 
+import json
 import sys
 import types
 from functools import cache
-from typing import (
-    TYPE_CHECKING,
-    Annotated,
-    Any,
-    Callable,
-    Dict,
-    Generic,
-    Type,
-    Union,
-    cast,
-    get_args,
-    get_origin,
-)
+from typing import Annotated, Any, Callable, Dict, Generic, Type, Union, cast, get_args, get_origin
 
 import polars as pl
 from typing_extensions import TypeGuard, TypeVar, dataclass_transform
 
+from .categories import Categories
 from .converter_registry import ConverterTransform, find_conversion_path
 from .schema import AttributeInfo, Field, Schema
 from .transform import IdentityTransform, Transform
 
-if TYPE_CHECKING:
-    from .categories import Categories
+META_COL = "__datumaro_categories__"
 
 
 @dataclass_transform()
@@ -467,6 +456,87 @@ class Dataset(Generic[DType]):
             target_dtype_or_schema,
             transforms,
             categories=inferred_categories,
+        )
+
+    @staticmethod
+    def _serialize_categories_map(categories_map: Dict[str, Categories]) -> dict[str, Any]:
+        # Delegates to Categories unified API to keep Dataset clean
+        return Categories.serialize_map(categories_map)
+
+    @staticmethod
+    def _deserialize_categories_map(data: dict[str, Any]) -> Dict[str, Categories]:
+        # Delegates to Categories unified API to keep Dataset clean
+        return Categories.deserialize_map(data)
+
+    def save_parquet(self, path: str) -> None:
+        """
+        Save the dataset to a Parquet file on disk.
+
+        - Writes the internal Polars DataFrame to a .parquet file using Polars.
+        - Categories are stored via a hidden Polars column that contains a JSON blob repeated for each row; this column
+          is stripped on load.
+        """
+        df_to_save = self.df
+
+        # Attach categories as a hidden column
+        categories_map: Dict[str, Categories] = {}
+        for name, info in self._schema.attributes.items():
+            if info.categories is not None:
+                categories_map[name] = info.categories
+
+        if categories_map:
+            cats_json = json.dumps(self._serialize_categories_map(categories_map))
+            # Repeat the JSON once per row (column will be empty if there are 0 rows)
+            df_to_save = df_to_save.with_columns(
+                pl.lit(cats_json).cast(pl.Categorical).alias(META_COL)
+            )
+
+        # Write using Polars
+        df_to_save.write_parquet(path)
+
+    @classmethod
+    def from_parquet(
+        cls,
+        path: str,
+        dtype_or_schema: Union[Schema, Type[DTargetType]],
+        categories: Dict[str, Categories] | None = None,
+        schema: Schema | None = None,
+    ) -> "Dataset[DTargetType]":
+        """
+        Load a dataset from a Parquet file previously saved with save_parquet.
+
+        Note: Since Parquet does not store our custom schema, the caller must
+        provide either the target Sample dtype or a Schema instance.
+        """
+        df: pl.DataFrame = pl.read_parquet(path)
+
+        # Try to extract categories from hidden column first
+        loaded_categories: Dict[str, Categories] | None = None
+        if categories is None and META_COL in df.columns:
+            try:
+                non_null = df[META_COL].drop_nulls()
+                if len(non_null) > 0:
+                    # First value contains the JSON blob
+                    cats_json = non_null[0]
+                    if isinstance(cats_json, (bytes, bytearray)):
+                        cats_json = cats_json.decode("utf-8")
+                    loaded_categories = cls._deserialize_categories_map(json.loads(cats_json))
+            except Exception:
+                loaded_categories = None
+            # Remove the hidden column regardless of success
+            df = df.drop([META_COL])
+
+        categories_final: Dict[str, Categories] | None = categories or loaded_categories
+
+        if isinstance(dtype_or_schema, Schema):
+            # When caller passed a Schema, pass the adjusted schema directly
+            return cls.from_dataframe(df, dtype_or_schema, transforms=None)
+        return cls.from_dataframe(
+            df,
+            dtype_or_schema,
+            transforms=None,
+            categories=categories_final,
+            schema=schema,
         )
 
 

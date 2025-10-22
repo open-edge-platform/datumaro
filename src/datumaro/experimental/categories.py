@@ -15,7 +15,7 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from enum import IntEnum
 from functools import cache
-from typing import Dict, Iterator, List, NamedTuple, Optional, Tuple, Union
+from typing import Dict, Iterator, List, NamedTuple, Optional, Tuple, Type, TypeVar, Union
 
 
 class LabelSemantic(IntEnum):
@@ -53,11 +53,65 @@ class Categories:
     A base class for annotation metainfo. It is supposed to include
     dataset-wide metainfo like available labels, label colors,
     label attributes etc.
+
+    Provides a unified JSON (de)serialization API used by Dataset I/O.
     """
 
-    pass
+    def to_json_obj(self) -> dict:
+        """Serialize this Categories instance to a JSON-serializable dict.
+
+        Subclasses must implement this method and include a 'type' field
+        so the factory can reconstruct the instance.
+        """
+        raise NotImplementedError
+
+    @staticmethod
+    def from_json_obj(obj: dict) -> "Categories":
+        """Deserialize a Categories instance from its JSON-serializable dict.
+
+        Dispatches based on the 'type' field added by to_json_obj().
+        """
+        typ = obj.get("type") if isinstance(obj, dict) else None
+        try:
+            cls = _CATEGORIES_REGISTRY[typ]
+        except Exception:
+            raise ValueError(f"Unknown Categories type: {typ}")
+        return cls.from_json_obj(obj)
+
+    @staticmethod
+    def serialize_map(categories_map: Dict[str, "Categories"]) -> dict:
+        """Serialize a mapping of attribute name -> Categories to JSON object.
+
+        Output format:
+        { "attributes": { name: <category json>, ... } }
+        """
+        return {"attributes": {name: cat.to_json_obj() for name, cat in categories_map.items()}}
+
+    @staticmethod
+    def deserialize_map(data: dict) -> Dict[str, "Categories"]:
+        """Deserialize mapping produced by serialize_map()."""
+        out: Dict[str, Categories] = {}
+        attrs = data.get("attributes", {}) if isinstance(data, dict) else {}
+        for name, payload in attrs.items():
+            try:
+                out[name] = Categories.from_json_obj(payload)
+            except Exception:
+                # Skip unknown/invalid categories payloads to keep I/O robust
+                continue
+        return out
 
 
+# Categories registry for factory-based deserialization
+_CATEGORIES_REGISTRY: Dict[str, Type["Categories"]] = {}
+T_Cat = TypeVar("T_Cat", bound="Categories")
+
+
+def register_category(cls: Type[T_Cat]) -> Type[T_Cat]:
+    _CATEGORIES_REGISTRY[cls.__name__] = cls
+    return cls
+
+
+@register_category
 @dataclass(frozen=True)
 class LabelCategories(Categories):
     """
@@ -135,6 +189,35 @@ class LabelCategories(Categories):
         # Include label_semantics in the hash
         return hash((self.labels, self.group_type, frozenset(self.label_semantics.items())))
 
+    def to_json_obj(self) -> dict:
+        ls = {}
+        for k, v in self.label_semantics.items():
+            if isinstance(k, LabelSemantic):
+                ls[k.name] = v
+            else:
+                ls[str(k)] = v
+        return {
+            "type": "LabelCategories",
+            "labels": list(self.labels),
+            "group_type": self.group_type.to_str()
+            if isinstance(self.group_type, GroupType)
+            else GroupType.EXCLUSIVE.to_str(),
+            "label_semantics": ls,
+        }
+
+    @classmethod
+    def from_json_obj(cls, obj: dict) -> "LabelCategories":
+        ls_in = obj.get("label_semantics", {})
+        ls: dict = {}
+        for k, v in ls_in.items():
+            try:
+                ls[LabelSemantic[k]] = v
+            except Exception:
+                ls[k] = v
+        labels = tuple(obj.get("labels", ()))
+        gt = GroupType.from_str(obj.get("group_type", GroupType.EXCLUSIVE.to_str()))
+        return cls(labels=labels, group_type=gt, label_semantics=ls)
+
 
 @dataclass(frozen=True)
 class HierarchicalLabelCategory:
@@ -167,6 +250,7 @@ class LabelGroup:
             raise ValueError("Label group name cannot be empty and must be a string")
 
 
+@register_category
 @dataclass(frozen=True)
 class HierarchicalLabelCategories(Categories):
     """
@@ -318,6 +402,67 @@ class HierarchicalLabelCategories(Categories):
         lg_repr = tuple((lg.name, tuple(lg.labels), lg.group_type) for lg in self.label_groups)
         return hash((self.items, lg_repr, frozenset(self.label_semantics.items())))
 
+    def to_json_obj(self) -> dict:
+        def _ser_item(it: HierarchicalLabelCategory) -> dict:
+            ls = {}
+            for k, v in it.label_semantics.items():
+                if isinstance(k, LabelSemantic):
+                    ls[k.name] = v
+                else:
+                    ls[str(k)] = v
+            return {"name": it.name, "parent": it.parent, "label_semantics": ls}
+
+        def _ser_group(g: LabelGroup) -> dict:
+            return {
+                "name": g.name,
+                "labels": list(g.labels),
+                "group_type": g.group_type.to_str()
+                if isinstance(g.group_type, GroupType)
+                else GroupType.EXCLUSIVE.to_str(),
+            }
+
+        top_ls = {}
+        for k, v in self.label_semantics.items():
+            if isinstance(k, LabelSemantic):
+                top_ls[k.name] = v
+            else:
+                top_ls[str(k)] = v
+
+        return {
+            "type": "HierarchicalLabelCategories",
+            "items": [_ser_item(it) for it in self.items],
+            "label_groups": [_ser_group(g) for g in self.label_groups],
+            "label_semantics": top_ls,
+        }
+
+    @classmethod
+    def from_json_obj(cls, obj: dict) -> "HierarchicalLabelCategories":
+        def _deser_label_semantics(d: dict) -> dict:
+            out = {}
+            for k, v in d.items():
+                try:
+                    out[LabelSemantic[k]] = v
+                except Exception:
+                    out[k] = v
+            return out
+
+        items = []
+        for it in obj.get("items", []):
+            ls = _deser_label_semantics(it.get("label_semantics", {}))
+            items.append(
+                HierarchicalLabelCategory(
+                    name=it.get("name", ""), parent=it.get("parent", ""), label_semantics=ls
+                )
+            )
+        groups = []
+        for g in obj.get("label_groups", []):
+            gt = GroupType.from_str(g.get("group_type", GroupType.EXCLUSIVE.to_str()))
+            groups.append(
+                LabelGroup(name=g.get("name", ""), labels=tuple(g.get("labels", [])), group_type=gt)
+            )
+        top_ls = _deser_label_semantics(obj.get("label_semantics", {}))
+        return cls(items=tuple(items), label_groups=tuple(groups), label_semantics=top_ls)
+
 
 class RgbColor(NamedTuple):
     """RGB color representation with named fields."""
@@ -374,6 +519,7 @@ class Colormap:
         return False
 
 
+@register_category
 @dataclass(frozen=True)
 class MaskCategories(Categories):
     """
@@ -385,6 +531,30 @@ class MaskCategories(Categories):
 
     def __hash__(self):
         return hash((tuple(self.labels), frozenset(self.colormap.items())))
+
+    def to_json_obj(self) -> dict:
+        cmap: dict[str, list[int]] = {}
+        for idx, color in self.colormap:
+            cmap[str(idx)] = [int(color.r), int(color.g), int(color.b)]
+        return {
+            "type": "MaskCategories",
+            "labels": list(self.labels),
+            "colormap": cmap,
+        }
+
+    @classmethod
+    def from_json_obj(cls, obj: dict) -> "MaskCategories":
+        labels = list(obj.get("labels", []))
+        cmap_in: dict[str, list[int]] = obj.get("colormap", {})
+        cmap: dict[int, RgbColor] = {}
+        for k, rgb in cmap_in.items():
+            try:
+                idx = int(k)
+            except Exception:
+                continue
+            if isinstance(rgb, (list, tuple)) and len(rgb) == 3:
+                cmap[idx] = RgbColor(int(rgb[0]), int(rgb[1]), int(rgb[2]))
+        return cls(labels=labels, colormap=Colormap(data=cmap))
 
     @classmethod
     def generate(cls, size: int = 255, include_background: bool = True) -> "MaskCategories":
