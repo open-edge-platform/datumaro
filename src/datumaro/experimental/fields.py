@@ -1168,3 +1168,50 @@ def subset_field(subset_type: Optional[type] = None, semantic: Semantic = Semant
         SubsetField instance configured with the given parameters
     """
     return SubsetField(semantic=semantic)
+
+
+@dataclass(frozen=True)
+class EllipseField(Field):
+    """
+    Represents an ellipse field with format and normalization options.
+
+    Handles ellipse data with support for different coordinate formats
+    and optional normalization to [0,1] range.
+
+    Attributes:
+        semantic: Semantic tags describing the ellipses purpose
+        dtype: Polars data type for coordinate values
+        format: Coordinate format (e.g., "x1y1x2y2", "xywh")
+        normalize: Whether coordinates are normalized to [0,1] range
+    """
+
+    semantic: Semantic
+    dtype: PolarsDataType = pl.Float32()
+    format: str = "x1y1x2y2"
+    normalize: bool = False
+
+    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+        """Generate schema for ellipses as list of 4-element arrays."""
+        return {name: pl.List(pl.Array(self.dtype, 4))}
+
+    def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
+        """Convert ellipse tensor to Polars list format."""
+        numpy_value = to_numpy(value, self.dtype)
+
+        if numpy_value is not None:
+            data: Any = numpy_value.reshape(1, -1, 4)
+        else:
+            data = [None]
+
+        return {
+            name: pl.Series(
+                name,
+                data,
+                dtype=pl.List(pl.Array(self.dtype, 4)),
+            )
+        }
+
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+        """Reconstruct an ellipse tensor from Polars data."""
+        polars_data = df[name][row_index]
+        return from_polars_data(polars_data, target_type)  # type: ignore
