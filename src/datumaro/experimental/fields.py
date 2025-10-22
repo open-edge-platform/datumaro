@@ -34,7 +34,7 @@ T = TypeVar("T")
 PolarsDataType: TypeAlias = Union[type[pl.DataType], pl.DataType]
 
 
-@dataclass(frozen=True)
+@dataclass()
 class TileInfo:
     """Information about a single tile within a larger image or data."""
 
