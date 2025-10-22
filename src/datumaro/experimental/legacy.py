@@ -13,13 +13,21 @@ from __future__ import annotations
 import io
 import math
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from typing import Any, Optional, Type, cast
 
 import numpy as np
 import polars as pl
 from PIL import Image as PILImage
 
-from datumaro.components.annotation import Annotation, AnnotationType, Bbox, ExtractedMask, Label
+from datumaro.components.annotation import (
+    Annotation,
+    AnnotationType,
+    Bbox,
+    Ellipse,
+    ExtractedMask,
+    Label,
+)
 from datumaro.components.annotation import LabelCategories as LegacyLabelCategories
 from datumaro.components.annotation import Points, Polygon, RotatedBbox
 from datumaro.components.dataset import Dataset as LegacyDataset
@@ -40,6 +48,7 @@ from .converters import generate_colormap
 from .dataset import Dataset, Sample
 from .fields import (
     BBoxField,
+    EllipseField,
     ImageInfo,
     ImagePathField,
     LabelField,
@@ -742,6 +751,89 @@ class ForwardKeypointAnnotationConverter(ForwardAnnotationConverter):
         return result
 
 
+class ForwardEllipseAnnotationConverter(ForwardAnnotationConverter):
+    """Forward converter for Ellipse annotations."""
+
+    def __init__(
+        self,
+        ellipse_attribute: AttributeInfo,
+        ellipse_labels_attribute: AttributeInfo | None,
+        name_prefix: str,
+    ):
+        """Initialize with ellipse attributes and ellipse label attribute name."""
+        super().__init__()
+        self.ellipse_attribute = ellipse_attribute
+        self.ellipse_labels_attribute = ellipse_labels_attribute
+        self.name_prefix = name_prefix
+
+    @classmethod
+    def get_supported_annotation_types(cls) -> list[AnnotationType]:
+        """Return list of annotation types this converter can handle."""
+        return [AnnotationType.ellipse]
+
+    @classmethod
+    def create(
+        cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+    ) -> "ForwardEllipseAnnotationConverter | None":
+        """Create converter instance for ellipse annotations."""
+        categories = dataset.categories()
+        # Extract label categories if available
+        legacy_label_categories = categories.get(AnnotationType.label, None)
+
+        ellipse_attribute = AttributeInfo(
+            type=np.ndarray, annotation=EllipseField(dtype=pl.Float32, semantic=semantic)
+        )
+
+        ellipse_labels_attribute = None
+        # Only add ellipse_labels if we have label categories
+        if legacy_label_categories is not None:
+            # Convert legacy label categories to new format
+            labels = tuple(label_item.name for label_item in legacy_label_categories.items)
+            new_label_categories = LabelCategories(labels=labels)
+
+            ellipse_labels_attribute = AttributeInfo(
+                type=np.ndarray,
+                annotation=label_field(is_list=True, semantic=semantic),
+                categories=new_label_categories,
+            )
+
+        return cls(
+            ellipse_attribute=ellipse_attribute,
+            ellipse_labels_attribute=ellipse_labels_attribute,
+            name_prefix=name_prefix,
+        )
+
+    def get_schema_attributes(self) -> dict[str, AttributeInfo]:
+        attributes = {self.name_prefix + "ellipses": self.ellipse_attribute}
+        if self.ellipse_labels_attribute is not None:
+            attributes[self.name_prefix + "labels"] = self.ellipse_labels_attribute
+        return attributes
+
+    def convert_annotations(
+        self, annotations: list[Annotation], item: DatasetItem
+    ) -> dict[str, Any]:
+        ellipses: list[list[float]] = []
+        labels: list[int | None] = []
+
+        for ann in annotations:
+            if isinstance(ann, Ellipse):
+                ellipses.append([ann.x1, ann.y1, ann.x2, ann.y2])
+                labels.append(ann.label)
+
+        # Ensure proper shapes for empty arrays
+        ellipses_array = np.array(ellipses, dtype=np.float32)
+        if ellipses_array.shape == (0,):
+            ellipses_array = ellipses_array.reshape(0, 4)
+
+        result = {self.name_prefix + "ellipses": ellipses_array}
+
+        # Only add ellipse_labels if we have label categories
+        if self.ellipse_labels_attribute is not None:
+            result[self.name_prefix + "labels"] = np.array(labels, dtype=np.int32)
+
+        return result
+
+
 def register_builtin_forward_converters():
     """Register built-in forward converters for common types."""
 
@@ -755,9 +847,7 @@ def register_builtin_forward_converters():
     register_forward_annotation_converter(ForwardKeypointAnnotationConverter)
     register_forward_annotation_converter(ForwardPolygonAnnotationConverter)
     register_forward_annotation_converter(ForwardRotatedBboxAnnotationConverter)
-
-
-from dataclasses import dataclass
+    register_forward_annotation_converter(ForwardEllipseAnnotationConverter)
 
 
 @dataclass
