@@ -1535,8 +1535,10 @@ class EllipseFormatConverter(Converter):
                 .list.eval(
                     pl.concat_arr(
                         [
-                            (pl.element().arr.get(2) - pl.element().arr.get(0)) / divider,  # x = x2-x1/2
-                            (pl.element().arr.get(1) - pl.element().arr.get(3)) / divider,  # y = y1-y2/2
+                            (pl.element().arr.get(0) + pl.element().arr.get(2))
+                            / divider,  # x = x2-x1/2
+                            (pl.element().arr.get(1) + pl.element().arr.get(3))
+                            / divider,  # y = y1-y2/2
                             pl.element().arr.get(2) - pl.element().arr.get(0),  # w = x2 - x1
                             pl.element().arr.get(1) - pl.element().arr.get(3),  # h = y1 - y2
                         ]
@@ -1551,10 +1553,14 @@ class EllipseFormatConverter(Converter):
                 .list.eval(
                     pl.concat_arr(
                         [
-                            pl.element().arr.get(0) - pl.element().arr.get(2) / divider,  # x1 = cx - w/2
-                            pl.element().arr.get(1) + pl.element().arr.get(3) / divider,  # y1 = y + h/2
-                            pl.element().arr.get(0) + pl.element().arr.get(2) / divider,  # x2 = cx + w/2
-                            pl.element().arr.get(1) - pl.element().arr.get(3) / divider,  # y2 = y - h/2
+                            pl.element().arr.get(0)
+                            - pl.element().arr.get(2) / divider,  # x1 = cx - w/2
+                            pl.element().arr.get(1)
+                            + pl.element().arr.get(3) / divider,  # y1 = y + h/2
+                            pl.element().arr.get(0)
+                            + pl.element().arr.get(2) / divider,  # x2 = cx + w/2
+                            pl.element().arr.get(1)
+                            - pl.element().arr.get(3) / divider,  # y2 = y - h/2
                         ]
                     )
                 )

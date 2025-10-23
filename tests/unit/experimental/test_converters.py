@@ -2378,7 +2378,7 @@ def test_ellipse_format_converter_x1y1x2y2_to_cxcywh():
     setattr(
         converter_instance,
         "output_ellipse",
-        AttributeSpec(name="ellipse_cxcywh", field=output_ellipse_field),
+        AttributeSpec(name="ellipses_cxcywh", field=output_ellipse_field),
     )
 
     # Test filter
@@ -2390,10 +2390,10 @@ def test_ellipse_format_converter_x1y1x2y2_to_cxcywh():
     assert "ellipses_cxcywh" in result_df.columns
     result_ellipses = result_df["ellipses_cxcywh"][0]
 
-    # First ellipse: (10, 70, 50, 20) -> (10, 20, 40, 50)
-    expected_ellipse1 = [20.0, 45.0, 40.0, 50.0]  # x, y, w=50-10, h=70-20
+    # First ellipse: (10, 70, 50, 20) -> (30, 45, 40, 50)
+    expected_ellipse1 = [30.0, 45.0, 40.0, 50.0]  # x, y, w=50-10, h=70-20
     # Second ellipse: (0, 200, 100, 0) -> (50, 100, 100, 200)
-    expected_ellipse2 = [0.0, 100.0, 100.0, 200.0]  # x, y, w=100-0, h=200-0
+    expected_ellipse2 = [50.0, 100.0, 100.0, 200.0]  # x, y, w=100-0, h=200-0
 
     assert np.allclose(result_ellipses[0], expected_ellipse1)
     assert np.allclose(result_ellipses[1], expected_ellipse2)
