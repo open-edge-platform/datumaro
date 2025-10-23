@@ -561,6 +561,58 @@ def label_field(
     return LabelField(semantic=semantic, dtype=dtype, multi_label=multi_label, is_list=is_list)
 
 
+@dataclass(frozen=True)
+class ScoreField(Field):
+    """
+    Represents a prediction score.
+
+    By default stores a single float value in a Float32 column. If is_list=True,
+    stores a list of float values, matching multi-prediction scenarios.
+    """
+
+    semantic: Semantic
+    dtype: PolarsDataType = pl.Float32()
+    is_list: bool = False
+
+    @property
+    def _pl_type(self) -> pl.DataType:
+        pl_type = self.dtype
+        if self.is_list:
+            pl_type = pl.List(pl_type)
+        return pl_type
+
+    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+        return {name: self._pl_type}
+
+    def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
+        return {name: pl.Series(name, [value], dtype=self._pl_type)}
+
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+        data = df[name][row_index]
+        if target_type is list:
+            return list(data) if data is not None else None  # type: ignore[return-value]
+        return from_polars_data(data, target_type)
+
+
+def score_field(
+    dtype: Any = pl.Float32(),
+    semantic: Semantic = Semantic.Default,
+    is_list: bool = False,
+) -> Any:
+    """
+    Create a ScoreField instance.
+
+    Args:
+        dtype: Polars data type for score values (defaults to pl.Float32())
+        semantic: Semantic tags describing the score purpose (optional)
+        is_list: Whether this field should be treated as a list type (defaults to False)
+
+    Returns:
+        ScoreField instance configured with the given parameters
+    """
+    return ScoreField(semantic=semantic, dtype=dtype, is_list=is_list)
+
+
 def convert_numpy_object_array_to_series(data: np.ndarray) -> pl.Series:
     """
     Convert ragged numpy object arrays to Polars Series recursively.
