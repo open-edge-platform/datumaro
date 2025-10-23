@@ -1526,6 +1526,7 @@ class EllipseFormatConverter(Converter):
         output_col = self.output_ellipse.name
         input_format = self.input_ellipse.field.format
         output_format = self.output_ellipse.field.format
+        divider = pl.lit(2).cast(self.input_ellipse.field.dtype)
 
         if input_format == EllipseFormat.X1Y1X2Y2 and output_format == EllipseFormat.CXCYWH:
             # Convert (x1, y1, x2, y2) to (cx, cy, w, h)
@@ -1534,8 +1535,8 @@ class EllipseFormatConverter(Converter):
                 .list.eval(
                     pl.concat_arr(
                         [
-                            (pl.element().arr.get(2) - pl.element().arr.get(0)) / 2,  # x = x2-x1/2
-                            (pl.element().arr.get(1) - pl.element().arr.get(3)) / 2,  # y = y1-y2/2
+                            (pl.element().arr.get(2) - pl.element().arr.get(0)) / divider,  # x = x2-x1/2
+                            (pl.element().arr.get(1) - pl.element().arr.get(3)) / divider,  # y = y1-y2/2
                             pl.element().arr.get(2) - pl.element().arr.get(0),  # w = x2 - x1
                             pl.element().arr.get(1) - pl.element().arr.get(3),  # h = y1 - y2
                         ]
@@ -1550,10 +1551,10 @@ class EllipseFormatConverter(Converter):
                 .list.eval(
                     pl.concat_arr(
                         [
-                            pl.element().arr.get(0) - pl.element().arr.get(2) / 2,  # x1 = cx - w/2
-                            pl.element().arr.get(1) + pl.element().arr.get(3) / 2,  # y1 = y + h/2
-                            pl.element().arr.get(0) + pl.element().arr.get(2) / 2,  # x2 = cx + w/2
-                            pl.element().arr.get(1) - pl.element().arr.get(3) / 2,  # y2 = y - h/2
+                            pl.element().arr.get(0) - pl.element().arr.get(2) / divider,  # x1 = cx - w/2
+                            pl.element().arr.get(1) + pl.element().arr.get(3) / divider,  # y1 = y + h/2
+                            pl.element().arr.get(0) + pl.element().arr.get(2) / divider,  # x2 = cx + w/2
+                            pl.element().arr.get(1) - pl.element().arr.get(3) / divider,  # y2 = y - h/2
                         ]
                     )
                 )
