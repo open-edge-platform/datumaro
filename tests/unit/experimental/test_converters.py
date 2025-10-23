@@ -22,6 +22,7 @@ from datumaro.experimental.converter_registry import (
 from datumaro.experimental.converters import (
     BBoxCoordinateConverter,
     BBoxFormatConverter,
+    EllipseFormatConverter,
     ImageBytesToImageConverter,
     ImageCallableToImageConverter,
     ImagePathToImageConverter,
@@ -40,6 +41,8 @@ from datumaro.experimental.converters import (
 from datumaro.experimental.fields import (
     BBoxField,
     BBoxFormat,
+    EllipseField,
+    EllipseFormat,
     Field,
     ImageBytesField,
     ImageCallableField,
@@ -2346,6 +2349,102 @@ def test_bbox_format_converter_xywh_to_x1y1x2y2():
 
     assert np.allclose(result_bboxes[0], expected_bbox1)
     assert np.allclose(result_bboxes[1], expected_bbox2)
+
+
+def test_ellipse_format_converter_x1y1x2y2_to_cxcywh():
+    """Test EllipseFormatConverter conversion from X1Y1X2Y2 to CXCYWH format."""
+    # Create test data: (x1, y1, x2, y2) format
+    test_data = [[10.0, 70.0, 50.0, 20.0], [0.0, 200.0, 100.0, 0.0]]
+
+    df = pl.DataFrame(
+        {"ellipses": [test_data]}, schema={"ellipses": pl.List(pl.Array(pl.Float32, 4))}
+    )
+
+    converter_instance = EllipseFormatConverter()
+
+    # Set up converter attributes
+    input_ellipse_field = EllipseField(
+        dtype=pl.Float32, format=EllipseFormat.X1Y1X2Y2, normalize=False, semantic=Semantic.Default
+    )
+    output_ellipse_field = EllipseField(
+        dtype=pl.Float32, format=EllipseFormat.CXCYWH, normalize=False, semantic=Semantic.Default
+    )
+
+    setattr(
+        converter_instance,
+        "input_ellipse",
+        AttributeSpec(name="ellipses", field=input_ellipse_field),
+    )
+    setattr(
+        converter_instance,
+        "output_ellipse",
+        AttributeSpec(name="ellipse_cxcywh", field=output_ellipse_field),
+    )
+
+    # Test filter
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    assert "ellipses_cxcywh" in result_df.columns
+    result_ellipses = result_df["ellipses_cxcywh"][0]
+
+    # First ellipse: (10, 70, 50, 20) -> (10, 20, 40, 50)
+    expected_ellipse1 = [20.0, 45.0, 40.0, 50.0]  # x, y, w=50-10, h=70-20
+    # Second ellipse: (0, 200, 100, 0) -> (50, 100, 100, 200)
+    expected_ellipse2 = [0.0, 100.0, 100.0, 200.0]  # x, y, w=100-0, h=200-0
+
+    assert np.allclose(result_ellipses[0], expected_ellipse1)
+    assert np.allclose(result_ellipses[1], expected_ellipse2)
+
+
+def test_ellipse_format_converter_cxcywh_to_x1y1x2y2():
+    """Test EllipseFormatConverter conversion from CXCYWH to X1Y1X2Y2 format."""
+    # Create test data: (cx, cy, w, h) format
+    test_data = [[20.0, 30.0, 40.0, 50.0], [50.0, 100.0, 100.0, 200.0]]
+
+    df = pl.DataFrame(
+        {"ellipses": [test_data]}, schema={"ellipses": pl.List(pl.Array(pl.Float32, 4))}
+    )
+
+    converter_instance = EllipseFormatConverter()
+
+    # Set up converter attributes
+    input_ellipse_field = EllipseField(
+        dtype=pl.Float32, format=EllipseFormat.CXCYWH, normalize=False, semantic=Semantic.Default
+    )
+    output_ellipse_field = EllipseField(
+        dtype=pl.Float32, format=EllipseFormat.X1Y1X2Y2, normalize=False, semantic=Semantic.Default
+    )
+
+    setattr(
+        converter_instance,
+        "input_ellipse",
+        AttributeSpec(name="ellipses", field=input_ellipse_field),
+    )
+    setattr(
+        converter_instance,
+        "output_ellipse",
+        AttributeSpec(name="ellipses_x1y1x2y2", field=output_ellipse_field),
+    )
+
+    # Test filter
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    assert "ellipses_x1y1x2y2" in result_df.columns
+    result_ellipses = result_df["ellipses_x1y1x2y2"][0]
+
+    # First ellipse: (20, 30, 40, 50) -> (0, 55, 40, 5)
+    expected_ellipse1 = [0.0, 55.0, 40.0, 5.0]  # cx +/- w/2 and cy +/- h/2
+    # Seond ellipse: (50, 100, 100, 200) -> (0, 200, 100, 0)
+    expected_ellipse2 = [0.0, 200.0, 100.0, 0.0]  # cx +/- w/2 and cy +/- h/2
+
+    assert np.allclose(result_ellipses[0], expected_ellipse1)
+    assert np.allclose(result_ellipses[1], expected_ellipse2)
 
 
 def test_rotated_bbox_format_converter_radians_to_degrees():
