@@ -14,6 +14,7 @@ import io
 import math
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from functools import partial as _partial
 from typing import Any, Optional, Type, cast
 
 import numpy as np
@@ -204,6 +205,23 @@ def get_forward_annotation_converter(
     return converter_class.create(dataset, semantic, name_prefix)
 
 
+def _image_callable_impl(bytes_source: Any, is_callable: bool = False):
+    """Convert image bytes (or bytes provider) to a numpy array.
+
+    Implemented at module scope so that partials of this function are pickleable
+    and thus safe to use with multi-processing data loaders.
+    """
+    # Get the bytes data (either directly or from callable)
+    bytes_data = bytes_source() if is_callable else bytes_source
+    if not isinstance(bytes_data, bytes):
+        raise TypeError(f"Expected bytes data, got {type(bytes_data)}")
+    # Convert bytes to image array using PIL
+    with PILImage.open(io.BytesIO(bytes_data)) as pil_image:
+        if pil_image.mode != "RGB":
+            pil_image = pil_image.convert("RGB")
+        return np.array(pil_image, dtype=np.uint8)
+
+
 class ForwardImageMediaConverter(ForwardMediaConverter):
     """Forward converter for Image media type supporting both file paths and byte data."""
 
@@ -311,31 +329,12 @@ class ForwardImageMediaConverter(ForwardMediaConverter):
         if isinstance(item.media, Image):  # pyright: ignore[reportUnknownMemberType]
             if self.media_mixin == FromDataMixin:
                 if self.has_callable_data:
-                    # Create a wrapper callable that converts bytes to image array
-                    def create_image_callable(media_obj):
-                        """Create a callable that returns image array from bytes."""
-
-                        def get_image_array():
-                            # Get the bytes data (either directly or from callable)
-                            if callable(media_obj._data):
-                                bytes_data = media_obj._data()
-                            else:
-                                bytes_data = media_obj._data
-
-                            if not isinstance(bytes_data, bytes):
-                                raise TypeError(f"Expected bytes data, got {type(bytes_data)}")
-
-                            # Convert bytes to image array using PIL
-                            with PILImage.open(io.BytesIO(bytes_data)) as pil_image:
-                                # Convert to RGB if needed
-                                if pil_image.mode != "RGB":
-                                    pil_image = pil_image.convert("RGB")
-                                # Convert to numpy array
-                                return np.array(pil_image, dtype=np.uint8)
-
-                        return get_image_array
-
-                    result[self.name_prefix + "image_callable"] = create_image_callable(item.media)
+                    # Use a top-level callable to ensure picklability across workers
+                    is_callable = callable(item.media._data)
+                    bytes_source = item.media._data
+                    result[self.name_prefix + "image_callable"] = _partial(
+                        _image_callable_impl, bytes_source, is_callable
+                    )
                 else:
                     result[self.name_prefix + "image_bytes"] = item.media._data
             elif self.media_mixin == FromFileMixin:
@@ -744,7 +743,7 @@ class ForwardKeypointAnnotationConverter(ForwardAnnotationConverter):
             ):
                 result[self.name_prefix + "labels"] = keypoints[0].attributes["keypoint_label_ids"]
             else:
-                result[self._name_prefix + "labels"] = None
+                result[self.name_prefix + "labels"] = None
         else:
             result[self.name_prefix + "keypoints"] = None
 
@@ -1056,7 +1055,7 @@ def convert_from_legacy(legacy_dataset: LegacyDataset) -> Dataset[Sample]:
         good_category_index = good_categories[0]
 
         new_categories = LabelCategories(
-            labels=["normal", "anomalous"],
+            labels=("normal", "anomalous"),
             label_semantics={LabelSemantic.NORMAL: "normal", LabelSemantic.ANOMALOUS: "anomalous"},
         )
         experimental_dataset.schema.attributes["label"].categories = new_categories
