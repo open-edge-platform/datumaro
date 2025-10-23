@@ -23,6 +23,8 @@ from .converter_registry import AttributeSpec, Converter, converter
 from .fields import (
     BBoxField,
     BBoxFormat,
+    EllipseField,
+    EllipseFormat,
     ImageBytesField,
     ImageCallableField,
     ImageField,
@@ -1032,8 +1034,7 @@ class PolygonToBBoxConverter(Converter):
             )
         else:
             raise NotImplementedError(
-                f"This conversion is not yet implemented "
-                f"for the format {self.output_bbox.field.format}."
+                f"This conversion is not yet implemented for the format {self.output_bbox.field.format}."
             )
 
         return df
@@ -1453,6 +1454,106 @@ class BBoxFormatConverter(Converter):
                             pl.element().arr.get(1),  # y1 = y
                             pl.element().arr.get(0) + pl.element().arr.get(2),  # x2 = x + w
                             pl.element().arr.get(1) + pl.element().arr.get(3),  # y2 = y + h
+                        ]
+                    )
+                )
+                .alias(output_col)
+            )
+        else:
+            raise NotImplementedError(
+                f"Conversion from {input_format} to {output_format} is not yet implemented"
+            )
+
+        return df
+
+
+@converter
+class EllipseFormatConverter(Converter):
+    """
+    Converter for switching between different ellipse coordinate formats.
+
+    Supports conversion between:
+    - X1Y1X2Y2: (x1, y1, x2, y2) - top-left and bottom-right corners
+    - CXCYWH: (cx, cy, w, h) - center coordinate and dimensions
+    """
+
+    input_ellipse: AttributeSpec[EllipseField]
+    output_ellipse: AttributeSpec[EllipseField]
+
+    def filter_output_spec(self) -> bool:
+        """
+        Check if this converter should be applied for ellipse format conversion.
+
+        Returns True if input and output have different ellipse formats.
+        """
+        input_format = self.input_ellipse.field.format
+        output_format = self.output_ellipse.field.format
+
+        # Only apply if formats are different
+        if input_format == output_format:
+            return False
+
+        # Configure output specification
+        self.output_ellipse = AttributeSpec(
+            name=self.output_ellipse.name,
+            field=EllipseField(
+                semantic=self.input_ellipse.field.semantic,
+                dtype=self.input_ellipse.field.dtype,
+                format=output_format,
+                normalize=self.input_ellipse.field.normalize,
+            ),
+        )
+
+        # Check if conversion is supported
+        supported_conversions = {
+            (EllipseFormat.X1Y1X2Y2, EllipseFormat.CXCYWH),
+            (EllipseFormat.CXCYWH, EllipseFormat.X1Y1X2Y2),
+        }
+
+        return (input_format, output_format) in supported_conversions
+
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+        """
+        Convert between ellipse coordinate formats.
+
+        Args:
+            df: DataFrame with ellipse coordinates in input format
+
+        Returns:
+            DataFrame with ellipse coordinates in output format
+        """
+        input_col = self.input_ellipse.name
+        output_col = self.output_ellipse.name
+        input_format = self.input_ellipse.field.format
+        output_format = self.output_ellipse.field.format
+
+        if input_format == EllipseFormat.X1Y1X2Y2 and output_format == EllipseFormat.CXCYWH:
+            # Convert (x1, y1, x2, y2) to (cx, cy, w, h)
+            df = df.with_columns(
+                pl.col(input_col)
+                .list.eval(
+                    pl.concat_arr(
+                        [
+                            (pl.element().arr.get(2) - pl.element().arr.get(0)) / 2,  # x = x2-x1/2
+                            (pl.element().arr.get(1) - pl.element().arr.get(3)) / 2,  # y = y1-y2/2
+                            pl.element().arr.get(2) - pl.element().arr.get(0),  # w = x2 - x1
+                            pl.element().arr.get(1) - pl.element().arr.get(3),  # h = y1 - y2
+                        ]
+                    )
+                )
+                .alias(output_col)
+            )
+        elif input_format == EllipseFormat.CXCYWH and output_format == EllipseFormat.X1Y1X2Y2:
+            # Convert (cx, cy, w, h) to (x1, y1, x2, y2)
+            df = df.with_columns(
+                pl.col(input_col)
+                .list.eval(
+                    pl.concat_arr(
+                        [
+                            pl.element().arr.get(0) - pl.element().arr.get(2) / 2,  # x1 = cx - w/2
+                            pl.element().arr.get(1) + pl.element().arr.get(3) / 2,  # y1 = y + h/2
+                            pl.element().arr.get(0) + pl.element().arr.get(2) / 2,  # x2 = cx + w/2
+                            pl.element().arr.get(1) - pl.element().arr.get(3) / 2,  # y2 = y - h/2
                         ]
                     )
                 )

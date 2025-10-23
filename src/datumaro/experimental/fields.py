@@ -35,6 +35,13 @@ class RotatedBBoxFormat(Enum):
     CXCYWHA = "cxcywha"  # (cx, cy, w, h, a) - center point, dimensions, rotation in degrees
 
 
+class EllipseFormat(Enum):
+    """Enumeration of ellipse coordinate formats."""
+
+    X1Y1X2Y2 = "x1y1x2y2"  # (x1, y1, x2, y2) - top-left and bottom-right corners of encapsulating bounding box
+    CXCYWH = "xywh"  # (x, y, w, h) - center coordinates and dimensions
+
+
 class ImageFormat(Enum):
     """Enumeration of image color formats."""
 
@@ -1181,13 +1188,13 @@ class EllipseField(Field):
     Attributes:
         semantic: Semantic tags describing the ellipses purpose
         dtype: Polars data type for coordinate values
-        format: Coordinate format (e.g., "x1y1x2y2", "xywh")
+        format: Coordinate format (e.g., "x1y1x2y2", "cxcywh")
         normalize: Whether coordinates are normalized to [0,1] range
     """
 
     semantic: Semantic
     dtype: PolarsDataType = pl.Float32()
-    format: str = "x1y1x2y2"
+    format: EllipseFormat = EllipseFormat.X1Y1X2Y2
     normalize: bool = False
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
