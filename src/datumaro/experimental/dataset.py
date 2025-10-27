@@ -491,7 +491,7 @@ class Dataset(Generic[DType]):
                 f"Dataset does not have an attribute for 'SubsetField': schema: {self.df.schema}"
             )
 
-        filtered_df = self.df.filter(self.df[subset_column_name] == subset)
+        filtered_df = self.df.filter(self.df[subset_column_name] == subset.name)
 
         return Dataset.from_dataframe(
             df=filtered_df,
