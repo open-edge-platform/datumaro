@@ -25,7 +25,7 @@ from datumaro.experimental.fields import (
     image_info_field,
     subset_field,
 )
-from datumaro.experimental.schema import AttributeInfo, Schema, Semantic
+from datumaro.experimental.schema import Semantic
 
 
 def test_filter_by_subset_raises_without_subset_field():
