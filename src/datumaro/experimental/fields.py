@@ -34,7 +34,7 @@ T = TypeVar("T")
 PolarsDataType: TypeAlias = Union[type[pl.DataType], pl.DataType]
 
 
-@dataclass(frozen=True)
+@dataclass()
 class TileInfo:
     """Information about a single tile within a larger image or data."""
 
@@ -559,6 +559,58 @@ def label_field(
         LabelField instance configured with the given parameters
     """
     return LabelField(semantic=semantic, dtype=dtype, multi_label=multi_label, is_list=is_list)
+
+
+@dataclass(frozen=True)
+class ScoreField(Field):
+    """
+    Represents a prediction score.
+
+    By default stores a single float value in a Float32 column. If is_list=True,
+    stores a list of float values, matching multi-prediction scenarios.
+    """
+
+    semantic: Semantic
+    dtype: PolarsDataType = pl.Float32()
+    is_list: bool = False
+
+    @property
+    def _pl_type(self) -> pl.DataType:
+        pl_type = self.dtype
+        if self.is_list:
+            pl_type = pl.List(pl_type)
+        return pl_type
+
+    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+        return {name: self._pl_type}
+
+    def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
+        return {name: pl.Series(name, [value], dtype=self._pl_type)}
+
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+        data = df[name][row_index]
+        if target_type is list:
+            return list(data) if data is not None else None  # type: ignore[return-value]
+        return from_polars_data(data, target_type)
+
+
+def score_field(
+    dtype: Any = pl.Float32(),
+    semantic: Semantic = Semantic.Default,
+    is_list: bool = False,
+) -> Any:
+    """
+    Create a ScoreField instance.
+
+    Args:
+        dtype: Polars data type for score values (defaults to pl.Float32())
+        semantic: Semantic tags describing the score purpose (optional)
+        is_list: Whether this field should be treated as a list type (defaults to False)
+
+    Returns:
+        ScoreField instance configured with the given parameters
+    """
+    return ScoreField(semantic=semantic, dtype=dtype, is_list=is_list)
 
 
 def convert_numpy_object_array_to_series(data: np.ndarray) -> pl.Series:
@@ -1138,3 +1190,50 @@ def subset_field(subset_type: Optional[type] = None, semantic: Semantic = Semant
         SubsetField instance configured with the given parameters
     """
     return SubsetField(semantic=semantic)
+
+
+@dataclass(frozen=True)
+class EllipseField(Field):
+    """
+    Represents an ellipse field with format and normalization options.
+
+    Handles ellipse data with support for different coordinate formats
+    and optional normalization to [0,1] range.
+
+    Attributes:
+        semantic: Semantic tags describing the ellipses purpose
+        dtype: Polars data type for coordinate values
+        format: Coordinate format (e.g., "x1y1x2y2", "xywh")
+        normalize: Whether coordinates are normalized to [0,1] range
+    """
+
+    semantic: Semantic
+    dtype: PolarsDataType = pl.Float32()
+    format: str = "x1y1x2y2"
+    normalize: bool = False
+
+    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+        """Generate schema for ellipses as list of 4-element arrays."""
+        return {name: pl.List(pl.Array(self.dtype, 4))}
+
+    def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
+        """Convert ellipse tensor to Polars list format."""
+        numpy_value = to_numpy(value, self.dtype)
+
+        if numpy_value is not None:
+            data: Any = numpy_value.reshape(1, -1, 4)
+        else:
+            data = [None]
+
+        return {
+            name: pl.Series(
+                name,
+                data,
+                dtype=pl.List(pl.Array(self.dtype, 4)),
+            )
+        }
+
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+        """Reconstruct an ellipse tensor from Polars data."""
+        polars_data = df[name][row_index]
+        return from_polars_data(polars_data, target_type)  # type: ignore

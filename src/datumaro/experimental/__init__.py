@@ -9,10 +9,13 @@ from .fields import (
     BBoxField,
     ImageCallableField,
     ImageField,
+    ImageInfo,
     ImageInfoField,
     ImagePathField,
     LabelField,
+    PolygonField,
     RotatedBBoxField,
+    ScoreField,
     TensorField,
     bbox_field,
     image_callable_field,
@@ -20,7 +23,9 @@ from .fields import (
     image_info_field,
     image_path_field,
     label_field,
+    polygon_field,
     rotated_bbox_field,
+    score_field,
     tensor_field,
 )
 from .schema import AttributeInfo, Field, Schema, Semantic
