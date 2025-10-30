@@ -4,10 +4,10 @@
 
 from __future__ import annotations
 
-import json
 import sys
 import types
 from functools import cache
+from pathlib import Path
 from typing import Annotated, Any, Callable, Dict, Generic, Type, Union, cast, get_args, get_origin
 
 import polars as pl
@@ -15,10 +15,21 @@ from typing_extensions import TypeGuard, TypeVar, dataclass_transform
 
 from .categories import Categories
 from .converter_registry import ConverterTransform, find_conversion_path
+from .io import (
+    MediaCopyMode,
+    PathStyle,
+    build_sidecar_dict,
+    create_zip_archive,
+    deserialize_categories_map,
+    detect_file_path_fields,
+    extract_zip_to_dir,
+    package_and_rewrite_paths,
+    read_sidecar_file,
+    rebase_media_paths,
+    write_sidecar_file,
+)
 from .schema import AttributeInfo, Field, Schema
 from .transform import IdentityTransform, Transform
-
-META_COL = "__datumaro_categories__"
 
 
 @dataclass_transform()
@@ -458,41 +469,109 @@ class Dataset(Generic[DType]):
             categories=inferred_categories,
         )
 
-    @staticmethod
-    def _serialize_categories_map(categories_map: Dict[str, Categories]) -> dict[str, Any]:
-        # Delegates to Categories unified API to keep Dataset clean
-        return Categories.serialize_map(categories_map)
-
-    @staticmethod
-    def _deserialize_categories_map(data: dict[str, Any]) -> Dict[str, Categories]:
-        # Delegates to Categories unified API to keep Dataset clean
-        return Categories.deserialize_map(data)
-
-    def save_parquet(self, path: str) -> None:
+    def save_parquet(
+        self,
+        path: str,
+        *,
+        save_media: bool = False,
+        media_dir: str = "media",
+        copy_mode: MediaCopyMode = MediaCopyMode.COPY,
+        path_style: PathStyle = PathStyle.RELATIVE,
+        archive: bool = False,
+        archive_path: str | None = None,
+    ) -> None:
         """
-        Save the dataset to a Parquet file on disk.
+        Save the dataset to a Parquet file on disk with an adjacent sidecar and optional media packaging/archiving.
 
-        - Writes the internal Polars DataFrame to a .parquet file using Polars.
-        - Categories are stored via a hidden Polars column that contains a JSON blob repeated for each row; this column
-          is stripped on load.
+        What gets written:
+        - The internal Polars DataFrame to a `.parquet` file at `path`.
+        - A sidecar JSON (`<path_without_ext>.json`) that records schema and categories, and
+          optionally a `media` block describing how image paths were stored.
+        - If requested, a zip archive that bundles the parquet, sidecar, and media directory.
+
+        Args:
+            path: Destination path to write the Parquet file to. The sidecar JSON will be
+                created next to this file using the same stem and the `.json` extension.
+            save_media: When True, any columns declared as `ImagePathField` in the schema are
+                treated as file-system paths. Their referenced files are copied/symlinked/moved
+                into `media_dir` placed next to the Parquet, and the column values are rewritten
+                to portable paths according to `path_style`.
+            media_dir: Name of the directory (created next to the Parquet) that will contain
+                packaged media files when `save_media=True`. Defaults to "media".
+            copy_mode: How to materialize media into `media_dir`. One of
+                `MediaCopyMode.COPY`, `MediaCopyMode.SYMLINK`, or `MediaCopyMode.MOVE`.
+                The chosen mode is recorded in the sidecar `media.copy_mode` as a string.
+                Note: `SYMLINK` may fall back to copy on platforms that disallow symlinks.
+            path_style: How to store the rewritten path values in the Parquet table for
+                `ImagePathField` columns. Use `PathStyle.RELATIVE` to store POSIX-style
+                relative paths like `media/xxx.png` (recommended for portability), or
+                `PathStyle.ABSOLUTE` to store absolute OS paths to the packaged files.
+            archive: When True, create a `.zip` archive next to the Parquet containing the
+                Parquet file, the sidecar JSON, and the `media_dir` if it exists.
+            archive_path: Optional explicit output path for the `.zip` archive. If provided,
+                the archive is written here regardless of `archive`. If `None` and `archive`
+                is True, the archive is created next to the Parquet with the same stem.
+
+        Notes:
+            - Columns treated as media paths are auto-detected from the schema by looking for
+              `ImagePathField` attributes; there is no need to specify them manually.
+            - Filenames in `media_dir` are collision-safe; if two sources share the same
+              basename, numeric suffixes are applied.
+            - The sidecar's `media` block contains `{ root, path_fields, style, copy_mode }`.
+            - Path strings written to Parquet are standard POSIX strings when relative.
+
+        Raises:
+            OSError: If the Parquet or sidecar cannot be written due to I/O errors.
+            FileNotFoundError: If `save_media=True` and a referenced source file does not exist.
+            ValueError: If unsupported enum values are somehow provided (should not occur when
+                using the provided enums).
+
+        Examples:
+            Save with packaged media and relative paths:
+            >>> ds.save_parquet(
+            ...     "out/dataset.parquet",
+            ...     save_media=True,
+            ...     media_dir="media",
+            ...     copy_mode=MediaCopyMode.COPY,
+            ...     path_style=PathStyle.RELATIVE,
+            ... )
+
+            Save and also bundle everything into a `.zip` next to the parquet:
+            >>> ds.save_parquet("out/data.parquet", save_media=True, archive=True)
+
+            Save and write the archive to a custom location:
+            >>> ds.save_parquet("out/data.parquet", save_media=True, archive_path="/share/pkg.zip")
         """
-        df_to_save = self.df
+        # 1) Prepare path fields via IO helper
+        file_path_fields = detect_file_path_fields(self._schema)
 
-        # Attach categories as a hidden column
-        categories_map: Dict[str, Categories] = {}
-        for name, info in self._schema.attributes.items():
-            if info.categories is not None:
-                categories_map[name] = info.categories
-
-        if categories_map:
-            cats_json = json.dumps(self._serialize_categories_map(categories_map))
-            # Repeat the JSON once per row (column will be empty if there are 0 rows)
-            df_to_save = df_to_save.with_columns(
-                pl.lit(cats_json).cast(pl.Categorical).alias(META_COL)
+        # 2) Optionally package media and rewrite path columns
+        df_to_write = self.df
+        media_meta: dict[str, Any] | None = None
+        if save_media and file_path_fields:
+            df_to_write, media_meta = package_and_rewrite_paths(
+                df=df_to_write,
+                out_parquet_path=Path(path),
+                path_fields=file_path_fields,
+                media_dir=media_dir,
+                copy_mode=copy_mode,
+                path_style=path_style,
             )
 
-        # Write using Polars
-        df_to_save.write_parquet(path)
+        # 3) Write parquet
+        df_to_write.write_parquet(path)
+
+        # 4) Build and write sidecar JSON
+        sidecar = build_sidecar_dict(self._schema, media_meta)
+        write_sidecar_file(Path(path), sidecar)
+
+        # 5) Optionally create an archive
+        if archive or archive_path is not None:
+            create_zip_archive(
+                out_parquet_path=Path(path),
+                media_dir=media_dir,
+                archive_path=Path(archive_path) if archive_path is not None else None,
+            )
 
     @classmethod
     def from_parquet(
@@ -501,30 +580,138 @@ class Dataset(Generic[DType]):
         dtype_or_schema: Union[Schema, Type[DTargetType]],
         categories: Dict[str, Categories] | None = None,
         schema: Schema | None = None,
+        *,
+        rebase_media_root: str | None = None,
+        make_paths_absolute: bool = False,
+        extract_dir: str | None = None,
     ) -> "Dataset[DTargetType]":
         """
-        Load a dataset from a Parquet file previously saved with save_parquet.
+        Load a dataset from a Parquet file or from a zip archive produced by `save_parquet`.
 
-        Note: Since Parquet does not store our custom schema, the caller must
-        provide either the target Sample dtype or a Schema instance.
+        Behavior overview:
+        - If `path` points to a `.zip`, the archive is extracted to `extract_dir` (if provided)
+          or to a temporary directory. The contained Parquet is then located and loaded.
+          When loading from a zip, `rebase_media_root` defaults to the extraction directory
+          so that relative media paths resolve to the extracted `media/` folder.
+        - If the sidecar JSON (`<parquet>.json`) contains a `media` block and either
+          `rebase_media_root` or `make_paths_absolute` is requested, columns that were
+          declared as `ImagePathField` are rewritten accordingly.
+
+        Args:
+            path: Path to a `.parquet` file or a `.zip` produced by `save_parquet(archive=True)`.
+            dtype_or_schema: The target Sample class (dtype) or a `Schema` instance describing
+                the structure of rows to construct. Parquet itself does not carry the custom
+                Datumaro schema, so this is required for typed access.
+            categories: Optional categories to attach to the loaded schema. When `None`, the
+                loader attempts to read categories from the sidecar JSON. If both are provided,
+                the explicit `categories` argument takes precedence.
+            schema: Optional explicit `Schema` to use instead of inferring from `dtype_or_schema`.
+                This is rarely needed; pass only if you manage schemas manually.
+            rebase_media_root: Optional directory that becomes the new base for resolving stored
+                relative media paths (e.g., `media/img.png`). If `None`, relative paths are
+                resolved relative to the Parquet file location. When loading from zip, the
+                default is the extraction directory unless you override it.
+            make_paths_absolute: When True, after optional rebasing, all media path values are
+                converted to absolute OS paths. When False, stored values are preserved except
+                for possible rebasing of relative paths.
+            extract_dir: Directory to extract the zip to when `path` is a `.zip`. If `None`, a
+                temporary directory is used. The directory is not automatically cleaned up.
+
+        Returns:
+            A `Dataset` instance of type `dtype_or_schema` (or using the provided `Schema`).
+
+        Notes:
+            - Path-field columns are auto-detected from the sidecar schema by selecting
+              attributes with `field == "ImagePathField"`.
+            - Categories are restored from the sidecar if not passed explicitly.
+            - When `path` is a `.zip`, the loader selects the Parquet inside by preferring a
+              file whose name matches the archive stem; otherwise it chooses a top-level Parquet
+              if present, or the first Parquet found.
+
+        Raises:
+            FileNotFoundError: If a `.zip` is provided but no Parquet is found inside.
+            OSError: If the Parquet file cannot be read.
+            ValueError: If the provided arguments are inconsistent.
+
+        Examples:
+            Load a plain Parquet written earlier:
+            >>> ds = Dataset.from_parquet("out/data.parquet", PathSample)
+
+            Load from a zip and resolve media paths to absolute on this machine:
+            >>> ds = Dataset.from_parquet(
+            ...     "out/data.zip",
+            ...     PathSample,
+            ...     make_paths_absolute=True,
+            ... )
+
+            Load and rebase relative media paths under a new directory:
+            >>> ds = Dataset.from_parquet(
+            ...     "out/data.parquet",
+            ...     PathSample,
+            ...     rebase_media_root="/mnt/datasets/shared_copy",
+            ... )
         """
+
+        # Handle zip archive inputs by extracting and delegating to inner parquet
+        try:
+            import zipfile
+
+            is_zip = path.lower().endswith(".zip") and zipfile.is_zipfile(path)
+        except Exception:
+            is_zip = False
+
+        if is_zip:
+            candidate, extract_root = extract_zip_to_dir(path, extract_dir)
+            effective_rebase = (
+                rebase_media_root if rebase_media_root is not None else str(extract_root)
+            )
+            return cls.from_parquet(
+                str(candidate),
+                dtype_or_schema,
+                categories=categories,
+                schema=schema,
+                rebase_media_root=effective_rebase,
+                make_paths_absolute=make_paths_absolute,
+            )
+
         df: pl.DataFrame = pl.read_parquet(path)
 
-        # Try to extract categories from hidden column first
+        # Load categories from sidecar JSON if available
         loaded_categories: Dict[str, Categories] | None = None
-        if categories is None and META_COL in df.columns:
-            try:
-                non_null = df[META_COL].drop_nulls()
-                if len(non_null) > 0:
-                    # First value contains the JSON blob
-                    cats_json = non_null[0]
-                    if isinstance(cats_json, (bytes, bytearray)):
-                        cats_json = cats_json.decode("utf-8")
-                    loaded_categories = cls._deserialize_categories_map(json.loads(cats_json))
-            except Exception:
-                loaded_categories = None
-            # Remove the hidden column regardless of success
-            df = df.drop([META_COL])
+        sidecar: dict[str, Any] | None = None
+        if categories is None or rebase_media_root or make_paths_absolute:
+            sidecar = read_sidecar_file(Path(path))
+            if categories is None and isinstance(sidecar, dict):
+                cats = sidecar.get("categories")
+                if isinstance(cats, dict):
+                    try:
+                        loaded_categories = deserialize_categories_map(cats)
+                    except Exception:
+                        loaded_categories = None
+
+        # Optionally rebase/resolve media paths using sidecar info
+        if sidecar is not None and (rebase_media_root or make_paths_absolute):
+            media_meta = sidecar.get("media") if isinstance(sidecar, dict) else None
+            if isinstance(media_meta, dict):
+                # Discover ImagePathField columns from sidecar schema
+                detected: list[str] = []
+                schema_info = sidecar.get("schema", {})
+                attrs = schema_info.get("attributes", []) if isinstance(schema_info, dict) else []
+                for a in attrs:
+                    try:
+                        if a.get("field") == "ImagePathField":
+                            detected.append(a.get("name"))
+                    except Exception:
+                        pass
+                if detected:
+                    df = rebase_media_paths(
+                        df=df,
+                        path_fields=detected,
+                        sidecar_media_meta=media_meta,
+                        parquet_path=Path(path),
+                        rebase_media_root=rebase_media_root,
+                        make_paths_absolute=make_paths_absolute,
+                    )
 
         categories_final: Dict[str, Categories] | None = categories or loaded_categories
 
