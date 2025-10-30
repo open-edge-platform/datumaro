@@ -17,8 +17,41 @@ from datumaro.experimental.dataset import (
     Schema,
     convert_sample_to_schema,
 )
-from datumaro.experimental.fields import ImageInfo, bbox_field, image_field, image_info_field
+from datumaro.experimental.fields import (
+    ImageInfo,
+    Subset,
+    bbox_field,
+    image_field,
+    image_info_field,
+    subset_field,
+)
 from datumaro.experimental.schema import Semantic
+
+
+def test_filter_by_subset_raises_without_subset_field():
+    class NoSubsetSample(Sample):
+        image: np.ndarray = image_field(dtype=pl.UInt8, format="RGB")
+
+    dataset = Dataset(NoSubsetSample)
+    dataset.append(NoSubsetSample(image=np.array([1])))
+    with pytest.raises(RuntimeError, match="Dataset does not have an attribute for 'SubsetField'"):
+        dataset.filter_by_subset(Subset.TRAINING)
+
+
+def test_filter_by_subset_filters_correctly():
+    class SubsetSample(Sample):
+        image: np.ndarray = image_field(dtype=pl.UInt8, format="RGB")
+        subset: Subset = subset_field()
+
+    dataset = Dataset(SubsetSample)
+    dataset.append(SubsetSample(image=np.array([1]), subset=Subset.TRAINING))
+    dataset.append(SubsetSample(image=np.array([2]), subset=Subset.VALIDATION))
+    dataset.append(SubsetSample(image=np.array([3]), subset=Subset.TRAINING))
+
+    filtered = dataset.filter_by_subset(Subset.TRAINING)
+    assert len(filtered) == 2
+    for sample in filtered:
+        assert sample.subset == Subset.TRAINING
 
 
 def test_dataset_creation_from_sample_class():

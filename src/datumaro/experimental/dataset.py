@@ -24,6 +24,8 @@ from typing import (
 import polars as pl
 from typing_extensions import TypeGuard, TypeVar, dataclass_transform
 
+from datumaro.experimental.fields import Subset, SubsetField
+
 from .converter_registry import ConverterTransform, find_conversion_path
 from .schema import AttributeInfo, Field, Schema
 from .transform import IdentityTransform, Transform
@@ -169,7 +171,7 @@ class Dataset(Generic[DType]):
     def __init__(
         self,
         dtype_or_schema: Union[Schema, Type[DType]],
-        categories: dict[str, Categories] = None,
+        categories: dict[str, Categories] | None = None,
         schema: Schema | None = None,
     ):
         """
@@ -200,7 +202,7 @@ class Dataset(Generic[DType]):
         df: pl.DataFrame,
         dtype_or_schema: Union[Schema, Type[DTargetType]],
         transforms: Transform | None = None,
-        categories: Dict[str, Categories] = None,
+        categories: Dict[str, Categories] | None = None,
         schema: Schema | None = None,
     ) -> "Dataset[DTargetType]":
         """
@@ -467,6 +469,32 @@ class Dataset(Generic[DType]):
             target_dtype_or_schema,
             transforms,
             categories=inferred_categories,
+        )
+
+    def filter_by_subset(self, subset: Subset) -> Dataset[DType]:
+        """
+        Return new dataset with items from given subset.
+
+        Args:
+            subset: the subset to filter on
+
+        Returns:
+            A new Dataset with items of the given subset.
+        """
+        for subset_column_name, attribute_info in self.schema.attributes.items():
+            if isinstance(attribute_info.annotation, SubsetField):
+                break
+        else:
+            raise RuntimeError(
+                f"Dataset does not have an attribute for 'SubsetField': schema: {self.df.schema}"
+            )
+
+        filtered_df = self.df.filter(self.df[subset_column_name] == subset.name)
+
+        return Dataset.from_dataframe(
+            df=filtered_df,
+            dtype_or_schema=self.dtype,
+            schema=self.schema,
         )
 
 
