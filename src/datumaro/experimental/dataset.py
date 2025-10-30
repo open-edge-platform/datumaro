@@ -481,12 +481,10 @@ class Dataset(Generic[DType]):
         Returns:
             A new Dataset with items of the given subset.
         """
-        subset_column_name: str | None = None
-        for column_name, attribute_info in self.schema.attributes.items():
+        for subset_column_name, attribute_info in self.schema.attributes.items():
             if isinstance(attribute_info.annotation, SubsetField):
-                subset_column_name = column_name
                 break
-        if subset_column_name is None:
+        else:
             raise RuntimeError(
                 f"Dataset does not have an attribute for 'SubsetField': schema: {self.df.schema}"
             )
