@@ -499,12 +499,10 @@ class Dataset(Generic[DType]):
 
     def append_dataset(self, dataset: Dataset) -> None:
         """
-        Append another dataset to this dataset.
+        Append another dataset to this dataset in place.
 
         Args:
             dataset: The dataset to append
-        Returns:
-            A new Dataset instance with the combined data
         """
         converted_dataset = dataset.convert_to_schema(target_dtype_or_schema=self.schema)
         self.df = self.df.vstack(converted_dataset.df)
