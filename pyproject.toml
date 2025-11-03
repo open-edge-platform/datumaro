@@ -125,11 +125,6 @@ protobuf = ["protobuf"]
 
 experimental = ["polars>=1.31.0,<2.0.0"]
 
-[tool.isort]
-profile = "black"
-forced_separate = ["tests"]
-line_length = 100
-
 [tool.coverage.run]
 branch = true
 
@@ -182,27 +177,9 @@ ignore_errors = true
 
 skip_empty = true
 
-[tool.black]
-line-length = 100
-target-version = ['py310']
-
 [tool.ruff]
-# Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
-select = ["E", "F"]
-
-# Need to review all ignore items below
-ignore = [
-    # pycodestyle
-    "E402",     # module-import-not-at-top-of-file
-    "E731",     # lambda-assignment
-    "E741",     # ambiguous-variable-name
-    #Pyflakes
-    "F403",     # undefined-local-with-import-star
-]
-
-# Allow autofix for all enabled rules (when `--fix`) is provided.
-fixable = ["A", "B", "C", "D", "E", "F"]
-unfixable = []
+target-version = "py310"
+line-length = 120
 
 # Exclude a variety of commonly ignored directories.
 exclude = [
@@ -231,16 +208,35 @@ extend-exclude = [
     "src/datumaro/plugins/openvino_plugin/samples"
 ]
 
-# Same as Black.
-line-length = 120
+[tool.ruff.lint]
+select = ["ARG", "E", "F", "I", "N", "UP", "YTT", "ASYNC", "S", "COM", "C4", "FA", "PIE", "PYI", "Q", "RSE", "RET", "SIM",
+    "TID", "TC", "PL", "RUF", "C90", "D103", "ANN001", "ANN201", "ANN205", "FAST"]
 
-# Allow unused variables when underscore-prefixed.
+ignore = ["N801", "N805","N806","N807", "N818", "COM812", "RET503", "SIM108", "SIM105", "PLR2004",
+    "RUF010", "TC001",  "RUF012"]
+
+fixable = ["ALL"]
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
-# minimum target version
-target-version = "py310"
+[tool.ruff.lint.per-file-ignores]
+"*test*.py" = ["S", "ANN", "D", "ARG", "PLR"]
 
-# ignore-init-module-imports = true
+[tool.ruff.lint.isort]
+split-on-trailing-comma = false
+known-local-folder = []
+
+[tool.ruff.lint.pylint]
+max-args=7
+
+# Need to review all ignore items below
+# ignore = [
+#     # pycodestyle
+#     "E402",     # module-import-not-at-top-of-file
+#     "E731",     # lambda-assignment
+#     "E741",     # ambiguous-variable-name
+#     #Pyflakes
+#     "F403",     # undefined-local-with-import-star
+# ]
 
 [tool.ruff.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
@@ -256,6 +252,11 @@ max-complexity = 10
 
 [tool.nbqa.addopts]
 ruff = ["--ignore=E402"]
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
+show_error_codes = true
 
 [tool.bandit]
 exclude_dirs = [

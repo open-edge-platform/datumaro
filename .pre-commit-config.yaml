@@ -14,24 +14,18 @@ repos:
           )$
 
   # Ruff
-  - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: "v0.5.0"
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.14.3
     hooks:
-      - id: ruff
-        exclude: "tests"
-
-  # python code formatting
-  - repo: https://github.com/psf/black
-    rev: 23.1.0
-    hooks:
-      - id: black
-
-  # Sort Python import
-  - repo: https://github.com/pycqa/isort
-    rev: 5.11.5
-    hooks:
-      - id: isort
-        name: isort (python)
+    - id: ruff
+      name: Ruff linter on all Python files
+      args: ["--fix"]
+    - id: ruff-format
+      name: Ruff formatter on all Python files
+      rev: "v0.5.0"
+      hooks:
+        - id: ruff
+        - id: ruff-format
 
   # TODO: Enable mypy as soon as possible
   # python static type checking
@@ -60,9 +54,8 @@ repos:
   - repo: https://github.com/nbQA-dev/nbQA
     rev: 1.8.5
     hooks:
-      - id: nbqa-black
       - id: nbqa-ruff
-        additional_dependencies: [ruff==0.4.10]
+        additional_dependencies: [ruff==0.14.3]
 
   # zizmor detects security issues in GitHub Actions workflows.
   - repo: https://github.com/woodruffw/zizmor-pre-commit
