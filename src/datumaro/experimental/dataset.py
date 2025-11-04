@@ -497,6 +497,61 @@ class Dataset(Generic[DType]):
             schema=self.schema,
         )
 
+    def export(
+        self,
+        output_path: Union[str, Any],
+        export_images: bool = True,
+        as_zip: bool = False,
+    ) -> None:
+        """
+        Export this dataset to disk in a structured format.
+
+        The dataset is exported with the following structure:
+        - data.parquet: The DataFrame in Parquet format
+        - metadata.json: Schema, categories, and image paths
+        - images/: Directory containing exported images (if export_images=True)
+
+        Image format is automatically determined:
+        - ImagePathField: Preserves original format (copied directly)
+        - ImageCallableField: Saved as PNG (lossless)
+        - InstanceMaskCallableField: Saved as PNG (best for masks)
+
+        Args:
+            output_path: Path to export to (directory or .zip file)
+            export_images: Whether to export images from callable/path fields
+            as_zip: Whether to package everything as a ZIP file
+
+        Raises:
+            ValueError: If the dataset has transforms (not yet supported)
+        """
+        from .export_import import export_dataset
+
+        export_dataset(self, output_path, export_images, as_zip)
+
+    @classmethod
+    def from_file(
+        cls,
+        input_path: Union[str, Any],
+        dtype: Type[DTargetType] | None = None,
+    ) -> "Dataset[DTargetType]":
+        """
+        Import a dataset from an exported format.
+
+        Args:
+            input_path: Path to the exported dataset (directory or .zip file)
+            dtype: Optional Sample class to use for the dataset. If None, uses generic Sample.
+
+        Returns:
+            The imported Dataset instance
+
+        Raises:
+            FileNotFoundError: If required files are missing
+            ValueError: If the dataset format is invalid
+        """
+        from .export_import import import_dataset
+
+        return import_dataset(input_path, dtype)
+
 
 def convert_sample_to_schema(
     sample: Sample,
