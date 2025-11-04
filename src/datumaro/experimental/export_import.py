@@ -24,6 +24,7 @@ from zipfile import ZIP_DEFLATED, ZipFile
 
 import numpy as np
 import polars as pl
+from PIL import Image
 
 from .dataset import Dataset, Sample
 from .fields import ImageCallableField, ImagePathField, InstanceMaskCallableField
@@ -57,7 +58,6 @@ def _export_images_from_dataset(
     Returns:
         Dictionary mapping field names to dictionaries of row_idx -> relative path
     """
-    from PIL import Image
 
     output_dir.mkdir(parents=True, exist_ok=True)
     image_paths: Dict[str, Dict[int, str]] = {}
@@ -405,7 +405,6 @@ def _import_dataset_from_dir(
                 df = df.with_columns(pl.Series(field_name, path_list, dtype=pl.String))
             else:
                 # For ImageCallableField/InstanceMaskCallableField: Create lazy-loading callables
-                from PIL import Image
 
                 callable_list = []
                 for idx in range(len(df)):

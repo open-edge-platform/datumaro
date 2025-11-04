@@ -6,12 +6,16 @@ Schema definitions for the dataset system.
 """
 
 import copy
+import importlib
 from dataclasses import dataclass, field
+from dataclasses import fields as dataclass_fields
+from dataclasses import is_dataclass
 from enum import Flag, auto
 from typing import Any, Dict, Generic, Optional, TypeVar
 
 import polars as pl
 
+from . import fields as fields_module
 from .categories import Categories
 
 
@@ -109,8 +113,6 @@ class Field:
         Returns:
             Dictionary containing field type and parameters
         """
-        from dataclasses import fields as dataclass_fields
-        from dataclasses import is_dataclass
 
         field_dict = {
             "type": self.__class__.__name__,
@@ -150,10 +152,6 @@ class Field:
         Returns:
             Reconstructed Field instance
         """
-        from dataclasses import fields as dataclass_fields
-        from dataclasses import is_dataclass
-
-        from . import fields as fields_module
 
         field_type = field_dict["type"]
 
@@ -351,8 +349,6 @@ class Schema:
             # Attempt to reconstruct the actual type
             if type_module and type_module != "builtins":
                 try:
-                    import importlib
-
                     module = importlib.import_module(type_module)
                     attr_type = getattr(module, type_name, object)
                 except (ImportError, AttributeError):
