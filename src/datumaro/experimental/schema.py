@@ -15,7 +15,6 @@ from typing import Any, Dict, Generic, Optional, TypeVar
 
 import polars as pl
 
-from . import fields as fields_module
 from .categories import Categories
 
 
@@ -152,6 +151,7 @@ class Field:
         Returns:
             Reconstructed Field instance
         """
+        from . import fields as fields_module
 
         field_type = field_dict["type"]
 
