@@ -27,7 +27,7 @@ import polars as pl
 from PIL import Image
 
 from .dataset import Dataset, Sample
-from .fields import ImageCallableField, ImagePathField, InstanceMaskCallableField
+from .fields import ImageCallableField, ImagePathField, InstanceMaskCallableField, MaskCallableField
 from .schema import Schema
 
 if TYPE_CHECKING:
@@ -49,7 +49,7 @@ def _export_images_from_dataset(
 
     For ImagePathField: Copies images directly from filesystem (preserving format)
     For ImageCallableField: Saves as PNG (lossless for arrays)
-    For InstanceMaskCallableField: Saves as PNG (best for masks)
+    For InstanceMaskCallableField/MaskCallableField: Saves as PNG (best for masks)
 
     Args:
         dataset: The dataset to export images from
@@ -66,7 +66,8 @@ def _export_images_from_dataset(
     image_fields = []
     for name, attr_info in dataset.schema.attributes.items():
         if isinstance(
-            attr_info.annotation, (ImageCallableField, ImagePathField, InstanceMaskCallableField)
+            attr_info.annotation,
+            (ImageCallableField, ImagePathField, InstanceMaskCallableField, MaskCallableField),
         ):
             image_fields.append((name, attr_info.annotation))
 
@@ -157,7 +158,7 @@ def _export_images_from_dataset(
                         )
                         continue
 
-            elif isinstance(field_annotation, InstanceMaskCallableField):
+            elif isinstance(field_annotation, (InstanceMaskCallableField, MaskCallableField)):
                 # Call the callable to get the mask data
                 if not callable(value):
                     continue
@@ -221,7 +222,7 @@ def export_dataset(
     Image format is automatically determined:
     - ImagePathField: Preserves original format (copied directly)
     - ImageCallableField: Saved as PNG (lossless)
-    - InstanceMaskCallableField: Saved as PNG (best for masks)
+    - InstanceMaskCallableField/MaskCallableField: Saved as PNG (best for masks)
 
     Args:
         dataset: The dataset to export

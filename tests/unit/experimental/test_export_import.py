@@ -32,11 +32,22 @@ from datumaro.experimental.export_import import (
     import_dataset,
 )
 from datumaro.experimental.fields import (
+    ImageInfo,
+    Subset,
+    TileInfo,
+    bbox_field,
     image_callable_field,
+    image_info_field,
     image_path_field,
     instance_mask_callable_field,
+    keypoints_field,
     label_field,
+    mask_callable_field,
+    rotated_bbox_field,
     score_field,
+    subset_field,
+    tensor_field,
+    tile_field,
 )
 
 
@@ -806,3 +817,146 @@ def test_zip_path_without_zip_extension(tmp_path):
     expected_zip = tmp_path / "export_no_ext.zip"
     assert expected_zip.exists()
     assert expected_zip.suffix == ".zip"
+
+
+def test_export_import_different_field_types(tmp_path):
+    """Test export/import with a sample containing one of every field type."""
+
+    # Create source image for image_path field
+    source_dir = tmp_path / "source"
+    source_dir.mkdir()
+    source_img_path = source_dir / "source_image.png"
+    PILImage.fromarray(np.ones((20, 30, 3), dtype=np.uint8) * 100).save(source_img_path)
+
+    class ComprehensiveSample(Sample):
+        label: int = label_field()
+        score: float = score_field()
+        subset: Subset = subset_field()
+
+        tensor: np.ndarray = tensor_field(dtype=pl.Float32)
+        bbox: np.ndarray = bbox_field(dtype=pl.Float32, normalize=False)
+        rotated_bbox: np.ndarray = rotated_bbox_field(dtype=pl.Float32)
+        keypoints: np.ndarray = keypoints_field(dtype=pl.Float32)
+
+        image_callable: Any = image_callable_field()
+        image_path: str = image_path_field()
+        image_info: ImageInfo = image_info_field()
+
+        mask_callable: Any = mask_callable_field()
+        instance_mask_callable: Any = instance_mask_callable_field()
+
+        tile: TileInfo = tile_field()
+
+    # Create helper functions for callables
+    def make_image():
+        return np.full((20, 30, 3), 150, dtype=np.uint8)
+
+    def make_mask():
+        return np.ones((20, 30), dtype=np.uint8) * 255
+
+    def make_instance_mask():
+        return np.ones((20, 30), dtype=np.uint8) * 128
+
+    # Create dataset with sample containing all field types
+    dataset = Dataset(ComprehensiveSample)
+    sample = ComprehensiveSample(
+        label=1,
+        score=0.95,
+        subset=Subset.TRAINING,
+        tensor=np.array([1.0, 2.0, 3.0], dtype=np.float32),
+        bbox=np.array([[10.0, 20.0, 50.0, 60.0]], dtype=np.float32),
+        rotated_bbox=np.array([[25.0, 35.0, 40.0, 50.0, 0.5]], dtype=np.float32),
+        keypoints=np.array([[15.0, 25.0, 1.0], [35.0, 45.0, 1.0]], dtype=np.float32),
+        image_callable=make_image,
+        image_path=str(source_img_path),
+        image_info=ImageInfo(width=30, height=20),
+        mask_callable=make_mask,
+        instance_mask_callable=make_instance_mask,
+        tile=TileInfo(source_sample_idx=0, x=10, y=20, width=30, height=40),
+    )
+    dataset.append(sample)
+
+    # Export dataset
+    export_dir = tmp_path / "export"
+    export_dataset(dataset, export_dir, export_images=True, as_zip=False)
+
+    # Verify export structure
+    assert (export_dir / METADATA_FILE).exists()
+    assert (export_dir / DATAFRAME_FILE).exists()
+    assert (export_dir / IMAGES_DIR).exists()
+
+    # Verify images were exported
+    images_dir = export_dir / IMAGES_DIR
+    assert (images_dir / "image_callable_000000.png").exists()
+    assert (images_dir / "image_path_000000.png").exists()
+    assert (images_dir / "mask_callable_000000.png").exists()
+    assert (images_dir / "instance_mask_callable_000000.png").exists()
+
+    # Import dataset
+    imported_dataset = import_dataset(export_dir, dtype=ComprehensiveSample)
+
+    # Verify dataset length
+    assert len(imported_dataset) == 1
+
+    # Get the imported sample
+    imported_sample = imported_dataset[0]
+
+    # Verify basic fields
+    assert imported_sample.label == 1
+    assert imported_sample.score == pytest.approx(0.95)
+    assert imported_sample.subset == Subset.TRAINING
+
+    # Verify tensor
+    np.testing.assert_array_almost_equal(
+        imported_sample.tensor, np.array([1.0, 2.0, 3.0], dtype=np.float32)
+    )
+
+    # Verify bounding boxes
+    np.testing.assert_array_almost_equal(
+        imported_sample.bbox, np.array([[10.0, 20.0, 50.0, 60.0]], dtype=np.float32)
+    )
+    np.testing.assert_array_almost_equal(
+        imported_sample.rotated_bbox,
+        np.array([[25.0, 35.0, 40.0, 50.0, 0.5]], dtype=np.float32),
+    )
+
+    # Verify keypoints
+    np.testing.assert_array_almost_equal(
+        imported_sample.keypoints,
+        np.array([[15.0, 25.0, 1.0], [35.0, 45.0, 1.0]], dtype=np.float32),
+    )
+
+    # Verify image callable
+    assert callable(imported_sample.image_callable)
+    img = imported_sample.image_callable()
+    assert img.shape == (20, 30, 3)
+    assert img[0, 0, 0] == 150
+
+    # Verify image path was updated
+    assert imported_sample.image_path is not None
+    assert Path(imported_sample.image_path).exists()
+    loaded_img = np.array(PILImage.open(imported_sample.image_path))
+    assert loaded_img.shape == (20, 30, 3)
+
+    # Verify image info
+    assert imported_sample.image_info.width == 30
+    assert imported_sample.image_info.height == 20
+
+    # Verify mask callable
+    assert callable(imported_sample.mask_callable)
+    mask = imported_sample.mask_callable()
+    assert mask.shape == (20, 30)
+    assert mask[0, 0] == 255
+
+    # Verify instance mask callable
+    assert callable(imported_sample.instance_mask_callable)
+    inst_mask = imported_sample.instance_mask_callable()
+    assert inst_mask.shape == (20, 30)
+    assert inst_mask[0, 0] == 128
+
+    # Verify tile info
+    assert imported_sample.tile.source_sample_idx == 0
+    assert imported_sample.tile.x == 10
+    assert imported_sample.tile.y == 20
+    assert imported_sample.tile.width == 30
+    assert imported_sample.tile.height == 40
