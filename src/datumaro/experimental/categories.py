@@ -15,7 +15,7 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from enum import IntEnum
 from functools import cache
-from typing import Dict, Iterator, List, NamedTuple, Optional, Tuple, Union
+from typing import Any, Dict, Iterator, List, NamedTuple, Optional, Tuple, Union
 
 
 class LabelSemantic(IntEnum):
@@ -55,7 +55,7 @@ class Categories:
     label attributes etc.
     """
 
-    def to_dict(self) -> Dict[str, any]:
+    def to_dict(self) -> Dict[str, Any]:
         """
         Serialize this Categories instance to a JSON-compatible dictionary.
 
@@ -68,7 +68,7 @@ class Categories:
         return {"type": self.__class__.__name__}
 
     @classmethod
-    def from_dict(cls, data: Dict[str, any]) -> "Categories":
+    def from_dict(cls, data: Dict[str, Any]) -> "Categories":
         """
         Deserialize a Categories instance from a JSON dictionary.
 
@@ -178,7 +178,7 @@ class LabelCategories(Categories):
         # Include label_semantics in the hash
         return hash((self.labels, self.group_type, frozenset(self.label_semantics.items())))
 
-    def to_dict(self) -> Dict[str, any]:
+    def to_dict(self) -> Dict[str, Any]:
         """
         Serialize to a JSON-compatible dictionary.
 
@@ -196,7 +196,7 @@ class LabelCategories(Categories):
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, any]) -> "LabelCategories":
+    def from_dict(cls, data: Dict[str, Any]) -> "LabelCategories":
         """
         Deserialize from a JSON dictionary.
 
@@ -404,7 +404,7 @@ class HierarchicalLabelCategories(Categories):
         lg_repr = tuple((lg.name, tuple(lg.labels), lg.group_type) for lg in self.label_groups)
         return hash((self.items, lg_repr, frozenset(self.label_semantics.items())))
 
-    def to_dict(self) -> Dict[str, any]:
+    def to_dict(self) -> Dict[str, Any]:
         """
         Serialize to a JSON-compatible dictionary.
 
@@ -439,7 +439,7 @@ class HierarchicalLabelCategories(Categories):
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, any]) -> "HierarchicalLabelCategories":
+    def from_dict(cls, data: Dict[str, Any]) -> "HierarchicalLabelCategories":
         """
         Deserialize from a JSON dictionary.
 
@@ -562,7 +562,7 @@ class MaskCategories(Categories):
     def __hash__(self):
         return hash((tuple(self.labels), frozenset(self.colormap.items())))
 
-    def to_dict(self) -> Dict[str, any]:
+    def to_dict(self) -> Dict[str, Any]:
         """
         Serialize to a JSON-compatible dictionary.
 
@@ -578,7 +578,7 @@ class MaskCategories(Categories):
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, any]) -> "MaskCategories":
+    def from_dict(cls, data: Dict[str, Any]) -> "MaskCategories":
         """
         Deserialize from a JSON dictionary.
 
