@@ -130,9 +130,6 @@ class Field:
                 # Handle Polars data types
                 elif field_name == "dtype" and isinstance(field_value, pl.DataType):
                     field_dict[field_name] = str(field_value)
-                # Handle other types with __name__
-                elif field_name == "dtype" and hasattr(field_value, "__name__"):
-                    field_dict[field_name] = field_value.__name__
                 # Handle regular serializable values
                 else:
                     field_dict[field_name] = field_value

@@ -270,7 +270,7 @@ def test_export_basic_dataset_to_directory(tmp_path):
 
     class SimpleSample(Sample):
         label: int = label_field()
-        score: float = score_field(dtype=pl.Float32)
+        score: float = score_field(dtype=pl.Float32())
 
     dataset = Dataset(SimpleSample)
     dataset.append(SimpleSample(label=1, score=0.9))
@@ -438,7 +438,7 @@ def test_import_basic_dataset_from_directory(tmp_path):
 
     class SimpleSample(Sample):
         label: int = label_field()
-        score: float = score_field(dtype=pl.Float32)
+        score: float = score_field(dtype=pl.Float32())
 
     # Export first
     original_dataset = Dataset(SimpleSample)
@@ -704,7 +704,7 @@ def test_roundtrip_preserves_data_integrity(tmp_path):
 
     class ComplexSample(Sample):
         label: int = label_field()
-        score: float = score_field(dtype=pl.Float32)
+        score: float = score_field(dtype=pl.Float32())
         image: Any = image_callable_field()
 
     def make_image(value):
@@ -833,10 +833,10 @@ def test_export_import_different_field_types(tmp_path):
         score: float = score_field()
         subset: Subset = subset_field()
 
-        tensor: np.ndarray = tensor_field(dtype=pl.Float32)
-        bbox: np.ndarray = bbox_field(dtype=pl.Float32, normalize=False)
-        rotated_bbox: np.ndarray = rotated_bbox_field(dtype=pl.Float32)
-        keypoints: np.ndarray = keypoints_field(dtype=pl.Float32)
+        tensor: np.ndarray = tensor_field(dtype=pl.Float32())
+        bbox: np.ndarray = bbox_field(dtype=pl.Float32(), normalize=False)
+        rotated_bbox: np.ndarray = rotated_bbox_field(dtype=pl.Float32())
+        keypoints: np.ndarray = keypoints_field(dtype=pl.Float32())
 
         image_callable: Any = image_callable_field()
         image_path: str = image_path_field()
