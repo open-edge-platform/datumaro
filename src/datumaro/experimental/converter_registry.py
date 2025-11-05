@@ -1062,6 +1062,24 @@ class ConverterTransform(Transform):
             if converters is not None:
                 for converter in converters:
                     if id(converter) not in self._applied_converters:
+                        # Only apply the converter when all of its required input columns are present.
+                        # This prevents race conditions when converters are evaluated lazily in
+                        # multi-worker dataloaders, where some columns may not be materialized yet.
+                        can_apply = True
+                        for attr_spec in converter.get_input_attr_specs():
+                            required_cols = attr_spec.field.to_polars_schema(attr_spec.name).keys()
+                            for col in required_cols:
+                                if col not in self._df.columns:
+                                    can_apply = False
+                                    break
+                            if not can_apply:
+                                break
+
+                        if not can_apply:
+                            # Defer this converter; it will be attempted again on future apply() calls
+                            # once the necessary input columns have been materialized.
+                            continue
+
                         self._df = converter.convert(self._df)
                         self._applied_converters.add(id(converter))
 
