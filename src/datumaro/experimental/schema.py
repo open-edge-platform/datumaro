@@ -355,7 +355,16 @@ class Schema:
                     attr_type = object
             elif type_name in ["int", "float", "str", "bool", "list", "dict", "tuple"]:
                 # Handle built-in types
-                attr_type = eval(type_name)  # Safe for built-ins
+                BUILTIN_TYPES = {
+                    "int": int,
+                    "float": float,
+                    "str": str,
+                    "bool": bool,
+                    "list": list,
+                    "dict": dict,
+                    "tuple": tuple,
+                }
+                attr_type = BUILTIN_TYPES.get(type_name, object)
             else:
                 # Default to object as placeholder
                 attr_type = object
