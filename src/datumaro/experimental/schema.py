@@ -7,7 +7,8 @@ Schema definitions for the dataset system.
 
 import copy
 import importlib
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+from dataclasses import field as dataclass_field
 from dataclasses import fields as dataclass_fields
 from dataclasses import is_dataclass
 from enum import Flag, auto
@@ -241,7 +242,7 @@ class Schema:
     Enforces that only one field of each type exists per semantic context.
     """
 
-    attributes: dict[str, AttributeInfo] = field(default_factory=dict[str, AttributeInfo])
+    attributes: dict[str, AttributeInfo] = dataclass_field(default_factory=dict[str, AttributeInfo])
 
     def __post_init__(self):
         """Validate that only one field of each type exists per semantic context."""
@@ -280,9 +281,8 @@ class Schema:
         for attr_name, category in categories.items():
             if attr_name in new_schema.attributes:
                 new_schema.attributes[attr_name].categories = category
-        else:
-            raise ValueError(f"Attribute '{attr_name}' not found in schema")
-
+            else:
+                raise ValueError(f"Attribute '{attr_name}' not found in schema")
         return new_schema
 
     def to_dict(self) -> Dict[str, Any]:

@@ -345,11 +345,15 @@ def _import_dataset_from_dir(
     Returns:
         The imported Dataset instance
     """
-    # Load metadata
     metadata_path = input_dir / METADATA_FILE
     if not metadata_path.exists():
         raise FileNotFoundError(f"Metadata file not found: {metadata_path}")
 
+    parquet_path = input_dir / DATAFRAME_FILE
+    if not parquet_path.exists():
+        raise FileNotFoundError(f"DataFrame file not found: {parquet_path}")
+
+    # Load metadata
     with open(metadata_path) as f:
         metadata = json.load(f)
 
@@ -364,10 +368,6 @@ def _import_dataset_from_dir(
     schema = Schema.from_dict(metadata["schema"])
 
     # Load DataFrame
-    parquet_path = input_dir / DATAFRAME_FILE
-    if not parquet_path.exists():
-        raise FileNotFoundError(f"DataFrame file not found: {parquet_path}")
-
     df = pl.read_parquet(parquet_path)
 
     # Get object columns that were excluded from parquet
