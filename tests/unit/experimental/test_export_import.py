@@ -85,10 +85,10 @@ def test_export_image_callable_field(tmp_path):
     for idx in range(3):
         assert idx in result["image"]
         rel_path = result["image"][idx]
-        assert rel_path == f"image/{idx:06d}.png"
+        assert rel_path == f"image_{idx:06d}.png"
 
         # Verify file exists and is valid
-        img_file = output_dir / rel_path.replace("/", "_")
+        img_file = output_dir / rel_path
         assert img_file.exists()
 
         # Load and verify image content
@@ -175,10 +175,10 @@ def test_export_instance_mask_callable_field(tmp_path):
     for idx in range(3):
         assert idx in result["mask"]
         rel_path = result["mask"][idx]
-        assert rel_path == f"mask/{idx:06d}.png"
+        assert rel_path == f"mask_{idx:06d}.png"
 
         # Verify file exists
-        mask_file = output_dir / rel_path.replace("/", "_")
+        mask_file = output_dir / rel_path
         assert mask_file.exists()
 
         # Load and verify mask content

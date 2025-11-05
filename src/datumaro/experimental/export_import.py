@@ -75,8 +75,6 @@ def _export_images_from_dataset(
 
     # Export images for each field
     for field_name, field_annotation in image_fields:
-        field_dir = output_dir / field_name
-        field_dir.mkdir(exist_ok=True)
         image_paths[field_name] = {}
 
         for idx in range(len(dataset)):
@@ -148,8 +146,9 @@ def _export_images_from_dataset(
                             continue
 
                         # Save as PNG (lossless)
-                        rel_path = f"{field_name}/{idx:06d}.png"
-                        abs_path = output_dir / rel_path.replace("/", "_")
+                        # Use underscore instead of slash to avoid directory creation issues
+                        rel_path = f"{field_name}_{idx:06d}.png"
+                        abs_path = output_dir / rel_path
                         pil_img.save(abs_path)
                         image_paths[field_name][idx] = str(rel_path)
                     except Exception as e:
@@ -192,8 +191,8 @@ def _export_images_from_dataset(
                             continue
 
                         # Save as PNG (best for masks - lossless)
-                        rel_path = f"{field_name}/{idx:06d}.png"
-                        abs_path = output_dir / rel_path.replace("/", "_")
+                        rel_path = f"{field_name}_{idx:06d}.png"
+                        abs_path = output_dir / rel_path
                         pil_img.save(abs_path)
                         image_paths[field_name][idx] = str(rel_path)
                     except Exception as e:
