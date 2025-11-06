@@ -22,7 +22,7 @@ from importlib.metadata import PackageNotFoundError
 from importlib.metadata import version as _pkg_version
 from pathlib import Path
 from typing import TYPE_CHECKING, Dict, Type, Union
-from zipfile import ZIP_DEFLATED, ZipFile
+from zipfile import ZIP_DEFLATED, ZipFile, is_zipfile
 
 import numpy as np
 import polars as pl
@@ -234,9 +234,6 @@ def export_dataset(
         output_path: Path to export to (directory or .zip file)
         export_images: Whether to export images from callable/path fields
         as_zip: Whether to package everything as a ZIP file
-
-    Raises:
-        ValueError: If the dataset has transforms (not yet supported)
     """
     output_path = Path(output_path)
 
@@ -244,7 +241,8 @@ def export_dataset(
     temp_dir = None
     if as_zip:
         if output_path.suffix != ".zip":
-            output_path = output_path.with_suffix(".zip")
+            output_path.mkdir(parents=True, exist_ok=True)
+            output_path /= "dataset.zip"
         temp_dir = Path(tempfile.mkdtemp())
         work_dir = temp_dir
     else:
@@ -301,7 +299,8 @@ def import_dataset(
 
     Args:
         input_path: Path to the exported dataset (directory or .zip file)
-        dtype: Optional Sample class to use for the dataset. If None, uses generic Sample.
+        dtype: Optional Sample class to use for the dataset. If None, uses generic Sample. Only necessary for typing and
+        auto-completion; schema is loaded from metadata.
 
     Returns:
         The imported Dataset instance
@@ -312,8 +311,7 @@ def import_dataset(
     """
     input_path = Path(input_path)
 
-    # Handle ZIP files
-    if input_path.suffix == ".zip":
+    if is_zipfile(input_path):
         temp_dir = Path(tempfile.mkdtemp())
         try:
             with ZipFile(input_path) as zipf:

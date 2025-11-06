@@ -1,5 +1,5 @@
 """
-Unit tests for export and import functionality.
+Tests for export and import functionality.
 
 This test suite covers:
 - Exporting datasets with various field types (ImageCallableField, ImagePathField, InstanceMaskCallableField)
@@ -809,7 +809,7 @@ def test_zip_path_without_zip_extension(tmp_path):
     export_dataset(dataset, output_path, export_images=False, as_zip=True)
 
     # Should create .zip file
-    expected_zip = tmp_path / "export_no_ext.zip"
+    expected_zip = tmp_path / "export_no_ext/dataset.zip"
     assert expected_zip.exists()
     assert expected_zip.suffix == ".zip"
 
@@ -897,61 +897,52 @@ def test_export_import_different_field_types(tmp_path):
     imported_sample = imported_dataset[0]
 
     # Verify basic fields
-    assert imported_sample.label == 1
-    assert imported_sample.score == pytest.approx(0.95)
-    assert imported_sample.subset == Subset.TRAINING
+    assert imported_sample.label == sample.label
+    assert imported_sample.score == pytest.approx(sample.score)
+    assert imported_sample.subset == sample.subset
 
     # Verify tensor
-    np.testing.assert_array_almost_equal(
-        imported_sample.tensor, np.array([1.0, 2.0, 3.0], dtype=np.float32)
-    )
+    np.testing.assert_array_equal(sample.tensor, imported_sample.tensor)
 
     # Verify bounding boxes
-    np.testing.assert_array_almost_equal(
-        imported_sample.bbox, np.array([[10.0, 20.0, 50.0, 60.0]], dtype=np.float32)
-    )
-    np.testing.assert_array_almost_equal(
-        imported_sample.rotated_bbox,
-        np.array([[25.0, 35.0, 40.0, 50.0, 0.5]], dtype=np.float32),
-    )
+    np.testing.assert_array_equal(sample.bbox, imported_sample.bbox)
+    np.testing.assert_array_equal(sample.rotated_bbox, imported_sample.rotated_bbox)
 
     # Verify keypoints
-    np.testing.assert_array_almost_equal(
-        imported_sample.keypoints,
-        np.array([[15.0, 25.0, 1.0], [35.0, 45.0, 1.0]], dtype=np.float32),
-    )
+    np.testing.assert_array_equal(sample.keypoints, imported_sample.keypoints)
 
     # Verify image callable
     assert callable(imported_sample.image_callable)
     img = imported_sample.image_callable()
-    assert img.shape == (20, 30, 3)
-    assert img[0, 0, 0] == 150
+    expected_img = sample.image_callable()
+    np.testing.assert_array_equal(expected_img, img)
 
-    # Verify image path was updated
+    # Verify image path was updated (content matches original source image)
     assert imported_sample.image_path is not None
     assert Path(imported_sample.image_path).exists()
     loaded_img = np.array(PILImage.open(imported_sample.image_path))
-    assert loaded_img.shape == (20, 30, 3)
+    original_loaded_img = np.array(PILImage.open(sample.image_path))
+    np.testing.assert_array_equal(original_loaded_img, loaded_img)
 
     # Verify image info
-    assert imported_sample.image_info.width == 30
-    assert imported_sample.image_info.height == 20
+    assert imported_sample.image_info.width == sample.image_info.width
+    assert imported_sample.image_info.height == sample.image_info.height
 
     # Verify mask callable
     assert callable(imported_sample.mask_callable)
     mask = imported_sample.mask_callable()
-    assert mask.shape == (20, 30)
-    assert mask[0, 0] == 255
+    expected_mask = sample.mask_callable()
+    np.testing.assert_array_equal(expected_mask, mask)
 
     # Verify instance mask callable
     assert callable(imported_sample.instance_mask_callable)
     inst_mask = imported_sample.instance_mask_callable()
-    assert inst_mask.shape == (20, 30)
-    assert inst_mask[0, 0] == 128
+    expected_inst_mask = sample.instance_mask_callable()
+    np.testing.assert_array_equal(expected_inst_mask, inst_mask)
 
     # Verify tile info
-    assert imported_sample.tile.source_sample_idx == 0
-    assert imported_sample.tile.x == 10
-    assert imported_sample.tile.y == 20
-    assert imported_sample.tile.width == 30
-    assert imported_sample.tile.height == 40
+    assert imported_sample.tile.source_sample_idx == sample.tile.source_sample_idx
+    assert imported_sample.tile.x == sample.tile.x
+    assert imported_sample.tile.y == sample.tile.y
+    assert imported_sample.tile.width == sample.tile.width
+    assert imported_sample.tile.height == sample.tile.height

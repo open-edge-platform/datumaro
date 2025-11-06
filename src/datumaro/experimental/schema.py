@@ -232,6 +232,17 @@ class AttributeSpec(Generic[TField]):
     categories: Optional[Categories] = None
 
 
+BUILTIN_TYPES = {
+    "int": int,
+    "float": float,
+    "str": str,
+    "bool": bool,
+    "list": list,
+    "dict": dict,
+    "tuple": tuple,
+}
+
+
 @dataclass
 class Schema:
     """
@@ -350,17 +361,8 @@ class Schema:
                     attr_type = getattr(module, type_name, object)
                 except (ImportError, AttributeError):
                     attr_type = object
-            elif type_name in ["int", "float", "str", "bool", "list", "dict", "tuple"]:
+            elif type_name in BUILTIN_TYPES:
                 # Handle built-in types
-                BUILTIN_TYPES = {
-                    "int": int,
-                    "float": float,
-                    "str": str,
-                    "bool": bool,
-                    "list": list,
-                    "dict": dict,
-                    "tuple": tuple,
-                }
                 attr_type = BUILTIN_TYPES.get(type_name, object)
             else:
                 # Default to object as placeholder
