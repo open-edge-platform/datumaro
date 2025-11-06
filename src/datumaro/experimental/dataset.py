@@ -428,7 +428,7 @@ class Dataset(Generic[DType]):
     def convert_to_schema(
         self,
         target_dtype_or_schema: Union[Schema, Type[DTargetType]],
-        target_categories: Dict[str, Categories] = None,
+        target_categories: Dict[str, Categories] | None = None,
     ) -> "Dataset[DTargetType]":
         """
         Convert this dataset to a new schema using registered converters.
@@ -496,6 +496,16 @@ class Dataset(Generic[DType]):
             dtype_or_schema=self.dtype,
             schema=self.schema,
         )
+
+    def append_dataset(self, dataset: Dataset) -> None:
+        """
+        Append another dataset to this dataset in place.
+
+        Args:
+            dataset: The dataset to append
+        """
+        converted_dataset = dataset.convert_to_schema(target_dtype_or_schema=self.schema)
+        self.df = self.df.vstack(converted_dataset.df)
 
 
 def convert_sample_to_schema(
