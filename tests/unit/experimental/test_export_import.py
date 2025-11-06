@@ -289,8 +289,6 @@ def test_export_basic_dataset_to_directory(tmp_path):
         metadata = json.load(f)
     assert metadata["version"] == VERSION
     assert "schema" in metadata
-    assert "dtype" in metadata
-    assert metadata["image_paths"] == {}
 
     # Check dataframe can be loaded
     df = pl.read_parquet(output_dir / DATAFRAME_FILE)
@@ -327,11 +325,9 @@ def test_export_dataset_with_images_to_directory(tmp_path):
     assert (output_dir / DATAFRAME_FILE).exists()
     assert (output_dir / IMAGES_DIR).exists()
 
-    # Check metadata includes image paths
+    # Check metadata does not include per-row image paths
     with open(output_dir / METADATA_FILE) as f:
         metadata = json.load(f)
-    assert "image" in metadata["image_paths"]
-    assert len(metadata["image_paths"]["image"]) == 2
 
     # Check images were exported
     images_dir = output_dir / IMAGES_DIR
@@ -427,10 +423,9 @@ def test_export_images_false_skips_image_export(tmp_path):
     # Images directory should not exist
     assert not (output_dir / IMAGES_DIR).exists()
 
-    # Metadata should have empty image_paths
+    # Metadata should not include per-row image paths
     with open(output_dir / METADATA_FILE) as f:
         metadata = json.load(f)
-    assert metadata["image_paths"] == {}
 
 
 def test_import_basic_dataset_from_directory(tmp_path):
@@ -619,7 +614,7 @@ def test_import_missing_dataframe_raises_error(tmp_path):
     export_dir.mkdir()
 
     # Create metadata but no dataframe
-    metadata = {"version": VERSION, "schema": {}, "image_paths": {}}
+    metadata = {"version": VERSION, "schema": {}}
     with open(export_dir / METADATA_FILE, "w") as f:
         json.dump(metadata, f)
 

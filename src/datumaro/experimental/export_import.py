@@ -18,6 +18,8 @@ from __future__ import annotations
 import json
 import shutil
 import tempfile
+from importlib.metadata import PackageNotFoundError
+from importlib.metadata import version as _pkg_version
 from pathlib import Path
 from typing import TYPE_CHECKING, Dict, Type, Union
 from zipfile import ZIP_DEFLATED, ZipFile
@@ -37,7 +39,10 @@ if TYPE_CHECKING:
 METADATA_FILE = "metadata.json"
 DATAFRAME_FILE = "data.parquet"
 IMAGES_DIR = "images"
-VERSION = "1.0"
+try:
+    VERSION = _pkg_version("datumaro")
+except PackageNotFoundError:
+    VERSION = "0.0.0"
 
 
 def _export_images_from_dataset(
@@ -235,13 +240,6 @@ def export_dataset(
     """
     output_path = Path(output_path)
 
-    # Check if dataset has transforms
-    if dataset._transforms is not None:
-        raise ValueError(
-            "Exporting datasets with transforms is not yet supported. "
-            "Please materialize the dataset first by converting it."
-        )
-
     # Create temporary directory if using zip, otherwise use output_path directly
     temp_dir = None
     if as_zip:
@@ -261,10 +259,9 @@ def export_dataset(
         dataset.df.select(columns_to_export).write_parquet(parquet_path)
 
         # Export images if requested
-        image_paths = {}
         if export_images:
             images_dir = work_dir / IMAGES_DIR
-            image_paths = _export_images_from_dataset(dataset, images_dir)
+            _export_images_from_dataset(dataset, images_dir)
 
         # Track which columns are Object types (excluded from parquet)
         object_columns = [col for col, dtype in dataset.df.schema.items() if dtype == pl.Object]
@@ -273,8 +270,6 @@ def export_dataset(
         metadata = {
             "version": VERSION,
             "schema": dataset.schema.to_dict(),
-            "dtype": dataset.dtype.__name__ if dataset.dtype != Sample else None,
-            "image_paths": image_paths,
             "object_columns": object_columns,
         }
 
@@ -373,61 +368,55 @@ def _import_dataset_from_dir(
     # Get object columns that were excluded from parquet
     object_columns = metadata.get("object_columns", [])
 
-    # Handle image paths if present
-    if metadata.get("image_paths"):
-        images_base_dir = input_dir / IMAGES_DIR
+    # Reconstruct image-related fields from images directory (no per-row mapping stored)
+    images_base_dir = input_dir / IMAGES_DIR
+    if images_base_dir.exists():
+        # Identify image-related fields from schema
+        for field_name, attr_info in schema.attributes.items():
+            annotation = getattr(attr_info, "annotation", None)
+            if annotation is None:
+                continue
 
-        for field_name, paths in metadata["image_paths"].items():
-            # JSON serialization converts int keys to strings, so convert back
-            paths = {int(k): v for k, v in paths.items()}
-
-            # Check if this is an ImagePathField in the schema
-            field_annotation = schema.attributes.get(field_name)
-            is_path_field = field_annotation and isinstance(
-                field_annotation.annotation, ImagePathField
+            is_path_field = isinstance(annotation, ImagePathField)
+            is_callable_field = isinstance(
+                annotation, (ImageCallableField, InstanceMaskCallableField, MaskCallableField)
             )
 
-            if is_path_field:
-                # For ImagePathField: Update paths to point to images in IMAGES_DIR
-                # Create a list of updated paths in the correct order
-                path_list = []
-                for idx in range(len(df)):
-                    if idx in paths:
-                        rel_path = paths[idx]
-                        abs_path = images_base_dir / rel_path.replace("/", "_")
-                        path_list.append(str(abs_path))
+            if not (is_path_field or is_callable_field):
+                continue
+
+            # Build per-row values by discovering files following naming convention
+            values: list[object | None] = []
+            for idx in range(len(df)):
+                pattern = f"{field_name}_{idx:06d}.*"
+                matches = sorted(images_base_dir.glob(pattern))
+                file_path = matches[0] if matches else None
+
+                if is_path_field:
+                    values.append(str(file_path) if file_path is not None else None)
+                else:
+                    if file_path is None:
+                        values.append(None)
                     else:
-                        path_list.append(None)
 
-                # Update or add the path column
-                if field_name in df.columns:
-                    df = df.drop(field_name)
-                df = df.with_columns(pl.Series(field_name, path_list, dtype=pl.String))
-            else:
-                # For ImageCallableField/InstanceMaskCallableField: Create lazy-loading callables
-
-                callable_list = []
-                for idx in range(len(df)):
-                    if idx in paths:
-                        rel_path = paths[idx]
-                        abs_path = images_base_dir / rel_path.replace("/", "_")
-
-                        # Create a closure that lazily loads the image
                         def make_loader(path: Path):
                             def load_image():
                                 return np.array(Image.open(path))
 
                             return load_image
 
-                        callable_list.append(make_loader(abs_path))
-                    else:
-                        callable_list.append(None)
+                        values.append(make_loader(file_path))
 
-                # Update or add the callable column
+            # Update or add the column
+            if is_path_field:
                 if field_name in df.columns:
-                    df = df.with_columns(pl.Series(field_name, callable_list))
+                    df = df.drop(field_name)
+                df = df.with_columns(pl.Series(field_name, values, dtype=pl.String))
+            else:
+                if field_name in df.columns:
+                    df = df.with_columns(pl.Series(field_name, values))
                 else:
-                    df = df.with_columns(pl.Series(field_name, callable_list, dtype=pl.Object))
+                    df = df.with_columns(pl.Series(field_name, values, dtype=pl.Object))
 
     # Add back any other object columns that weren't reconstructed from images
     for col_name in object_columns:
