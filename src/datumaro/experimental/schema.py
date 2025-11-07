@@ -200,7 +200,7 @@ class AttributeInfo:
     """
 
     type: type
-    annotation: Field
+    field: Field
     categories: Optional["Categories"] = None
 
 
@@ -256,7 +256,7 @@ class Schema:
         """Validate that only one field of each type exists per semantic context."""
         seen: dict[tuple[type[Field], Semantic], str] = {}
         for name, attr in self.attributes.items():
-            key = type(attr.annotation), attr.annotation.semantic
+            key = type(attr.field), attr.field.semantic
             if key in seen:
                 raise ValueError(
                     f"Duplicate field type {key[0]} for semantic {key[1]} in schema. "
@@ -318,7 +318,7 @@ class Schema:
             attributes[name] = {
                 "type": type_info,
                 "type_module": type_module,
-                "field": attr_info.annotation.to_dict(),
+                "field": attr_info.field.to_dict(),
             }
             if attr_info.categories is not None:
                 categories[name] = attr_info.categories.to_dict()
@@ -370,7 +370,7 @@ class Schema:
 
             attributes[name] = AttributeInfo(
                 type=attr_type,
-                annotation=field,
+                field=field,
                 categories=categories,
             )
 

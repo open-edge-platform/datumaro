@@ -557,21 +557,17 @@ def test_image_callable_field_complex_callable():
 def test_attribute_info_creation():
     """Test AttributeInfo creation."""
     field = tensor_field(dtype=pl.Float32)
-    attr_info = AttributeInfo(type=np.ndarray, annotation=field)
+    attr_info = AttributeInfo(type=np.ndarray, field=field)
 
     assert attr_info.type == np.ndarray
-    assert attr_info.annotation == field
+    assert attr_info.field == field
 
 
 def test_schema_creation():
     """Test Schema creation."""
     attributes = {
-        "image": AttributeInfo(
-            type=np.ndarray, annotation=image_field(dtype=pl.UInt8, format="RGB")
-        ),
-        "bbox": AttributeInfo(
-            type=np.ndarray, annotation=bbox_field(dtype=pl.Float32, normalize=False)
-        ),
+        "image": AttributeInfo(type=np.ndarray, field=image_field(dtype=pl.UInt8, format="RGB")),
+        "bbox": AttributeInfo(type=np.ndarray, field=bbox_field(dtype=pl.Float32, normalize=False)),
     }
 
     schema = Schema(attributes=attributes)
@@ -918,8 +914,8 @@ def test_schema_serialization_simple():
     # Create a simple schema
     schema = Schema(
         attributes={
-            "image": AttributeInfo(type=np.ndarray, annotation=image_field(dtype=pl.UInt8)),
-            "bbox": AttributeInfo(type=np.ndarray, annotation=bbox_field(dtype=pl.Float32)),
+            "image": AttributeInfo(type=np.ndarray, field=image_field(dtype=pl.UInt8)),
+            "bbox": AttributeInfo(type=np.ndarray, field=bbox_field(dtype=pl.Float32)),
         }
     )
 
@@ -938,8 +934,8 @@ def test_schema_serialization_simple():
 
     # Compare with original
     assert set(reconstructed.attributes.keys()) == set(schema.attributes.keys())
-    assert isinstance(reconstructed.attributes["image"].annotation, ImageField)
-    assert isinstance(reconstructed.attributes["bbox"].annotation, BBoxField)
+    assert isinstance(reconstructed.attributes["image"].field, ImageField)
+    assert isinstance(reconstructed.attributes["bbox"].field, BBoxField)
     assert type(reconstructed.attributes["image"].type) == type(schema.attributes["image"].type)
     assert type(reconstructed.attributes["bbox"].type) == type(schema.attributes["bbox"].type)
 
@@ -954,7 +950,7 @@ def test_schema_serialization_with_categories():
     schema = Schema(
         attributes={
             "label": AttributeInfo(
-                type=str, annotation=tensor_field(dtype=pl.Int32), categories=label_cats
+                type=str, field=tensor_field(dtype=pl.Int32), categories=label_cats
             )
         }
     )
@@ -988,13 +984,13 @@ def test_schema_serialization_builtin_types():
     schema = Schema(
         attributes={
             "score": AttributeInfo(
-                type=float, annotation=tensor_field(dtype=pl.Float32, semantic=Semantic.Default)
+                type=float, field=tensor_field(dtype=pl.Float32, semantic=Semantic.Default)
             ),
             "count": AttributeInfo(
-                type=int, annotation=tensor_field(dtype=pl.Int32, semantic=Semantic.Left)
+                type=int, field=tensor_field(dtype=pl.Int32, semantic=Semantic.Left)
             ),
             "name": AttributeInfo(
-                type=str, annotation=tensor_field(dtype=pl.Utf8, semantic=Semantic.Right)
+                type=str, field=tensor_field(dtype=pl.Utf8, semantic=Semantic.Right)
             ),
         }
     )
@@ -1010,16 +1006,15 @@ def test_schema_serialization_builtin_types():
     assert "name" in reconstructed.attributes
     # Verify semantics are preserved
     assert (
-        reconstructed.attributes["score"].annotation.semantic
-        == schema.attributes["score"].annotation.semantic
+        reconstructed.attributes["score"].field.semantic
+        == schema.attributes["score"].field.semantic
     )
     assert (
-        reconstructed.attributes["count"].annotation.semantic
-        == schema.attributes["count"].annotation.semantic
+        reconstructed.attributes["count"].field.semantic
+        == schema.attributes["count"].field.semantic
     )
     assert (
-        reconstructed.attributes["name"].annotation.semantic
-        == schema.attributes["name"].annotation.semantic
+        reconstructed.attributes["name"].field.semantic == schema.attributes["name"].field.semantic
     )
 
 
@@ -1032,10 +1027,10 @@ def test_schema_with_categories_method():
     schema = Schema(
         attributes={
             "label": AttributeInfo(
-                type=str, annotation=tensor_field(dtype=pl.Int32, semantic=Semantic.Default)
+                type=str, field=tensor_field(dtype=pl.Int32, semantic=Semantic.Default)
             ),
             "mask": AttributeInfo(
-                type=np.ndarray, annotation=mask_field(dtype=pl.UInt8, semantic=Semantic.Left)
+                type=np.ndarray, field=mask_field(dtype=pl.UInt8, semantic=Semantic.Left)
             ),
         }
     )

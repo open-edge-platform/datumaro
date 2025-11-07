@@ -71,10 +71,10 @@ def _export_images_from_dataset(
     image_fields = []
     for name, attr_info in dataset.schema.attributes.items():
         if isinstance(
-            attr_info.annotation,
+            attr_info.field,
             (ImageCallableField, ImagePathField, InstanceMaskCallableField, MaskCallableField),
         ):
-            image_fields.append((name, attr_info.annotation))
+            image_fields.append((name, attr_info.field))
 
     if not image_fields:
         return image_paths

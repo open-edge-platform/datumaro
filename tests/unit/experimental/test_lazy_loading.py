@@ -198,8 +198,8 @@ def test_lazy_loading_with_semantic_fields():
 
         # Verify semantic fields are handled correctly in schema
         schema = StereoPathSample.infer_schema()
-        left_field = schema.attributes["left_image_path"].annotation
-        right_field = schema.attributes["right_image_path"].annotation
+        left_field = schema.attributes["left_image_path"].field
+        right_field = schema.attributes["right_image_path"].field
 
         assert left_field.semantic == Semantic.Left
         assert right_field.semantic == Semantic.Right
