@@ -302,15 +302,15 @@ class ForwardImageMediaConverter(ForwardMediaConverter):
         if self.media_mixin == FromDataMixin:
             if self.has_callable_data:
                 attributes[self.name_prefix + "image_callable"] = AttributeInfo(
-                    type=callable, annotation=image_callable_field(semantic=self.semantic)
+                    type=callable, field=image_callable_field(semantic=self.semantic)
                 )
             else:
                 attributes[self.name_prefix + "image_bytes"] = AttributeInfo(
-                    type=bytes, annotation=image_bytes_field(semantic=self.semantic)
+                    type=bytes, field=image_bytes_field(semantic=self.semantic)
                 )
         elif self.media_mixin == FromFileMixin:
             attributes[self.name_prefix + "image_path"] = AttributeInfo(
-                type=str, annotation=image_path_field(semantic=self.semantic)
+                type=str, field=image_path_field(semantic=self.semantic)
             )
         else:
             raise RuntimeError(f"Media mixin not implemented: {self.media_mixin}")
@@ -318,7 +318,7 @@ class ForwardImageMediaConverter(ForwardMediaConverter):
         # Add image info field if all images have size
         if self.has_image_info:
             attributes[self.name_prefix + "image_info"] = AttributeInfo(
-                type=ImageInfo, annotation=image_info_field(semantic=self.semantic)
+                type=ImageInfo, field=image_info_field(semantic=self.semantic)
             )
 
         return attributes
@@ -380,7 +380,7 @@ class ForwardBboxAnnotationConverter(ForwardAnnotationConverter):
         legacy_label_categories = categories.get(AnnotationType.label, None)
 
         bbox_attribute = AttributeInfo(
-            type=np.ndarray, annotation=bbox_field(dtype=pl.Float32, semantic=semantic)
+            type=np.ndarray, field=bbox_field(dtype=pl.Float32, semantic=semantic)
         )
 
         bbox_labels_attribute = None
@@ -392,7 +392,7 @@ class ForwardBboxAnnotationConverter(ForwardAnnotationConverter):
 
             bbox_labels_attribute = AttributeInfo(
                 type=np.ndarray,
-                annotation=label_field(is_list=True, semantic=semantic),
+                field=label_field(is_list=True, semantic=semantic),
                 categories=new_label_categories,
             )
 
@@ -462,7 +462,7 @@ class ForwardRotatedBboxAnnotationConverter(ForwardAnnotationConverter):
         # Create attribute for rotated bboxes (cx, cy, w, h, r)
         rotated_bbox_attribute = AttributeInfo(
             type=np.ndarray,
-            annotation=rotated_bbox_field(dtype=pl.Float32, semantic=semantic),
+            field=rotated_bbox_field(dtype=pl.Float32, semantic=semantic),
         )
 
         # Create attribute for labels if we have label categories
@@ -477,7 +477,7 @@ class ForwardRotatedBboxAnnotationConverter(ForwardAnnotationConverter):
 
             rotated_bbox_labels_attribute = AttributeInfo(
                 type=np.ndarray,
-                annotation=label_field(is_list=True, semantic=semantic),
+                field=label_field(is_list=True, semantic=semantic),
                 categories=new_label_categories,
             )
 
@@ -550,7 +550,7 @@ class ForwardPolygonAnnotationConverter(ForwardAnnotationConverter):
 
         polygon_attribute = AttributeInfo(
             type=np.ndarray,
-            annotation=polygon_field(dtype=pl.Float32, format="xy", semantic=semantic),
+            field=polygon_field(dtype=pl.Float32, format="xy", semantic=semantic),
         )
 
         polygon_labels_attribute = None
@@ -562,7 +562,7 @@ class ForwardPolygonAnnotationConverter(ForwardAnnotationConverter):
 
             polygon_labels_attribute = AttributeInfo(
                 type=np.ndarray,
-                annotation=label_field(is_list=True, semantic=semantic),
+                field=label_field(is_list=True, semantic=semantic),
                 categories=new_label_categories,
             )
 
@@ -640,7 +640,7 @@ class ForwardLabelAnnotationConverter(ForwardAnnotationConverter):
 
         label_attribute = AttributeInfo(
             type=int,
-            annotation=label_field(semantic=semantic),
+            field=label_field(semantic=semantic),
             categories=new_label_categories,
         )
 
@@ -661,7 +661,7 @@ class ForwardLabelAnnotationConverter(ForwardAnnotationConverter):
         if len(labels) > 0:
             if "multi_label_ids" in labels[0].attributes:
                 result[self.name_prefix + "label"] = labels[0].attributes["multi_label_ids"]
-            elif self.label_attribute.annotation.multi_label:
+            elif self.label_attribute.field.multi_label:
                 result[self.name_prefix + "label"] = [labels[0].label]
             else:
                 result[self.name_prefix + "label"] = labels[0].label
@@ -695,7 +695,7 @@ class ForwardKeypointAnnotationConverter(ForwardAnnotationConverter):
         legacy_label_categories = categories.get(AnnotationType.label, None)
 
         keypoints_attribute = AttributeInfo(
-            type=np.ndarray, annotation=keypoints_field(dtype=pl.Float32, semantic=semantic)
+            type=np.ndarray, field=keypoints_field(dtype=pl.Float32, semantic=semantic)
         )
 
         keypoints_labels_attribute = None
@@ -707,7 +707,7 @@ class ForwardKeypointAnnotationConverter(ForwardAnnotationConverter):
 
             keypoints_labels_attribute = AttributeInfo(
                 type=np.ndarray,
-                annotation=label_field(is_list=True, semantic=semantic),
+                field=label_field(is_list=True, semantic=semantic),
                 categories=new_label_categories,
             )
 
@@ -780,7 +780,7 @@ class ForwardEllipseAnnotationConverter(ForwardAnnotationConverter):
         legacy_label_categories = categories.get(AnnotationType.label, None)
 
         ellipse_attribute = AttributeInfo(
-            type=np.ndarray, annotation=EllipseField(dtype=pl.Float32, semantic=semantic)
+            type=np.ndarray, field=EllipseField(dtype=pl.Float32, semantic=semantic)
         )
 
         ellipse_labels_attribute = None
@@ -792,7 +792,7 @@ class ForwardEllipseAnnotationConverter(ForwardAnnotationConverter):
 
             ellipse_labels_attribute = AttributeInfo(
                 type=np.ndarray,
-                annotation=label_field(is_list=True, semantic=semantic),
+                field=label_field(is_list=True, semantic=semantic),
                 categories=new_label_categories,
             )
 
@@ -928,9 +928,9 @@ def analyze_legacy_dataset(
             ann_converters[ann_type] = converter
             ann_attributes = converter.get_schema_attributes()
             if is_multi_label:
-                ann_attributes[AnnotationType.label.name].annotation = label_field(multi_label=True)
+                ann_attributes[AnnotationType.label.name].field = label_field(multi_label=True)
             if is_hierarchical:
-                ann_attributes[AnnotationType.label.name].annotation = label_field(is_list=True)
+                ann_attributes[AnnotationType.label.name].field = label_field(is_list=True)
                 categories = legacy_dataset.categories()[AnnotationType.label].items
                 label_categories = tuple(
                     HierarchicalLabelCategory(
@@ -1213,7 +1213,7 @@ class ForwardMaskAnnotationConverter(ForwardAnnotationConverter):
             mask_categories = MaskCategories(labels=labels, colormap=colormap)
             mask_attribute = AttributeInfo(
                 type=callable,
-                annotation=mask_callable_field(dtype=pl.UInt8, semantic=semantic),
+                field=mask_callable_field(dtype=pl.UInt8, semantic=semantic),
                 categories=mask_categories,
             )
             instance_mask_attribute = None
@@ -1224,7 +1224,7 @@ class ForwardMaskAnnotationConverter(ForwardAnnotationConverter):
             # Configure instance mask attribute with Boolean dtype for binary instance masks
             instance_mask_attribute = AttributeInfo(
                 type=callable,
-                annotation=instance_mask_callable_field(dtype=pl.Boolean, semantic=semantic),
+                field=instance_mask_callable_field(dtype=pl.Boolean, semantic=semantic),
             )
 
             # Only add mask_labels if we have label categories
@@ -1233,9 +1233,7 @@ class ForwardMaskAnnotationConverter(ForwardAnnotationConverter):
 
                 mask_labels_attribute = AttributeInfo(
                     type=np.ndarray,
-                    annotation=label_field(
-                        is_list=True, semantic=semantic
-                    ),  # Labels for each instance
+                    field=label_field(is_list=True, semantic=semantic),  # Labels for each instance
                     categories=new_label_categories,
                 )
 
@@ -1336,7 +1334,7 @@ class BackwardImageMediaConverter(BackwardMediaConverter):
     def create_from_schema(cls, schema: Schema) -> "BackwardImageMediaConverter | None":
         """Create converter instance if schema contains image_path field."""
         for attr_name, attr_info in schema.attributes.items():
-            if isinstance(attr_info.annotation, ImagePathField):
+            if isinstance(attr_info.field, ImagePathField):
                 return cls(image_path_attr=attr_name)
         return None
 
@@ -1365,13 +1363,13 @@ class BackwardBboxAnnotationConverter(BackwardAnnotationConverter):
 
         # Find bbox field
         for attr_name, attr_info in schema.attributes.items():
-            if isinstance(attr_info.annotation, BBoxField):
+            if isinstance(attr_info.field, BBoxField):
                 bboxes_attr = attr_name
                 break
 
         # Find bbox_labels field (look for label field with 'bbox_labels' in name or similar pattern)
         for attr_name, attr_info in schema.attributes.items():
-            if isinstance(attr_info.annotation, LabelField):
+            if isinstance(attr_info.field, LabelField):
                 bbox_labels_attr = attr_name
                 break
 
@@ -1440,9 +1438,9 @@ class BackwardRotatedBboxAnnotationConverter(BackwardAnnotationConverter):
         rotated_bbox_labels_attr: str | None = None
 
         for attr_name, attr_info in schema.attributes.items():
-            if isinstance(attr_info.annotation, RotatedBBoxField):
+            if isinstance(attr_info.field, RotatedBBoxField):
                 rotated_bboxes_attr = attr_name
-            elif isinstance(attr_info.annotation, LabelField):
+            elif isinstance(attr_info.field, LabelField):
                 rotated_bbox_labels_attr = attr_name
 
         if rotated_bboxes_attr is None:
@@ -1524,13 +1522,13 @@ class BackwardPolygonAnnotationConverter(BackwardAnnotationConverter):
 
         # Find polygon field
         for attr_name, attr_info in schema.attributes.items():
-            if isinstance(attr_info.annotation, PolygonField):
+            if isinstance(attr_info.field, PolygonField):
                 polygons_attr = attr_name
                 break
 
         # Find polygon_labels field
         for attr_name, attr_info in schema.attributes.items():
-            if isinstance(attr_info.annotation, LabelField):
+            if isinstance(attr_info.field, LabelField):
                 polygon_labels_attr = attr_name
                 break
 
@@ -1768,7 +1766,7 @@ class SubsetConverter(ForwardAnnotationConverter):
         return {
             field_name: AttributeInfo(
                 type=str,
-                annotation=subset_field(semantic=self._semantic),
+                field=subset_field(semantic=self._semantic),
             )
         }
 

@@ -124,11 +124,11 @@ def test_dataset_creation_from_schema():
     schema = Schema(
         attributes={
             "image": AttributeInfo(
-                type=np.ndarray, annotation=image_field(dtype=pl.UInt8, format="RGB")
+                type=np.ndarray, field=image_field(dtype=pl.UInt8, format="RGB")
             ),
             "bbox": AttributeInfo(
                 type=np.ndarray,
-                annotation=bbox_field(dtype=pl.Float32, normalize=False),
+                field=bbox_field(dtype=pl.Float32, normalize=False),
             ),
         }
     )
@@ -294,13 +294,13 @@ def test_dynamic_schema_definition():
     schema = Schema(
         attributes={
             "image": AttributeInfo(
-                type=np.ndarray, annotation=image_field(dtype=pl.UInt8, format="RGB")
+                type=np.ndarray, field=image_field(dtype=pl.UInt8, format="RGB")
             ),
             "bbox": AttributeInfo(
                 type=np.ndarray,
-                annotation=bbox_field(dtype=pl.Float32, normalize=False),
+                field=bbox_field(dtype=pl.Float32, normalize=False),
             ),
-            "image_info": AttributeInfo(type=ImageInfo, annotation=image_info_field()),
+            "image_info": AttributeInfo(type=ImageInfo, field=image_info_field()),
         }
     )
 

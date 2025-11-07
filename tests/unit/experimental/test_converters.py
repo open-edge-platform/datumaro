@@ -334,16 +334,14 @@ def test_find_conversion_path():
     # Create simple source and target schemas
     source_schema = Schema(
         attributes={
-            "image": AttributeInfo(
-                type=np.ndarray, annotation=image_field(dtype=pl.UInt8, format="RGB")
-            )
+            "image": AttributeInfo(type=np.ndarray, field=image_field(dtype=pl.UInt8, format="RGB"))
         }
     )
 
     target_schema = Schema(
         attributes={
             "image": AttributeInfo(
-                type=np.ndarray, annotation=image_field(dtype=pl.Float32, format="RGB")
+                type=np.ndarray, field=image_field(dtype=pl.Float32, format="RGB")
             )
         }
     )
@@ -365,16 +363,14 @@ def test_convert_dataframe():
 
     source_schema = Schema(
         attributes={
-            "image": AttributeInfo(
-                type=np.ndarray, annotation=image_field(dtype=pl.UInt8, format="RGB")
-            )
+            "image": AttributeInfo(type=np.ndarray, field=image_field(dtype=pl.UInt8, format="RGB"))
         }
     )
 
     target_schema = Schema(
         attributes={
             "image": AttributeInfo(
-                type=np.ndarray, annotation=image_field(dtype=pl.Float32, format="BGR")
+                type=np.ndarray, field=image_field(dtype=pl.Float32, format="BGR")
             )
         }
     )
@@ -454,11 +450,11 @@ def test_multiple_converter_chaining():
     source_schema = Schema(
         attributes={
             "image": AttributeInfo(
-                type=np.ndarray, annotation=image_field(dtype=pl.UInt8, format="RGB")
+                type=np.ndarray, field=image_field(dtype=pl.UInt8, format="RGB")
             ),
             "bbox": AttributeInfo(
                 type=np.ndarray,
-                annotation=bbox_field(dtype=pl.Float32, normalize=False),
+                field=bbox_field(dtype=pl.Float32, normalize=False),
             ),
         }
     )
@@ -466,10 +462,10 @@ def test_multiple_converter_chaining():
     target_schema = Schema(
         attributes={
             "image": AttributeInfo(
-                type=np.ndarray, annotation=image_field(dtype=pl.Float32, format="BGR")
+                type=np.ndarray, field=image_field(dtype=pl.Float32, format="BGR")
             ),
             "bbox": AttributeInfo(
-                type=np.ndarray, annotation=bbox_field(dtype=pl.Float32, normalize=True)
+                type=np.ndarray, field=bbox_field(dtype=pl.Float32, normalize=True)
             ),
         }
     )
@@ -537,16 +533,14 @@ def test_astar_direct_conversion():
     # Create schemas
     from_schema = Schema(
         {
-            "image": AttributeInfo(
-                type=bytes, annotation=TestImageField(semantic=Semantic.Default)
-            ),
+            "image": AttributeInfo(type=bytes, field=TestImageField(semantic=Semantic.Default)),
         }
     )
 
     to_schema = Schema(
         {
             "image_size": AttributeInfo(
-                type=tuple, annotation=TestImageSizeField(semantic=Semantic.Default)
+                type=tuple, field=TestImageSizeField(semantic=Semantic.Default)
             ),
         }
     )
@@ -636,11 +630,9 @@ def test_astar_chained_conversion():
     # Create schemas that require chaining
     from_schema = Schema(
         {
-            "image": AttributeInfo(
-                type=bytes, annotation=TestImageField(semantic=Semantic.Default)
-            ),
+            "image": AttributeInfo(type=bytes, field=TestImageField(semantic=Semantic.Default)),
             "bbox": AttributeInfo(
-                type=list, annotation=TestNormalizedBboxField(semantic=Semantic.Default)
+                type=list, field=TestNormalizedBboxField(semantic=Semantic.Default)
             ),
         }
     )
@@ -648,7 +640,7 @@ def test_astar_chained_conversion():
     to_schema = Schema(
         {
             "absolute_bbox": AttributeInfo(
-                type=list, annotation=TestAbsoluteBboxField(semantic=Semantic.Default)
+                type=list, field=TestAbsoluteBboxField(semantic=Semantic.Default)
             ),
         }
     )
@@ -675,7 +667,7 @@ def test_astar_no_conversion_needed():
     # Identical schemas - no conversion needed
     schema = Schema(
         {
-            "data": AttributeInfo(type=str, annotation=TestField(semantic=Semantic.Default)),
+            "data": AttributeInfo(type=str, field=TestField(semantic=Semantic.Default)),
         }
     )
 
@@ -706,13 +698,13 @@ def test_astar_impossible_conversion():
     # No converters registered between these types - should fail
     from_schema = Schema(
         {
-            "field_a": AttributeInfo(type=str, annotation=FieldA(semantic=Semantic.Default)),
+            "field_a": AttributeInfo(type=str, field=FieldA(semantic=Semantic.Default)),
         }
     )
 
     to_schema = Schema(
         {
-            "field_b": AttributeInfo(type=str, annotation=FieldB(semantic=Semantic.Default)),
+            "field_b": AttributeInfo(type=str, field=FieldB(semantic=Semantic.Default)),
         }
     )
 
@@ -782,13 +774,13 @@ def test_optimal_path_selection():
 
     from_schema = Schema(
         {
-            "field_a": AttributeInfo(type=str, annotation=FieldA(semantic=Semantic.Default)),
+            "field_a": AttributeInfo(type=str, field=FieldA(semantic=Semantic.Default)),
         }
     )
 
     to_schema = Schema(
         {
-            "field_c": AttributeInfo(type=str, annotation=FieldC(semantic=Semantic.Default)),
+            "field_c": AttributeInfo(type=str, field=FieldC(semantic=Semantic.Default)),
         }
     )
 
@@ -822,7 +814,7 @@ def test_generator_converter():
 
     to_schema = Schema(
         {
-            "field_b": AttributeInfo(type=str, annotation=FieldB(semantic=Semantic.Default)),
+            "field_b": AttributeInfo(type=str, field=FieldB(semantic=Semantic.Default)),
         }
     )
 
@@ -872,14 +864,14 @@ def test_multiple_output_converter():
 
     from_schema = Schema(
         {
-            "field_a": AttributeInfo(type=str, annotation=FieldA(semantic=Semantic.Default)),
+            "field_a": AttributeInfo(type=str, field=FieldA(semantic=Semantic.Default)),
         }
     )
 
     to_schema = Schema(
         {
-            "multi1": AttributeInfo(type=str, annotation=MultiField1(semantic=Semantic.Default)),
-            "multi2": AttributeInfo(type=str, annotation=MultiField2(semantic=Semantic.Default)),
+            "multi1": AttributeInfo(type=str, field=MultiField1(semantic=Semantic.Default)),
+            "multi2": AttributeInfo(type=str, field=MultiField2(semantic=Semantic.Default)),
         }
     )
 
@@ -921,16 +913,16 @@ def test_partial_schema_matching():
 
     from_schema = Schema(
         {
-            "field_a": AttributeInfo(type=str, annotation=FieldA(semantic=Semantic.Default)),
+            "field_a": AttributeInfo(type=str, field=FieldA(semantic=Semantic.Default)),
             "other_field": AttributeInfo(
-                type=str, annotation=FieldA(semantic=Semantic.Left)
+                type=str, field=FieldA(semantic=Semantic.Left)
             ),  # Extra field with different semantic
         }
     )
 
     to_schema = Schema(
         {
-            "field_c": AttributeInfo(type=str, annotation=FieldC(semantic=Semantic.Default)),
+            "field_c": AttributeInfo(type=str, field=FieldC(semantic=Semantic.Default)),
             # Only requesting field_c, not other_field
         }
     )
@@ -947,7 +939,7 @@ def test_attribute_renaming():
     source_schema = Schema(
         {
             "input_image": AttributeInfo(
-                type=str, annotation=image_field(dtype=pl.UInt8(), format="RGB")
+                type=str, field=image_field(dtype=pl.UInt8(), format="RGB")
             ),
         }
     )
@@ -956,7 +948,7 @@ def test_attribute_renaming():
     target_schema = Schema(
         {
             "output_image": AttributeInfo(
-                type=str, annotation=image_field(dtype=pl.UInt8(), format="RGB")
+                type=str, field=image_field(dtype=pl.UInt8(), format="RGB")
             ),
         }
     )
@@ -997,22 +989,18 @@ def test_combined_rename_and_delete():
     # Create source schema with three fields
     source_schema = Schema(
         {
-            "old_image": AttributeInfo(
-                type=str, annotation=image_field(dtype=pl.UInt8(), format="RGB")
-            ),
+            "old_image": AttributeInfo(type=str, field=image_field(dtype=pl.UInt8(), format="RGB")),
             "bbox": AttributeInfo(
-                type=str, annotation=bbox_field(dtype=pl.Float32(), format="x1y1x2y2")
+                type=str, field=bbox_field(dtype=pl.Float32(), format="x1y1x2y2")
             ),
-            "extra_field": AttributeInfo(type=str, annotation=image_info_field()),
+            "extra_field": AttributeInfo(type=str, field=image_info_field()),
         }
     )
 
     # Create target schema with renamed image and no bbox or extra_field
     target_schema = Schema(
         {
-            "new_image": AttributeInfo(
-                type=str, annotation=image_field(dtype=pl.UInt8(), format="RGB")
-            ),
+            "new_image": AttributeInfo(type=str, field=image_field(dtype=pl.UInt8(), format="RGB")),
         }
     )
 
@@ -1265,17 +1253,15 @@ def test_find_conversion_path_inferred_categories():
         attributes={
             "polygons": AttributeInfo(
                 type=list,
-                annotation=PolygonField(dtype=pl.Float32, semantic=Semantic.Default),
+                field=PolygonField(dtype=pl.Float32, semantic=Semantic.Default),
                 categories=None,
             ),
             "labels": AttributeInfo(
                 type=list,
-                annotation=LabelField(semantic=Semantic.Default),
+                field=LabelField(semantic=Semantic.Default),
                 categories=label_categories,
             ),
-            "image_info": AttributeInfo(
-                type=dict, annotation=ImageInfoField(semantic=Semantic.Default)
-            ),
+            "image_info": AttributeInfo(type=dict, field=ImageInfoField(semantic=Semantic.Default)),
         }
     )
 
@@ -1283,7 +1269,7 @@ def test_find_conversion_path_inferred_categories():
     target_schema = Schema(
         attributes={
             "mask": AttributeInfo(
-                type=np.ndarray, annotation=MaskField(dtype=pl.UInt8, semantic=Semantic.Default)
+                type=np.ndarray, field=MaskField(dtype=pl.UInt8, semantic=Semantic.Default)
             )
         }
     )

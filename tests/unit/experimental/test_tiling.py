@@ -28,8 +28,8 @@ from datumaro.experimental.tiling.tiler_registry import (
 def sample_schema():
     return Schema(
         attributes={
-            "image": AttributeInfo(type=np.ndarray, annotation=image_field(pl.UInt8())),
-            "image_info": AttributeInfo(type=dict, annotation=image_info_field()),
+            "image": AttributeInfo(type=np.ndarray, field=image_field(pl.UInt8())),
+            "image_info": AttributeInfo(type=dict, field=image_info_field()),
         }
     )
 
@@ -70,16 +70,14 @@ def test_calculate_tiles(sample_df):
 
     schema = Schema(
         attributes={
-            "image_info": AttributeInfo(type=dict, annotation=image_info_field()),
-            "tile": AttributeInfo(type=dict, annotation=tile_field()),
+            "image_info": AttributeInfo(type=dict, field=image_info_field()),
+            "tile": AttributeInfo(type=dict, field=tile_field()),
         }
     )
 
     # Create specs from schema
-    image_info_spec = AttributeSpec(
-        name="image_info", field=schema.attributes["image_info"].annotation
-    )
-    tile_info_spec = AttributeSpec(name="tile", field=schema.attributes["tile"].annotation)
+    image_info_spec = AttributeSpec(name="image_info", field=schema.attributes["image_info"].field)
+    tile_info_spec = AttributeSpec(name="tile", field=schema.attributes["tile"].field)
 
     # Calculate tiles
     tiles_df = _calculate_tiles(sample_df, config, image_info_spec, tile_info_spec, 0)
@@ -165,7 +163,7 @@ def test_invalid_schema():
     # Create schema without image info
     invalid_schema = Schema(
         attributes={
-            "image": AttributeInfo(type=np.ndarray, annotation=image_field(pl.UInt8())),
+            "image": AttributeInfo(type=np.ndarray, field=image_field(pl.UInt8())),
         }
     )
 
@@ -183,9 +181,9 @@ def test_mask_tiling():
     # Create schema with both types of masks
     schema = Schema(
         attributes={
-            "image_info": AttributeInfo(type=dict, annotation=image_info_field()),
-            "segmentation": AttributeInfo(type=np.ndarray, annotation=mask_field()),
-            "instances": AttributeInfo(type=list, annotation=instance_mask_field()),
+            "image_info": AttributeInfo(type=dict, field=image_info_field()),
+            "segmentation": AttributeInfo(type=np.ndarray, field=mask_field()),
+            "instances": AttributeInfo(type=list, field=instance_mask_field()),
         }
     )
 
@@ -254,13 +252,13 @@ def test_bbox_tiling():
     # Create schema with bounding boxes
     schema = Schema(
         attributes={
-            "image_info": AttributeInfo(type=dict, annotation=image_info_field()),
-            "bboxes": AttributeInfo(type=list, annotation=bbox_field(dtype=pl.Float64)),
+            "image_info": AttributeInfo(type=dict, field=image_info_field()),
+            "bboxes": AttributeInfo(type=list, field=bbox_field(dtype=pl.Float64)),
         }
     )
 
-    polars_schema = schema.attributes["image_info"].annotation.to_polars_schema("image_info")
-    polars_schema.update(schema.attributes["bboxes"].annotation.to_polars_schema("bboxes"))
+    polars_schema = schema.attributes["image_info"].field.to_polars_schema("image_info")
+    polars_schema.update(schema.attributes["bboxes"].field.to_polars_schema("bboxes"))
 
     # Create sample data with bounding boxes
     df = pl.DataFrame(
@@ -308,9 +306,9 @@ def test_polygon_and_label_tiling():
     # Create schema with both polygon and label fields
     schema = Schema(
         attributes={
-            "image_info": AttributeInfo(type=dict, annotation=image_info_field()),
-            "polygons": AttributeInfo(type=list, annotation=polygon_field(dtype=pl.Float64)),
-            "labels": AttributeInfo(type=list, annotation=label_field(is_list=True)),
+            "image_info": AttributeInfo(type=dict, field=image_info_field()),
+            "polygons": AttributeInfo(type=list, field=polygon_field(dtype=pl.Float64)),
+            "labels": AttributeInfo(type=list, field=label_field(is_list=True)),
         }
     )
 
