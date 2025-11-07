@@ -13,6 +13,14 @@ from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image, PointCloud
 from datumaro.util.image import encode_image
+from tests.unit.data_formats.datumaro.conftest import (  # noqa: F401
+    fxt_can_save_and_load_image_with_arbitrary_extension,
+    fxt_can_save_and_load_infos,
+    fxt_can_save_dataset_with_cjk_categories,
+    fxt_can_save_dataset_with_cyrillic_and_spaces_in_filename,
+    fxt_relative_paths,
+    fxt_test_datumaro_format_dataset,
+)
 from tests.utils.test_utils import TestDir
 
 
