@@ -64,8 +64,8 @@ Homepage = "https://github.com/open-edge-platform/datumaro"
 
 [project.optional-dependencies]
 dev = [
-    "pre-commit",
     "ruff",
+    "prek"
 ]
 
 test = [
@@ -220,6 +220,13 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 [tool.ruff.lint.per-file-ignores]
 "*test*.py" = ["S", "ANN", "D", "ARG", "PLR"]
+"!src/datumaro/experimental/**" = ["S", "ANN", "D", "ARG", "PLR", "PLC0415", "PLW", "C", "UP"]
+"__init__.py" = [
+    "F401"      # unused-import
+]
+"src/datumaro/plugins/data_formats/ava/ava_label_pb2.py" = [
+    "E501"      # line-too-long
+]
 
 [tool.ruff.lint.isort]
 split-on-trailing-comma = false
@@ -238,17 +245,9 @@ max-args=7
 #     "F403",     # undefined-local-with-import-star
 # ]
 
-[tool.ruff.mccabe]
+[tool.ruff..lint.mccabe]
 # Unlike Flake8, default to a complexity level of 10.
 max-complexity = 10
-
-[tool.ruff.per-file-ignores]
-"__init__.py" = [
-    "F401"      # unused-import
-]
-"src/datumaro/plugins/data_formats/ava/ava_label_pb2.py" = [
-    "E501"      # line-too-long
-]
 
 [tool.nbqa.addopts]
 ruff = ["--ignore=E402"]
