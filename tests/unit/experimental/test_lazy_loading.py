@@ -12,13 +12,7 @@ import pytest
 from PIL import Image as PILImage
 
 from datumaro.experimental.dataset import Dataset, Sample
-from datumaro.experimental.fields import (
-    ImageInfo,
-    bbox_field,
-    image_field,
-    image_info_field,
-    image_path_field,
-)
+from datumaro.experimental.fields import ImageInfo, bbox_field, image_field, image_info_field, image_path_field
 from datumaro.experimental.schema import Semantic
 
 
@@ -68,9 +62,7 @@ def test_lazy_image_loading_basic():
         # Check bbox normalization happened
         # Original: [20.0, 30.0, 80.0, 70.0] for 150x100 image (WxH)
         # Normalized: [20/150, 30/100, 80/150, 70/100] = [0.133, 0.3, 0.533, 0.7]
-        expected_normalized = np.array(
-            [[20.0 / 150, 30.0 / 100, 80.0 / 150, 70.0 / 100]], dtype=np.float32
-        )
+        expected_normalized = np.array([[20.0 / 150, 30.0 / 100, 80.0 / 150, 70.0 / 100]], dtype=np.float32)
         assert np.allclose(loaded_sample.bbox, expected_normalized, atol=1e-3)
 
 
@@ -164,12 +156,8 @@ def test_lazy_loading_with_semantic_fields():
     class StereoImageSample(Sample):
         left_image_path: str = image_path_field(semantic=Semantic.Left)
         right_image_path: str = image_path_field(semantic=Semantic.Right)
-        left_image: np.ndarray[Any, Any] = image_field(
-            dtype=pl.UInt8, format="RGB", semantic=Semantic.Left
-        )
-        right_image: np.ndarray[Any, Any] = image_field(
-            dtype=pl.UInt8, format="RGB", semantic=Semantic.Right
-        )
+        left_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Left)
+        right_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Right)
 
     with tempfile.TemporaryDirectory() as temp_dir:
         # Create left and right images with distinct patterns
@@ -192,9 +180,7 @@ def test_lazy_loading_with_semantic_fields():
 
         # Create dataset with paths
         path_dataset = Dataset(StereoPathSample)
-        path_dataset.append(
-            StereoPathSample(left_image_path=left_path, right_image_path=right_path)
-        )
+        path_dataset.append(StereoPathSample(left_image_path=left_path, right_image_path=right_path))
 
         # Verify semantic fields are handled correctly in schema
         schema = StereoPathSample.infer_schema()

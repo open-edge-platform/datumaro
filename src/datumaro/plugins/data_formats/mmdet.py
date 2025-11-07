@@ -25,12 +25,11 @@ class MmdetCocoImporter(CocoImporter):
         for ann_path in ann_paths:
             subset_name = cls._get_subset_name(ann_path)
 
-            with context.require_any():
-                with context.alternative():
-                    image_files = osp.join(subset_name, "*.jpg")
-                    context.require_file(f"{image_files}")
+            with context.require_any(), context.alternative():
+                image_files = osp.join(subset_name, "*.jpg")
+                context.require_file(f"{image_files}")
 
-                    return FormatDetectionConfidence.MEDIUM
+                return FormatDetectionConfidence.MEDIUM
 
     def __call__(self, path, stream: bool = False, **extra_params):
         subset_paths = glob(osp.join(path, "**", "instances_*.json"), recursive=True)

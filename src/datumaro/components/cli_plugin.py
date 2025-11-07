@@ -27,7 +27,7 @@ def plugin_types() -> List[Type["CliPlugin"]]:
 
 
 def remove_plugin_type(s):
-    for t in {"transform", "base", "exporter", "importer", "validator"}:
+    for t in ("transform", "base", "exporter", "importer", "validator"):
         s = s.replace("_" + t, "")
     return s
 
@@ -69,8 +69,6 @@ class CliPlugin:
         args = parser.parse_args(args)
         args = vars(args)
 
-        log.debug(
-            "Parsed parameters: \n\t%s", "\n\t".join("%s: %s" % (k, v) for k, v in args.items())
-        )
+        log.debug("Parsed parameters: \n\t%s", "\n\t".join("%s: %s" % (k, v) for k, v in args.items()))
 
         return args

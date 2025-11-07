@@ -12,13 +12,8 @@ from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetBase, DatasetItem
 from datumaro.components.environment import Environment
 from datumaro.components.media import Image
-from datumaro.plugins.data_formats.cityscapes import (
-    TRAIN_CITYSCAPES_LABEL_MAP,
-    CityscapesExporter,
-    CityscapesImporter,
-)
+from datumaro.plugins.data_formats.cityscapes import TRAIN_CITYSCAPES_LABEL_MAP, CityscapesExporter, CityscapesImporter
 from datumaro.util.meta_file_util import parse_meta_file
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import IGNORE_ALL, TestDir, check_save_and_load, compare_datasets
 
@@ -483,9 +478,7 @@ class CityscapesExporterTest(TestCase):
             def __iter__(self):
                 return iter(
                     [
-                        DatasetItem(
-                            id="q", media=Image.from_numpy(data=np.zeros((4, 3, 3)), ext=".JPEG")
-                        ),
+                        DatasetItem(id="q", media=Image.from_numpy(data=np.zeros((4, 3, 3)), ext=".JPEG")),
                         DatasetItem(
                             id="w",
                             media=Image.from_numpy(data=np.ones((1, 5, 3)), ext=".bmp"),

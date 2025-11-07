@@ -7,14 +7,7 @@ import os
 import os.path as osp
 from typing import List, Optional
 
-from datumaro.components.annotation import (
-    AnnotationType,
-    Bbox,
-    Label,
-    LabelCategories,
-    Points,
-    PointsCategories,
-)
+from datumaro.components.annotation import AnnotationType, Bbox, Label, LabelCategories, Points, PointsCategories
 from datumaro.components.dataset_base import DatasetItem, SubsetBase
 from datumaro.components.errors import DatasetImportError, InvalidAnnotationError
 from datumaro.components.format_detection import FormatDetectionConfidence, FormatDetectionContext
@@ -50,9 +43,7 @@ class CelebaBase(SubsetBase):
 
         self._categories = {AnnotationType.label: LabelCategories()}
         if has_meta_file(path):
-            self._categories = {
-                AnnotationType.label: LabelCategories.from_iterable(parse_meta_file(path).keys())
-            }
+            self._categories = {AnnotationType.label: LabelCategories.from_iterable(parse_meta_file(path).keys())}
 
         self._items = list(self._load_items(path).values())
 
@@ -109,15 +100,13 @@ class CelebaBase(SubsetBase):
 
                     if len(landmarks) != len(point_cat):
                         raise InvalidAnnotationError(
-                            "File '%s', line %s: "
-                            "points do not match the header of this file" % (landmark_path, line)
+                            "File '%s', line %s: points do not match the header of this file" % (landmark_path, line)
                         )
 
                     if item_id not in items:
                         raise InvalidAnnotationError(
                             "File '%s', line %s: "
-                            "for this item are not label in %s "
-                            % (landmark_path, line, CelebaPath.LABELS_FILE)
+                            "for this item are not label in %s " % (landmark_path, line, CelebaPath.LABELS_FILE)
                         )
 
                     anno = items[item_id].annotations
@@ -140,8 +129,7 @@ class CelebaBase(SubsetBase):
                 if f.readline().strip() != CelebaPath.BBOXES_HEADER:
                     raise InvalidAnnotationError(
                         "File '%s': the header "
-                        "does not match the expected format '%s'"
-                        % (bbox_path, CelebaPath.BBOXES_HEADER)
+                        "does not match the expected format '%s'" % (bbox_path, CelebaPath.BBOXES_HEADER)
                     )
 
                 counter = 0
@@ -152,8 +140,7 @@ class CelebaBase(SubsetBase):
                     if item_id not in items:
                         raise InvalidAnnotationError(
                             "File '%s', line %s: "
-                            "for this item are not label in %s "
-                            % (bbox_path, line, CelebaPath.LABELS_FILE)
+                            "for this item are not label in %s " % (bbox_path, line, CelebaPath.LABELS_FILE)
                         )
 
                     anno = items[item_id].annotations
@@ -185,7 +172,7 @@ class CelebaBase(SubsetBase):
                             "beginning of the file " % (attr_path, line)
                         )
 
-                    attrs = {name: 0 < int(ann) for name, ann in zip(attr_names, item_ann)}
+                    attrs = {name: int(ann) > 0 for name, ann in zip(attr_names, item_ann)}
 
                     if item_id not in items:
                         image = images.get(item_id)
@@ -228,14 +215,12 @@ class CelebaBase(SubsetBase):
 
     def split_annotation(self, line):
         item = line.split('"')
-        if 1 < len(item):
+        if len(item) > 1:
             if len(item) == 3:
                 item_id = osp.splitext(item[1])[0]
                 item = item[2].split()
             else:
-                raise InvalidAnnotationError(
-                    "Line %s: unexpected number " "of quotes in filename" % line
-                )
+                raise InvalidAnnotationError("Line %s: unexpected number of quotes in filename" % line)
         else:
             item = line.split()
             item_id = osp.splitext(item[0])[0]

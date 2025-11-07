@@ -6,23 +6,12 @@ from __future__ import annotations
 
 import sys
 import types
+from collections.abc import Callable
 from functools import cache
-from typing import (
-    TYPE_CHECKING,
-    Annotated,
-    Any,
-    Callable,
-    Dict,
-    Generic,
-    Type,
-    Union,
-    cast,
-    get_args,
-    get_origin,
-)
+from typing import TYPE_CHECKING, Annotated, Any, Generic, TypeGuard, Union, cast, get_args, get_origin
 
 import polars as pl
-from typing_extensions import TypeGuard, TypeVar, dataclass_transform
+from typing_extensions import TypeVar, dataclass_transform
 
 from datumaro.experimental.fields import Subset, SubsetField
 
@@ -55,9 +44,7 @@ class Sample:
 
     def __repr__(self):
         """Return a string representation of the sample."""
-        fields = ", ".join(
-            f"{key}={getattr(self, key)}" for key in self.__dict__ if not key.startswith("_")
-        )
+        fields = ", ".join(f"{key}={getattr(self, key)}" for key in self.__dict__ if not key.startswith("_"))
         return f"{self.__class__.__name__}({fields})"
 
     @classmethod
@@ -83,9 +70,7 @@ class Sample:
                     module = sys.modules[cls.__module__]
                     annotation = eval(annotation, module.__dict__)
                 except Exception as e:
-                    raise TypeError(
-                        f"Failed to resolve type annotation '{annotation}' for attribute '{name}': {e}"
-                    )
+                    raise TypeError(f"Failed to resolve type annotation '{annotation}' for attribute '{name}': {e}")
 
             origin = get_origin(annotation)
             if origin is Annotated:
@@ -104,9 +89,7 @@ class Sample:
 
             # For Union types, keep the original annotation (the Union instance)
             # instead of the origin (which is just the UnionType class)
-            if (
-                sys.version_info >= (3, 10) and isinstance(annotation, types.UnionType)
-            ) or type_origin is Union:
+            if (sys.version_info >= (3, 10) and isinstance(annotation, types.UnionType)) or type_origin is Union:
                 final_type = annotation
             else:
                 final_type = type_origin if type_origin is not None else annotation
@@ -170,7 +153,7 @@ class Dataset(Generic[DType]):
 
     def __init__(
         self,
-        dtype_or_schema: Union[Schema, Type[DType]],
+        dtype_or_schema: Schema | type[DType],
         categories: dict[str, Categories] | None = None,
         schema: Schema | None = None,
     ):
@@ -184,7 +167,7 @@ class Dataset(Generic[DType]):
         """
         if isinstance(dtype_or_schema, Schema):
             self._schema = dtype_or_schema
-            self._dtype = cast(Type[DType], Sample)
+            self._dtype = cast("type[DType]", Sample)
         else:
             self._schema = dtype_or_schema.infer_schema() if schema is None else schema
             self._dtype = dtype_or_schema
@@ -200,11 +183,11 @@ class Dataset(Generic[DType]):
     def from_dataframe(
         cls,
         df: pl.DataFrame,
-        dtype_or_schema: Union[Schema, Type[DTargetType]],
+        dtype_or_schema: Schema | type[DTargetType],
         transforms: Transform | None = None,
-        categories: Dict[str, Categories] | None = None,
+        categories: dict[str, Categories] | None = None,
         schema: Schema | None = None,
-    ) -> "Dataset[DTargetType]":
+    ) -> Dataset[DTargetType]:
         """
         Create a Dataset from an existing DataFrame and lazy converters.
 
@@ -228,7 +211,7 @@ class Dataset(Generic[DType]):
         return self._schema
 
     @property
-    def dtype(self) -> Type[DType]:
+    def dtype(self) -> type[DType]:
         """Get the sample type of this dataset."""
         return self._dtype
 
@@ -311,9 +294,7 @@ class Dataset(Generic[DType]):
         for key, attr_info in self._schema.attributes.items():
             if key not in lazy_attributes:
                 # This attribute is directly available
-                direct_attributes[key] = attr_info.annotation.from_polars(
-                    key, 0, row_df, attr_info.type
-                )
+                direct_attributes[key] = attr_info.annotation.from_polars(key, 0, row_df, attr_info.type)
 
         # If there are lazy converters, create a dynamic class with descriptors
         dtype = self._dtype
@@ -403,7 +384,7 @@ class Dataset(Generic[DType]):
     def transform(
         self,
         transform_factory: Callable[[Transform], Transform],
-        dtype: Type[DTargetType] | None = None,
+        dtype: type[DTargetType] | None = None,
     ) -> Dataset[DTargetType]:
         transforms = self._transforms
         if transforms is None:
@@ -417,19 +398,18 @@ class Dataset(Generic[DType]):
                 transforms.schema,
                 transforms,
             )
-        else:
-            return Dataset.from_dataframe(
-                self.df,
-                dtype,
-                transforms,
-                schema=transforms.schema,
-            )
+        return Dataset.from_dataframe(
+            self.df,
+            dtype,
+            transforms,
+            schema=transforms.schema,
+        )
 
     def convert_to_schema(
         self,
-        target_dtype_or_schema: Union[Schema, Type[DTargetType]],
-        target_categories: Dict[str, Categories] = None,
-    ) -> "Dataset[DTargetType]":
+        target_dtype_or_schema: Schema | type[DTargetType],
+        target_categories: dict[str, Categories] = None,
+    ) -> Dataset[DTargetType]:
         """
         Convert this dataset to a new schema using registered converters.
 
@@ -485,9 +465,7 @@ class Dataset(Generic[DType]):
             if isinstance(attribute_info.annotation, SubsetField):
                 break
         else:
-            raise RuntimeError(
-                f"Dataset does not have an attribute for 'SubsetField': schema: {self.df.schema}"
-            )
+            raise RuntimeError(f"Dataset does not have an attribute for 'SubsetField': schema: {self.df.schema}")
 
         filtered_df = self.df.filter(self.df[subset_column_name] == subset.name)
 
@@ -501,7 +479,7 @@ class Dataset(Generic[DType]):
 def convert_sample_to_schema(
     sample: Sample,
     source_schema: Schema,
-    target_dtype_or_schema: Union[Schema, Type[DTargetType]],
+    target_dtype_or_schema: Schema | type[DTargetType],
 ) -> DTargetType:
     """
     Convert a sample to a new schema using registered converters.
@@ -530,8 +508,8 @@ def convert_sample_to_schema(
 
 
 def has_schema(
-    dataset: "Dataset[Any]", target_dtype_or_schema: Union[Schema, Type[DTargetType]]
-) -> TypeGuard["Dataset[DTargetType]"]:
+    dataset: Dataset[Any], target_dtype_or_schema: Schema | type[DTargetType]
+) -> TypeGuard[Dataset[DTargetType]]:
     """
     Check if a dataset has the specified schema.
 

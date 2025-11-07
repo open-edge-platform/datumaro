@@ -6,14 +6,13 @@ import logging
 import os
 import os.path as osp
 import pickle
-from typing import Callable, List, Sequence  # nosec B403
+from typing import Callable, List  # nosec B403
 from unittest import TestCase, mock
 
 import numpy as np
 import pytest
 
 from datumaro.components.annotation import (
-    Annotation,
     Annotations,
     AnnotationType,
     Bbox,
@@ -27,12 +26,7 @@ from datumaro.components.annotation import (
     PolyLine,
 )
 from datumaro.components.dataset import DEFAULT_FORMAT, Dataset, eager_mode
-from datumaro.components.dataset_base import (
-    DEFAULT_SUBSET_NAME,
-    DatasetBase,
-    DatasetItem,
-    SubsetBase,
-)
+from datumaro.components.dataset_base import DEFAULT_SUBSET_NAME, DatasetBase, DatasetItem, SubsetBase
 from datumaro.components.dataset_item_storage import ItemStatus
 from datumaro.components.environment import Environment
 from datumaro.components.errors import (
@@ -48,11 +42,7 @@ from datumaro.components.errors import (
     UnknownFormatError,
 )
 from datumaro.components.exporter import Exporter
-from datumaro.components.filter import (
-    DatasetItemEncoder,
-    XPathAnnotationsFilter,
-    XPathDatasetFilter,
-)
+from datumaro.components.filter import DatasetItemEncoder, XPathAnnotationsFilter, XPathDatasetFilter
 from datumaro.components.importer import FailingImportErrorPolicy, ImportErrorPolicy
 from datumaro.components.media import Image, MediaElement, Video
 from datumaro.components.merge.intersect_merge import IntersectMerge
@@ -60,7 +50,6 @@ from datumaro.components.progress_reporting import NullProgressReporter, Progres
 from datumaro.components.registry import DatasetBaseRegistry, ImporterRegistry
 from datumaro.components.transformer import ItemTransform, Transform
 from datumaro.plugins.transforms import ProjectInfos, RemapLabels
-
 from tests.utils.test_utils import TestDir, compare_datasets, compare_datasets_strict
 
 
@@ -74,9 +63,7 @@ class DatasetTest(TestCase):
         default_importers = [env.importers[DEFAULT_FORMAT]]
         default_extractors = [env.extractors[DEFAULT_FORMAT]]
         importers = importers_override(env) if importers_override is not None else default_importers
-        extractors = (
-            extractors_override(env) if extractors_override is not None else default_extractors
-        )
+        extractors = extractors_override(env) if extractors_override is not None else default_extractors
         env._importers = ImporterRegistry()
         env._importers.batch_register(importers)
         env._extractors = DatasetBaseRegistry()
@@ -171,9 +158,7 @@ class DatasetTest(TestCase):
                 )
 
             def categories(self):
-                return {
-                    AnnotationType.label: LabelCategories.from_iterable(["a", "b", "c", "d", "e"])
-                }
+                return {AnnotationType.label: LabelCategories.from_iterable(["a", "b", "c", "d", "e"])}
 
         actual = Dataset.from_iterable(
             [
@@ -281,9 +266,7 @@ class DatasetTest(TestCase):
     def test_can_detect_with_nested_folder_and_multiply_matches(self):
         dataset = Dataset.from_iterable(
             [
-                DatasetItem(
-                    id=1, media=Image.from_numpy(data=np.ones((3, 3, 3))), annotations=[Label(2)]
-                ),
+                DatasetItem(id=1, media=Image.from_numpy(data=np.ones((3, 3, 3))), annotations=[Label(2)]),
             ],
             categories=["a", "b", "c"],
         )
@@ -544,12 +527,8 @@ class DatasetTest(TestCase):
             Dataset.from_extractors(s1, s2)
 
     def test_cant_join_different_image_info(self):
-        s1 = Dataset.from_iterable(
-            [DatasetItem(1, media=Image.from_file(path="1.png", size=(2, 4)))]
-        )
-        s2 = Dataset.from_iterable(
-            [DatasetItem(1, media=Image.from_file(path="1.png", size=(4, 2)))]
-        )
+        s1 = Dataset.from_iterable([DatasetItem(1, media=Image.from_file(path="1.png", size=(2, 4)))])
+        s2 = Dataset.from_iterable([DatasetItem(1, media=Image.from_file(path="1.png", size=(4, 2)))])
 
         with self.assertRaises(MismatchingImageInfoError):
             Dataset.from_extractors(s1, s2)
@@ -1529,9 +1508,7 @@ class DatasetTest(TestCase):
             dataset = Dataset.from_iterable(
                 [
                     DatasetItem(1, subset="train", media=Image.from_numpy(data=np.ones((2, 4, 3)))),
-                    DatasetItem(
-                        2, subset="train", media=Image.from_file(path="2.jpg", size=(3, 2))
-                    ),
+                    DatasetItem(2, subset="train", media=Image.from_file(path="2.jpg", size=(3, 2))),
                     DatasetItem(3, subset="valid", media=Image.from_numpy(data=np.ones((2, 2, 3)))),
                 ],
                 categories=[],
@@ -1539,15 +1516,11 @@ class DatasetTest(TestCase):
             )
             dataset.export(path, "test", save_media=True)
 
-            dataset.put(
-                DatasetItem(2, subset="train", media=Image.from_numpy(data=np.ones((3, 2, 3))))
-            )
+            dataset.put(DatasetItem(2, subset="train", media=Image.from_numpy(data=np.ones((3, 2, 3)))))
             dataset.remove(3, "valid")
             dataset.save(save_media=True)
 
-            self.assertEqual(
-                {"train_1.txt", "train_1.jpg", "train_2.txt", "train_2.jpg"}, set(os.listdir(path))
-            )
+            self.assertEqual({"train_1.txt", "train_1.jpg", "train_2.txt", "train_2.jpg"}, set(os.listdir(path)))
 
     def test_update_overwrites_matching_items(self):
         patch = Dataset.from_iterable(
@@ -1624,9 +1597,7 @@ class DatasetTest(TestCase):
                     ],
                 ),
                 # Must be added
-                DatasetItem(
-                    id=2, annotations=[Bbox(1, 2, 3, 2, label=1)]
-                ),  # Label must be remapped
+                DatasetItem(id=2, annotations=[Bbox(1, 2, 3, 2, label=1)]),  # Label must be remapped
             ],
             categories=["b", "a", "c"],
         )
@@ -1794,9 +1765,7 @@ class DatasetTest(TestCase):
         progress_reporter.finish = mock.MagicMock()
 
         with TestDir() as test_dir:
-            Dataset(media_type=MediaElement).export(
-                test_dir, TestExporter, progress_reporter=progress_reporter
-            )
+            Dataset(media_type=MediaElement).export(test_dir, TestExporter, progress_reporter=progress_reporter)
 
         period_mock.assert_called_once()
         progress_reporter.start.assert_called_once()
@@ -1822,9 +1791,7 @@ class DatasetTest(TestCase):
         error_policy.report_annotation_error = mock.MagicMock()
 
         with TestDir() as test_dir:
-            Dataset(media_type=MediaElement).export(
-                test_dir, TestExporter, error_policy=error_policy
-            )
+            Dataset(media_type=MediaElement).export(test_dir, TestExporter, error_policy=error_policy)
 
         error_policy.report_item_error.assert_called()
         error_policy.report_annotation_error.assert_called()
@@ -2106,9 +2073,7 @@ class DatasetFilterTest(TestCase):
             categories=["a", "b", "c"],
         )
 
-        filtered = XPathAnnotationsFilter(
-            source, "/item/annotation[label_id = 2]", remove_empty=True
-        )
+        filtered = XPathAnnotationsFilter(source, "/item/annotation[label_id = 2]", remove_empty=True)
 
         compare_datasets(self, expected, filtered)
 
@@ -2152,9 +2117,7 @@ class DatasetTransformTest:
         ids=["xpath", "pyfunc"],
     )
     def test_can_filter_items(self, expr_or_filter_func, helper_tc):
-        expected = Dataset.from_iterable(
-            [DatasetItem(0, subset="train")], categories=["cat", "dog"]
-        )
+        expected = Dataset.from_iterable([DatasetItem(0, subset="train")], categories=["cat", "dog"])
 
         dataset = Dataset.from_iterable(
             [DatasetItem(0, subset="train"), DatasetItem(1, subset="train")],
@@ -2242,9 +2205,7 @@ class DatasetInfosTest:
         dataset = fxt_sample_dataset_factory(infos=infos)
         fxt_test_case.assertEqual(dataset.infos(), infos)
 
-    def test_dataset_infos_exact_merge(
-        self, fxt_test_case, fxt_sample_dataset_factory, fxt_sample_infos
-    ):
+    def test_dataset_infos_exact_merge(self, fxt_test_case, fxt_sample_dataset_factory, fxt_sample_infos):
         infos_1, infos_2, infos = fxt_sample_infos
 
         dataset_1 = fxt_sample_dataset_factory(infos=infos_1)
@@ -2254,9 +2215,7 @@ class DatasetInfosTest:
 
         fxt_test_case.assertEqual(dataset.infos(), infos)
 
-    def test_dataset_infos_intersect_merge(
-        self, fxt_test_case, fxt_sample_dataset_factory, fxt_sample_infos
-    ):
+    def test_dataset_infos_intersect_merge(self, fxt_test_case, fxt_sample_dataset_factory, fxt_sample_infos):
         infos_1, infos_2, infos = fxt_sample_infos
 
         dataset_1 = fxt_sample_dataset_factory(infos=infos_1)
@@ -2268,9 +2227,7 @@ class DatasetInfosTest:
         fxt_test_case.assertEqual(dataset.infos(), infos)
 
     @pytest.mark.parametrize("is_eager", [True, False])
-    def test_dataset_infos_transform(
-        self, fxt_test_case, fxt_sample_dataset_factory, fxt_sample_infos, is_eager
-    ):
+    def test_dataset_infos_transform(self, fxt_test_case, fxt_sample_dataset_factory, fxt_sample_infos, is_eager):
         infos_1, infos_2, infos = fxt_sample_infos
         with eager_mode(is_eager):
             dataset = fxt_sample_dataset_factory(infos=infos_1)
@@ -2281,7 +2238,5 @@ class DatasetInfosTest:
             dataset.transform(ProjectInfos, dst_infos=infos_2, overwrite=True)
             fxt_test_case.assertEqual(dataset.infos(), infos_2)
 
-            dataset.transform(
-                RemapLabels, mapping={"car": "apple", "cat": "banana", "dog": "cinnamon"}
-            )
+            dataset.transform(RemapLabels, mapping={"car": "apple", "cat": "banana", "dog": "cinnamon"})
             fxt_test_case.assertEqual(dataset.infos(), infos_2)

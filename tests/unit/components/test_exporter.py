@@ -10,7 +10,6 @@ import pytest
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.exporter import ExportContextComponent
 from datumaro.components.media import MediaElement, Video, VideoFrame
-
 from tests.utils.test_utils import TestDir
 from tests.utils.video import make_sample_video
 
@@ -41,7 +40,7 @@ class ExportContextComponentTest:
         ecc: ExportContextComponent = fxt_export_context_component
 
         for media in [video, frame]:
-            assert "video.avi" == ecc.make_video_filename(DatasetItem(0, media=media))
+            assert ecc.make_video_filename(DatasetItem(0, media=media)) == "video.avi"
 
         # error cases
         for item in [None, DatasetItem(0, media=MediaElement())]:

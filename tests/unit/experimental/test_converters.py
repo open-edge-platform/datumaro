@@ -52,9 +52,6 @@ from datumaro.experimental.fields import (
     bbox_field,
     image_field,
     image_info_field,
-    mask_callable_field,
-    mask_field,
-    rotated_bbox_field,
 )
 from datumaro.experimental.schema import AttributeInfo, Schema, Semantic
 
@@ -174,18 +171,12 @@ def test_bbox_coordinate_converter():
             "bbox": [[[100.0, 150.0, 200.0, 250.0]]],  # One bbox: x1,y1,x2,y2
             "image_shape": [[300, 400, 3]],  # height=300, width=400
         },
-        schema=pl.Schema(
-            {"bbox": pl.List(pl.Array(pl.Float32, 4)), "image_shape": pl.List(pl.Int64)}
-        ),
+        schema=pl.Schema({"bbox": pl.List(pl.Array(pl.Float32, 4)), "image_shape": pl.List(pl.Int64)}),
     )
 
     # Set up converter for absolute to normalized conversion
-    input_bbox_field = BBoxField(
-        dtype=pl.Float32, format="x1y1x2y2", normalize=False, semantic=Semantic.Default
-    )
-    output_bbox_field = BBoxField(
-        dtype=pl.Float32, format="x1y1x2y2", normalize=True, semantic=Semantic.Default
-    )
+    input_bbox_field = BBoxField(dtype=pl.Float32, format="x1y1x2y2", normalize=False, semantic=Semantic.Default)
+    output_bbox_field = BBoxField(dtype=pl.Float32, format="x1y1x2y2", normalize=True, semantic=Semantic.Default)
     input_image_field = ImageField(dtype=pl.UInt8, format="RGB", semantic=Semantic.Default)
 
     setattr(
@@ -287,7 +278,6 @@ def test_image_bytes_to_image_converter():
     df = pl.DataFrame({"image_bytes": [image_bytes]})
 
     # Set up converter attributes
-    from datumaro.experimental.fields import image_bytes_field
 
     input_field = ImageBytesField(semantic=Semantic.Default)
     output_field = ImageField(dtype=pl.UInt8, format="RGB", semantic=Semantic.Default)
@@ -333,19 +323,11 @@ def test_find_conversion_path():
 
     # Create simple source and target schemas
     source_schema = Schema(
-        attributes={
-            "image": AttributeInfo(
-                type=np.ndarray, annotation=image_field(dtype=pl.UInt8, format="RGB")
-            )
-        }
+        attributes={"image": AttributeInfo(type=np.ndarray, annotation=image_field(dtype=pl.UInt8, format="RGB"))}
     )
 
     target_schema = Schema(
-        attributes={
-            "image": AttributeInfo(
-                type=np.ndarray, annotation=image_field(dtype=pl.Float32, format="RGB")
-            )
-        }
+        attributes={"image": AttributeInfo(type=np.ndarray, annotation=image_field(dtype=pl.Float32, format="RGB"))}
     )
 
     # This should find a conversion path (UInt8 -> Float32)
@@ -364,19 +346,11 @@ def test_convert_dataframe():
     )
 
     source_schema = Schema(
-        attributes={
-            "image": AttributeInfo(
-                type=np.ndarray, annotation=image_field(dtype=pl.UInt8, format="RGB")
-            )
-        }
+        attributes={"image": AttributeInfo(type=np.ndarray, annotation=image_field(dtype=pl.UInt8, format="RGB"))}
     )
 
     target_schema = Schema(
-        attributes={
-            "image": AttributeInfo(
-                type=np.ndarray, annotation=image_field(dtype=pl.Float32, format="BGR")
-            )
-        }
+        attributes={"image": AttributeInfo(type=np.ndarray, annotation=image_field(dtype=pl.Float32, format="BGR"))}
     )
 
     # Get conversion path and apply it manually
@@ -404,9 +378,7 @@ def test_lazy_converter():
     assert len(lazy_converters) > 0
 
     # Check that ImagePathToImageConverter is marked as lazy
-    image_path_converters = [
-        c for c in lazy_converters if issubclass(c, ImagePathToImageConverter) and c.lazy
-    ]
+    image_path_converters = [c for c in lazy_converters if issubclass(c, ImagePathToImageConverter) and c.lazy]
     assert len(image_path_converters) > 0
 
 
@@ -418,12 +390,8 @@ def test_converter_with_auxiliary_fields():
     converter_instance = BBoxCoordinateConverter()  # type: ignore[call-arg]
 
     # BBox converter needs image data as auxiliary
-    input_bbox_field = BBoxField(
-        dtype=pl.Float32, format="x1y1x2y2", normalize=False, semantic=Semantic.Default
-    )
-    output_bbox_field = BBoxField(
-        dtype=pl.Float32, format="x1y1x2y2", normalize=True, semantic=Semantic.Default
-    )
+    input_bbox_field = BBoxField(dtype=pl.Float32, format="x1y1x2y2", normalize=False, semantic=Semantic.Default)
+    output_bbox_field = BBoxField(dtype=pl.Float32, format="x1y1x2y2", normalize=True, semantic=Semantic.Default)
     input_image_field = ImageField(dtype=pl.UInt8, format="RGB", semantic=Semantic.Default)
 
     setattr(
@@ -453,9 +421,7 @@ def test_multiple_converter_chaining():
     # Create a complex conversion scenario
     source_schema = Schema(
         attributes={
-            "image": AttributeInfo(
-                type=np.ndarray, annotation=image_field(dtype=pl.UInt8, format="RGB")
-            ),
+            "image": AttributeInfo(type=np.ndarray, annotation=image_field(dtype=pl.UInt8, format="RGB")),
             "bbox": AttributeInfo(
                 type=np.ndarray,
                 annotation=bbox_field(dtype=pl.Float32, normalize=False),
@@ -465,12 +431,8 @@ def test_multiple_converter_chaining():
 
     target_schema = Schema(
         attributes={
-            "image": AttributeInfo(
-                type=np.ndarray, annotation=image_field(dtype=pl.Float32, format="BGR")
-            ),
-            "bbox": AttributeInfo(
-                type=np.ndarray, annotation=bbox_field(dtype=pl.Float32, normalize=True)
-            ),
+            "image": AttributeInfo(type=np.ndarray, annotation=image_field(dtype=pl.Float32, format="BGR")),
+            "bbox": AttributeInfo(type=np.ndarray, annotation=bbox_field(dtype=pl.Float32, normalize=True)),
         }
     )
 
@@ -537,17 +499,13 @@ def test_astar_direct_conversion():
     # Create schemas
     from_schema = Schema(
         {
-            "image": AttributeInfo(
-                type=bytes, annotation=TestImageField(semantic=Semantic.Default)
-            ),
+            "image": AttributeInfo(type=bytes, annotation=TestImageField(semantic=Semantic.Default)),
         }
     )
 
     to_schema = Schema(
         {
-            "image_size": AttributeInfo(
-                type=tuple, annotation=TestImageSizeField(semantic=Semantic.Default)
-            ),
+            "image_size": AttributeInfo(type=tuple, annotation=TestImageSizeField(semantic=Semantic.Default)),
         }
     )
 
@@ -636,20 +594,14 @@ def test_astar_chained_conversion():
     # Create schemas that require chaining
     from_schema = Schema(
         {
-            "image": AttributeInfo(
-                type=bytes, annotation=TestImageField(semantic=Semantic.Default)
-            ),
-            "bbox": AttributeInfo(
-                type=list, annotation=TestNormalizedBboxField(semantic=Semantic.Default)
-            ),
+            "image": AttributeInfo(type=bytes, annotation=TestImageField(semantic=Semantic.Default)),
+            "bbox": AttributeInfo(type=list, annotation=TestNormalizedBboxField(semantic=Semantic.Default)),
         }
     )
 
     to_schema = Schema(
         {
-            "absolute_bbox": AttributeInfo(
-                type=list, annotation=TestAbsoluteBboxField(semantic=Semantic.Default)
-            ),
+            "absolute_bbox": AttributeInfo(type=list, annotation=TestAbsoluteBboxField(semantic=Semantic.Default)),
         }
     )
 
@@ -680,9 +632,7 @@ def test_astar_no_conversion_needed():
     )
 
     path, _ = find_conversion_path(schema, schema)
-    assert (
-        len(path.converters) == 0
-    ), f"Expected 0 converters for identical schemas, got {len(path.converters)}"
+    assert len(path.converters) == 0, f"Expected 0 converters for identical schemas, got {len(path.converters)}"
 
 
 def test_astar_impossible_conversion():
@@ -866,9 +816,9 @@ def test_multiple_output_converter():
             return True
 
         def convert(self, df: pl.DataFrame) -> pl.DataFrame:
-            return df.with_columns(
-                [pl.col("field_a").alias("multi1"), pl.col("field_a").alias("multi2")]
-            ).drop("field_a")
+            return df.with_columns([pl.col("field_a").alias("multi1"), pl.col("field_a").alias("multi2")]).drop(
+                "field_a"
+            )
 
     from_schema = Schema(
         {
@@ -946,18 +896,14 @@ def test_attribute_renaming():
     # Create source schema with an image field named "input_image"
     source_schema = Schema(
         {
-            "input_image": AttributeInfo(
-                type=str, annotation=image_field(dtype=pl.UInt8(), format="RGB")
-            ),
+            "input_image": AttributeInfo(type=str, annotation=image_field(dtype=pl.UInt8(), format="RGB")),
         }
     )
 
     # Create target schema with the same field type but different name "output_image"
     target_schema = Schema(
         {
-            "output_image": AttributeInfo(
-                type=str, annotation=image_field(dtype=pl.UInt8(), format="RGB")
-            ),
+            "output_image": AttributeInfo(type=str, annotation=image_field(dtype=pl.UInt8(), format="RGB")),
         }
     )
 
@@ -973,9 +919,7 @@ def test_attribute_renaming():
 
     # Create test DataFrame with the source column
     test_data = np.random.randint(0, 255, (10, 10, 3), dtype=np.uint8)
-    df = pl.DataFrame(
-        {"input_image": [test_data.flatten()], "input_image_shape": [test_data.shape]}
-    )
+    df = pl.DataFrame({"input_image": [test_data.flatten()], "input_image_shape": [test_data.shape]})
 
     # Apply the remapper converter
     result_df = remapper_converter.convert(df)
@@ -997,12 +941,8 @@ def test_combined_rename_and_delete():
     # Create source schema with three fields
     source_schema = Schema(
         {
-            "old_image": AttributeInfo(
-                type=str, annotation=image_field(dtype=pl.UInt8(), format="RGB")
-            ),
-            "bbox": AttributeInfo(
-                type=str, annotation=bbox_field(dtype=pl.Float32(), format="x1y1x2y2")
-            ),
+            "old_image": AttributeInfo(type=str, annotation=image_field(dtype=pl.UInt8(), format="RGB")),
+            "bbox": AttributeInfo(type=str, annotation=bbox_field(dtype=pl.Float32(), format="x1y1x2y2")),
             "extra_field": AttributeInfo(type=str, annotation=image_info_field()),
         }
     )
@@ -1010,9 +950,7 @@ def test_combined_rename_and_delete():
     # Create target schema with renamed image and no bbox or extra_field
     target_schema = Schema(
         {
-            "new_image": AttributeInfo(
-                type=str, annotation=image_field(dtype=pl.UInt8(), format="RGB")
-            ),
+            "new_image": AttributeInfo(type=str, annotation=image_field(dtype=pl.UInt8(), format="RGB")),
         }
     )
 
@@ -1111,9 +1049,7 @@ def test_polygon_to_mask_converter():
     )
 
     # Set up converter attributes
-    input_polygon_field = PolygonField(
-        dtype=pl.Float32, format="xy", normalize=False, semantic=Semantic.Default
-    )
+    input_polygon_field = PolygonField(dtype=pl.Float32, format="xy", normalize=False, semantic=Semantic.Default)
     input_labels_field = LabelField(dtype=pl.Int32, semantic=Semantic.Default, multi_label=True)
     image_info_field = ImageInfoField(semantic=Semantic.Default)
     output_mask_field = MaskField(dtype=pl.UInt8, semantic=Semantic.Default)
@@ -1216,9 +1152,7 @@ def test_polygon_to_mask_converter_normalized():
         "input_polygon",
         AttributeSpec(name="polygons", field=input_polygon_field),
     )
-    setattr(
-        converter_instance, "input_labels", AttributeSpec(name="labels", field=input_labels_field)
-    )
+    setattr(converter_instance, "input_labels", AttributeSpec(name="labels", field=input_labels_field))
     setattr(
         converter_instance,
         "input_image_info",
@@ -1273,18 +1207,14 @@ def test_find_conversion_path_inferred_categories():
                 annotation=LabelField(semantic=Semantic.Default),
                 categories=label_categories,
             ),
-            "image_info": AttributeInfo(
-                type=dict, annotation=ImageInfoField(semantic=Semantic.Default)
-            ),
+            "image_info": AttributeInfo(type=dict, annotation=ImageInfoField(semantic=Semantic.Default)),
         }
     )
 
     # Create target schema (polygon to mask conversion)
     target_schema = Schema(
         attributes={
-            "mask": AttributeInfo(
-                type=np.ndarray, annotation=MaskField(dtype=pl.UInt8, semantic=Semantic.Default)
-            )
+            "mask": AttributeInfo(type=np.ndarray, annotation=MaskField(dtype=pl.UInt8, semantic=Semantic.Default))
         }
     )
 
@@ -1326,9 +1256,7 @@ def test_polygon_to_instance_mask_converter():
     converter_instance = PolygonToInstanceMaskConverter()
 
     # Set up field specs
-    input_polygon_field = PolygonField(
-        dtype=pl.Float32, format="xy", normalize=False, semantic=Semantic.Default
-    )
+    input_polygon_field = PolygonField(dtype=pl.Float32, format="xy", normalize=False, semantic=Semantic.Default)
     image_info_field = ImageInfoField(semantic=Semantic.Default)
     output_instance_mask_field = InstanceMaskField(dtype=pl.Boolean, semantic=Semantic.Default)
 
@@ -1392,9 +1320,7 @@ def test_polygon_to_instance_mask_converter_normalized():
     polygon_coords1 = [[0.1, 0.1], [0.2, 0.1], [0.15, 0.2]]
     polygon_coords2 = [[0.3, 0.3], [0.4, 0.3], [0.4, 0.4], [0.3, 0.4]]
 
-    polygon_series = pl.Series(
-        [polygon_coords1, polygon_coords2], dtype=pl.List(pl.Array(pl.Float32, 2))
-    )
+    polygon_series = pl.Series([polygon_coords1, polygon_coords2], dtype=pl.List(pl.Array(pl.Float32, 2)))
 
     df = pl.DataFrame(
         {
@@ -1407,9 +1333,7 @@ def test_polygon_to_instance_mask_converter_normalized():
     converter_instance = PolygonToInstanceMaskConverter()
 
     # Set up field specs
-    input_polygon_field = PolygonField(
-        dtype=pl.Float32, format="xy", normalize=True, semantic=Semantic.Default
-    )
+    input_polygon_field = PolygonField(dtype=pl.Float32, format="xy", normalize=True, semantic=Semantic.Default)
     image_info_field = ImageInfoField(semantic=Semantic.Default)
     output_instance_mask_field = InstanceMaskField(dtype=pl.Boolean, semantic=Semantic.Default)
 
@@ -1456,9 +1380,7 @@ def test_instance_mask_callable_to_instance_mask_converter():
 
     # Create a test callable that returns instance masks
     def get_instance_masks():
-        return np.array(
-            [[[True, False], [False, True]], [[False, True], [True, False]]], dtype=bool
-        )  # (2,2,2)
+        return np.array([[[True, False], [False, True]], [[False, True], [True, False]]], dtype=bool)  # (2,2,2)
 
     df = pl.DataFrame(
         {
@@ -1646,9 +1568,7 @@ def test_polygon_to_bbox_converter():
     polygon_coords1 = [[10.0, 10.0], [20.0, 10.0], [15.0, 20.0]]
     polygon_coords2 = [[30.0, 30.0], [40.0, 30.0], [40.0, 40.0], [30.0, 40.0]]
 
-    polygon_series = pl.Series(
-        [polygon_coords1, polygon_coords2], dtype=pl.List(pl.Array(pl.Float32, 2))
-    )
+    polygon_series = pl.Series([polygon_coords1, polygon_coords2], dtype=pl.List(pl.Array(pl.Float32, 2)))
 
     df = pl.DataFrame(
         {
@@ -1660,12 +1580,8 @@ def test_polygon_to_bbox_converter():
     converter_instance = PolygonToBBoxConverter()
 
     # Set up field specs
-    input_polygon_field = PolygonField(
-        dtype=pl.Float32, format="xy", normalize=False, semantic=Semantic.Default
-    )
-    output_bbox_field = BBoxField(
-        dtype=pl.Float32, format="x1y1x2y2", normalize=False, semantic=Semantic.Default
-    )
+    input_polygon_field = PolygonField(dtype=pl.Float32, format="xy", normalize=False, semantic=Semantic.Default)
+    output_bbox_field = BBoxField(dtype=pl.Float32, format="x1y1x2y2", normalize=False, semantic=Semantic.Default)
 
     setattr(
         converter_instance,
@@ -1725,12 +1641,8 @@ def test_polygon_to_bbox_converter_xywh():
     converter_instance = PolygonToBBoxConverter()
 
     # Set up field specs for xywh format
-    input_polygon_field = PolygonField(
-        dtype=pl.Float32, format="xy", normalize=False, semantic=Semantic.Default
-    )
-    output_bbox_field = BBoxField(
-        dtype=pl.Float32, format="xywh", normalize=False, semantic=Semantic.Default
-    )
+    input_polygon_field = PolygonField(dtype=pl.Float32, format="xy", normalize=False, semantic=Semantic.Default)
+    output_bbox_field = BBoxField(dtype=pl.Float32, format="xywh", normalize=False, semantic=Semantic.Default)
 
     setattr(
         converter_instance,
@@ -1774,12 +1686,8 @@ def test_polygon_to_bbox_converter_normalized():
     converter_instance = PolygonToBBoxConverter()
 
     # Set up field specs with normalized coordinates
-    input_polygon_field = PolygonField(
-        dtype=pl.Float32, format="xy", normalize=True, semantic=Semantic.Default
-    )
-    output_bbox_field = BBoxField(
-        dtype=pl.Float32, format="x1y1x2y2", normalize=True, semantic=Semantic.Default
-    )
+    input_polygon_field = PolygonField(dtype=pl.Float32, format="xy", normalize=True, semantic=Semantic.Default)
+    output_bbox_field = BBoxField(dtype=pl.Float32, format="x1y1x2y2", normalize=True, semantic=Semantic.Default)
 
     setattr(
         converter_instance,
@@ -1945,12 +1853,8 @@ def test_image_callable_converter_dtype_handling():
     output_field = ImageField(dtype=pl.UInt8, format="RGB", semantic=Semantic.Default)
     output_info_field = ImageInfoField(semantic=Semantic.Default)
 
-    setattr(
-        converter_instance, "input_callable", AttributeSpec(name="my_callable", field=input_field)
-    )
-    setattr(
-        converter_instance, "output_image", AttributeSpec(name="output_image", field=output_field)
-    )
+    setattr(converter_instance, "input_callable", AttributeSpec(name="my_callable", field=input_field))
+    setattr(converter_instance, "output_image", AttributeSpec(name="output_image", field=output_field))
     setattr(
         converter_instance,
         "output_info",
@@ -2191,9 +2095,7 @@ def test_rotated_bbox_to_polygon_converter():
     rotated_bbox_coords1 = [50.0, 60.0, 30.0, 20.0, 0.0]  # No rotation
     rotated_bbox_coords2 = [100.0, 120.0, 40.0, 25.0, math.pi / 4]  # 45 degrees
 
-    rotated_bbox_series = pl.Series(
-        [rotated_bbox_coords1, rotated_bbox_coords2], dtype=pl.Array(pl.Float32, 5)
-    )
+    rotated_bbox_series = pl.Series([rotated_bbox_coords1, rotated_bbox_coords2], dtype=pl.Array(pl.Float32, 5))
 
     df = pl.DataFrame(
         {
@@ -2208,9 +2110,7 @@ def test_rotated_bbox_to_polygon_converter():
     input_rotated_bbox_field = RotatedBBoxField(
         dtype=pl.Float32, format="cxcywhr", normalize=False, semantic=Semantic.Default
     )
-    output_polygon_field = PolygonField(
-        dtype=pl.Float32, format="xy", normalize=False, semantic=Semantic.Default
-    )
+    output_polygon_field = PolygonField(dtype=pl.Float32, format="xy", normalize=False, semantic=Semantic.Default)
 
     setattr(
         converter_instance,

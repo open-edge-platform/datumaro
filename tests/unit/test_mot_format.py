@@ -10,7 +10,6 @@ from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.environment import Environment
 from datumaro.components.media import Image
 from datumaro.plugins.data_formats.mot import MotSeqGtExporter, MotSeqImporter
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, check_save_and_load, compare_datasets
 
@@ -76,9 +75,7 @@ class MotConverterTest(TestCase):
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    "label_" + str(label) for label in range(10)
-                ),
+                AnnotationType.label: LabelCategories.from_iterable("label_" + str(label) for label in range(10)),
             },
         )
 
@@ -149,9 +146,7 @@ class MotConverterTest(TestCase):
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    "label_" + str(label) for label in range(10)
-                ),
+                AnnotationType.label: LabelCategories.from_iterable("label_" + str(label) for label in range(10)),
             },
         )
 
@@ -208,9 +203,7 @@ class MotConverterTest(TestCase):
         )
 
         with TestDir() as test_dir:
-            self._test_save_and_load(
-                source_dataset, partial(MotSeqGtExporter.convert, save_media=False), test_dir
-            )
+            self._test_save_and_load(source_dataset, partial(MotSeqGtExporter.convert, save_media=False), test_dir)
 
     def test_can_save_and_load_image_with_arbitrary_extension(self):
         expected = Dataset.from_iterable(

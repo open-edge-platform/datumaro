@@ -37,9 +37,7 @@ class RoboflowCocoImporter(Importer):
         sources = []
         for subset_path in subset_paths:
             subset_name = osp.basename(osp.dirname(subset_path))
-            sources.append(
-                {"url": subset_path, "format": cls.FORMAT, "options": {"subset": subset_name}}
-            )
+            sources.append({"url": subset_path, "format": cls.FORMAT, "options": {"subset": subset_name}})
 
         return sources
 
@@ -62,19 +60,14 @@ class RoboflowVocImporter(Importer):
 
     @classmethod
     def detect(cls, context: FormatDetectionContext) -> FormatDetectionConfidence:
-        with context.require_any():
-            with context.alternative():
-                cls._check_ann_file(
-                    context.require_file("**/" + cls.ANN_DIR_NAME + "*" + cls.FORMAT_EXT), context
-                )
+        with context.require_any(), context.alternative():
+            cls._check_ann_file(context.require_file("**/" + cls.ANN_DIR_NAME + "*" + cls.FORMAT_EXT), context)
 
         return FormatDetectionConfidence.MEDIUM
 
     @classmethod
     def _check_ann_file(cls, fpath: str, context: FormatDetectionContext) -> None:
-        with context.probe_text_file(
-            fpath, "Requirements for the annotation file of voc format"
-        ) as fp:
+        with context.probe_text_file(fpath, "Requirements for the annotation file of voc format") as fp:
             cls._check_ann_file_impl(fp)
 
     @classmethod
@@ -85,9 +78,7 @@ class RoboflowVocImporter(Importer):
             raise DatasetImportError("Roboflow VOC format xml file should have the annotation tag.")
 
         if not root.find("source/database").text == "roboflow.ai":
-            raise DatasetImportError(
-                "Roboflow VOC format xml file should have the source/database with `roboflow.ai`."
-            )
+            raise DatasetImportError("Roboflow VOC format xml file should have the source/database with `roboflow.ai`.")
 
         return True
 
@@ -202,11 +193,8 @@ class RoboflowYoloObbImporter(RoboflowYoloImporter):
             f"It will be deprecated in datumaro==1.8.0.",
             DeprecationWarning,
         )
-        with context.require_any():
-            with context.alternative():
-                cls._check_ann_file(
-                    context.require_file("**/" + cls.ANN_DIR_NAME + "*" + cls.FORMAT_EXT), context
-                )
+        with context.require_any(), context.alternative():
+            cls._check_ann_file(context.require_file("**/" + cls.ANN_DIR_NAME + "*" + cls.FORMAT_EXT), context)
 
         return FormatDetectionConfidence.LOW
 

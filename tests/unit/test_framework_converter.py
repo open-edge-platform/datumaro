@@ -13,16 +13,7 @@ from tokenizers import Tokenizer
 from tokenizers.models import BPE
 from tokenizers.trainers import BpeTrainer
 
-from datumaro.components.annotation import (
-    AnnotationType,
-    Bbox,
-    Caption,
-    Label,
-    LabelCategories,
-    Mask,
-    Polygon,
-    Tabular,
-)
+from datumaro.components.annotation import AnnotationType, Bbox, Caption, Label, LabelCategories, Mask, Polygon
 from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image, Table, TableRow
@@ -34,7 +25,6 @@ from datumaro.plugins.framework_converter import (
     FrameworkConverterFactory,
     _MultiFrameworkDataset,
 )
-
 from tests.utils.assets import get_test_asset_path
 
 try:
@@ -181,11 +171,7 @@ def fxt_tabular_label_dataset(fxt_text_example):
                 annotations=[Label(id=0, attributes={}, group=0, object_id=-1, label=0)],
             )
         ],
-        categories={
-            AnnotationType.label: LabelCategories.from_iterable(
-                [("label:1", "label"), ("label:2", "label")]
-            )
-        },
+        categories={AnnotationType.label: LabelCategories.from_iterable([("label:1", "label"), ("label:2", "label")])},
         media_type=TableRow,
     )
 
@@ -206,9 +192,7 @@ def fxt_tabular_caption_dataset():
                 id=0,
                 subset="train",
                 media=TableRow(table=table, index=0),
-                annotations=[
-                    Caption("target:Two young, White males are outside near many bushes.")
-                ],
+                annotations=[Caption("target:Two young, White males are outside near many bushes.")],
             )
         ],
         categories={},
@@ -286,13 +270,9 @@ class MultiframeworkConverterTest:
             ("fxt_tabular_label_dataset", "train", "tabular"),
         ],
     )
-    def test_multi_framework_dataset(
-        self, fxt_dataset_type: str, fxt_subset: str, fxt_task: str, request
-    ):
+    def test_multi_framework_dataset(self, fxt_dataset_type: str, fxt_subset: str, fxt_task: str, request):
         dataset = request.getfixturevalue(fxt_dataset_type)
-        dm_multi_framework_dataset = _MultiFrameworkDataset(
-            dataset=dataset, subset=fxt_subset, task=fxt_task
-        )
+        dm_multi_framework_dataset = _MultiFrameworkDataset(dataset=dataset, subset=fxt_subset, task=fxt_task)
 
         for idx in range(len(dm_multi_framework_dataset)):
             image, label = dm_multi_framework_dataset._gen_item(idx)
@@ -360,48 +340,30 @@ class MultiframeworkConverterTest:
     ):
         multi_framework_dataset = FrameworkConverter(fxt_dataset, subset=fxt_subset, task=fxt_task)
 
-        dm_torch_dataset = multi_framework_dataset.to_framework(
-            framework="torch", **fxt_convert_kwargs
-        )
+        dm_torch_dataset = multi_framework_dataset.to_framework(framework="torch", **fxt_convert_kwargs)
 
         expected_dataset = fxt_dataset.get_subset(fxt_subset)
 
         for exp_item, dm_torch_item in zip(expected_dataset, dm_torch_dataset):
             image = exp_item.media.data
             if fxt_task == "classification":
-                label = [
-                    ann.label for ann in exp_item.annotations if ann.type == TASK_ANN_TYPE[fxt_task]
-                ][0]
+                label = [ann.label for ann in exp_item.annotations if ann.type == TASK_ANN_TYPE[fxt_task]][0]
             elif fxt_task == "multilabel_classification":
-                label = [
-                    ann.label for ann in exp_item.annotations if ann.type == TASK_ANN_TYPE[fxt_task]
-                ]
+                label = [ann.label for ann in exp_item.annotations if ann.type == TASK_ANN_TYPE[fxt_task]]
             elif fxt_task in ["detection", "instance_segmentation"]:
-                label = [
-                    ann.as_dict()
-                    for ann in exp_item.annotations
-                    if ann.type == TASK_ANN_TYPE[fxt_task]
-                ]
+                label = [ann.as_dict() for ann in exp_item.annotations if ann.type == TASK_ANN_TYPE[fxt_task]]
             elif fxt_task == "semantic_segmentation":
-                masks = [
-                    ann.as_class_mask()
-                    for ann in exp_item.annotations
-                    if ann.type == TASK_ANN_TYPE[fxt_task]
-                ]
+                masks = [ann.as_class_mask() for ann in exp_item.annotations if ann.type == TASK_ANN_TYPE[fxt_task]]
                 label = np.sum(masks, axis=0, dtype=np.uint8)
             elif fxt_task == "tabular":
-                label = [
-                    ann.as_dict()
-                    for ann in exp_item.annotations
-                    if ann.type in TASK_ANN_TYPE[fxt_task]
-                ]
-            if fxt_convert_kwargs.get("transform", None):
+                label = [ann.as_dict() for ann in exp_item.annotations if ann.type in TASK_ANN_TYPE[fxt_task]]
+            if fxt_convert_kwargs.get("transform"):
                 actual = dm_torch_item[0].permute(1, 2, 0).mul(255.0).to(torch.uint8).numpy()
                 assert np.array_equal(image, actual)
             else:
                 assert np.array_equal(image, dm_torch_item[0])
 
-            if fxt_convert_kwargs.get("target_transform", None):
+            if fxt_convert_kwargs.get("target_transform"):
                 assert np.array_equal(label, dm_torch_item[1].squeeze(0).numpy())
             else:
                 assert np.array_equal(label, dm_torch_item[1])
@@ -425,12 +387,8 @@ class MultiframeworkConverterTest:
 
             dm_dataset = Dataset.import_from(path=osp.join(tmp_dir, "MNIST"), format="mnist")
 
-            multi_framework_dataset = FrameworkConverter(
-                dm_dataset, subset="train", task="classification"
-            )
-            dm_torch_dataset = multi_framework_dataset.to_framework(
-                framework="torch", transform=transform
-            )
+            multi_framework_dataset = FrameworkConverter(dm_dataset, subset="train", task="classification")
+            dm_torch_dataset = multi_framework_dataset.to_framework(framework="torch", transform=transform)
 
             assert len(torch_dataset) == len(dm_torch_dataset)
             for torch_item, dm_item in zip(torch_dataset, dm_torch_dataset):
@@ -460,9 +418,7 @@ class MultiframeworkConverterTest:
         dm_dataset = Dataset.import_from(data_path, format)
 
         multi_framework_dataset = FrameworkConverter(dm_dataset, subset="train", task="detection")
-        dm_torch_dataset = multi_framework_dataset.to_framework(
-            framework="torch", transform=transform
-        )
+        dm_torch_dataset = multi_framework_dataset.to_framework(framework="torch", transform=transform)
 
         for torch_item, dm_item in zip(torch_dataset, dm_torch_dataset):
             assert torch.equal(torch_item[0], dm_item[0])
@@ -475,9 +431,7 @@ class MultiframeworkConverterTest:
                 assert torch_ann["iscrowd"] == dm_ann["attributes"]["is_crowd"]
 
     @pytest.mark.skipif(not TORCH_AVAILABLE, reason="PyTorch is not installed")
-    def test_can_convert_torch_framework_tabular_label(
-        self, fxt_tabular_label_dataset, fxt_text_example
-    ):
+    def test_can_convert_torch_framework_tabular_label(self, fxt_tabular_label_dataset, fxt_text_example):
         class DummyTabularDataset(Dataset):
             def __init__(self, data, tokenizer, transform=None):
                 self.data = data
@@ -494,9 +448,7 @@ class MultiframeworkConverterTest:
                 if self.transform:
                     token_ids = self.transform(token_ids)
 
-                return torch.tensor(token_ids, dtype=torch.long), torch.tensor(
-                    label, dtype=torch.long
-                )
+                return torch.tensor(token_ids, dtype=torch.long), torch.tensor(label, dtype=torch.long)
 
         # Prepare data and tokenizer
         first_item = (
@@ -528,9 +480,7 @@ class MultiframeworkConverterTest:
 
         # Extract and compare labels
         torch_item_label = str(torch_item[1].item())
-        dm_item_label = list(label_indices.keys())[list(label_indices.values()).index(0)].split(
-            ":"
-        )[-1]
+        dm_item_label = list(label_indices.keys())[list(label_indices.values()).index(0)].split(":")[-1]
         assert torch_item_label == dm_item_label, "Labels do not match"
 
     @pytest.mark.skipif(not TORCH_AVAILABLE, reason="PyTorch is not installed")
@@ -624,12 +574,8 @@ class MultiframeworkConverterTest:
                 {
                     "output_signature": {
                         "image": _tf_tensor_spec(shape=(None, None, None), dtype=_tf_int32()),
-                        "bbox": _tf_tensor_spec(
-                            shape=(None, 4), dtype=_tf_float32(), name="points"
-                        ),
-                        "category_id": _tf_tensor_spec(
-                            shape=(None,), dtype=_tf_int32(), name="label"
-                        ),
+                        "bbox": _tf_tensor_spec(shape=(None, 4), dtype=_tf_float32(), name="points"),
+                        "category_id": _tf_tensor_spec(shape=(None,), dtype=_tf_int32(), name="label"),
                     }
                 },
             ),
@@ -639,12 +585,8 @@ class MultiframeworkConverterTest:
                 {
                     "output_signature": {
                         "image": _tf_tensor_spec(shape=(None, None, None), dtype=_tf_int32()),
-                        "polygon": _tf_tensor_spec(
-                            shape=(None, None), dtype=_tf_float32(), name="points"
-                        ),
-                        "category_id": _tf_tensor_spec(
-                            shape=(None,), dtype=_tf_int32(), name="label"
-                        ),
+                        "polygon": _tf_tensor_spec(shape=(None, None), dtype=_tf_float32(), name="points"),
+                        "category_id": _tf_tensor_spec(shape=(None,), dtype=_tf_int32(), name="label"),
                     }
                 },
             ),
@@ -679,21 +621,11 @@ class MultiframeworkConverterTest:
             if fxt_task == "classification":
                 label = exp_item.annotations[0].label
             if fxt_task == "multilabel_classification":
-                label = [
-                    ann.label for ann in exp_item.annotations if ann.type == TASK_ANN_TYPE[fxt_task]
-                ]
+                label = [ann.label for ann in exp_item.annotations if ann.type == TASK_ANN_TYPE[fxt_task]]
             elif fxt_task in ["detection", "instance_segmentation"]:
-                label = [
-                    ann.as_dict()
-                    for ann in exp_item.annotations
-                    if ann.type == TASK_ANN_TYPE[fxt_task]
-                ]
+                label = [ann.as_dict() for ann in exp_item.annotations if ann.type == TASK_ANN_TYPE[fxt_task]]
             elif fxt_task == "semantic_segmentation":
-                masks = [
-                    ann.as_class_mask()
-                    for ann in exp_item.annotations
-                    if ann.type == TASK_ANN_TYPE[fxt_task]
-                ]
+                masks = [ann.as_class_mask() for ann in exp_item.annotations if ann.type == TASK_ANN_TYPE[fxt_task]]
                 label = np.sum(masks, axis=0, dtype=np.uint8)
 
             assert np.array_equal(image, tf_item["image"])
@@ -744,9 +676,7 @@ class MultiframeworkConverterTest:
             ),
         ],
     )
-    def test_tf_get_rawitem(
-        self, fxt_dataset: Dataset, fxt_subset: str, fxt_task: str, fxt_output_signature: dict
-    ):
+    def test_tf_get_rawitem(self, fxt_dataset: Dataset, fxt_subset: str, fxt_task: str, fxt_output_signature: dict):
         dm_tf_dataset = DmTfDataset(
             dataset=fxt_dataset,
             subset=fxt_subset,
@@ -761,11 +691,7 @@ class MultiframeworkConverterTest:
             if fxt_task == "classification":
                 label = exp_item.annotations[0].label
             elif fxt_task == "detection":
-                bboxes = [
-                    ann.as_dict()
-                    for ann in exp_item.annotations
-                    if ann.type == TASK_ANN_TYPE[fxt_task]
-                ]
+                bboxes = [ann.as_dict() for ann in exp_item.annotations if ann.type == TASK_ANN_TYPE[fxt_task]]
                 label = []
                 for key, spec in fxt_output_signature.items():
                     if key == "image":
@@ -804,9 +730,7 @@ class MultiframeworkConverterTest:
             ),
         ],
     )
-    def test_tf_process_item(
-        self, fxt_dataset: Dataset, fxt_subset: str, fxt_task: str, fxt_output_signature: dict
-    ):
+    def test_tf_process_item(self, fxt_dataset: Dataset, fxt_subset: str, fxt_task: str, fxt_output_signature: dict):
         dm_tf_dataset = DmTfDataset(
             dataset=fxt_dataset,
             subset=fxt_subset,
@@ -821,11 +745,7 @@ class MultiframeworkConverterTest:
             if fxt_task == "classification":
                 label = exp_item.annotations[0].label
             elif fxt_task == "detection":
-                bboxes = [
-                    ann.as_dict()
-                    for ann in exp_item.annotations
-                    if ann.type == TASK_ANN_TYPE[fxt_task]
-                ]
+                bboxes = [ann.as_dict() for ann in exp_item.annotations if ann.type == TASK_ANN_TYPE[fxt_task]]
                 label = []
                 for key, spec in fxt_output_signature.items():
                     if key == "image":
@@ -897,16 +817,10 @@ class MultiframeworkConverterTest:
             tf_dataset = tf.data.Dataset.from_tensor_slices((x_test, y_test))
 
             keras_data_dir = osp.expanduser("~/.keras/datasets")
-            dm_dataset = Dataset.import_from(
-                path=osp.join(keras_data_dir, "fashion-mnist"), format="mnist"
-            )
+            dm_dataset = Dataset.import_from(path=osp.join(keras_data_dir, "fashion-mnist"), format="mnist")
 
-            multi_framework_dataset = FrameworkConverter(
-                dm_dataset, subset="test", task="classification"
-            )
-            dm_tf_dataset = multi_framework_dataset.to_framework(
-                framework="tf", output_signature=output_signature
-            )
+            multi_framework_dataset = FrameworkConverter(dm_dataset, subset="test", task="classification")
+            dm_tf_dataset = multi_framework_dataset.to_framework(framework="tf", output_signature=output_signature)
 
             epoch, batch_size = 1, 16
             for tf_item, dm_item in zip(
@@ -923,6 +837,4 @@ class MultiframeworkConverterTest:
         multi_framework_dataset = FrameworkConverter(dm_dataset, subset="train", task="tabular")
 
         with pytest.raises(ValueError):
-            dm_torch_dataset = multi_framework_dataset.to_framework(
-                framework="torch", target={"input": "text"}
-            )
+            dm_torch_dataset = multi_framework_dataset.to_framework(framework="torch", target={"input": "text"})

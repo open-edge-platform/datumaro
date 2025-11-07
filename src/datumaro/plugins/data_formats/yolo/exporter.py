@@ -46,9 +46,7 @@ class YoloExporter(Exporter):
         )
         return parser
 
-    def __init__(
-        self, extractor: IDataset, save_dir: str, *, add_path_prefix: bool = True, **kwargs
-    ) -> None:
+    def __init__(self, extractor: IDataset, save_dir: str, *, add_path_prefix: bool = True, **kwargs) -> None:
         super().__init__(extractor, save_dir, **kwargs)
 
         self._prefix = "data" if add_path_prefix else ""
@@ -78,9 +76,7 @@ class YoloExporter(Exporter):
             if not subset_name or subset_name == DEFAULT_SUBSET_NAME:
                 subset_name = YoloPath.DEFAULT_SUBSET_NAME
             elif subset_name in YoloPath.RESERVED_CONFIG_KEYS:
-                raise DatasetExportError(
-                    f"Can't export '{subset_name}' subset in YOLO format, this word is reserved."
-                )
+                raise DatasetExportError(f"Can't export '{subset_name}' subset in YOLO format, this word is reserved.")
 
             subset_dir = osp.join(save_dir, "obj_%s_data" % subset_name)
             os.makedirs(subset_dir, exist_ok=True)
@@ -90,9 +86,7 @@ class YoloExporter(Exporter):
                 try:
                     image_fpath = self._export_media(item, subset_dir)
                     image_name = osp.relpath(image_fpath, subset_dir)
-                    image_paths[item.id] = osp.join(
-                        self._prefix, osp.basename(subset_dir), image_name
-                    )
+                    image_paths[item.id] = osp.join(self._prefix, osp.basename(subset_dir), image_name)
 
                     self._export_item_annotation(item, subset_dir)
 
@@ -114,10 +108,7 @@ class YoloExporter(Exporter):
             f.write(f"classes = {len(label_ids)}\n")
 
             for subset_name, subset_list_name in subset_lists.items():
-                f.write(
-                    "%s = %s\n"
-                    % (subset_name, osp.join(self._prefix, subset_list_name).replace("\\", "/"))
-                )
+                f.write("%s = %s\n" % (subset_name, osp.join(self._prefix, subset_list_name).replace("\\", "/")))
 
             f.write("names = %s\n" % osp.join(self._prefix, "obj.names"))
             f.write("backup = backup/\n")
@@ -125,9 +116,7 @@ class YoloExporter(Exporter):
     def _export_media(self, item: DatasetItem, subset_img_dir: str) -> str:
         try:
             if not item.media or not (item.media.has_data or item.media.has_size):
-                raise DatasetExportError(
-                    "Failed to export item '%s': " "item has no image info" % item.id
-                )
+                raise DatasetExportError("Failed to export item '%s': item has no image info" % item.id)
 
             image_name = self._make_image_filename(item)
             image_fpath = osp.join(subset_img_dir, image_name)
@@ -223,8 +212,7 @@ class YoloUltralyticsExporter(YoloExporter):
         for must_name in self.must_subset_names:
             if must_name not in subset_names:
                 raise DatasetExportError(
-                    f'Subset "{must_name}" is not in {subset_names}, '
-                    "but YoloUltralytics requires both of them."
+                    f'Subset "{must_name}" is not in {subset_names}, but YoloUltralytics requires both of them.'
                 )
 
     def _apply_impl(self):
@@ -270,9 +258,7 @@ class YoloUltralyticsExporter(YoloExporter):
             with open(osp.join(save_dir, subset_fname), "w") as fp:
                 # Prefix (os.curdir + os.sep) is required by Ultralytics
                 # Please see https://github.com/ultralytics/ultralytics/blob/30fc4b537ff1d9b115bc1558884f6bc2696a282c/ultralytics/yolo/data/utils.py#L40-L43
-                fp.writelines(
-                    [os.curdir + os.sep + img_fpath + "\n" for img_fpath in img_fpath_list]
-                )
+                fp.writelines([os.curdir + os.sep + img_fpath + "\n" for img_fpath in img_fpath_list])
             yaml_dict[subset_name] = subset_fname
 
         label_categories = extractor.categories()[AnnotationType.label]

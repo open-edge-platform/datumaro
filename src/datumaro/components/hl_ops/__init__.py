@@ -68,9 +68,7 @@ class HLOps:
         """
         if method == "table":
             comparator = TableComparator()
-            h_table, m_table, l_table, result_dict = comparator.compare_datasets(
-                first_dataset, second_dataset
-            )
+            h_table, m_table, l_table, result_dict = comparator.compare_datasets(first_dataset, second_dataset)
             if report_dir:
                 comparator.save_compare_report(h_table, m_table, l_table, result_dict, report_dir)
 
@@ -82,9 +80,7 @@ class HLOps:
 
         elif method == "distance":
             if not report_dir:
-                raise ValueError(
-                    "Please specify report_dir to save comparison result for DistanceComparator."
-                )
+                raise ValueError("Please specify report_dir to save comparison result for DistanceComparator.")
             output_format = kwargs.pop("output_format", "simple")
             comparator = DistanceComparator(**kwargs)
             from datumaro.cli.util.compare import DistanceCompareVisualizer
@@ -160,15 +156,12 @@ class HLOps:
         Returns: a wrapper around the input dataset, which is computed lazily
             during iteration
         """
-        ...
 
     @overload
     @staticmethod
     def filter(
         dataset: IDataset,
-        filter_func: Union[
-            Callable[[DatasetItem], bool], Callable[[DatasetItem, Annotation], bool]
-        ],
+        filter_func: Union[Callable[[DatasetItem], bool], Callable[[DatasetItem, Annotation], bool]],
         *,  # pylint: disable=redefined-builtin
         filter_annotations: bool = False,
         remove_empty: bool = False,
@@ -236,9 +229,7 @@ class HLOps:
 
     def filter(
         dataset: IDataset,
-        expr_or_filter_func: Union[
-            str, Callable[[DatasetItem], bool], Callable[[DatasetItem, Annotation], bool]
-        ],
+        expr_or_filter_func: Union[str, Callable[[DatasetItem], bool], Callable[[DatasetItem, Annotation], bool]],
         *,  # pylint: disable=redefined-builtin
         filter_annotations: bool = False,
         remove_empty: bool = False,
@@ -246,13 +237,11 @@ class HLOps:
         if isinstance(expr_or_filter_func, str):
             expr = expr_or_filter_func
             return (
-                HLOps.transform(
-                    dataset, XPathAnnotationsFilter, xpath=expr, remove_empty=remove_empty
-                )
+                HLOps.transform(dataset, XPathAnnotationsFilter, xpath=expr, remove_empty=remove_empty)
                 if filter_annotations
                 else HLOps.transform(dataset, XPathDatasetFilter, xpath=expr)
             )
-        elif callable(expr_or_filter_func):
+        if callable(expr_or_filter_func):
             filter_func = expr_or_filter_func
             return (
                 HLOps.transform(
@@ -369,10 +358,6 @@ class HLOps:
 
         for subset in from_subsets:
             if subset not in subset_names:
-                raise DatasetError(
-                    f"{subset} is not found in the subset names ({subset_names}) in the dataset."
-                )
+                raise DatasetError(f"{subset} is not found in the subset names ({subset_names}) in the dataset.")
 
-        return HLOps.transform(
-            dataset, "map_subsets", mapping={subset: to_subset for subset in from_subsets}
-        )
+        return HLOps.transform(dataset, "map_subsets", mapping={subset: to_subset for subset in from_subsets})

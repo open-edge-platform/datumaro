@@ -35,11 +35,7 @@ class Transform(DatasetBase, CliPlugin):
 
     def __len__(self):
         assert self._length in {None, "parent"} or isinstance(self._length, int)
-        if (
-            self._length is None
-            and not is_method_redefined("__iter__", Transform, self)
-            or self._length == "parent"
-        ):
+        if (self._length is None and not is_method_redefined("__iter__", Transform, self)) or self._length == "parent":
             self._length = len(self._extractor)
         return super().__len__()
 
@@ -59,7 +55,7 @@ class ItemTransform(Transform):
         unexpected problems. Use wrap_item() or item.wrap() to simplify copying.
         """
 
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def __iter__(self):
         for item in self._extractor:
@@ -92,9 +88,7 @@ class TabularTransform(Transform):
         super().__init__(extractor)
         self._batch_size = batch_size
         if not (isinstance(num_workers, int) and num_workers >= 0):
-            raise ValueError(
-                f"num_workers should be a non negative integer, but it is {num_workers}"
-            )
+            raise ValueError(f"num_workers should be a non negative integer, but it is {num_workers}")
         self._num_workers = num_workers
 
     def __iter__(self) -> Iterator[DatasetItem]:
@@ -131,7 +125,7 @@ class TabularTransform(Transform):
         unexpected problems. Use wrap_item() or item.wrap() to simplify copying.
         """
 
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def _process_batch(
         self,

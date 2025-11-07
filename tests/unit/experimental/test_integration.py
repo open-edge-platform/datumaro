@@ -60,12 +60,8 @@ def test_stereo_camera_workflow():
 
     class StereoSample(Sample):
         bboxes: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32)
-        left_image: np.ndarray[Any, Any] = image_field(
-            dtype=pl.UInt8, format="RGB", semantic=Semantic.Left
-        )
-        right_image: np.ndarray[Any, Any] = image_field(
-            dtype=pl.UInt8, format="BGR", semantic=Semantic.Right
-        )
+        left_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Left)
+        right_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="BGR", semantic=Semantic.Right)
         left_image_info: ImageInfo = image_info_field(Semantic.Left)
         right_image_info: ImageInfo = image_info_field(Semantic.Right)
 
@@ -326,4 +322,4 @@ def test_error_handling_workflow():
     )
 
     with pytest.raises(AttributeError):
-        other_dataset.append(cast(OtherSample, sample))  # Wrong type
+        other_dataset.append(cast("OtherSample", sample))  # Wrong type

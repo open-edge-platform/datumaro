@@ -7,8 +7,9 @@ registration and configuration management.
 
 import copy
 from abc import ABC, abstractmethod
+from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Any, Dict, List, NamedTuple, Optional, Sequence, Type
+from typing import Any, NamedTuple
 
 import polars as pl
 
@@ -37,7 +38,6 @@ class Filter(ABC):
         Returns:
             Boolean expression indicating which rows to keep (True) or remove (False)
         """
-        pass
 
 
 class FilterRegistry:
@@ -60,10 +60,10 @@ class FilterRegistry:
         ```
     """
 
-    _filters: Dict[Type[Field], Type[Filter]] = {}
+    _filters: dict[type[Field], type[Filter]] = {}
 
     @classmethod
-    def register(cls, field_type: Type[Field]):
+    def register(cls, field_type: type[Field]):
         """Decorator to register a filter implementation for a field type.
 
         Args:
@@ -73,14 +73,14 @@ class FilterRegistry:
             Decorator function that registers the filter class
         """
 
-        def decorator(filter_cls: Type[Filter]) -> Type[Filter]:
+        def decorator(filter_cls: type[Filter]) -> type[Filter]:
             cls._filters[field_type] = filter_cls
             return filter_cls
 
         return decorator
 
     @classmethod
-    def get_filter(cls, field_type: Type[Field]) -> Optional[Type[Filter]]:
+    def get_filter(cls, field_type: type[Field]) -> type[Filter] | None:
         """Get the filter implementation for a field type.
 
         Args:
@@ -119,8 +119,8 @@ class FilteringPlan:
         filters: List of filter entries to apply to the dataset
     """
 
-    filters: List[FilterEntry]
-    attributes: List[str]
+    filters: list[FilterEntry]
+    attributes: list[str]
 
 
 def create_filtering_plan(schema: Schema) -> FilteringPlan:
@@ -142,8 +142,8 @@ def create_filtering_plan(schema: Schema) -> FilteringPlan:
         ```
     """
     # Create filters for each field type
-    filters: List[FilterEntry] = []
-    attributes: List[str] = []
+    filters: list[FilterEntry] = []
+    attributes: list[str] = []
 
     for field_name, field_info in schema.attributes.items():
         filter_cls = FilterRegistry.get_filter(type(field_info.annotation))
@@ -249,9 +249,9 @@ class FilteringTransform(Transform):
 
         if self._keep_mask is None:
             # First time applying filters
-            self._keep_mask = input_df.select(
-                _compute_filter_mask(input_df, self._filtering_plan).alias("mask")
-            )["mask"]
+            self._keep_mask = input_df.select(_compute_filter_mask(input_df, self._filtering_plan).alias("mask"))[
+                "mask"
+            ]
 
         output_df = input_df.filter(self._keep_mask)
         self._length = len(output_df)
@@ -281,22 +281,16 @@ class FilteringTransform(Transform):
             parent_length = length
         else:
             # Find parent offset and length
-            parent_indexes = (
-                pl.DataFrame({"keep": self._keep_mask}).with_row_index().filter(pl.col("keep"))
-            )
+            parent_indexes = pl.DataFrame({"keep": self._keep_mask}).with_row_index().filter(pl.col("keep"))
             parent_offset = parent_indexes[offset, "index"]
             parent_length = (
-                parent_indexes[offset + length - 1, "index"] - parent_offset + 1
-                if length is not None
-                else None
+                parent_indexes[offset + length - 1, "index"] - parent_offset + 1 if length is not None else None
             )
 
         instance = copy.copy(self)
         instance._parent = self._parent.slice(parent_offset, parent_length)
         instance._keep_mask = (
-            self._keep_mask.slice(parent_offset, parent_length)
-            if self._keep_mask is not None
-            else None
+            self._keep_mask.slice(parent_offset, parent_length) if self._keep_mask is not None else None
         )
         return instance
 

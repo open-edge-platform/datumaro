@@ -20,10 +20,9 @@ from datumaro.plugins.data_formats.common_semantic_segmentation import (
     CommonSemanticSegmentationWithSubsetDirsImporter,
     make_categories,
 )
+from tests.utils.assets import get_test_asset_path
 
 from .base import TestDataFormatBase
-
-from tests.utils.assets import get_test_asset_path
 
 DUMMY_DATASET_DIR = get_test_asset_path("common_semantic_segmentation_dataset", "dataset")
 
@@ -142,9 +141,7 @@ class CommonSemanticSegmentationImporterTest(TestDataFormatBase):
         fxt_import_kwargs: Dict[str, Any],
         request: pytest.FixtureRequest,
     ):
-        return super().test_can_import(
-            fxt_dataset_dir, fxt_expected_dataset, fxt_import_kwargs, request
-        )
+        return super().test_can_import(fxt_dataset_dir, fxt_expected_dataset, fxt_import_kwargs, request)
 
     @pytest.mark.parametrize(
         ["fxt_dataset_dir", "fxt_expected_dataset", "fxt_import_kwargs"],

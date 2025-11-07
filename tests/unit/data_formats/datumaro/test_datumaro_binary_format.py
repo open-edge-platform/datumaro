@@ -10,10 +10,7 @@ from typing import Any
 import pytest
 
 from datumaro.components.annotation import Annotation
-from datumaro.plugins.data_formats.datumaro_binary import (
-    DatumaroBinaryExporter,
-    DatumaroBinaryImporter,
-)
+from datumaro.plugins.data_formats.datumaro_binary import DatumaroBinaryExporter, DatumaroBinaryImporter
 from datumaro.plugins.data_formats.datumaro_binary.format import DatumaroBinaryPath
 
 # pylint: disable=undefined-variable
@@ -23,10 +20,9 @@ from datumaro.plugins.data_formats.datumaro_binary.format import DatumaroBinaryP
 # tests/unit/data_formats/datumaro/test_datumaro_binary_format.py:115:16: E0602: Undefined variable 'FloatListMapper' (undefined-variable)
 from datumaro.plugins.data_formats.datumaro_binary.mapper import *
 from datumaro.plugins.data_formats.datumaro_binary.mapper.annotation import AnnotationMapper
+from tests.utils.test_utils import compare_datasets_strict
 
 from .test_datumaro_format import DatumaroFormatTest as TestBase
-
-from tests.utils.test_utils import compare_datasets_strict
 
 
 class DatumaroBinaryFormatTest(TestBase):

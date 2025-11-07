@@ -79,10 +79,7 @@ def parse_str_enum_value(value, enum_class, default=NOTSET, unknown_member_error
             value = enum_class[value]
         except KeyError:
             raise ValueError(
-                (
-                    unknown_member_error
-                    or "Unknown element of {cls} '{value}'. " "The only known are: {available}"
-                ).format(
+                (unknown_member_error or "Unknown element of {cls} '{value}'. The only known are: {available}").format(
                     cls=enum_class.__name__,
                     value=value,
                     available=", ".join(e.name for e in enum_class),
@@ -91,10 +88,7 @@ def parse_str_enum_value(value, enum_class, default=NOTSET, unknown_member_error
     elif isinstance(value, enum_class):
         pass
     else:
-        raise TypeError(
-            "Expected value type string or %s, but got %s"
-            % (enum_class.__name__, type(value).__name__)
-        )
+        raise TypeError("Expected value type string or %s, but got %s" % (enum_class.__name__, type(value).__name__))
     return value
 
 
@@ -131,12 +125,10 @@ def optional_arg_decorator(fn):
         if len(args) == 1 and callable(args[0]) and not kwargs:
             return fn(args[0], **kwargs)
 
-        else:
+        def real_decorator(decoratee):
+            return fn(decoratee, *args, **kwargs)
 
-            def real_decorator(decoratee):
-                return fn(decoratee, *args, **kwargs)
-
-            return real_decorator
+        return real_decorator
 
     return wrapped_decorator
 

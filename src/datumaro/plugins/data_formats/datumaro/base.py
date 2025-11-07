@@ -139,9 +139,7 @@ class JsonReader:
         items = []
         ann_types = set()
         actual_media_types = set()
-        for item_desc in pbar.iter(
-            _gen(), desc=f"Importing '{self._subset}'", total=len(item_descs)
-        ):
+        for item_desc in pbar.iter(_gen(), desc=f"Importing '{self._subset}'", total=len(item_descs)):
             item = self._parse_item(item_desc)
             if item is not None:
                 items.append(item)
@@ -208,9 +206,7 @@ class JsonReader:
             if media and video_frame_info:
                 raise MediaTypeError(STR_MULTIPLE_MEDIA)
             if video_frame_info:
-                video_path = osp.join(
-                    self._video_dir, self._subset, video_frame_info.get("video_path")
-                )
+                video_path = osp.join(self._video_dir, self._subset, video_frame_info.get("video_path"))
                 if video_path not in self._videos:
                     self._videos[video_path] = Video(video_path)
                 video = self._videos[video_path]
@@ -229,18 +225,14 @@ class JsonReader:
                 step = video_info.get("step", 1)
                 start_frame = video_info.get("start_frame", 0)
                 end_frame = video_info.get("end_frame", None)
-                media = Video(
-                    path=video_path, step=step, start_frame=start_frame, end_frame=end_frame
-                )
+                media = Video(path=video_path, step=step, start_frame=start_frame, end_frame=end_frame)
 
             media_desc = item_desc.get("media")
             if not media and media_desc and media_desc.get("path"):
                 media = MediaElement(path=media_desc.get("path"))
 
         except Exception as e:
-            self._ctx.error_policy.report_item_error(
-                e, item_id=(item_desc.get("id", None), self._subset)
-            )
+            self._ctx.error_policy.report_item_error(e, item_id=(item_desc.get("id"), self._subset))
             return None
 
         annotations = self._load_annotations(item_desc)
@@ -395,11 +387,9 @@ class JsonReader:
                         )
                     )
                 else:
-                    raise NotImplementedError()
+                    raise NotImplementedError
             except Exception as e:
-                self._ctx.error_policy.report_annotation_error(
-                    e, item_id=(ann.get("id", None), self._subset)
-                )
+                self._ctx.error_policy.report_annotation_error(e, item_id=(ann.get("id", None), self._subset))
 
         return loaded
 

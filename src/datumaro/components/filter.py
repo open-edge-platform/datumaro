@@ -29,19 +29,17 @@ if TYPE_CHECKING:
     from datumaro.components.dataset_base import CategoriesInfo, DatasetItem, IDataset
 
 __all__ = [
-    "XPathDatasetFilter",
-    "XPathAnnotationsFilter",
-    "UserFunctionDatasetFilter",
     "UserFunctionAnnotationsFilter",
+    "UserFunctionDatasetFilter",
+    "XPathAnnotationsFilter",
+    "XPathDatasetFilter",
 ]
 
 
 @deprecated(deprecated_version="1.11", removed_version="1.12")
 class DatasetItemEncoder:
     @classmethod
-    def encode(
-        cls, item: DatasetItem, categories: Optional[CategoriesInfo] = None
-    ) -> ET.ElementBase:
+    def encode(cls, item: DatasetItem, categories: Optional[CategoriesInfo] = None) -> ET.ElementBase:
         item_elem = ET.Element("item")
         ET.SubElement(item_elem, "id").text = str(item.id)
         ET.SubElement(item_elem, "subset").text = str(item.subset)
@@ -102,9 +100,7 @@ class DatasetItemEncoder:
         return label
 
     @classmethod
-    def encode_label_object(
-        cls, obj: Label, categories: Optional[CategoriesInfo]
-    ) -> ET.ElementBase:
+    def encode_label_object(cls, obj: Label, categories: Optional[CategoriesInfo]) -> ET.ElementBase:
         ann_elem = cls.encode_annotation_base(obj)
 
         ET.SubElement(ann_elem, "label").text = str(cls._get_label(obj.label, categories))
@@ -136,9 +132,7 @@ class DatasetItemEncoder:
         return ann_elem
 
     @classmethod
-    def encode_points_object(
-        cls, obj: Points, categories: Optional[CategoriesInfo]
-    ) -> ET.ElementBase:
+    def encode_points_object(cls, obj: Points, categories: Optional[CategoriesInfo]) -> ET.ElementBase:
         ann_elem = cls.encode_annotation_base(obj)
 
         ET.SubElement(ann_elem, "label").text = str(cls._get_label(obj.label, categories))
@@ -163,9 +157,7 @@ class DatasetItemEncoder:
         return ann_elem
 
     @classmethod
-    def encode_polygon_object(
-        cls, obj: Polygon, categories: Optional[CategoriesInfo]
-    ) -> ET.ElementBase:
+    def encode_polygon_object(cls, obj: Polygon, categories: Optional[CategoriesInfo]) -> ET.ElementBase:
         ann_elem = cls.encode_annotation_base(obj)
 
         ET.SubElement(ann_elem, "label").text = str(cls._get_label(obj.label, categories))
@@ -189,9 +181,7 @@ class DatasetItemEncoder:
         return ann_elem
 
     @classmethod
-    def encode_polyline_object(
-        cls, obj: PolyLine, categories: Optional[CategoriesInfo]
-    ) -> ET.ElementBase:
+    def encode_polyline_object(cls, obj: PolyLine, categories: Optional[CategoriesInfo]) -> ET.ElementBase:
         ann_elem = cls.encode_annotation_base(obj)
 
         ET.SubElement(ann_elem, "label").text = str(cls._get_label(obj.label, categories))
@@ -223,9 +213,7 @@ class DatasetItemEncoder:
         return ann_elem
 
     @classmethod
-    def encode_ellipse_object(
-        cls, obj: Ellipse, categories: Optional[CategoriesInfo]
-    ) -> ET.ElementBase:
+    def encode_ellipse_object(cls, obj: Ellipse, categories: Optional[CategoriesInfo]) -> ET.ElementBase:
         ann_elem = cls.encode_annotation_base(obj)
 
         ET.SubElement(ann_elem, "label").text = str(cls._get_label(obj.label, categories))
@@ -240,9 +228,7 @@ class DatasetItemEncoder:
         return ann_elem
 
     @classmethod
-    def encode_annotation(
-        cls, o: Annotation, categories: Optional[CategoriesInfo] = None
-    ) -> ET.ElementBase:
+    def encode_annotation(cls, o: Annotation, categories: Optional[CategoriesInfo] = None) -> ET.ElementBase:
         if isinstance(o, Label):
             return cls.encode_label_object(o, categories)
         if isinstance(o, Mask):
@@ -279,9 +265,7 @@ class XPathDatasetFilter(ItemTransform):
             raise
 
         # Return true -> filter out an item
-        self._f = lambda item: bool(
-            xpath_eval(DatasetItemEncoder.encode(item, extractor.categories()))
-        )
+        self._f = lambda item: bool(xpath_eval(DatasetItemEncoder.encode(item, extractor.categories())))
 
     def transform_item(self, item: DatasetItem) -> Optional[DatasetItem]:
         if not self._f(item):

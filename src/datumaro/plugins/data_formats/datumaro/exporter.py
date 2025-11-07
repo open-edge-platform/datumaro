@@ -121,7 +121,7 @@ class JsonWriter:
             elif isinstance(desc, PointsCategories):
                 converted_desc = cls._convert_points_categories(desc)
             else:
-                raise NotImplementedError()
+                raise NotImplementedError
             dict_cat[ann_type.name] = converted_desc
 
         return dict_cat
@@ -166,9 +166,7 @@ class _SubsetWriter:
 
     @staticmethod
     @contextmanager
-    def context_save_media(
-        item: DatasetItem, context: ExportContextComponent, encryption: bool = False
-    ) -> None:
+    def context_save_media(item: DatasetItem, context: ExportContextComponent, encryption: bool = False) -> None:
         """Implicitly change the media path and save it if save_media=True.
         When done, revert it's path as before.
 
@@ -320,7 +318,7 @@ class _SubsetWriter:
             elif isinstance(ann, Cuboid2D):
                 converted_ann = self._convert_cuboid_2d_object(ann)
             else:
-                raise NotImplementedError()
+                raise NotImplementedError
             annotations.append(converted_ann)
 
         return item_desc
@@ -596,15 +594,11 @@ class DatumaroExporter(Exporter):
             if not (status == ItemStatus.removed or not item.media):
                 continue
 
-            image_path = osp.join(
-                save_dir, cls.PATH_CLS.IMAGES_DIR, item.subset, conv._make_image_filename(item)
-            )
+            image_path = osp.join(save_dir, cls.PATH_CLS.IMAGES_DIR, item.subset, conv._make_image_filename(item))
             if osp.isfile(image_path):
                 os.unlink(image_path)
 
-            pcd_path = osp.join(
-                save_dir, cls.PATH_CLS.PCD_DIR, item.subset, conv._make_pcd_filename(item)
-            )
+            pcd_path = osp.join(save_dir, cls.PATH_CLS.PCD_DIR, item.subset, conv._make_pcd_filename(item))
             if osp.isfile(pcd_path):
                 os.unlink(pcd_path)
 

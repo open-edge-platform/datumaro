@@ -14,10 +14,9 @@ from datumaro.components.exporter import Exporter
 from datumaro.components.importer import Importer
 from datumaro.components.media import Image
 from datumaro.plugins.data_formats.dota import DotaExporter, DotaImporter
+from tests.utils.assets import get_test_asset_path
 
 from .base import TestDataFormatBase
-
-from tests.utils.assets import get_test_asset_path
 
 DUMMY_DATASET_DOTA_DIR = get_test_asset_path("dota_dataset")
 

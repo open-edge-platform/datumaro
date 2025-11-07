@@ -11,7 +11,6 @@ from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image
 from datumaro.plugins.sampler.random_sampler import LabelRandomSampler, RandomSampler
-
 from tests.utils.test_utils import compare_datasets, compare_datasets_strict
 
 try:
@@ -38,11 +37,10 @@ class TestRelevancySampler(TestCase):
                 if col == 0:
                     col += 1
                     continue
+                if out_range:
+                    probs.append(list(map(lambda x: -float(x), row[1:4])))
                 else:
-                    if out_range:
-                        probs.append(list(map(lambda x: -float(x), row[1:4])))
-                    else:
-                        probs.append(list(map(float, row[1:4])))
+                    probs.append(list(map(float, row[1:4])))
         return probs
 
     def _generate_classification_dataset(
@@ -348,7 +346,7 @@ class TestRelevancySampler(TestCase):
                         infer_df["ImageID"].append(data.id)
 
                         for prob_idx, prob in enumerate(probs):
-                            infer_df[f"ClassProbability{prob_idx+1}"].append(prob)
+                            infer_df[f"ClassProbability{prob_idx + 1}"].append(prob)
 
                 data_df = pd.DataFrame(data_df)
                 infer_df = pd.DataFrame(infer_df)
@@ -372,7 +370,7 @@ class TestRelevancySampler(TestCase):
                         probs = annotation.attributes["scores"]
 
                         for prob_idx, prob in enumerate(probs):
-                            infer_df[f"ClassProbability{prob_idx+1}"].append(prob)
+                            infer_df[f"ClassProbability{prob_idx + 1}"].append(prob)
 
                 data_df = pd.DataFrame(data_df)
                 infer_df = pd.DataFrame(infer_df)
@@ -431,9 +429,7 @@ class TestRelevancySampler(TestCase):
                 "label3": 10,
             }
 
-            source = self._generate_classification_dataset(
-                config, empty_scores=False, out_range=True
-            )
+            source = self._generate_classification_dataset(config, empty_scores=False, out_range=True)
             with self.assertRaisesRegex(Exception, "Invalid data"):
                 result = RelevancySampler(
                     source,
@@ -1082,11 +1078,7 @@ class TestRandomSampler(TestCase):
     @staticmethod
     def _make_dataset(config: Dict[str, int]):
         return Dataset.from_iterable(
-            [
-                DatasetItem(i, subset=subset)
-                for subset, subset_size in config.items()
-                for i in range(subset_size)
-            ]
+            [DatasetItem(i, subset=subset) for subset, subset_size in config.items() for i in range(subset_size)]
         )
 
     def test_can_sample_when_no_subsets(self):

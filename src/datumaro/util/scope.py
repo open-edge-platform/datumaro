@@ -39,9 +39,7 @@ class Scope:
     class _ErrorHandler(_ExitHandler):
         def __exit__(self, exc_type, exc_value, exc_traceback):
             if exc_type:
-                return super().__exit__(
-                    exc_type=exc_type, exc_value=exc_value, exc_traceback=exc_traceback
-                )
+                return super().__exit__(exc_type=exc_type, exc_value=exc_value, exc_traceback=exc_traceback)
 
     def __init__(self):
         self._stack = ExitStack()

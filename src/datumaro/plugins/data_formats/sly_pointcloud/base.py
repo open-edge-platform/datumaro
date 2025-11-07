@@ -59,7 +59,7 @@ class SuperviselyPointCloudBase(SubsetBase):
             applicable_to = tag.get("applicable_type", "all")
             if applicable_to == "imagesOnly":
                 continue  # an image attribute
-            elif applicable_to not in {"all", "objectsOnly"}:
+            if applicable_to not in {"all", "objectsOnly"}:
                 raise InvalidFieldError(applicable_to)
 
             applicable_classes = tag.get("classes", [])
@@ -115,9 +115,7 @@ class SuperviselyPointCloudBase(SubsetBase):
 
             for figure in ann_data["figures"]:
                 geometry = {
-                    dst_field: [
-                        float(figure["geometry"][src_field][axis]) for axis in ["x", "y", "z"]
-                    ]
+                    dst_field: [float(figure["geometry"][src_field][axis]) for axis in ["x", "y", "z"]]
                     for src_field, dst_field in {
                         "position": "position",
                         "rotation": "rotation",
@@ -157,9 +155,7 @@ class SuperviselyPointCloudBase(SubsetBase):
         for frame_id, frame_desc in parsed.items():
             pcd_name = frame_desc["name"]
             name = osp.splitext(pcd_name)[0]
-            pcd_path = osp.join(
-                self._rootdir, PointCloudPath.BASE_DIR, PointCloudPath.POINT_CLOUD_DIR, pcd_name
-            )
+            pcd_path = osp.join(self._rootdir, PointCloudPath.BASE_DIR, PointCloudPath.POINT_CLOUD_DIR, pcd_name)
             assert pcd_path.endswith(".pcd"), pcd_path
 
             related_images_dir = osp.join(
@@ -170,9 +166,7 @@ class SuperviselyPointCloudBase(SubsetBase):
             )
             related_images = None
             if osp.isdir(related_images_dir):
-                related_images = [
-                    Image.from_file(path=image) for image in find_images(related_images_dir)
-                ]
+                related_images = [Image.from_file(path=image) for image in find_images(related_images_dir)]
 
             parsed[frame_id] = DatasetItem(
                 id=name,

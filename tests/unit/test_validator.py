@@ -10,16 +10,7 @@ import numpy as np
 import pytest
 
 import datumaro.plugins.transforms as transforms
-from datumaro.components.annotation import (
-    AnnotationType,
-    Bbox,
-    Caption,
-    Ellipse,
-    Label,
-    LabelCategories,
-    Mask,
-    Polygon,
-)
+from datumaro.components.annotation import AnnotationType, Bbox, Caption, Ellipse, Label, LabelCategories, Mask, Polygon
 from datumaro.components.dataset import Dataset, DatasetItem
 from datumaro.components.environment import Environment
 from datumaro.components.errors import (
@@ -61,7 +52,6 @@ from datumaro.plugins.validators import (
     TabularValidator,
     _TaskValidator,
 )
-
 from tests.utils.assets import get_test_asset_path
 
 
@@ -380,9 +370,7 @@ class _TestValidatorBase(TestCase):
             ],
         )
 
-        path = osp.join(
-            get_test_asset_path("tabular_dataset"), "women-clothing", "women_clothing.csv"
-        )
+        path = osp.join(get_test_asset_path("tabular_dataset"), "women-clothing", "women_clothing.csv")
         tabular_dataset = Dataset.import_from(
             path,
             "tabular",
@@ -474,9 +462,7 @@ class TestBaseValidator(_TestValidatorBase):
         label_name = "unit"
         attr_stats = {"test": {"distribution": {}}}
 
-        actual_reports = self.validator._check_attribute_defined_but_not_found(
-            label_name, attr_stats
-        )
+        actual_reports = self.validator._check_attribute_defined_but_not_found(label_name, attr_stats)
 
         self.assertTrue(len(actual_reports) == 1)
         self.assertIsInstance(actual_reports[0], AttributeDefinedButNotFound)
@@ -501,9 +487,7 @@ class TestBaseValidator(_TestValidatorBase):
 
     def test_check_few_samples_in_label(self):
         with self.subTest("Few Samples"):
-            stats = {
-                "label_distribution": {"defined_labels": {"unit": self.validator.few_samples_thr}}
-            }
+            stats = {"label_distribution": {"defined_labels": {"unit": self.validator.few_samples_thr}}}
 
             actual_reports = self.validator._check_few_samples_in_label(stats)
 
@@ -511,11 +495,7 @@ class TestBaseValidator(_TestValidatorBase):
             self.assertIsInstance(actual_reports[0], FewSamplesInLabel)
 
         with self.subTest("No Few Samples Warning"):
-            stats = {
-                "label_distribution": {
-                    "defined_labels": {"unit": self.validator.few_samples_thr + 1}
-                }
-            }
+            stats = {"label_distribution": {"defined_labels": {"unit": self.validator.few_samples_thr + 1}}}
 
             actual_reports = self.validator._check_few_samples_in_label(stats)
 
@@ -528,9 +508,7 @@ class TestBaseValidator(_TestValidatorBase):
         with self.subTest("Few Samples"):
             attr_dets = {"distribution": {"mock": self.validator.few_samples_thr}}
 
-            actual_reports = self.validator._check_few_samples_in_attribute(
-                label_name, attr_name, attr_dets
-            )
+            actual_reports = self.validator._check_few_samples_in_attribute(label_name, attr_name, attr_dets)
 
             self.assertTrue(len(actual_reports) == 1)
             self.assertIsInstance(actual_reports[0], FewSamplesInAttribute)
@@ -538,19 +516,13 @@ class TestBaseValidator(_TestValidatorBase):
         with self.subTest("No Few Samples Warning"):
             attr_dets = {"distribution": {"mock": self.validator.few_samples_thr + 1}}
 
-            actual_reports = self.validator._check_few_samples_in_attribute(
-                label_name, attr_name, attr_dets
-            )
+            actual_reports = self.validator._check_few_samples_in_attribute(label_name, attr_name, attr_dets)
 
             self.assertTrue(len(actual_reports) == 0)
 
     def test_check_imbalanced_labels(self):
         with self.subTest("Imbalance"):
-            stats = {
-                "label_distribution": {
-                    "defined_labels": {"unit": self.validator.imbalance_ratio_thr, "test": 1}
-                }
-            }
+            stats = {"label_distribution": {"defined_labels": {"unit": self.validator.imbalance_ratio_thr, "test": 1}}}
 
             actual_reports = self.validator._check_imbalanced_labels(stats)
 
@@ -559,9 +531,7 @@ class TestBaseValidator(_TestValidatorBase):
 
         with self.subTest("No Imbalance Warning"):
             stats = {
-                "label_distribution": {
-                    "defined_labels": {"unit": self.validator.imbalance_ratio_thr - 1, "test": 1}
-                }
+                "label_distribution": {"defined_labels": {"unit": self.validator.imbalance_ratio_thr - 1, "test": 1}}
             }
 
             actual_reports = self.validator._check_imbalanced_labels(stats)
@@ -575,21 +545,15 @@ class TestBaseValidator(_TestValidatorBase):
         with self.subTest("Imbalance"):
             attr_dets = {"distribution": {"mock": self.validator.imbalance_ratio_thr, "mock_1": 1}}
 
-            actual_reports = self.validator._check_imbalanced_attribute(
-                label_name, attr_name, attr_dets
-            )
+            actual_reports = self.validator._check_imbalanced_attribute(label_name, attr_name, attr_dets)
 
             self.assertTrue(len(actual_reports) == 1)
             self.assertIsInstance(actual_reports[0], ImbalancedAttribute)
 
         with self.subTest("No Imbalance Warning"):
-            attr_dets = {
-                "distribution": {"mock": self.validator.imbalance_ratio_thr - 1, "mock_1": 1}
-            }
+            attr_dets = {"distribution": {"mock": self.validator.imbalance_ratio_thr - 1, "mock_1": 1}}
 
-            actual_reports = self.validator._check_imbalanced_attribute(
-                label_name, attr_name, attr_dets
-            )
+            actual_reports = self.validator._check_imbalanced_attribute(label_name, attr_name, attr_dets)
 
             self.assertTrue(len(actual_reports) == 0)
 
@@ -660,9 +624,7 @@ class TestDetectionValidator(_TestValidatorBase):
         with self.subTest("Imbalanced"):
             bbox_attr_stats = {"mock": {"x": {"histogram": {"counts": [most, rest]}}}}
 
-            reports = self.validator._check_imbalanced_dist_in_attr(
-                label_name, attr_name, bbox_attr_stats
-            )
+            reports = self.validator._check_imbalanced_dist_in_attr(label_name, attr_name, bbox_attr_stats)
 
             self.assertTrue(len(reports) == 1)
             self.assertIsInstance(reports[0], ImbalancedDistInAttribute)
@@ -670,9 +632,7 @@ class TestDetectionValidator(_TestValidatorBase):
         with self.subTest("No Imbalanced Warning"):
             bbox_attr_stats = {"mock": {"x": {"histogram": {"counts": [most - 1, rest]}}}}
 
-            reports = self.validator._check_imbalanced_dist_in_attr(
-                label_name, attr_name, bbox_attr_stats
-            )
+            reports = self.validator._check_imbalanced_dist_in_attr(label_name, attr_name, bbox_attr_stats)
 
             self.assertTrue(len(reports) == 0)
 
@@ -726,9 +686,7 @@ class TestDetectionValidator(_TestValidatorBase):
             }
         }
 
-        actual_reports = self.validator._check_far_from_attr_mean(
-            label_name, attr_name, bbox_attr_stats
-        )
+        actual_reports = self.validator._check_far_from_attr_mean(label_name, attr_name, bbox_attr_stats)
 
         self.assertTrue(len(actual_reports) == 1)
         self.assertIsInstance(actual_reports[0], FarFromAttrMean)
@@ -772,9 +730,7 @@ class TestSegmentationValidator(_TestValidatorBase):
         with self.subTest("Imbalanced"):
             mask_attr_stats = {"mock": {"x": {"histogram": {"counts": [most, rest]}}}}
 
-            reports = self.validator._check_imbalanced_dist_in_attr(
-                label_name, attr_name, mask_attr_stats
-            )
+            reports = self.validator._check_imbalanced_dist_in_attr(label_name, attr_name, mask_attr_stats)
 
             self.assertTrue(len(reports) == 1)
             self.assertIsInstance(reports[0], ImbalancedDistInAttribute)
@@ -782,9 +738,7 @@ class TestSegmentationValidator(_TestValidatorBase):
         with self.subTest("No Imbalanced Warning"):
             mask_attr_stats = {"mock": {"x": {"histogram": {"counts": [most - 1, rest]}}}}
 
-            reports = self.validator._check_imbalanced_dist_in_attr(
-                label_name, attr_name, mask_attr_stats
-            )
+            reports = self.validator._check_imbalanced_dist_in_attr(label_name, attr_name, mask_attr_stats)
 
             self.assertTrue(len(reports) == 0)
 
@@ -830,9 +784,7 @@ class TestSegmentationValidator(_TestValidatorBase):
             }
         }
 
-        actual_reports = self.validator._check_far_from_attr_mean(
-            label_name, attr_name, mask_attr_stats
-        )
+        actual_reports = self.validator._check_far_from_attr_mean(label_name, attr_name, mask_attr_stats)
 
         self.assertTrue(len(actual_reports) == 1)
         self.assertIsInstance(actual_reports[0], FarFromAttrMean)
@@ -891,7 +843,7 @@ class TestTabularValidator(_TestValidatorBase):
         self.assertEqual(stats["distribution_in_dataset_item"], {("1", "train"): 1})
 
     def test_compute_prop_stats_from_dist(self):
-        dist = range(0, 100)
+        dist = range(100)
         dist_by_caption = {
             "unittest": {
                 "value": {
@@ -919,9 +871,7 @@ class TestTabularValidator(_TestValidatorBase):
 
         counts, bins = np.histogram(dist)
         self.assertEqual(dist_by_caption["unittest"]["value"]["histogram"]["bins"], bins.tolist())
-        self.assertEqual(
-            dist_by_caption["unittest"]["value"]["histogram"]["counts"], counts.tolist()
-        )
+        self.assertEqual(dist_by_caption["unittest"]["value"]["histogram"]["counts"], counts.tolist())
 
     def test_compute_far_from_mean(self):
         dist = range(1, 101)
@@ -965,9 +915,7 @@ class TestTabularValidator(_TestValidatorBase):
 
     def test_check_empty_label(self):
         stats = {
-            "label_distribution": {
-                "empty_labels": {"unittest": {"count": 1, "items_with_empty_label": [(1, "train")]}}
-            }
+            "label_distribution": {"empty_labels": {"unittest": {"count": 1, "items_with_empty_label": [(1, "train")]}}}
         }
 
         actual_reports = self.validator._check_empty_label(stats)
@@ -978,9 +926,7 @@ class TestTabularValidator(_TestValidatorBase):
     def test_check_empty_caption(self):
         stats = {
             "caption_distribution": {
-                "empty_captions": {
-                    "unittest": {"count": 1, "items_with_empty_caption": [(1, "train")]}
-                }
+                "empty_captions": {"unittest": {"count": 1, "items_with_empty_caption": [(1, "train")]}}
             }
         }
 
@@ -991,11 +937,7 @@ class TestTabularValidator(_TestValidatorBase):
 
     def test_check_few_samples_in_caption(self):
         with self.subTest("Few Samples"):
-            stats = {
-                "caption_distribution": {
-                    "defined_captions": {"unit": self.validator.few_samples_thr}
-                }
-            }
+            stats = {"caption_distribution": {"defined_captions": {"unit": self.validator.few_samples_thr}}}
 
             actual_reports = self.validator._check_few_samples_in_caption(stats)
 
@@ -1003,11 +945,7 @@ class TestTabularValidator(_TestValidatorBase):
             self.assertIsInstance(actual_reports[0], FewSamplesInCaption)
 
         with self.subTest("No Few Samples Warning"):
-            stats = {
-                "caption_distribution": {
-                    "defined_captions": {"unit": self.validator.few_samples_thr + 1}
-                }
-            }
+            stats = {"caption_distribution": {"defined_captions": {"unit": self.validator.few_samples_thr + 1}}}
 
             actual_reports = self.validator._check_few_samples_in_caption(stats)
 
@@ -1031,11 +969,7 @@ class TestTabularValidator(_TestValidatorBase):
     def test_check_redundancies_in_caption(self):
         stats = {
             "caption_distribution": {
-                "redundancies": {
-                    "unittest": {
-                        "stopword": {"count": 1, "items_with_redundancies": [("1", "train")]}
-                    }
-                }
+                "redundancies": {"unittest": {"stopword": {"count": 1, "items_with_redundancies": [("1", "train")]}}}
             }
         }
 
@@ -1047,9 +981,7 @@ class TestTabularValidator(_TestValidatorBase):
     def test_check_imbalanced_captions(self):
         with self.subTest("Imbalance"):
             stats = {
-                "caption_distribution": {
-                    "defined_captions": {"unit": self.validator.imbalance_ratio_thr, "test": 1}
-                }
+                "caption_distribution": {"defined_captions": {"unit": self.validator.imbalance_ratio_thr, "test": 1}}
             }
 
             actual_reports = self.validator._check_imbalanced_captions(stats)
@@ -1362,13 +1294,9 @@ class TestValidateAnnotations(_TestValidatorBase):
             empty_labels = label_dist["empty_labels"]
             self.assertEqual(len(empty_labels), 2)
             self.assertEqual(empty_labels["Rating"]["count"], 2)
-            self.assertEqual(
-                empty_labels["Rating"]["items_with_empty_label"][0][0], "0@women_clothing"
-            )
+            self.assertEqual(empty_labels["Rating"]["items_with_empty_label"][0][0], "0@women_clothing")
             self.assertEqual(empty_labels["Division Name"]["count"], 2)
-            self.assertEqual(
-                empty_labels["Division Name"]["items_with_empty_label"][0][0], "0@women_clothing"
-            )
+            self.assertEqual(empty_labels["Division Name"]["items_with_empty_label"][0][0], "0@women_clothing")
 
             caption_dist = actual_stats["caption_distribution"]
             self.assertEqual(len(caption_dist["defined_captions"]), 4)
@@ -1379,17 +1307,11 @@ class TestValidateAnnotations(_TestValidatorBase):
             empty_captions = caption_dist["empty_captions"]
             self.assertEqual(len(empty_captions), 4)
             self.assertEqual(empty_captions["Age"]["count"], 2)
-            self.assertEqual(
-                empty_captions["Age"]["items_with_empty_caption"][0][0], "0@women_clothing"
-            )
+            self.assertEqual(empty_captions["Age"]["items_with_empty_caption"][0][0], "0@women_clothing")
             self.assertEqual(empty_captions["Title"]["count"], 2)
-            self.assertEqual(
-                empty_captions["Title"]["items_with_empty_caption"][0][0], "0@women_clothing"
-            )
+            self.assertEqual(empty_captions["Title"]["items_with_empty_caption"][0][0], "0@women_clothing")
             self.assertEqual(empty_captions["Review Text"]["count"], 2)
-            self.assertEqual(
-                empty_captions["Review Text"]["items_with_empty_caption"][0][0], "0@women_clothing"
-            )
+            self.assertEqual(empty_captions["Review Text"]["items_with_empty_caption"][0][0], "0@women_clothing")
             self.assertEqual(empty_captions["Positive Feedback Count"]["count"], 2)
             self.assertEqual(
                 empty_captions["Positive Feedback Count"]["items_with_empty_caption"][0][0],

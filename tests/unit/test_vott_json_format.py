@@ -8,14 +8,11 @@ from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.environment import Environment
 from datumaro.components.media import Image
 from datumaro.plugins.data_formats.vott_json import VottJsonImporter
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import compare_datasets
 
 DUMMY_DATASET_DIR = get_test_asset_path("vott_json_dataset", "dataset")
-DUMMY_DATASET_DIR_WITH_META_FILE = get_test_asset_path(
-    "vott_json_dataset", "dataset_with_meta_file"
-)
+DUMMY_DATASET_DIR_WITH_META_FILE = get_test_asset_path("vott_json_dataset", "dataset_with_meta_file")
 
 
 class VottJsonImporterTest(TestCase):
@@ -72,9 +69,7 @@ class VottJsonImporterTest(TestCase):
                     subset="train",
                     media=Image.from_numpy(data=np.ones((5, 5, 3))),
                     attributes={"id": "b482849bc"},
-                    annotations=[
-                        Bbox(11.5, 12, 10.2, 20.5, label=1, attributes={"id": "mosw0b97K"})
-                    ],
+                    annotations=[Bbox(11.5, 12, 10.2, 20.5, label=1, attributes={"id": "mosw0b97K"})],
                 ),
                 DatasetItem(
                     id="img0003",

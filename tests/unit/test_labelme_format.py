@@ -11,7 +11,6 @@ from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.environment import Environment
 from datumaro.components.media import Image
 from datumaro.plugins.data_formats.labelme import LabelMeExporter, LabelMeImporter
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, check_save_and_load, compare_datasets
 
@@ -145,12 +144,8 @@ class LabelMeExporterTest(TestCase):
     def test_can_save_and_load_image_with_arbitrary_extension(self):
         dataset = Dataset.from_iterable(
             [
-                DatasetItem(
-                    id="a/1", media=Image.from_numpy(data=np.zeros((4, 3, 3)), ext=".JPEG")
-                ),
-                DatasetItem(
-                    id="b/c/d/2", media=Image.from_numpy(data=np.zeros((3, 4, 3)), ext=".png")
-                ),
+                DatasetItem(id="a/1", media=Image.from_numpy(data=np.zeros((4, 3, 3)), ext=".JPEG")),
+                DatasetItem(id="b/c/d/2", media=Image.from_numpy(data=np.zeros((3, 4, 3)), ext=".png")),
             ],
             categories=[],
         )
@@ -231,15 +226,9 @@ class LabelMeExporterTest(TestCase):
                     id="subdir3/1",
                     subset="a",
                     media=Image.from_numpy(data=np.ones((5, 4, 3))),
-                    annotations=[
-                        Bbox(
-                            1, 2, 3, 4, label=0, attributes={"occluded": False, "username": "user"}
-                        )
-                    ],
+                    annotations=[Bbox(1, 2, 3, 4, label=0, attributes={"occluded": False, "username": "user"})],
                 ),
-                DatasetItem(
-                    id="subdir3/1", subset="b", media=Image.from_numpy(data=np.ones((4, 4, 3)))
-                ),
+                DatasetItem(id="subdir3/1", subset="b", media=Image.from_numpy(data=np.ones((4, 4, 3)))),
             ],
             categories=["label1", "label2"],
         )
@@ -255,9 +244,7 @@ class LabelMeExporterTest(TestCase):
     def test_can_save_dataset_to_correct_dir_with_correct_filename(self):
         dataset = Dataset.from_iterable(
             [
-                DatasetItem(
-                    id="dir/a", media=Image.from_numpy(data=np.zeros((4, 3, 3)), ext=".jpeg")
-                ),
+                DatasetItem(id="dir/a", media=Image.from_numpy(data=np.zeros((4, 3, 3)), ext=".jpeg")),
             ],
             categories=[],
         )
@@ -301,11 +288,7 @@ class LabelMeExporterTest(TestCase):
                     id="subdir3/1",
                     subset="a",
                     media=Image.from_numpy(data=np.ones((5, 4, 3))),
-                    annotations=[
-                        Bbox(
-                            1, 2, 3, 4, label=0, attributes={"occluded": False, "username": "user"}
-                        )
-                    ],
+                    annotations=[Bbox(1, 2, 3, 4, label=0, attributes={"occluded": False, "username": "user"})],
                 ),
             ],
             categories=["label1", "label2"],

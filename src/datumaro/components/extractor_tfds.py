@@ -9,20 +9,7 @@ import logging as log
 import os.path as osp
 from importlib.util import find_spec
 from types import SimpleNamespace as namespace
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    Callable,
-    Dict,
-    Iterator,
-    Mapping,
-    Optional,
-    Sequence,
-    Set,
-    Tuple,
-    Type,
-    Union,
-)
+from typing import TYPE_CHECKING, Any, Callable, Dict, Iterator, Mapping, Optional, Sequence, Set, Tuple, Type, Union
 
 import attrs
 import numpy as np
@@ -44,10 +31,7 @@ if TFDS_EXTRACTOR_AVAILABLE:
         else:
             tfds = lazy_import("tensorflow_datasets")
     except ImportError:
-        log.debug(
-            "Unable to import TensorFlow or TensorFlow Datasets. "
-            "Dataset downloading via TFDS is disabled."
-        )
+        log.debug("Unable to import TensorFlow or TensorFlow Datasets. Dataset downloading via TFDS is disabled.")
 
 
 @frozen(kw_only=True)
@@ -71,9 +55,7 @@ class TfdsDatasetMetadata:
 
 @frozen
 class _TfdsAdapter:
-    category_transformers: Sequence[
-        Callable[[tfds.core.DatasetBuilder, CategoriesInfo, namespace], None]
-    ]
+    category_transformers: Sequence[Callable[[tfds.core.DatasetBuilder, CategoriesInfo, namespace], None]]
     data_transformers: Sequence[Callable[[Any, DatasetItem, namespace], None]]
     id_generator: Callable[[Any], str] = field(default=None, kw_only=True)
 
@@ -204,8 +186,7 @@ class _AddObjectsFromFeature:
         default=(),
         kw_only=True,
         converter=lambda values: tuple(
-            value if isinstance(value, _AttributeMemberMapping) else _AttributeMemberMapping(value)
-            for value in values
+            value if isinstance(value, _AttributeMemberMapping) else _AttributeMemberMapping(value) for value in values
         ),
     )
 
@@ -302,26 +283,18 @@ _CIFAR_ADAPTER = _TfdsAdapter(
         _AddLabelFromClassLabelFeature("label"),
     ],
     id_generator=_GenerateIdFromTextFeature("id"),
-    metadata=TfdsDatasetMetadata(
-        human_name="CIFAR", default_output_format="cifar", media_type=Image
-    ),
+    metadata=TfdsDatasetMetadata(human_name="CIFAR", default_output_format="cifar", media_type=Image),
 )
 
 _COCO_ADAPTER = _TfdsAdapter(
-    category_transformers=[
-        _SetLabelCategoriesFromClassLabelFeature(("objects", "feature", "label"))
-    ],
+    category_transformers=[_SetLabelCategoriesFromClassLabelFeature(("objects", "feature", "label"))],
     data_transformers=[
         _SetImageFromImageFeature("image", filename_feature_name="image/filename"),
-        _AddObjectsFromFeature(
-            "objects", "bbox", label_member="label", attribute_members=("is_crowd",)
-        ),
+        _AddObjectsFromFeature("objects", "bbox", label_member="label", attribute_members=("is_crowd",)),
         _SetAttributeFromFeature("image/id", "id"),
     ],
     id_generator=_GenerateIdFromFilenameFeature("image/filename"),
-    metadata=TfdsDatasetMetadata(
-        human_name="COCO", default_output_format="coco_instances", media_type=Image
-    ),
+    metadata=TfdsDatasetMetadata(human_name="COCO", default_output_format="coco_instances", media_type=Image),
 )
 
 _IMAGENET_ADAPTER = _TfdsAdapter(
@@ -331,9 +304,7 @@ _IMAGENET_ADAPTER = _TfdsAdapter(
         _AddLabelFromClassLabelFeature("label"),
     ],
     id_generator=_GenerateIdFromFilenameFeature("file_name"),
-    metadata=TfdsDatasetMetadata(
-        human_name="ImageNet", default_output_format="imagenet_txt", media_type=Image
-    ),
+    metadata=TfdsDatasetMetadata(human_name="ImageNet", default_output_format="imagenet_txt", media_type=Image),
 )
 
 _EUROSAT_ADAPTER = _TfdsAdapter(
@@ -343,9 +314,7 @@ _EUROSAT_ADAPTER = _TfdsAdapter(
         _AddLabelFromClassLabelFeature("label"),
     ],
     id_generator=_GenerateIdFromFilenameFeature("filename"),
-    metadata=TfdsDatasetMetadata(
-        human_name="EuroSAT", default_output_format="imagenet_txt", media_type=Image
-    ),
+    metadata=TfdsDatasetMetadata(human_name="EuroSAT", default_output_format="imagenet_txt", media_type=Image),
 )
 
 
@@ -356,9 +325,7 @@ _UC_MERCED_ADAPTER = _TfdsAdapter(
         _AddLabelFromClassLabelFeature("label"),
     ],
     id_generator=_GenerateIdFromFilenameFeature("filename"),
-    metadata=TfdsDatasetMetadata(
-        human_name="UCMerced", default_output_format="imagenet_txt", media_type=Image
-    ),
+    metadata=TfdsDatasetMetadata(human_name="UCMerced", default_output_format="imagenet_txt", media_type=Image),
 )
 
 
@@ -374,9 +341,7 @@ def _voc_save_pose_names(
     # case in the original dataset. Fix them back to title case so that the
     # output dataset better resembles the original dataset.
 
-    state.pose_names = [
-        name.title() for name in tfds_builder.info.features["objects"].feature["pose"].names
-    ]
+    state.pose_names = [name.title() for name in tfds_builder.info.features["objects"].feature["pose"].names]
 
 
 _VOC_ADAPTER = _TfdsAdapter(
@@ -393,16 +358,12 @@ _VOC_ADAPTER = _TfdsAdapter(
             attribute_members=(
                 _AttributeMemberMapping("is_difficult", "difficult"),
                 _AttributeMemberMapping("is_truncated", "truncated"),
-                _AttributeMemberMapping(
-                    "pose", value_converter=lambda idx, state: state.pose_names[idx]
-                ),
+                _AttributeMemberMapping("pose", value_converter=lambda idx, state: state.pose_names[idx]),
             ),
         ),
     ],
     id_generator=_GenerateIdFromFilenameFeature("image/filename"),
-    metadata=TfdsDatasetMetadata(
-        human_name="PASCAL VOC", default_output_format="voc", media_type=Image
-    ),
+    metadata=TfdsDatasetMetadata(human_name="PASCAL VOC", default_output_format="voc", media_type=Image),
 )
 
 
@@ -625,6 +586,4 @@ class TfdsDataset:
         )
 
 
-AVAILABLE_TFDS_DATASETS: Mapping[str, TfdsDataset] = {
-    name: TfdsDataset(name) for name in _TFDS_ADAPTERS
-}
+AVAILABLE_TFDS_DATASETS: Mapping[str, TfdsDataset] = {name: TfdsDataset(name) for name in _TFDS_ADAPTERS}

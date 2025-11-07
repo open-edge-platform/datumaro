@@ -5,7 +5,6 @@ from datumaro.components.annotation import AnnotationType, Cuboid3d, LabelCatego
 from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image, PointCloud
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, compare_datasets_3d
 from tests.utils.test_utils import run_datum as run

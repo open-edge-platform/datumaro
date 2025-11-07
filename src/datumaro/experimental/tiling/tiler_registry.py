@@ -12,8 +12,9 @@ registration and configuration management.
 import copy
 from abc import ABC, abstractmethod
 from collections import defaultdict
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
-from typing import Callable, Dict, List, NamedTuple, Optional, Sequence, Type
+from typing import NamedTuple
 
 import polars as pl
 
@@ -166,7 +167,6 @@ class Tiler(ABC):
             DataFrame with tiled data. The output will have the same
             number of rows as tiles_df.
         """
-        pass
 
 
 class TilerRegistry:
@@ -192,10 +192,10 @@ class TilerRegistry:
         ```
     """
 
-    _tilers: Dict[Type[Field], Type[Tiler]] = {}
+    _tilers: dict[type[Field], type[Tiler]] = {}
 
     @classmethod
-    def register(cls, field_type: Type[Field]):
+    def register(cls, field_type: type[Field]):
         """Decorator to register a tiler for a specific field type.
 
         This decorator associates a Tiler implementation with a specific Field type.
@@ -216,14 +216,14 @@ class TilerRegistry:
             ```
         """
 
-        def wrapper(tiler_cls: Type[Tiler]):
+        def wrapper(tiler_cls: type[Tiler]):
             cls._tilers[field_type] = tiler_cls
             return tiler_cls
 
         return wrapper
 
     @classmethod
-    def get_tiler(cls, field_type: Type[Field]) -> Optional[Type[Tiler]]:
+    def get_tiler(cls, field_type: type[Field]) -> type[Tiler] | None:
         """Get the registered tiler for a field type.
 
         Args:
@@ -241,7 +241,7 @@ class TilerEntry(NamedTuple):
     tiler: Tiler
 
 
-def create_tilers(schema: Schema, threshold_drop_ann: float) -> Dict[Semantic, List[TilerEntry]]:
+def create_tilers(schema: Schema, threshold_drop_ann: float) -> dict[Semantic, list[TilerEntry]]:
     """Create tiler instances based on schema fields.
 
     This function instantiates appropriate tilers for each field in the schema,
@@ -302,9 +302,7 @@ def zip_list(op: Callable[[pl.Expr, pl.Expr], pl.Expr], *args: str) -> pl.Expr:
     Note:
         See https://github.com/pola-rs/polars/issues/7210 for implementation details
     """
-    return pl.concat_list(pl.struct(*args)).list.eval(
-        op(*(pl.element().struct.field(arg).explode() for arg in args))
-    )
+    return pl.concat_list(pl.struct(*args)).list.eval(op(*(pl.element().struct.field(arg).explode() for arg in args)))
 
 
 @dataclass
@@ -472,9 +470,7 @@ def _apply_tiling(
             fields_set.update(plan.tilers_by_group_id[group_id])
 
     if output_df is None:
-        output_df = _calculate_tiles(
-            input_df, plan.config, plan.image_info_spec, plan.tile_info_spec, slice_offset
-        )
+        output_df = _calculate_tiles(input_df, plan.config, plan.image_info_spec, plan.tile_info_spec, slice_offset)
 
     # Apply each tiler and collect keep flags and columns to filter
     tiled_data = []
@@ -488,9 +484,7 @@ def _apply_tiling(
         # If tiler provides a keep column, update our mask and track columns
         if tiler.is_filterable():
             if "keep" not in tiled_df.columns:
-                raise RuntimeError(
-                    "Expected the 'keep' column to be present since the tiler is filterable."
-                )
+                raise RuntimeError("Expected the 'keep' column to be present since the tiler is filterable.")
 
             group_id = plan.tilers_filter_group_id[field_name]
 
@@ -517,9 +511,7 @@ def _apply_tiling(
         # Only keep columns that aren't in the result yet
         new_cols = [col for col in tiled_df.columns if col not in output_df.columns]
         if new_cols:
-            output_df = output_df.with_columns(
-                [tiled_df.get_column(col).alias(col) for col in new_cols]
-            )
+            output_df = output_df.with_columns([tiled_df.get_column(col).alias(col) for col in new_cols])
 
     # Apply list filtering if we have a keep mask
     for group_id, keep_mask in keep_mask_by_group_id.items():
@@ -603,9 +595,7 @@ class TilingTransform(Transform):
         input_df = self._parent.apply(list(fields_set))
 
         # Apply tiling
-        self._df, fields_set = _apply_tiling(
-            input_df, self._df, self._tiling_plan, fields_set, self._slice_offset
-        )
+        self._df, fields_set = _apply_tiling(input_df, self._df, self._tiling_plan, fields_set, self._slice_offset)
 
         # Update the list of applied attributes to avoid recomputing them.
         self._applied_tilers.update(fields_set)
@@ -621,16 +611,14 @@ class TilingTransform(Transform):
             raise RuntimeError("apply() should have been called in the constructor.")
 
         # Find the start and end of this slice in the source dataset
-        source_sample_offset = self._df[offset, self._tiling_plan.tile_info_spec.name][
-            "source_sample_idx"
-        ]
+        source_sample_offset = self._df[offset, self._tiling_plan.tile_info_spec.name]["source_sample_idx"]
 
         if length is None:
             source_sample_length = None
         else:
-            source_sample_last = self._df[
-                offset + length - 1, self._tiling_plan.tile_info_spec.name
-            ]["source_sample_idx"]
+            source_sample_last = self._df[offset + length - 1, self._tiling_plan.tile_info_spec.name][
+                "source_sample_idx"
+            ]
             source_sample_length = source_sample_last - source_sample_offset + 1
 
         # Slice the parent transform based on the source offset and length

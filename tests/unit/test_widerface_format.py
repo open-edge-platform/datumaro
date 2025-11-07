@@ -14,7 +14,6 @@ from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.environment import Environment
 from datumaro.components.media import Image
 from datumaro.plugins.data_formats.widerface import WiderFaceExporter, WiderFaceImporter
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import IGNORE_ALL, TestDir, compare_datasets
 
@@ -254,9 +253,7 @@ class WiderFaceFormatTest(TestCase):
         )
 
         with TestDir() as test_dir:
-            WiderFaceExporter.convert(
-                source_dataset, test_dir, save_media=True, save_dataset_meta=True
-            )
+            WiderFaceExporter.convert(source_dataset, test_dir, save_media=True, save_dataset_meta=True)
             parsed_dataset = Dataset.import_from(test_dir, "wider_face")
 
             self.assertTrue(osp.isfile(osp.join(test_dir, "dataset_meta.json")))
@@ -344,9 +341,7 @@ class WiderFaceFormatTest(TestCase):
         dataset = Dataset.from_iterable(
             [
                 DatasetItem("q/1", media=Image.from_numpy(data=np.zeros((4, 3, 3)), ext=".JPEG")),
-                DatasetItem(
-                    "a/b/c/2", media=Image.from_numpy(data=np.zeros((3, 4, 3)), ext=".bmp")
-                ),
+                DatasetItem("a/b/c/2", media=Image.from_numpy(data=np.zeros((3, 4, 3)), ext=".bmp")),
             ],
             categories=[],
         )
@@ -370,18 +365,14 @@ class WiderFaceFormatTest(TestCase):
             dataset = Dataset.from_iterable(
                 [
                     DatasetItem(1, subset="train", media=Image.from_numpy(data=np.ones((2, 4, 3)))),
-                    DatasetItem(
-                        2, subset="train", media=Image.from_file(path="2.jpg", size=(3, 2))
-                    ),
+                    DatasetItem(2, subset="train", media=Image.from_file(path="2.jpg", size=(3, 2))),
                     DatasetItem(3, subset="valid", media=Image.from_numpy(data=np.ones((2, 2, 3)))),
                 ],
                 categories=[],
             )
             dataset.export(path, "wider_face", save_media=True)
 
-            dataset.put(
-                DatasetItem(2, subset="train", media=Image.from_numpy(data=np.ones((3, 2, 3))))
-            )
+            dataset.put(DatasetItem(2, subset="train", media=Image.from_numpy(data=np.ones((3, 2, 3)))))
             dataset.remove(3, "valid")
             dataset.save(save_media=True)
 
@@ -389,9 +380,7 @@ class WiderFaceFormatTest(TestCase):
                 {"1.jpg", "2.jpg"},
                 set(os.listdir(osp.join(path, "WIDER_train", "images", "no_label"))),
             )
-            self.assertEqual(
-                {"wider_face_train_bbx_gt.txt"}, set(os.listdir(osp.join(path, "wider_face_split")))
-            )
+            self.assertEqual({"wider_face_train_bbx_gt.txt"}, set(os.listdir(osp.join(path, "wider_face_split"))))
             compare_datasets(
                 self,
                 expected,

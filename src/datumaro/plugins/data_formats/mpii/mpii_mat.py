@@ -8,13 +8,7 @@ from typing import List, Optional
 
 import scipy.io as spio
 
-from datumaro.components.annotation import (
-    AnnotationType,
-    Bbox,
-    LabelCategories,
-    Points,
-    PointsCategories,
-)
+from datumaro.components.annotation import AnnotationType, Bbox, LabelCategories, Points, PointsCategories
 from datumaro.components.dataset_base import DatasetItem, SubsetBase
 from datumaro.components.format_detection import FormatDetectionContext
 from datumaro.components.importer import ImportContext, Importer
@@ -38,9 +32,7 @@ class MpiiBase(SubsetBase):
 
         self._categories = {
             AnnotationType.label: LabelCategories.from_iterable(["human"]),
-            AnnotationType.points: PointsCategories.from_iterable(
-                [(0, MPII_POINTS_LABELS, MPII_POINTS_JOINTS)]
-            ),
+            AnnotationType.points: PointsCategories.from_iterable([(0, MPII_POINTS_LABELS, MPII_POINTS_JOINTS)]),
         }
 
         self._items = list(self._load_items(path).values())
@@ -120,9 +112,7 @@ class MpiiBase(SubsetBase):
                         points[2 * i + 1] = point[1]
                         vis[i] = is_visible.get(key, 1)
 
-                    annotations.append(
-                        Points(points, vis, label=0, group=group_num, attributes=attributes)
-                    )
+                    annotations.append(Points(points, vis, label=0, group=group_num, attributes=attributes))
 
                 if x1 is not None and x2 is not None and y1 is not None and y2 is not None:
                     annotations.append(Bbox(x1, y1, x2 - x1, y2 - y1, label=0, group=group_num))

@@ -198,9 +198,7 @@ class DatumaroBinaryExporter(DatumaroExporter):
         """
 
         if num_workers < 0:
-            raise DatumaroError(
-                f"num_workers should be non-negative but num_workers={num_workers}."
-            )
+            raise DatumaroError(f"num_workers should be non-negative but num_workers={num_workers}.")
         self._num_workers = num_workers
 
         self._max_blob_size = max_blob_size
@@ -215,9 +213,7 @@ class DatumaroBinaryExporter(DatumaroExporter):
             ctx=ctx,
         )
 
-    def create_writer(
-        self, subset: str, images_dir: str, pcd_dir: str, video_dir: str
-    ) -> _SubsetWriter:
+    def create_writer(self, subset: str, images_dir: str, pcd_dir: str, video_dir: str) -> _SubsetWriter:
         export_context = ExportContextComponent(
             save_dir=self._save_dir,
             save_media=self._save_media,

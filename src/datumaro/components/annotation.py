@@ -8,21 +8,7 @@ import math
 from enum import IntEnum
 from functools import partial
 from itertools import zip_longest
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    Iterable,
-    Iterator,
-    List,
-    Optional,
-    Sequence,
-    Set,
-    Tuple,
-    Type,
-    TypeVar,
-    Union,
-)
+from typing import Any, Callable, Dict, Iterable, Iterator, List, Optional, Sequence, Set, Tuple, Type, TypeVar, Union
 
 import attr
 import cv2
@@ -149,9 +135,7 @@ class LabelCategories(Categories):
     class LabelGroup:
         name: str = field(converter=str, validator=not_empty)
         labels: List[str] = field(default=[], validator=default_if_none(list))
-        group_type: GroupType = field(
-            default=GroupType.EXCLUSIVE, validator=default_if_none(GroupType)
-        )
+        group_type: GroupType = field(default=GroupType.EXCLUSIVE, validator=default_if_none(GroupType))
 
     items: List[str] = field(factory=list, validator=default_if_none(list))
     label_groups: List[LabelGroup] = field(factory=list, validator=default_if_none(list))
@@ -239,8 +223,7 @@ class LabelCategories(Categories):
     def __contains__(self, value: Union[int, str]) -> bool:
         if isinstance(value, str):
             return self.find(value)[1] is not None
-        else:
-            return 0 <= value and value < len(self.items)
+        return value >= 0 and value < len(self.items)
 
     def __len__(self) -> int:
         return len(self.items)
@@ -280,9 +263,7 @@ class MaskCategories(Categories):
         return cls(generate_colormap(size, include_background=include_background))
 
     colormap: Colormap = field(factory=dict, validator=default_if_none(dict))
-    _inverse_colormap: Optional[Dict[RgbColor, int]] = field(
-        default=None, validator=attr.validators.optional(dict)
-    )
+    _inverse_colormap: Optional[Dict[RgbColor, int]] = field(default=None, validator=attr.validators.optional(dict))
 
     @property
     def inverse_colormap(self) -> Dict[RgbColor, int]:
@@ -326,9 +307,7 @@ class Mask(Annotation):
 
     _type = AnnotationType.mask
     _image: Union[BinaryMaskImage, BinaryMaskImageCallable] = field()
-    label: Optional[int] = field(
-        converter=attr.converters.optional(int), default=None, kw_only=True
-    )
+    label: Optional[int] = field(converter=attr.converters.optional(int), default=None, kw_only=True)
     z_order: int = field(default=0, validator=default_if_none(int), kw_only=True)
 
     def __attrs_post_init__(self):
@@ -391,9 +370,7 @@ class Mask(Annotation):
         """
         from datumaro.util.mask_tools import make_index_mask
 
-        return make_index_mask(
-            self.image, index=instance_id, ignore_index=ignore_index, dtype=dtype
-        )
+        return make_index_mask(self.image, index=instance_id, ignore_index=ignore_index, dtype=dtype)
 
     def get_area(self) -> int:
         return np.count_nonzero(self.image)
@@ -538,9 +515,7 @@ class CompiledMask:
 
         instance_ids = instance_ids or []
         instance_labels = instance_labels or []
-        masks = sorted(
-            zip_longest(instance_masks, instance_ids, instance_labels), key=lambda m: m[0].z_order
-        )
+        masks = sorted(zip_longest(instance_masks, instance_ids, instance_labels), key=lambda m: m[0].z_order)
 
         max_index = len(masks) + 1
         index_dtype = np.min_scalar_type(max_index)
@@ -583,9 +558,7 @@ class CompiledMask:
         if np.array_equal(instance_map, range(max_index)):
             merged_instance_mask = index_mask
         else:
-            merged_instance_mask = np.array(instance_map, dtype=np.min_scalar_type(instance_map))[
-                index_mask
-            ]
+            merged_instance_mask = np.array(instance_map, dtype=np.min_scalar_type(instance_map))[index_mask]
 
         merged_class_mask = np.array(class_map, dtype=np.min_scalar_type(class_map))[index_mask]
 
@@ -625,14 +598,10 @@ class CompiledMask:
         """
 
         class_shift = 16
-        m = (self.class_mask.astype(np.uint32) << class_shift) + self.instance_mask.astype(
-            np.uint32
-        )
+        m = (self.class_mask.astype(np.uint32) << class_shift) + self.instance_mask.astype(np.uint32)
         keys = np.unique(m)
         instance_labels = {
-            int(k & ((1 << class_shift) - 1)): int(k >> class_shift)
-            for k in keys
-            if k & ((1 << class_shift) - 1) != 0
+            int(k & ((1 << class_shift) - 1)): int(k >> class_shift) for k in keys if k & ((1 << class_shift) - 1) != 0
         }
         return instance_labels
 
@@ -669,9 +638,7 @@ class Shape(Annotation):
         converter=lambda x: np.array(x, dtype=np.float32).round(COORDINATE_ROUNDING_DIGITS).tolist()
     )
 
-    label: Optional[int] = field(
-        converter=attr.converters.optional(int), default=None, kw_only=True
-    )
+    label: Optional[int] = field(converter=attr.converters.optional(int), default=None, kw_only=True)
 
     z_order: int = field(default=0, validator=default_if_none(int), kw_only=True)
 
@@ -679,13 +646,13 @@ class Shape(Annotation):
         """
         Calculate the area of the shape.
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def as_polygon(self) -> List[float]:
         """
         Convert the shape into a polygon representation.
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def get_bbox(self) -> Tuple[float, float, float, float]:
         """
@@ -767,9 +734,7 @@ class Cuboid3d(Annotation):
 
     _type = AnnotationType.cuboid_3d
     _points: List[float] = field(default=None)
-    label: Optional[int] = field(
-        converter=attr.converters.optional(int), default=None, kw_only=True
-    )
+    label: Optional[int] = field(converter=attr.converters.optional(int), default=None, kw_only=True)
 
     @_points.validator
     def _points_validator(self, attribute, points):
@@ -894,9 +859,7 @@ class Polygon(Shape):
             AssertionError: If the number of points is not even or less than 3 pairs of coordinates.
         """
         # keep the message on a single line to produce informative output
-        assert len(self.points) % 2 == 0 and 3 <= len(self.points) // 2, (
-            "Wrong polygon points: %s" % self.points
-        )
+        assert len(self.points) % 2 == 0 and len(self.points) // 2 >= 3, "Wrong polygon points: %s" % self.points
 
     def get_area(self):
         """
@@ -934,11 +897,7 @@ class Polygon(Shape):
         """
         if not isinstance(other, __class__):
             return False
-        if (
-            not Annotation.__eq__(self, other)
-            or self.label != other.label
-            or self.z_order != other.z_order
-        ):
+        if not Annotation.__eq__(self, other) or self.label != other.label or self.z_order != other.z_order:
             return False
 
         self_points = self.get_points()
@@ -1354,9 +1313,7 @@ class Cuboid2D(Annotation):
 
     _type = AnnotationType.cuboid_2d
     points = field(default=None)
-    label: Optional[int] = field(
-        converter=attr.converters.optional(int), default=None, kw_only=True
-    )
+    label: Optional[int] = field(converter=attr.converters.optional(int), default=None, kw_only=True)
     z_order: int = field(default=0, validator=default_if_none(int), kw_only=True)
     y_3d: float = field(default=None, validator=default_if_none(float), kw_only=True)
 
@@ -1395,9 +1352,7 @@ class Cuboid2D(Annotation):
         Returns:
             np.ndarray: vector"""
         ground_points_lidar = np.array([[0.0, 0.0, 0.0], [0.0, 1.0, 0.0], [1.0, 1.0, 0.0]])
-        ground_points_lidar = np.concatenate(
-            (ground_points_lidar, np.ones((ground_points_lidar.shape[0], 1))), axis=1
-        )
+        ground_points_lidar = np.concatenate((ground_points_lidar, np.ones((ground_points_lidar.shape[0], 1))), axis=1)
         ground_points_cam = np.matmul(Tr_velo_to_cam_homo, ground_points_lidar.T).T
         denorm = -1 * Cuboid2D._get_plane_equation(ground_points_cam)
         return denorm
@@ -1522,8 +1477,7 @@ class Cuboid2D(Annotation):
         pairs = [(0, 1), (2, 3), (4, 5), (6, 7)]
         for p in pairs:
             delta_x = np.sqrt(
-                (recon_3d[p[0]][0] - recon_3d[p[1]][0]) ** 2
-                + (recon_3d[p[0]][2] - recon_3d[p[1]][2]) ** 2
+                (recon_3d[p[0]][0] - recon_3d[p[1]][0]) ** 2 + (recon_3d[p[0]][2] - recon_3d[p[1]][2]) ** 2
             )
             widths.append(delta_x)
         w = np.mean(widths)
@@ -1532,8 +1486,7 @@ class Cuboid2D(Annotation):
         pairs = [(1, 2), (0, 3), (5, 6), (4, 7)]
         for p in pairs:
             delta_z = np.sqrt(
-                (recon_3d[p[0]][0] - recon_3d[p[1]][0]) ** 2
-                + (recon_3d[p[0]][2] - recon_3d[p[1]][2]) ** 2
+                (recon_3d[p[0]][0] - recon_3d[p[1]][0]) ** 2 + (recon_3d[p[0]][2] - recon_3d[p[1]][2]) ** 2
             )
             lengths.append(delta_z)
         l = np.mean(lengths)
@@ -1566,9 +1519,7 @@ class PointsCategories(Categories):
         positions: List[float] = field(default=[])
 
         @positions.validator
-        def positions_validator(
-            self, attribute: attr.Attribute[list], positions: list[float] | None
-        ) -> None:
+        def positions_validator(self, attribute: attr.Attribute[list], positions: list[float] | None) -> None:
             """
             Validate a list of point positions in the format [x1, y1, x2, y2, ..., xn, yn].
 
@@ -1740,16 +1691,8 @@ class Points(Shape):
         Returns:
             List[float]: The bounding box as [x0, y0, width, height].
         """
-        xs = [
-            p
-            for p, v in zip(self.points[0::2], self.visibility)
-            if v != __class__.Visibility.absent
-        ]
-        ys = [
-            p
-            for p, v in zip(self.points[1::2], self.visibility)
-            if v != __class__.Visibility.absent
-        ]
+        xs = [p for p, v in zip(self.points[0::2], self.visibility) if v != __class__.Visibility.absent]
+        ys = [p for p, v in zip(self.points[1::2], self.visibility) if v != __class__.Visibility.absent]
         x0 = min(xs, default=0)
         x1 = max(xs, default=0)
         y0 = min(ys, default=0)
@@ -1938,9 +1881,7 @@ class TabularCategories(Categories):
     @classmethod
     def from_iterable(
         cls,
-        iterable: Iterable[
-            Union[Tuple[str, Type[TableDtype]], Tuple[str, Type[TableDtype], Set[str]]]
-        ],
+        iterable: Iterable[Union[Tuple[str, Type[TableDtype]], Tuple[str, Type[TableDtype], Set[str]]]],
     ) -> TabularCategories:
         """
         Creates a TabularCategories from iterable.
@@ -2029,9 +1970,7 @@ class Tabular(Annotation):
 class Annotations(List[Annotation]):
     """List of `Annotation` equipped with additional utility functions."""
 
-    def get_semantic_seg_mask(
-        self, ignore_index: int = 0, dtype: np.dtype = np.uint8
-    ) -> np.ndarray:
+    def get_semantic_seg_mask(self, ignore_index: int = 0, dtype: np.dtype = np.uint8) -> np.ndarray:
         """Extract semantic segmentation mask from a collection of Datumaro `Mask`s.
 
         Args:

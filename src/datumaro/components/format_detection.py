@@ -203,7 +203,7 @@ class FormatDetectionContext:
 
     def _start_requirement(self, req_type: str) -> None:
         assert not self._one_or_more_context, (
-            f"a requirement ({req_type}) can't be placed directly within " "a 'require_any' block"
+            f"a requirement ({req_type}) can't be placed directly within a 'require_any' block"
         )
 
     def raise_unsupported(self) -> NoReturn:
@@ -291,9 +291,7 @@ class FormatDetectionContext:
         requirement_desc = f'dataset must contain a file matching pattern "{pattern}"'
 
         if exclude_fnames:
-            requirement_desc += (
-                " (but not named " + ", ".join(f'"{e}"' for e in exclude_fnames) + ")"
-            )
+            requirement_desc += " (but not named " + ", ".join(f'"{e}"' for e in exclude_fnames) + ")"
 
         if not self._is_path_within_root(pattern):
             self.fail(requirement_desc)
@@ -404,7 +402,7 @@ class FormatDetectionContext:
             # If no alternatives succeeded, and none failed, then there were
             # no alternatives at all.
             assert self._one_or_more_context.failed_alternatives, (
-                "a 'require_any' block must contain " "at least one 'alternative' block"
+                "a 'require_any' block must contain at least one 'alternative' block"
             )
 
             raise FormatRequirementsUnmet(self._one_or_more_context.failed_alternatives)
@@ -421,9 +419,7 @@ class FormatDetectionContext:
         Must only be used directly within a `with context.requirements()` block.
         """
 
-        assert self._one_or_more_context, (
-            "An 'alternative' block must be directly within " "a 'require_any' block"
-        )
+        assert self._one_or_more_context, "An 'alternative' block must be directly within a 'require_any' block"
 
         saved_one_or_more_context = self._one_or_more_context
         self._one_or_more_context = None
@@ -483,8 +479,7 @@ class RejectionCallback(Protocol):
         format_name: str,
         reason: RejectionReason,
         human_message: str,
-    ) -> Any:
-        ...
+    ) -> Any: ...
 
 
 def detect_dataset_format(
@@ -525,8 +520,7 @@ def detect_dataset_format(
             rejection_callback(
                 format_name,
                 RejectionReason.insufficient_confidence,
-                f"Another format ({format_with_more_confidence}) "
-                "was matched with more confidence",
+                f"Another format ({format_with_more_confidence}) was matched with more confidence",
             )
 
     max_confidence = 0
@@ -562,9 +556,7 @@ def detect_dataset_format(
     # We must revisit this after fixing detect().
     def _give_more_priority_to_with_subset_dirs(matches: List[DetectedFormat]):
         for idx, match in enumerate(matches):
-            with_subset_dir_match = DetectedFormat(
-                match.confidence, match.name + "_with_subset_dirs"
-            )
+            with_subset_dir_match = DetectedFormat(match.confidence, match.name + "_with_subset_dirs")
             if with_subset_dir_match in matches:
                 matches = matches.pop(idx)
                 return True

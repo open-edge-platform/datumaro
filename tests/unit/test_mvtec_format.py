@@ -14,7 +14,6 @@ from datumaro.plugins.data_formats.mvtec.importer import (
     MvtecDetectionImporter,
     MvtecSegmentationImporter,
 )
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, compare_datasets
 
@@ -35,9 +34,7 @@ class MVTecFormatTest(TestCase):
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    "label_" + str(label) for label in range(2)
-                ),
+                AnnotationType.label: LabelCategories.from_iterable("label_" + str(label) for label in range(2)),
             },
         )
 
@@ -67,9 +64,7 @@ class MVTecFormatTest(TestCase):
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    "label_" + str(label) for label in range(3)
-                ),
+                AnnotationType.label: LabelCategories.from_iterable("label_" + str(label) for label in range(3)),
             },
         )
 
@@ -99,9 +94,7 @@ class MVTecFormatTest(TestCase):
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    "label_" + str(label) for label in range(3)
-                ),
+                AnnotationType.label: LabelCategories.from_iterable("label_" + str(label) for label in range(3)),
             },
         )
 
@@ -136,9 +129,7 @@ class MvtecImporterTest(TestCase):
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    "label_" + str(label) for label in range(3)
-                ),
+                AnnotationType.label: LabelCategories.from_iterable("label_" + str(label) for label in range(3)),
             },
         )
 
@@ -174,9 +165,7 @@ class MvtecImporterTest(TestCase):
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    "label_" + str(label) for label in range(3)
-                ),
+                AnnotationType.label: LabelCategories.from_iterable("label_" + str(label) for label in range(3)),
             },
         )
 
@@ -204,9 +193,7 @@ class MvtecImporterTest(TestCase):
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    "label_" + str(label) for label in range(3)
-                ),
+                AnnotationType.label: LabelCategories.from_iterable("label_" + str(label) for label in range(3)),
             },
         )
 
@@ -240,9 +227,7 @@ class MVTecExporterTest(TestCase):
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    "label_" + str(label) for label in range(2)
-                ),
+                AnnotationType.label: LabelCategories.from_iterable("label_" + str(label) for label in range(2)),
             },
         )
 
@@ -260,9 +245,7 @@ class MVTecExporterTest(TestCase):
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    "label_" + str(label) for label in range(2)
-                ),
+                AnnotationType.label: LabelCategories.from_iterable("label_" + str(label) for label in range(2)),
             },
         )
 

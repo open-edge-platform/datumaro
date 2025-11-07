@@ -76,12 +76,8 @@ class TfDetectionApiExporter(Exporter):
         os.makedirs(self._save_dir, exist_ok=True)
 
         label_categories = self._extractor.categories().get(AnnotationType.label, LabelCategories())
-        get_label = (
-            lambda label_id: label_categories.items[label_id].name if label_id is not None else ""
-        )
-        label_ids = OrderedDict(
-            (label.name, 1 + idx) for idx, label in enumerate(label_categories.items)
-        )
+        get_label = lambda label_id: label_categories.items[label_id].name if label_id is not None else ""
+        label_ids = OrderedDict((label.name, 1 + idx) for idx, label in enumerate(label_categories.items))
         map_label_id = lambda label_id: label_ids.get(get_label(label_id), 0)
         self._get_label = get_label
         self._get_label_id = map_label_id
@@ -90,9 +86,7 @@ class TfDetectionApiExporter(Exporter):
             labelmap_path = osp.join(self._save_dir, DetectionApiPath.LABELMAP_FILE)
             with codecs.open(labelmap_path, "w", encoding="utf8") as f:
                 for label, idx in label_ids.items():
-                    f.write(
-                        "item {\n" + ("\tid: %s\n" % (idx)) + ("\tname: '%s'\n" % (label)) + "}\n\n"
-                    )
+                    f.write("item {\n" + ("\tid: %s\n" % (idx)) + ("\tname: '%s'\n" % (label)) + "}\n\n")
 
             anno_path = osp.join(self._save_dir, "%s.tfrecord" % (subset_name))
             with tf.io.TFRecordWriter(anno_path) as writer:
@@ -102,9 +96,7 @@ class TfDetectionApiExporter(Exporter):
 
     @staticmethod
     def _find_instances(annotations):
-        return find_instances(
-            a for a in annotations if a.type in {AnnotationType.bbox, AnnotationType.mask}
-        )
+        return find_instances(a for a in annotations if a.type in {AnnotationType.bbox, AnnotationType.mask})
 
     def _find_instance_parts(self, group, img_width, img_height):
         boxes = [a for a in group if a.type == AnnotationType.bbox]
@@ -162,18 +154,14 @@ class TfDetectionApiExporter(Exporter):
 
     def _make_tf_example(self, item):
         features = {
-            "image/source_id": bytes_feature(
-                str(item.attributes.get("source_id") or "").encode("utf-8")
-            ),
+            "image/source_id": bytes_feature(str(item.attributes.get("source_id") or "").encode("utf-8")),
         }
 
         filename = self._make_image_filename(item)
         features["image/filename"] = bytes_feature(filename.encode("utf-8"))
 
         if not isinstance(item.media, Image):
-            raise DatasetExportError(
-                "Failed to export dataset item '%s': " "item has no image info" % item.id
-            )
+            raise DatasetExportError("Failed to export dataset item '%s': item has no image info" % item.id)
         height, width = item.media.size
 
         features.update(

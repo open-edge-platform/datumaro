@@ -69,15 +69,14 @@ class FilterModes(Enum):
     def make_filter_args(cls, mode):
         if mode == cls.items:
             return {}
-        elif mode == cls.annotations:
+        if mode == cls.annotations:
             return {"filter_annotations": True}
-        elif mode == cls.items_annotations:
+        if mode == cls.items_annotations:
             return {
                 "filter_annotations": True,
                 "remove_empty": True,
             }
-        else:
-            raise NotImplementedError()
+        raise NotImplementedError
 
     @classmethod
     def list_options(cls):

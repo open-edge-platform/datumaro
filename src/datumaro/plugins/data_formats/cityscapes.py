@@ -13,13 +13,7 @@ from typing import List, Optional
 
 import numpy as np
 
-from datumaro.components.annotation import (
-    AnnotationType,
-    CompiledMask,
-    ExtractedMask,
-    LabelCategories,
-    MaskCategories,
-)
+from datumaro.components.annotation import AnnotationType, CompiledMask, ExtractedMask, LabelCategories, MaskCategories
 from datumaro.components.dataset_base import DatasetItem, SubsetBase
 from datumaro.components.dataset_item_storage import ItemStatus
 from datumaro.components.errors import AnnotationExportError, InvalidAnnotationError, MediaTypeError
@@ -153,13 +147,13 @@ def parse_label_map(path):
         for line in f:
             # skip empty and commented lines
             line = line.strip()
-            if not line or line and line[0] == "#":
+            if not line or (line and line[0] == "#"):
                 continue
 
             # color, name
             label_desc = line.strip().split()
 
-            if 2 < len(label_desc):
+            if len(label_desc) > 2:
                 name = label_desc[3]
                 color = tuple([int(c) for c in label_desc[:-1]])
             else:
@@ -199,9 +193,7 @@ class CityscapesBase(SubsetBase):
         if osp.basename(osp.dirname(path)) == CityscapesPath.GT_FINE_DIR:
             self._path = osp.dirname(osp.dirname(path))
             annotations_dir = path
-            images_dir = osp.join(
-                self._path, CityscapesPath.IMGS_FINE_DIR, CityscapesPath.ORIGINAL_IMAGE_DIR, subset
-            )
+            images_dir = osp.join(self._path, CityscapesPath.IMGS_FINE_DIR, CityscapesPath.ORIGINAL_IMAGE_DIR, subset)
         else:
             self._path = osp.dirname(osp.dirname(osp.dirname(path)))
             images_dir = path
@@ -237,9 +229,7 @@ class CityscapesBase(SubsetBase):
         return make_cityscapes_categories(label_map)
 
     def _get_id_from_image_path(self, path):
-        return osp.relpath(osp.splitext(path)[0], self._images_dir).replace(
-            "_" + CityscapesPath.ORIGINAL_IMAGE_DIR, ""
-        )
+        return osp.relpath(osp.splitext(path)[0], self._images_dir).replace("_" + CityscapesPath.ORIGINAL_IMAGE_DIR, "")
 
     def _get_id_from_mask_path(self, path, suffix):
         return osp.relpath(path, self._gt_anns_dir).replace(suffix, "")
@@ -250,8 +240,7 @@ class CityscapesBase(SubsetBase):
 
         if self._images_dir:
             image_path_by_id = {
-                self._get_id_from_image_path(p): p
-                for p in find_images(self._images_dir, recursive=True)
+                self._get_id_from_image_path(p): p for p in find_images(self._images_dir, recursive=True)
             }
 
         masks = glob.glob(
@@ -302,14 +291,10 @@ class CityscapesBase(SubsetBase):
             if image:
                 image = Image.from_file(path=image)
 
-            items[item_id] = DatasetItem(
-                id=item_id, subset=self._subset, media=image, annotations=anns
-            )
+            items[item_id] = DatasetItem(id=item_id, subset=self._subset, media=image, annotations=anns)
 
         for item_id, path in image_path_by_id.items():
-            items[item_id] = DatasetItem(
-                id=item_id, subset=self._subset, media=Image.from_file(path=path)
-            )
+            items[item_id] = DatasetItem(id=item_id, subset=self._subset, media=Image.from_file(path=path))
 
         return items
 
@@ -342,9 +327,7 @@ class CityscapesImporter(Importer):
 
     @classmethod
     def find_sources(cls, path):
-        sources = cls._find_sources_recursive(
-            path, "", "cityscapes", dirname=CityscapesPath.GT_FINE_DIR, max_depth=1
-        )
+        sources = cls._find_sources_recursive(path, "", "cityscapes", dirname=CityscapesPath.GT_FINE_DIR, max_depth=1)
 
         if not sources:
             sources = cls._find_sources_recursive(
@@ -459,9 +442,7 @@ class CityscapesExporter(Exporter):
                 self.save_mask(color_mask_path, compiled_mask.class_mask)
 
                 cls_mask_path = osp.join(mask_dir, mask_name + CityscapesPath.LABELIDS_IMAGE)
-                self.save_mask(
-                    cls_mask_path, compiled_mask.class_mask, apply_colormap=False, dtype=np.uint8
-                )
+                self.save_mask(cls_mask_path, compiled_mask.class_mask, apply_colormap=False, dtype=np.uint8)
 
                 inst_mask_path = osp.join(mask_dir, mask_name + CityscapesPath.INSTANCES_IMAGE)
                 self.save_mask(
@@ -488,18 +469,12 @@ class CityscapesExporter(Exporter):
             # use the default Cityscapes colormap
             label_map = CITYSCAPES_LABEL_MAP
 
-        elif (
-            label_map_source == LabelmapType.source.name
-            and AnnotationType.mask not in self._extractor.categories()
-        ):
+        elif label_map_source == LabelmapType.source.name and AnnotationType.mask not in self._extractor.categories():
             # generate colormap for input labels
             labels = self._extractor.categories().get(AnnotationType.label, LabelCategories())
             label_map = OrderedDict((item.name, None) for item in labels.items)
 
-        elif (
-            label_map_source == LabelmapType.source.name
-            and AnnotationType.mask in self._extractor.categories()
-        ):
+        elif label_map_source == LabelmapType.source.name and AnnotationType.mask in self._extractor.categories():
             # use source colormap
             labels = self._extractor.categories()[AnnotationType.label]
             colors = self._extractor.categories()[AnnotationType.mask]
@@ -520,8 +495,7 @@ class CityscapesExporter(Exporter):
 
         else:
             raise AnnotationExportError(
-                "Wrong labelmap specified, "
-                "expected one of %s or a file path" % ", ".join(t.name for t in LabelmapType)
+                "Wrong labelmap specified, expected one of %s or a file path" % ", ".join(t.name for t in LabelmapType)
             )
 
         self._categories = make_cityscapes_categories(label_map)
@@ -534,13 +508,9 @@ class CityscapesExporter(Exporter):
             self._categories[AnnotationType.label],
         )
 
-        void_labels = [
-            src_label for src_id, src_label in src_labels.items() if src_label not in dst_labels
-        ]
+        void_labels = [src_label for src_id, src_label in src_labels.items() if src_label not in dst_labels]
         if void_labels:
-            log.warning(
-                "The following labels are remapped to background: %s" % ", ".join(void_labels)
-            )
+            log.warning("The following labels are remapped to background: %s" % ", ".join(void_labels))
         log.debug(
             "Saving segmentations with the following label mapping: \n%s"
             % "\n".join(
@@ -606,8 +576,6 @@ class CityscapesExporter(Exporter):
             if osp.isdir(mask_dir) and not os.listdir(mask_dir):
                 os.rmdir(mask_dir)
 
-            img_dir = osp.join(
-                save_dir, CityscapesPath.IMGS_FINE_DIR, CityscapesPath.ORIGINAL_IMAGE_DIR, subset
-            )
+            img_dir = osp.join(save_dir, CityscapesPath.IMGS_FINE_DIR, CityscapesPath.ORIGINAL_IMAGE_DIR, subset)
             if osp.isdir(img_dir) and not os.listdir(img_dir):
                 os.rmdir(img_dir)

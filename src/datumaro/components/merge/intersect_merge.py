@@ -9,12 +9,7 @@ from typing import Dict, Sequence
 import attr
 from attr import attrib, attrs
 
-from datumaro.components.annotation import (
-    AnnotationType,
-    LabelCategories,
-    MaskCategories,
-    PointsCategories,
-)
+from datumaro.components.annotation import AnnotationType, LabelCategories, MaskCategories, PointsCategories
 from datumaro.components.annotations.merger import (
     AnnotationMerger,
     BboxMerger,
@@ -32,10 +27,7 @@ from datumaro.components.annotations.merger import (
     TabularMerger,
 )
 from datumaro.components.dataset_base import DatasetItem, IDataset
-from datumaro.components.dataset_item_storage import (
-    DatasetItemStorage,
-    DatasetItemStorageDatasetView,
-)
+from datumaro.components.dataset_item_storage import DatasetItemStorage, DatasetItemStorageDatasetView
 from datumaro.components.errors import (
     AnnotationsTooCloseError,
     ConflictingCategoriesError,
@@ -227,15 +219,11 @@ class IntersectMerge(Merger):
         for item in items.values():
             self._ann_map.update({id(a): (a, id(item)) for a in item.annotations})
             sources.append(item.annotations)
-        log.debug(
-            "Merging item %s: source annotations %s" % (self._item_id, list(map(len, sources)))
-        )
+        log.debug("Merging item %s: source annotations %s" % (self._item_id, list(map(len, sources))))
 
         annotations = self.merge_annotations(sources)
 
-        annotations = [
-            a for a in annotations if self.conf.output_conf_thresh <= a.attributes.get("score", 1)
-        ]
+        annotations = [a for a in annotations if self.conf.output_conf_thresh <= a.attributes.get("score", 1)]
 
         return self._item.wrap(annotations=annotations)
 
@@ -256,9 +244,7 @@ class IntersectMerge(Merger):
 
             for merged_ann, cluster in zip(merged_clusters, clusters):
                 attributes = self._find_cluster_attrs(cluster, merged_ann)
-                attributes = {
-                    k: v for k, v in attributes.items() if k not in self.conf.ignored_attributes
-                }
+                attributes = {k: v for k, v in attributes.items() if k not in self.conf.ignored_attributes}
                 attributes.update(merged_ann.attributes)
                 merged_ann.attributes = attributes
 
@@ -320,11 +306,7 @@ class IntersectMerge(Merger):
                 dst_label = dst_cat.find(src_label.name)[1]
                 if dst_label is not None:
                     if dst_label != src_label:
-                        if (
-                            src_label.parent
-                            and dst_label.parent
-                            and src_label.parent != dst_label.parent
-                        ):
+                        if src_label.parent and dst_label.parent and src_label.parent != dst_label.parent:
                             raise ConflictingCategoriesError(
                                 "Can't merge label category %s (from #%s): "
                                 "parent label conflict: %s vs. %s"
@@ -360,8 +342,6 @@ class IntersectMerge(Merger):
                             "%s (from #%s): %s vs. %s" % (src_label, src_id, src_cat, dst_cat),
                             sources=list(range(src_id)),
                         )
-                    else:
-                        pass
                 else:
                     dst_point_cat.add(dst_label_id, src_cat.labels, src_cat.joints)
 
@@ -390,8 +370,6 @@ class IntersectMerge(Merger):
                             "%s (from #%s): %s vs. %s" % (src_label, src_id, src_cat, dst_cat),
                             sources=list(range(src_id)),
                         )
-                    else:
-                        pass
                 else:
                     dst_mask_cat.colormap[dst_label_id] = src_cat
 
@@ -424,48 +402,40 @@ class IntersectMerge(Merger):
         def _for_type(t, **kwargs):
             if t is AnnotationType.unknown:
                 return _make(AnnotationMerger, **kwargs)
-            elif t is AnnotationType.label:
+            if t is AnnotationType.label:
                 return _make(LabelMerger, **kwargs)
-            elif t is AnnotationType.bbox:
+            if t is AnnotationType.bbox:
                 return _make(BboxMerger, **kwargs)
-            elif t is AnnotationType.mask:
+            if t is AnnotationType.mask:
                 return _make(MaskMerger, **kwargs)
-            elif t is AnnotationType.polygon:
+            if t is AnnotationType.polygon:
                 return _make(PolygonMerger, **kwargs)
-            elif t is AnnotationType.polyline:
+            if t is AnnotationType.polyline:
                 return _make(LineMerger, **kwargs)
-            elif t is AnnotationType.points:
+            if t is AnnotationType.points:
                 return _make(PointsMerger, **kwargs)
-            elif t is AnnotationType.caption:
+            if t is AnnotationType.caption:
                 return _make(CaptionsMerger, **kwargs)
-            elif t is AnnotationType.cuboid_3d:
+            if t is AnnotationType.cuboid_3d:
                 return _make(Cuboid3dMerger, **kwargs)
-            elif t is AnnotationType.super_resolution_annotation:
+            if t is AnnotationType.super_resolution_annotation or t is AnnotationType.depth_annotation:
                 return _make(ImageAnnotationMerger, **kwargs)
-            elif t is AnnotationType.depth_annotation:
-                return _make(ImageAnnotationMerger, **kwargs)
-            elif t is AnnotationType.ellipse:
+            if t is AnnotationType.ellipse:
                 return _make(EllipseMerger, **kwargs)
-            elif t is AnnotationType.tabular:
+            if t is AnnotationType.tabular:
                 return _make(TabularMerger, **kwargs)
-            elif t is AnnotationType.rotated_bbox:
+            if t is AnnotationType.rotated_bbox:
                 return _make(RotatedBboxMerger, **kwargs)
-            elif t is AnnotationType.cuboid_2d:
+            if t is AnnotationType.cuboid_2d:
                 return _make(Cuboid2DMerger, **kwargs)
-            else:
-                raise NotImplementedError("Type %s is not supported" % t)
+            raise NotImplementedError("Type %s is not supported" % t)
 
         instance_map = {}
         for s in sources:
             s_instances = find_instances(s)
             for inst in s_instances:
                 inst_bbox = max_bbox(
-                    [
-                        a
-                        for a in inst
-                        if a.type
-                        in {AnnotationType.polygon, AnnotationType.mask, AnnotationType.bbox}
-                    ]
+                    [a for a in inst if a.type in {AnnotationType.polygon, AnnotationType.mask, AnnotationType.bbox}]
                 )
                 for ann in inst:
                     instance_map[id(ann)] = [inst, inst_bbox]
@@ -529,21 +499,15 @@ class IntersectMerge(Merger):
                 if sum(votes.values()) < quorum:
                     # blame provokers
                     missing_sources = set(
-                        self.get_ann_source(id(a))
-                        for a in cluster
-                        if s.attributes.get(name) == winner
+                        self.get_ann_source(id(a)) for a in cluster if s.attributes.get(name) == winner
                     )
                 else:
                     # blame outliers
                     missing_sources = set(
-                        self.get_ann_source(id(a))
-                        for a in cluster
-                        if s.attributes.get(name) != winner
+                        self.get_ann_source(id(a)) for a in cluster if s.attributes.get(name) != winner
                     )
                 missing_sources = [self._dataset_map[s][1] for s in missing_sources]
-                self.add_item_error(
-                    FailedAttrVotingError, name, votes, ann, sources=missing_sources
-                )
+                self.add_item_error(FailedAttrVotingError, name, votes, ann, sources=missing_sources)
                 continue
             attributes[name] = winner
 
@@ -619,9 +583,7 @@ class IntersectMerge(Merger):
             return None
         item_id = self._ann_map[id(ann)][1]
         dataset_id = self._item_map[item_id][1]
-        return (
-            self._dataset_map[dataset_id][0].categories()[AnnotationType.label].items[label_id].name
-        )
+        return self._dataset_map[dataset_id][0].categories()[AnnotationType.label].items[label_id].name
 
     def get_any_label_name(self, ann, label_id):
         if label_id is None:

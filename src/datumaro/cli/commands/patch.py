@@ -70,7 +70,7 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
     parser.add_argument(
         "--overwrite",
         action="store_true",
-        help="Overwrite existing files in the save directory, " "if it is not empty",
+        help="Overwrite existing files in the save directory, if it is not empty",
     )
     parser.add_argument(
         "extra_args",
@@ -96,9 +96,7 @@ def patch_command(args):
     dst_dir = args.dst_dir or target_dataset.data_path
 
     if not args.overwrite and osp.isdir(dst_dir) and os.listdir(dst_dir):
-        raise CliException(
-            "Directory '%s' already exists " "(pass --overwrite to overwrite)" % dst_dir
-        )
+        raise CliException("Directory '%s' already exists (pass --overwrite to overwrite)" % dst_dir)
     dst_dir = osp.abspath(dst_dir)
 
     # Get the exporter for the target format

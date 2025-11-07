@@ -40,8 +40,7 @@ class _MeanStdCounter:
         size = item.media.size
         if size is None:
             log.warning(
-                "Item %s: can't detect image size, "
-                "the image will be skipped from pixel statistics",
+                "Item %s: can't detect image size, the image will be skipped from pixel statistics",
                 item.id,
             )
             return
@@ -133,9 +132,7 @@ class _MeanStdCounter:
         if n == 1:
             return counts[0], m(0, stats), v(0, stats)
         if n == 2:
-            return __class__._pairwise_stats(
-                counts[0], m(0, stats), v(0, stats), counts[1], m(1, stats), v(1, stats)
-            )
+            return __class__._pairwise_stats(counts[0], m(0, stats), v(0, stats), counts[1], m(1, stats), v(1, stats))
         h = n // 2
         return __class__._pairwise_stats(
             *__class__._compute_stats(stats[:h], counts[:h], m, v),
@@ -160,8 +157,7 @@ IMAGE_STATS_SCHEMA = {
 def compute_image_statistics(dataset: IDataset):
     if dataset.media_type() != Image:
         raise DatumaroError(
-            f"Your dataset's media_type is {dataset.media_type()}, "
-            "but only Image media_type is allowed."
+            f"Your dataset's media_type is {dataset.media_type()}, but only Image media_type is allowed."
         )
 
     stats = deepcopy(IMAGE_STATS_SCHEMA)
@@ -188,9 +184,7 @@ def compute_image_statistics(dataset: IDataset):
     def _extractor_stats(subset_name):
         sub_counter = _MeanStdCounter()
         sub_counter._stats = {
-            k: v
-            for k, v in stats_counter._stats.items()
-            if subset_name and k[1] == subset_name or not subset_name
+            k: v for k, v in stats_counter._stats.items() if (subset_name and k[1] == subset_name) or not subset_name
         }
 
         available = len(sub_counter._stats) != 0
@@ -221,7 +215,7 @@ def compute_image_statistics(dataset: IDataset):
         stats["subsets"][subset_name] = _extractor_stats(subset_name)
 
     unique_items = unique_counter.get_result()
-    repeated_items = [sorted(g) for g in unique_items.values() if 1 < len(g)]
+    repeated_items = [sorted(g) for g in unique_items.values() if len(g) > 1]
 
     stats["dataset"].update(
         {
@@ -366,9 +360,7 @@ class _ItemMatcher:
             if item.media and hasattr(item.media, "path"):
                 return hash(item.media.path)
 
-            log.warning(
-                "Item (%s, %s) has no image " "info, counted as unique", item.id, item.subset
-            )
+            log.warning("Item (%s, %s) has no image info, counted as unique", item.id, item.subset)
             return None
 
         # Disable B303:md5, because the hash is not used in a security context

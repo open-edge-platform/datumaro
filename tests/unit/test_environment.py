@@ -34,9 +34,9 @@ class EnvironmentTest:
 
         misregistered_names = lazy_plugin_names.difference(no_lazy_plugin_names)
         unregistered_names = no_lazy_plugin_names.difference(lazy_plugin_names)
-        assert (
-            lazy_plugin_names == no_lazy_plugin_names
-        ), f"misregistered_names={misregistered_names}, unregistered_names={unregistered_names}"
+        assert lazy_plugin_names == no_lazy_plugin_names, (
+            f"misregistered_names={misregistered_names}, unregistered_names={unregistered_names}"
+        )
 
     def test_equivalance(self, fxt_lazy_import: Environment, fxt_no_lazy_import: Environment):
         self._test_equivalance(fxt_lazy_import.extractors, fxt_no_lazy_import.extractors)

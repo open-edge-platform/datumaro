@@ -33,9 +33,7 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         build_describe_subparser(_subparsers, name, downloader)
 
 
-def build_get_subparser(
-    subparsers: argparse._SubParsersAction, name: str, downloader: IDatasetDownloader
-):
+def build_get_subparser(subparsers: argparse._SubParsersAction, name: str, downloader: IDatasetDownloader):
     parser = subparsers.add_parser(
         name="get",
         help="Download a publicly available dataset",
@@ -43,18 +41,14 @@ def build_get_subparser(
         formatter_class=MultilineFormatter,
     )
     parser.add_argument("-i", "--dataset-id", required=True, help="Which dataset to download")
-    parser.add_argument(
-        "-f", "--output-format", help="Output format (default: original format of the dataset)"
-    )
+    parser.add_argument("-f", "--output-format", help="Output format (default: original format of the dataset)")
     parser.add_argument(
         "-o",
         "--output-dir",
         dest="dst_dir",
         help="Directory to save output (default: a subdir in the current one)",
     )
-    parser.add_argument(
-        "--overwrite", action="store_true", help="Overwrite existing files in the save directory"
-    )
+    parser.add_argument("--overwrite", action="store_true", help="Overwrite existing files in the save directory")
     parser.add_argument("-s", "--subset", help="Save only the specified subset")
     parser.add_argument(
         "extra_args",
@@ -68,9 +62,7 @@ def build_get_subparser(
     return parser
 
 
-def build_describe_subparser(
-    subparsers: argparse._SubParsersAction, name: str, downloader: IDatasetDownloader
-):
+def build_describe_subparser(subparsers: argparse._SubParsersAction, name: str, downloader: IDatasetDownloader):
     parser = subparsers.add_parser(
         name="describe",
         help="Print information about downloadable datasets",
@@ -88,9 +80,7 @@ def build_describe_subparser(
         default="text",
         help="Format in which to report the information (default: %(default)s)",
     )
-    parser.add_argument(
-        "--report-file", help="File to which to write the report (default: standard output)"
-    )
+    parser.add_argument("--report-file", help="File to which to write the report (default: standard output)")
     parser.set_defaults(command=describe_downloads_command, downloader=downloader)
 
     return parser

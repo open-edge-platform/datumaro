@@ -11,14 +11,7 @@ import pytest
 from lxml import etree as ElementTree  # nosec
 
 import datumaro.plugins.data_formats.voc.format as VOC
-from datumaro.components.annotation import (
-    AnnotationType,
-    Bbox,
-    Label,
-    LabelCategories,
-    Mask,
-    MaskCategories,
-)
+from datumaro.components.annotation import AnnotationType, Bbox, Label, LabelCategories, Mask, MaskCategories
 from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.environment import DEFAULT_ENVIRONMENT
@@ -50,11 +43,10 @@ from datumaro.plugins.data_formats.voc.importer import (
 )
 from datumaro.util.image import save_image
 from datumaro.util.mask_tools import load_mask
-
-from .base import TestDataFormatBase
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import compare_datasets
+
+from .base import TestDataFormatBase
 
 DUMMY_DATASET_DIR = get_test_asset_path("voc_dataset", "voc_dataset1")
 
@@ -341,9 +333,7 @@ class VocFormatImportExportTest(TestDataFormatBase):
             (DUMMY_DATASET_DIR, "voc_detection"),
         ],
     )
-    def test_can_pickle(
-        self, fxt_dataset_dir: str, fxt_format: str, request: pytest.FixtureRequest
-    ):
+    def test_can_pickle(self, fxt_dataset_dir: str, fxt_format: str, request: pytest.FixtureRequest):
         source = Dataset.import_from(fxt_dataset_dir, format=fxt_format)
 
         parsed = pickle.loads(pickle.dumps(source))
@@ -411,8 +401,7 @@ class VocFormatImportExportTest(TestDataFormatBase):
         with pytest.raises(InvalidAnnotationError) as err_info:
             VOC.parse_label_map(path)
         assert (
-            str(err_info.value)
-            == "Label description has wrong number of fields '1'. Expected 4 ':'-separated fields."
+            str(err_info.value) == "Label description has wrong number of fields '1'. Expected 4 ':'-separated fields."
         )
 
     def test_can_report_repeated_label_in_labelmap(self, test_dir: str):
@@ -432,10 +421,7 @@ class VocFormatImportExportTest(TestDataFormatBase):
 
         with pytest.raises(InvalidAnnotationError) as err_info:
             VOC.parse_label_map(path)
-        assert (
-            str(err_info.value)
-            == "Label 'a' has wrong color '['10', '20']'. Expected an 'r,g,b' triplet."
-        )
+        assert str(err_info.value) == "Label 'a' has wrong color '['10', '20']'. Expected an 'r,g,b' triplet."
 
 
 class VocFormatPracticeTest:
@@ -594,9 +580,7 @@ class VocFormatPracticeTest:
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    ["background", "a", "b", "c", "d"]
-                ),
+                AnnotationType.label: LabelCategories.from_iterable(["background", "a", "b", "c", "d"]),
                 AnnotationType.mask: MaskCategories(colormap=VOC.generate_colormap(5)),
             },
         )
@@ -631,9 +615,7 @@ class VocFormatPracticeTest:
         helper_tc = request.getfixturevalue("helper_tc")
         compare_datasets(helper_tc, dst_dataset, imported_dataset, require_media=True)
 
-    def test_can_save_voc_segm_with_many_instances(
-        self, test_dir: str, request: pytest.FixtureRequest
-    ):
+    def test_can_save_voc_segm_with_many_instances(self, test_dir: str, request: pytest.FixtureRequest):
         def bit(x, y, shape):
             mask = np.zeros(shape)
             mask[y, x] = 1
@@ -677,17 +659,13 @@ class VocFormatPracticeTest:
             categories=VOC.make_voc_categories(task=VocTask.voc_segmentation),
         )
 
-        VocSegmentationExporter.convert(
-            src_dataset, save_dir=test_dir, save_media=True, label_map="voc_segmentation"
-        )
+        VocSegmentationExporter.convert(src_dataset, save_dir=test_dir, save_media=True, label_map="voc_segmentation")
         imported_dataset = Dataset.import_from(test_dir, VocSegmentationImporter.NAME)
 
         helper_tc = request.getfixturevalue("helper_tc")
         compare_datasets(helper_tc, dst_dataset, imported_dataset, require_media=True)
 
-    def test_dataset_with_source_labelmap_undefined(
-        self, test_dir: str, request: pytest.FixtureRequest
-    ):
+    def test_dataset_with_source_labelmap_undefined(self, test_dir: str, request: pytest.FixtureRequest):
         src_dataset = Dataset.from_iterable(
             [
                 DatasetItem(
@@ -698,9 +676,7 @@ class VocFormatPracticeTest:
                     ],
                 ),
             ],
-            categories={
-                AnnotationType.label: LabelCategories.from_iterable(["Label_1", "label_2"])
-            },
+            categories={AnnotationType.label: LabelCategories.from_iterable(["Label_1", "label_2"])},
         )
 
         dst_dataset = Dataset.from_iterable(
@@ -739,11 +715,7 @@ class VocFormatPracticeTest:
                     ],
                 )
             ],
-            categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    ["background", "Label_1", "label_2"]
-                )
-            },
+            categories={AnnotationType.label: LabelCategories.from_iterable(["background", "Label_1", "label_2"])},
         )
 
         VocDetectionExporter.convert(
@@ -756,9 +728,7 @@ class VocFormatPracticeTest:
         helper_tc = request.getfixturevalue("helper_tc")
         compare_datasets(helper_tc, dst_dataset, imported_dataset, require_media=True)
 
-    def test_dataset_with_source_labelmap_defined(
-        self, test_dir: str, request: pytest.FixtureRequest
-    ):
+    def test_dataset_with_source_labelmap_defined(self, test_dir: str, request: pytest.FixtureRequest):
         src_dataset = Dataset.from_iterable(
             [
                 DatasetItem(
@@ -769,11 +739,7 @@ class VocFormatPracticeTest:
                     ],
                 )
             ],
-            categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    ["label_1", "background", "label_2"]
-                )
-            },
+            categories={AnnotationType.label: LabelCategories.from_iterable(["label_1", "background", "label_2"])},
         )
 
         dst_dataset = Dataset.from_iterable(
@@ -812,11 +778,7 @@ class VocFormatPracticeTest:
                     ],
                 )
             ],
-            categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    ["background", "label_1", "label_2"]
-                )
-            },
+            categories={AnnotationType.label: LabelCategories.from_iterable(["background", "label_1", "label_2"])},
         )
 
         VocDetectionExporter.convert(
@@ -955,9 +917,7 @@ class VocFormatPracticeTest:
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    ["background", "a", "b", "c", "d"]
-                ),
+                AnnotationType.label: LabelCategories.from_iterable(["background", "a", "b", "c", "d"]),
             },
         )
 
@@ -978,9 +938,7 @@ class VocFormatPracticeTest:
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    ["background", "a", "b", "c", "d"]
-                ),
+                AnnotationType.label: LabelCategories.from_iterable(["background", "a", "b", "c", "d"]),
                 AnnotationType.mask: MaskCategories(colormap=VOC.generate_colormap(5)),
             },
         )
@@ -1010,9 +968,7 @@ class VocFormatPracticeTest:
         helper_tc = request.getfixturevalue("helper_tc")
         compare_datasets(helper_tc, dst_dataset, imported_dataset, require_media=True)
 
-    def test_can_save_dataset_with_no_data_images(
-        self, test_dir: str, request: pytest.FixtureRequest
-    ):
+    def test_can_save_dataset_with_no_data_images(self, test_dir: str, request: pytest.FixtureRequest):
         src_dataset = Dataset.from_iterable(
             [
                 DatasetItem(
@@ -1080,9 +1036,7 @@ class VocFormatPracticeTest:
 
         src_dataset = dataset_with_images(fxt_task)
 
-        fxt_exporter.convert(
-            src_dataset, save_dir=test_dir, save_media=True, label_map=fxt_importer.NAME
-        )
+        fxt_exporter.convert(src_dataset, save_dir=test_dir, save_media=True, label_map=fxt_importer.NAME)
         imported_dataset = Dataset.import_from(test_dir, fxt_importer.NAME)
 
         helper_tc = request.getfixturevalue("helper_tc")
@@ -1117,9 +1071,7 @@ class VocFormatPracticeTest:
 
         src_dataset = dataset_with_no_subsets(fxt_task)
 
-        fxt_exporter.convert(
-            src_dataset, save_dir=test_dir, save_media=True, label_map=fxt_importer.NAME
-        )
+        fxt_exporter.convert(src_dataset, save_dir=test_dir, save_media=True, label_map=fxt_importer.NAME)
         imported_dataset = Dataset.import_from(test_dir, fxt_importer.NAME)
 
         helper_tc = request.getfixturevalue("helper_tc")
@@ -1157,9 +1109,7 @@ class VocFormatPracticeTest:
 
         src_dataset = dataset_with_cyrillic_and_spaces_in_filename(fxt_task)
 
-        fxt_exporter.convert(
-            src_dataset, save_dir=test_dir, save_media=True, label_map=fxt_importer.NAME
-        )
+        fxt_exporter.convert(src_dataset, save_dir=test_dir, save_media=True, label_map=fxt_importer.NAME)
         imported_dataset = Dataset.import_from(test_dir, fxt_importer.NAME)
 
         helper_tc = request.getfixturevalue("helper_tc")
@@ -1216,9 +1166,7 @@ class VocFormatPracticeTest:
 
         src_dataset = dataset_with_image_info(fxt_task)
 
-        fxt_exporter.convert(
-            src_dataset, save_dir=test_dir, save_media=True, label_map=fxt_importer.NAME
-        )
+        fxt_exporter.convert(src_dataset, save_dir=test_dir, save_media=True, label_map=fxt_importer.NAME)
         imported_dataset = Dataset.import_from(test_dir, fxt_importer.NAME)
 
         helper_tc = request.getfixturevalue("helper_tc")
@@ -1245,9 +1193,7 @@ class VocFormatPracticeTest:
         def dataset_with_arbitrary_extension(task):
             return Dataset.from_iterable(
                 [
-                    DatasetItem(
-                        id="q/1", media=Image.from_numpy(data=np.zeros((4, 3, 3)), ext=".JPEG")
-                    ),
+                    DatasetItem(id="q/1", media=Image.from_numpy(data=np.zeros((4, 3, 3)), ext=".JPEG")),
                     DatasetItem(id="a/b/c/2", media=Image.from_numpy(data=np.zeros((3, 4, 3)))),
                 ],
                 categories=VOC.make_voc_categories(task=task),
@@ -1255,9 +1201,7 @@ class VocFormatPracticeTest:
 
         src_dataset = dataset_with_arbitrary_extension(fxt_task)
 
-        fxt_exporter.convert(
-            src_dataset, save_dir=test_dir, save_media=True, label_map=fxt_importer.NAME
-        )
+        fxt_exporter.convert(src_dataset, save_dir=test_dir, save_media=True, label_map=fxt_importer.NAME)
         imported_dataset = Dataset.import_from(test_dir, fxt_importer.NAME)
 
         helper_tc = request.getfixturevalue("helper_tc")
@@ -1293,9 +1237,7 @@ class VocFormatPracticeTest:
 
         src_dataset = dataset_with_relative_paths(fxt_task)
 
-        fxt_exporter.convert(
-            src_dataset, save_dir=test_dir, save_media=True, label_map=fxt_importer.NAME
-        )
+        fxt_exporter.convert(src_dataset, save_dir=test_dir, save_media=True, label_map=fxt_importer.NAME)
         imported_dataset = Dataset.import_from(test_dir, fxt_importer.NAME)
 
         helper_tc = request.getfixturevalue("helper_tc")
@@ -1351,9 +1293,7 @@ class VocFormatErrorTest:
             ("voc_action", "Action"),
         ],
     )
-    def test_can_parse_xml_without_errors(
-        self, fxt_format: str, fxt_format_dir: str, test_dir: str
-    ):
+    def test_can_parse_xml_without_errors(self, fxt_format: str, fxt_format_dir: str, test_dir: str):
         self._write_xml_dataset(test_dir, format_dir=fxt_format_dir)
 
         dataset = Dataset.import_from(test_dir, fxt_format)
@@ -1367,10 +1307,7 @@ class VocFormatErrorTest:
 
         with pytest.raises(AnnotationImportError) as err_info:
             Dataset.import_from(test_dir, format="voc_detection").init_cache()
-        assert (
-            str(err_info.value)
-            == "Failed to import item ('a', 'test') annotation: Undeclared label 'test'"
-        )
+        assert str(err_info.value) == "Failed to import item ('a', 'test') annotation: Undeclared label 'test'"
 
     @pytest.mark.parametrize(
         "fxt_format,fxt_format_dir",
@@ -1431,9 +1368,7 @@ class VocFormatErrorTest:
             "object/attributes/attribute/value",
         ],
     )
-    def test_can_report_missing_field_in_xml(
-        self, fxt_format: str, fxt_format_dir: str, fxt_key: str, test_dir: str
-    ):
+    def test_can_report_missing_field_in_xml(self, fxt_format: str, fxt_format_dir: str, fxt_key: str, test_dir: str):
         def mangle_xml(xml: ElementTree.ElementBase):
             for elem in xml.findall(fxt_key):
                 elem.getparent().remove(elem)
@@ -1444,9 +1379,7 @@ class VocFormatErrorTest:
             Dataset.import_from(test_dir, format=fxt_format).init_cache()
         assert "Missing annotation field" in str(err_info.value)
 
-    def test_can_parse_classification_without_errors(
-        self, test_dir: str, request: pytest.FixtureRequest
-    ):
+    def test_can_parse_classification_without_errors(self, test_dir: str, request: pytest.FixtureRequest):
         subset_file = osp.join(test_dir, "ImageSets", "Main", "test.txt")
         os.makedirs(osp.dirname(subset_file))
         with open(subset_file, "w") as f:
@@ -1500,10 +1433,7 @@ class VocFormatErrorTest:
 
         with pytest.raises(InvalidAnnotationError) as err_info:
             Dataset.import_from(test_dir, format="voc_classification").init_cache()
-        assert (
-            str(err_info.value)
-            == "cat_test.txt:1: unexpected class existence value '3', expected -1, 0 or 1"
-        )
+        assert str(err_info.value) == "cat_test.txt:1: unexpected class existence value '3', expected -1, 0 or 1"
 
     def test_can_report_invalid_label_in_segmentation_cls_mask(self, test_dir: str):
         subset_file = osp.join(test_dir, "ImageSets", "Segmentation", "test.txt")
@@ -1517,10 +1447,7 @@ class VocFormatErrorTest:
 
         with pytest.raises(AnnotationImportError) as err_info:
             Dataset.import_from(test_dir, format="voc_segmentation").init_cache()
-        assert (
-            str(err_info.value)
-            == "Failed to import item ('a', 'test') annotation: Undeclared label '30'"
-        )
+        assert str(err_info.value) == "Failed to import item ('a', 'test') annotation: Undeclared label '30'"
 
     def test_can_report_invalid_label_in_segmentation_both_masks(self, test_dir: str):
         subset_file = osp.join(test_dir, "ImageSets", "Segmentation", "test.txt")
@@ -1538,10 +1465,7 @@ class VocFormatErrorTest:
 
         with pytest.raises(AnnotationImportError) as err_info:
             Dataset.import_from(test_dir, format="voc_segmentation").init_cache()
-        assert (
-            str(err_info.value)
-            == "Failed to import item ('a', 'test') annotation: Undeclared label '30'"
-        )
+        assert str(err_info.value) == "Failed to import item ('a', 'test') annotation: Undeclared label '30'"
 
     def test_can_report_invalid_quotes_in_lists_of_layout_task(self, test_dir: str):
         subset_file = osp.join(test_dir, "ImageSets", "Layout", "test.txt")

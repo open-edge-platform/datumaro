@@ -55,8 +55,7 @@ class _LogManager:
             "--loglevel",
             type=loglevel,
             default="info",
-            help="Logging level (options: %s; default: %s)"
-            % (", ".join(_log_levels.keys()), "%(default)s"),
+            help="Logging level (options: %s; default: %s)" % (", ".join(_log_levels.keys()), "%(default)s"),
         )
         return parser
 
@@ -111,13 +110,9 @@ def make_parser():
         subcommands_desc += "Helper Commands:\n"
         subcommands_desc += make_subcommands_help(known_helpers, help_line_start)
     if subcommands_desc:
-        subcommands_desc += (
-            "\nRun '%s COMMAND --help' for more information on a command." % parser.prog
-        )
+        subcommands_desc += "\nRun '%s COMMAND --help' for more information on a command." % parser.prog
 
-    subcommands = parser.add_subparsers(
-        title=subcommands_desc, description="", help=argparse.SUPPRESS
-    )
+    subcommands = parser.add_subparsers(title=subcommands_desc, description="", help=argparse.SUPPRESS)
     for command_name, command, _ in known_contexts + known_commands + known_helpers:
         if command is not None:
             add_subparser(subcommands, command_name, command.build_parser)

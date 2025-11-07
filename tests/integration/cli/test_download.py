@@ -4,8 +4,6 @@
 import contextlib
 import io
 import os.path as osp
-from unittest import TestCase
-from unittest.case import skipIf
 
 import pytest
 
@@ -13,8 +11,7 @@ from datumaro.cli.commands.downloaders.kaggle import KAGGLE_API_KEY_EXISTS
 from datumaro.components.dataset import Dataset
 from datumaro.components.extractor_tfds import AVAILABLE_TFDS_DATASETS, TFDS_EXTRACTOR_AVAILABLE
 from datumaro.util import parse_json
-
-from tests.utils.test_utils import TestCaseHelper, TestDir, compare_datasets, mock_tfds_data
+from tests.utils.test_utils import TestCaseHelper, compare_datasets, mock_tfds_data
 from tests.utils.test_utils import run_datum as run
 
 
@@ -94,9 +91,7 @@ class DownloadGetTest:
 
     @mock_tfds_data(subsets=("train", "val"))
     def test_download_subset(self, test_dir: str):
-        expected_dataset = Dataset(
-            AVAILABLE_TFDS_DATASETS["mnist"].make_extractor().get_subset("train")
-        )
+        expected_dataset = Dataset(AVAILABLE_TFDS_DATASETS["mnist"].make_extractor().get_subset("train"))
 
         run(
             self._helper_tc,

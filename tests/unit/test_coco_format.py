@@ -53,7 +53,6 @@ from datumaro.plugins.data_formats.coco.exporter import (
 )
 from datumaro.plugins.data_formats.coco.format import CocoPath
 from datumaro.util import dump_json_file, parse_json_file
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import (
     TestDir,
@@ -82,9 +81,7 @@ class CocoImporterTest:
     def test_can_export_and_import_back(self, format, path, stream, test_dir, helper_tc):
         dataset = Dataset.import_from(path, format)
         dataset.export(test_dir, format)
-        back_dataset = (
-            Dataset.import_from(test_dir) if not stream else StreamDataset.import_from(test_dir)
-        )
+        back_dataset = Dataset.import_from(test_dir) if not stream else StreamDataset.import_from(test_dir)
         check_is_stream(back_dataset, stream)
         compare_datasets(helper_tc, dataset, back_dataset)
 
@@ -125,9 +122,7 @@ class CocoImporterTest:
                 with ChangeCWD(rel_path):
                     Dataset.import_from(osp.relpath(path, rel_path), format)
                     for anno_file in os.listdir(os.path.join(path, CocoPath.ANNOTATIONS_DIR)):
-                        dataset_dir = osp.relpath(
-                            os.path.join(path, CocoPath.ANNOTATIONS_DIR, anno_file), rel_path
-                        )
+                        dataset_dir = osp.relpath(os.path.join(path, CocoPath.ANNOTATIONS_DIR, anno_file), rel_path)
                         dataset = (
                             Dataset.import_from(dataset_dir, format)
                             if not stream
@@ -142,9 +137,7 @@ class CocoImporterTest:
             ("", osp.join(DUMMY_DATASET_DIR, "coco_instances")),
             (
                 "train",
-                osp.join(
-                    DUMMY_DATASET_DIR, "coco_instances", "annotations", "instances_train.json"
-                ),
+                osp.join(DUMMY_DATASET_DIR, "coco_instances", "annotations", "instances_train.json"),
             ),
             (
                 "val",
@@ -161,9 +154,7 @@ class CocoImporterTest:
                     subset="train",
                     media=Image.from_numpy(data=np.ones((5, 10, 3))),
                     attributes={"id": 5},
-                    annotations=[
-                        Bbox(2, 2, 3, 1, label=1, group=1, id=1, attributes={"is_crowd": False})
-                    ],
+                    annotations=[Bbox(2, 2, 3, 1, label=1, group=1, id=1, attributes={"is_crowd": False})],
                 ),
                 DatasetItem(
                     id="b",
@@ -215,18 +206,11 @@ class CocoImporterTest:
 
         expected = expected_dataset.get_subset(subset) if subset else expected_dataset
 
-        dataset = (
-            Dataset.import_from(path, format)
-            if not stream
-            else StreamDataset.import_from(path, format)
-        )
+        dataset = Dataset.import_from(path, format) if not stream else StreamDataset.import_from(path, format)
         check_is_stream(dataset, stream)
         compare_datasets(helper_tc, expected, dataset, require_media=True)
 
-    @skip(
-        "COCO format is required to specify the task in annotation file "
-        " for resolving ambiguity problem."
-    )
+    @skip("COCO format is required to specify the task in annotation file  for resolving ambiguity problem.")
     @pytest.mark.parametrize("stream", [True, False])
     def test_can_import_instances_with_any_annotation_filename(self, stream, test_dir, helper_tc):
         expected_dataset = Dataset.from_iterable(
@@ -236,9 +220,7 @@ class CocoImporterTest:
                     subset="default",
                     media=Image.from_numpy(data=np.ones((5, 10, 3))),
                     attributes={"id": 5},
-                    annotations=[
-                        Bbox(2, 2, 3, 1, label=1, group=1, id=1, attributes={"is_crowd": False})
-                    ],
+                    annotations=[Bbox(2, 2, 3, 1, label=1, group=1, id=1, attributes={"is_crowd": False})],
                 ),
             ],
             categories=["a", "b", "c"],
@@ -254,9 +236,7 @@ class CocoImporterTest:
         )
 
         imported_dataset = (
-            Dataset.import_from(dataset_dir, format)
-            if not stream
-            else StreamDataset.import_from(dataset_dir, format)
+            Dataset.import_from(dataset_dir, format) if not stream else StreamDataset.import_from(dataset_dir, format)
         )
 
         check_is_stream(imported_dataset, stream)
@@ -271,9 +251,7 @@ class CocoImporterTest:
                     subset="default",
                     media=Image.from_numpy(data=np.ones((5, 10, 3))),
                     attributes={"id": 5},
-                    annotations=[
-                        Bbox(2, 2, 3, 1, label=1, group=1, id=1, attributes={"is_crowd": False})
-                    ],
+                    annotations=[Bbox(2, 2, 3, 1, label=1, group=1, id=1, attributes={"is_crowd": False})],
                 ),
             ],
             categories=["a", "b", "c"],
@@ -331,17 +309,13 @@ class CocoImporterTest:
                     subset="train",
                     media=Image.from_numpy(data=np.ones((5, 10, 3))),
                     attributes={"id": 5},
-                    annotations=[
-                        Bbox(2, 2, 3, 1, label=2, group=1, id=1, attributes={"is_crowd": False})
-                    ],
+                    annotations=[Bbox(2, 2, 3, 1, label=2, group=1, id=1, attributes={"is_crowd": False})],
                 ),
             ],
             categories=["class-0", "a", "b", "class-3", "c"],
         )
 
-        dataset_dir = osp.join(
-            DUMMY_DATASET_DIR, "coco_instances", "annotations", "instances_train.json"
-        )
+        dataset_dir = osp.join(DUMMY_DATASET_DIR, "coco_instances", "annotations", "instances_train.json")
         format = "coco_instances"
         actual_dataset = (
             Dataset.import_from(dataset_dir, format, keep_original_category_ids=True)
@@ -394,18 +368,11 @@ class CocoImporterTest:
 
         expected = expected_dataset.get_subset(subset) if subset else expected_dataset
 
-        dataset = (
-            Dataset.import_from(path, format)
-            if not stream
-            else StreamDataset.import_from(path, format)
-        )
+        dataset = Dataset.import_from(path, format) if not stream else StreamDataset.import_from(path, format)
         check_is_stream(dataset, stream)
         compare_datasets(helper_tc, expected, dataset, require_media=True)
 
-    @skip(
-        "COCO format is required to specify the task in annotation file "
-        " for resolving ambiguity problem."
-    )
+    @skip("COCO format is required to specify the task in annotation file  for resolving ambiguity problem.")
     @pytest.mark.parametrize("stream", [True, False])
     def test_can_import_captions_with_any_annotation_filename(self, stream, test_dir, helper_tc):
         expected_dataset = Dataset.from_iterable(
@@ -432,9 +399,7 @@ class CocoImporterTest:
         )
 
         imported_dataset = (
-            Dataset.import_from(dataset_dir, format)
-            if not stream
-            else StreamDataset.import_from(dataset_dir, format)
+            Dataset.import_from(dataset_dir, format) if not stream else StreamDataset.import_from(dataset_dir, format)
         )
         check_is_stream(imported_dataset, stream)
         compare_datasets(helper_tc, expected_dataset, imported_dataset, require_media=True)
@@ -480,18 +445,11 @@ class CocoImporterTest:
 
         expected = expected_dataset.get_subset(subset) if subset else expected_dataset
 
-        dataset = (
-            Dataset.import_from(path, format)
-            if not stream
-            else StreamDataset.import_from(path, format)
-        )
+        dataset = Dataset.import_from(path, format) if not stream else StreamDataset.import_from(path, format)
         check_is_stream(dataset, stream)
         compare_datasets(helper_tc, expected, dataset, require_media=True)
 
-    @skip(
-        "COCO format is required to specify the task in annotation file "
-        " for resolving ambiguity problem."
-    )
+    @skip("COCO format is required to specify the task in annotation file  for resolving ambiguity problem.")
     @pytest.mark.parametrize("stream", [True, False])
     def test_can_import_labels_with_any_annotation_filename(self, stream, test_dir, helper_tc):
         expected_dataset = Dataset.from_iterable(
@@ -519,9 +477,7 @@ class CocoImporterTest:
         )
 
         imported_dataset = (
-            Dataset.import_from(dataset_dir, format)
-            if not stream
-            else StreamDataset.import_from(dataset_dir, format)
+            Dataset.import_from(dataset_dir, format) if not stream else StreamDataset.import_from(dataset_dir, format)
         )
         check_is_stream(imported_dataset, stream)
         compare_datasets(helper_tc, expected_dataset, imported_dataset, require_media=True)
@@ -633,26 +589,17 @@ class CocoImporterTest:
             ],
             categories={
                 AnnotationType.label: LabelCategories.from_iterable(["a", "b"]),
-                AnnotationType.points: PointsCategories.from_iterable(
-                    (i, None, [[0, 1], [1, 2]]) for i in range(2)
-                ),
+                AnnotationType.points: PointsCategories.from_iterable((i, None, [[0, 1], [1, 2]]) for i in range(2)),
             },
         )
 
         expected = expected_dataset.get_subset(subset) if subset else expected_dataset
 
-        dataset = (
-            Dataset.import_from(path, format)
-            if not stream
-            else StreamDataset.import_from(path, format)
-        )
+        dataset = Dataset.import_from(path, format) if not stream else StreamDataset.import_from(path, format)
         check_is_stream(dataset, stream)
         compare_datasets(helper_tc, expected, dataset, require_media=True)
 
-    @skip(
-        "COCO format is required to specify the task in annotation file "
-        " for resolving ambiguity problem."
-    )
+    @skip("COCO format is required to specify the task in annotation file  for resolving ambiguity problem.")
     @pytest.mark.parametrize("stream", [True, False])
     def test_can_import_keypoints_with_any_annotation_filename(self, stream, test_dir, helper_tc):
         expected_dataset = Dataset.from_iterable(
@@ -677,9 +624,7 @@ class CocoImporterTest:
             ],
             categories={
                 AnnotationType.label: LabelCategories.from_iterable(["a", "b"]),
-                AnnotationType.points: PointsCategories.from_iterable(
-                    (i, None, [[0, 1], [1, 2]]) for i in range(2)
-                ),
+                AnnotationType.points: PointsCategories.from_iterable((i, None, [[0, 1], [1, 2]]) for i in range(2)),
             },
         )
 
@@ -693,9 +638,7 @@ class CocoImporterTest:
         )
 
         imported_dataset = (
-            Dataset.import_from(dataset_dir, format)
-            if not stream
-            else StreamDataset.import_from(dataset_dir, format)
+            Dataset.import_from(dataset_dir, format) if not stream else StreamDataset.import_from(dataset_dir, format)
         )
         check_is_stream(imported_dataset, stream)
         compare_datasets(helper_tc, expected_dataset, imported_dataset, require_media=True)
@@ -753,15 +696,11 @@ class CocoImporterTest:
             ("", osp.join(DUMMY_DATASET_DIR, "coco_image_info")),
             (
                 "train",
-                osp.join(
-                    DUMMY_DATASET_DIR, "coco_image_info", "annotations", "image_info_train.json"
-                ),
+                osp.join(DUMMY_DATASET_DIR, "coco_image_info", "annotations", "image_info_train.json"),
             ),
             (
                 "val",
-                osp.join(
-                    DUMMY_DATASET_DIR, "coco_image_info", "annotations", "image_info_val.json"
-                ),
+                osp.join(DUMMY_DATASET_DIR, "coco_image_info", "annotations", "image_info_val.json"),
             ),
         ],
     )
@@ -785,18 +724,11 @@ class CocoImporterTest:
         )
 
         expected = expected_dataset.get_subset(subset) if subset else expected_dataset
-        dataset = (
-            Dataset.import_from(path, format)
-            if not stream
-            else StreamDataset.import_from(path, format)
-        )
+        dataset = Dataset.import_from(path, format) if not stream else StreamDataset.import_from(path, format)
         check_is_stream(dataset, stream)
         compare_datasets(helper_tc, expected, dataset, require_media=True)
 
-    @skip(
-        "COCO format is required to specify the task in annotation file "
-        " for resolving ambiguity problem."
-    )
+    @skip("COCO format is required to specify the task in annotation file  for resolving ambiguity problem.")
     @pytest.mark.parametrize("stream", [True, False])
     def test_can_import_image_info_with_any_annotation_filename(self, stream, test_dir, helper_tc):
         expected_dataset = Dataset.from_iterable(
@@ -820,9 +752,7 @@ class CocoImporterTest:
         )
 
         imported_dataset = (
-            Dataset.import_from(dataset_dir, format)
-            if not stream
-            else StreamDataset.import_from(dataset_dir, format)
+            Dataset.import_from(dataset_dir, format) if not stream else StreamDataset.import_from(dataset_dir, format)
         )
         check_is_stream(imported_dataset, stream)
 
@@ -889,17 +819,10 @@ class CocoImporterTest:
         )
 
         expected = expected_dataset.get_subset(subset) if subset else expected_dataset
-        dataset = (
-            Dataset.import_from(path, format)
-            if not stream
-            else StreamDataset.import_from(path, format)
-        )
+        dataset = Dataset.import_from(path, format) if not stream else StreamDataset.import_from(path, format)
         compare_datasets(helper_tc, expected, dataset, require_media=True)
 
-    @skip(
-        "COCO format is required to specify the task in annotation file "
-        " for resolving ambiguity problem."
-    )
+    @skip("COCO format is required to specify the task in annotation file  for resolving ambiguity problem.")
     @pytest.mark.parametrize("stream", [True, False])
     def test_can_import_panoptic_with_any_annotation_filename(self, stream, test_dir, helper_tc):
         expected_dataset = Dataset.from_iterable(
@@ -937,9 +860,7 @@ class CocoImporterTest:
         )
 
         imported_dataset = (
-            Dataset.import_from(dataset_dir, format)
-            if not stream
-            else StreamDataset.import_from(dataset_dir, format)
+            Dataset.import_from(dataset_dir, format) if not stream else StreamDataset.import_from(dataset_dir, format)
         )
         check_is_stream(imported_dataset, stream)
         compare_datasets(helper_tc, expected_dataset, imported_dataset, require_media=True)
@@ -966,9 +887,7 @@ class CocoImporterTest:
             ],
             categories=["class-0", "a", "b"],
         )
-        dataset_dir = osp.join(
-            DUMMY_DATASET_DIR, "coco_panoptic", "annotations", "panoptic_train.json"
-        )
+        dataset_dir = osp.join(DUMMY_DATASET_DIR, "coco_panoptic", "annotations", "panoptic_train.json")
         format = "coco_panoptic"
         actual_dataset = (
             Dataset.import_from(dataset_dir, format, keep_original_category_ids=True)
@@ -1050,18 +969,11 @@ class CocoImporterTest:
 
         expected = expected_dataset.get_subset(subset) if subset else expected_dataset
 
-        dataset = (
-            Dataset.import_from(path, format)
-            if not stream
-            else StreamDataset.import_from(path, format)
-        )
+        dataset = Dataset.import_from(path, format) if not stream else StreamDataset.import_from(path, format)
         check_is_stream(dataset, stream)
         compare_datasets(helper_tc, expected, dataset, require_media=True)
 
-    @skip(
-        "COCO format is required to specify the task in annotation file "
-        " for resolving ambiguity problem."
-    )
+    @skip("COCO format is required to specify the task in annotation file  for resolving ambiguity problem.")
     @pytest.mark.parametrize("stream", [True, False])
     def test_can_import_stuff_with_any_annotation_filename(self, stream, test_dir, helper_tc):
         expected_dataset = Dataset.from_iterable(
@@ -1106,9 +1018,7 @@ class CocoImporterTest:
         )
 
         imported_dataset = (
-            Dataset.import_from(dataset_dir, format)
-            if not stream
-            else StreamDataset.import_from(dataset_dir, format)
+            Dataset.import_from(dataset_dir, format) if not stream else StreamDataset.import_from(dataset_dir, format)
         )
         check_is_stream(imported_dataset, stream)
         compare_datasets(helper_tc, expected_dataset, imported_dataset, require_media=True)
@@ -1178,9 +1088,7 @@ class CocoImporterTest:
 
     @pytest.mark.parametrize("tc", ["fxt_wrong_structure_1", "fxt_wrong_structure_2"])
     @pytest.mark.parametrize("stream", [True, False])
-    def test_import_error_on_wrong_directory_structure(
-        self, tc, stream, request: pytest.FixtureRequest
-    ):
+    def test_import_error_on_wrong_directory_structure(self, tc, stream, request: pytest.FixtureRequest):
         dataset_dir = request.getfixturevalue(tc)
         with pytest.raises(DatasetImportError):
             if not stream:
@@ -1219,9 +1127,8 @@ class CocoExtractorTests(TestCase):
     }
 
     def test_can_report_unexpected_file(self):
-        with TestDir() as test_dir:
-            with self.assertRaisesRegex(FileNotFoundError, "JSON file"):
-                CocoInstancesBase(test_dir)
+        with TestDir() as test_dir, self.assertRaisesRegex(FileNotFoundError, "JSON file"):
+            CocoInstancesBase(test_dir)
 
     @staticmethod
     def _get_dummy_annotation_path(test_dir: str) -> str:
@@ -1235,78 +1142,74 @@ class CocoExtractorTests(TestCase):
 
     def test_can_report_missing_item_field(self):
         for field in ["id", "file_name"]:
-            with self.subTest(field=field):
-                with TestDir() as test_dir:
-                    ann_path = self._get_dummy_annotation_path(test_dir)
-                    anns = deepcopy(self.ANNOTATION_JSON_TEMPLATE)
-                    anns["images"][0].pop(field)
-                    dump_json_file(ann_path, anns)
+            with self.subTest(field=field), TestDir() as test_dir:
+                ann_path = self._get_dummy_annotation_path(test_dir)
+                anns = deepcopy(self.ANNOTATION_JSON_TEMPLATE)
+                anns["images"][0].pop(field)
+                dump_json_file(ann_path, anns)
 
-                    with self.assertRaises(ItemImportError) as capture:
-                        try:
-                            Dataset.import_from(ann_path, "coco_instances")
-                        except DatasetImportError as e:
-                            if str(e).startswith("Failed to import dataset"):
-                                raise e.__cause__
-                            raise e
-                    self.assertIsInstance(capture.exception.__cause__, MissingFieldError)
-                    self.assertEqual(capture.exception.__cause__.name, field)
+                with self.assertRaises(ItemImportError) as capture:
+                    try:
+                        Dataset.import_from(ann_path, "coco_instances")
+                    except DatasetImportError as e:
+                        if str(e).startswith("Failed to import dataset"):
+                            raise e.__cause__
+                        raise e
+                self.assertIsInstance(capture.exception.__cause__, MissingFieldError)
+                self.assertEqual(capture.exception.__cause__.name, field)
 
     def test_can_report_missing_ann_field(self):
         # https://github.com/open-edge-platform/datumaro/issues/1344 requires to make "segmentation" optional
         for field in ["id", "image_id", "iscrowd", "category_id", "bbox"]:
-            with self.subTest(field=field):
-                with TestDir() as test_dir:
-                    ann_path = self._get_dummy_annotation_path(test_dir)
-                    anns = deepcopy(self.ANNOTATION_JSON_TEMPLATE)
-                    anns["annotations"][0].pop(field)
-                    dump_json_file(ann_path, anns)
+            with self.subTest(field=field), TestDir() as test_dir:
+                ann_path = self._get_dummy_annotation_path(test_dir)
+                anns = deepcopy(self.ANNOTATION_JSON_TEMPLATE)
+                anns["annotations"][0].pop(field)
+                dump_json_file(ann_path, anns)
 
-                    with self.assertRaises(AnnotationImportError) as capture:
-                        try:
-                            Dataset.import_from(ann_path, "coco_instances")
-                        except DatasetImportError as e:
-                            if str(e).startswith("Failed to import dataset"):
-                                raise e.__cause__
-                            raise e
-                    self.assertIsInstance(capture.exception.__cause__, MissingFieldError)
-                    self.assertEqual(capture.exception.__cause__.name, field)
+                with self.assertRaises(AnnotationImportError) as capture:
+                    try:
+                        Dataset.import_from(ann_path, "coco_instances")
+                    except DatasetImportError as e:
+                        if str(e).startswith("Failed to import dataset"):
+                            raise e.__cause__
+                        raise e
+                self.assertIsInstance(capture.exception.__cause__, MissingFieldError)
+                self.assertEqual(capture.exception.__cause__.name, field)
 
     def test_can_report_missing_global_field(self):
         for field in ["images", "annotations", "categories"]:
-            with self.subTest(field=field):
-                with TestDir() as test_dir:
-                    ann_path = self._get_dummy_annotation_path(test_dir)
-                    anns = deepcopy(self.ANNOTATION_JSON_TEMPLATE)
-                    anns.pop(field)
-                    dump_json_file(ann_path, anns)
+            with self.subTest(field=field), TestDir() as test_dir:
+                ann_path = self._get_dummy_annotation_path(test_dir)
+                anns = deepcopy(self.ANNOTATION_JSON_TEMPLATE)
+                anns.pop(field)
+                dump_json_file(ann_path, anns)
 
-                    with self.assertRaises(MissingFieldError) as capture:
-                        try:
-                            Dataset.import_from(ann_path, "coco_instances")
-                        except Exception as e:
-                            if isinstance(e, DatasetImportError) and e.__cause__:
-                                raise e.__cause__
-                            raise
-                    self.assertEqual(capture.exception.name, field)
+                with self.assertRaises(MissingFieldError) as capture:
+                    try:
+                        Dataset.import_from(ann_path, "coco_instances")
+                    except Exception as e:
+                        if isinstance(e, DatasetImportError) and e.__cause__:
+                            raise e.__cause__
+                        raise
+                self.assertEqual(capture.exception.name, field)
 
     def test_can_report_missing_category_field(self):
         for field in ["id", "name"]:
-            with self.subTest(field=field):
-                with TestDir() as test_dir:
-                    ann_path = self._get_dummy_annotation_path(test_dir)
-                    anns = deepcopy(self.ANNOTATION_JSON_TEMPLATE)
-                    anns["categories"][0].pop(field)
-                    dump_json_file(ann_path, anns)
+            with self.subTest(field=field), TestDir() as test_dir:
+                ann_path = self._get_dummy_annotation_path(test_dir)
+                anns = deepcopy(self.ANNOTATION_JSON_TEMPLATE)
+                anns["categories"][0].pop(field)
+                dump_json_file(ann_path, anns)
 
-                    with self.assertRaises(MissingFieldError) as capture:
-                        try:
-                            Dataset.import_from(ann_path, "coco_instances")
-                        except Exception as e:
-                            if isinstance(e, DatasetImportError) and e.__cause__:
-                                raise e.__cause__
-                            raise
-                    self.assertEqual(capture.exception.name, field)
+                with self.assertRaises(MissingFieldError) as capture:
+                    try:
+                        Dataset.import_from(ann_path, "coco_instances")
+                    except Exception as e:
+                        if isinstance(e, DatasetImportError) and e.__cause__:
+                            raise e.__cause__
+                        raise
+                self.assertEqual(capture.exception.name, field)
 
     def test_can_report_undeclared_label(self):
         with TestDir() as test_dir:
@@ -1377,8 +1280,7 @@ class CocoExtractorTests(TestCase):
             self.assertIn("at least 3 (x, y) pairs", str(capture.exception.__cause__))
 
     @skip(
-        "CocoBase is changed to skip loading annotation "
-        "if there is no image id reference rather than raising an error."
+        "CocoBase is changed to skip loading annotation if there is no image id reference rather than raising an error."
     )
     def test_can_report_invalid_image_id(self):
         with TestDir() as test_dir:
@@ -1678,9 +1580,7 @@ class CocoExporterTest:
                     media=Image.from_numpy(data=np.ones((4, 4, 3))),
                     annotations=[
                         Mask(
-                            image=np.array(
-                                [[0, 1, 0, 0], [0, 1, 0, 0], [0, 1, 1, 1], [0, 0, 0, 0]]
-                            ),
+                            image=np.array([[0, 1, 0, 0], [0, 1, 0, 0], [0, 1, 1, 1], [0, 0, 0, 0]]),
                             attributes={"is_crowd": False},
                             label=4,
                             group=3,
@@ -2219,9 +2119,7 @@ class CocoExporterTest:
             categories=["고양이", "ネコ", "猫"],
         )
 
-        self._test_save_and_load(
-            expected_dataset, CocoInstancesExporter.convert, test_dir, stream=stream
-        )
+        self._test_save_and_load(expected_dataset, CocoInstancesExporter.convert, test_dir, stream=stream)
 
     def test_can_save_dataset_with_cyrillic_and_spaces_in_filename(self, test_dir, stream: bool):
         expected_dataset = Dataset.from_iterable(
@@ -2285,9 +2183,7 @@ class CocoExporterTest:
             ],
             categories={
                 AnnotationType.label: LabelCategories.from_iterable(str(i) for i in range(10)),
-                AnnotationType.points: PointsCategories.from_iterable(
-                    (i, None, [[0, 1], [1, 2]]) for i in range(10)
-                ),
+                AnnotationType.points: PointsCategories.from_iterable((i, None, [[0, 1], [1, 2]]) for i in range(10)),
             },
         )
 
@@ -2348,9 +2244,7 @@ class CocoExporterTest:
             ],
             categories={
                 AnnotationType.label: LabelCategories.from_iterable(str(i) for i in range(10)),
-                AnnotationType.points: PointsCategories.from_iterable(
-                    (i, None, [[0, 1], [1, 2]]) for i in range(10)
-                ),
+                AnnotationType.points: PointsCategories.from_iterable((i, None, [[0, 1], [1, 2]]) for i in range(10)),
             },
         )
 
@@ -2380,22 +2274,16 @@ class CocoExporterTest:
     def test_can_save_dataset_with_image_info(self, test_dir, stream: bool):
         expected_dataset = Dataset.from_iterable(
             [
-                DatasetItem(
-                    id=1, media=Image.from_file(path="1.jpg", size=(10, 15)), attributes={"id": 1}
-                ),
+                DatasetItem(id=1, media=Image.from_file(path="1.jpg", size=(10, 15)), attributes={"id": 1}),
             ],
         )
 
-        self._test_save_and_load(
-            expected_dataset, CocoImageInfoExporter.convert, test_dir, stream=stream
-        )
+        self._test_save_and_load(expected_dataset, CocoImageInfoExporter.convert, test_dir, stream=stream)
 
     def test_relative_paths(self, test_dir, stream: bool):
         expected_dataset = Dataset.from_iterable(
             [
-                DatasetItem(
-                    id="1", media=Image.from_numpy(data=np.ones((4, 2, 3))), attributes={"id": 1}
-                ),
+                DatasetItem(id="1", media=Image.from_numpy(data=np.ones((4, 2, 3))), attributes={"id": 1}),
                 DatasetItem(
                     id="subdir1/1",
                     media=Image.from_numpy(data=np.ones((2, 6, 3))),
@@ -2753,9 +2641,7 @@ class CocoExporterTest:
         dataset.remove(3, "c")
         dataset.save(save_media=True, stream=stream)
 
-        assert {"image_info_a.json", "image_info_b.json"} == set(
-            os.listdir(osp.join(test_dir, "annotations"))
-        )
+        assert {"image_info_a.json", "image_info_b.json"} == set(os.listdir(osp.join(test_dir, "annotations")))
         assert osp.isfile(osp.join(test_dir, "images", "a", "2.jpg"))
         assert osp.isfile(osp.join(test_dir, "images", "c", "3.jpg")) == False
         compare_datasets(
@@ -2851,9 +2737,7 @@ class CocoExporterTest:
                     media=Image.from_numpy(data=np.ones((4, 4, 3))),
                     annotations=[
                         Mask(
-                            image=np.array(
-                                [[0, 1, 0, 0], [0, 1, 0, 0], [0, 1, 1, 1], [0, 0, 0, 0]]
-                            ),
+                            image=np.array([[0, 1, 0, 0], [0, 1, 0, 0], [0, 1, 1, 1], [0, 0, 0, 0]]),
                             attributes={"is_crowd": False},
                             label=4,
                             group=3,
@@ -3068,9 +2952,7 @@ class CocoExporterTest:
             ),
         ],
     )
-    def test_can_export_annotations_without_media(
-        self, annotations, n_expected_anns, test_dir, stream: bool
-    ):
+    def test_can_export_annotations_without_media(self, annotations, n_expected_anns, test_dir, stream: bool):
         dataset = Dataset.from_iterable(
             [
                 DatasetItem(

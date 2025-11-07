@@ -67,7 +67,7 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         except KeyError:
             raise argparse.ArgumentError(
                 "format",
-                message="Unknown output " "format '%s', the only available are: %s" % (s, formats),
+                message="Unknown output format '%s', the only available are: %s" % (s, formats),
             )
 
     def _parse_comparison_method(s):
@@ -76,8 +76,7 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         except KeyError:
             raise argparse.ArgumentError(
                 "method",
-                message="Unknown comparison "
-                "method '%s', the only available are: %s" % (s, comp_methods),
+                message="Unknown comparison method '%s', the only available are: %s" % (s, comp_methods),
             )
 
     parser.add_argument("first_target", help="The first dataset path to be compared")
@@ -87,7 +86,7 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         "--output-dir",
         dest="dst_dir",
         default=None,
-        help="Directory to save comparison results " "(default: generate automatically)",
+        help="Directory to save comparison results (default: generate automatically)",
     )
     parser.add_argument(
         "-m",
@@ -96,9 +95,7 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         default=ComparisonMethod.table.name,
         help="Comparison method, one of {} (default: %(default)s)".format(comp_methods),
     )
-    parser.add_argument(
-        "--overwrite", action="store_true", help="Overwrite existing files in the save directory"
-    )
+    parser.add_argument("--overwrite", action="store_true", help="Overwrite existing files in the save directory")
     parser.set_defaults(command=compare_command)
 
     distance_parser = parser.add_argument_group("Distance comparison options")
@@ -144,9 +141,7 @@ def compare_command(args):
     dst_dir = args.dst_dir
     if dst_dir:
         if not args.overwrite and osp.isdir(dst_dir) and os.listdir(dst_dir):
-            raise CliException(
-                "Directory '%s' already exists " "(pass --overwrite to overwrite)" % dst_dir
-            )
+            raise CliException("Directory '%s' already exists (pass --overwrite to overwrite)" % dst_dir)
     else:
         dst_dir = generate_next_file_name("compare")
     dst_dir = osp.abspath(dst_dir)
@@ -169,9 +164,7 @@ def compare_command(args):
             comparison_dict,
         ) = comparator.compare_datasets(first_dataset, second_dataset)
         if args.dst_dir:
-            comparator.save_compare_report(
-                high_level_table, mid_level_table, comparison_dict, args.dst_dir
-            )
+            comparator.save_compare_report(high_level_table, mid_level_table, comparison_dict, args.dst_dir)
 
     elif args.method is ComparisonMethod.equality:
         if not args.ignore_field:

@@ -38,9 +38,7 @@ def _apply_offset(geom: sg.base.BaseGeometry, roi_box: sg.Polygon) -> sg.base.Ba
     return so.transform(lambda x, y: (x + offset_x, y + offset_y), geom)
 
 
-def _merge_mask(
-    anns: AnnotationsForMerge, img_size: Tuple[int, int], *args, **kwargs
-) -> List[Mask]:
+def _merge_mask(anns: AnnotationsForMerge, img_size: Tuple[int, int], *args, **kwargs) -> List[Mask]:
     merged_masks = []
     group_by_label = defaultdict(list)
 
@@ -171,9 +169,7 @@ def _merge_depth_annotation(
     return [ann.wrap(image=depth_img, attributes=deepcopy(ann.attributes))]
 
 
-def _merge_by_copy(
-    anns: AnnotationsForMerge, img_size: Tuple[int, int], *args, **kwargs
-) -> Union[Label, Caption]:
+def _merge_by_copy(anns: AnnotationsForMerge, img_size: Tuple[int, int], *args, **kwargs) -> Union[Label, Caption]:
     new_anns = {}
     for ann, _, _ in anns:
         label = getattr(ann, "label", None)
@@ -281,9 +277,7 @@ class MergeTile(Transform, CliPlugin):
         del attrs["roi"]
         return attrs
 
-    def _merge_tiled_annotations(
-        self, items: List[DatasetItem], img_size: Tuple[int, int]
-    ) -> List[Annotation]:
+    def _merge_tiled_annotations(self, items: List[DatasetItem], img_size: Tuple[int, int]) -> List[Annotation]:
         anns_to_merge: Dict[AnnotationType, AnnotationsForMerge] = defaultdict(list)
 
         for item in items:
@@ -296,8 +290,6 @@ class MergeTile(Transform, CliPlugin):
         merged_anns = []
 
         for ann_type, anns in anns_to_merge.items():
-            merged_anns += self._merge_anns_func_map[ann_type](
-                anns=anns, img_size=img_size, ann_type=ann_type
-            )
+            merged_anns += self._merge_anns_func_map[ann_type](anns=anns, img_size=img_size, ann_type=ann_type)
 
         return merged_anns

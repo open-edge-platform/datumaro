@@ -65,9 +65,7 @@ class _YoloLooseImporter(Importer):
 
     @classmethod
     def _check_ann_file(cls, fpath: str, context: FormatDetectionContext) -> None:
-        with context.probe_text_file(
-            fpath, "Requirements for the annotation file of yolo format"
-        ) as fp:
+        with context.probe_text_file(fpath, "Requirements for the annotation file of yolo format") as fp:
             cls._check_ann_file_impl(fp)
 
     @classmethod
@@ -209,10 +207,4 @@ class YoloImporter(Importer):
 
     @classmethod
     def get_file_extensions(cls) -> List[str]:
-        return list(
-            {
-                ext
-                for importer in cls.SUB_IMPORTERS.values()
-                for ext in importer.get_file_extensions()
-            }
-        )
+        return list({ext for importer in cls.SUB_IMPORTERS.values() for ext in importer.get_file_extensions()})

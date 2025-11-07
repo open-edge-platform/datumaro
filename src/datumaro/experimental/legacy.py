@@ -15,7 +15,7 @@ import math
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from functools import partial as _partial
-from typing import Any, Optional, Type, cast
+from typing import Any, cast
 
 import numpy as np
 import polars as pl
@@ -28,9 +28,11 @@ from datumaro.components.annotation import (
     Ellipse,
     ExtractedMask,
     Label,
+    Points,
+    Polygon,
+    RotatedBbox,
 )
 from datumaro.components.annotation import LabelCategories as LegacyLabelCategories
-from datumaro.components.annotation import Points, Polygon, RotatedBbox
 from datumaro.components.dataset import Dataset as LegacyDataset
 from datumaro.components.dataset_base import CategoriesInfo, DatasetItem
 from datumaro.components.media import FromDataMixin, FromFileMixin, Image, MediaElement
@@ -77,15 +79,14 @@ class ForwardMediaConverter(ABC):
 
     @classmethod
     @abstractmethod
-    def get_supported_media_types(cls) -> list[Type[MediaElement[Any]]]:
+    def get_supported_media_types(cls) -> list[type[MediaElement[Any]]]:
         """Return list of media types this converter can handle."""
-        pass
 
     @classmethod
     @abstractmethod
     def create(
         cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
-    ) -> "ForwardMediaConverter | None":
+    ) -> ForwardMediaConverter | None:
         """Create converter instance if dataset is supported, None otherwise.
 
         Args:
@@ -93,17 +94,14 @@ class ForwardMediaConverter(ABC):
             semantic: The semantic type for the converted fields
             name_prefix: Prefix to prepend to all field names
         """
-        pass
 
     @abstractmethod
     def get_schema_attributes(self) -> dict[str, AttributeInfo]:
         """Return schema attributes for this media type."""
-        pass
 
     @abstractmethod
     def convert_item_media(self, item: DatasetItem) -> dict[str, Any]:
         """Convert media from a DatasetItem to experimental format."""
-        pass
 
 
 class ForwardAnnotationConverter(ABC):
@@ -113,13 +111,12 @@ class ForwardAnnotationConverter(ABC):
     @abstractmethod
     def get_supported_annotation_types(cls) -> list[AnnotationType]:
         """Return list of annotation types this converter can handle."""
-        pass
 
     @classmethod
     @abstractmethod
     def create(
         cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
-    ) -> "ForwardAnnotationConverter | None":
+    ) -> ForwardAnnotationConverter | None:
         """Create converter instance if dataset supports this annotation type.
 
         Args:
@@ -127,34 +124,29 @@ class ForwardAnnotationConverter(ABC):
             semantic: The semantic type for the converted fields
             name_prefix: Prefix to prepend to all field names
         """
-        pass
 
     @abstractmethod
     def get_schema_attributes(self) -> dict[str, AttributeInfo]:
         """Return schema attributes for this annotation type."""
-        pass
 
     @abstractmethod
-    def convert_annotations(
-        self, annotations: list[Annotation], item: DatasetItem
-    ) -> dict[str, Any]:
+    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:
         """Convert annotations of this type to experimental format."""
-        pass
 
 
 # Global registries
-_media_converter_classes: dict[Type[MediaElement[Any]], Type[ForwardMediaConverter]] = {}
-_annotation_converters: dict[AnnotationType, Type[ForwardAnnotationConverter]] = {}
+_media_converter_classes: dict[type[MediaElement[Any]], type[ForwardMediaConverter]] = {}
+_annotation_converters: dict[AnnotationType, type[ForwardAnnotationConverter]] = {}
 
 
-def register_forward_media_converter(converter_class: Type[ForwardMediaConverter]) -> None:
+def register_forward_media_converter(converter_class: type[ForwardMediaConverter]) -> None:
     """Register a forward converter class for media types it supports."""
     for media_type in converter_class.get_supported_media_types():
         _media_converter_classes[media_type] = converter_class
 
 
 def register_forward_annotation_converter(
-    converter_class: Type[ForwardAnnotationConverter],
+    converter_class: type[ForwardAnnotationConverter],
 ) -> None:
     """Register a forward converter class for annotation types it supports."""
     for annotation_type in converter_class.get_supported_annotation_types():
@@ -172,7 +164,7 @@ def get_forward_media_converter(
         name_prefix: Prefix to prepend to all field names
     """
     # Get the dataset's media type
-    media_type = cast(Type[MediaElement[Any]], dataset.media_type())
+    media_type = cast("type[MediaElement[Any]]", dataset.media_type())
 
     # Try converter registered for this specific media type
     if media_type in _media_converter_classes:
@@ -241,21 +233,21 @@ class ForwardImageMediaConverter(ForwardMediaConverter):
         self.name_prefix = name_prefix
 
     @classmethod
-    def get_supported_media_types(cls) -> list[Type[MediaElement[Any]]]:
+    def get_supported_media_types(cls) -> list[type[MediaElement[Any]]]:
         """Return list of media types this converter can handle."""
         return [Image]
 
     @classmethod
     def create(
         cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
-    ) -> "ForwardImageMediaConverter | None":
+    ) -> ForwardImageMediaConverter | None:
         """Create converter instance, detecting whether to use paths or bytes.
 
         Args:
             dataset: Legacy dataset to create converter from
             semantic: The semantic type for the converted fields
         """
-        found_media_type: Optional[type] = None
+        found_media_type: type | None = None
         has_image_info = True  # Assume all images have size until proven otherwise
         has_callable_data = False  # Track if any FromDataMixin has callable _data
 
@@ -373,15 +365,13 @@ class ForwardBboxAnnotationConverter(ForwardAnnotationConverter):
     @classmethod
     def create(
         cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
-    ) -> "ForwardBboxAnnotationConverter | None":
+    ) -> ForwardBboxAnnotationConverter | None:
         """Create converter instance for bbox annotations."""
         categories = dataset.categories()
         # Extract label categories if available
         legacy_label_categories = categories.get(AnnotationType.label, None)
 
-        bbox_attribute = AttributeInfo(
-            type=np.ndarray, annotation=bbox_field(dtype=pl.Float32, semantic=semantic)
-        )
+        bbox_attribute = AttributeInfo(type=np.ndarray, annotation=bbox_field(dtype=pl.Float32, semantic=semantic))
 
         bbox_labels_attribute = None
         # Only add bbox_labels if we have label categories
@@ -408,9 +398,7 @@ class ForwardBboxAnnotationConverter(ForwardAnnotationConverter):
             attributes[self.name_prefix + "labels"] = self.bbox_labels_attribute
         return attributes
 
-    def convert_annotations(
-        self, annotations: list[Annotation], item: DatasetItem
-    ) -> dict[str, Any]:
+    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:
         bboxes: list[list[float]] = []
         labels: list[int | None] = []
 
@@ -456,7 +444,7 @@ class ForwardRotatedBboxAnnotationConverter(ForwardAnnotationConverter):
     @classmethod
     def create(
         cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
-    ) -> "ForwardRotatedBboxAnnotationConverter | None":
+    ) -> ForwardRotatedBboxAnnotationConverter | None:
         """Create converter instance from dataset."""
         categories = dataset.categories()
         # Create attribute for rotated bboxes (cx, cy, w, h, r)
@@ -493,9 +481,7 @@ class ForwardRotatedBboxAnnotationConverter(ForwardAnnotationConverter):
             attributes[self.name_prefix + "labels"] = self.rotated_bbox_labels_attribute
         return attributes
 
-    def convert_annotations(
-        self, annotations: list[Annotation], item: DatasetItem
-    ) -> dict[str, Any]:
+    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:
         rotated_bboxes: list[list[float]] = []
         labels: list[int | None] = []
 
@@ -542,7 +528,7 @@ class ForwardPolygonAnnotationConverter(ForwardAnnotationConverter):
     @classmethod
     def create(
         cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
-    ) -> "ForwardPolygonAnnotationConverter | None":
+    ) -> ForwardPolygonAnnotationConverter | None:
         """Create converter instance for polygon annotations."""
         categories = dataset.categories()
         # Extract label categories if available
@@ -578,9 +564,7 @@ class ForwardPolygonAnnotationConverter(ForwardAnnotationConverter):
             attributes[self.name_prefix + "labels"] = self.polygon_labels_attribute
         return attributes
 
-    def convert_annotations(
-        self, annotations: list[Annotation], item: DatasetItem
-    ) -> dict[str, Any]:
+    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:
         polygons: list[list[float]] = []
         labels: list[int | None] = []
 
@@ -627,7 +611,7 @@ class ForwardLabelAnnotationConverter(ForwardAnnotationConverter):
     @classmethod
     def create(
         cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
-    ) -> "ForwardLabelAnnotationConverter | None":
+    ) -> ForwardLabelAnnotationConverter | None:
         """Create converter instance for label annotations."""
         categories = dataset.categories()
         legacy_label_categories = categories.get(AnnotationType.label, None)
@@ -653,9 +637,7 @@ class ForwardLabelAnnotationConverter(ForwardAnnotationConverter):
     def get_schema_attributes(self) -> dict[str, AttributeInfo]:
         return {self.name_prefix + "label": self.label_attribute}
 
-    def convert_annotations(
-        self, annotations: list[Annotation], item: DatasetItem
-    ) -> dict[str, Any]:
+    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:
         labels = [ann for ann in annotations if isinstance(ann, Label)]
         result = {}
         if len(labels) > 0:
@@ -688,7 +670,7 @@ class ForwardKeypointAnnotationConverter(ForwardAnnotationConverter):
     @classmethod
     def create(
         cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
-    ) -> "ForwardKeypointAnnotationConverter | None":
+    ) -> ForwardKeypointAnnotationConverter | None:
         """Create converter instance for keypoints annotations."""
         categories = dataset.categories()
         # Extract label categories if available
@@ -727,9 +709,7 @@ class ForwardKeypointAnnotationConverter(ForwardAnnotationConverter):
             attributes[self.name_prefix + "labels"] = self.keypoints_labels_attribute
         return attributes
 
-    def convert_annotations(
-        self, annotations: list[Annotation], item: DatasetItem
-    ) -> dict[str, Any]:
+    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:
         keypoints = [ann for ann in annotations if isinstance(ann, Points)]
         # KeypointsField expects individual Points objects, not arrays
         # Only supports single keypoint case
@@ -737,10 +717,7 @@ class ForwardKeypointAnnotationConverter(ForwardAnnotationConverter):
 
         if len(keypoints) > 0:
             result["keypoints"] = keypoints[0]  # Pass the Points object directly
-            if (
-                self.keypoints_labels_attribute is not None
-                and "keypoint_label_ids" in keypoints[0].attributes
-            ):
+            if self.keypoints_labels_attribute is not None and "keypoint_label_ids" in keypoints[0].attributes:
                 result[self.name_prefix + "labels"] = keypoints[0].attributes["keypoint_label_ids"]
             else:
                 result[self.name_prefix + "labels"] = None
@@ -773,15 +750,13 @@ class ForwardEllipseAnnotationConverter(ForwardAnnotationConverter):
     @classmethod
     def create(
         cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
-    ) -> "ForwardEllipseAnnotationConverter | None":
+    ) -> ForwardEllipseAnnotationConverter | None:
         """Create converter instance for ellipse annotations."""
         categories = dataset.categories()
         # Extract label categories if available
         legacy_label_categories = categories.get(AnnotationType.label, None)
 
-        ellipse_attribute = AttributeInfo(
-            type=np.ndarray, annotation=EllipseField(dtype=pl.Float32, semantic=semantic)
-        )
+        ellipse_attribute = AttributeInfo(type=np.ndarray, annotation=EllipseField(dtype=pl.Float32, semantic=semantic))
 
         ellipse_labels_attribute = None
         # Only add ellipse_labels if we have label categories
@@ -808,9 +783,7 @@ class ForwardEllipseAnnotationConverter(ForwardAnnotationConverter):
             attributes[self.name_prefix + "labels"] = self.ellipse_labels_attribute
         return attributes
 
-    def convert_annotations(
-        self, annotations: list[Annotation], item: DatasetItem
-    ) -> dict[str, Any]:
+    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:
         ellipses: list[list[float]] = []
         labels: list[int | None] = []
 
@@ -861,9 +834,7 @@ class AnalysisResult:
     is_hierarchical: bool
 
 
-def analyze_legacy_dataset(
-    legacy_dataset: LegacyDataset, semantic: Semantic = Semantic.Default
-) -> AnalysisResult:
+def analyze_legacy_dataset(legacy_dataset: LegacyDataset, semantic: Semantic = Semantic.Default) -> AnalysisResult:
     """Analyze legacy dataset and generate schema using registered converters.
 
     Args:
@@ -882,23 +853,17 @@ def analyze_legacy_dataset(
         label_groups = legacy_dataset.categories()[AnnotationType.label].label_groups
         # Convert to new label group class
         label_groups = [
-            LabelGroup(
-                name=group.name, labels=group.labels, group_type=GroupType[group.group_type.name]
-            )
+            LabelGroup(name=group.name, labels=group.labels, group_type=GroupType[group.group_type.name])
             for group in label_groups
         ]
         label_group_names = [group.name for group in label_groups] if label_groups else []
 
         # Check if project has a hierarchical structure
-        label_names = [
-            item.name for item in legacy_dataset.categories()[AnnotationType.label].items
-        ]
+        label_names = [item.name for item in legacy_dataset.categories()[AnnotationType.label].items]
         is_hierarchical = _has_derived_labels(label_group_names) or _has_derived_labels(label_names)
 
         # Look for multi label classification groups
-        multi_label_group_names = [
-            name for name in label_group_names if name.startswith("Classification labels__")
-        ]
+        multi_label_group_names = [name for name in label_group_names if name.startswith("Classification labels__")]
         is_multi_label = len(multi_label_group_names) > 1 and not is_hierarchical
     else:
         is_hierarchical = False
@@ -917,13 +882,9 @@ def analyze_legacy_dataset(
     is_anomaly = AnnotationType.label in ann_types and len(ann_types) > 1
 
     for ann_type in ann_types:
-        ann_semantic = (
-            Semantic.Anomaly if is_anomaly and ann_type != AnnotationType.label else semantic
-        )
+        ann_semantic = Semantic.Anomaly if is_anomaly and ann_type != AnnotationType.label else semantic
         name_prefix = "anomaly_" if is_anomaly and ann_type != AnnotationType.label else ""
-        converter = get_forward_annotation_converter(
-            ann_type, legacy_dataset, ann_semantic, name_prefix
-        )
+        converter = get_forward_annotation_converter(ann_type, legacy_dataset, ann_semantic, name_prefix)
         if converter is not None:
             ann_converters[ann_type] = converter
             ann_attributes = converter.get_schema_attributes()
@@ -1045,9 +1006,7 @@ def convert_from_legacy(legacy_dataset: LegacyDataset) -> Dataset[Sample]:
         if not isinstance(categories, LabelCategories):
             raise ValueError("Expected label categories for anomaly detection.")
 
-        good_categories = [
-            index for index, label in enumerate(categories.labels) if label == "good"
-        ]
+        good_categories = [index for index, label in enumerate(categories.labels) if label == "good"]
 
         if len(good_categories) != 1:
             raise ValueError("Expected exactly one 'good' label for anomaly detection.")
@@ -1071,19 +1030,16 @@ class BackwardMediaConverter(ABC):
 
     @classmethod
     @abstractmethod
-    def create_from_schema(cls, schema: Schema) -> "BackwardMediaConverter | None":
+    def create_from_schema(cls, schema: Schema) -> BackwardMediaConverter | None:
         """Create converter instance if schema is supported, None otherwise."""
-        pass
 
     @abstractmethod
-    def get_media_type(self) -> Type[MediaElement[Any]]:
+    def get_media_type(self) -> type[MediaElement[Any]]:
         """Get the legacy media type this converter produces."""
-        pass
 
     @abstractmethod
     def convert_to_legacy_media(self, sample: Sample) -> MediaElement[Any]:
         """Convert experimental sample media to legacy MediaElement."""
-        pass
 
 
 class BackwardAnnotationConverter(ABC):
@@ -1091,40 +1047,34 @@ class BackwardAnnotationConverter(ABC):
 
     @classmethod
     @abstractmethod
-    def create_from_schema(cls, schema: Schema) -> "BackwardAnnotationConverter | None":
+    def create_from_schema(cls, schema: Schema) -> BackwardAnnotationConverter | None:
         """Create converter instance if schema is supported, None otherwise."""
-        pass
 
     @abstractmethod
     def get_annotation_type(self) -> AnnotationType:
         """Get the legacy annotation type this converter produces."""
-        pass
 
     @abstractmethod
     def infer_categories(self, experimental_dataset: Dataset[Sample]) -> CategoriesInfo:
         """Infer legacy categories from experimental dataset."""
-        pass
 
     @abstractmethod
-    def convert_to_legacy_annotations(
-        self, sample: Sample, categories: CategoriesInfo
-    ) -> list[Annotation]:
+    def convert_to_legacy_annotations(self, sample: Sample, categories: CategoriesInfo) -> list[Annotation]:
         """Convert experimental sample annotations to legacy format."""
-        pass
 
 
 # Global registries for backward converters
-_backward_media_converter_classes: list[Type[BackwardMediaConverter]] = []
-_backward_annotation_converter_classes: list[Type[BackwardAnnotationConverter]] = []
+_backward_media_converter_classes: list[type[BackwardMediaConverter]] = []
+_backward_annotation_converter_classes: list[type[BackwardAnnotationConverter]] = []
 
 
-def register_backward_media_converter(converter_class: Type[BackwardMediaConverter]) -> None:
+def register_backward_media_converter(converter_class: type[BackwardMediaConverter]) -> None:
     """Register a backward converter class for a media type."""
     _backward_media_converter_classes.append(converter_class)
 
 
 def register_backward_annotation_converter(
-    converter_class: Type[BackwardAnnotationConverter],
+    converter_class: type[BackwardAnnotationConverter],
 ) -> None:
     """Register a backward converter class for an annotation type."""
     _backward_annotation_converter_classes.append(converter_class)
@@ -1160,7 +1110,7 @@ class ForwardMaskAnnotationConverter(ForwardAnnotationConverter):
     @classmethod
     def create(
         cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
-    ) -> "ForwardMaskAnnotationConverter | None":
+    ) -> ForwardMaskAnnotationConverter | None:
         """Create converter instance for mask annotations.
 
         Determines if the dataset uses semantic or instance segmentation by checking
@@ -1233,9 +1183,7 @@ class ForwardMaskAnnotationConverter(ForwardAnnotationConverter):
 
                 mask_labels_attribute = AttributeInfo(
                     type=np.ndarray,
-                    annotation=label_field(
-                        is_list=True, semantic=semantic
-                    ),  # Labels for each instance
+                    annotation=label_field(is_list=True, semantic=semantic),  # Labels for each instance
                     categories=new_label_categories,
                 )
 
@@ -1264,9 +1212,7 @@ class ForwardMaskAnnotationConverter(ForwardAnnotationConverter):
             attributes[self.name_prefix + "labels"] = self.mask_labels_attribute
         return attributes
 
-    def convert_annotations(
-        self, annotations: list[Annotation], item: DatasetItem
-    ) -> dict[str, Any]:
+    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:
         """Convert legacy mask annotations to either semantic or instance segmentation format."""
         # Extract mask annotations
         extracted_masks = [ann for ann in annotations if isinstance(ann, ExtractedMask)]
@@ -1333,14 +1279,14 @@ class BackwardImageMediaConverter(BackwardMediaConverter):
         self.image_path_attr = image_path_attr
 
     @classmethod
-    def create_from_schema(cls, schema: Schema) -> "BackwardImageMediaConverter | None":
+    def create_from_schema(cls, schema: Schema) -> BackwardImageMediaConverter | None:
         """Create converter instance if schema contains image_path field."""
         for attr_name, attr_info in schema.attributes.items():
             if isinstance(attr_info.annotation, ImagePathField):
                 return cls(image_path_attr=attr_name)
         return None
 
-    def get_media_type(self) -> Type[MediaElement[Any]]:
+    def get_media_type(self) -> type[MediaElement[Any]]:
         return Image
 
     def convert_to_legacy_media(self, sample: Sample) -> MediaElement[Any]:
@@ -1358,7 +1304,7 @@ class BackwardBboxAnnotationConverter(BackwardAnnotationConverter):
         self.bbox_labels_attr = bbox_labels_attr
 
     @classmethod
-    def create_from_schema(cls, schema: Schema) -> "BackwardBboxAnnotationConverter | None":
+    def create_from_schema(cls, schema: Schema) -> BackwardBboxAnnotationConverter | None:
         """Create converter instance if schema contains bbox-related fields."""
         bboxes_attr = None
         bbox_labels_attr = None
@@ -1382,9 +1328,7 @@ class BackwardBboxAnnotationConverter(BackwardAnnotationConverter):
     def get_annotation_type(self) -> AnnotationType:
         return AnnotationType.bbox
 
-    def convert_to_legacy_annotations(
-        self, sample: Sample, categories: CategoriesInfo
-    ) -> list[Annotation]:
+    def convert_to_legacy_annotations(self, sample: Sample, categories: CategoriesInfo) -> list[Annotation]:
         """Convert bboxes and bbox_labels back to legacy Bbox annotations."""
         bboxes = getattr(sample, self.bboxes_attr, None)
         bbox_labels = getattr(sample, self.bbox_labels_attr, None)
@@ -1434,7 +1378,7 @@ class BackwardRotatedBboxAnnotationConverter(BackwardAnnotationConverter):
         self.rotated_bbox_labels_attr = rotated_bbox_labels_attr
 
     @classmethod
-    def create_from_schema(cls, schema: Schema) -> "BackwardRotatedBboxAnnotationConverter | None":
+    def create_from_schema(cls, schema: Schema) -> BackwardRotatedBboxAnnotationConverter | None:
         """Create converter if schema contains rotated bbox fields."""
         rotated_bboxes_attr: str | None = None
         rotated_bbox_labels_attr: str | None = None
@@ -1453,9 +1397,7 @@ class BackwardRotatedBboxAnnotationConverter(BackwardAnnotationConverter):
     def get_annotation_type(self) -> AnnotationType:
         return AnnotationType.rotated_bbox
 
-    def convert_to_legacy_annotations(
-        self, sample: Sample, categories: CategoriesInfo
-    ) -> list[Annotation]:
+    def convert_to_legacy_annotations(self, sample: Sample, categories: CategoriesInfo) -> list[Annotation]:
         """Convert experimental rotated bbox data to legacy RotatedBbox annotations."""
         rotated_bboxes = getattr(sample, self.rotated_bboxes_attr, None)
         if rotated_bboxes is None or len(rotated_bboxes) == 0:
@@ -1517,7 +1459,7 @@ class BackwardPolygonAnnotationConverter(BackwardAnnotationConverter):
         self.polygon_labels_attr = polygon_labels_attr
 
     @classmethod
-    def create_from_schema(cls, schema: Schema) -> "BackwardPolygonAnnotationConverter | None":
+    def create_from_schema(cls, schema: Schema) -> BackwardPolygonAnnotationConverter | None:
         """Create converter instance if schema contains polygon-related fields."""
         polygons_attr = None
         polygon_labels_attr = None
@@ -1541,14 +1483,10 @@ class BackwardPolygonAnnotationConverter(BackwardAnnotationConverter):
     def get_annotation_type(self) -> AnnotationType:
         return AnnotationType.polygon
 
-    def convert_to_legacy_annotations(
-        self, sample: Sample, categories: CategoriesInfo
-    ) -> list[Annotation]:
+    def convert_to_legacy_annotations(self, sample: Sample, categories: CategoriesInfo) -> list[Annotation]:
         """Convert polygons and polygon_labels back to legacy Polygon annotations."""
         polygons = getattr(sample, self.polygons_attr)
-        polygon_labels = (
-            getattr(sample, self.polygon_labels_attr) if self.polygon_labels_attr else None
-        )
+        polygon_labels = getattr(sample, self.polygon_labels_attr) if self.polygon_labels_attr else None
 
         annotations: list[Annotation] = []
         for i in range(len(polygons)):
@@ -1587,7 +1525,7 @@ class BackwardPolygonAnnotationConverter(BackwardAnnotationConverter):
 class BackwardAnalysisResult:
     """Result of experimental dataset analysis for backward conversion."""
 
-    media_type: Type[MediaElement[Any]] | None
+    media_type: type[MediaElement[Any]] | None
     ann_types: set[AnnotationType]
     categories: CategoriesInfo
     media_converter: BackwardMediaConverter | None
@@ -1607,7 +1545,7 @@ def analyze_experimental_dataset(experimental_dataset: Dataset[Sample]) -> Backw
 
     # Find compatible media converter
     media_converter: BackwardMediaConverter | None = None
-    media_type: Type[MediaElement[Any]] | None = None
+    media_type: type[MediaElement[Any]] | None = None
 
     for converter_class in _backward_media_converter_classes:
         converter_instance = converter_class.create_from_schema(schema)
@@ -1641,9 +1579,7 @@ def analyze_experimental_dataset(experimental_dataset: Dataset[Sample]) -> Backw
     )
 
 
-def _convert_experimental_item(
-    index: int, sample: Sample, backward_analysis: BackwardAnalysisResult
-) -> DatasetItem:
+def _convert_experimental_item(index: int, sample: Sample, backward_analysis: BackwardAnalysisResult) -> DatasetItem:
     """Convert experimental sample to legacy DatasetItem."""
 
     # Convert media
@@ -1747,7 +1683,7 @@ class SubsetConverter(ForwardAnnotationConverter):
     @classmethod
     def create(
         cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
-    ) -> "ForwardAnnotationConverter | None":
+    ) -> ForwardAnnotationConverter | None:
         """Create converter instance if dataset supports this annotation type.
 
         Args:
@@ -1772,9 +1708,7 @@ class SubsetConverter(ForwardAnnotationConverter):
             )
         }
 
-    def convert_annotations(
-        self, annotations: list[Annotation], item: DatasetItem
-    ) -> dict[str, Any]:
+    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:
         """Convert dataset item subset to standardized format.
 
         Args:

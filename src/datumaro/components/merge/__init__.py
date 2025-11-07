@@ -81,9 +81,9 @@ def get_merger(merge_policy: str = DEFAULT_MERGE_POLICY, *args, **kwargs) -> Mer
     """
     if merge_policy == "union":
         return UnionMerge(*args, **kwargs)
-    elif merge_policy == "intersect":
+    if merge_policy == "intersect":
         return IntersectMerge(*args, **kwargs)
-    elif merge_policy == "exact":
+    if merge_policy == "exact":
         return ExactMerge(*args, **kwargs)
 
     raise ValueError(f"{merge_policy} is invalid Merger name.")

@@ -10,14 +10,7 @@ from typing import Dict, List, Optional, Union
 
 from defusedxml import ElementTree
 
-from datumaro.components.annotation import (
-    Annotation,
-    AnnotationType,
-    Bbox,
-    Label,
-    LabelCategories,
-    RotatedBbox,
-)
+from datumaro.components.annotation import Annotation, AnnotationType, Bbox, Label, LabelCategories, RotatedBbox
 from datumaro.components.dataset import DatasetItem
 from datumaro.components.dataset_base import SubsetBase
 from datumaro.components.errors import InvalidAnnotationError, UndeclaredLabelError
@@ -222,9 +215,7 @@ class RoboflowCreateMlBase(SubsetBase):
 
     def _load_items(self, json_data):
         items = {}
-        for anns in self._ctx.progress_reporter.iter(
-            json_data, desc=f"Parsing boxes in '{self._subset}'"
-        ):
+        for anns in self._ctx.progress_reporter.iter(json_data, desc=f"Parsing boxes in '{self._subset}'"):
             annotations = []
             for ann_id, ann in enumerate(anns["annotations"]):
                 label_id, _ = self._categories[AnnotationType.label].find(ann["label"])
@@ -300,9 +291,7 @@ class RoboflowMulticlassBase(SubsetBase):
                     if key.strip() not in self._label_mapping:
                         continue
                     if int(val) == 1:
-                        annotations.append(
-                            Label(label=self._label_mapping[key.strip()], id=idx, group=idx)
-                        )
+                        annotations.append(Label(label=self._label_mapping[key.strip()], id=idx, group=idx))
                         self._ann_types.add(AnnotationType.label)
                         idx += 1
 
@@ -310,9 +299,7 @@ class RoboflowMulticlassBase(SubsetBase):
                     DatasetItem(
                         id=img_id,
                         subset=self._subset,
-                        media=Image.from_file(
-                            path=osp.join(osp.dirname(self._path), anns["filename"])
-                        ),
+                        media=Image.from_file(path=osp.join(osp.dirname(self._path), anns["filename"])),
                         annotations=annotations,
                     )
                 )

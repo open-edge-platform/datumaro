@@ -121,9 +121,7 @@ class AvaBase(SubsetBase):
                 timestamp = data[1]
 
                 item_id = video_id + "/" + timestamp
-                image_path = osp.join(
-                    self._images_dir, video_id, item_id.replace("/", "_") + AvaPath.IMAGE_EXT
-                )
+                image_path = osp.join(self._images_dir, video_id, item_id.replace("/", "_") + AvaPath.IMAGE_EXT)
 
                 item = items.get(item_id)
                 if item is None:
@@ -162,9 +160,7 @@ class AvaImporter(Importer):
 
     @classmethod
     def find_sources(cls, path):
-        ann_files = find_files(
-            osp.join(path, AvaPath.ANNOTATION_DIR), exts=cls._ANNO_EXT, recursive=True, max_depth=1
-        )
+        ann_files = find_files(osp.join(path, AvaPath.ANNOTATION_DIR), exts=cls._ANNO_EXT, recursive=True, max_depth=1)
 
         sources = []
         for ann_file in ann_files:
@@ -214,10 +210,7 @@ class AvaExporter(Exporter):
         for subset_name, subset in self._extractor.subsets().items():
             ann_file = osp.join(
                 ann_dir,
-                AvaPath.ANNOTATION_PREFIX
-                + subset_name
-                + AvaPath.ANNOTATION_VERSION
-                + AvaPath.ANNOTATION_EXT,
+                AvaPath.ANNOTATION_PREFIX + subset_name + AvaPath.ANNOTATION_VERSION + AvaPath.ANNOTATION_EXT,
             )
             with open(ann_file, mode="w", newline="", encoding="utf-8") as csvfile:
                 csvwriter = csv.writer(csvfile)

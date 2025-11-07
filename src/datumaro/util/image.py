@@ -139,7 +139,7 @@ def load_image(path: str, dtype: DTypeLike = np.uint8):
             image_bytes = f.read()
 
         return decode_image(image_bytes, dtype=dtype)
-    elif IMAGE_BACKEND.get() == ImageBackend.PIL:
+    if IMAGE_BACKEND.get() == ImageBackend.PIL:
         with open(path, "rb") as f:
             image_bytes = f.read()
 
@@ -229,7 +229,7 @@ def save_image(
         image = Image.fromarray(image)
         image.save(dst, format=ext, **params)
     else:
-        raise NotImplementedError()
+        raise NotImplementedError
 
 
 def encode_image(image: np.ndarray, ext: str, dtype: DTypeLike = np.uint8, **kwargs) -> bytes:
@@ -252,7 +252,7 @@ def encode_image(image: np.ndarray, ext: str, dtype: DTypeLike = np.uint8, **kwa
         if not success:
             raise Exception("Failed to encode image to '%s' format" % (ext))
         return result.tobytes()
-    elif IMAGE_BACKEND.get() == ImageBackend.PIL:
+    if IMAGE_BACKEND.get() == ImageBackend.PIL:
         from PIL import Image
 
         if ext.startswith("."):
@@ -271,7 +271,7 @@ def encode_image(image: np.ndarray, ext: str, dtype: DTypeLike = np.uint8, **kwa
             image.save(buffer, format=ext, **params)
             return buffer.getvalue()
     else:
-        raise NotImplementedError()
+        raise NotImplementedError
 
 
 def decode_image(image_bytes: bytes, dtype: np.dtype = np.uint8) -> np.ndarray:
@@ -280,9 +280,7 @@ def decode_image(image_bytes: bytes, dtype: np.dtype = np.uint8) -> np.ndarray:
     if np.issubdtype(dtype, np.floating):
         # PIL doesn't support floating point image loading
         # CV doesn't support floating point image with color channel setting (IMREAD_COLOR)
-        with decode_image_context(
-            image_backend=ImageBackend.cv2, image_color_channel=ImageColorChannel.UNCHANGED
-        ):
+        with decode_image_context(image_backend=ImageBackend.cv2, image_color_channel=ImageColorChannel.UNCHANGED):
             image = ctx_color_scale.decode_by_cv2(image_bytes, dtype=dtype)
             image = image[..., ::-1]
         if ctx_color_scale == ImageColorChannel.COLOR_BGR:
@@ -293,7 +291,7 @@ def decode_image(image_bytes: bytes, dtype: np.dtype = np.uint8) -> np.ndarray:
         elif IMAGE_BACKEND.get() == ImageBackend.PIL:
             image = ctx_color_scale.decode_by_pil(image_bytes)
         else:
-            raise NotImplementedError()
+            raise NotImplementedError
 
     image = image.astype(dtype)
 

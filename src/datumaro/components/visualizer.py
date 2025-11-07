@@ -207,9 +207,7 @@ class Visualizer:
     def get_random_items(self, n_samples: int) -> List[DatasetItem]:
         """Get random samples from the dataset"""
         if n_samples >= len(self.dataset):
-            raise ValueError(
-                f"n_samples={n_samples} should be less than the dataset size ({len(self.dataset)})."
-            )
+            raise ValueError(f"n_samples={n_samples} should be less than the dataset size ({len(self.dataset)}).")
 
         # Disable B311: random - used for general random sampling not for security/crypto
         return random.choices(self._items, k=n_samples)  # nosec B311
@@ -246,7 +244,6 @@ class Visualizer:
         ------
             :class:`Figure` include visualization plots.
         """
-        ...
 
     @overload
     def vis_gallery(
@@ -273,7 +270,6 @@ class Visualizer:
         ------
             :class:`Figure` include visualization plots.
         """
-        ...
 
     @overload
     def vis_gallery(
@@ -293,7 +289,6 @@ class Visualizer:
         ------
             :class:`Figure` include visualization plots.
         """
-        ...
 
     def vis_gallery(
         self,
@@ -318,16 +313,12 @@ class Visualizer:
         if isinstance(subsets, str):
             subsets = [subsets] * len(ids)  # expand it to have len(ids)
 
-        assert (
-            len(ids) == len(ann_ids) == len(subsets)
-        ), "ids, ann_ids, subset should have the same length"
+        assert len(ids) == len(ann_ids) == len(subsets), "ids, ann_ids, subset should have the same length"
 
         nrows, ncols = _infer_grid_size(len(ids), grid_size)
         fig, axs = plt.subplots(nrows, ncols, figsize=self.figsize)
 
-        assert len(ids) == len(
-            subsets
-        ), "If subset is a list, it should have the same length as ids."
+        assert len(ids) == len(subsets), "If subset is a list, it should have the same length as ids."
 
         for item_id, subset, ann_id, ax in zip(ids, subsets, ann_ids, axs.flatten()):
             self.vis_one_sample(item_id, subset, ann_id=ann_id, ax=ax)
@@ -360,7 +351,6 @@ class Visualizer:
         ------
             :class:`Figure` include visualization plot of the :class:`DatasetItem`.
         """
-        ...
 
     @overload
     def vis_one_sample(
@@ -385,7 +375,6 @@ class Visualizer:
         ------
             :class:`Figure` include visualization plot of the :class:`DatasetItem`.
         """
-        ...
 
     def vis_one_sample(
         self,
@@ -416,21 +405,17 @@ class Visualizer:
         ) -> Tuple[str, str]:
             if item_id is not None and subset is not None:
                 return item_id, subset
-            elif item is not None:
+            if item is not None:
                 item_id = item.id
                 subset = item.subset
                 return item_id, subset
-            raise ValueError(
-                f"item_id={item_id}, subset={subset}, and item={item} is an invalid input."
-            )
+            raise ValueError(f"item_id={item_id}, subset={subset}, and item={item} is an invalid input.")
 
         item_id, subset = _parse_inputs(item_id, subset, item)
         item: DatasetItem = self.dataset.get(item_id, subset)
 
         assert item is not None, f"Cannot find id={item_id}, subset={subset}"
-        assert (
-            item is not Image
-        ), f"Media type should be Image, Current media type={type(item.media)}"
+        assert item is not Image, f"Media type should be Image, Current media type={type(item.media)}"
 
         img = item.media.data.astype(np.uint8)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -447,9 +432,7 @@ class Visualizer:
         annotations = self._sort_by_z_order(item.annotations)
         categories = self.dataset.categories()
         label_categories = (
-            self.dataset.categories()[AnnotationType.label]
-            if AnnotationType.label in categories
-            else None
+            self.dataset.categories()[AnnotationType.label] if AnnotationType.label in categories else None
         )
 
         context = defaultdict(list)
@@ -516,8 +499,7 @@ class Visualizer:
         source = ann.image
         if source.dtype != bool:
             warnings.warn(
-                f"Mask should has dtype == bool, but its dtype == {source.dtype}. "
-                "Try to change it to bool dtype."
+                f"Mask should has dtype == bool, but its dtype == {source.dtype}. Try to change it to bool dtype."
             )
             source = source.astype(bool)
 
@@ -628,9 +610,7 @@ class Visualizer:
             # https://stackoverflow.com/a/41271773/16880031
             fig.canvas.draw()
             drawed_bbox = bbox.get_bbox()
-            x, y = bbox.get_transform().transform(
-                [0, (1.0 + 2 * CAPTION_BBOX_PAD) * drawed_bbox.height]
-            )
+            x, y = bbox.get_transform().transform([0, (1.0 + 2 * CAPTION_BBOX_PAD) * drawed_bbox.height])
             x, y = ax.transAxes.inverted().transform([x, y])
             x, y = 0.5, y
 
@@ -688,9 +668,7 @@ class Visualizer:
 
         # Draw each face
         for face in faces:
-            polygon = patches.Polygon(
-                face, fill=False, linewidth=self.bbox_linewidth, edgecolor=color
-            )
+            polygon = patches.Polygon(face, fill=False, linewidth=self.bbox_linewidth, edgecolor=color)
             ax.add_patch(polygon)
 
     def _draw_super_resolution_annotation(
@@ -701,9 +679,7 @@ class Visualizer:
         ax: Axes,
         context: List,
     ) -> None:
-        assert (
-            len(context) == 0
-        ), "It cannot visualize more than one SuperResolutionAnnotation per item."
+        assert len(context) == 0, "It cannot visualize more than one SuperResolutionAnnotation per item."
 
         warnings.warn(
             "SuperResolutionAnnotation overdraws the high-resolution image over the original image. "

@@ -26,10 +26,9 @@ class FrameworkConverterFactory:
     def create_converter(framework):
         if framework == "torch":
             return DmTorchDataset
-        elif framework == "tf":
+        if framework == "tf":
             return DmTfDataset
-        else:
-            raise ValueError("Unsupported framework")
+        raise ValueError("Unsupported framework")
 
 
 class FrameworkConverter:
@@ -79,20 +78,12 @@ class _MultiFrameworkDataset:
         elif self.task == "multilabel_classification":
             label = [ann.label for ann in item.annotations if ann.type == TASK_ANN_TYPE[self.task]]
         elif self.task in ["detection", "instance_segmentation"]:
-            label = [
-                ann.as_dict() for ann in item.annotations if ann.type == TASK_ANN_TYPE[self.task]
-            ]
+            label = [ann.as_dict() for ann in item.annotations if ann.type == TASK_ANN_TYPE[self.task]]
         elif self.task == "semantic_segmentation":
-            masks = [
-                (ann.image, ann.label)
-                for ann in item.annotations
-                if ann.type == TASK_ANN_TYPE[self.task]
-            ]
+            masks = [(ann.image, ann.label) for ann in item.annotations if ann.type == TASK_ANN_TYPE[self.task]]
             label = mask_tools.merge_masks((mask, label_id) for mask, label_id in masks)
         elif self.task == "tabular":
-            label = [
-                ann.as_dict() for ann in item.annotations if ann.type in TASK_ANN_TYPE[self.task]
-            ]
+            label = [ann.as_dict() for ann in item.annotations if ann.type in TASK_ANN_TYPE[self.task]]
         return image, label
 
 
@@ -127,15 +118,11 @@ try:
 
             if self.task == "tabular":
                 if not isinstance(target, dict):
-                    raise ValueError(
-                        "Target should be a dictionary with 'input' and 'output' keys."
-                    )
+                    raise ValueError("Target should be a dictionary with 'input' and 'output' keys.")
                 self.input_target = target.get("input")
                 self.output_target = target.get("output")
                 if not self.input_target:
-                    raise ValueError(
-                        "Please provide target column for tabular task which is used for input"
-                    )
+                    raise ValueError("Please provide target column for tabular task which is used for input")
 
                 if not (tokenizer):
                     raise ValueError("A tokenizer must be provided for tabular task")
@@ -161,15 +148,10 @@ try:
                     tgt_tokens = tgt_tokenizer(label_text)
                     tgt_token_ids = tgt_vocab(tgt_tokens) if tgt_vocab else tgt_tokens
 
-                    return torch.tensor(src_token_ids, dtype=torch.long), torch.tensor(
-                        tgt_token_ids, dtype=torch.long
-                    )
-                else:
-                    tokens = self.tokenizer(text)
-                    token_ids = self.vocab(tokens) if self.vocab else tokens
-                    return torch.tensor(token_ids, dtype=torch.long), torch.tensor(
-                        label[0]["label"], dtype=torch.long
-                    )
+                    return torch.tensor(src_token_ids, dtype=torch.long), torch.tensor(tgt_token_ids, dtype=torch.long)
+                tokens = self.tokenizer(text)
+                token_ids = self.vocab(tokens) if self.vocab else tokens
+                return torch.tensor(token_ids, dtype=torch.long), torch.tensor(label[0]["label"], dtype=torch.long)
 
             if len(image.shape) == 2:
                 image = np.expand_dims(image, axis=-1)

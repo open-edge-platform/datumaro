@@ -2,26 +2,17 @@ from unittest import TestCase
 
 import numpy as np
 
-from datumaro.components.annotation import (
-    AnnotationType,
-    Label,
-    LabelCategories,
-    Points,
-    PointsCategories,
-)
+from datumaro.components.annotation import AnnotationType, Label, LabelCategories, Points, PointsCategories
 from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.environment import Environment
 from datumaro.components.media import Image
 from datumaro.plugins.data_formats.celeba import AlignCelebaImporter
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import compare_datasets
 
 DUMMY_ALIGN_DATASET_DIR = get_test_asset_path("align_celeba_dataset", "dataset")
-DUMMY_ALIGN_DATASET_DIR_WITH_META_FILE = get_test_asset_path(
-    "align_celeba_dataset", "dataset_with_meta_file"
-)
+DUMMY_ALIGN_DATASET_DIR_WITH_META_FILE = get_test_asset_path("align_celeba_dataset", "dataset_with_meta_file")
 
 
 class AlignCelebaImporterTest(TestCase):
@@ -95,9 +86,7 @@ class AlignCelebaImporterTest(TestCase):
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    f"class-{i}" for i in range(13)
-                ),
+                AnnotationType.label: LabelCategories.from_iterable(f"class-{i}" for i in range(13)),
                 AnnotationType.points: PointsCategories.from_iterable(
                     [
                         (0, ["lefteye_x"]),

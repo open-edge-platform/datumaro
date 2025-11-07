@@ -6,13 +6,7 @@ from typing import Any, Dict
 import numpy as np
 import pytest
 
-from datumaro.components.annotation import (
-    AnnotationType,
-    LabelCategories,
-    Mask,
-    MaskCategories,
-    Polygon,
-)
+from datumaro.components.annotation import AnnotationType, LabelCategories, Mask, MaskCategories, Polygon
 from datumaro.components.dataset import Dataset, DatasetItem
 from datumaro.components.environment import DEFAULT_ENVIRONMENT
 from datumaro.components.media import Image
@@ -21,11 +15,10 @@ from datumaro.plugins.data_formats.mapillary_vistas.format import (
     make_mapillary_instance_categories,
 )
 from datumaro.plugins.data_formats.mapillary_vistas.importer import MapillaryVistasImporter
-
-from .base import TestDataFormatBase
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import compare_datasets
+
+from .base import TestDataFormatBase
 
 DATASET_DIR = get_test_asset_path("mapillary_vistas_dataset")
 VAL_DATASET_DIR = get_test_asset_path("mapillary_vistas_dataset", "val")

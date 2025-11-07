@@ -76,9 +76,7 @@ def test_calculate_tiles(sample_df):
     )
 
     # Create specs from schema
-    image_info_spec = AttributeSpec(
-        name="image_info", field=schema.attributes["image_info"].annotation
-    )
+    image_info_spec = AttributeSpec(name="image_info", field=schema.attributes["image_info"].annotation)
     tile_info_spec = AttributeSpec(name="tile", field=schema.attributes["tile"].annotation)
 
     # Calculate tiles
@@ -169,9 +167,7 @@ def test_invalid_schema():
         }
     )
 
-    df = pl.DataFrame(
-        {"image": [np.zeros((100, 100, 3)).flatten()], "image_shape": [(100, 100, 3)]}
-    )
+    df = pl.DataFrame({"image": [np.zeros((100, 100, 3)).flatten()], "image_shape": [(100, 100, 3)]})
     config = TilingConfig(tile_width=50, tile_height=50)
 
     # Should raise error due to missing ImageInfoField

@@ -3,14 +3,7 @@ from unittest import TestCase
 import numpy as np
 
 import datumaro.plugins.splitter as splitter
-from datumaro.components.annotation import (
-    AnnotationType,
-    Bbox,
-    Label,
-    LabelCategories,
-    Mask,
-    Polygon,
-)
+from datumaro.components.annotation import AnnotationType, Bbox, Label, LabelCategories, Mask, Polygon
 from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image
@@ -288,10 +281,9 @@ class SplitterTest(TestCase):
                 splits = [("train", 0.5), ("test", 0.5), ("val", 0.5)]
                 splitter.Split(source, task, splits)
 
-        with self.subTest("duplicated subset name"):
-            with self.assertRaisesRegex(Exception, "duplicated"):
-                splits = [("train", 0.5), ("train", 0.2), ("test", 0.3)]
-                splitter.Split(source, task, splits)
+        with self.subTest("duplicated subset name"), self.assertRaisesRegex(Exception, "duplicated"):
+            splits = [("train", 0.5), ("train", 0.2), ("test", 0.3)]
+            splitter.Split(source, task, splits)
 
     def test_split_for_reidentification(self):
         """
@@ -450,15 +442,13 @@ class SplitterTest(TestCase):
                 splits = [("train", 0.5), ("val", 0.2), ("test", 0.3)]
                 actual = splitter.Split(source, task, splits, -query)
 
-        with self.subTest("duplicated subset name"):
-            with self.assertRaisesRegex(Exception, "duplicated"):
-                splits = [("train", 0.5), ("train", 0.2), ("test", 0.3)]
-                splitter.Split(source, task, splits, query)
+        with self.subTest("duplicated subset name"), self.assertRaisesRegex(Exception, "duplicated"):
+            splits = [("train", 0.5), ("train", 0.2), ("test", 0.3)]
+            splitter.Split(source, task, splits, query)
 
-        with self.subTest("wrong subset name"):
-            with self.assertRaisesRegex(Exception, "Subset name"):
-                splits = [("_train", 0.5), ("val", 0.2), ("test", 0.3)]
-                splitter.Split(source, task, splits, query)
+        with self.subTest("wrong subset name"), self.assertRaisesRegex(Exception, "Subset name"):
+            splits = [("_train", 0.5), ("val", 0.2), ("test", 0.3)]
+            splitter.Split(source, task, splits, query)
 
         with self.subTest("wrong attribute name for person id"):
             splits = [("train", 0.5), ("val", 0.2), ("test", 0.3)]
@@ -842,10 +832,9 @@ class SplitterTest(TestCase):
                 splits = [("train", 0.5), ("test", 0.5), ("val", 0.5)]
                 splitter.Split(source, task, splits)
 
-        with self.subTest("duplicated subset name"):
-            with self.assertRaisesRegex(Exception, "duplicated"):
-                splits = [("train", 0.5), ("train", 0.2), ("test", 0.3)]
-                splitter.Split(source, task, splits)
+        with self.subTest("duplicated subset name"), self.assertRaisesRegex(Exception, "duplicated"):
+            splits = [("train", 0.5), ("train", 0.2), ("test", 0.3)]
+            splitter.Split(source, task, splits)
 
     def test_no_subset_name_and_count_restriction(self):
         splits = [
@@ -1070,10 +1059,9 @@ class SplitterTest(TestCase):
                     splits = [("train", 0.5), ("test", 0.5), ("val", 0.5)]
                     splitter.Split(source, task, splits)
 
-            with self.subTest("duplicated subset name"):
-                with self.assertRaisesRegex(Exception, "duplicated"):
-                    splits = [("train", 0.5), ("train", 0.2), ("test", 0.3)]
-                    splitter.Split(source, task, splits)
+            with self.subTest("duplicated subset name"), self.assertRaisesRegex(Exception, "duplicated"):
+                splits = [("train", 0.5), ("train", 0.2), ("test", 0.3)]
+                splitter.Split(source, task, splits)
 
         with self.subTest("polygon annotation"):
             source, _ = self._generate_detection_segmentation_dataset(
@@ -1092,7 +1080,6 @@ class SplitterTest(TestCase):
                     splits = [("train", 0.5), ("test", 0.5), ("val", 0.5)]
                     splitter.Split(source, task, splits)
 
-            with self.subTest("duplicated subset name"):
-                with self.assertRaisesRegex(Exception, "duplicated"):
-                    splits = [("train", 0.5), ("train", 0.2), ("test", 0.3)]
-                    splitter.Split(source, task, splits)
+            with self.subTest("duplicated subset name"), self.assertRaisesRegex(Exception, "duplicated"):
+                splits = [("train", 0.5), ("train", 0.2), ("test", 0.3)]
+                splitter.Split(source, task, splits)

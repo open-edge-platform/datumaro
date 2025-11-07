@@ -13,7 +13,6 @@ from datumaro.components.annotation import AnnotationType, Bbox, LabelCategories
 from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image
-
 from tests.utils.test_utils import TestDir, compare_datasets
 from tests.utils.test_utils import run_datum as run
 
@@ -110,7 +109,7 @@ class MergeTest:
             Dataset.from_iterable(
                 [
                     DatasetItem(
-                        id=f"dset_0",
+                        id="dset_0",
                         subset="train",
                         media=Image.from_numpy(data=np.ones((10, 6, 3))),
                         annotations=[
@@ -118,7 +117,7 @@ class MergeTest:
                         ],
                     ),
                     DatasetItem(
-                        id=f"dset_1",
+                        id="dset_1",
                         subset="train",
                         media=Image.from_numpy(data=np.ones((10, 6, 3))),
                         annotations=[
@@ -133,7 +132,7 @@ class MergeTest:
             Dataset.from_iterable(
                 [
                     DatasetItem(
-                        id=f"dset_0",
+                        id="dset_0",
                         subset="train",
                         media=Image.from_numpy(data=np.ones((10, 6, 3))),
                         annotations=[
@@ -141,7 +140,7 @@ class MergeTest:
                         ],
                     ),
                     DatasetItem(
-                        id=f"dset_1",
+                        id="dset_1",
                         subset="train",
                         media=Image.from_numpy(data=np.ones((10, 6, 3))),
                         annotations=[
@@ -149,7 +148,7 @@ class MergeTest:
                         ],
                     ),
                     DatasetItem(
-                        id=f"dset_2",
+                        id="dset_2",
                         subset="train",
                         media=Image.from_numpy(data=np.ones((10, 6, 3))),
                         annotations=[
@@ -170,7 +169,7 @@ class MergeTest:
         expected = Dataset.from_iterable(
             [
                 DatasetItem(
-                    id=f"dset_0-0",
+                    id="dset_0-0",
                     subset="train",
                     media=Image.from_numpy(data=np.ones((10, 6, 3))),
                     annotations=[
@@ -178,7 +177,7 @@ class MergeTest:
                     ],
                 ),
                 DatasetItem(
-                    id=f"dset_0-1",
+                    id="dset_0-1",
                     subset="train",
                     media=Image.from_numpy(data=np.ones((10, 6, 3))),
                     annotations=[
@@ -186,7 +185,7 @@ class MergeTest:
                     ],
                 ),
                 DatasetItem(
-                    id=f"dset_1-0",
+                    id="dset_1-0",
                     subset="train",
                     media=Image.from_numpy(data=np.ones((10, 6, 3))),
                     annotations=[
@@ -194,7 +193,7 @@ class MergeTest:
                     ],
                 ),
                 DatasetItem(
-                    id=f"dset_1-1",
+                    id="dset_1-1",
                     subset="train",
                     media=Image.from_numpy(data=np.ones((10, 6, 3))),
                     annotations=[
@@ -202,7 +201,7 @@ class MergeTest:
                     ],
                 ),
                 DatasetItem(
-                    id=f"dset_2",
+                    id="dset_2",
                     subset="train",
                     media=Image.from_numpy(data=np.ones((10, 6, 3))),
                     annotations=[
@@ -531,6 +530,4 @@ class IntersectMergeTest(TestCase):
                 "--save-media",
             )
 
-            compare_datasets(
-                self, expected, Dataset.import_from(result_dir, "yolo"), require_media=True
-            )
+            compare_datasets(self, expected, Dataset.import_from(result_dir, "yolo"), require_media=True)

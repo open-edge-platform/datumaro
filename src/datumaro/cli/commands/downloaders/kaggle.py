@@ -47,9 +47,7 @@ class KaggleDatasetDownloader(IDatasetDownloader):
         try:
             import kaggle
         except ImportError:
-            raise CliException(
-                "Kaggle API is not installed. To install it, run `pip install kaggle`."
-            )
+            raise CliException("Kaggle API is not installed. To install it, run `pip install kaggle`.")
 
         import_kwargs = _SUPPORTED_DATASETS.get(dataset_id, {})
         if not import_kwargs:
@@ -66,9 +64,7 @@ class KaggleDatasetDownloader(IDatasetDownloader):
             import_kwargs["format"] = output_format
         if "subsets" in import_kwargs:
             if not subset or subset not in import_kwargs["subsets"]:
-                raise CliException(
-                    f"Please specify the subset. Options : {[k for k in import_kwargs['subsets']]}"
-                )
+                raise CliException(f"Please specify the subset. Options : {[k for k in import_kwargs['subsets']]}")
             log.info(f"Getting subset {subset}...")
             import_kwargs = import_kwargs["subsets"][subset]
 

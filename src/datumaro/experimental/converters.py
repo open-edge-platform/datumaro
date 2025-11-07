@@ -9,7 +9,8 @@ data transformations such as format conversions, dtype conversions, and
 multi-field transformations.
 """
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 import cv2
 import numpy as np
@@ -120,9 +121,7 @@ class LabelIndexConverter(Converter):
 
         if field.multi_label or field.is_list:
             mapping_expr = pl.col(input_col).list.eval(
-                pl.element().replace(
-                    list(index_mapping.keys()), list(index_mapping.values()), default=None
-                )
+                pl.element().replace(list(index_mapping.keys()), list(index_mapping.values()), default=None)
             )
         else:
             mapping_expr = pl.col(input_col).replace(
@@ -194,9 +193,7 @@ class RGBToBGRConverter(Converter):
         dtype = df.schema[input_column_name]
         # Apply the conversion using map_elements for efficient processing
         return df.with_columns(
-            pl.col(input_column_name)
-            .map_elements(rgb_to_bgr, return_dtype=dtype)
-            .alias(output_column_name),
+            pl.col(input_column_name).map_elements(rgb_to_bgr, return_dtype=dtype).alias(output_column_name),
             pl.col(input_shape_column_name).alias(output_shape_column_name),
         )
 
@@ -617,11 +614,7 @@ class BBoxDtypeConverter(Converter):
         # Cast bbox values to target dtype by converting each element
         return df.with_columns(
             pl.col(input_col)
-            .list.eval(
-                pl.element()
-                .arr.to_list()
-                .list.eval(pl.element().cast(self.output_bbox.field.dtype))
-            )
+            .list.eval(pl.element().arr.to_list().list.eval(pl.element().cast(self.output_bbox.field.dtype)))
             .alias(output_col)
         )
 
@@ -658,15 +651,10 @@ class LabelDtypeConverter(Converter):
         if self.input_label.field.is_list:
             # Handle list of labels
             return df.with_columns(
-                pl.col(input_col)
-                .list.eval(pl.element().cast(self.output_label.field.dtype))
-                .alias(output_col)
+                pl.col(input_col).list.eval(pl.element().cast(self.output_label.field.dtype)).alias(output_col)
             )
-        else:
-            # Handle single label
-            return df.with_columns(
-                pl.col(input_col).cast(self.output_label.field.dtype).alias(output_col)
-            )
+        # Handle single label
+        return df.with_columns(pl.col(input_col).cast(self.output_label.field.dtype).alias(output_col))
 
 
 @converter(lazy=True)
@@ -739,9 +727,7 @@ class PolygonToMaskConverter(Converter):
         output_column_name = self.output_mask.name
         output_shape_column_name = self.output_mask.name + "_shape"
 
-        def polygons_to_mask(
-            polygons_data: list, labels_data: list, img_info: dict
-        ) -> tuple[list[int], list[int]]:
+        def polygons_to_mask(polygons_data: list, labels_data: list, img_info: dict) -> tuple[list[int], list[int]]:
             """Rasterize polygons into indexed mask using OpenCV contour filling.
 
             The mask uses:
@@ -866,9 +852,7 @@ class PolygonToInstanceMaskConverter(Converter):
         output_column_name = self.output_instance_mask.name
         output_shape_column_name = self.output_instance_mask.name + "_shape"
 
-        def polygons_to_instance_masks(
-            polygons_data: list, img_info: dict
-        ) -> tuple[list[bool], list[int]]:
+        def polygons_to_instance_masks(polygons_data: list, img_info: dict) -> tuple[list[bool], list[int]]:
             """Rasterize polygons into instance masks using OpenCV contour filling."""
             # Extract image dimensions
             image_width = img_info["width"]
@@ -1029,8 +1013,7 @@ class PolygonToBBoxConverter(Converter):
             )
         else:
             raise NotImplementedError(
-                f"This conversion is not yet implemented "
-                f"for the format {self.output_bbox.field.format}."
+                f"This conversion is not yet implemented for the format {self.output_bbox.field.format}."
             )
 
         return df
@@ -1096,17 +1079,13 @@ class ImageCallableToImageConverter(Converter):
 
                 # Ensure the array has 3 dimensions for an image (height, width, channels)
                 if len(img_array.shape) != 3:
-                    raise ValueError(
-                        f"Image array must be 3D (height, width, channels), got shape {img_array.shape}"
-                    )
+                    raise ValueError(f"Image array must be 3D (height, width, channels), got shape {img_array.shape}")
 
                 # Check that the array has the expected dtype (no conversion)
                 expected_dtype = self.output_image.field.dtype
                 expected_numpy_dtype = polars_to_numpy_dtype(expected_dtype)
                 if img_array.dtype != expected_numpy_dtype:
-                    raise TypeError(
-                        f"Expected {expected_numpy_dtype} image array, got {img_array.dtype}"
-                    )
+                    raise TypeError(f"Expected {expected_numpy_dtype} image array, got {img_array.dtype}")
                 # If no specific dtype checking needed, accept as-is
 
                 # Store flattened image data and shape
@@ -1185,17 +1164,13 @@ class InstanceMaskCallableToInstanceMaskConverter(Converter):
 
             # Check array shape - should be 3D for instance masks (N, height, width)
             if len(mask_array.shape) != 3:
-                raise ValueError(
-                    f"Instance mask array must be 3D (N,H,W), got shape {mask_array.shape}"
-                )
+                raise ValueError(f"Instance mask array must be 3D (N,H,W), got shape {mask_array.shape}")
 
             # Check that the array has the expected dtype
             expected_dtype = self.output_mask.field.dtype
             expected_numpy_dtype = polars_to_numpy_dtype(expected_dtype)
             if mask_array.dtype != expected_numpy_dtype:
-                raise TypeError(
-                    f"Expected {expected_numpy_dtype} mask array, got {mask_array.dtype}"
-                )
+                raise TypeError(f"Expected {expected_numpy_dtype} mask array, got {mask_array.dtype}")
 
             # Store flattened mask data and shape
             mask_data.append(mask_array.flatten())
@@ -1276,9 +1251,7 @@ class MaskCallableToMaskConverter(Converter):
             expected_dtype = self.output_mask.field.dtype
             expected_numpy_dtype = polars_to_numpy_dtype(expected_dtype)
             if mask_array.dtype != expected_numpy_dtype:
-                raise TypeError(
-                    f"Expected {expected_numpy_dtype} mask array, got {mask_array.dtype}"
-                )
+                raise TypeError(f"Expected {expected_numpy_dtype} mask array, got {mask_array.dtype}")
 
             # Store flattened mask data and shape
             mask_data.append(mask_array.flatten())
@@ -1343,9 +1316,7 @@ class RotatedBBoxToPolygonConverter(Converter):
             py = expr.arr.get(1)
             cos_theta = r.cos()
             sin_theta = r.sin()
-            return pl.concat_arr(
-                cos_theta * px - sin_theta * py + cx, sin_theta * px + cos_theta * py + cy
-            )
+            return pl.concat_arr(cos_theta * px - sin_theta * py + cx, sin_theta * px + cos_theta * py + cy)
 
         df = df.with_columns(
             pl.col(input_column_name)

@@ -51,9 +51,7 @@ class StreamDatasetStorageTest:
         # Iterator should be called 3 times (n_calls = 3)
         assert fxt_stream_extractor.__iter__.call_count == n_calls
 
-    def _test_subsets(
-        self, fxt_stream_extractor, storage, expect: Set[str] = {DEFAULT_SUBSET_NAME}
-    ):
+    def _test_subsets(self, fxt_stream_extractor, storage, expect: Set[str] = {DEFAULT_SUBSET_NAME}):
         fxt_stream_extractor.reset_iter()
         subsets = storage.subsets()
         assert set(subsets.keys()) == expect
@@ -99,9 +97,7 @@ class StreamDatasetStorageTest:
         assert fxt_stream_extractor.__iter__.call_count == 1
 
         # Stack transform 2 level, should run 1 iter more to get the subset info after transform
-        storage.transform(
-            MapSubsets, mapping={"train": DEFAULT_SUBSET_NAME, "val": DEFAULT_SUBSET_NAME}
-        )
+        storage.transform(MapSubsets, mapping={"train": DEFAULT_SUBSET_NAME, "val": DEFAULT_SUBSET_NAME})
         self._test_subsets(fxt_stream_extractor, storage)
         assert fxt_stream_extractor.__iter__.call_count == 2
 
@@ -116,9 +112,7 @@ class StreamDatasetStorageTest:
         assert storage.infos().get("new") == "info"
         assert fxt_stream_extractor.__iter__.call_count == 0
 
-    def test_categories_transform(
-        self, fxt_stream_extractor: MagicMock, fxt_categories: CategoriesInfo
-    ):
+    def test_categories_transform(self, fxt_stream_extractor: MagicMock, fxt_categories: CategoriesInfo):
         storage = StreamDatasetStorage(source=fxt_stream_extractor)
 
         assert storage.categories() == fxt_categories

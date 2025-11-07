@@ -12,15 +12,11 @@ from datumaro.components.environment import Environment
 from datumaro.components.media import Image
 from datumaro.util.image import encode_image
 from datumaro.util.tf_util import check_import
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, check_save_and_load, compare_datasets
 
 try:
-    from datumaro.plugins.data_formats.tf_detection_api.base import (
-        TfDetectionApiBase,
-        TfDetectionApiImporter,
-    )
+    from datumaro.plugins.data_formats.tf_detection_api.base import TfDetectionApiBase, TfDetectionApiImporter
     from datumaro.plugins.data_formats.tf_detection_api.exporter import TfDetectionApiExporter
 
     import_failed = False
@@ -72,16 +68,12 @@ class TfrecordExporterTest(TestCase):
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    "label_" + str(label) for label in range(10)
-                ),
+                AnnotationType.label: LabelCategories.from_iterable("label_" + str(label) for label in range(10)),
             },
         )
 
         with TestDir() as test_dir:
-            self._test_save_and_load(
-                test_dataset, partial(TfDetectionApiExporter.convert, save_media=True), test_dir
-            )
+            self._test_save_and_load(test_dataset, partial(TfDetectionApiExporter.convert, save_media=True), test_dir)
 
     def test_can_save_masks(self):
         test_dataset = Dataset.from_iterable(
@@ -107,16 +99,12 @@ class TfrecordExporterTest(TestCase):
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    "label_" + str(label) for label in range(10)
-                ),
+                AnnotationType.label: LabelCategories.from_iterable("label_" + str(label) for label in range(10)),
             },
         )
 
         with TestDir() as test_dir:
-            self._test_save_and_load(
-                test_dataset, partial(TfDetectionApiExporter.convert, save_masks=True), test_dir
-            )
+            self._test_save_and_load(test_dataset, partial(TfDetectionApiExporter.convert, save_masks=True), test_dir)
 
     def test_can_save_dataset_with_no_subsets(self):
         test_dataset = Dataset.from_iterable(
@@ -145,16 +133,12 @@ class TfrecordExporterTest(TestCase):
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    "label_" + str(label) for label in range(10)
-                ),
+                AnnotationType.label: LabelCategories.from_iterable("label_" + str(label) for label in range(10)),
             },
         )
 
         with TestDir() as test_dir:
-            self._test_save_and_load(
-                test_dataset, partial(TfDetectionApiExporter.convert, save_media=True), test_dir
-            )
+            self._test_save_and_load(test_dataset, partial(TfDetectionApiExporter.convert, save_media=True), test_dir)
 
     def test_can_save_dataset_with_cyrillic_and_spaces_in_filename(self):
         test_dataset = Dataset.from_iterable(
@@ -170,16 +154,12 @@ class TfrecordExporterTest(TestCase):
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    "label_" + str(label) for label in range(10)
-                ),
+                AnnotationType.label: LabelCategories.from_iterable("label_" + str(label) for label in range(10)),
             },
         )
 
         with TestDir() as test_dir:
-            self._test_save_and_load(
-                test_dataset, partial(TfDetectionApiExporter.convert, save_media=True), test_dir
-            )
+            self._test_save_and_load(test_dataset, partial(TfDetectionApiExporter.convert, save_media=True), test_dir)
 
     def test_can_save_dataset_with_image_info(self):
         test_dataset = Dataset.from_iterable(
@@ -338,9 +318,7 @@ class TfrecordImporterTest(TestCase):
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    "label_" + str(label) for label in range(10)
-                ),
+                AnnotationType.label: LabelCategories.from_iterable("label_" + str(label) for label in range(10)),
             },
         )
 

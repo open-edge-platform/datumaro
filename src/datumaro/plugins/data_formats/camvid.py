@@ -12,13 +12,7 @@ from typing import List, Optional, Tuple
 
 import numpy as np
 
-from datumaro.components.annotation import (
-    AnnotationType,
-    CompiledMask,
-    ExtractedMask,
-    LabelCategories,
-    MaskCategories,
-)
+from datumaro.components.annotation import AnnotationType, CompiledMask, ExtractedMask, LabelCategories, MaskCategories
 from datumaro.components.dataset_base import DatasetItem, SubsetBase
 from datumaro.components.dataset_item_storage import ItemStatus
 from datumaro.components.errors import AnnotationExportError, InvalidAnnotationError, MediaTypeError
@@ -86,13 +80,13 @@ def parse_label_map(path):
         for line in f:
             # skip empty and commented lines
             line = line.strip()
-            if not line or line and line[0] == "#":
+            if not line or (line and line[0] == "#"):
                 continue
 
             # color, name
             label_desc = line.strip().split()
 
-            if 2 < len(label_desc):
+            if len(label_desc) > 2:
                 name = label_desc[3]
                 color = tuple([int(c) for c in label_desc[:-1]])
             else:
@@ -143,9 +137,7 @@ def make_camvid_categories(label_map=None):
         colormap = generate_colormap(len(label_map))
     else:  # only copy defined colors
         label_id = lambda label: label_categories.find(label)[0]
-        colormap = {
-            label_id(name): (desc[0], desc[1], desc[2]) for name, desc in label_map.items() if desc
-        }
+        colormap = {label_id(name): (desc[0], desc[1], desc[2]) for name, desc in label_map.items() if desc}
     mask_categories = MaskCategories(colormap)
     mask_categories.inverse_colormap  # pylint: disable=pointless-statement
     categories[AnnotationType.mask] = mask_categories
@@ -155,21 +147,18 @@ def make_camvid_categories(label_map=None):
 def _parse_annotation_line(line: str) -> Tuple[str, Optional[str]]:
     line = line.strip()
     objects = line.split('"')
-    if 1 < len(objects):
+    if len(objects) > 1:
         if len(objects) == 5:
             objects[0] = objects[1]
             objects[1] = objects[3]
         else:
-            raise InvalidAnnotationError(
-                "Line %s: unexpected number " "of quotes in filename" % line
-            )
+            raise InvalidAnnotationError("Line %s: unexpected number of quotes in filename" % line)
     else:
         objects = line.split()
 
     if len(objects) > 1:
         return objects[0], objects[1].lstrip("/")
-    else:
-        return objects[0], None
+    return objects[0], None
 
 
 class CamvidBase(SubsetBase):
@@ -220,9 +209,7 @@ class CamvidBase(SubsetBase):
                 item_annotations = []
                 if gt is not None:
                     gt_path = osp.join(self._dataset_dir, gt)
-                    mask = lazy_mask(
-                        gt_path, self._categories[AnnotationType.mask].inverse_colormap
-                    )
+                    mask = lazy_mask(gt_path, self._categories[AnnotationType.mask].inverse_colormap)
                     np_mask = mask()  # loading mask through cache
 
                     classes = np.unique(np_mask)
@@ -253,9 +240,7 @@ class CamvidImporter(Importer):
 
     @classmethod
     def detect(cls, context: FormatDetectionContext) -> None:
-        annot_path = context.require_file(
-            f"*{cls._ANNO_EXT}", exclude_fnames=CamvidPath.LABELMAP_FILE
-        )
+        annot_path = context.require_file(f"*{cls._ANNO_EXT}", exclude_fnames=CamvidPath.LABELMAP_FILE)
 
         with context.probe_text_file(
             annot_path,
@@ -353,9 +338,7 @@ class CamvidExporter(Exporter):
                         masks, instance_labels=[self._label_id_mapping(m.label) for m in masks]
                     )
 
-                    mask_path = osp.join(
-                        subset_name + CamvidPath.SEGM_DIR, item.id + CamvidPath.MASK_EXT
-                    )
+                    mask_path = osp.join(subset_name + CamvidPath.SEGM_DIR, item.id + CamvidPath.MASK_EXT)
                     self.save_segm(osp.join(self._save_dir, mask_path), compiled_mask.class_mask)
                     segm_list[item.id] = (image_path, mask_path)
                 else:
@@ -384,7 +367,7 @@ class CamvidExporter(Exporter):
             for image_path, mask_path in segm_list.values():
                 image_path = "/" + image_path.replace("\\", "/")
                 mask_path = mask_path.replace("\\", "/")
-                if 1 < len(image_path.split()) or 1 < len(mask_path.split()):
+                if len(image_path.split()) > 1 or len(mask_path.split()) > 1:
                     image_path = '"' + image_path + '"'
                     mask_path = '"' + mask_path + '"'
                 f.write("%s %s\n" % (image_path, mask_path))
@@ -404,18 +387,12 @@ class CamvidExporter(Exporter):
             # use the default Camvid colormap
             label_map = CamvidLabelMap
 
-        elif (
-            label_map_source == LabelmapType.source.name
-            and AnnotationType.mask not in self._extractor.categories()
-        ):
+        elif label_map_source == LabelmapType.source.name and AnnotationType.mask not in self._extractor.categories():
             # generate colormap for input labels
             labels = self._extractor.categories().get(AnnotationType.label, LabelCategories())
             label_map = OrderedDict((item.name, None) for item in labels.items)
 
-        elif (
-            label_map_source == LabelmapType.source.name
-            and AnnotationType.mask in self._extractor.categories()
-        ):
+        elif label_map_source == LabelmapType.source.name and AnnotationType.mask in self._extractor.categories():
             # use source colormap
             labels = self._extractor.categories()[AnnotationType.label]
             colors = self._extractor.categories()[AnnotationType.mask]
@@ -436,8 +413,7 @@ class CamvidExporter(Exporter):
 
         else:
             raise AnnotationExportError(
-                "Wrong labelmap specified, "
-                "expected one of %s or a file path" % ", ".join(t.name for t in LabelmapType)
+                "Wrong labelmap specified, expected one of %s or a file path" % ", ".join(t.name for t in LabelmapType)
             )
 
         self._categories = make_camvid_categories(label_map)
@@ -450,13 +426,9 @@ class CamvidExporter(Exporter):
             self._categories[AnnotationType.label],
         )
 
-        void_labels = [
-            src_label for src_id, src_label in src_labels.items() if src_label not in dst_labels
-        ]
+        void_labels = [src_label for src_id, src_label in src_labels.items() if src_label not in dst_labels]
         if void_labels:
-            log.warning(
-                "The following labels are remapped to background: %s" % ", ".join(void_labels)
-            )
+            log.warning("The following labels are remapped to background: %s" % ", ".join(void_labels))
         log.debug(
             "Saving segmentations with the following label mapping: \n%s"
             % "\n".join(
@@ -496,9 +468,7 @@ class CamvidExporter(Exporter):
             if osp.isfile(image_path):
                 os.unlink(image_path)
 
-            mask_path = osp.join(
-                save_dir, subset + CamvidPath.SEGM_DIR, item.id + CamvidPath.MASK_EXT
-            )
+            mask_path = osp.join(save_dir, subset + CamvidPath.SEGM_DIR, item.id + CamvidPath.MASK_EXT)
             if osp.isfile(mask_path):
                 os.remove(mask_path)
 

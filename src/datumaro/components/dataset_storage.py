@@ -14,11 +14,7 @@ from datumaro.components.dataset_base import (
     DatasetItem,
     IDataset,
 )
-from datumaro.components.dataset_item_storage import (
-    DatasetItemStorage,
-    DatasetItemStorageDatasetView,
-    ItemStatus,
-)
+from datumaro.components.dataset_item_storage import DatasetItemStorage, DatasetItemStorageDatasetView, ItemStatus
 from datumaro.components.errors import (
     CategoriesRedefinedError,
     ConflictingCategoriesError,
@@ -230,10 +226,7 @@ class DatasetStorage(IDataset):
                     self._updated_items.pop(item_id)
                 else:
                     self._updated_items[item_id] = ItemStatus.removed
-            elif new_status == ItemStatus.modified:
-                if current_status != ItemStatus.added:
-                    self._updated_items[item_id] = ItemStatus.modified
-            elif new_status == ItemStatus.added:
+            elif new_status == ItemStatus.modified or new_status == ItemStatus.added:
                 if current_status != ItemStatus.added:
                     self._updated_items[item_id] = ItemStatus.modified
             else:
@@ -272,9 +265,7 @@ class DatasetStorage(IDataset):
 
             if not issubclass(transform.media_type(), media_type):
                 # TODO: make it statically available
-                raise MediaTypeError(
-                    "Transforms are not allowed to change media " "type of dataset items"
-                )
+                raise MediaTypeError("Transforms are not allowed to change media type of dataset items")
 
             self._drop_malformed_transforms(transform.malformed_transform_indices)
 
@@ -381,7 +372,7 @@ class DatasetStorage(IDataset):
     def _merged(self) -> IDataset:
         if self._is_unchanged_wrapper:
             return self._source
-        elif self._source is not None:
+        if self._source is not None:
             self.init_cache()
         return DatasetItemStorageDatasetView(
             self._storage,
@@ -397,15 +388,12 @@ class DatasetStorage(IDataset):
         return self._length
 
     def infos(self) -> DatasetInfo:
-        if self.is_cache_initialized():
+        if self.is_cache_initialized() or self._infos is not None:
             return self._infos
-        elif self._infos is not None:
-            return self._infos
-        elif any(is_method_redefined("infos", Transform, t[0]) for t in self._transforms):
+        if any(is_method_redefined("infos", Transform, t[0]) for t in self._transforms):
             self.init_cache()
             return self._infos
-        else:
-            return self._source.infos()
+        return self._source.infos()
 
     def define_infos(self, infos: DatasetInfo):
         if self._infos or self._source is not None:
@@ -413,15 +401,12 @@ class DatasetStorage(IDataset):
         self._infos = infos
 
     def categories(self) -> CategoriesInfo:
-        if self.is_cache_initialized():
+        if self.is_cache_initialized() or self._categories is not None:
             return self._categories
-        elif self._categories is not None:
-            return self._categories
-        elif any(is_method_redefined("categories", Transform, t[0]) for t in self._transforms):
+        if any(is_method_redefined("categories", Transform, t[0]) for t in self._transforms):
             self.init_cache()
             return self._categories
-        else:
-            return self._source.categories()
+        return self._source.categories()
 
     def define_categories(self, categories: CategoriesInfo):
         if self._categories or self._source is not None:
@@ -544,9 +529,7 @@ class DatasetStorage(IDataset):
             else:
                 patch.put(self._storage.get(item_id, subset))
 
-        return DatasetPatch(
-            patch, infos=self._infos, categories=self._categories, updated_items=self._updated_items
-        )
+        return DatasetPatch(patch, infos=self._infos, categories=self._categories, updated_items=self._updated_items)
 
     def flush_changes(self):
         self._updated_items = {}
@@ -568,9 +551,7 @@ class DatasetStorage(IDataset):
         elif isinstance(source, IDataset):
             from datumaro.plugins.transforms import ProjectLabels
 
-            for item in ProjectLabels(
-                source, self.categories().get(AnnotationType.label, LabelCategories())
-            ):
+            for item in ProjectLabels(source, self.categories().get(AnnotationType.label, LabelCategories())):
                 self.put(item)
         else:
             for item in source:
@@ -667,7 +648,6 @@ class StreamDatasetStorage(DatasetStorage):
 
     def init_cache(self) -> None:
         log.debug("This function has no effect on streaming.")
-        pass
 
     @property
     def stacked_transform(self) -> IDataset:

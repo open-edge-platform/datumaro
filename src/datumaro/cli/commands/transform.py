@@ -46,25 +46,19 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         |n
         - Split a dataset randomly:|n |n
         |s|s%(prog)s --overwrite path/to/dataset:voc -t random_split
-        """.format(
-            ", ".join(builtins)
-        ),
+        """.format(", ".join(builtins)),
         formatter_class=MultilineFormatter,
     )
 
     parser.add_argument("target", help="Target dataset path")
-    parser.add_argument(
-        "-t", "--transform", required=True, help="Transform to apply to the dataset"
-    )
+    parser.add_argument("-t", "--transform", required=True, help="Transform to apply to the dataset")
     parser.add_argument(
         "-o",
         "--output-dir",
         dest="dst_dir",
         help="Output directory. If not specified, the results will be saved inplace.",
     )
-    parser.add_argument(
-        "--overwrite", action="store_true", help="Overwrite existing files in the save directory"
-    )
+    parser.add_argument("--overwrite", action="store_true", help="Overwrite existing files in the save directory")
     parser.add_argument(
         "extra_args",
         nargs=argparse.REMAINDER,
@@ -96,9 +90,7 @@ def transform_command(args):
     dst_dir = args.dst_dir or dataset.data_path
 
     if not args.overwrite and osp.isdir(dst_dir) and os.listdir(dst_dir):
-        raise CliException(
-            "Directory '%s' already exists " "(pass --overwrite to overwrite)" % dst_dir
-        )
+        raise CliException("Directory '%s' already exists (pass --overwrite to overwrite)" % dst_dir)
     dst_dir = osp.abspath(dst_dir)
 
     # Apply the transform

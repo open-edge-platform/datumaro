@@ -5,7 +5,6 @@
 import os
 import os.path as osp
 import shutil
-import sys
 from functools import partial
 from unittest.mock import patch
 
@@ -21,13 +20,7 @@ from datumaro.components.media import Image
 from datumaro.plugins.data_formats.datumaro.exporter import DatumaroExporter
 from datumaro.plugins.data_formats.datumaro.format import DatumaroPath
 from datumaro.plugins.data_formats.datumaro.importer import DatumaroImporter
-
-from tests.utils.test_utils import (
-    Dimensions,
-    check_save_and_load,
-    compare_datasets,
-    compare_datasets_strict,
-)
+from tests.utils.test_utils import Dimensions, check_save_and_load, compare_datasets, compare_datasets_strict
 
 
 class DatumaroFormatTest:
@@ -194,9 +187,7 @@ class DatumaroFormatTest:
         fxt_test_datumaro_format_video_dataset: Dataset,
         test_dir,
     ):
-        with patch(
-            "datumaro.components.media.shutil.copyfile", wraps=shutil.copyfile
-        ) as mocked_save:
+        with patch("datumaro.components.media.shutil.copyfile", wraps=shutil.copyfile) as mocked_save:
             fxt_test_datumaro_format_video_dataset.export(test_dir, "datumaro", save_media=True)
             assert mocked_save.call_count == 2  # train/video.avi, test/video.avi
 
@@ -243,7 +234,7 @@ class DatumaroFormatTest:
         self.exporter.convert(fxt_dataset, save_dir=test_dir)
 
         detected_formats = Environment().detect_dataset(test_dir)
-        assert [self.importer.NAME] == detected_formats
+        assert detected_formats == [self.importer.NAME]
 
     # Below is testing special cases...
     def test_inplace_save_writes_only_updated_data_with_direct_changes(self, test_dir, helper_tc):
@@ -276,9 +267,7 @@ class DatumaroFormatTest:
             {f"a{self.ann_ext}", f"b{self.ann_ext}"},
             set(os.listdir(osp.join(test_dir, "annotations"))),
         )
-        helper_tc.assertEqual(
-            {"1.jpg", "2.jpg"}, set(os.listdir(osp.join(test_dir, "images", "a")))
-        )
+        helper_tc.assertEqual({"1.jpg", "2.jpg"}, set(os.listdir(osp.join(test_dir, "images", "a"))))
         compare_datasets(
             helper_tc,
             expected,
@@ -318,9 +307,7 @@ class DatumaroFormatTest:
         )
         helper_tc.assertEqual({"3.jpg"}, set(os.listdir(osp.join(test_dir, "images", "train"))))
         helper_tc.assertEqual({"4.jpg"}, set(os.listdir(osp.join(test_dir, "images", "test"))))
-        helper_tc.assertEqual(
-            {"train", "c", "d", "test"}, set(os.listdir(osp.join(test_dir, "images")))
-        )
+        helper_tc.assertEqual({"train", "c", "d", "test"}, set(os.listdir(osp.join(test_dir, "images"))))
         helper_tc.assertEqual(set(), set(os.listdir(osp.join(test_dir, "images", "c"))))
         helper_tc.assertEqual(set(), set(os.listdir(osp.join(test_dir, "images", "d"))))
 

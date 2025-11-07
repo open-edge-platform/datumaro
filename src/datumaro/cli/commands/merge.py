@@ -100,12 +100,8 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         default=None,
         help="Output directory (default: generate a new one)",
     )
-    parser.add_argument(
-        "--overwrite", action="store_true", help="Overwrite existing files in the save directory"
-    )
-    parser.add_argument(
-        "-f", "--format", default=DEFAULT_FORMAT, help="Output format (default: %(default)s)"
-    )
+    parser.add_argument("--overwrite", action="store_true", help="Overwrite existing files in the save directory")
+    parser.add_argument("-f", "--format", default=DEFAULT_FORMAT, help="Output format (default: %(default)s)")
     parser.add_argument(
         "extra_args",
         nargs=argparse.REMAINDER,
@@ -130,14 +126,13 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         "--output-conf-thresh",
         default=0.0,
         type=float,
-        help="Confidence threshold for output " "annotations (default: %(default)s)",
+        help="Confidence threshold for output annotations (default: %(default)s)",
     )
     intersect_args.add_argument(
         "--quorum",
         default=0,
         type=int,
-        help="Minimum count for a label and attribute voting "
-        "results to be counted (default: %(default)s)",
+        help="Minimum count for a label and attribute voting results to be counted (default: %(default)s)",
     )
     intersect_args.add_argument(
         "-g",
@@ -174,9 +169,7 @@ def merge_command(args):
     dst_dir = args.dst_dir
     if dst_dir:
         if not args.overwrite and osp.isdir(dst_dir) and os.listdir(dst_dir):
-            raise CliException(
-                "Directory '%s' already exists " "(pass --overwrite to overwrite)" % dst_dir
-            )
+            raise CliException("Directory '%s' already exists (pass --overwrite to overwrite)" % dst_dir)
     else:
         dst_dir = generate_next_file_name("merged")
     dst_dir = osp.abspath(dst_dir)
@@ -214,9 +207,7 @@ def merge_command(args):
         if args.merge_policy == "intersect"
         else {}
     )
-    merged_dataset = HLOps.merge(
-        *source_datasets, merge_policy=args.merge_policy, report_path=report_path, **options
-    )
+    merged_dataset = HLOps.merge(*source_datasets, merge_policy=args.merge_policy, report_path=report_path, **options)
 
     merged_dataset.export(save_dir=dst_dir, format=exporter, **export_args)
 

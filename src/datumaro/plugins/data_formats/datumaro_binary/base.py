@@ -74,9 +74,7 @@ class DatumaroBinaryBase(DatumaroBase):
         _bytes = self._fp.read(struct.unpack("I", len_byte)[0])
 
         if _bytes != b"":
-            raise DatasetImportError(
-                "Encrypted files are no longer supported since Datumaro 1.12.0."
-            )
+            raise DatasetImportError("Encrypted files are no longer supported since Datumaro 1.12.0.")
 
     def _read_header(self):
         len_byte = self._fp.read(4)
@@ -131,9 +129,7 @@ class DatumaroBinaryBase(DatumaroBase):
             for ann in item.annotations:
                 self._ann_types.add(ann.type)
 
-    def _read_items_mp(
-        self, blob_sizes: List[int], media_path_prefix: Dict[MediaType, str]
-    ) -> List[DatasetItem]:
+    def _read_items_mp(self, blob_sizes: List[int], media_path_prefix: Dict[MediaType, str]) -> List[DatasetItem]:
         async_results: List[AsyncResult] = []
 
         with Pool(processes=self._num_workers) as pool:
@@ -155,12 +151,8 @@ class DatumaroBinaryBase(DatumaroBase):
                 for item in async_result.get(timeout=DatumaroBinaryPath.MP_TIMEOUT)
             ]
 
-    def _read_items_sp(
-        self, blob_sizes: List[int], media_path_prefix: Dict[MediaType, str]
-    ) -> List[DatasetItem]:
-        items_list = [
-            self._read_blob(self._fp.read(blob_size), media_path_prefix) for blob_size in blob_sizes
-        ]
+    def _read_items_sp(self, blob_sizes: List[int], media_path_prefix: Dict[MediaType, str]) -> List[DatasetItem]:
+        items_list = [self._read_blob(self._fp.read(blob_size), media_path_prefix) for blob_size in blob_sizes]
 
         return [item for items in items_list for item in items]
 

@@ -33,11 +33,9 @@ def parse_field(
         if default is not NOTSET:
             return default
         raise MissingFieldError(key)
-    elif not isinstance(value, cls):
+    if not isinstance(value, cls):
         cls = (cls,) if isclass(cls) else cls
-        raise InvalidFieldTypeError(
-            key, actual=str(type(value)), expected=tuple(str(t) for t in cls)
-        )
+        raise InvalidFieldTypeError(key, actual=str(type(value)), expected=tuple(str(t) for t in cls))
     return value
 
 
@@ -90,9 +88,7 @@ class SegmentAnythingBase(SubsetBase):
                 file_name = parse_field(image_info, "file_name", str)
 
                 item_kwargs["id"] = osp.splitext(file_name)[0]
-                item_kwargs["media"] = Image.from_file(
-                    path=osp.join(self._path, file_name), size=image_size
-                )
+                item_kwargs["media"] = Image.from_file(path=osp.join(self._path, file_name), size=image_size)
             except Exception as e:
                 self._ctx.error_policy.report_item_error(e, item_id=(image_id, self._subset))
 
@@ -142,9 +138,7 @@ class SegmentAnythingBase(SubsetBase):
 
                     if len(bbox) > 0:
                         if len(bbox) != 4:
-                            raise InvalidAnnotationError(
-                                f"Bbox has wrong value count {len(bbox)}. Expected 4 values."
-                            )
+                            raise InvalidAnnotationError(f"Bbox has wrong value count {len(bbox)}. Expected 4 values.")
                         x, y, w, h = bbox
                         item_kwargs["annotations"].append(
                             Bbox(

@@ -34,8 +34,7 @@ class MultilineFormatter(argparse.HelpFormatter):
         multiline_text = ""
         for paragraph in paragraphs:
             formatted_paragraph = (
-                textwrap.fill(paragraph, width, initial_indent=indent, subsequent_indent=indent)
-                + "\n"
+                textwrap.fill(paragraph, width, initial_indent=indent, subsequent_indent=indent) + "\n"
             )
             multiline_text += formatted_paragraph
         return multiline_text
@@ -63,12 +62,12 @@ class MultilineFormatter(argparse.HelpFormatter):
 
 
 def required_count(nmin=0, nmax=0):
-    assert 0 <= nmin and 0 <= nmax and nmin or nmax
+    assert (nmin >= 0 and nmax >= 0 and nmin) or nmax
 
     class RequiredCount(argparse.Action):
         def __call__(self, parser, args, values, option_string=None):
             k = len(values)
-            if not ((nmin and (nmin <= k) or not nmin) and (nmax and (k <= nmax) or not nmax)):
+            if not (((nmin and (nmin <= k)) or not nmin) and ((nmax and (k <= nmax)) or not nmax)):
                 msg = "Argument '%s' requires" % self.dest
                 if nmin and nmax:
                     msg += " from %s to %s arguments" % (nmin, nmax)

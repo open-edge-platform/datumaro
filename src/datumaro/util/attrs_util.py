@@ -46,7 +46,6 @@ def ensure_cls(c):
     def _converter(arg):
         if isinstance(arg, c):
             return arg
-        else:
-            return c(**arg)
+        return c(**arg)
 
     return _converter

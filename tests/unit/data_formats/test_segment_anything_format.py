@@ -9,14 +9,10 @@ import pytest
 from datumaro.components.annotation import Bbox, RleMask
 from datumaro.components.dataset import Dataset, DatasetItem
 from datumaro.components.media import Image
-from datumaro.plugins.data_formats.segment_anything import (
-    SegmentAnythingExporter,
-    SegmentAnythingImporter,
-)
+from datumaro.plugins.data_formats.segment_anything import SegmentAnythingExporter, SegmentAnythingImporter
+from tests.utils.assets import get_test_asset_path
 
 from .base import TestDataFormatBase
-
-from tests.utils.assets import get_test_asset_path
 
 DATASET_DIR = get_test_asset_path("segment_anything_dataset")
 

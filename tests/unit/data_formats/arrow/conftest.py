@@ -13,16 +13,6 @@ from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image, PointCloud
 from datumaro.util.image import encode_image
-
-from ..datumaro.conftest import (
-    fxt_can_save_and_load_image_with_arbitrary_extension,
-    fxt_can_save_and_load_infos,
-    fxt_can_save_dataset_with_cjk_categories,
-    fxt_can_save_dataset_with_cyrillic_and_spaces_in_filename,
-    fxt_relative_paths,
-    fxt_test_datumaro_format_dataset,
-)
-
 from tests.utils.test_utils import TestDir
 
 
@@ -60,13 +50,9 @@ def fxt_image(test_dir, n=1000):
         if i % 3 == 0:
             media = Image.from_numpy(data=np.random.randint(0, 255, (5, 5, 3)))
         elif i % 3 == 1:
-            media = Image.from_bytes(
-                data=encode_image(np.random.randint(0, 255, (5, 5, 3)), ".png")
-            )
+            media = Image.from_bytes(data=encode_image(np.random.randint(0, 255, (5, 5, 3)), ".png"))
         elif i % 3 == 2:
-            Image.from_numpy(data=np.random.randint(0, 255, (5, 5, 3))).save(
-                os.path.join(test_dir, f"test{i}.jpg")
-            )
+            Image.from_numpy(data=np.random.randint(0, 255, (5, 5, 3))).save(os.path.join(test_dir, f"test{i}.jpg"))
             media = Image.from_file(path=os.path.join(test_dir, f"test{i}.jpg"))
 
         items.append(
@@ -88,9 +74,7 @@ def fxt_point_cloud(test_dir, n=1000):
     items = []
     for i in range(n):
         media = None
-        Image.from_numpy(data=np.random.randint(0, 255, (5, 5, 3))).save(
-            os.path.join(test_dir, f"test{i}.jpg")
-        )
+        Image.from_numpy(data=np.random.randint(0, 255, (5, 5, 3))).save(os.path.join(test_dir, f"test{i}.jpg"))
         extra_images = [
             Image.from_numpy(data=np.random.randint(0, 255, (5, 5, 3))),
             Image.from_bytes(data=encode_image(np.random.randint(0, 255, (5, 5, 3)), ".png")),
@@ -102,9 +86,7 @@ def fxt_point_cloud(test_dir, n=1000):
         elif i % 2 == 1:
             with open(os.path.join(test_dir, f"test{i}.pcd"), "wb") as f:
                 f.write(data)
-            media = PointCloud.from_file(
-                path=os.path.join(test_dir, f"test{i}.pcd"), extra_images=extra_images
-            )
+            media = PointCloud.from_file(path=os.path.join(test_dir, f"test{i}.pcd"), extra_images=extra_images)
 
         items.append(
             DatasetItem(

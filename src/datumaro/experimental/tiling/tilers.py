@@ -7,7 +7,7 @@ Implementations of tilers for specific field types.
 """
 
 import operator
-from typing import Any, Tuple
+from typing import Any
 
 import numpy as np
 import polars as pl
@@ -38,8 +38,7 @@ class PassthroughTiler(Tiler):
         """Process labels, adding keep column for list fields."""
         column_name = self.field_spec.name
         source_sample_idx = (
-            tiles_df.select(pl.col("tile").struct["source_sample_idx"])["source_sample_idx"]
-            - slice_offset
+            tiles_df.select(pl.col("tile").struct["source_sample_idx"])["source_sample_idx"] - slice_offset
         )
 
         # Just a passthrough of the data
@@ -115,9 +114,7 @@ class InstanceMaskTiler(Tiler):
 
             # Reshape flattened data and extract tile
             instances = instances_data.reshape(instances_shape).to_numpy()
-            tile_result = instances[
-                :, y : y + height, x : x + width
-            ]  # Shape: (num_instances, tile_height, tile_width)
+            tile_result = instances[:, y : y + height, x : x + width]  # Shape: (num_instances, tile_height, tile_width)
 
             # Flatten result for storage
             results_data.append(tile_result.reshape(-1))
@@ -290,8 +287,8 @@ class ImageTiler(Tiler):
 
         def extract_tile(
             image_data: np.ndarray,
-            image_shape: Tuple[int, ...],
-            tile_box: Tuple[int, int, int, int],
+            image_shape: tuple[int, ...],
+            tile_box: tuple[int, int, int, int],
         ) -> np.ndarray:
             """Extract a tile from flattened image data."""
             # Reshape the flattened data
@@ -328,9 +325,7 @@ class ImageTiler(Tiler):
         return pl.DataFrame(results)
 
 
-def _apply_offset(
-    geom: sg.base.BaseGeometry, offset_x: float, offset_y: float
-) -> sg.base.BaseGeometry:
+def _apply_offset(geom: sg.base.BaseGeometry, offset_x: float, offset_y: float) -> sg.base.BaseGeometry:
     """Apply offset to geometry."""
     return so.transform(lambda x, y: (x - offset_x, y - offset_y), geom)
 
@@ -389,9 +384,7 @@ class PolygonTiler(Tiler):
 
                 # NOTE: intersection may return a GeometryCollection or MultiPolygon
                 if isinstance(intersection, (sg.GeometryCollection, sg.MultiPolygon)):
-                    shapes = [
-                        (geom, geom.area) for geom in list(intersection.geoms) if geom.is_valid
-                    ]
+                    shapes = [(geom, geom.area) for geom in list(intersection.geoms) if geom.is_valid]
                     if not shapes:
                         tiled_polygons.append(None)  # Placeholder for dropped polygon
                         polygon_keeps.append(False)
@@ -399,11 +392,7 @@ class PolygonTiler(Tiler):
 
                     intersection, _ = max(shapes, key=operator.itemgetter(1))
 
-                if (
-                    not isinstance(intersection, sg.Polygon)
-                    or intersection.is_empty
-                    or not intersection.is_valid
-                ):
+                if not isinstance(intersection, sg.Polygon) or intersection.is_empty or not intersection.is_valid:
                     tiled_polygons.append(None)  # Placeholder for dropped polygon
                     polygon_keeps.append(False)
                     continue
@@ -423,15 +412,10 @@ class PolygonTiler(Tiler):
             # Always create output row
             results.append(
                 pl.Series(
-                    [
-                        pl.Series(polygon, dtype=pl.Array(self.field_spec.field.dtype, 2))
-                        for polygon in tiled_polygons
-                    ]
+                    [pl.Series(polygon, dtype=pl.Array(self.field_spec.field.dtype, 2)) for polygon in tiled_polygons]
                 )
             )
             keeps.append(polygon_keeps)
 
         # Create DataFrame with results and keep column as List[Boolean]
-        return pl.DataFrame(
-            {column_name: results, "keep": pl.Series(keeps, dtype=pl.List(pl.Boolean))}
-        )
+        return pl.DataFrame({column_name: results, "keep": pl.Series(keeps, dtype=pl.List(pl.Boolean))})

@@ -8,7 +8,6 @@ from datumaro.components.annotation import Bbox, Label
 from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.util.scope import scope_add, scoped
-
 from tests.utils.test_utils import TestDir, compare_datasets
 from tests.utils.test_utils import run_datum as run
 
@@ -46,9 +45,7 @@ class TransformTest(TestCase):
             ],
             categories=["cat", "dog"],
         )
-        compare_datasets(
-            self, expected_dataset, Dataset.import_from(test_dir, "coco"), ignored_attrs="*"
-        )
+        compare_datasets(self, expected_dataset, Dataset.import_from(test_dir, "coco"), ignored_attrs="*")
 
     def test_transform_fails_on_inplace_update_without_overwrite(self):
         with TestDir() as test_dir:

@@ -36,9 +36,7 @@ class VottJsonBase(SubsetBase):
         super().__init__(subset=subset, ctx=ctx)
 
         if has_meta_file(path):
-            self._categories = {
-                AnnotationType.label: LabelCategories.from_iterable(parse_meta_file(path).keys())
-            }
+            self._categories = {AnnotationType.label: LabelCategories.from_iterable(parse_meta_file(path).keys())}
         else:
             self._categories = {AnnotationType.label: LabelCategories()}
 
@@ -97,9 +95,7 @@ class VottJsonBase(SubsetBase):
                 id=item_id,
                 subset=self._subset,
                 attributes={"id": id},
-                media=Image.from_file(
-                    path=osp.join(osp.dirname(path), asset.get("asset", {}).get("path"))
-                ),
+                media=Image.from_file(path=osp.join(osp.dirname(path), asset.get("asset", {}).get("path"))),
                 annotations=annotations,
             )
 

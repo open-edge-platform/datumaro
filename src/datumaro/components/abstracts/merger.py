@@ -7,10 +7,7 @@ from typing import Dict, Optional, Sequence, Type
 
 from datumaro.components.annotation import Annotation
 from datumaro.components.dataset_base import IDataset
-from datumaro.components.dataset_item_storage import (
-    DatasetItemStorage,
-    DatasetItemStorageDatasetView,
-)
+from datumaro.components.dataset_item_storage import DatasetItemStorage, DatasetItemStorageDatasetView
 from datumaro.components.media import MediaElement
 
 __all__ = ["IMatcherContext", "IMergerContext"]

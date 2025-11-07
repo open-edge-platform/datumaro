@@ -65,9 +65,7 @@ class ImagenetBase(SubsetBase):
     def _load_items(self, path):
         items = {}
 
-        for image_path in find_images(
-            path, recursive=True, max_depth=self._max_depth, min_depth=self._min_depth
-        ):
+        for image_path in find_images(path, recursive=True, max_depth=self._max_depth, min_depth=self._min_depth):
             label = str(Path(image_path).parent.relative_to(path))
             if label == ".":  # image is located in the root directory
                 label = ImagenetPath.IMAGE_DIR_NO_LABEL
@@ -76,9 +74,7 @@ class ImagenetBase(SubsetBase):
             item = items.get(item_id)
             try:
                 if item is None:
-                    item = DatasetItem(
-                        id=item_id, subset=self._subset, media=Image.from_file(path=image_path)
-                    )
+                    item = DatasetItem(id=item_id, subset=self._subset, media=Image.from_file(path=image_path))
                     items[item_id] = item
             except Exception as e:
                 self._ctx.error_policy.report_item_error(e, item_id=(item_id, self._subset))
@@ -90,9 +86,7 @@ class ImagenetBase(SubsetBase):
                     annotations.append(Label(label=label))
                     self._ann_types.add(AnnotationType.label)
                 except Exception as e:
-                    self._ctx.error_policy.report_annotation_error(
-                        e, item_id=(item_id, self._subset)
-                    )
+                    self._ctx.error_policy.report_annotation_error(e, item_id=(item_id, self._subset))
 
         return items
 
@@ -129,9 +123,7 @@ class ImagenetImporter(Importer):
         # Images must not be under a directory whose name is blacklisted.
         for dname, dirnames, filenames in os.walk(context.root_path):
             if dname in SUBSET_NAME_WHITELIST:
-                context.fail(
-                    f"Following directory names are not permitted: {SUBSET_NAME_WHITELIST}"
-                )
+                context.fail(f"Following directory names are not permitted: {SUBSET_NAME_WHITELIST}")
             rel_dname = Path(dname).relative_to(context.root_path)
             level = len(rel_dname.parts)
             if cls._MIN_DEPTH is not None and level < cls._MIN_DEPTH and filenames:
@@ -226,14 +218,13 @@ class ImagenetExporter(Exporter):
             if len(id_parts) == 1:
                 # e.g. item.id = my_img_1
                 return item.id
-            else:
-                # e.g. item.id = label_1:my_img_1
-                return "_".join(id_parts[1:])  # ":" is not allowed in windows
+            # e.g. item.id = label_1:my_img_1
+            return "_".join(id_parts[1:])  # ":" is not allowed in windows
 
         if self._extractor.media_type() and not issubclass(self._extractor.media_type(), Image):
             raise MediaTypeError("Media type is not an image")
 
-        if 1 < len(self._extractor.subsets()) and not self.USE_SUBSET_DIRS:
+        if len(self._extractor.subsets()) > 1 and not self.USE_SUBSET_DIRS:
             log.warning(
                 f"There are more than one subset in the dataset ({len(self._extractor.subsets())}). "
                 "However, ImageNet format exports all dataset items into the same directory. "
@@ -252,9 +243,7 @@ class ImagenetExporter(Exporter):
                 label_name = extractor.categories()[AnnotationType.label][label].name
                 self._save_image(
                     item,
-                    subdir=root_dir / item.subset / label_name
-                    if self.USE_SUBSET_DIRS
-                    else root_dir / label_name,
+                    subdir=root_dir / item.subset / label_name if self.USE_SUBSET_DIRS else root_dir / label_name,
                     name=file_name,
                 )
 

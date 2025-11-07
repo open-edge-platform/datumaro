@@ -5,7 +5,6 @@ from unittest import TestCase
 import pytest
 
 import datumaro.util.image as image_module
-
 from tests.utils.test_utils import TestDir
 from tests.utils.test_utils import run_datum as run
 

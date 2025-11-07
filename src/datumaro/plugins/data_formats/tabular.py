@@ -117,13 +117,7 @@ class TabularDataBase(DatasetBase):
                 target_dtype = table.dtype(target_)
                 if target_dtype in [int, float, pd.api.types.CategoricalDtype()]:
                     # 'int' can be categorical, but we don't know this unless user gives information.
-                    labels = set(
-                        [
-                            feature
-                            for feature in table.features(target_, unique=True)
-                            if not pd.isna(feature)
-                        ]
-                    )
+                    labels = set([feature for feature in table.features(target_, unique=True) if not pd.isna(feature)])
                     if category is None:
                         categories.add(target_, target_dtype, labels)
                     else:  # update labels if they are different.
@@ -132,9 +126,7 @@ class TabularDataBase(DatasetBase):
                     if category is None:
                         categories.add(target_, target_dtype)
                 else:
-                    raise TypeError(
-                        f"Unsupported type '{target_dtype}' for target column '{target_}'."
-                    )
+                    raise TypeError(f"Unsupported type '{target_dtype}' for target column '{target_}'.")
 
             # load annotations
             subset = osp.splitext(osp.basename(path))[0]

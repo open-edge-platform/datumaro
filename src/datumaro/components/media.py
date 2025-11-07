@@ -34,14 +34,7 @@ import numpy as np
 
 from datumaro.components.errors import DatumaroError, MediaShapeError
 from datumaro.util.definitions import BboxIntCoords
-from datumaro.util.image import (
-    _image_loading_errors,
-    copyto_image,
-    decode_image,
-    lazy_image,
-    load_image,
-    save_image,
-)
+from datumaro.util.image import _image_loading_errors, copyto_image, decode_image, lazy_image, load_image, save_image
 
 if TYPE_CHECKING:
     import pandas as pd
@@ -226,9 +219,7 @@ class Image(MediaElement[np.ndarray]):
         self._ext = ext
 
         if size is not None:
-            assert (
-                len(size) == 2 and 0 < size[0] and 0 < size[1]
-            ), f"Invalid image size info '{size}'"
+            assert len(size) == 2 and size[0] > 0 and size[1] > 0, f"Invalid image size info '{size}'"
             size = tuple(map(int, size))
         self._size = size  # (H, W)
 
@@ -579,7 +570,7 @@ class _VideoFrameIterator(Iterator[VideoFrame]):
         """
 
         if idx < 0:
-            raise IndexError()
+            raise IndexError
 
         if idx < self._pos:
             self._reset()
@@ -589,7 +580,7 @@ class _VideoFrameIterator(Iterator[VideoFrame]):
                 while self._pos < idx:
                     v = self.__next__()
             except StopIteration as e:
-                raise IndexError() from e
+                raise IndexError from e
         else:
             v = self._make_frame(index=self._pos)
 
@@ -615,12 +606,12 @@ class Video(MediaElement, Iterable[VideoFrame]):
         super().__init__(*args, **kwargs)
         self._path = path
 
-        assert 0 <= start_frame
+        assert start_frame >= 0
         if end_frame is not None:
             assert start_frame <= end_frame
             # we can't know the video length here,
             # so we cannot validate if the end_frame is valid.
-        assert 0 < step
+        assert step > 0
         self._step = step
         self._start_frame = start_frame
         self._end_frame = end_frame
@@ -696,7 +687,7 @@ class Video(MediaElement, Iterable[VideoFrame]):
 
             if end_frame is not None:
                 length = (end_frame + 1 - self._start_frame) // self._step
-                if 0 >= length:
+                if length <= 0:
                     raise ValueError(
                         "There is no valid frame for the closed interval"
                         f"[start_frame({self._start_frame}),"
@@ -867,9 +858,7 @@ class PointCloud(MediaElement[bytes]):
     def extra_images(self) -> List[Image]:
         if callable(self._extra_images):
             extra_images = self._extra_images()
-            assert isinstance(extra_images, list) and all(
-                [isinstance(image, Image) for image in extra_images]
-            )
+            assert isinstance(extra_images, list) and all([isinstance(image, Image) for image in extra_images])
             return extra_images
         return self._extra_images
 
@@ -884,11 +873,7 @@ class PointCloud(MediaElement[bytes]):
                 img.save(**kwargs)
 
     def __eq__(self, other: object) -> bool:
-        return (
-            super().__eq__(other)
-            and (self.data == other.data)
-            and self.extra_images == other.extra_images
-        )
+        return super().__eq__(other) and (self.data == other.data) and self.extra_images == other.extra_images
 
 
 class PointCloudFromFile(FromFileMixin, PointCloud):
@@ -1295,15 +1280,13 @@ class Table:
             return pd.api.types.CategoricalDtype()
         if isinstance(numpy_type, np.dtypes.ObjectDType):
             return str
-        else:
-            return type(np.zeros(1, numpy_type).tolist()[0])
+        return type(np.zeros(1, numpy_type).tolist()[0])
 
     def features(self, column: str, unique: Optional[bool] = False) -> List[TableDtype]:
         """Get features for a given column name."""
         if unique:
             return list(self.data[column].unique())
-        else:
-            return self.data[column].to_list()
+        return self.data[column].to_list()
 
     def save(
         self,

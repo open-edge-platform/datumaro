@@ -6,7 +6,6 @@ import pytest
 
 from datumaro import Dataset, DatasetItem, HLOps
 from datumaro.components.annotation import Bbox, Ellipse, Label, Polygon
-
 from tests.utils.test_utils import TestCaseHelper, TestDir
 from tests.utils.test_utils import compare_datasets as _compare_datasets
 
@@ -17,13 +16,9 @@ def compare_datasets(_, expected, actual):
 
 class HLOpsTest:
     def test_can_transform(self):
-        expected = Dataset.from_iterable(
-            [DatasetItem(0, subset="train")], categories=["cat", "dog"]
-        )
+        expected = Dataset.from_iterable([DatasetItem(0, subset="train")], categories=["cat", "dog"])
 
-        dataset = Dataset.from_iterable(
-            [DatasetItem(10, subset="train")], categories=["cat", "dog"]
-        )
+        dataset = Dataset.from_iterable([DatasetItem(10, subset="train")], categories=["cat", "dog"])
 
         actual = HLOps.transform(dataset, "reindex", start=0)
 
@@ -35,9 +30,7 @@ class HLOpsTest:
         ids=["xpath", "pyfunc"],
     )
     def test_can_filter_items(self, expr_or_filter_func):
-        expected = Dataset.from_iterable(
-            [DatasetItem(0, subset="train")], categories=["cat", "dog"]
-        )
+        expected = Dataset.from_iterable([DatasetItem(0, subset="train")], categories=["cat", "dog"])
 
         dataset = Dataset.from_iterable(
             [DatasetItem(0, subset="train"), DatasetItem(1, subset="train")],
@@ -74,9 +67,7 @@ class HLOpsTest:
             categories=["cat", "dog"],
         )
 
-        actual = HLOps.filter(
-            dataset, expr_or_filter_func, filter_annotations=True, remove_empty=True
-        )
+        actual = HLOps.filter(dataset, expr_or_filter_func, filter_annotations=True, remove_empty=True)
 
         compare_datasets(self, expected, actual)
 
@@ -125,9 +116,7 @@ class HLOpsTest:
             categories=["cat", "dog"],
         )
 
-        dataset_b = Dataset.from_iterable(
-            [DatasetItem(1, subset="train")], categories=["cat", "dog"]
-        )
+        dataset_b = Dataset.from_iterable([DatasetItem(1, subset="train")], categories=["cat", "dog"])
 
         actual = HLOps.merge(dataset_a, dataset_b)
 
@@ -169,8 +158,6 @@ class HLOpsTest:
             categories=["cat", "dog"],
         )
 
-        actual = HLOps.aggregate(
-            dataset, from_subsets=["train", "val", "test"], to_subset="default"
-        )
+        actual = HLOps.aggregate(dataset, from_subsets=["train", "val", "test"], to_subset="default")
 
         compare_datasets(self, expected, actual)

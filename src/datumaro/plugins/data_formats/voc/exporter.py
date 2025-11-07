@@ -15,14 +15,7 @@ from attrs import define, field
 # Disable B410: import_lxml - the library is used for writing
 from lxml import etree as ET  # nosec
 
-from datumaro.components.annotation import (
-    AnnotationType,
-    Bbox,
-    CompiledMask,
-    Label,
-    LabelCategories,
-    Mask,
-)
+from datumaro.components.annotation import AnnotationType, Bbox, CompiledMask, Label, LabelCategories, Mask
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.dataset_item_storage import ItemStatus
 from datumaro.components.errors import DatasetExportError, InvalidAnnotationError, MediaTypeError
@@ -117,7 +110,7 @@ class VocExporter(Exporter):
             "--apply-colormap",
             type=str_to_bool,
             default=True,
-            help="Use colormap for class and instance masks " "(default: %(default)s)",
+            help="Use colormap for class and instance masks (default: %(default)s)",
         )
         parser.add_argument(
             "--label-map",
@@ -135,14 +128,13 @@ class VocExporter(Exporter):
             "--keep-empty",
             type=str_to_bool,
             default=False,
-            help="Write subset lists even if they are empty " "(default: %(default)s)",
+            help="Write subset lists even if they are empty (default: %(default)s)",
         )
         parser.add_argument(
             "--task",
             type=cls._split_task_string,
             default=VocTask.voc,
-            help="VOC task filter, one of list {%s} "
-            "(default: voc)" % ", ".join(t.name for t in VocTask),
+            help="VOC task filter, one of list {%s} (default: voc)" % ", ".join(t.name for t in VocTask),
         )
 
         return parser
@@ -162,9 +154,7 @@ class VocExporter(Exporter):
 
         task = VocTask.voc if task is None else task
         if not isinstance(task, VocTask):
-            raise DatasetExportError(
-                f"The task must be an instance of {VocTask} but {task} is given."
-            )
+            raise DatasetExportError(f"The task must be an instance of {VocTask} but {task} is given.")
 
         self._task = task
 
@@ -306,7 +296,7 @@ class VocExporter(Exporter):
                     depth = str(item.media.data.shape[-1])
                 ET.SubElement(size_elem, "depth").text = depth
 
-            item_segmented = 0 < len(masks)
+            item_segmented = len(masks) > 0
             ET.SubElement(root_elem, "segmented").text = str(int(item_segmented))
 
             objects_with_parts = []
@@ -332,15 +322,9 @@ class VocExporter(Exporter):
                 if "pose" in attr:
                     ET.SubElement(obj_elem, "pose").text = str(attr["pose"])
 
-                ET.SubElement(obj_elem, "truncated").text = "%d" % _convert_attr(
-                    "truncated", attr, int, 0
-                )
-                ET.SubElement(obj_elem, "occluded").text = "%d" % _convert_attr(
-                    "occluded", attr, int, 0
-                )
-                ET.SubElement(obj_elem, "difficult").text = "%d" % _convert_attr(
-                    "difficult", attr, int, 0
-                )
+                ET.SubElement(obj_elem, "truncated").text = "%d" % _convert_attr("truncated", attr, int, 0)
+                ET.SubElement(obj_elem, "occluded").text = "%d" % _convert_attr("occluded", attr, int, 0)
+                ET.SubElement(obj_elem, "difficult").text = "%d" % _convert_attr("difficult", attr, int, 0)
 
                 bbox = obj.get_bbox()
                 if bbox is not None:
@@ -410,17 +394,12 @@ class VocExporter(Exporter):
 
             lists.clsdet_list[item.id] = True
 
-        if (
-            self._task in [VocTask.voc, VocTask.voc_segmentation, VocTask.voc_instance_segmentation]
-            and masks
-        ):
+        if self._task in [VocTask.voc, VocTask.voc_segmentation, VocTask.voc_instance_segmentation] and masks:
             compiled_mask = CompiledMask.from_instance_masks(
                 masks, instance_labels=[self._label_id_mapping(m.label) for m in masks]
             )
 
-            self.save_segm(
-                osp.join(self._segm_dir, item.id + VocPath.SEGM_EXT), compiled_mask.class_mask
-            )
+            self.save_segm(osp.join(self._segm_dir, item.id + VocPath.SEGM_EXT), compiled_mask.class_mask)
             self.save_segm(
                 osp.join(self._inst_dir, item.id + VocPath.SEGM_EXT),
                 compiled_mask.instance_mask,
@@ -569,7 +548,7 @@ class VocExporter(Exporter):
 
     def save_layout_lists(self, subset_name, layout_list):
         def _write_item(f, item, item_layouts):
-            if 1 < len(item.split()):
+            if len(item.split()) > 1:
                 item = '"' + item + '"'
             if item_layouts:
                 for obj_id in item_layouts:
@@ -612,24 +591,15 @@ class VocExporter(Exporter):
             write_label_map(path, self._label_map)
 
     def _load_categories(self, label_map_source):
-        if (
-            label_map_source in [t.name for t in LabelmapType]
-            and label_map_source != LabelmapType.source.name
-        ):
+        if label_map_source in [t.name for t in LabelmapType] and label_map_source != LabelmapType.source.name:
             label_map = make_voc_label_map(task=self._task)
 
-        elif (
-            label_map_source == LabelmapType.source.name
-            and AnnotationType.mask not in self._extractor.categories()
-        ):
+        elif label_map_source == LabelmapType.source.name and AnnotationType.mask not in self._extractor.categories():
             # generate colormap for input labels
             labels = self._extractor.categories().get(AnnotationType.label, LabelCategories())
             label_map = OrderedDict((item.name, [None, [], []]) for item in labels.items)
 
-        elif (
-            label_map_source == LabelmapType.source.name
-            and AnnotationType.mask in self._extractor.categories()
-        ):
+        elif label_map_source == LabelmapType.source.name and AnnotationType.mask in self._extractor.categories():
             # use source colormap
             labels = self._extractor.categories()[AnnotationType.label]
             colors = self._extractor.categories()[AnnotationType.mask]
@@ -651,8 +621,7 @@ class VocExporter(Exporter):
         else:
             raise InvalidAnnotationError(
                 "Wrong labelmap specified: '%s', "
-                "expected one of %s or a file path"
-                % (label_map_source, ", ".join(t.name for t in LabelmapType))
+                "expected one of %s or a file path" % (label_map_source, ", ".join(t.name for t in LabelmapType))
             )
 
         bg_label = find(label_map.items(), lambda x: x[1][0] == (0, 0, 0))
@@ -675,9 +644,7 @@ class VocExporter(Exporter):
             colormap = self._categories[AnnotationType.mask].colormap
             for label_id, color in colormap.items():
                 if label_id:
-                    label_desc = label_map[
-                        self._categories[AnnotationType.label].items[label_id].name
-                    ]
+                    label_desc = label_map[self._categories[AnnotationType.label].items[label_id].name]
                     label_desc[0] = color
 
         self._label_map = label_map
@@ -707,13 +674,9 @@ class VocExporter(Exporter):
             self._categories[AnnotationType.label],
         )
 
-        void_labels = [
-            src_label for src_label in src_labels.values() if src_label not in dst_labels
-        ]
+        void_labels = [src_label for src_label in src_labels.values() if src_label not in dst_labels]
         if void_labels:
-            log.warning(
-                "The following labels are remapped to background: %s" % ", ".join(void_labels)
-            )
+            log.warning("The following labels are remapped to background: %s" % ", ".join(void_labels))
         log.debug(
             "Saving segmentations with the following label mapping: \n%s"
             % "\n".join(

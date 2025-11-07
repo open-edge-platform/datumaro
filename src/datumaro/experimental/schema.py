@@ -8,7 +8,7 @@ Schema definitions for the dataset system.
 import copy
 from dataclasses import dataclass, field
 from enum import Flag, auto
-from typing import Any, Dict, Generic, Optional, TypeVar
+from typing import Any, Generic, Optional, TypeVar
 
 import polars as pl
 
@@ -137,7 +137,7 @@ class AttributeSpec(Generic[TField]):
 
     name: str
     field: TField
-    categories: Optional[Categories] = None
+    categories: Categories | None = None
 
 
 @dataclass
@@ -161,7 +161,7 @@ class Schema:
                 )
             seen[key] = name
 
-    def with_categories(self, categories: Dict[str, "Categories"]) -> "Schema":
+    def with_categories(self, categories: dict[str, "Categories"]) -> "Schema":
         """
         Create a new schema with categories applied to specific attributes.
 
@@ -178,9 +178,7 @@ class Schema:
         new_schema = copy.copy(self)
 
         # Also copy the attributes dict to avoid modifying the original AttributeInfo objects
-        new_schema.attributes = {
-            name: copy.copy(attr_info) for name, attr_info in self.attributes.items()
-        }
+        new_schema.attributes = {name: copy.copy(attr_info) for name, attr_info in self.attributes.items()}
 
         # Add categories to specific attributes
         for attr_name, category in categories.items():

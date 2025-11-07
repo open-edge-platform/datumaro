@@ -11,7 +11,8 @@ DataFrames. New types can be registered at runtime without modifying core code.
 
 import sys
 import types
-from typing import Any, Callable, Union
+from collections.abc import Callable
+from typing import Any, Union
 
 import numpy as np
 import polars as pl
@@ -39,30 +40,29 @@ def polars_to_numpy_dtype(polars_dtype: pl.DataType) -> np.dtype[Any]:
     # Basic numeric types
     if polars_dtype == pl.Float32:
         return np.dtype(np.float32)
-    elif polars_dtype == pl.Float64:
+    if polars_dtype == pl.Float64:
         return np.dtype(np.float64)
-    elif polars_dtype == pl.Int8:
+    if polars_dtype == pl.Int8:
         return np.dtype(np.int8)
-    elif polars_dtype == pl.Int16:
+    if polars_dtype == pl.Int16:
         return np.dtype(np.int16)
-    elif polars_dtype == pl.Int32:
+    if polars_dtype == pl.Int32:
         return np.dtype(np.int32)
-    elif polars_dtype == pl.Int64:
+    if polars_dtype == pl.Int64:
         return np.dtype(np.int64)
-    elif polars_dtype == pl.UInt8:
+    if polars_dtype == pl.UInt8:
         return np.dtype(np.uint8)
-    elif polars_dtype == pl.UInt16:
+    if polars_dtype == pl.UInt16:
         return np.dtype(np.uint16)
-    elif polars_dtype == pl.UInt32:
+    if polars_dtype == pl.UInt32:
         return np.dtype(np.uint32)
-    elif polars_dtype == pl.UInt64:
+    if polars_dtype == pl.UInt64:
         return np.dtype(np.uint64)
-    elif polars_dtype == pl.Boolean:
+    if polars_dtype == pl.Boolean:
         return np.dtype(np.bool_)
-    elif polars_dtype == pl.Binary:
+    if polars_dtype == pl.Binary:
         return np.dtype(np.bytes_)
-    else:
-        raise TypeError(f"No NumPy dtype mapping for Polars dtype: {polars_dtype}")
+    raise TypeError(f"No NumPy dtype mapping for Polars dtype: {polars_dtype}")
 
 
 def points_to_numpy(x: Points) -> np.ndarray:
@@ -100,9 +100,7 @@ _from_polars_converters: dict[type, Callable[[Any], Any]] = {
 }
 
 
-def register_numpy_converter(
-    source_type: type, converter_func: Callable[[Any], np.ndarray[Any, Any]]
-) -> None:
+def register_numpy_converter(source_type: type, converter_func: Callable[[Any], np.ndarray[Any, Any]]) -> None:
     """Register a converter function to convert from source_type to numpy array.
 
     Args:
@@ -161,9 +159,7 @@ def to_numpy(value: Any, dtype: Any = None) -> np.ndarray[Any, Any] | None:
                 return None
 
             if numpy_value.dtype == object:
-                nested_func = np.vectorize(
-                    lambda x: to_numpy(x, dtype), otypes=numpy_value.dtype.char
-                )
+                nested_func = np.vectorize(lambda x: to_numpy(x, dtype), otypes=numpy_value.dtype.char)
                 numpy_value = nested_func(numpy_value)
             else:
                 target_numpy_dtype = polars_to_numpy_dtype(dtype)
@@ -241,12 +237,8 @@ def from_polars_data(polars_data: Any, target_type: type) -> Any:
 try:
     import torch  # pyright: ignore[reportMissingImports]
 
-    register_numpy_converter(
-        torch.Tensor, lambda x: x.detach().cpu().numpy()
-    )  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
-    register_from_polars_converter(
-        torch.Tensor, lambda x: torch.tensor(x)
-    )  # pyright: ignore[reportUnknownMemberType, reportUnknownLambdaType, reportUnknownArgumentType]
+    register_numpy_converter(torch.Tensor, lambda x: x.detach().cpu().numpy())  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+    register_from_polars_converter(torch.Tensor, lambda x: torch.tensor(x))  # pyright: ignore[reportUnknownMemberType, reportUnknownLambdaType, reportUnknownArgumentType]
 except ImportError:
     pass
 
@@ -254,27 +246,17 @@ except ImportError:
 try:
     from torchvision import tv_tensors  # pyright: ignore[reportMissingImports]
 
-    register_numpy_converter(
-        tv_tensors.Image, lambda x: x.detach().cpu().numpy()
-    )  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+    register_numpy_converter(tv_tensors.Image, lambda x: x.detach().cpu().numpy())  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
 
-    register_numpy_converter(
-        tv_tensors.BoundingBoxes, lambda x: x.detach().cpu().numpy()
-    )  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+    register_numpy_converter(tv_tensors.BoundingBoxes, lambda x: x.detach().cpu().numpy())  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
 
-    register_numpy_converter(
-        tv_tensors.Mask, lambda x: x.detach().cpu().numpy()
-    )  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+    register_numpy_converter(tv_tensors.Mask, lambda x: x.detach().cpu().numpy())  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
 
     # Conversion from Polars to tv_tensors BoundingBoxes and Keypoints are not supported
     # because tv_tensors BoundingBoxes and Keypoints require the image size which is not available during conversion.
-    register_from_polars_converter(
-        tv_tensors.Image, lambda x: tv_tensors.Image(x)
-    )  # pyright: ignore[reportUnknownMemberType, reportUnknownLambdaType, reportUnknownArgumentType]
+    register_from_polars_converter(tv_tensors.Image, lambda x: tv_tensors.Image(x))  # pyright: ignore[reportUnknownMemberType, reportUnknownLambdaType, reportUnknownArgumentType]
 
-    register_from_polars_converter(
-        tv_tensors.Mask, lambda x: tv_tensors.Mask(x)
-    )  # pyright: ignore[reportUnknownMemberType, reportUnknownLambdaType, reportUnknownArgumentType]
+    register_from_polars_converter(tv_tensors.Mask, lambda x: tv_tensors.Mask(x))  # pyright: ignore[reportUnknownMemberType, reportUnknownLambdaType, reportUnknownArgumentType]
 except ImportError:
     pass
 
@@ -320,9 +302,7 @@ def convert_image_type(image: Any, target_type: type) -> Any:
     # Validate that target_type is a supported image type
     if target_type not in supported_image_types:
         supported_names = [t.__name__ for t in supported_image_types]
-        raise TypeError(
-            f"Target type {target_type.__name__} not supported. Supported image types: {supported_names}"
-        )
+        raise TypeError(f"Target type {target_type.__name__} not supported. Supported image types: {supported_names}")
 
     # If already the target type, return as-is
     if current_type == target_type:
@@ -339,9 +319,8 @@ def convert_image_type(image: Any, target_type: type) -> Any:
         # Then convert from numpy to target type
         if target_type == np.ndarray:
             return numpy_image
-        else:
-            # Convert numpy to target via polars-style conversion
-            return _from_polars_converters[target_type](numpy_image)
+        # Convert numpy to target via polars-style conversion
+        return _from_polars_converters[target_type](numpy_image)
 
     except Exception as e:
         raise TypeError(f"Cannot convert from {current_type} to {target_type}: {e}")

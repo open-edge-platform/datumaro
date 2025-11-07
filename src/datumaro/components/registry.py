@@ -4,18 +4,7 @@
 
 from collections import defaultdict
 from inspect import isclass
-from typing import (
-    Dict,
-    Generator,
-    Generic,
-    Iterable,
-    Iterator,
-    Optional,
-    Tuple,
-    Type,
-    TypeVar,
-    Union,
-)
+from typing import Dict, Generator, Generic, Iterable, Iterator, Optional, Tuple, Type, TypeVar, Union
 
 from datumaro.components.cli_plugin import CliPlugin
 from datumaro.components.dataset_base import DatasetBase, SubsetBase
@@ -74,11 +63,7 @@ class PluginRegistry(Registry[Type[CliPlugin]]):
     def _filter(self, t):
         skip = {self._SKIP} if isclass(self._SKIP) else set(self._SKIP or [])
         skip = tuple(skip | set((self._ACCEPT,)))
-        if (
-            not issubclass(t, self._ACCEPT)
-            or t in skip
-            or (self._DECLINE and issubclass(t, self._DECLINE))
-        ):
+        if not issubclass(t, self._ACCEPT) or t in skip or (self._DECLINE and issubclass(t, self._DECLINE)):
             return False
         if getattr(t, "__not_plugin__", None):
             return False
@@ -112,9 +97,7 @@ class ImporterRegistry(PluginRegistry):
         super().__init__()
         self.extension_groups = defaultdict(list)
 
-    def register(
-        self, name: str, value: Union[Type[Importer], LazyPlugin]
-    ) -> Union[Type[Importer], LazyPlugin]:
+    def register(self, name: str, value: Union[Type[Importer], LazyPlugin]) -> Union[Type[Importer], LazyPlugin]:
         super().register(name, value)
         if issubclass(value, LazyPlugin):
             file_extensions = value.METADATA["file_extensions"]

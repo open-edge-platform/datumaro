@@ -17,7 +17,6 @@ from datumaro.util.definitions import get_datumaro_cache_dir
 from datumaro.util.multi_procs_util import consumer_generator
 from datumaro.util.os_util import walk
 from datumaro.util.scope import Scope, on_error_do, on_exit_do, scoped
-
 from tests.utils.test_utils import TestDir
 
 
@@ -44,7 +43,7 @@ class ScopeTest(TestCase):
         with self.assertRaises(TestException), Scope() as scope:
             scope.on_error_do(error_cb)
             scope.on_exit_do(exit_cb)
-            raise TestException()
+            raise TestException
 
         error_cb.assert_called_once()
         exit_cb.assert_called_once()
@@ -68,7 +67,7 @@ class ScopeTest(TestCase):
 
         with suppress(TestException), Scope() as scope:
             scope.add(cm)
-            raise TestException()
+            raise TestException
 
         cm.__enter__.assert_called_once()
         cm.__exit__.assert_called_once()
@@ -79,7 +78,7 @@ class ScopeTest(TestCase):
         @scoped("scope")
         def foo(scope=None):
             scope.on_error_do(cb)
-            raise TestException()
+            raise TestException
 
         with suppress(TestException):
             foo()
@@ -108,7 +107,7 @@ class ScopeTest(TestCase):
         def foo():
             on_error_do(error_cb)
             on_exit_do(exit_cb)
-            raise TestException()
+            raise TestException
 
         with suppress(TestException):
             foo()
@@ -121,7 +120,7 @@ class ScopeTest(TestCase):
 
         with suppress(TestException), Scope() as scope:
             scope.on_error_do(cb, 5, ignore_errors=True, kwargs={"a2": 2})
-            raise TestException()
+            raise TestException
 
         cb.assert_called_once_with(5, a2=2)
 
@@ -247,9 +246,7 @@ class MultiProcUtilTest:
             for expect, actual in enumerate(f):
                 assert expect == actual.value
 
-    def test_raise_exception_in_main_thread(
-        self, fxt_producer_generator, caplog: pytest.LogCaptureFixture
-    ):
+    def test_raise_exception_in_main_thread(self, fxt_producer_generator, caplog: pytest.LogCaptureFixture):
         try:
             with consumer_generator(
                 producer_generator=fxt_producer_generator(),
@@ -258,10 +255,9 @@ class MultiProcUtilTest:
             ) as f:
                 for expect, actual in enumerate(f):
                     assert expect == actual.value
-                    raise Exception()
+                    raise Exception
         except Exception:
             assert any(
-                "Item to enqueue is left. However, the main process is terminated."
-                == record.message
+                record.message == "Item to enqueue is left. However, the main process is terminated."
                 for record in caplog.records
             )

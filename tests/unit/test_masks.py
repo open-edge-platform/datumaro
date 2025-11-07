@@ -75,9 +75,7 @@ class PolygonConversionsTest(TestCase):
             mask_tools.rles_to_mask([initial[2]], *image_size),  # unchanged
         ]
 
-        computed = mask_tools.crop_covered_segments(
-            initial, *image_size, ratio_tolerance=0, return_masks=True
-        )
+        computed = mask_tools.crop_covered_segments(initial, *image_size, ratio_tolerance=0, return_masks=True)
 
         self.assertEqual(len(initial), len(computed))
         for i, (e_mask, c_mask) in enumerate(zip(expected, computed)):
@@ -91,9 +89,7 @@ class PolygonConversionsTest(TestCase):
         resulting_mask = mask_utils.frPyObjects(rle_uncompressed, *rle_uncompressed["size"])
         resulting_mask = mask_utils.decode(resulting_mask)
 
-        self.assertTrue(
-            np.array_equal(source_mask, resulting_mask), "%s\n%s\n" % (source_mask, resulting_mask)
-        )
+        self.assertTrue(np.array_equal(source_mask, resulting_mask), "%s\n%s\n" % (source_mask, resulting_mask))
 
     def test_mask_to_rle_multi(self):
         cases = [
@@ -252,7 +248,5 @@ class MaskToolsTest:
 
         _test(
             np.array([[10, 65535], [65535, 10]], dtype=np.uint16),
-            mask_tools.make_index_mask(
-                binary_mask=binary_mask, index=10, ignore_index=65535, dtype=np.uint16
-            ),
+            mask_tools.make_index_mask(binary_mask=binary_mask, index=10, ignore_index=65535, dtype=np.uint16),
         )

@@ -9,7 +9,6 @@ from datumaro.components.dataset import Dataset, StreamDataset
 from datumaro.components.environment import DEFAULT_ENVIRONMENT
 from datumaro.components.exporter import Exporter
 from datumaro.components.importer import Importer
-
 from tests.utils.test_utils import check_is_stream, compare_datasets
 
 
@@ -25,7 +24,7 @@ class TestDataFormatBase:
             pytest.skip(reason="importer is None.")
 
         detected_formats = DEFAULT_ENVIRONMENT.detect_dataset(fxt_dataset_dir)
-        assert [importer.NAME] == detected_formats, f"{[importer.NAME]} != {detected_formats}"
+        assert detected_formats == [importer.NAME], f"{[importer.NAME]} != {detected_formats}"
 
     def test_can_import(
         self,

@@ -11,11 +11,10 @@ learning and computer vision applications.
 
 from dataclasses import dataclass
 from enum import Enum, auto
-from typing import Any, Optional, TypeVar, Union
+from typing import Any, TypeAlias, TypeVar
 
 import numpy as np
 import polars as pl
-from typing_extensions import TypeAlias
 
 from .schema import Field, Semantic
 from .type_registry import from_polars_data, to_numpy
@@ -31,7 +30,7 @@ class Subset(Enum):
 
 T = TypeVar("T")
 
-PolarsDataType: TypeAlias = Union[type[pl.DataType], pl.DataType]
+PolarsDataType: TypeAlias = type[pl.DataType] | pl.DataType
 
 
 @dataclass()
@@ -90,9 +89,7 @@ class TileField(Field):
             data = [None]
         return {name: pl.Series(name, data, dtype=schema["tile"])}
 
-    def from_polars(
-        self, name: str, row_index: int, df: pl.DataFrame, target_type: type
-    ) -> TileInfo | None:
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> TileInfo | None:
         """Convert Polars data back to TileInfo."""
         if not issubclass(target_type, TileInfo):
             raise TypeError(f"Expected target_type to be TileInfo, got {target_type}")
@@ -146,10 +143,7 @@ class TensorField(Field):
 
         return {
             name: pl.Series(name, [numpy_value], dtype=schema["tensor"]),
-            name
-            + "_shape": pl.Series(
-                name + "_shape", [numpy_value_shape], dtype=schema["tensor_shape"]
-            ),
+            name + "_shape": pl.Series(name + "_shape", [numpy_value_shape], dtype=schema["tensor_shape"]),
         }
 
     def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
@@ -423,9 +417,7 @@ class ImageInfoField(Field):
             data = [None]
         return {name: pl.Series(name, data, dtype=schema["info"])}
 
-    def from_polars(
-        self, name: str, row_index: int, df: pl.DataFrame, target_type: type
-    ) -> ImageInfo | None:
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> ImageInfo | None:
         if not issubclass(target_type, ImageInfo):
             raise TypeError(f"Expected target_type to be ImageInfo, got {target_type}")
         struct_val = df[name][row_index]
@@ -755,19 +747,14 @@ class MaskField(Field):
 
         return {
             name: pl.Series(name, [numpy_value], dtype=schema["mask"]),
-            name
-            + "_shape": pl.Series(name + "_shape", [numpy_value_shape], dtype=schema["mask_shape"]),
+            name + "_shape": pl.Series(name + "_shape", [numpy_value_shape], dtype=schema["mask_shape"]),
         }
 
     def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
         """Reconstruct mask tensor from flattened data using stored shape."""
         flat_data = df[name][row_index]
         shape = df[name + "_shape"][row_index]
-        numpy_data = (
-            np.array(flat_data).reshape(shape)
-            if flat_data is not None and shape is not None
-            else None
-        )
+        numpy_data = np.array(flat_data).reshape(shape) if flat_data is not None and shape is not None else None
 
         if numpy_data is not None and self.has_channels_dim:
             if self.channels_first:
@@ -835,19 +822,14 @@ class InstanceMaskField(Field):
 
         return {
             name: pl.Series(name, [numpy_value], dtype=schema["mask"]),
-            name
-            + "_shape": pl.Series(name + "_shape", [numpy_value_shape], dtype=schema["mask_shape"]),
+            name + "_shape": pl.Series(name + "_shape", [numpy_value_shape], dtype=schema["mask_shape"]),
         }
 
     def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
         """Reconstruct instance mask tensor from flattened data using stored shape."""
         flat_data = df[name][row_index]
         shape = df[name + "_shape"][row_index]
-        numpy_data = (
-            np.array(flat_data).reshape(shape)
-            if flat_data is not None and shape is not None
-            else None
-        )
+        numpy_data = np.array(flat_data).reshape(shape) if flat_data is not None and shape is not None else None
         return from_polars_data(numpy_data, target_type)  # type: ignore
 
 
@@ -892,9 +874,7 @@ class ImageCallableField(Field):
             raise TypeError(f"Expected callable, got {type(value)}")
         return {name: pl.Series(name, [value])}
 
-    def from_polars(
-        self, name: str, row_index: int, df: pl.DataFrame, target_type: type
-    ) -> callable:
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> callable:
         """Extract callable from Polars dataframe."""
         value = df[name][row_index]
         if not callable(value) and value is not None:
@@ -951,9 +931,7 @@ class InstanceMaskCallableField(Field):
             raise TypeError(f"Expected callable, got {type(value)}")
         return {name: pl.Series(name, [value])}
 
-    def from_polars(
-        self, name: str, row_index: int, df: pl.DataFrame, target_type: type
-    ) -> callable:
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> callable:
         """
         Extract instance mask callable from Polars dataframe.
 
@@ -966,9 +944,7 @@ class InstanceMaskCallableField(Field):
         return value
 
 
-def instance_mask_callable_field(
-    dtype: Any = pl.Boolean(), semantic: Semantic = Semantic.Default
-) -> Any:
+def instance_mask_callable_field(dtype: Any = pl.Boolean(), semantic: Semantic = Semantic.Default) -> Any:
     """
     Create an InstanceMaskCallableField for storing instance mask-generating callables.
 
@@ -1026,9 +1002,7 @@ class MaskCallableField(Field):
             raise TypeError(f"Expected callable, got {type(value)}")
         return {name: pl.Series(name, [value])}
 
-    def from_polars(
-        self, name: str, row_index: int, df: pl.DataFrame, target_type: type
-    ) -> callable:
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> callable:
         """
         Extract mask callable from Polars dataframe.
 
@@ -1139,7 +1113,7 @@ class SubsetField(Field):
     """
 
     semantic: Semantic
-    categories: Optional[list[str]] = None
+    categories: list[str] | None = None
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Generate schema with categorical type for subset values."""
@@ -1179,7 +1153,7 @@ class SubsetField(Field):
         return value  # type: ignore
 
 
-def subset_field(subset_type: Optional[type] = None, semantic: Semantic = Semantic.Default) -> Any:
+def subset_field(subset_type: type | None = None, semantic: Semantic = Semantic.Default) -> Any:
     """
     Create a SubsetField instance for storing dataset subset information.
 

@@ -99,13 +99,13 @@ def parse_label_map(path):
         for line in f:
             # skip empty and commented lines
             line = line.strip()
-            if not line or line and line[0] == "#":
+            if not line or (line and line[0] == "#"):
                 continue
 
             # color, name
             label_desc = line.strip().split()
 
-            if 2 < len(label_desc):
+            if len(label_desc) > 2:
                 name = label_desc[3]
                 color = tuple([int(c) for c in label_desc[:-1]])
             else:

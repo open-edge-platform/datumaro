@@ -227,9 +227,7 @@ class MergeInstanceSegments(ItemTransform, CliPlugin):
 
     @staticmethod
     def find_instances(annotations):
-        return find_instances(
-            a for a in annotations if a.type in {AnnotationType.polygon, AnnotationType.mask}
-        )
+        return find_instances(a for a in annotations if a.type in {AnnotationType.polygon, AnnotationType.mask})
 
 
 class PolygonsToMasks(ItemTransform, CliPlugin):
@@ -292,10 +290,7 @@ class BoxesToMasks(ItemTransform, CliPlugin):
 
 class BoxesToPolygons(ItemTransform, CliPlugin):
     def transform_item(self, item):
-        annotations = [
-            self.convert_bbox(ann) if ann.type == AnnotationType.bbox else ann
-            for ann in item.annotations
-        ]
+        annotations = [self.convert_bbox(ann) if ann.type == AnnotationType.bbox else ann for ann in item.annotations]
 
         return self.wrap_item(item, annotations=annotations)
 
@@ -425,9 +420,7 @@ class ReindexAnnotations(ItemTransform, CliPlugin):
         self._reindex_each_item = reindex_each_item
 
     def transform_item(self, item: DatasetItem) -> DatasetItem:
-        annotations = [
-            ann.wrap(id=idx) for idx, ann in enumerate(item.annotations, start=self._cur_idx)
-        ]
+        annotations = [ann.wrap(id=idx) for idx, ann in enumerate(item.annotations, start=self._cur_idx)]
 
         self._cur_idx = self._start if self._reindex_each_item else self._cur_idx + len(annotations)
 
@@ -537,8 +530,7 @@ class RandomSplit(Transform, CliPlugin):
             action="append",
             type=cls._split_arg,
             dest="splits",
-            help="Subsets in the form: '<subset>:<ratio>' "
-            "(repeatable, default: %s)" % dict(cls._default_split),
+            help="Subsets in the form: '<subset>:<ratio>' (repeatable, default: %s)" % dict(cls._default_split),
         )
         parser.add_argument("--seed", type=int, help="Random seed")
         return parser
@@ -549,16 +541,14 @@ class RandomSplit(Transform, CliPlugin):
         if splits is None:
             splits = self._default_split
 
-        assert 0 < len(splits), "Expected at least one split"
-        assert all(0.0 <= r and r <= 1.0 for _, r in splits), (
+        assert len(splits) > 0, "Expected at least one split"
+        assert all(r >= 0.0 and r <= 1.0 for _, r in splits), (
             "Ratios are expected to be in the range [0; 1], but got %s" % splits
         )
 
         total_ratio = sum(s[1] for s in splits)
         if not abs(total_ratio - 1.0) <= 1e-7:
-            raise Exception(
-                "Sum of ratios is expected to be 1, got %s, which is %s" % (splits, total_ratio)
-            )
+            raise Exception("Sum of ratios is expected to be 1, got %s, which is %s" % (splits, total_ratio))
 
         dataset_size = len(extractor)
         indices = list(range(dataset_size))
@@ -648,12 +638,8 @@ class IdFromImageName(ItemTransform, CliPlugin):
         self._names: set[str] = set()
         self._suffix_length = suffix_length
         if suffix_length <= 0:
-            raise ValueError(
-                f"The 'suffix_length' must be greater than 0. Received: {suffix_length}."
-            )
-        self._max_retry = min(
-            self.DEFAULT_RETRY, pow(len(self.SUFFIX_LETTERS), self._suffix_length)
-        )
+            raise ValueError(f"The 'suffix_length' must be greater than 0. Received: {suffix_length}.")
+        self._max_retry = min(self.DEFAULT_RETRY, pow(len(self.SUFFIX_LETTERS), self._suffix_length))
 
     def _add_unique_suffix(self, name):
         count = 0
@@ -682,9 +668,8 @@ class IdFromImageName(ItemTransform, CliPlugin):
             if self._ensure_unique:
                 name = self._add_unique_suffix(name)
             return self.wrap_item(item, id=name)
-        else:
-            log.debug("Can't change item id for item '%s': " "item has no path info" % item.id)
-            return item
+        log.debug("Can't change item id for item '%s': item has no path info" % item.id)
+        return item
 
 
 class Rename(ItemTransform, CliPlugin):
@@ -722,7 +707,7 @@ class Rename(ItemTransform, CliPlugin):
         parser.add_argument(
             "-e",
             "--regex",
-            help="Regex for renaming in the form " "'<sep><search><sep><replacement><sep>'",
+            help="Regex for renaming in the form '<sep><search><sep><replacement><sep>'",
         )
         return parser
 
@@ -865,9 +850,7 @@ class RemapLabels(ItemTransform, CliPlugin):
 
             dst_index = dst_label_cat.find(dst_label)[0]
             if dst_index is None:
-                dst_index = dst_label_cat.add(
-                    dst_label, src_label.parent, deepcopy(src_label.attributes)
-                )
+                dst_index = dst_label_cat.add(dst_label, src_label.parent, deepcopy(src_label.attributes))
             id_mapping[src_index] = dst_index
 
         if log.getLogger().isEnabledFor(log.DEBUG):
@@ -884,7 +867,7 @@ class RemapLabels(ItemTransform, CliPlugin):
                 else:
                     log.debug("#%s '%s' -> <deleted>", src_id, src_label.name)
 
-        self._map_id = lambda src_id: id_mapping.get(src_id, None)
+        self._map_id = lambda src_id: id_mapping.get(src_id)
 
         for label in dst_label_cat:
             if label.parent not in dst_label_cat:
@@ -1006,9 +989,7 @@ class ProjectLabels(ItemTransform):
                     assert isinstance(dst_label, str)
                     src_label = src_label_cat.find(dst_label)[1]
                     if src_label is not None:
-                        dst_label_cat.add(
-                            dst_label, src_label.parent, deepcopy(src_label.attributes)
-                        )
+                        dst_label_cat.add(dst_label, src_label.parent, deepcopy(src_label.attributes))
                     else:
                         dst_label_cat.add(dst_label)
             else:
@@ -1032,9 +1013,7 @@ class ProjectLabels(ItemTransform):
 
             # Generate new colors for new labels, keep old untouched
             existing_colors = set(dst_mask_cat.colormap.values())
-            color_bank = iter(
-                mask_tools.generate_colormap(len(dst_label_cat), include_background=False).values()
-            )
+            color_bank = iter(mask_tools.generate_colormap(len(dst_label_cat), include_background=False).values())
             for new_id, new_label in enumerate(dst_label_cat):
                 if new_label.name in src_label_cat:
                     continue
@@ -1062,10 +1041,9 @@ class ProjectLabels(ItemTransform):
 
     def _make_label_id_map(self, src_label_cat, dst_label_cat):
         id_mapping = {
-            src_id: dst_label_cat.find(src_label_cat[src_id].name)[0]
-            for src_id in range(len(src_label_cat or ()))
+            src_id: dst_label_cat.find(src_label_cat[src_id].name)[0] for src_id in range(len(src_label_cat or ()))
         }
-        self._map_id = lambda src_id: id_mapping.get(src_id, None)
+        self._map_id = lambda src_id: id_mapping.get(src_id)
 
     def categories(self):
         return self._categories
@@ -1168,9 +1146,7 @@ class ResizeTransform(ItemTransform):
         def _resize_image():
             # Can use only NEAREST for masks,
             # because we can't have interpolated values
-            rescaled_mask = cv2.resize(
-                mask.image.astype(np.float32), new_size[::-1], interpolation=cv2.INTER_NEAREST
-            )
+            rescaled_mask = cv2.resize(mask.image.astype(np.float32), new_size[::-1], interpolation=cv2.INTER_NEAREST)
             return rescaled_mask.astype(np.uint8)
 
         return _resize_image
@@ -1187,9 +1163,7 @@ class ResizeTransform(ItemTransform):
 
     def transform_item(self, item):
         if not isinstance(item.media, Image):
-            raise DatumaroError(
-                "Item %s: image info is required for this " "transform" % (item.id,)
-            )
+            raise DatumaroError("Item %s: image info is required for this transform" % (item.id,))
 
         h, w = item.media.size
         xscale = self._width / float(w)
@@ -1215,11 +1189,7 @@ class ResizeTransform(ItemTransform):
             elif isinstance(ann, (Polygon, Points, PolyLine)):
                 resized_annotations.append(
                     ann.wrap(
-                        points=[
-                            p
-                            for t in ((x * xscale, y * yscale) for x, y in take_by(ann.points, 2))
-                            for p in t
-                        ]
+                        points=[p for t in ((x * xscale, y * yscale) for x, y in take_by(ann.points, 2)) for p in t]
                     )
                 )
             elif isinstance(ann, RleMask):
@@ -1255,7 +1225,7 @@ class RemoveItems(ItemTransform):
         full_id = s.split(":")
         if len(full_id) != 2:
             raise argparse.ArgumentTypeError(
-                None, message="Invalid id format of '%s'. " "Expected a 'name:subset' pair." % s
+                None, message="Invalid id format of '%s'. Expected a 'name:subset' pair." % s
             )
         return full_id
 
@@ -1304,8 +1274,7 @@ class RemoveAnnotations(ItemTransform):
         if len(full_id) != 2 or len(full_id) != 3:
             raise argparse.ArgumentTypeError(
                 None,
-                message="Invalid id format of '%s'. "
-                "Expected 'name:subset:ann_id' or 'name:subset' pair." % s,
+                message="Invalid id format of '%s'. Expected 'name:subset:ann_id' or 'name:subset' pair." % s,
             )
         return full_id
 
@@ -1341,9 +1310,7 @@ class RemoveAnnotations(ItemTransform):
 
         for item_id, ann_ids in self._ids.items():
             if (item.id, item.subset) == item_id:
-                updated_anns = (
-                    [ann for ann in item.annotations if ann.id not in ann_ids] if ann_ids else []
-                )
+                updated_anns = [ann for ann in item.annotations if ann.id not in ann_ids] if ann_ids else []
                 return item.wrap(annotations=updated_anns)
 
         return item
@@ -1375,7 +1342,7 @@ class RemoveAttributes(ItemTransform):
         full_id = s.split(":")
         if len(full_id) != 2:
             raise argparse.ArgumentTypeError(
-                None, message="Invalid id format of '%s'. " "Expected a 'name:subset' pair." % s
+                None, message="Invalid id format of '%s'. Expected a 'name:subset' pair." % s
             )
         return full_id
 
@@ -1396,8 +1363,7 @@ class RemoveAttributes(ItemTransform):
             "--attr",
             action="append",
             dest="attributes",
-            help="Attribute name to be removed. If not specified, "
-            "removes all attributes (repeatable)",
+            help="Attribute name to be removed. If not specified, removes all attributes (repeatable)",
         )
         return parser
 
@@ -1414,8 +1380,7 @@ class RemoveAttributes(ItemTransform):
     def _filter_attrs(self, attrs):
         if not self._attributes:
             return None
-        else:
-            return filter_dict(attrs, exclude_keys=self._attributes)
+        return filter_dict(attrs, exclude_keys=self._attributes)
 
     def transform_item(self, item: DatasetItem):
         if not self._ids or (item.id, item.subset) in self._ids:
@@ -1423,9 +1388,7 @@ class RemoveAttributes(ItemTransform):
             for ann in item.annotations:
                 filtered_annotations.append(ann.wrap(attributes=self._filter_attrs(ann.attributes)))
 
-            return item.wrap(
-                attributes=self._filter_attrs(item.attributes), annotations=filtered_annotations
-            )
+            return item.wrap(attributes=self._filter_attrs(item.attributes), annotations=filtered_annotations)
         return item
 
 
@@ -1498,8 +1461,7 @@ class Correct(Transform, CliPlugin):
         self._caption_value = {}
 
         self.caption_type = {
-            cat.name: cat.dtype
-            for cat in self._extractor.categories().get(AnnotationType.caption, TabularCategories())
+            cat.name: cat.dtype for cat in self._extractor.categories().get(AnnotationType.caption, TabularCategories())
         }
 
     def categories(self):
@@ -1511,12 +1473,8 @@ class Correct(Transform, CliPlugin):
     def _analyze_reports(self, report):
         for rep in report:
             if rep["anomaly_type"] == MissingLabelCategories.__name__:
-                unique_labels = sorted(
-                    list({ann.label for item in self._extractor for ann in item.annotations})
-                )
-                label_categories = LabelCategories().from_iterable(
-                    [str(label) for label in unique_labels]
-                )
+                unique_labels = sorted(list({ann.label for item in self._extractor for ann in item.annotations}))
+                label_categories = LabelCategories().from_iterable([str(label) for label in unique_labels])
                 for item in self._extractor:
                     for ann in item.annotations:
                         attrs = {attr for attr in ann.attributes}
@@ -1695,9 +1653,7 @@ class Correct(Transform, CliPlugin):
                     self._caption_value[caption] = table.mean()
             elif caption_type is str:
                 self._remove_items.update(
-                    item_key
-                    for item_key, captions in self._empty_captions.items()
-                    if caption in captions
+                    item_key for item_key, captions in self._empty_captions.items() if caption in captions
                 )
 
     def update_label_value(self):
@@ -1717,14 +1673,10 @@ class Correct(Transform, CliPlugin):
             sep_token = self._extractor._sep_token
             id_mapping = self._extractor.categories().get(AnnotationType.label)._indices
             label_value = self._label_value
-            annotations.extend(
-                Label(id_mapping[f"{label}{sep_token}{label_value[label]}"]) for label in labels
-            )
+            annotations.extend(Label(id_mapping[f"{label}{sep_token}{label_value[label]}"]) for label in labels)
         if captions:
             caption_value = self._caption_value
-            annotations.extend(
-                Caption(f"{caption}:{caption_value[caption]}") for caption in captions
-            )
+            annotations.extend(Caption(f"{caption}:{caption_value[caption]}") for caption in captions)
         return annotations
 
     def cap_far_from_mean(self, annotations, far_from_mean_captions):
@@ -1819,9 +1771,7 @@ class Correct(Transform, CliPlugin):
                 item.annotations = self.cap_far_from_mean(item.annotations, far_from_mean_captions)
 
             if empty_labels or empty_captions:
-                item.annotations = self.fill_missing_value(
-                    item.annotations, empty_labels, empty_captions
-                )
+                item.annotations = self.fill_missing_value(item.annotations, empty_labels, empty_captions)
 
             if not ann_ids:
                 updated_attrs = defaultdict(list)
@@ -1832,9 +1782,7 @@ class Correct(Transform, CliPlugin):
                 for ann in item.annotations:
                     new_ann = ann.wrap(attributes=deepcopy(ann.attributes))
                     if ann.type == AnnotationType.label and ann.label in updated_attrs:
-                        new_ann.attributes.update(
-                            {attr_name: "" for attr_name in updated_attrs[ann.label]}
-                        )
+                        new_ann.attributes.update({attr_name: "" for attr_name in updated_attrs[ann.label]})
                     updated_anns.append(new_ann)
                 yield item.wrap(annotations=updated_anns)
 
@@ -1889,9 +1837,7 @@ class AstypeAnnotations(ItemTransform):
         self._sep_token = ":"
 
         if extractor.ann_types() and AnnotationType.tabular not in extractor.ann_types():
-            raise AnnotationTypeError(
-                "Annotation type is not Tabular. This transform only support tabular annotation"
-            )
+            raise AnnotationTypeError("Annotation type is not Tabular. This transform only support tabular annotation")
 
         # Turn off for default setting
         assert mapping is None or isinstance(mapping, (dict, list)), "Mapping must be dict, or list"
@@ -1916,9 +1862,7 @@ class AstypeAnnotations(ItemTransform):
                     dst_label_cat.add(dst_label, parent=dst_parent, attributes={})
                 dst_label_cat.add_label_group(src_cat.name, src_cat.labels, group_type=0)
             else:
-                self._categories[AnnotationType.caption] = self._categories.get(
-                    AnnotationType.caption, []
-                ) + [src_cat]
+                self._categories[AnnotationType.caption] = self._categories.get(AnnotationType.caption, []) + [src_cat]
         self._categories[AnnotationType.label] = dst_label_cat
 
     def categories(self):
@@ -1992,9 +1936,7 @@ class Clean(TabularTransform):
         text = text.lower()  # Convert to lowercase
         text = re.sub(r"[^A-Za-z\s]+", "", text)  # Remove special characters and punctuation
         text = re.sub(r"\s+", " ", text).strip()  # Remove extra whitespaces
-        text = " ".join(
-            [word for word in text.split() if word not in stop_words]
-        )  # Remove stopwords
+        text = " ".join([word for word in text.split() if word not in stop_words])  # Remove stopwords
         return text
 
     def check_outlier(self, table, numeric_cols):
@@ -2052,8 +1994,7 @@ class Clean(TabularTransform):
         countable_cols = [
             col
             for col in media.data().keys()
-            if isinstance(item.media.table.dtype(col), CategoricalDtype)
-            or item.media.table.dtype(col) is int
+            if isinstance(item.media.table.dtype(col), CategoricalDtype) or item.media.table.dtype(col) is int
         ]
 
         df[str_cols] = df[str_cols].map(lambda x: self.remove_unnecessary_char(x))
@@ -2063,22 +2004,14 @@ class Clean(TabularTransform):
         df[float_cols + int_cols] = df[float_cols + int_cols].apply(lambda x: self.cap_outliers(x))
 
         if not (self._missing_value):
-            self.check_missing_value(
-                media.table.data[float_cols + countable_cols], float_cols, countable_cols
-            )
-        df[float_cols + countable_cols] = df[float_cols + countable_cols].apply(
-            lambda x: self.fill_missing_value(x)
-        )
+            self.check_missing_value(media.table.data[float_cols + countable_cols], float_cols, countable_cols)
+        df[float_cols + countable_cols] = df[float_cols + countable_cols].apply(lambda x: self.fill_missing_value(x))
 
-        return TableRow.from_data(
-            df.iloc[0].to_dict(), table=item.media.table, index=item.media.index
-        )
+        return TableRow.from_data(df.iloc[0].to_dict(), table=item.media.table, index=item.media.index)
 
     def transform_item(self, item):
         if not isinstance(item.media, TableRow):
-            raise DatumaroError(
-                "Item %s: TableRow info is required for this " "transform" % (item.id,)
-            )
+            raise DatumaroError("Item %s: TableRow info is required for this transform" % (item.id,))
 
         sep_token = self._sep_token
         refined_media = self.refine_tabular_media(item) if item.media.has_data else None
@@ -2086,9 +2019,7 @@ class Clean(TabularTransform):
         for ann in item.annotations:
             if isinstance(ann, Tabular):
                 if len(item.annotations) != 1:
-                    raise ValueError(
-                        "If the item has a tabular annotation, it should have one annotation."
-                    )
+                    raise ValueError("If the item has a tabular annotation, it should have one annotation.")
                 annotation_values = {
                     key: refined_media.data[key] for key in item.annotations[0].values.keys()
                 }  # only for tabular

@@ -25,5 +25,7 @@ class TestDeprecationDecorator(unittest.TestCase):
             instance = TestClass(42)
             self.assertEqual(len(w), 1)
             self.assertTrue(issubclass(w[0].category, DeprecationWarning))
-            expected_message = "The TestClass class will be deprecated in version 1.11 and will be removed in version 1.12."
+            expected_message = (
+                "The TestClass class will be deprecated in version 1.11 and will be removed in version 1.12."
+            )
             self.assertEqual(str(w[0].message), expected_message)

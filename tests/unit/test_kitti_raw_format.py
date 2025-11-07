@@ -12,7 +12,6 @@ from datumaro.components.environment import Environment
 from datumaro.components.media import Image, PointCloud
 from datumaro.plugins.data_formats.kitti_raw.base import KittiRawImporter
 from datumaro.plugins.data_formats.kitti_raw.exporter import KittiRawExporter
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import Dimensions, TestDir, check_save_and_load, compare_datasets_3d
 
@@ -29,15 +28,9 @@ class KittiRawImporterTest(TestCase):
         pcd2 = osp.join(DUMMY_DATASET_DIR, "velodyne_points", "data", "0000000001.pcd")
         pcd3 = osp.join(DUMMY_DATASET_DIR, "velodyne_points", "data", "0000000002.pcd")
 
-        image1 = Image.from_file(
-            path=osp.join(DUMMY_DATASET_DIR, "IMAGE_00", "data", "0000000000.png")
-        )
-        image2 = Image.from_file(
-            path=osp.join(DUMMY_DATASET_DIR, "IMAGE_00", "data", "0000000001.png")
-        )
-        image3 = Image.from_file(
-            path=osp.join(DUMMY_DATASET_DIR, "IMAGE_00", "data", "0000000002.png")
-        )
+        image1 = Image.from_file(path=osp.join(DUMMY_DATASET_DIR, "IMAGE_00", "data", "0000000000.png"))
+        image2 = Image.from_file(path=osp.join(DUMMY_DATASET_DIR, "IMAGE_00", "data", "0000000001.png"))
+        image3 = Image.from_file(path=osp.join(DUMMY_DATASET_DIR, "IMAGE_00", "data", "0000000002.png"))
 
         expected_label_cat = LabelCategories(attributes={"occluded"})
         expected_label_cat.add("bus")
@@ -105,15 +98,9 @@ class KittiRawExporterTest(TestCase):
     pcd2 = osp.abspath(osp.join(DUMMY_DATASET_DIR, "velodyne_points", "data", "0000000001.pcd"))
     pcd3 = osp.abspath(osp.join(DUMMY_DATASET_DIR, "velodyne_points", "data", "0000000002.pcd"))
 
-    image1 = Image.from_file(
-        path=osp.abspath(osp.join(DUMMY_DATASET_DIR, "IMAGE_00", "data", "0000000000.png"))
-    )
-    image2 = Image.from_file(
-        path=osp.abspath(osp.join(DUMMY_DATASET_DIR, "IMAGE_00", "data", "0000000001.png"))
-    )
-    image3 = Image.from_file(
-        path=osp.abspath(osp.join(DUMMY_DATASET_DIR, "IMAGE_00", "data", "0000000002.png"))
-    )
+    image1 = Image.from_file(path=osp.abspath(osp.join(DUMMY_DATASET_DIR, "IMAGE_00", "data", "0000000000.png")))
+    image2 = Image.from_file(path=osp.abspath(osp.join(DUMMY_DATASET_DIR, "IMAGE_00", "data", "0000000001.png")))
+    image3 = Image.from_file(path=osp.abspath(osp.join(DUMMY_DATASET_DIR, "IMAGE_00", "data", "0000000002.png")))
 
     def _test_save_and_load(
         self, source_dataset, converter, test_dir, target_dataset=None, importer_args=None, **kwargs
@@ -222,9 +209,7 @@ class KittiRawExporterTest(TestCase):
                         media=PointCloud.from_file(
                             path=osp.join(test_dir, "velodyne_points", "data", "0000000000.pcd"),
                             extra_images=[
-                                Image.from_file(
-                                    path=osp.join(test_dir, "image_00", "data", "0000000000.png")
-                                )
+                                Image.from_file(path=osp.join(test_dir, "image_00", "data", "0000000000.png"))
                             ],
                         ),
                         attributes={"frame": 0},
@@ -339,9 +324,8 @@ class KittiRawExporterTest(TestCase):
             media_type=PointCloud,
         )
 
-        with TestDir() as test_dir:
-            with self.assertRaisesRegex(Exception, "track_id"):
-                KittiRawExporter.convert(source_dataset, test_dir)
+        with TestDir() as test_dir, self.assertRaisesRegex(Exception, "track_id"):
+            KittiRawExporter.convert(source_dataset, test_dir)
 
     def test_reindex_allows_single_annotations(self):
         source_dataset = Dataset.from_iterable(
@@ -470,9 +454,7 @@ class KittiRawExporterTest(TestCase):
         )
 
         with TestDir() as test_dir:
-            self._test_save_and_load(
-                source_dataset, KittiRawExporter.convert, test_dir, target_dataset=target_dataset
-            )
+            self._test_save_and_load(source_dataset, KittiRawExporter.convert, test_dir, target_dataset=target_dataset)
 
     def test_can_save_and_load_without_annotations(self):
         source_dataset = Dataset.from_iterable(
@@ -515,9 +497,7 @@ class KittiRawExporterTest(TestCase):
                         media=PointCloud.from_file(
                             path=osp.join(test_dir, "velodyne_points", "data", "a", "d.pcd"),
                             extra_images=[
-                                Image.from_file(
-                                    path=osp.join(test_dir, "image_00", "data", "a", "d.png")
-                                ),
+                                Image.from_file(path=osp.join(test_dir, "image_00", "data", "a", "d.png")),
                             ],
                         ),
                         attributes={"frame": 3},
@@ -542,9 +522,7 @@ class KittiRawExporterTest(TestCase):
                 DatasetItem(
                     id="a/d",
                     annotations=[Cuboid3d(position=[1, 2, 3], label=0, attributes={"track_id": 1})],
-                    media=PointCloud.from_file(
-                        path=self.pcd1, extra_images=[self.image1, self.image2, self.image3]
-                    ),
+                    media=PointCloud.from_file(path=self.pcd1, extra_images=[self.image1, self.image2, self.image3]),
                     attributes={"frame": 3},
                 ),
             ],
@@ -569,15 +547,9 @@ class KittiRawExporterTest(TestCase):
                         media=PointCloud.from_file(
                             path=osp.join(test_dir, "velodyne_points", "data", "a", "d.pcd"),
                             extra_images=[
-                                Image.from_file(
-                                    path=osp.join(test_dir, "image_00", "data", "a", "d.png")
-                                ),
-                                Image.from_file(
-                                    path=osp.join(test_dir, "image_01", "data", "a", "d.png")
-                                ),
-                                Image.from_file(
-                                    path=osp.join(test_dir, "image_02", "data", "a", "d.png")
-                                ),
+                                Image.from_file(path=osp.join(test_dir, "image_00", "data", "a", "d.png")),
+                                Image.from_file(path=osp.join(test_dir, "image_01", "data", "a", "d.png")),
+                                Image.from_file(path=osp.join(test_dir, "image_02", "data", "a", "d.png")),
                             ],
                         ),
                         attributes={"frame": 3},
@@ -604,9 +576,7 @@ class KittiRawExporterTest(TestCase):
                 [
                     DatasetItem(
                         id="frame1",
-                        annotations=[
-                            Cuboid3d(position=[3.5, 9.8, 0.3], label=0, attributes={"track_id": 1})
-                        ],
+                        annotations=[Cuboid3d(position=[3.5, 9.8, 0.3], label=0, attributes={"track_id": 1})],
                         media=PointCloud.from_file(path=self.pcd1, extra_images=[self.image1]),
                         attributes={"frame": 0},
                     )
@@ -628,9 +598,7 @@ class KittiRawExporterTest(TestCase):
             dataset.save(save_media=True)
 
             self.assertEqual({"frame2.png"}, set(os.listdir(osp.join(path, "image_00", "data"))))
-            self.assertEqual(
-                {"frame2.pcd"}, set(os.listdir(osp.join(path, "velodyne_points", "data")))
-            )
+            self.assertEqual({"frame2.pcd"}, set(os.listdir(osp.join(path, "velodyne_points", "data"))))
 
     def test_can_save_and_load_with_meta_file(self):
         source_dataset = Dataset.from_iterable(
@@ -649,9 +617,7 @@ class KittiRawExporterTest(TestCase):
                 ),
                 DatasetItem(
                     id="0000000001",
-                    annotations=[
-                        Cuboid3d(position=[1.4, 2.1, 1.4], label=1, attributes={"track_id": 2})
-                    ],
+                    annotations=[Cuboid3d(position=[1.4, 2.1, 1.4], label=1, attributes={"track_id": 2})],
                 ),
             ],
             categories=["cat", "dog"],
@@ -677,9 +643,7 @@ class KittiRawExporterTest(TestCase):
                         media=PointCloud.from_file(
                             path=osp.join(test_dir, "velodyne_points", "data", "0000000000.pcd"),
                             extra_images=[
-                                Image.from_file(
-                                    path=osp.join(test_dir, "image_00", "data", "0000000000.png")
-                                )
+                                Image.from_file(path=osp.join(test_dir, "image_00", "data", "0000000000.png"))
                             ],
                         ),
                         attributes={"frame": 0},

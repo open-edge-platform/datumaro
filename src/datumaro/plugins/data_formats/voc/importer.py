@@ -35,9 +35,7 @@ class _VocImporter(Importer):
             task_dirs = {task_dir for _, task_dir in cls._TASKS.values()}
             for task_dir in sorted(task_dirs):
                 with context.alternative():
-                    context.require_file(
-                        osp.join(VocPath.SUBSETS_DIR, task_dir, f"*{cls.ANNO_EXT}")
-                    )
+                    context.require_file(osp.join(VocPath.SUBSETS_DIR, task_dir, f"*{cls.ANNO_EXT}"))
 
     @classmethod
     def find_sources(cls, path):

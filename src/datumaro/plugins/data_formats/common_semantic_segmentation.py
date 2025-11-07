@@ -8,12 +8,7 @@ from typing import List, Optional
 
 import numpy as np
 
-from datumaro.components.annotation import (
-    AnnotationType,
-    ExtractedMask,
-    LabelCategories,
-    MaskCategories,
-)
+from datumaro.components.annotation import AnnotationType, ExtractedMask, LabelCategories, MaskCategories
 from datumaro.components.dataset_base import DatasetItem, SubsetBase
 from datumaro.components.format_detection import FormatDetectionConfidence, FormatDetectionContext
 from datumaro.components.importer import ImportContext, Importer, with_subset_dirs
@@ -86,9 +81,7 @@ class CommonSemanticSegmentationBase(SubsetBase):
 
         if osp.isdir(image_dir):
             images = {
-                osp.splitext(osp.relpath(p, image_dir))[0].replace("\\", "/")[
-                    len(self._image_prefix) :
-                ]: p
+                osp.splitext(osp.relpath(p, image_dir))[0].replace("\\", "/")[len(self._image_prefix) :]: p
                 for p in find_images(image_dir, recursive=True)
                 if osp.basename(p).startswith(self._image_prefix)
             }
@@ -110,9 +103,7 @@ class CommonSemanticSegmentationBase(SubsetBase):
                 image = Image.from_file(path=image)
 
             annotations = []
-            index_mask = lazy_mask(
-                mask_path, self._categories[AnnotationType.mask].inverse_colormap
-            )
+            index_mask = lazy_mask(mask_path, self._categories[AnnotationType.mask].inverse_colormap)
             np_mask = index_mask()  # loading mask through cache
 
             classes = np.unique(np_mask)
@@ -126,9 +117,7 @@ class CommonSemanticSegmentationBase(SubsetBase):
                 )
                 self._ann_types.add(AnnotationType.mask)
 
-            items[item_id] = DatasetItem(
-                id=item_id, subset=self._subset, media=image, annotations=annotations
-            )
+            items[item_id] = DatasetItem(id=item_id, subset=self._subset, media=image, annotations=annotations)
 
         return items
 

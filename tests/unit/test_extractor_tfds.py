@@ -10,7 +10,6 @@ from datumaro.components.environment import Environment
 from datumaro.components.extractor_tfds import AVAILABLE_TFDS_DATASETS, TFDS_EXTRACTOR_AVAILABLE
 from datumaro.components.media import Image, MediaElement
 from datumaro.util.image import decode_image, encode_image
-
 from tests.utils.test_utils import compare_datasets, mock_tfds_data
 
 if TFDS_EXTRACTOR_AVAILABLE:
@@ -42,9 +41,7 @@ class TfdsDatasetsTest(TestCase):
 
             # verify that the remote metadata contains a copy of the local metadata
             for attribute in dataset.metadata.__attrs_attrs__:
-                assert getattr(dataset.metadata, attribute.name) == getattr(
-                    remote_meta, attribute.name
-                )
+                assert getattr(dataset.metadata, attribute.name) == getattr(remote_meta, attribute.name)
 
             tfds_info = tfds.builder("mnist").info
 

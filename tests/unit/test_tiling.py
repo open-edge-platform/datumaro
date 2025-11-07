@@ -27,7 +27,6 @@ from datumaro.components.errors import DatumaroError
 from datumaro.components.media import Image
 from datumaro.plugins.tiling import Tile
 from datumaro.plugins.tiling.util import xywh_to_x1y1x2y2
-
 from tests.utils.test_utils import compare_datasets
 
 
@@ -260,9 +259,7 @@ class _TestBase:
                     id=idx,
                     media=Image.from_numpy(data=np.zeros((self.height, self.width, 3))),
                     annotations=[
-                        SuperResolutionAnnotation(
-                            image=np.zeros((self.height, self.width, 3)), **self.default_attrs
-                        )
+                        SuperResolutionAnnotation(image=np.zeros((self.height, self.width, 3)), **self.default_attrs)
                     ],
                 )
                 for idx in range(self.n_items)
@@ -271,9 +268,7 @@ class _TestBase:
 
 
 class TileTest(_TestBase, TestCase):
-    def _test_common(
-        self, transformed: List[DatasetItem], attrs_to_test: Dict, ann_type: AnnotationType
-    ):
+    def _test_common(self, transformed: List[DatasetItem], attrs_to_test: Dict, ann_type: AnnotationType):
         expected_size = (self.height // self.n_tiles, self.width // self.n_tiles)
 
         unique_ids = set()
@@ -360,9 +355,7 @@ class TileTest(_TestBase, TestCase):
 
         self._test_common(transformed, self.default_attrs, AnnotationType.caption)
 
-        expected_label_counts = {
-            f"caption_{idx}": self.n_tiles * self.n_tiles for idx in range(self.n_items)
-        }
+        expected_label_counts = {f"caption_{idx}": self.n_tiles * self.n_tiles for idx in range(self.n_items)}
         caption_counts = defaultdict(lambda: 0)
 
         for item in transformed:
@@ -404,9 +397,7 @@ class TileTest(_TestBase, TestCase):
 
         self._test_common(transformed, self.default_shape_attrs, AnnotationType.polygon)
 
-        expected_points = Polygon(
-            Bbox(0, 0, self.tile_width, self.tile_height).as_polygon()
-        ).get_points()
+        expected_points = Polygon(Bbox(0, 0, self.tile_width, self.tile_height).as_polygon()).get_points()
         expected_polygon = sg.Polygon(expected_points)
 
         # For each tiled item, we created a Polygon which has the same size as the tiled image.
@@ -432,9 +423,7 @@ class TileTest(_TestBase, TestCase):
 
         self._test_common(transformed, self.default_shape_attrs, AnnotationType.points)
 
-        expected_points = Polygon(
-            Bbox(0, 0, self.tile_width, self.tile_height).as_polygon()
-        ).get_points()
+        expected_points = Polygon(Bbox(0, 0, self.tile_width, self.tile_height).as_polygon()).get_points()
 
         # For each tiled item, we created a Points covered by the tiled image.
         for item in transformed:
@@ -454,9 +443,7 @@ class TileTest(_TestBase, TestCase):
 
         self._test_common(transformed, self.default_shape_attrs, AnnotationType.polyline)
 
-        expected_points = Polygon(
-            Bbox(0, 0, self.tile_width, self.tile_height).as_polygon()
-        ).get_points()
+        expected_points = Polygon(Bbox(0, 0, self.tile_width, self.tile_height).as_polygon()).get_points()
 
         # For each tiled item, we created a Points covered by the tiled image.
         for item in transformed:
@@ -526,9 +513,7 @@ class TileTest(_TestBase, TestCase):
 
         # Do not support this annotation type.
         with self.assertRaises(DatumaroError):
-            self._test_common(
-                transformed, self.default_attrs, AnnotationType.super_resolution_annotation
-            )
+            self._test_common(transformed, self.default_attrs, AnnotationType.super_resolution_annotation)
 
     def _create_sticking_out_box(self, row: int, col: int) -> Bbox:
         return Bbox(
@@ -617,9 +602,7 @@ class TileTest(_TestBase, TestCase):
             threshold_drop_ann=0,
         )
 
-        tile_roi_polygon = sg.Polygon(
-            Polygon(Bbox(0, 0, self.tile_width, self.tile_height).as_polygon()).get_points()
-        )
+        tile_roi_polygon = sg.Polygon(Polygon(Bbox(0, 0, self.tile_width, self.tile_height).as_polygon()).get_points())
 
         for item in accepted:
             assert len(item.annotations) >= 2
@@ -630,7 +613,7 @@ class TileTest(_TestBase, TestCase):
                 elif ann.type == AnnotationType.polygon:
                     actual_polygon = sg.Polygon(ann.get_points())
                 else:
-                    raise RuntimeError()
+                    raise RuntimeError
 
                 # There should be no protrusion.
                 assert tile_roi_polygon.covers(actual_polygon)

@@ -4,9 +4,7 @@
 
 import filecmp
 import os.path as osp
-import sys
 from unittest import TestCase
-from unittest.mock import MagicMock
 
 import numpy as np
 import pytest
@@ -15,11 +13,10 @@ from datumaro.components.annotation import Bbox, Label
 from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image, Video, VideoFrame
-from datumaro.util.scope import Scope, on_exit_do, scope_add, scoped
+from datumaro.util.scope import Scope, on_exit_do, scoped
+from tests.utils.test_utils import TestDir, compare_datasets
 
 from ..utils.video import make_sample_video
-
-from tests.utils.test_utils import TestDir, compare_datasets
 
 
 def _make_sample_video(video_dir, fname="video.avi", frame_size=(4, 6), frames=4):
@@ -36,7 +33,7 @@ class VideoTest:
         on_exit_do(video.close)
 
         assert None is video.length
-        assert (4, 6) == video.frame_size
+        assert video.frame_size == (4, 6)
 
     @scoped
     def test_can_read_frames_sequentially(self, test_dir):
@@ -44,14 +41,14 @@ class VideoTest:
         video = Video(video_path)
         on_exit_do(video.close)
 
-        assert None == video._frame_count
+        assert video._frame_count == None
         for idx, frame in enumerate(video):
             assert frame.size == video.frame_size
             assert frame.index == idx
             assert frame.video is video
             assert np.array_equal(frame.data, np.ones((*video.frame_size, 3)) * idx)
 
-        assert 4 == video._frame_count
+        assert video._frame_count == 4
         for idx, frame in enumerate(video):
             assert frame.size == video.frame_size
             assert frame.index == idx
@@ -90,7 +87,7 @@ class VideoTest:
         video = Video(video_path, start_frame=1)
         on_exit_do(video.close)
 
-        assert 1 == next(iter(video)).index
+        assert next(iter(video)).index == 1
 
     @scoped
     def test_can_skip_from_end(self, test_dir):
@@ -102,8 +99,8 @@ class VideoTest:
         for last_frame in video:
             pass
 
-        assert 3 == video.length
-        assert 2 == last_frame.index
+        assert video.length == 3
+        assert last_frame.index == 2
 
     @scoped
     def test_check_invalid_length(self, test_dir):
@@ -135,14 +132,14 @@ class VideoTest:
         for idx, frame in enumerate(video):
             assert idx == frame.index
 
-        assert 4 == video.length
+        assert video.length == 4
 
     @scoped
     def test_can_open_lazily(self, test_dir):
         video = Video(osp.join(test_dir, "path.mp4"))
 
         assert osp.join(test_dir, "path.mp4") == video.path
-        assert ".mp4" == video.ext
+        assert video.ext == ".mp4"
 
     @scoped
     def test_can_compare(self, test_dir):
@@ -182,9 +179,7 @@ class VideoExtractorTest:
             ],
         )
 
-        actual = Dataset.import_from(
-            video_path, "video_frames", subset="train", name_pattern="frame_%03d"
-        )
+        actual = Dataset.import_from(video_path, "video_frames", subset="train", name_pattern="frame_%03d")
 
         compare_datasets(TestCase(), expected, actual)
 
@@ -194,15 +189,10 @@ class VideoExtractorTest:
         dataset_dir = Scope().add(TestDir())
 
         expected = Dataset.from_iterable(
-            [
-                DatasetItem("frame_%06d" % i, media=Image.from_numpy(data=np.ones((4, 6, 3)) * i))
-                for i in range(4)
-            ],
+            [DatasetItem("frame_%06d" % i, media=Image.from_numpy(data=np.ones((4, 6, 3)) * i)) for i in range(4)],
         )
 
-        dataset = Dataset.import_from(
-            video_path, "video_frames", start_frame=0, end_frame=3, name_pattern="frame_%06d"
-        )
+        dataset = Dataset.import_from(video_path, "video_frames", start_frame=0, end_frame=3, name_pattern="frame_%06d")
         dataset.export(format="image_dir", save_dir=dataset_dir, image_ext=".jpg")
 
         actual = Dataset.import_from(dataset_dir, "image_dir")

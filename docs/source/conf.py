@@ -179,7 +179,7 @@ def replace(app, what, name, obj, options, lines):
             for b in exclude_plugins_name:
                 if a.lower() == b:
                     names.pop(n)
-    if all(1 == len(a) for a in names):
+    if all(len(a) == 1 for a in names):
         prog_name = "".join(names).lower()
     else:
         prog_name = "_".join(names).lower()

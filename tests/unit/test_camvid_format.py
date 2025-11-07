@@ -14,7 +14,6 @@ from datumaro.components.environment import Environment
 from datumaro.components.media import Image
 from datumaro.plugins.data_formats.camvid import CamvidExporter, CamvidImporter
 from datumaro.util.meta_file_util import parse_meta_file
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, check_save_and_load, compare_datasets
 
@@ -145,9 +144,7 @@ class CamvidExporterTest(TestCase):
                 )
 
         with TestDir() as test_dir:
-            self._test_save_and_load(
-                TestExtractor(), partial(CamvidExporter.convert, label_map="camvid"), test_dir
-            )
+            self._test_save_and_load(TestExtractor(), partial(CamvidExporter.convert, label_map="camvid"), test_dir)
 
     def test_can_save_camvid_segm_unpainted(self):
         class TestExtractor(TestExtractorBase):
@@ -217,9 +214,7 @@ class CamvidExporterTest(TestCase):
                 )
 
         with TestDir() as test_dir:
-            self._test_save_and_load(
-                TestExtractor(), partial(CamvidExporter.convert, label_map="camvid"), test_dir
-            )
+            self._test_save_and_load(TestExtractor(), partial(CamvidExporter.convert, label_map="camvid"), test_dir)
 
     def test_can_save_dataset_with_cyrillic_and_spaces_in_filename(self):
         class TestExtractor(TestExtractorBase):
@@ -238,9 +233,7 @@ class CamvidExporterTest(TestCase):
                 )
 
         with TestDir() as test_dir:
-            self._test_save_and_load(
-                TestExtractor(), partial(CamvidExporter.convert, label_map="camvid"), test_dir
-            )
+            self._test_save_and_load(TestExtractor(), partial(CamvidExporter.convert, label_map="camvid"), test_dir)
 
     def test_can_save_with_no_masks(self):
         class TestExtractor(TestExtractorBase):
@@ -256,9 +249,7 @@ class CamvidExporterTest(TestCase):
                 )
 
         with TestDir() as test_dir:
-            self._test_save_and_load(
-                TestExtractor(), partial(CamvidExporter.convert, label_map="camvid"), test_dir
-            )
+            self._test_save_and_load(TestExtractor(), partial(CamvidExporter.convert, label_map="camvid"), test_dir)
 
     def test_dataset_with_source_labelmap_undefined(self):
         class SrcExtractor(TestExtractorBase):
@@ -356,9 +347,7 @@ class CamvidExporterTest(TestCase):
             def __iter__(self):
                 return iter(
                     [
-                        DatasetItem(
-                            id="q/1", media=Image.from_numpy(data=np.zeros((4, 3, 3)), ext=".JPEG")
-                        ),
+                        DatasetItem(id="q/1", media=Image.from_numpy(data=np.zeros((4, 3, 3)), ext=".JPEG")),
                         DatasetItem(
                             id="a/b/c/2",
                             media=Image.from_numpy(data=np.ones((1, 5, 3)), ext=".bmp"),
@@ -380,9 +369,7 @@ class CamvidExporterTest(TestCase):
             def __iter__(self):
                 return iter(
                     [
-                        DatasetItem(
-                            id="q/1", media=Image.from_numpy(data=np.zeros((4, 3, 3)), ext=".JPEG")
-                        ),
+                        DatasetItem(id="q/1", media=Image.from_numpy(data=np.zeros((4, 3, 3)), ext=".JPEG")),
                         DatasetItem(
                             id="a/b/c/2",
                             media=Image.from_numpy(data=np.ones((1, 5, 3)), ext=".bmp"),
@@ -465,13 +452,9 @@ class CamvidExporterTest(TestCase):
             dataset.remove(3, "c")
             dataset.save(save_media=True)
 
-            self.assertEqual(
-                {"a", "aannot", "a.txt", "b.txt", "label_colors.txt"}, set(os.listdir(path))
-            )
+            self.assertEqual({"a", "aannot", "a.txt", "b.txt", "label_colors.txt"}, set(os.listdir(path)))
             self.assertEqual({"1.jpg", "2.jpg"}, set(os.listdir(osp.join(path, "a"))))
-            compare_datasets(
-                self, expected, Dataset.import_from(path, "camvid"), require_media=True
-            )
+            compare_datasets(self, expected, Dataset.import_from(path, "camvid"), require_media=True)
 
     def test_dataset_with_meta_file(self):
         class SrcExtractor(TestExtractorBase):

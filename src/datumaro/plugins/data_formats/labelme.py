@@ -60,14 +60,12 @@ class LabelMeBase(DatasetBase):
 
         if has_meta_file(path):
             categories = {
-                AnnotationType.label: LabelCategories(
-                    attributes={"occluded", "username"}
-                ).from_iterable(parse_meta_file(path).keys())
+                AnnotationType.label: LabelCategories(attributes={"occluded", "username"}).from_iterable(
+                    parse_meta_file(path).keys()
+                )
             }
         else:
-            categories = {
-                AnnotationType.label: LabelCategories(attributes={"occluded", "username"})
-            }
+            categories = {AnnotationType.label: LabelCategories(attributes={"occluded", "username"})}
 
         for xml_path in sorted(glob(osp.join(path, "**", "*.xml"), recursive=True)):
             root = ElementTree.parse(xml_path)
@@ -81,9 +79,7 @@ class LabelMeBase(DatasetBase):
             if imagesize_elem is not None:
                 width_elem = imagesize_elem.find("ncols").text
                 height_elem = imagesize_elem.find("nrows").text
-                image_size = (
-                    (int(height_elem), int(width_elem)) if height_elem and width_elem else None
-                )
+                image_size = (int(height_elem), int(width_elem)) if height_elem and width_elem else None
 
             image = Image.from_file(path=image_path, size=image_size)
 
@@ -92,9 +88,7 @@ class LabelMeBase(DatasetBase):
             for ann in annotations:
                 self._ann_types.add(ann.type)
 
-            items.append(
-                DatasetItem(id=item_id, subset=subset, media=image, annotations=annotations)
-            )
+            items.append(DatasetItem(id=item_id, subset=subset, media=image, annotations=annotations))
             subsets.add(items[-1].subset)
         return items, categories, subsets
 
@@ -123,7 +117,7 @@ class LabelMeBase(DatasetBase):
                     name, value = attr.split("=", maxsplit=1)
                     if value.lower() in {"true", "false"}:
                         value = value.lower() == "true"
-                    elif 1 < len(value) and value[0] == '"' and value[-1] == '"':
+                    elif len(value) > 1 and value[0] == '"' and value[-1] == '"':
                         value = value[1:-1]
                     else:
                         for t in [int, float]:
@@ -226,9 +220,7 @@ class LabelMeBase(DatasetBase):
                     user = user_elem.text
                 attributes.append(("username", user))
 
-                mask_path = osp.join(
-                    path, LabelMePath.MASKS_DIR, subset, segm_elem.find("mask").text
-                )
+                mask_path = osp.join(path, LabelMePath.MASKS_DIR, subset, segm_elem.find("mask").text)
                 if not osp.isfile(mask_path):
                     raise FileNotFoundError(errno.ENOENT, "Can't find mask", mask_path)
                 mask = load_mask(mask_path)
@@ -427,9 +419,7 @@ class LabelMeExporter(Exporter):
             ET.SubElement(obj_elem, "name").text = self._get_label(ann.label)
             ET.SubElement(obj_elem, "deleted").text = "0"
             ET.SubElement(obj_elem, "verified").text = "0"
-            ET.SubElement(obj_elem, "occluded").text = (
-                "yes" if ann.attributes.get("occluded") is True else "no"
-            )
+            ET.SubElement(obj_elem, "occluded").text = "yes" if ann.attributes.get("occluded") is True else "no"
             ET.SubElement(obj_elem, "date").text = ""
             ET.SubElement(obj_elem, "id").text = str(obj_id)
 
@@ -487,11 +477,8 @@ class LabelMeExporter(Exporter):
                 if k in {"username", "occluded"}:
                     continue
                 if isinstance(v, str):
-                    if (
-                        cast(v, float) is not None
-                        and str(float(v)) == v
-                        or cast(v, int) is not None
-                        and str(int(v)) == v
+                    if (cast(v, float) is not None and str(float(v)) == v) or (
+                        cast(v, int) is not None and str(int(v)) == v
                     ):
                         v = f'"{v}"'  # add escaping for string values
                     else:

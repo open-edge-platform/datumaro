@@ -6,12 +6,7 @@ from copy import deepcopy
 
 import numpy as np
 
-from datumaro.components.annotation import (
-    AnnotationType,
-    GroupType,
-    LabelCategories,
-    TabularCategories,
-)
+from datumaro.components.annotation import AnnotationType, GroupType, LabelCategories, TabularCategories
 from datumaro.components.cli_plugin import CliPlugin
 from datumaro.components.errors import (
     AttributeDefinedButNotFound,
@@ -90,8 +85,7 @@ class _TaskValidator(Validator, CliPlugin):
             "--few-samples-thr",
             default=cls.DEFAULT_FEW_SAMPLES_THR,
             type=int,
-            help="Threshold for giving a warning for minimum number of "
-            "samples per class (default: %(default)s)",
+            help="Threshold for giving a warning for minimum number of samples per class (default: %(default)s)",
         )
         parser.add_argument(
             "-ir",
@@ -247,9 +241,7 @@ class _TaskValidator(Validator, CliPlugin):
                 if not 0 <= ann.label < len(label_categories):
                     label_name = ann.label
 
-                    label_stats = undefined_label_dist.setdefault(
-                        ann.label, deepcopy(undefined_label_template)
-                    )
+                    label_stats = undefined_label_dist.setdefault(ann.label, deepcopy(undefined_label_template))
                     label_stats["items_with_undefined_label"].append(item_key)
 
                     label_stats["count"] += 1
@@ -275,9 +267,7 @@ class _TaskValidator(Validator, CliPlugin):
                 for attr, value in ann.attributes.items():
                     if attr not in valid_attrs:
                         undefined_attr_stats = undefined_attr_dist.setdefault(label_name, {})
-                        attr_dets = undefined_attr_stats.setdefault(
-                            attr, deepcopy(undefined_attr_template)
-                        )
+                        attr_dets = undefined_attr_stats.setdefault(attr, deepcopy(undefined_attr_template))
                         attr_dets["items_with_undefined_attr"].append(item_key)
                     else:
                         attr_dets = defined_attr_stats[attr]
@@ -346,9 +336,7 @@ class _TaskValidator(Validator, CliPlugin):
         validation_reports = []
 
         if len(stats["label_distribution"]["defined_labels"]) == 0:
-            validation_reports += self._generate_validation_report(
-                MissingLabelCategories, Severity.error
-            )
+            validation_reports += self._generate_validation_report(MissingLabelCategories, Severity.error)
 
         return validation_reports
 
@@ -403,9 +391,7 @@ class _TaskValidator(Validator, CliPlugin):
     def _check_label_defined_but_not_found(self, stats):
         validation_reports = []
         count_by_defined_labels = stats["label_distribution"]["defined_labels"]
-        labels_not_found = [
-            label_name for label_name, count in count_by_defined_labels.items() if count == 0
-        ]
+        labels_not_found = [label_name for label_name, count in count_by_defined_labels.items() if count == 0]
 
         for label_name in labels_not_found:
             validation_reports += self._generate_validation_report(
@@ -417,9 +403,7 @@ class _TaskValidator(Validator, CliPlugin):
     def _check_attribute_defined_but_not_found(self, label_name, attr_stats):
         validation_reports = []
         attrs_not_found = [
-            attr_name
-            for attr_name, attr_dets in attr_stats.items()
-            if len(attr_dets["distribution"]) == 0
+            attr_name for attr_name, attr_dets in attr_stats.items() if len(attr_dets["distribution"]) == 0
         ]
 
         for attr_name in attrs_not_found:
@@ -433,14 +417,10 @@ class _TaskValidator(Validator, CliPlugin):
     def _check_only_one_label(self, stats):
         validation_reports = []
         count_by_defined_labels = stats["label_distribution"]["defined_labels"]
-        labels_found = [
-            label_name for label_name, count in count_by_defined_labels.items() if count > 0
-        ]
+        labels_found = [label_name for label_name, count in count_by_defined_labels.items() if count > 0]
 
         if len(labels_found) == 1:
-            validation_reports += self._generate_validation_report(
-                OnlyOneLabel, Severity.info, labels_found[0]
-            )
+            validation_reports += self._generate_validation_report(OnlyOneLabel, Severity.info, labels_found[0])
 
         return validation_reports
 
@@ -450,9 +430,7 @@ class _TaskValidator(Validator, CliPlugin):
 
         if len(values) == 1:
             details = (label_name, attr_name, values[0])
-            validation_reports += self._generate_validation_report(
-                OnlyOneAttributeValue, Severity.info, *details
-            )
+            validation_reports += self._generate_validation_report(OnlyOneAttributeValue, Severity.info, *details)
 
         return validation_reports
 
@@ -462,15 +440,11 @@ class _TaskValidator(Validator, CliPlugin):
 
         defined_label_dist = stats["label_distribution"]["defined_labels"]
         labels_with_few_samples = [
-            (label_name, count)
-            for label_name, count in defined_label_dist.items()
-            if 0 < count <= thr
+            (label_name, count) for label_name, count in defined_label_dist.items() if 0 < count <= thr
         ]
 
         for label_name, count in labels_with_few_samples:
-            validation_reports += self._generate_validation_report(
-                FewSamplesInLabel, Severity.info, label_name, count
-            )
+            validation_reports += self._generate_validation_report(FewSamplesInLabel, Severity.info, label_name, count)
 
         return validation_reports
 
@@ -479,16 +453,12 @@ class _TaskValidator(Validator, CliPlugin):
         thr = self.few_samples_thr
 
         attr_values_with_few_samples = [
-            (attr_value, count)
-            for attr_value, count in attr_dets["distribution"].items()
-            if count <= thr
+            (attr_value, count) for attr_value, count in attr_dets["distribution"].items() if count <= thr
         ]
 
         for attr_value, count in attr_values_with_few_samples:
             details = (label_name, attr_name, attr_value, count)
-            validation_reports += self._generate_validation_report(
-                FewSamplesInAttribute, Severity.info, *details
-            )
+            validation_reports += self._generate_validation_report(FewSamplesInAttribute, Severity.info, *details)
 
         return validation_reports
 
@@ -821,9 +791,7 @@ class DetectionValidator(_TaskValidator):
 
             for attr_name, bbox_attr_stats in bbox_attr_label.items():
                 reports += self._check_far_from_attr_mean(label_name, attr_name, bbox_attr_stats)
-                reports += self._check_imbalanced_dist_in_attr(
-                    label_name, attr_name, bbox_attr_stats
-                )
+                reports += self._check_imbalanced_dist_in_attr(label_name, attr_name, bbox_attr_stats)
 
         return reports
 
@@ -851,20 +819,14 @@ class DetectionValidator(_TaskValidator):
                     label_name = label_categories[ann.label].name
                     valid_attrs = base_valid_attrs.union(label_categories[ann.label].attributes)
 
-                    point_label_stats = dist_by_label.setdefault(
-                        label_name, deepcopy(self.point_template)
-                    )
-                    ann_point_info, _has_error = update_stats_by_label(
-                        item_key, ann, point_label_stats
-                    )
+                    point_label_stats = dist_by_label.setdefault(label_name, deepcopy(self.point_template))
+                    ann_point_info, _has_error = update_stats_by_label(item_key, ann, point_label_stats)
 
                 for attr, value in ann.attributes.items():
                     if attr in valid_attrs:
                         point_attr_label = dist_by_attr.setdefault(label_name, {})
                         point_attr_stats = point_attr_label.setdefault(attr, {})
-                        point_val_stats = point_attr_stats.setdefault(
-                            str(value), deepcopy(self.point_template)
-                        )
+                        point_val_stats = point_attr_stats.setdefault(str(value), deepcopy(self.point_template))
 
                         if not _has_error:
                             self._update_prop_distributions(ann_point_info, point_val_stats)
@@ -1209,9 +1171,7 @@ class SegmentationValidator(DetectionValidator):
 
             for attr_name, mask_attr_stats in mask_attr_label.items():
                 reports += self._check_far_from_attr_mean(label_name, attr_name, mask_attr_stats)
-                reports += self._check_imbalanced_dist_in_attr(
-                    label_name, attr_name, mask_attr_stats
-                )
+                reports += self._check_imbalanced_dist_in_attr(label_name, attr_name, mask_attr_stats)
 
         return reports
 
@@ -1234,12 +1194,8 @@ class TabularValidationStats:
 
     def __post_init__(self, dataset: Optional[Any] = None):
         if dataset:
-            self.label_categories = dataset.categories().get(
-                AnnotationType.label, LabelCategories()
-            )
-            self.tabular_categories = dataset.categories().get(
-                AnnotationType.caption, TabularCategories()
-            )
+            self.label_categories = dataset.categories().get(AnnotationType.label, LabelCategories())
+            self.tabular_categories = dataset.categories().get(AnnotationType.caption, TabularCategories())
             self.label_columns = list({item.parent for item in self.label_categories.items})
             self.caption_columns = [cat.name for cat in self.tabular_categories]
 
@@ -1249,15 +1205,12 @@ class TabularValidationStats:
             self.defined_captions = {cat: 0 for cat in self.caption_columns}
             self.empty_captions = {cat: [] for cat in self.caption_columns}
             self.redundancies = {
-                cat: {"stopword": [], "url": [], "html": [], "emoji": []}
-                for cat in self.caption_columns
+                cat: {"stopword": [], "url": [], "html": [], "emoji": []} for cat in self.caption_columns
             }
 
     def to_dict(self):
         empty_labels = self._build_empty_labels_dict(self.empty_labels, "items_with_empty_label")
-        empty_captions = self._build_empty_labels_dict(
-            self.empty_captions, "items_with_empty_caption"
-        )
+        empty_captions = self._build_empty_labels_dict(self.empty_captions, "items_with_empty_caption")
         redundancies = self._build_redundancies_dict(self.redundancies)
 
         return {
@@ -1498,9 +1451,7 @@ class TabularValidator(_TaskValidator):
             if cat.dtype in [int, float]
         ]
 
-        stats["distribution_in_caption"] = {
-            cap: deepcopy(self.value_template) for cap, _ in num_caption_columns
-        }
+        stats["distribution_in_caption"] = {cap: deepcopy(self.value_template) for cap, _ in num_caption_columns}
         stats["distribution_in_dataset_item"] = {}
 
         # Collect property distribution
@@ -1587,9 +1538,7 @@ class TabularValidator(_TaskValidator):
         for label_name, label_stats in empty_label_dist.items():
             for item_id, item_subset in label_stats["items_with_empty_label"]:
                 details = (item_subset, label_name)
-                validation_reports += self._generate_validation_report(
-                    EmptyLabel, Severity.warning, item_id, *details
-                )
+                validation_reports += self._generate_validation_report(EmptyLabel, Severity.warning, item_id, *details)
 
         return validation_reports
 
@@ -1612,9 +1561,7 @@ class TabularValidator(_TaskValidator):
 
         defined_caption_dist = stats["caption_distribution"]["defined_captions"]
         captions_with_few_samples = [
-            (caption_name, count)
-            for caption_name, count in defined_caption_dist.items()
-            if 0 < count <= thr
+            (caption_name, count) for caption_name, count in defined_caption_dist.items() if 0 < count <= thr
         ]
 
         for caption_name, count in captions_with_few_samples:
@@ -1646,9 +1593,7 @@ class TabularValidator(_TaskValidator):
                 lower_bound,
                 val,
             )
-            validation_reports += self._generate_validation_report(
-                FarFromCaptionMean, Severity.info, item_id, *details
-            )
+            validation_reports += self._generate_validation_report(FarFromCaptionMean, Severity.info, item_id, *details)
 
         return validation_reports
 
@@ -1668,9 +1613,7 @@ class TabularValidator(_TaskValidator):
                 upper_bound,
                 val,
             )
-            validation_reports += self._generate_validation_report(
-                OutlierInCaption, Severity.info, item_id, *details
-            )
+            validation_reports += self._generate_validation_report(OutlierInCaption, Severity.info, item_id, *details)
 
         return validation_reports
 
@@ -1681,7 +1624,7 @@ class TabularValidator(_TaskValidator):
         captions_with_redundancies = []
         for cap_column, cap_stats in redundancies_in_caption_dist.items():
             for redundancy_type, items in cap_stats.items():
-                if 0 < items["count"]:
+                if items["count"] > 0:
                     captions_with_redundancies.append((cap_column, redundancy_type, items["count"]))
 
         for cap_column, redundancy_type, count in captions_with_redundancies:
@@ -1705,9 +1648,7 @@ class TabularValidator(_TaskValidator):
         count_min = np.min(count_by_caption_labels)
         balance = count_max / count_min if count_min > 0 else float("inf")
         if balance >= thr:
-            validation_reports += self._generate_validation_report(
-                ImbalancedCaptions, Severity.info
-            )
+            validation_reports += self._generate_validation_report(ImbalancedCaptions, Severity.info)
 
         return validation_reports
 

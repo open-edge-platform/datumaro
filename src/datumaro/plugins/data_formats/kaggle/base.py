@@ -13,14 +13,7 @@ import numpy as np
 import pandas as pd
 from defusedxml import ElementTree
 
-from datumaro.components.annotation import (
-    AnnotationType,
-    Bbox,
-    ExtractedMask,
-    Label,
-    LabelCategories,
-    MaskCategories,
-)
+from datumaro.components.annotation import AnnotationType, Bbox, ExtractedMask, Label, LabelCategories, MaskCategories
 from datumaro.components.dataset import DatasetItem
 from datumaro.components.dataset_base import DEFAULT_SUBSET_NAME, DatasetBase, SubsetBase
 from datumaro.components.errors import InvalidAnnotationError, InvalidFieldError, MissingFieldError
@@ -77,18 +70,14 @@ class KaggleImageCsvBase(DatasetBase):
         # expected to output [x1, y1, x2, y2]
         return [float(coord.strip()) for coord in coords]
 
-    def _load_annotations(
-        self, datas: list, indices: Dict[str, Union[int, Dict[str, int]]], bbox_flag: bool
-    ):
+    def _load_annotations(self, datas: list, indices: Dict[str, Union[int, Dict[str, int]]], bbox_flag: bool):
         if "label" in indices:
             label_indices = indices["label"]
             if isinstance(label_indices, dict):
                 labels = []
                 list_values = datas[1:]
                 index_to_label = {v: k for k, v in label_indices.items()}
-                present_labels = [
-                    index_to_label[i + 1] for i, value in enumerate(list_values) if value == "1"
-                ]
+                present_labels = [index_to_label[i + 1] for i, value in enumerate(list_values) if value == "1"]
 
                 for label_name in present_labels:
                     label, cat = self._label_cat.find(label_name)
@@ -164,17 +153,8 @@ class KaggleImageCsvBase(DatasetBase):
             if isinstance(bbox_index, str):
                 indices["bbox"] = df_fields.index(bbox_index)
             elif isinstance(bbox_index, dict):
-                indices.update(
-                    {
-                        key: df_fields.index(bbox_index[key])
-                        for key in bbox_indices
-                        if bbox_index.get(key)
-                    }
-                )
-            if not (
-                {"x1", "x2", "y1", "y2"} <= bbox_indices
-                or {"x1", "y1", "width", "height"} <= bbox_indices
-            ):
+                indices.update({key: df_fields.index(bbox_index[key]) for key in bbox_indices if bbox_index.get(key)})
+            if not ({"x1", "x2", "y1", "y2"} <= bbox_indices or {"x1", "y1", "width", "height"} <= bbox_indices):
                 warnings.warn("Insufficient box coordinate is given for importing bounding boxes.")
                 bbox_flag = False
 
@@ -258,9 +238,7 @@ class KaggleImageTxtBase(KaggleImageCsvBase):
                     all(item in bbox_columns for item in ["x1", "x2", "y1", "y2"])
                     or all(item in bbox_columns for item in ["x1", "y1", "width", "height"])
                 ):
-                    warnings.warn(
-                        "Insufficient box coordinate is given for importing bounding boxes."
-                    )
+                    warnings.warn("Insufficient box coordinate is given for importing bounding boxes.")
                     bbox_flag = False
                 columns.update(bbox_columns)
 
@@ -353,9 +331,7 @@ class KaggleImageMaskBase(DatasetBase):
             anns = []
             for mask_name in os.listdir(self._mask_path):
                 if id in mask_name:
-                    index_mask = lazy_image(
-                        path=osp.join(self._mask_path, mask_name), dtype=np.int32
-                    )
+                    index_mask = lazy_image(path=osp.join(self._mask_path, mask_name), dtype=np.int32)
                     for label_id in self._label_ids:
                         anns.append(
                             ExtractedMask(
@@ -418,9 +394,7 @@ class KaggleVocBase(SubsetBase):
             img_file = osp.join(path, img_filename)
             ann_file = osp.join(ann_path, item_id + self.ann_extensions)
 
-            annotations = (
-                self._parse_annotations(img_file, ann_file) if osp.isfile(ann_file) else []
-            )
+            annotations = self._parse_annotations(img_file, ann_file) if osp.isfile(ann_file) else []
             for ann in annotations:
                 self._ann_types.add(ann.type)
 
@@ -464,9 +438,7 @@ class KaggleVocBase(SubsetBase):
                 self._label_cat.add(label_name)
                 label_id, _ = self._label_cat.find(label_name)
 
-            annotations.append(
-                Bbox(id=obj_id, label=label_id, x=xmin, y=ymin, w=xmax - xmin, h=ymax - ymin)
-            )
+            annotations.append(Bbox(id=obj_id, label=label_id, x=xmin, y=ymin, w=xmax - xmin, h=ymax - ymin))
 
         return annotations
 
@@ -476,8 +448,7 @@ class KaggleVocBase(SubsetBase):
         if elem is None:
             if required:
                 raise MissingFieldError(xpath)
-            else:
-                return None
+            return None
 
         if cls is str:
             return elem.text

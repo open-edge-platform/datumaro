@@ -10,13 +10,7 @@ from typing import Optional
 
 import numpy as np
 
-from datumaro.components.annotation import (
-    AnnotationType,
-    ExtractedMask,
-    LabelCategories,
-    MaskCategories,
-    Polygon,
-)
+from datumaro.components.annotation import AnnotationType, ExtractedMask, LabelCategories, MaskCategories, Polygon
 from datumaro.components.dataset_base import DatasetItem, SubsetBase
 from datumaro.components.errors import DatasetImportError
 from datumaro.components.importer import ImportContext
@@ -66,14 +60,12 @@ class _MapillaryVistasBase(SubsetBase):
             expected_dirs = ",".join(MapillaryVistasPath.ANNOTATION_DIRS[format_version])
             raise NotADirectoryError(
                 errno.ENOTDIR,
-                f"Can't find annotation directory at {path}. "
-                f"Expected one of these directories: {expected_dirs}.",
+                f"Can't find annotation directory at {path}. Expected one of these directories: {expected_dirs}.",
             )
-        elif len(annotations_dirs) > 1:
+        if len(annotations_dirs) > 1:
             skipped_dirs = ",".join(annotations_dirs[1:])
             log.warning(
-                f"Directory(-es): {skipped_dirs} will be skipped, dataset should "
-                "contain only one annotation directory"
+                f"Directory(-es): {skipped_dirs} will be skipped, dataset should contain only one annotation directory"
             )
 
         self._use_original_config = use_original_config
@@ -90,9 +82,7 @@ class _MapillaryVistasBase(SubsetBase):
             self._items = self._load_instances_items()
         else:
             panoptic_config = self._load_panoptic_config(self._annotations_dir)
-            self._categories = self._load_panoptic_categories(
-                panoptic_config["categories"], keep_original_category_ids
-            )
+            self._categories = self._load_panoptic_categories(panoptic_config["categories"], keep_original_category_ids)
             self._items = self._load_panoptic_items(panoptic_config)
 
     def _load_panoptic_config(self, path):
@@ -103,9 +93,7 @@ class _MapillaryVistasBase(SubsetBase):
         )
 
         if not osp.isfile(panoptic_config_path):
-            raise FileNotFoundError(
-                errno.ENOENT, "Can't find panoptic config file", panoptic_config_path
-            )
+            raise FileNotFoundError(errno.ENOENT, "Can't find panoptic config file", panoptic_config_path)
 
         return parse_json_file(panoptic_config_path)
 
@@ -157,9 +145,7 @@ class _MapillaryVistasBase(SubsetBase):
                     size=self._get_image_size(images_info[item_id]),
                 )
 
-            mask_path = osp.join(
-                self._annotations_dir, MapillaryVistasPath.PANOPTIC_DIR, item_ann["file_name"]
-            )
+            mask_path = osp.join(self._annotations_dir, MapillaryVistasPath.PANOPTIC_DIR, item_ann["file_name"])
             mask = lazy_image(mask_path, loader=self._load_pan_mask)
 
             annotations = []
@@ -192,9 +178,7 @@ class _MapillaryVistasBase(SubsetBase):
                     points = [int(coord) for point in polygon["polygon"] for coord in point]
                     annotations.append(Polygon(label=label_id, points=points))
 
-            items[item_id] = DatasetItem(
-                id=item_id, subset=self._subset, annotations=annotations, media=image
-            )
+            items[item_id] = DatasetItem(id=item_id, subset=self._subset, annotations=annotations, media=image)
             for ann in annotations:
                 self._ann_types.add(ann.type)
 
@@ -229,9 +213,7 @@ class _MapillaryVistasBase(SubsetBase):
             annotations = []
             for uval in np.unique(np_index_mask):
                 label_id, instance_id = uval >> 8, uval & 255
-                annotations.append(
-                    ExtractedMask(index_mask=index_mask, index=uval, label=label_id, id=instance_id)
-                )
+                annotations.append(ExtractedMask(index_mask=index_mask, index=uval, label=label_id, id=instance_id))
 
             if self._parse_polygon:
                 polygon_path = osp.join(polygon_dir, item_id + ".json")
@@ -250,9 +232,7 @@ class _MapillaryVistasBase(SubsetBase):
             for ann in annotations:
                 self._ann_types.add(ann.type)
 
-            items[item_id] = DatasetItem(
-                id=item_id, subset=self._subset, media=image, annotations=annotations
-            )
+            items[item_id] = DatasetItem(id=item_id, subset=self._subset, media=image, annotations=annotations)
 
         return items.values()
 

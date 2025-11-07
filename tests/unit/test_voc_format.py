@@ -14,14 +14,7 @@ import pytest
 from lxml import etree as ElementTree  # nosec
 
 import datumaro.plugins.data_formats.voc.format as VOC
-from datumaro.components.annotation import (
-    AnnotationType,
-    Bbox,
-    Label,
-    LabelCategories,
-    Mask,
-    MaskCategories,
-)
+from datumaro.components.annotation import AnnotationType, Bbox, Label, LabelCategories, Mask, MaskCategories
 from datumaro.components.dataset import Dataset, StreamDataset
 from datumaro.components.dataset_base import DatasetBase, DatasetItem
 from datumaro.components.environment import Environment
@@ -46,14 +39,8 @@ from datumaro.plugins.data_formats.voc.exporter import (
 from datumaro.plugins.data_formats.voc.importer import VocImporter
 from datumaro.util.image import save_image
 from datumaro.util.mask_tools import load_mask
-
 from tests.utils.assets import get_test_asset_path
-from tests.utils.test_utils import (
-    TestDir,
-    check_save_and_load,
-    compare_datasets,
-    compare_datasets_strict,
-)
+from tests.utils.test_utils import TestDir, check_save_and_load, compare_datasets, compare_datasets_strict
 
 
 class VocFormatTest(TestCase):
@@ -164,9 +151,7 @@ class VocImportTest:
                             id="2007_000001",
                             subset="train",
                             media=Image.from_numpy(data=np.ones((10, 20, 3))),
-                            annotations=[
-                                Label(self._label(l.name)) for l in VOC.VocLabel if l.value % 2 == 1
-                            ]
+                            annotations=[Label(self._label(l.name)) for l in VOC.VocLabel if l.value % 2 == 1]
                             + [
                                 Bbox(
                                     1,
@@ -239,9 +224,7 @@ class VocImportTest:
             ("voc_classification", "train", osp.join("ImageSets", "Main", "train.txt")),
         ],
     )
-    def test_can_import_voc_classification_dataset(
-        self, dataset_cls, is_stream, format, subset, path, helper_tc
-    ):
+    def test_can_import_voc_classification_dataset(self, dataset_cls, is_stream, format, subset, path, helper_tc):
         class DstExtractor(TestExtractorBase):
             def __iter__(self):
                 return iter(
@@ -250,9 +233,7 @@ class VocImportTest:
                             id="2007_000001",
                             subset="train",
                             media=Image.from_numpy(data=np.ones((10, 20, 3))),
-                            annotations=[
-                                Label(self._label(l.name)) for l in VOC.VocLabel if l.value % 2 == 1
-                            ],
+                            annotations=[Label(self._label(l.name)) for l in VOC.VocLabel if l.value % 2 == 1],
                         ),
                         DatasetItem(
                             id="2007_000002",
@@ -286,9 +267,7 @@ class VocImportTest:
             # ("voc", "train", rpath),
         ],
     )
-    def test_can_import_voc_layout_dataset(
-        self, dataset_cls, is_stream, format, subset, path, helper_tc
-    ):
+    def test_can_import_voc_layout_dataset(self, dataset_cls, is_stream, format, subset, path, helper_tc):
         expected_dataset = Dataset.from_iterable(
             [
                 DatasetItem(
@@ -340,9 +319,7 @@ class VocImportTest:
             ("voc_detection", "train", osp.join("ImageSets", "Main", "train.txt")),
         ],
     )
-    def test_can_import_voc_detection_dataset(
-        self, dataset_cls, is_stream, format, subset, path, helper_tc
-    ):
+    def test_can_import_voc_detection_dataset(self, dataset_cls, is_stream, format, subset, path, helper_tc):
         expected_dataset = Dataset.from_iterable(
             [
                 DatasetItem(
@@ -409,9 +386,7 @@ class VocImportTest:
             # ("voc", "train", rpath),
         ],
     )
-    def test_can_import_voc_segmentation_dataset(
-        self, dataset_cls, is_stream, format, subset, path, helper_tc
-    ):
+    def test_can_import_voc_segmentation_dataset(self, dataset_cls, is_stream, format, subset, path, helper_tc):
         expected_dataset = Dataset.from_iterable(
             [
                 DatasetItem(
@@ -448,9 +423,7 @@ class VocImportTest:
             # ("voc", "train", rpath),
         ],
     )
-    def test_can_import_voc_action_dataset(
-        self, dataset_cls, is_stream, format, subset, path, helper_tc
-    ):
+    def test_can_import_voc_action_dataset(self, dataset_cls, is_stream, format, subset, path, helper_tc):
         expected_dataset = Dataset.from_iterable(
             [
                 DatasetItem(
@@ -615,13 +588,12 @@ class VocExtractorTest(TestCase):
         ]
 
         for fmt, fmt_dir in formats:
-            with self.subTest(fmt=fmt):
-                with TestDir() as test_dir:
-                    self._write_xml_dataset(test_dir, fmt_dir=fmt_dir)
+            with self.subTest(fmt=fmt), TestDir() as test_dir:
+                self._write_xml_dataset(test_dir, fmt_dir=fmt_dir)
 
-                    dataset = Dataset.import_from(test_dir, fmt)
-                    dataset.init_cache()
-                    self.assertEqual(len(dataset), 1)
+                dataset = Dataset.import_from(test_dir, fmt)
+                dataset.init_cache()
+                self.assertEqual(len(dataset), 1)
 
     def test_can_report_invalid_quotes_in_lists_of_layout_task(self):
         with TestDir() as test_dir:
@@ -630,9 +602,7 @@ class VocExtractorTest(TestCase):
             with open(subset_file, "w") as f:
                 f.write('"qwe 1\n')
 
-            with self.assertRaisesRegex(
-                InvalidAnnotationError, "unexpected number of quotes in filename"
-            ):
+            with self.assertRaisesRegex(InvalidAnnotationError, "unexpected number of quotes in filename"):
                 try:
                     Dataset.import_from(test_dir, format="voc_layout")
                 except Exception as e:
@@ -648,18 +618,17 @@ class VocExtractorTest(TestCase):
         ]
 
         for fmt, fmt_dir in formats:
-            with self.subTest(fmt=fmt):
-                with TestDir() as test_dir:
+            with self.subTest(fmt=fmt), TestDir() as test_dir:
 
-                    def mangle_xml(xml: ElementTree.ElementBase):
-                        xml.find("object/name").text = "test"
+                def mangle_xml(xml: ElementTree.ElementBase):
+                    xml.find("object/name").text = "test"
 
-                    self._write_xml_dataset(test_dir, fmt_dir=fmt_dir, mangle_xml=mangle_xml)
+                self._write_xml_dataset(test_dir, fmt_dir=fmt_dir, mangle_xml=mangle_xml)
 
-                    with self.assertRaises(AnnotationImportError) as capture:
-                        Dataset.import_from(test_dir, format=fmt).init_cache()
-                    self.assertIsInstance(capture.exception.__cause__, UndeclaredLabelError)
-                    self.assertEqual(capture.exception.__cause__.id, "test")
+                with self.assertRaises(AnnotationImportError) as capture:
+                    Dataset.import_from(test_dir, format=fmt).init_cache()
+                self.assertIsInstance(capture.exception.__cause__, UndeclaredLabelError)
+                self.assertEqual(capture.exception.__cause__.id, "test")
 
     def test_can_report_missing_field_in_xml(self):
         formats = [
@@ -682,21 +651,18 @@ class VocExtractorTest(TestCase):
                     "object/attributes/attribute/name",
                     "object/attributes/attribute/value",
                 ]:
-                    with self.subTest(key=key):
-                        with TestDir() as test_dir:
+                    with self.subTest(key=key), TestDir() as test_dir:
 
-                            def mangle_xml(xml: ElementTree.ElementBase):
-                                for elem in xml.findall(key):
-                                    elem.getparent().remove(elem)
+                        def mangle_xml(xml: ElementTree.ElementBase):
+                            for elem in xml.findall(key):
+                                elem.getparent().remove(elem)
 
-                            self._write_xml_dataset(
-                                test_dir, fmt_dir=fmt_dir, mangle_xml=mangle_xml
-                            )
+                        self._write_xml_dataset(test_dir, fmt_dir=fmt_dir, mangle_xml=mangle_xml)
 
-                            with self.assertRaises(ItemImportError) as capture:
-                                Dataset.import_from(test_dir, format=fmt).init_cache()
-                            self.assertIsInstance(capture.exception.__cause__, MissingFieldError)
-                            self.assertIn(osp.basename(key), capture.exception.__cause__.name)
+                        with self.assertRaises(ItemImportError) as capture:
+                            Dataset.import_from(test_dir, format=fmt).init_cache()
+                        self.assertIsInstance(capture.exception.__cause__, MissingFieldError)
+                        self.assertIn(osp.basename(key), capture.exception.__cause__.name)
 
     def test_can_report_invalid_field_in_xml(self):
         formats = [
@@ -720,20 +686,17 @@ class VocExtractorTest(TestCase):
                     ("object/point/x", "a"),
                     ("object/point/y", "a"),
                 ]:
-                    with self.subTest(key=key):
-                        with TestDir() as test_dir:
+                    with self.subTest(key=key), TestDir() as test_dir:
 
-                            def mangle_xml(xml: ElementTree.ElementBase):
-                                xml.find(key).text = value
+                        def mangle_xml(xml: ElementTree.ElementBase):
+                            xml.find(key).text = value
 
-                            self._write_xml_dataset(
-                                test_dir, fmt_dir=fmt_dir, mangle_xml=mangle_xml
-                            )
+                        self._write_xml_dataset(test_dir, fmt_dir=fmt_dir, mangle_xml=mangle_xml)
 
-                            with self.assertRaises(ItemImportError) as capture:
-                                Dataset.import_from(test_dir, format=fmt).init_cache()
-                            self.assertIsInstance(capture.exception.__cause__, InvalidFieldError)
-                            self.assertIn(osp.basename(key), capture.exception.__cause__.name)
+                        with self.assertRaises(ItemImportError) as capture:
+                            Dataset.import_from(test_dir, format=fmt).init_cache()
+                        self.assertIsInstance(capture.exception.__cause__, InvalidFieldError)
+                        self.assertIn(osp.basename(key), capture.exception.__cause__.name)
 
     def test_can_report_missing_field_in_classification(self):
         with TestDir() as test_dir:
@@ -1185,12 +1148,8 @@ class VocExporterTest(TestCase):
                                         "occluded": False,
                                     },
                                 ),
-                                Bbox(
-                                    2, 3, 1, 1, label=self._label(VOC.VocBodyPart(1).name), group=0
-                                ),
-                                Bbox(
-                                    5, 4, 3, 2, label=self._label(VOC.VocBodyPart(2).name), group=0
-                                ),
+                                Bbox(2, 3, 1, 1, label=self._label(VOC.VocBodyPart(1).name), group=0),
+                                Bbox(5, 4, 3, 2, label=self._label(VOC.VocBodyPart(2).name), group=0),
                             ],
                         ),
                     ]
@@ -1280,11 +1239,7 @@ class VocExporterTest(TestCase):
                                         "occluded": False,
                                         VOC.VocAction(1).name: True,
                                         VOC.VocAction(2).name: True,
-                                        **{
-                                            a.name: False
-                                            for a in VOC.VocAction
-                                            if a.value not in {1, 2}
-                                        },
+                                        **{a.name: False for a in VOC.VocAction if a.value not in {1, 2}},
                                     },
                                 ),
                             ],
@@ -1369,15 +1324,9 @@ class VocExporterTest(TestCase):
             def __iter__(self):
                 return iter(
                     [
-                        DatasetItem(
-                            id=1, subset="a", media=Image.from_numpy(data=np.ones([4, 5, 3]))
-                        ),
-                        DatasetItem(
-                            id=2, subset="a", media=Image.from_numpy(data=np.ones([4, 5, 3]))
-                        ),
-                        DatasetItem(
-                            id=3, subset="b", media=Image.from_numpy(data=np.ones([2, 6, 3]))
-                        ),
+                        DatasetItem(id=1, subset="a", media=Image.from_numpy(data=np.ones([4, 5, 3]))),
+                        DatasetItem(id=2, subset="a", media=Image.from_numpy(data=np.ones([4, 5, 3]))),
+                        DatasetItem(id=3, subset="b", media=Image.from_numpy(data=np.ones([2, 6, 3]))),
                     ]
                 )
 
@@ -1679,9 +1628,7 @@ class VocExporterTest(TestCase):
                     AnnotationType.label: label_cat,
                 }
 
-        label_map = OrderedDict(
-            [("label", [None, ["label_part1", "label_part2"], ["act1", "act2"]])]
-        )
+        label_map = OrderedDict([("label", [None, ["label_part1", "label_part2"], ["act1", "act2"]])])
 
         dst_label_map = OrderedDict(
             [
@@ -1786,9 +1733,7 @@ class VocExporterTest(TestCase):
             def __iter__(self):
                 return iter(
                     [
-                        DatasetItem(
-                            id="q/1", media=Image.from_numpy(data=np.zeros((4, 3, 3)), ext=".JPEG")
-                        ),
+                        DatasetItem(id="q/1", media=Image.from_numpy(data=np.zeros((4, 3, 3)), ext=".JPEG")),
                         DatasetItem(id="a/b/c/2", media=Image.from_numpy(data=np.zeros((3, 4, 3)))),
                     ]
                 )
@@ -1816,12 +1761,8 @@ class VocExporterTest(TestCase):
                 return iter(
                     [
                         DatasetItem(id="1", media=Image.from_numpy(data=np.ones((4, 2, 3)))),
-                        DatasetItem(
-                            id="subdir1/1", media=Image.from_numpy(data=np.ones((2, 6, 3)))
-                        ),
-                        DatasetItem(
-                            id="subdir2/1", media=Image.from_numpy(data=np.ones((5, 4, 3)))
-                        ),
+                        DatasetItem(id="subdir1/1", media=Image.from_numpy(data=np.ones((2, 6, 3)))),
+                        DatasetItem(id="subdir2/1", media=Image.from_numpy(data=np.ones((5, 4, 3)))),
                     ]
                 )
 
@@ -1936,9 +1877,7 @@ class VocExporterTest(TestCase):
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    ["background", "a", "b", "c", "d"]
-                ),
+                AnnotationType.label: LabelCategories.from_iterable(["background", "a", "b", "c", "d"]),
                 AnnotationType.mask: MaskCategories(colormap=VOC.generate_colormap(5)),
             },
         )
@@ -1984,9 +1923,7 @@ class VocExporterTest(TestCase):
                 set(os.listdir(osp.join(path, "Annotations"))),
             )
             self.assertEqual({"1.jpg", "2.jpg"}, set(os.listdir(osp.join(path, "JPEGImages"))))
-            self.assertEqual(
-                {"a.txt", "b.txt"}, set(os.listdir(osp.join(path, "ImageSets", "Main")))
-            )
+            self.assertEqual({"a.txt", "b.txt"}, set(os.listdir(osp.join(path, "ImageSets", "Main"))))
             compare_datasets(self, expected, Dataset.import_from(path, "voc"), require_media=True)
 
     def test_inplace_save_writes_only_updated_data_with_transforms(self):
@@ -2037,9 +1974,7 @@ class VocExporterTest(TestCase):
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    ["background", "a", "b", "c", "d"]
-                ),
+                AnnotationType.label: LabelCategories.from_iterable(["background", "a", "b", "c", "d"]),
                 AnnotationType.mask: MaskCategories(colormap=VOC.generate_colormap(5)),
             },
         )
@@ -2088,12 +2023,8 @@ class VocExporterTest(TestCase):
             self.assertEqual({"3.jpg", "4.jpg"}, set(os.listdir(osp.join(path, "JPEGImages"))))
             self.assertEqual({"4.png"}, set(os.listdir(osp.join(path, "SegmentationClass"))))
             self.assertEqual({"4.png"}, set(os.listdir(osp.join(path, "SegmentationObject"))))
-            self.assertEqual(
-                {"train.txt", "test.txt"}, set(os.listdir(osp.join(path, "ImageSets", "Main")))
-            )
-            self.assertEqual(
-                {"train.txt"}, set(os.listdir(osp.join(path, "ImageSets", "Segmentation")))
-            )
+            self.assertEqual({"train.txt", "test.txt"}, set(os.listdir(osp.join(path, "ImageSets", "Main"))))
+            self.assertEqual({"train.txt"}, set(os.listdir(osp.join(path, "ImageSets", "Segmentation"))))
             compare_datasets(self, expected, Dataset.import_from(path, "voc"), require_media=True)
 
     def test_can_save_dataset_with_no_data_images(self):

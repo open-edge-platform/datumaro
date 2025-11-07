@@ -48,9 +48,7 @@ class SegmentAnythingExporter(Exporter):
 
     def get_annotation_info(self, group, img_width, img_height):
         boxes = [a for a in group if a.type == AnnotationType.bbox]
-        polygons: List[Union[Polygon, Ellipse]] = [
-            a for a in group if a.type in self._polygon_types
-        ]
+        polygons: List[Union[Polygon, Ellipse]] = [a for a in group if a.type in self._polygon_types]
         masks = [a for a in group if a.type == AnnotationType.mask]
 
         anns = boxes + polygons + masks
@@ -91,11 +89,7 @@ class SegmentAnythingExporter(Exporter):
             "stability_score": max(ann.attributes.get("stability_score", 0.0) for ann in anns),
             "crop_box": anno_tools.max_bbox([ann.attributes.get("crop_box", []) for ann in anns]),
             "point_coords": list(
-                set(
-                    tuple(point_coord)
-                    for ann in anns
-                    for point_coord in ann.attributes.get("point_coords", [[]])
-                )
+                set(tuple(point_coord) for ann in anns for point_coord in ann.attributes.get("point_coords", [[]]))
             ),
         }
         return annotation_data
@@ -122,9 +116,7 @@ class SegmentAnythingExporter(Exporter):
                     max_image_id += 1
 
                     if not item.media or not item.media.size:
-                        log.warning(
-                            f"Item '{item.id}': skipping writing instances since no image info available"
-                        )
+                        log.warning(f"Item '{item.id}': skipping writing instances since no image info available")
                         continue
 
                     height, width = item.media.size
@@ -142,9 +134,7 @@ class SegmentAnythingExporter(Exporter):
                     annotations = [self.get_annotation_info(i, width, height) for i in instances]
                     annotations = [i for i in annotations if i is not None]
                     if not annotations:
-                        log.warning(
-                            f"Item '{item.id}': skipping writing instances since no annotation available"
-                        )
+                        log.warning(f"Item '{item.id}': skipping writing instances since no annotation available")
                         continue
                     json_data["annotations"] = annotations
 

@@ -57,20 +57,16 @@ class VideoFramesImporter(Importer):
         parser = super().build_cmdline_parser(**kwargs)
         parser.add_argument(
             "--subset",
-            help="The name of the subset for the produced dataset items " "(default: none)",
+            help="The name of the subset for the produced dataset items (default: none)",
         )
         parser.add_argument(
             "-p",
             "--name-pattern",
             default="%06d",
-            help="The name pattern for the produced dataset items " "(default: %(default)s).",
+            help="The name pattern for the produced dataset items (default: %(default)s).",
         )
-        parser.add_argument(
-            "-s", "--step", type=int, default=1, help="Frame step (default: %(default)s)"
-        )
-        parser.add_argument(
-            "-b", "--start-frame", type=int, default=0, help="Starting frame (default: %(default)s)"
-        )
+        parser.add_argument("-s", "--step", type=int, default=1, help="Frame step (default: %(default)s)")
+        parser.add_argument("-b", "--start-frame", type=int, default=0, help="Starting frame (default: %(default)s)")
         parser.add_argument(
             "-e",
             "--end-frame",
@@ -126,9 +122,7 @@ class VideoFramesBase(DatasetBase):
 
     def __iter__(self):
         for frame in self._reader:
-            yield DatasetItem(
-                id=self._name_pattern % (frame.index,), subset=self._subset, media=frame
-            )
+            yield DatasetItem(id=self._name_pattern % (frame.index,), subset=self._subset, media=frame)
 
     def get(self, id, subset=None):
         assert subset == self._subset, "%s != %s" % (subset, self._subset)
@@ -194,15 +188,13 @@ class VideoKeyframesBase(VideoFramesBase):
 
     def _is_keyframe(self, frame):
         if self._keyframe is None:
-            self._keyframe = cv2.resize(
-                cv2.cvtColor(np.uint8(frame), cv2.COLOR_BGR2GRAY), self._resize
-            ).astype("float64")
+            self._keyframe = cv2.resize(cv2.cvtColor(np.uint8(frame), cv2.COLOR_BGR2GRAY), self._resize).astype(
+                "float64"
+            )
             self._keyframe -= np.mean(self._keyframe)
             return True
 
-        _curr_frame = cv2.resize(
-            cv2.cvtColor(np.uint8(frame), cv2.COLOR_BGR2GRAY), self._resize
-        ).astype("float64")
+        _curr_frame = cv2.resize(cv2.cvtColor(np.uint8(frame), cv2.COLOR_BGR2GRAY), self._resize).astype("float64")
         _curr_frame -= np.mean(_curr_frame)
 
         zncc_score = np.sum(self._keyframe * _curr_frame)
@@ -221,6 +213,4 @@ class VideoKeyframesBase(VideoFramesBase):
         for frame in self._reader:
             frame_data = frame.video.get_frame_data(frame.index)
             if self._is_keyframe(frame_data):
-                yield DatasetItem(
-                    id=self._name_pattern % (frame.index,), subset=self._subset, media=frame
-                )
+                yield DatasetItem(id=self._name_pattern % (frame.index,), subset=self._subset, media=frame)

@@ -55,9 +55,7 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         required=True,
         help="Task type for validation, one of %s" % task_types,
     )
-    parser.add_argument(
-        "-s", "--subset", dest="subset_name", help="Subset to validate (default: whole dataset)"
-    )
+    parser.add_argument("-s", "--subset", dest="subset_name", help="Subset to validate (default: whole dataset)")
     parser.add_argument(
         "extra_args",
         nargs=argparse.REMAINDER,

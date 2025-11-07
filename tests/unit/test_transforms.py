@@ -35,9 +35,7 @@ from datumaro.components.annotation import (
 )
 from datumaro.components.dataset import Dataset, eager_mode
 from datumaro.components.dataset_base import DatasetItem
-from datumaro.components.errors import AnnotationTypeError
 from datumaro.components.media import Image, Table, TableRow, Video, VideoFrame
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import compare_datasets, compare_datasets_strict
 
@@ -599,9 +597,7 @@ class TransformsTest(TestCase):
             categories={
                 AnnotationType.label: LabelCategories.from_iterable(f"label{i}" for i in range(6)),
                 AnnotationType.mask: MaskCategories(colormap=mask_tools.generate_colormap(6)),
-                AnnotationType.points: PointsCategories.from_iterable(
-                    [(i, [str(i)]) for i in range(6)]
-                ),
+                AnnotationType.points: PointsCategories.from_iterable([(i, [str(i)]) for i in range(6)]),
             },
         )
 
@@ -624,17 +620,11 @@ class TransformsTest(TestCase):
                     colormap={
                         i: v
                         for i, v in enumerate(
-                            {
-                                k: v
-                                for k, v in mask_tools.generate_colormap(6).items()
-                                if k in {0, 1, 5}
-                            }.values()
+                            {k: v for k, v in mask_tools.generate_colormap(6).items() if k in {0, 1, 5}}.values()
                         )
                     }
                 ),
-                AnnotationType.points: PointsCategories.from_iterable(
-                    [(0, ["0"]), (1, ["1"]), (2, ["5"])]
-                ),
+                AnnotationType.points: PointsCategories.from_iterable([(0, ["0"]), (1, ["1"]), (2, ["5"])]),
             },
         )
 
@@ -679,9 +669,7 @@ class TransformsTest(TestCase):
             categories=["label1"],
         )
 
-        actual = transforms.RemapLabels(
-            source_dataset, mapping={"label1": "label1"}, default="delete"
-        )
+        actual = transforms.RemapLabels(source_dataset, mapping={"label1": "label1"}, default="delete")
 
         compare_datasets(self, target_dataset, actual)
 
@@ -718,9 +706,7 @@ class TransformsTest(TestCase):
             },
         )
 
-        actual = transforms.RemapLabels(
-            source_dataset, mapping={"a": "d", "b": "e", "c": "f"}, default="delete"
-        )
+        actual = transforms.RemapLabels(source_dataset, mapping={"a": "d", "b": "e", "c": "f"}, default="delete")
 
         compare_datasets(self, target_dataset, actual)
 
@@ -763,9 +749,7 @@ class TransformsTest(TestCase):
                 AnnotationType.label: LabelCategories.from_iterable(
                     ["a", "b", ("c", "a"), ("d", "b")]  # no parents  # have parents
                 ),
-                AnnotationType.points: PointsCategories.from_iterable(
-                    [(0, ["a"]), (1, ["b"]), (2, ["c"])]
-                ),
+                AnnotationType.points: PointsCategories.from_iterable([(0, ["a"]), (1, ["b"]), (2, ["c"])]),
                 AnnotationType.mask: MaskCategories.generate(4),
             },
         )
@@ -785,8 +769,7 @@ class TransformsTest(TestCase):
                     colormap={
                         i: v
                         for i, v in {
-                            {2: 0, 0: 1, 3: 2}.get(k): v
-                            for k, v in mask_tools.generate_colormap(4).items()
+                            {2: 0, 0: 1, 3: 2}.get(k): v for k, v in mask_tools.generate_colormap(4).items()
                         }.items()
                         if i is not None
                     }
@@ -971,9 +954,7 @@ class TransformsTest(TestCase):
     def test_can_keep_image_ext_on_resize(self):
         expected = Image.from_numpy(data=np.ones((8, 4)), ext="jpg")
 
-        dataset = Dataset.from_iterable(
-            [DatasetItem(id=1, media=Image.from_numpy(data=np.ones((4, 2)), ext="jpg"))]
-        )
+        dataset = Dataset.from_iterable([DatasetItem(id=1, media=Image.from_numpy(data=np.ones((4, 2)), ext="jpg"))])
 
         dataset.transform("resize", width=4, height=8)
 
@@ -984,9 +965,7 @@ class TransformsTest(TestCase):
     def test_can_remove_items_by_ids(self):
         expected = Dataset.from_iterable([DatasetItem(id="1", subset="train")])
 
-        dataset = Dataset.from_iterable(
-            [DatasetItem(id="1", subset="train"), DatasetItem(id="2", subset="train")]
-        )
+        dataset = Dataset.from_iterable([DatasetItem(id="1", subset="train"), DatasetItem(id="2", subset="train")])
 
         actual = transforms.RemoveItems(dataset, ids=[("2", "train")])
 
@@ -1046,9 +1025,7 @@ class TransformsTest(TestCase):
             categories=["a", "b"],
         )
 
-        actual = transforms.RemoveAnnotations(
-            dataset, ids=[("1", "train"), ("1", "test", 0), ("1", "test", 2)]
-        )
+        actual = transforms.RemoveAnnotations(dataset, ids=[("1", "train"), ("1", "test", 0), ("1", "test", 2)])
 
         compare_datasets(self, expected, actual)
 
@@ -1145,9 +1122,7 @@ class ReindexAnnotationsTest:
             [
                 DatasetItem(
                     id=f"item_{item_idx}",
-                    annotations=[
-                        Label(label=random.randint(0, n_labels - 1)) for _ in range(n_anns)
-                    ],
+                    annotations=[Label(label=random.randint(0, n_labels - 1)) for _ in range(n_anns)],
                 )
                 for item_idx in range(n_items)
             ],
@@ -1160,9 +1135,7 @@ class ReindexAnnotationsTest:
         n_anns = sum([len(item.annotations) for item in fxt_dataset])
 
         # n_anns != n_unique_ids
-        assert n_anns != len(
-            {(item.id, ann.id) for item in fxt_dataset for ann in item.annotations}
-        )
+        assert n_anns != len({(item.id, ann.id) for item in fxt_dataset for ann in item.annotations})
 
         fxt_dataset.transform(
             "reindex_annotations",
@@ -1170,9 +1143,7 @@ class ReindexAnnotationsTest:
             reindex_each_item=reindex_each_item,
         )
         # n_anns == n_unique_ids
-        assert n_anns == len(
-            {(item.id, ann.id) for item in fxt_dataset for ann in item.annotations}
-        )
+        assert n_anns == len({(item.id, ann.id) for item in fxt_dataset for ann in item.annotations})
 
 
 class IdFromImageNameTest:
@@ -1222,15 +1193,17 @@ class IdFromImageNameTest:
         assert str(e.value).startswith("The 'suffix_length' must be greater than 0.")
 
     def test_id_from_image_too_many_duplication(self, fxt_dataset):
-        with patch("datumaro.plugins.transforms.IdFromImageName.DEFAULT_RETRY", 1), patch(
-            "datumaro.plugins.transforms.IdFromImageName.SUFFIX_LETTERS", "a"
-        ), pytest.raises(Exception) as e:
-            with eager_mode():
-                fxt_dataset.transform(
-                    "id_from_image_name",
-                    ensure_unique=True,
-                    suffix_length=1,
-                )
+        with (
+            patch("datumaro.plugins.transforms.IdFromImageName.DEFAULT_RETRY", 1),
+            patch("datumaro.plugins.transforms.IdFromImageName.SUFFIX_LETTERS", "a"),
+            pytest.raises(Exception) as e,
+            eager_mode(),
+        ):
+            fxt_dataset.transform(
+                "id_from_image_name",
+                ensure_unique=True,
+                suffix_length=1,
+            )
         assert str(e.value).startswith("Too many duplicate names.")
 
     @pytest.mark.parametrize(
@@ -1251,9 +1224,7 @@ class IdFromImageNameTest:
 
 class AstypeAnnotationsTest(TestCase):
     def setUp(self):
-        self.table = Table.from_list(
-            [{"nswprice": 0.076108, "class": "DOWN"}, {"nswprice": 0.060376, "class": "UP"}]
-        )
+        self.table = Table.from_list([{"nswprice": 0.076108, "class": "DOWN"}, {"nswprice": 0.060376, "class": "UP"}])
         self.dataset = Dataset.from_iterable(
             [
                 DatasetItem(
@@ -1270,9 +1241,7 @@ class AstypeAnnotationsTest(TestCase):
                 ),
             ],
             categories={
-                AnnotationType.tabular: TabularCategories.from_iterable(
-                    [("class", CategoricalDtype(), {"DOWN", "UP"})]
-                )
+                AnnotationType.tabular: TabularCategories.from_iterable([("class", CategoricalDtype(), {"DOWN", "UP"})])
             },
             media_type=TableRow,
         )
@@ -1295,9 +1264,7 @@ class AstypeAnnotationsTest(TestCase):
             categories={},
             media_type=TableRow,
         )
-        self.table_label_nan = Table.from_list(
-            [{"class": "DOWN"}, {"class": "UP"}, {"class": None}]
-        )
+        self.table_label_nan = Table.from_list([{"class": "DOWN"}, {"class": "UP"}, {"class": None}])
         self.dataset_label_nan = Dataset.from_iterable(
             [
                 DatasetItem(
@@ -1320,9 +1287,7 @@ class AstypeAnnotationsTest(TestCase):
                 ),
             ],
             categories={
-                AnnotationType.tabular: TabularCategories.from_iterable(
-                    [("class", CategoricalDtype(), {"DOWN", "UP"})]
-                )
+                AnnotationType.tabular: TabularCategories.from_iterable([("class", CategoricalDtype(), {"DOWN", "UP"})])
             },
             media_type=TableRow,
         )
@@ -1359,9 +1324,7 @@ class AstypeAnnotationsTest(TestCase):
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    [("class:DOWN", "class"), ("class:UP", "class")]
-                )
+                AnnotationType.label: LabelCategories.from_iterable([("class:DOWN", "class"), ("class:UP", "class")])
             },
             media_type=TableRow,
         )
@@ -1428,9 +1391,7 @@ class AstypeAnnotationsTest(TestCase):
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    [("class:DOWN", "class"), ("class:UP", "class")]
-                )
+                AnnotationType.label: LabelCategories.from_iterable([("class:DOWN", "class"), ("class:UP", "class")])
             },
             media_type=TableRow,
         )
@@ -1472,7 +1433,7 @@ class CleanTest(TestCase):
                         )
                     ],
                 )
-                for i in range(0, 10)
+                for i in range(10)
             ],
             categories={
                 AnnotationType.tabular: TabularCategories.from_iterable(
@@ -1557,7 +1518,7 @@ class CleanTest(TestCase):
                         )
                     ],
                 )
-                for i in range(0, 10)
+                for i in range(10)
             ],
             categories={
                 AnnotationType.tabular: TabularCategories.from_iterable(
@@ -1621,7 +1582,9 @@ class CleanTest(TestCase):
         )
 
     def test_remove_unneccessary_char(self):
-        example_text = "This is a test 😊! Check out https://example.com for more <b>details</b> about this text. Enjoy!!!"
+        example_text = (
+            "This is a test 😊! Check out https://example.com for more <b>details</b> about this text. Enjoy!!!"
+        )
         cleaned_text = "test check details text enjoy"
 
         with self.subTest("with None"):

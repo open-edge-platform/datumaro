@@ -10,12 +10,7 @@ from typing import List, Optional
 
 from datumaro.components.annotation import AnnotationType, Bbox, Label, LabelCategories, Points
 from datumaro.components.dataset_base import DatasetBase, DatasetItem
-from datumaro.components.errors import (
-    AnnotationExportError,
-    DatasetImportError,
-    InvalidAnnotationError,
-    MediaTypeError,
-)
+from datumaro.components.errors import AnnotationExportError, DatasetImportError, InvalidAnnotationError, MediaTypeError
 from datumaro.components.exporter import Exporter
 from datumaro.components.format_detection import FormatDetectionContext
 from datumaro.components.importer import ImportContext, Importer
@@ -60,9 +55,7 @@ class VggFace2Base(DatasetBase):
         super().__init__(ctx=ctx)
 
         self._dataset_dir = osp.dirname(self._path)
-        self._subsets = (
-            {subset} if subset else set(osp.splitext(f.split("_")[2])[0] for f in annotation_files)
-        )
+        self._subsets = {subset} if subset else set(osp.splitext(f.split("_")[2])[0] for f in annotation_files)
 
         self._categories = {}
         self._items = []
@@ -91,7 +84,7 @@ class VggFace2Base(DatasetBase):
                 objects = line.split()
                 label = objects[0]
                 class_name = None
-                if 1 < len(objects):
+                if len(objects) > 1:
                     class_name = objects[1]
                 label_cat.add(label, parent=class_name)
         else:
@@ -147,14 +140,10 @@ class VggFace2Base(DatasetBase):
 
                 annotations = items[item_id].annotations
                 if [a for a in annotations if a.type == AnnotationType.points]:
-                    raise InvalidAnnotationError(
-                        "Item %s: an image can have only one " "set of landmarks" % item_id
-                    )
+                    raise InvalidAnnotationError("Item %s: an image can have only one set of landmarks" % item_id)
 
                 if len([p for p in row if row[p] == ""]) == 0 and len(row) == 11:
-                    annotations.append(
-                        Points([float(row[p]) for p in row if p != "NAME_ID"], label=label)
-                    )
+                    annotations.append(Points([float(row[p]) for p in row if p != "NAME_ID"], label=label))
                     self._ann_types.add(AnnotationType.points)
                 elif label is not None:
                     annotations.append(Label(label=label))
@@ -182,9 +171,7 @@ class VggFace2Base(DatasetBase):
 
                 annotations = items[item_id].annotations
                 if [a for a in annotations if a.type == AnnotationType.bbox]:
-                    raise InvalidAnnotationError(
-                        "Item %s: an image can have only one " "bbox" % item_id
-                    )
+                    raise InvalidAnnotationError("Item %s: an image can have only one bbox" % item_id)
 
                 if len([p for p in row if row[p] == ""]) == 0 and len(row) == 5:
                     annotations.append(
@@ -244,10 +231,9 @@ class VggFace2Exporter(Exporter):
 
     def _apply_impl(self):
         def _get_name_id(item_parts, label_name):
-            if 1 < len(item_parts) and item_parts[0] == label_name:
+            if len(item_parts) > 1 and item_parts[0] == label_name:
                 return "/".join([label_name, *item_parts[1:]])
-            else:
-                return "/".join([label_name, *item_parts])
+            return "/".join([label_name, *item_parts])
 
         if self._extractor.media_type() and not issubclass(self._extractor.media_type(), Image):
             raise MediaTypeError("Media type is not an image")
@@ -276,32 +262,27 @@ class VggFace2Exporter(Exporter):
             for item in subset:
                 item_parts = item.id.split("/")
                 if item.media and self._save_media:
-                    labels = set(
-                        p.label for p in item.annotations if (getattr(p, "label", None) is not None)
-                    )
+                    labels = set(p.label for p in item.annotations if (getattr(p, "label", None) is not None))
                     if labels:
                         for label in labels:
                             image_dir = label_categories[label].name
-                            if 1 < len(item_parts) and image_dir == item_parts[0]:
+                            if len(item_parts) > 1 and image_dir == item_parts[0]:
                                 image_dir = ""
                             self._save_image(item, subdir=osp.join(subset_name, image_dir))
                     else:
                         image_dir = VggFace2Path.IMAGES_DIR_NO_LABEL
-                        if 1 < len(item_parts) and image_dir == item_parts[0]:
+                        if len(item_parts) > 1 and image_dir == item_parts[0]:
                             image_dir = ""
                         self._save_image(item, subdir=osp.join(subset_name, image_dir))
 
                 landmarks = [a for a in item.annotations if a.type == AnnotationType.points]
-                if 1 < len(landmarks):
+                if len(landmarks) > 1:
                     raise AnnotationExportError(
-                        "Item (%s, %s): an image can have only one "
-                        "set of landmarks" % (item.id, item.subset)
+                        "Item (%s, %s): an image can have only one set of landmarks" % (item.id, item.subset)
                     )
                 if landmarks:
                     if landmarks[0].label is not None and label_categories[landmarks[0].label].name:
-                        name_id = _get_name_id(
-                            item_parts, label_categories[landmarks[0].label].name
-                        )
+                        name_id = _get_name_id(item_parts, label_categories[landmarks[0].label].name)
                     else:
                         name_id = _get_name_id(item_parts, VggFace2Path.IMAGES_DIR_NO_LABEL)
                     points = landmarks[0].points
@@ -325,9 +306,9 @@ class VggFace2Exporter(Exporter):
                         )
 
                 bboxes = [a for a in item.annotations if a.type == AnnotationType.bbox]
-                if 1 < len(bboxes):
+                if len(bboxes) > 1:
                     raise AnnotationExportError(
-                        "Item (%s, %s): an image can have only one " "bbox" % (item.id, item.subset)
+                        "Item (%s, %s): an image can have only one bbox" % (item.id, item.subset)
                     )
                 if bboxes:
                     if bboxes[0].label is not None and label_categories[bboxes[0].label].name:
@@ -353,9 +334,7 @@ class VggFace2Exporter(Exporter):
                     landmarks_table.append({"NAME_ID": name_id})
 
                 if not landmarks and not bboxes and not labels:
-                    landmarks_table.append(
-                        {"NAME_ID": _get_name_id(item_parts, VggFace2Path.IMAGES_DIR_NO_LABEL)}
-                    )
+                    landmarks_table.append({"NAME_ID": _get_name_id(item_parts, VggFace2Path.IMAGES_DIR_NO_LABEL)})
 
             landmarks_path = osp.join(
                 save_dir,

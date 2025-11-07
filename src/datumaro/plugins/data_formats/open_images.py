@@ -24,12 +24,7 @@ from attr import attrs
 from datumaro.components.annotation import AnnotationType, Bbox, Label, LabelCategories, Mask
 from datumaro.components.dataset_base import DatasetBase, DatasetItem
 from datumaro.components.dataset_item_storage import ItemStatus
-from datumaro.components.errors import (
-    DatasetError,
-    MediaTypeError,
-    RepeatedItemError,
-    UndefinedLabel,
-)
+from datumaro.components.errors import DatasetError, MediaTypeError, RepeatedItemError, UndefinedLabel
 from datumaro.components.exporter import Exporter
 from datumaro.components.format_detection import FormatDetectionContext
 from datumaro.components.importer import ImportContext, Importer
@@ -199,16 +194,12 @@ class OpenImagesBase(DatasetBase):
             self._image_meta = load_image_meta_file(osp.join(path, image_meta))
         elif image_meta is None:
             try:
-                self._image_meta = load_image_meta_file(
-                    osp.join(self._annotation_dir, DEFAULT_IMAGE_META_FILE_NAME)
-                )
+                self._image_meta = load_image_meta_file(osp.join(self._annotation_dir, DEFAULT_IMAGE_META_FILE_NAME))
             except FileNotFoundError:
                 self._image_meta = {}
 
         if has_meta_file(path):
-            self._categories = {
-                AnnotationType.label: LabelCategories.from_iterable(parse_meta_file(path).keys())
-            }
+            self._categories = {AnnotationType.label: LabelCategories.from_iterable(parse_meta_file(path).keys())}
         else:
             self._load_categories()
         self._load_items()
@@ -240,15 +231,12 @@ class OpenImagesBase(DatasetBase):
             OpenImagesPath.V5_CLASS_DESCRIPTION_FILE_NAME,
         ]
 
-        class_desc_files = [
-            file for pattern in class_desc_patterns for file in self._glob_annotations(pattern)
-        ]
+        class_desc_files = [file for pattern in class_desc_patterns for file in self._glob_annotations(pattern)]
 
         if not class_desc_files:
             raise FileNotFoundError(
                 errno.ENOENT,
-                "Can't find class description file, the "
-                "annotations directory does't contain any of these files",
+                "Can't find class description file, the annotations directory does't contain any of these files",
                 ", ".join(class_desc_patterns),
             )
 
@@ -310,7 +298,7 @@ class OpenImagesBase(DatasetBase):
                     osp.splitext(osp.relpath(path, images_dir))[0],
                 )
             ]
-            if 1 < len(path_parts)
+            if len(path_parts) > 1
         }
 
         items_by_id = {}
@@ -373,9 +361,7 @@ class OpenImagesBase(DatasetBase):
 
         # TODO: implement reading of machine-annotated labels
 
-        for label_path in self._glob_annotations(
-            "*" + OpenImagesPath.LABEL_DESCRIPTION_FILE_SUFFIX
-        ):
+        for label_path in self._glob_annotations("*" + OpenImagesPath.LABEL_DESCRIPTION_FILE_SUFFIX):
             with self._open_csv_annotation(label_path) as label_reader:
                 for label_description in label_reader:
                     image_id = label_description["ImageID"]
@@ -396,9 +382,7 @@ class OpenImagesBase(DatasetBase):
                             label_name=label_name,
                             severity=Severity.error,
                         )
-                    item.annotations.append(
-                        Label(label=label_index, attributes={"score": confidence})
-                    )
+                    item.annotations.append(Label(label=label_index, attributes={"score": confidence}))
                     self._ann_types.add(AnnotationType.label)
 
     def _load_bboxes(self, items_by_id):
@@ -436,9 +420,7 @@ class OpenImagesBase(DatasetBase):
                     elif self._image_meta.get(item.id):
                         height, width = self._image_meta[item.id]
                     else:
-                        log.warning(
-                            "Can't decode box for item '%s' due to missing image file", item.id
-                        )
+                        log.warning("Can't decode box for item '%s' due to missing image file", item.id)
                         continue
 
                     x_min_norm, x_max_norm, y_min_norm, y_max_norm = [
@@ -518,9 +500,7 @@ class OpenImagesBase(DatasetBase):
                     elif self._image_meta.get(item.id):
                         image_size = self._image_meta.get(item.id)
                     else:
-                        log.warning(
-                            "Can't decode mask for item '%s' due to missing image file", item.id
-                        )
+                        log.warning("Can't decode mask for item '%s' due to missing image file", item.id)
                         continue
 
                     attributes = {}
@@ -545,15 +525,10 @@ class OpenImagesBase(DatasetBase):
                     if all(mask_description[f] for f in box_coord_fields):
                         # Try to find the box annotation corresponding to the
                         # current mask.
-                        mask_box_coords = np.array(
-                            [float(mask_description[field]) for field in box_coord_fields]
-                        )
+                        mask_box_coords = np.array([float(mask_description[field]) for field in box_coord_fields])
 
                         for annotation in item.annotations:
-                            if (
-                                annotation.type is AnnotationType.bbox
-                                and annotation.label == label_index
-                            ):
+                            if annotation.type is AnnotationType.bbox and annotation.label == label_index:
                                 # In the original OID, mask box coordinates are stored
                                 # with 6 digit precision, hence the tolerance.
                                 if np.allclose(
@@ -576,9 +551,7 @@ class OpenImagesBase(DatasetBase):
                                     item.subset,
                                     mask_path,
                                 ),
-                                loader=functools.partial(
-                                    self._load_and_resize_mask, size=image_size
-                                ),
+                                loader=functools.partial(self._load_and_resize_mask, size=image_size),
                             ),
                             label=label_index,
                             attributes=attributes,
@@ -615,9 +588,9 @@ class OpenImagesImporter(Importer):
     @classmethod
     def find_sources(cls, path):
         for pattern in cls.POSSIBLE_ANNOTATION_PATTERNS:
-            if glob.glob(osp.join(glob.escape(path), OpenImagesPath.ANNOTATIONS_DIR, pattern)):
-                return [{"url": path, "format": OpenImagesBase.NAME}]
-            elif glob.glob(osp.join(glob.escape(path), pattern)):
+            if glob.glob(osp.join(glob.escape(path), OpenImagesPath.ANNOTATIONS_DIR, pattern)) or glob.glob(
+                osp.join(glob.escape(path), pattern)
+            ):
                 return [{"url": path, "format": OpenImagesBase.NAME}]
         return []
 
@@ -709,8 +682,7 @@ class _AnnotationWriter:
     def remove_unwritten(self):
         for file_name in os.listdir(self._annotations_dir):
             if file_name not in self._written_annotations and any(
-                fnmatch.fnmatch(file_name, pattern)
-                for pattern in self._POSSIBLE_ANNOTATION_FILE_PATTERNS
+                fnmatch.fnmatch(file_name, pattern) for pattern in self._POSSIBLE_ANNOTATION_FILE_PATTERNS
             ):
                 os.unlink(osp.join(self._annotations_dir, file_name))
 
@@ -794,10 +766,7 @@ class OpenImagesExporter(Exporter):
         root_node = {
             # Create an OID-like label name that isn't already used by a real label
             "LabelName": next(
-                root_name
-                for i in itertools.count()
-                for root_name in [f"/m/{i}"]
-                if root_name not in all_label_names
+                root_name for i in itertools.count() for root_name in [f"/m/{i}"] if root_name not in all_label_names
             ),
             # If an orphan has no children, then it makes no semantic difference
             # whether it's listed in the hierarchy file or not. So strip such nodes
@@ -805,9 +774,7 @@ class OpenImagesExporter(Exporter):
             "Subcategory": [node for node in orphan_nodes if "Subcategory" in node],
         }
 
-        hierarchy_path = osp.join(
-            self._save_dir, OpenImagesPath.ANNOTATIONS_DIR, OpenImagesPath.HIERARCHY_FILE_NAME
-        )
+        hierarchy_path = osp.join(self._save_dir, OpenImagesPath.ANNOTATIONS_DIR, OpenImagesPath.HIERARCHY_FILE_NAME)
 
         with annotation_writer.open(hierarchy_path) as hierarchy_file:
             json.dump(root_node, hierarchy_file, indent=4, ensure_ascii=False)
@@ -824,19 +791,24 @@ class OpenImagesExporter(Exporter):
 
             image_description_name = f"{subset_name}-images-with-rotation.csv"
 
-            with annotation_writer.open_csv(
-                image_description_name,
-                OpenImagesPath.IMAGE_DESCRIPTION_FIELDS,
-            ) as image_description_writer, annotation_writer.open_csv_lazy(
-                subset_name + OpenImagesPath.LABEL_DESCRIPTION_FILE_SUFFIX,
-                OpenImagesPath.LABEL_DESCRIPTION_FIELDS,
-            ) as label_description_writer, annotation_writer.open_csv_lazy(
-                subset_name + OpenImagesPath.BBOX_DESCRIPTION_FILE_SUFFIX,
-                OpenImagesPath.BBOX_DESCRIPTION_FIELDS,
-            ) as bbox_description_writer, annotation_writer.open_csv_lazy(
-                subset_name + OpenImagesPath.MASK_DESCRIPTION_FILE_SUFFIX,
-                OpenImagesPath.MASK_DESCRIPTION_FIELDS,
-            ) as mask_description_writer:
+            with (
+                annotation_writer.open_csv(
+                    image_description_name,
+                    OpenImagesPath.IMAGE_DESCRIPTION_FIELDS,
+                ) as image_description_writer,
+                annotation_writer.open_csv_lazy(
+                    subset_name + OpenImagesPath.LABEL_DESCRIPTION_FILE_SUFFIX,
+                    OpenImagesPath.LABEL_DESCRIPTION_FIELDS,
+                ) as label_description_writer,
+                annotation_writer.open_csv_lazy(
+                    subset_name + OpenImagesPath.BBOX_DESCRIPTION_FILE_SUFFIX,
+                    OpenImagesPath.BBOX_DESCRIPTION_FIELDS,
+                ) as bbox_description_writer,
+                annotation_writer.open_csv_lazy(
+                    subset_name + OpenImagesPath.MASK_DESCRIPTION_FILE_SUFFIX,
+                    OpenImagesPath.MASK_DESCRIPTION_FIELDS,
+                ) as mask_description_writer,
+            ):
                 for item in subset:
                     image_description_writer.writerow(
                         {
@@ -847,9 +819,7 @@ class OpenImagesExporter(Exporter):
 
                     if self._save_media:
                         if item.media:
-                            self._save_image(
-                                item, subdir=osp.join(OpenImagesPath.IMAGES_DIR, subset_name)
-                            )
+                            self._save_image(item, subdir=osp.join(OpenImagesPath.IMAGES_DIR, subset_name))
                         else:
                             log.debug("Item '%s' has no image", item.id)
 
@@ -904,9 +874,7 @@ class OpenImagesExporter(Exporter):
                         image_meta[item.id] = item.media.size
                         height, width = item.media.size
                     else:
-                        log.warning(
-                            "Can't encode box for item '%s' due to missing image file", item.id
-                        )
+                        log.warning("Can't encode box for item '%s' due to missing image file", item.id)
                         continue
 
                     bbox_description_writer.writerow(
@@ -919,9 +887,7 @@ class OpenImagesExporter(Exporter):
                             "XMax": (annotation.x + annotation.w) / width,
                             "YMax": (annotation.y + annotation.h) / height,
                             **{
-                                bool_attr.oid_name: int(
-                                    annotation.attributes.get(bool_attr.datumaro_name, -1)
-                                )
+                                bool_attr.oid_name: int(annotation.attributes.get(bool_attr.datumaro_name, -1))
                                 for bool_attr in OpenImagesPath.BBOX_BOOLEAN_ATTRIBUTES
                             },
                         }
@@ -964,8 +930,7 @@ class OpenImagesExporter(Exporter):
                             }
                         else:
                             log.warning(
-                                "Can't encode box coordinates for a mask"
-                                " for item '%s' due to missing image file",
+                                "Can't encode box coordinates for a mask for item '%s' due to missing image file",
                                 item.id,
                             )
 
@@ -980,6 +945,4 @@ class OpenImagesExporter(Exporter):
                         }
                     )
 
-                    save_image(
-                        osp.join(mask_dir, mask_file_name), annotation.image, create_dir=True
-                    )
+                    save_image(osp.join(mask_dir, mask_file_name), annotation.image, create_dir=True)

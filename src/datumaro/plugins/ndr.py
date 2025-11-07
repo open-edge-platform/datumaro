@@ -71,7 +71,7 @@ class NDR(Transform, CliPlugin):
             "-d",
             "--duplicated_subset",
             default="duplicated",
-            help="Name of the subset for the removed data " "after NDR runs (default: %(default)s)",
+            help="Name of the subset for the removed data after NDR runs (default: %(default)s)",
         )
         parser.add_argument(
             "-a",
@@ -80,24 +80,20 @@ class NDR(Transform, CliPlugin):
             choices=[algo.name for algo in Algorithm],
             help="Name of the algorithm to use (default: %(default)s)",
         )
-        parser.add_argument(
-            "-k", "--num_cut", default=None, type=int, help="Maximum output dataset size"
-        )
+        parser.add_argument("-k", "--num_cut", default=None, type=int, help="Maximum output dataset size")
         parser.add_argument(
             "-e",
             "--over_sample",
             default=OverSamplingMethod.random.name,
             choices=[method.name for method in OverSamplingMethod],
-            help="The policy to use when num_cut is bigger "
-            "than result length (default: %(default)s)",
+            help="The policy to use when num_cut is bigger than result length (default: %(default)s)",
         )
         parser.add_argument(
             "-u",
             "--under_sample",
             default=UnderSamplingMethod.uniform.name,
             choices=[method.name for method in UnderSamplingMethod],
-            help="The policy to use when num_cut is smaller "
-            "than result length (default: %(default)s)",
+            help="The policy to use when num_cut is smaller than result length (default: %(default)s)",
         )
         parser.add_argument("-s", "--seed", type=int, help="Random seed")
         return parser
@@ -224,20 +220,18 @@ class NDR(Transform, CliPlugin):
                         pass
                     else:
                         raise ValueError(
-                            "Item %s: invalid image shape: "
-                            "unexpected number of channels (%s)" % (item.id, img.shape[2])
+                            "Item %s: invalid image shape: unexpected number of channels (%s)" % (item.id, img.shape[2])
                         )
                 else:
                     raise ValueError(
-                        "Item %s: invalid image shape: "
-                        "unexpected number of dimensions (%s)" % (item.id, len(img.shape))
+                        "Item %s: invalid image shape: unexpected number of dimensions (%s)" % (item.id, len(img.shape))
                     )
 
                 if self.algorithm == Algorithm.gradient:
                     # Calculate gradient
                     img = self._cgrad_feature(img)
                 else:
-                    raise NotImplementedError()
+                    raise NotImplementedError
                 all_imgs.append(img)
             else:
                 log.debug("Skipping item %s: no image data available", item.id)
@@ -250,7 +244,7 @@ class NDR(Transform, CliPlugin):
                 all_imgs, **self.algorithm_specific
             )
         else:
-            raise NotImplementedError()
+            raise NotImplementedError
 
         kept_index = self._keep_cut(
             self.num_cut,
@@ -328,13 +322,9 @@ class NDR(Transform, CliPlugin):
                     list(set(fidx) - set(kept_index)), size=num_cut - len(kept_index), replace=False
                 )
             elif over_sample == OverSamplingMethod.similarity:
-                removed_index_with_similarity = [
-                    [key, value] for key, value in removed_index_with_similarity.items()
-                ]
+                removed_index_with_similarity = [[key, value] for key, value in removed_index_with_similarity.items()]
                 removed_index_with_similarity.sort(key=lambda x: x[1])
-                selected_index = [
-                    index for index, _ in removed_index_with_similarity[: num_cut - len(kept_index)]
-                ]
+                selected_index = [index for index, _ in removed_index_with_similarity[: num_cut - len(kept_index)]]
             kept_index.extend(selected_index)
         elif num_cut and num_cut < len(kept_index):
             if under_sample == UnderSamplingMethod.uniform:
@@ -352,13 +342,9 @@ class NDR(Transform, CliPlugin):
                 key_with_reverse_occur = {key: 1 / key_counter[key] for key in key_counter}
                 reverse_occur_sum = sum(key_with_reverse_occur.values())
                 key_normalized_reverse_occur = {
-                    key: reverse_occur / reverse_occur_sum
-                    for key, reverse_occur in key_with_reverse_occur.items()
+                    key: reverse_occur / reverse_occur_sum for key, reverse_occur in key_with_reverse_occur.items()
                 }
-                prob = [
-                    key_normalized_reverse_occur[all_key[ii]] / key_counter[all_key[ii]]
-                    for ii in kept_index
-                ]
+                prob = [key_normalized_reverse_occur[all_key[ii]] / key_counter[all_key[ii]] for ii in kept_index]
             kept_index = np.random.choice(kept_index, size=num_cut, replace=False, p=prob)
 
         return kept_index
@@ -426,25 +412,19 @@ class NDR(Transform, CliPlugin):
         # generate hash key strings
         # assign hex string from each consecutive 16 bits and concatenate
         _all_key = np.packbits(feat_binary, axis=-1)
-        _all_key = np.array(
-            list(map(lambda row: "".join(["{:02x}".format(r) for r in row]), _all_key))
-        )
+        _all_key = np.array(list(map(lambda row: "".join(["{:02x}".format(r) for r in row]), _all_key)))
         if len(_all_key) == 1:
             return _all_key[0]
-        else:
-            return _all_key
+        return _all_key
 
     def _check_subset(self, item):
         if item.subset:
             if item.subset == self.working_subset:
                 if item.id in self.kept_item_id:
                     return item.subset
-                else:
-                    return self.duplicated_subset
-            else:
-                return item.subset
-        else:
-            return DEFAULT_SUBSET_NAME
+                return self.duplicated_subset
+            return item.subset
+        return DEFAULT_SUBSET_NAME
 
     def __iter__(self):
         if not self._initialized:
