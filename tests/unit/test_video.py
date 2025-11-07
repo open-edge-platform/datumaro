@@ -13,10 +13,9 @@ from datumaro.components.annotation import Bbox, Label
 from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image, Video, VideoFrame
-from datumaro.util.scope import Scope, on_exit_do, scoped
+from datumaro.util.scope import on_exit_do, scoped
 from tests.utils.test_utils import TestDir, compare_datasets
-
-from ..utils.video import make_sample_video
+from tests.utils.video import make_sample_video
 
 
 def _make_sample_video(video_dir, fname="video.avi", frame_size=(4, 6), frames=4):
@@ -32,7 +31,7 @@ class VideoTest:
         video = Video(video_path)
         on_exit_do(video.close)
 
-        assert None is video.length
+        assert video.length is None
         assert video.frame_size == (4, 6)
 
     @scoped
@@ -41,7 +40,7 @@ class VideoTest:
         video = Video(video_path)
         on_exit_do(video.close)
 
-        assert video._frame_count == None
+        assert video._frame_count is None
         for idx, frame in enumerate(video):
             assert frame.size == video.frame_size
             assert frame.index == idx
@@ -100,6 +99,7 @@ class VideoTest:
             pass
 
         assert video.length == 3
+        assert last_frame is not None
         assert last_frame.index == 2
 
     @scoped
@@ -161,7 +161,7 @@ class VideoTest:
     def test_can_preserve_zero_end_frame(self):
         video = Video("video.avi", start_frame=0, end_frame=0)
 
-        assert video._end_frame != None
+        assert video._end_frame is not None
 
 
 class VideoExtractorTest:
@@ -186,17 +186,18 @@ class VideoExtractorTest:
     @scoped
     def test_can_split_and_load(self, test_dir):
         video_path = _make_sample_video(test_dir)
-        dataset_dir = Scope().add(TestDir())
+        with TestDir() as dataset_dir:
+            expected = Dataset.from_iterable(
+                [DatasetItem("frame_%06d" % i, media=Image.from_numpy(data=np.ones((4, 6, 3)) * i)) for i in range(4)],
+            )
 
-        expected = Dataset.from_iterable(
-            [DatasetItem("frame_%06d" % i, media=Image.from_numpy(data=np.ones((4, 6, 3)) * i)) for i in range(4)],
-        )
+            dataset = Dataset.import_from(
+                video_path, "video_frames", start_frame=0, end_frame=3, name_pattern="frame_%06d"
+            )
+            dataset.export(format="image_dir", save_dir=dataset_dir, image_ext=".jpg")
 
-        dataset = Dataset.import_from(video_path, "video_frames", start_frame=0, end_frame=3, name_pattern="frame_%06d")
-        dataset.export(format="image_dir", save_dir=dataset_dir, image_ext=".jpg")
-
-        actual = Dataset.import_from(dataset_dir, "image_dir")
-        compare_datasets(TestCase(), expected, actual)
+            actual = Dataset.import_from(dataset_dir, "image_dir")
+            compare_datasets(TestCase(), expected, actual)
 
 
 @pytest.mark.new
