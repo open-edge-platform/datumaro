@@ -80,7 +80,7 @@ def _export_images_from_dataset(
         return image_paths
 
     # Export images for each field
-    for field_name, field_annotation in image_fields:
+    for field_name, field in image_fields:
         image_paths[field_name] = {}
 
         for idx in range(len(dataset)):
@@ -98,7 +98,7 @@ def _export_images_from_dataset(
                 continue
 
             # Handle different field types
-            if isinstance(field_annotation, ImagePathField):
+            if isinstance(field, ImagePathField):
                 # For ImagePathField: Copy image directly from filesystem
                 try:
                     source_path = Path(value)
@@ -118,7 +118,7 @@ def _export_images_from_dataset(
                     print(f"Warning: Failed to copy image from {value}: {e}")
                     continue
 
-            elif isinstance(field_annotation, ImageCallableField):
+            elif isinstance(field, ImageCallableField):
                 # Call the callable to get the image data
                 if not callable(value):
                     continue
@@ -163,7 +163,7 @@ def _export_images_from_dataset(
                         )
                         continue
 
-            elif isinstance(field_annotation, (InstanceMaskCallableField, MaskCallableField)):
+            elif isinstance(field, (InstanceMaskCallableField, MaskCallableField)):
                 # Call the callable to get the mask data
                 if not callable(value):
                     continue
@@ -371,13 +371,13 @@ def _import_dataset_from_dir(
     if images_base_dir.exists():
         # Identify image-related fields from schema
         for field_name, attr_info in schema.attributes.items():
-            annotation = getattr(attr_info, "annotation", None)
-            if annotation is None:
+            field = getattr(attr_info, "field", None)
+            if field is None:
                 continue
 
-            is_path_field = isinstance(annotation, ImagePathField)
+            is_path_field = isinstance(field, ImagePathField)
             is_callable_field = isinstance(
-                annotation, (ImageCallableField, InstanceMaskCallableField, MaskCallableField)
+                field, (ImageCallableField, InstanceMaskCallableField, MaskCallableField)
             )
 
             if not (is_path_field or is_callable_field):
