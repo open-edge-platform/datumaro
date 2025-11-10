@@ -192,8 +192,6 @@ def _apply_numpy_dtype_from_type_annotation(array: np.ndarray, target_type: type
         >>> result.dtype == np.float32
         True
     """
-    from typing import get_args, get_origin
-
     type_args = get_args(target_type)
     # type_args for np.ndarray are typically (shape, dtype)
     if len(type_args) >= 2:
