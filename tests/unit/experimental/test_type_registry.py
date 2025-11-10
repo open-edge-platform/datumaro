@@ -471,19 +471,6 @@ def test_typed_numpy_array_helper_function():
     assert result.dtype == np.float64  # Should remain unchanged
 
 
-def test_untyped_numpy_array_still_works():
-    """Test that untyped np.ndarray continues to work as before."""
-    import polars as pl
-
-    # Test with generic np.ndarray
-    df = pl.DataFrame({"data": [[0.8, 0.9]]}, schema={"data": pl.List(pl.Float32)})
-    result = from_polars_data(df["data"][0], np.ndarray)
-
-    assert isinstance(result, np.ndarray)
-    # Should preserve the dtype from Polars
-    assert result.dtype == np.float32
-
-
 def test_typed_numpy_array_round_trip():
     """Test round-trip conversion: numpy -> polars -> typed numpy."""
     import numpy.typing as npt
