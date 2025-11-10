@@ -11,7 +11,7 @@ DataFrames. New types can be registered at runtime without modifying core code.
 
 import sys
 import types
-from typing import Any, Callable, Union
+from typing import Any, Callable, Union, get_args, get_origin
 
 import numpy as np
 import polars as pl
@@ -174,6 +174,46 @@ def to_numpy(value: Any, dtype: Any = None) -> np.ndarray[Any, Any] | None:
     raise TypeError(f"No converter registered for type {value_type}")
 
 
+def _apply_numpy_dtype_from_type_annotation(array: np.ndarray, target_type: type) -> np.ndarray:
+    """Apply dtype conversion to numpy array based on type annotation.
+
+    Args:
+        array: Numpy array to convert
+        target_type: Type annotation containing dtype information (e.g., npt.NDArray[np.float32])
+
+    Returns:
+        Array with the correct dtype applied
+
+    Example:
+        >>> import numpy.typing as npt
+        >>> arr = np.array([1.0, 2.0], dtype=np.float64)
+        >>> NDArrayFloat32 = npt.NDArray[np.float32]
+        >>> result = _apply_numpy_dtype_from_type_annotation(arr, NDArrayFloat32)
+        >>> result.dtype == np.float32
+        True
+    """
+    from typing import get_args, get_origin
+
+    type_args = get_args(target_type)
+    # type_args for np.ndarray are typically (shape, dtype)
+    if len(type_args) >= 2:
+        # Extract the dtype from numpy.dtype[T]
+        dtype_generic = type_args[1]
+        # Check if this is a numpy.dtype generic type
+        if get_origin(dtype_generic) is np.dtype:
+            dtype_args = get_args(dtype_generic)
+            if dtype_args:
+                try:
+                    target_dtype = dtype_args[0]
+                    # Only convert if the dtype is different
+                    if array.dtype != np.dtype(target_dtype):
+                        return array.astype(target_dtype)
+                except (AttributeError, TypeError, ValueError):
+                    # If we can't extract or apply dtype, just return the array as-is
+                    pass
+    return array
+
+
 def from_polars_data(polars_data: Any, target_type: type) -> Any:
     """Convert polars data to target type.
 
@@ -198,6 +238,18 @@ def from_polars_data(polars_data: Any, target_type: type) -> Any:
     if target_type in _from_polars_converters:
         return _from_polars_converters[target_type](polars_data)
 
+    # Check if target_type is a generic type (e.g., np.ndarray[Any, np.dtype[np.float32]])
+    origin_type = get_origin(target_type)
+    if origin_type is not None and origin_type in _from_polars_converters:
+        # Handle typed numpy arrays and other generic types
+        result = _from_polars_converters[origin_type](polars_data)
+
+        # For typed numpy arrays, apply the dtype if specified in the type annotation
+        if origin_type is np.ndarray and result is not None:
+            result = _apply_numpy_dtype_from_type_annotation(result, target_type)
+
+        return result
+
     # Handle Union types (e.g., torch.Tensor | np.ndarray)
     # Check if target_type is a Union type (Python 3.10+ style or typing.Union)
     is_union = False
@@ -209,14 +261,9 @@ def from_polars_data(polars_data: Any, target_type: type) -> Any:
         union_args = target_type.__args__
 
     # Check for typing.Union (older syntax: Union[A, B])
-    try:
-        from typing import get_args, get_origin
-
-        if get_origin(target_type) is Union:
-            is_union = True
-            union_args = get_args(target_type)
-    except Exception:
-        pass
+    if get_origin(target_type) is Union:
+        is_union = True
+        union_args = get_args(target_type)
 
     if is_union and union_args:
         if types.NoneType in union_args:
@@ -228,12 +275,12 @@ def from_polars_data(polars_data: Any, target_type: type) -> Any:
 
         # For non-optional Union types, try each type in the union until one succeeds
         for union_type in union_args:
-            if union_type in _from_polars_converters:
-                try:
-                    return _from_polars_converters[union_type](polars_data)
-                except KeyError:
-                    # If conversion fails, try the next type in the union
-                    continue
+            # Try to convert using the union type (which might be generic)
+            try:
+                return from_polars_data(polars_data, union_type)
+            except KeyError:
+                # If conversion fails, try the next type in the union
+                continue
     raise TypeError(f"No converter registered for type {target_type}")
 
 
