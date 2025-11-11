@@ -27,6 +27,7 @@ class Subset(Enum):
     TRAINING = auto()
     VALIDATION = auto()
     TESTING = auto()
+    UNASSIGNED = auto()
 
 
 T = TypeVar("T")
