@@ -66,21 +66,19 @@ def test_pytorch_bbox_field_polars_conversion():
 def test_pytorch_attribute_info_creation():
     """Test AttributeInfo creation with PyTorch tensor type."""
     field = tensor_field(dtype=pl.Float32)
-    attr_info = AttributeInfo(type=torch.Tensor, annotation=field)
+    attr_info = AttributeInfo(type=torch.Tensor, field=field)
 
     assert attr_info.type == torch.Tensor
-    assert attr_info.annotation == field
+    assert attr_info.field == field
 
 
 @pytest.mark.skipif(not torch_available, reason="PyTorch is not available")
 def test_pytorch_schema_creation():
     """Test Schema creation with PyTorch tensor types."""
     attributes = {
-        "image": AttributeInfo(
-            type=torch.Tensor, annotation=image_field(dtype=pl.UInt8, format="RGB")
-        ),
+        "image": AttributeInfo(type=torch.Tensor, field=image_field(dtype=pl.UInt8, format="RGB")),
         "bbox": AttributeInfo(
-            type=torch.Tensor, annotation=bbox_field(dtype=pl.Float32, normalize=False)
+            type=torch.Tensor, field=bbox_field(dtype=pl.Float32, normalize=False)
         ),
     }
 

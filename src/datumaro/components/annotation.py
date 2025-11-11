@@ -486,7 +486,7 @@ class ExtractedMask(Mask):
         and 1 for foreground.
 
         >>> import numpy as np
-        >>> from datumaro.components.annotation import ExtractedMask
+        >>> from datumaro.components.field import ExtractedMask
         >>>
         >>> index_mask = np.random.randint(low=0, high=2, size=(10, 10), dtype=np.uint8)
         >>> mask1 = ExtractedMask(index_mask=index_mask, index=0, label=0)  # 0 for background
