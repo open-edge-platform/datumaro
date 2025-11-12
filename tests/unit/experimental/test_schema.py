@@ -20,6 +20,7 @@ from datumaro.experimental.fields import (
     InstanceMaskCallableField,
     InstanceMaskField,
     MaskCallableField,
+    MaskField,
     PolygonField,
     RotatedBBoxField,
     Subset,
@@ -34,6 +35,7 @@ from datumaro.experimental.fields import (
     instance_mask_callable_field,
     instance_mask_field,
     mask_callable_field,
+    mask_field,
     polygon_field,
     rotated_bbox_field,
     subset_field,
@@ -511,7 +513,7 @@ def test_image_callable_field_complex_callable():
     import numpy as np
 
     field = image_callable_field(format="RGBA")  # Test with lambda
-    lambda_callable = lambda: np.zeros((5, 5, 4), dtype=np.uint8)
+    lambda_callable = lambda: np.zeros((5, 5, 4), dtype=np.uint8)  # noqa: E731
 
     polars_data = field.to_polars("image_callable", lambda_callable)
     df = pl.DataFrame(polars_data)
@@ -914,8 +916,8 @@ def test_schema_serialization_simple():
     assert set(reconstructed.attributes.keys()) == set(schema.attributes.keys())
     assert isinstance(reconstructed.attributes["image"].field, ImageField)
     assert isinstance(reconstructed.attributes["bbox"].field, BBoxField)
-    assert type(reconstructed.attributes["image"].type) == type(schema.attributes["image"].type)
-    assert type(reconstructed.attributes["bbox"].type) == type(schema.attributes["bbox"].type)
+    assert type(reconstructed.attributes["image"].type) is type(schema.attributes["image"].type)
+    assert type(reconstructed.attributes["bbox"].type) is type(schema.attributes["bbox"].type)
 
 
 def test_schema_serialization_with_categories():
@@ -926,11 +928,7 @@ def test_schema_serialization_with_categories():
     # Create schema with categories
     label_cats = LabelCategories(labels=("cat", "dog", "bird"))
     schema = Schema(
-        attributes={
-            "label": AttributeInfo(
-                type=str, field=tensor_field(dtype=pl.Int32), categories=label_cats
-            )
-        }
+        attributes={"label": AttributeInfo(type=str, field=tensor_field(dtype=pl.Int32), categories=label_cats)}
     )
 
     # Serialize to dict
@@ -947,10 +945,7 @@ def test_schema_serialization_with_categories():
     assert "label" in reconstructed.attributes
     assert reconstructed.attributes["label"].categories is not None
     assert isinstance(reconstructed.attributes["label"].categories, LabelCategories)
-    assert (
-        reconstructed.attributes["label"].categories.labels
-        == schema.attributes["label"].categories.labels
-    )
+    assert reconstructed.attributes["label"].categories.labels == schema.attributes["label"].categories.labels
     assert reconstructed.attributes["label"].categories.labels == ("cat", "dog", "bird")
 
 
@@ -961,15 +956,9 @@ def test_schema_serialization_builtin_types():
     # Create schema with built-in Python types and different semantics to avoid conflicts
     schema = Schema(
         attributes={
-            "score": AttributeInfo(
-                type=float, field=tensor_field(dtype=pl.Float32, semantic=Semantic.Default)
-            ),
-            "count": AttributeInfo(
-                type=int, field=tensor_field(dtype=pl.Int32, semantic=Semantic.Left)
-            ),
-            "name": AttributeInfo(
-                type=str, field=tensor_field(dtype=pl.Utf8, semantic=Semantic.Right)
-            ),
+            "score": AttributeInfo(type=float, field=tensor_field(dtype=pl.Float32, semantic=Semantic.Default)),
+            "count": AttributeInfo(type=int, field=tensor_field(dtype=pl.Int32, semantic=Semantic.Left)),
+            "name": AttributeInfo(type=str, field=tensor_field(dtype=pl.Utf8, semantic=Semantic.Right)),
         }
     )
 
@@ -983,17 +972,9 @@ def test_schema_serialization_builtin_types():
     assert "count" in reconstructed.attributes
     assert "name" in reconstructed.attributes
     # Verify semantics are preserved
-    assert (
-        reconstructed.attributes["score"].field.semantic
-        == schema.attributes["score"].field.semantic
-    )
-    assert (
-        reconstructed.attributes["count"].field.semantic
-        == schema.attributes["count"].field.semantic
-    )
-    assert (
-        reconstructed.attributes["name"].field.semantic == schema.attributes["name"].field.semantic
-    )
+    assert reconstructed.attributes["score"].field.semantic == schema.attributes["score"].field.semantic
+    assert reconstructed.attributes["count"].field.semantic == schema.attributes["count"].field.semantic
+    assert reconstructed.attributes["name"].field.semantic == schema.attributes["name"].field.semantic
 
 
 def test_schema_with_categories_method():
@@ -1004,12 +985,8 @@ def test_schema_with_categories_method():
     # Create base schema without categories (use different semantics to avoid conflicts)
     schema = Schema(
         attributes={
-            "label": AttributeInfo(
-                type=str, field=tensor_field(dtype=pl.Int32, semantic=Semantic.Default)
-            ),
-            "mask": AttributeInfo(
-                type=np.ndarray, field=mask_field(dtype=pl.UInt8, semantic=Semantic.Left)
-            ),
+            "label": AttributeInfo(type=str, field=tensor_field(dtype=pl.Int32, semantic=Semantic.Default)),
+            "mask": AttributeInfo(type=np.ndarray, field=mask_field(dtype=pl.UInt8, semantic=Semantic.Left)),
         }
     )
 
@@ -1024,10 +1001,7 @@ def test_schema_with_categories_method():
     # Compare with original
     assert reconstructed.attributes["label"].categories is not None
     assert isinstance(reconstructed.attributes["label"].categories, LabelCategories)
-    assert (
-        reconstructed.attributes["label"].categories.labels
-        == schema_with_cats.attributes["label"].categories.labels
-    )
+    assert reconstructed.attributes["label"].categories.labels == schema_with_cats.attributes["label"].categories.labels
     assert reconstructed.attributes["label"].categories.labels == ("cat", "dog")
     assert reconstructed.attributes["mask"].categories is None
 
@@ -1046,9 +1020,7 @@ def test_subset_field_from_polars_with_direct_enum_type():
     field = subset_field()
 
     # Create a DataFrame with subset values
-    df = pl.DataFrame(
-        {"subset": pl.Series(["TRAINING", "TESTING", "VALIDATION"], dtype=pl.Categorical)}
-    )
+    df = pl.DataFrame({"subset": pl.Series(["TRAINING", "TESTING", "VALIDATION"], dtype=pl.Categorical)})
 
     # Test reconstruction with direct Subset type
     value1 = field.from_polars("subset", 0, df, Subset)

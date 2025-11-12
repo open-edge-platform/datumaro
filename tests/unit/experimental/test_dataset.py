@@ -11,7 +11,15 @@ import pytest
 
 from datumaro.experimental.categories import LabelCategories, MaskCategories
 from datumaro.experimental.dataset import AttributeInfo, Dataset, Sample, Schema, convert_sample_to_schema
-from datumaro.experimental.fields import ImageInfo, Subset, bbox_field, image_field, image_info_field, subset_field
+from datumaro.experimental.fields import (
+    ImageInfo,
+    Subset,
+    bbox_field,
+    image_field,
+    image_info_field,
+    mask_field,
+    subset_field,
+)
 from datumaro.experimental.schema import Semantic
 
 
@@ -666,7 +674,6 @@ def test_union_type_handling():
 
 def test_dataset_with_optional_field():
     """Test dataset with np.ndarray | None field using mask_field, mixing None and array values."""
-    from datumaro.experimental.fields import mask_field
 
     class TestSample(Sample):
         mask: np.ndarray | None = mask_field(dtype=pl.UInt8)

@@ -210,11 +210,11 @@ def from_polars_data(polars_data: Any, target_type: type) -> Any:
             logger.error(f"Error handling Union type: {e}")
 
     if is_union and union_args:
-        return _convert_union_types(union_args=union_args, polars_data=polars_data)
+        return _convert_union_types(union_args=union_args, polars_data=polars_data, target_type=target_type)
     raise TypeError(f"No converter registered for type {target_type}")
 
 
-def _convert_union_types(union_args: tuple[type], polars_data: Any) -> Any:
+def _convert_union_types(union_args: tuple[type], polars_data: Any, target_type: type) -> Any:
     if types.NoneType in union_args:
         # Handle optional types in union (e.g. A | None) when Polars data is None
         if polars_data is None:
@@ -230,6 +230,7 @@ def _convert_union_types(union_args: tuple[type], polars_data: Any) -> Any:
             except KeyError:
                 # If conversion fails, try the next type in the union
                 continue
+    raise TypeError(f"No converter registered for type {target_type}")
 
 
 # Register PyTorch converters if available
