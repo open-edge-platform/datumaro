@@ -276,14 +276,14 @@ def create_tilers(schema: Schema, threshold_drop_ann: float) -> dict[Semantic, l
     tilers = defaultdict(list)
 
     for field_name, field in schema.attributes.items():
-        tiler_cls = TilerRegistry.get_tiler(type(field.annotation))
+        tiler_cls = TilerRegistry.get_tiler(type(field.field))
         if tiler_cls:
             # Create field spec and tiler instance
-            field_spec = AttributeSpec(name=field_name, field=field.annotation)
+            field_spec = AttributeSpec(name=field_name, field=field.field)
             tiler = tiler_cls()
             setattr(tiler, "field_spec", field_spec)  # Set the field spec
             setattr(tiler, "threshold_drop_ann", threshold_drop_ann)  # Set the threshold
-            tilers[field.annotation.semantic].append(TilerEntry(field_name, tiler))
+            tilers[field.field.semantic].append(TilerEntry(field_name, tiler))
 
     return tilers
 
@@ -376,7 +376,7 @@ def _create_tiling_plan(schema: Schema, config: TilingConfig, threshold_drop_ann
     # Find image info field in schema
     image_info_spec = None
     for field_name, field in schema.attributes.items():
-        if isinstance(field.annotation, ImageInfoField):
+        if isinstance(field.field, ImageInfoField):
             image_info_spec = AttributeSpec(name=field_name, field=field)
             break
 
@@ -404,7 +404,7 @@ def _create_tiling_plan(schema: Schema, config: TilingConfig, threshold_drop_ann
 
     # Update schema with tile information
     new_fields = dict(schema.attributes)
-    new_fields[tile_info_spec.name] = AttributeInfo(type=TileInfo, annotation=tile_info_spec.field)
+    new_fields[tile_info_spec.name] = AttributeInfo(type=TileInfo, field=tile_info_spec.field)
     target_schema = Schema(new_fields)
 
     return TilingPlan(

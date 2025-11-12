@@ -78,9 +78,9 @@ def test_sample_schema_inference():
     assert schema.attributes["bbox"].type == np.ndarray
     assert schema.attributes["image_info"].type == ImageInfo
 
-    assert isinstance(schema.attributes["image"].annotation, ImageField)
-    assert isinstance(schema.attributes["bbox"].annotation, BBoxField)
-    assert isinstance(schema.attributes["image_info"].annotation, ImageInfoField)
+    assert isinstance(schema.attributes["image"].field, ImageField)
+    assert isinstance(schema.attributes["bbox"].field, BBoxField)
+    assert isinstance(schema.attributes["image_info"].field, ImageInfoField)
 
 
 def test_sample_with_semantic_fields():
@@ -100,9 +100,9 @@ def test_sample_with_semantic_fields():
     schema = StereoSample.infer_schema()
 
     # Check semantic tags are preserved
-    left_field = schema.attributes["left_image"].annotation
-    right_field = schema.attributes["right_image"].annotation
-    bbox = schema.attributes["bbox"].annotation
+    left_field = schema.attributes["left_image"].field
+    right_field = schema.attributes["right_image"].field
+    bbox = schema.attributes["bbox"].field
 
     assert left_field.semantic == Semantic.Left
     assert right_field.semantic == Semantic.Right

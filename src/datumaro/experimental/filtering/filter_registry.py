@@ -146,9 +146,9 @@ def create_filtering_plan(schema: Schema) -> FilteringPlan:
     attributes: list[str] = []
 
     for field_name, field_info in schema.attributes.items():
-        filter_cls = FilterRegistry.get_filter(type(field_info.annotation))
+        filter_cls = FilterRegistry.get_filter(type(field_info.field))
         if filter_cls is not None:
-            filter_instance = filter_cls(AttributeSpec(field_name, field_info.annotation))
+            filter_instance = filter_cls(AttributeSpec(field_name, field_info.field))
             filters.append(FilterEntry(field_name, filter_instance))
             attributes.append(field_name)
 

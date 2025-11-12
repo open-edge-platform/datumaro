@@ -9,9 +9,10 @@ to/from Polars DataFrames for different data types commonly used in machine
 learning and computer vision applications.
 """
 
+import types
 from dataclasses import dataclass, field
 from enum import Enum, auto
-from typing import Any, TypeAlias, TypeVar
+from typing import Any, TypeAlias, TypeVar, get_args, get_origin
 
 import numpy as np
 import polars as pl
@@ -26,6 +27,7 @@ class Subset(Enum):
     TRAINING = auto()
     VALIDATION = auto()
     TESTING = auto()
+    UNASSIGNED = auto()
 
 
 T = TypeVar("T")
@@ -1137,19 +1139,27 @@ class SubsetField(Field):
     def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
         """Reconstruct subset value from Polars data.
 
-        If target_type is an Enum, converts string back to enum value.
-        Otherwise, returns the string value directly.
+        Converts categorical string back to Subset enum value, or None if missing.
+        Handles Union types (e.g., Subset | None).
         """
         value = df[name][row_index]
 
         if value is None:
             return None  # type: ignore
 
-        if issubclass(target_type, Enum):
-            # Convert string back to enum value
+        # Handle Union types (e.g., Subset | None)
+        origin = get_origin(target_type)
+        if isinstance(target_type, types.UnionType) or origin is Union:
+            # Extract the Subset type from the union
+            args = get_args(target_type)
+            for arg in args:
+                if arg is not type(None) and isinstance(arg, type) and issubclass(arg, Enum):
+                    return arg[value]  # type: ignore
+
+        # Handle direct Enum types
+        if isinstance(target_type, type) and issubclass(target_type, Enum):
             return target_type[value]  # type: ignore
 
-        # For string type or no type specified, return the string value
         return value  # type: ignore
 
 

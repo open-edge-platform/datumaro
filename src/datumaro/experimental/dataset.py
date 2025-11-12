@@ -90,8 +90,7 @@ class Sample:
             else:
                 final_type = type_origin if type_origin is not None else annotation
 
-            attributes[name] = AttributeInfo(type=final_type, annotation=field_annotation)
-
+            attributes[name] = AttributeInfo(type=final_type, field=field_annotation)
         return Schema(attributes=attributes)
 
     def evaluate_lazy_field(self, name: str) -> Any:
@@ -99,7 +98,7 @@ class Sample:
 
         # Now extract the value from the converted dataframe
         attr_info = self._transforms.schema.attributes[name]
-        return attr_info.annotation.from_polars(name, 0, row_df, attr_info.type)
+        return attr_info.field.from_polars(name, 0, row_df, attr_info.type)
 
 
 class LazyDescriptor:
@@ -123,7 +122,7 @@ class LazyDescriptor:
 
         # Now extract the value from the converted dataframe
         attr_info = self._transforms.schema.attributes[self._attr_name]
-        value = attr_info.annotation.from_polars(self._attr_name, 0, row_df, attr_info.type)
+        value = attr_info.field.from_polars(self._attr_name, 0, row_df, attr_info.type)
 
         # Cache the value and set it as a real attribute
         setattr(instance, self._attr_name, value)
@@ -215,7 +214,7 @@ class Dataset(Generic[DType]):
         """Generate a Polars schema from the dataset's field definitions."""
         schema: dict[str, pl.DataType] = {}
         for key, attr_info in self._schema.attributes.items():
-            schema.update(attr_info.annotation.to_polars_schema(key))
+            schema.update(attr_info.field.to_polars_schema(key))
         return pl.Schema(schema)
 
     def append(self, sample: DType) -> None:
@@ -230,7 +229,7 @@ class Dataset(Generic[DType]):
 
         series_data: dict[str, pl.Series] = {}
         for key, attr_info in self._schema.attributes.items():
-            series_data.update(attr_info.annotation.to_polars(key, getattr(sample, key)))
+            series_data.update(attr_info.field.to_polars(key, getattr(sample, key)))
 
         new_row = pl.DataFrame(series_data).cast(dict(self.df.schema))  # type: ignore
 
@@ -290,7 +289,7 @@ class Dataset(Generic[DType]):
         for key, attr_info in self._schema.attributes.items():
             if key not in lazy_attributes:
                 # This attribute is directly available
-                direct_attributes[key] = attr_info.annotation.from_polars(key, 0, row_df, attr_info.type)
+                direct_attributes[key] = attr_info.field.from_polars(key, 0, row_df, attr_info.type)
 
         # If there are lazy converters, create a dynamic class with descriptors
         dtype = self._dtype
@@ -366,7 +365,7 @@ class Dataset(Generic[DType]):
 
         series_data: dict[str, pl.Series] = {}
         for key, attr_info in self._schema.attributes.items():
-            series_data.update(attr_info.annotation.to_polars(key, getattr(sample, key)))
+            series_data.update(attr_info.field.to_polars(key, getattr(sample, key)))
 
         updated_row = pl.DataFrame(series_data).cast(dict(self.df.schema))  # type: ignore
 
@@ -457,7 +456,7 @@ class Dataset(Generic[DType]):
             A new Dataset with items of the given subset.
         """
         for subset_column_name, attribute_info in self.schema.attributes.items():
-            if isinstance(attribute_info.annotation, SubsetField):
+            if isinstance(attribute_info.field, SubsetField):
                 break
         else:
             raise RuntimeError(f"Dataset does not have an attribute for 'SubsetField': schema: {self.df.schema}")
@@ -469,6 +468,16 @@ class Dataset(Generic[DType]):
             dtype_or_schema=self.dtype,
             schema=self.schema,
         )
+
+    def append_dataset(self, dataset: Dataset) -> None:
+        """
+        Append another dataset to this dataset in place.
+
+        Args:
+            dataset: The dataset to append
+        """
+        converted_dataset = dataset.convert_to_schema(target_dtype_or_schema=self.schema)
+        self.df = self.df.vstack(converted_dataset.df)
 
 
 def convert_sample_to_schema(

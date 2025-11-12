@@ -15,7 +15,8 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from enum import IntEnum
 from functools import cache
-from typing import TYPE_CHECKING, NamedTuple
+from typing import TYPE_CHECKING, Any, NamedTuple
+
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -57,6 +58,51 @@ class Categories:
     dataset-wide metainfo like available labels, label colors,
     label attributes etc.
     """
+
+    def to_dict(self) -> dict[str, Any]:
+        """
+        Serialize this Categories instance to a JSON-compatible dictionary.
+
+        This default implementation should be overridden by subclasses that have
+        specific serialization needs. Returns just the type by default.
+
+        Returns:
+            Dictionary representation of this Categories instance
+        """
+        return {"type": self.__class__.__name__}
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> "Categories":
+        """
+        Deserialize a Categories instance from a JSON dictionary.
+
+        This method uses polymorphic dispatch to create the correct subclass
+        based on the "type" field in the dictionary.
+
+        Args:
+            data: Dictionary containing serialized Categories data
+
+        Returns:
+            Reconstructed Categories instance of the appropriate subclass
+        """
+        cat_type = data.get("type")
+
+        if not cat_type:
+            raise ValueError("Categories dictionary must have a 'type' field")
+
+        # Import subclasses to make them available
+        subclass_map = {
+            "LabelCategories": LabelCategories,
+            "HierarchicalLabelCategories": HierarchicalLabelCategories,
+            "MaskCategories": MaskCategories,
+        }
+
+        if cat_type in subclass_map:
+            return subclass_map[cat_type].from_dict(data)
+        else:
+            # Unknown type - return base Categories with just the type info
+            # This allows forward compatibility with new category types
+            raise ValueError(f"Unknown categories type: {cat_type}")
 
 
 @dataclass(frozen=True)
@@ -134,6 +180,49 @@ class LabelCategories(Categories):
     def __hash__(self):
         # Include label_semantics in the hash
         return hash((self.labels, self.group_type, frozenset(self.label_semantics.items())))
+
+    def to_dict(self) -> dict[str, Any]:
+        """
+        Serialize to a JSON-compatible dictionary.
+
+        Returns:
+            Dictionary representation of this LabelCategories instance
+        """
+        return {
+            "type": "LabelCategories",
+            "labels": list(self.labels),
+            "group_type": self.group_type.name,
+            "label_semantics": {
+                k.name if isinstance(k, LabelSemantic) else str(k): v
+                for k, v in self.label_semantics.items()
+            },
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> "LabelCategories":
+        """
+        Deserialize from a JSON dictionary.
+
+        Args:
+            data: Dictionary containing serialized LabelCategories data
+
+        Returns:
+            Reconstructed LabelCategories instance
+        """
+        # Reconstruct label_semantics with proper LabelSemantic keys
+        label_semantics = {}
+        for k, v in data.get("label_semantics", {}).items():
+            try:
+                key = LabelSemantic[k]
+            except KeyError:
+                key = k
+            label_semantics[key] = v
+
+        return cls(
+            labels=tuple(data["labels"]),
+            group_type=GroupType[data["group_type"]],
+            label_semantics=label_semantics,
+        )
 
 
 @dataclass(frozen=True)
@@ -320,6 +409,96 @@ class HierarchicalLabelCategories(Categories):
         lg_repr = tuple((lg.name, tuple(lg.labels), lg.group_type) for lg in self.label_groups)
         return hash((self.items, lg_repr, frozenset(self.label_semantics.items())))
 
+    def to_dict(self) -> dict[str, Any]:
+        """
+        Serialize to a JSON-compatible dictionary.
+
+        Returns:
+            Dictionary representation of this HierarchicalLabelCategories instance
+        """
+        return {
+            "type": "HierarchicalLabelCategories",
+            "items": [
+                {
+                    "name": item.name,
+                    "parent": item.parent,
+                    "label_semantics": {
+                        k.name if isinstance(k, LabelSemantic) else str(k): v
+                        for k, v in item.label_semantics.items()
+                    },
+                }
+                for item in self.items
+            ],
+            "label_groups": [
+                {
+                    "name": group.name,
+                    "labels": list(group.labels),
+                    "group_type": group.group_type.name,
+                }
+                for group in self.label_groups
+            ],
+            "label_semantics": {
+                k.name if isinstance(k, LabelSemantic) else str(k): v
+                for k, v in self.label_semantics.items()
+            },
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> "HierarchicalLabelCategories":
+        """
+        Deserialize from a JSON dictionary.
+
+        Args:
+            data: Dictionary containing serialized HierarchicalLabelCategories data
+
+        Returns:
+            Reconstructed HierarchicalLabelCategories instance
+        """
+        # Reconstruct items
+        items = []
+        for item_dict in data["items"]:
+            item_label_semantics = {}
+            for k, v in item_dict.get("label_semantics", {}).items():
+                try:
+                    key = LabelSemantic[k]
+                except KeyError:
+                    key = k
+                item_label_semantics[key] = v
+
+            items.append(
+                HierarchicalLabelCategory(
+                    name=item_dict["name"],
+                    parent=item_dict.get("parent", ""),
+                    label_semantics=item_label_semantics,
+                )
+            )
+
+        # Reconstruct label groups
+        label_groups = []
+        for group_dict in data.get("label_groups", []):
+            label_groups.append(
+                LabelGroup(
+                    name=group_dict["name"],
+                    labels=tuple(group_dict["labels"]),
+                    group_type=GroupType[group_dict["group_type"]],
+                )
+            )
+
+        # Reconstruct label_semantics
+        label_semantics = {}
+        for k, v in data.get("label_semantics", {}).items():
+            try:
+                key = LabelSemantic[k]
+            except KeyError:
+                key = k
+            label_semantics[key] = v
+
+        return cls(
+            items=tuple(items),
+            label_groups=tuple(label_groups),
+            label_semantics=label_semantics,
+        )
+
 
 class RgbColor(NamedTuple):
     """RGB color representation with named fields."""
@@ -391,6 +570,43 @@ class MaskCategories(Categories):
 
     def __hash__(self):
         return hash((tuple(self.labels), frozenset(self.colormap.items())))
+
+    def to_dict(self) -> dict[str, Any]:
+        """
+        Serialize to a JSON-compatible dictionary.
+
+        Returns:
+            Dictionary representation of this MaskCategories instance
+        """
+        return {
+            "type": "MaskCategories",
+            "labels": list(self.labels),
+            "colormap": {
+                str(idx): [color.r, color.g, color.b] for idx, color in self.colormap.data.items()
+            },
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> "MaskCategories":
+        """
+        Deserialize from a JSON dictionary.
+
+        Args:
+            data: Dictionary containing serialized MaskCategories data
+
+        Returns:
+            Reconstructed MaskCategories instance
+        """
+        labels = data.get("labels", [])
+
+        # Reconstruct colormap
+        colormap_data = {}
+        for idx_str, color_list in data.get("colormap", {}).items():
+            idx = int(idx_str)
+            colormap_data[idx] = RgbColor(*color_list)
+
+        colormap = Colormap(data=colormap_data)
+        return cls(labels=labels, colormap=colormap)
 
     @classmethod
     def generate(cls, size: int = 255, include_background: bool = True) -> MaskCategories:

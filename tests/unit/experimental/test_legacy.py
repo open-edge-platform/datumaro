@@ -1046,7 +1046,7 @@ def test_backward_image_media_converter_create_from_schema_no_image_field():
 
     # Create schema without image_path field
     schema = Schema(
-        attributes={"some_tensor": AttributeInfo(type=np.ndarray, annotation=tensor_field(dtype=pl.Float32))}
+        attributes={"some_tensor": AttributeInfo(type=np.ndarray, field=tensor_field(dtype=pl.Float32))}
     )
 
     converter = BackwardImageMediaConverter.create_from_schema(schema)
@@ -1096,7 +1096,7 @@ def test_backward_bbox_annotation_converter_create_from_schema_missing_fields():
     """Test BackwardBboxAnnotationConverter with incomplete schema."""
 
     # Create schema without bbox fields
-    schema = Schema(attributes={"image_path": AttributeInfo(type=str, annotation=image_path_field())})
+    schema = Schema(attributes={"image_path": AttributeInfo(type=str, field=image_path_field())})
 
     converter = BackwardBboxAnnotationConverter.create_from_schema(schema)
     assert converter is None
@@ -1432,8 +1432,8 @@ def test_backward_polygon_annotation_converter_create_from_schema():
     # Create schema with polygon fields
     schema = Schema(
         attributes={
-            "polygons": AttributeInfo(type=list, annotation=polygon_field(dtype=pl.Float32)),
-            "polygon_labels": AttributeInfo(type=np.ndarray, annotation=label_field(dtype=pl.Int32, multi_label=True)),
+            "polygons": AttributeInfo(type=list, field=polygon_field(dtype=pl.Float32)),
+            "polygon_labels": AttributeInfo(type=np.ndarray, field=label_field(dtype=pl.Int32, multi_label=True)),
         }
     )
 
@@ -1686,11 +1686,11 @@ def test_backward_rotated_bbox_annotation_converter_create_from_schema():
     attributes = {
         "rotated_bboxes": AttributeInfo(
             type=np.ndarray,
-            annotation=rotated_bbox_field(dtype=pl.Float32),
+            field=rotated_bbox_field(dtype=pl.Float32),
         ),
         "rotated_bbox_labels": AttributeInfo(
             type=np.ndarray,
-            annotation=label_field(is_list=True),
+            field=label_field(is_list=True),
         ),
     }
     schema = Schema(attributes=attributes)
@@ -1734,11 +1734,11 @@ def test_backward_rotated_bbox_annotation_converter_convert_to_legacy():
     attributes = {
         "rotated_bboxes": AttributeInfo(
             type=np.ndarray,
-            annotation=rotated_bbox_field(dtype=pl.Float32),
+            field=rotated_bbox_field(dtype=pl.Float32),
         ),
         "rotated_bbox_labels": AttributeInfo(
             type=np.ndarray,
-            annotation=label_field(is_list=True),
+            field=label_field(is_list=True),
         ),
     }
     schema = Schema(attributes=attributes)
@@ -2023,7 +2023,7 @@ def test_analyze_legacy_dataset_hierarchical():
     # Check that hierarchical categories were created
     label_attr = analysis_result.schema.attributes[AnnotationType.label.name]
     assert isinstance(label_attr.categories, HierarchicalLabelCategories)
-    assert label_attr.annotation.is_list is True
+    assert label_attr.field.is_list is True
 
 
 def test_analyze_legacy_dataset_non_hierarchical():

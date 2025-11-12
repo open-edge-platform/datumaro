@@ -15,6 +15,53 @@ from datumaro.experimental.fields import ImageInfo, Subset, bbox_field, image_fi
 from datumaro.experimental.schema import Semantic
 
 
+def test_append_dataset():
+    class MySample(Sample):
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+
+    # Define sample instances
+    sample1 = MySample(
+        image=np.array([1, 2, 3], dtype=np.uint8),
+        bbox=np.array([0.1, 0.2, 0.3, 0.4], dtype=np.float32),
+    )
+    sample2 = MySample(
+        image=np.array([4, 5, 6], dtype=np.uint8),
+        bbox=np.array([0.5, 0.6, 0.7, 0.8], dtype=np.float32),
+    )
+    sample3 = MySample(
+        image=np.array([7, 8, 9], dtype=np.uint8),
+        bbox=np.array([0.9, 1.0, 1.1, 1.2], dtype=np.float32),
+    )
+    sample4 = MySample(
+        image=np.array([10, 11, 12], dtype=np.uint8),
+        bbox=np.array([1.3, 1.4, 1.5, 1.6], dtype=np.float32),
+    )
+
+    # Create two datasets with the same schema
+    ds1 = Dataset(MySample)
+    ds2 = Dataset(MySample)
+
+    # Append samples to each dataset
+    ds1.append(sample1)
+    ds1.append(sample2)
+    ds2.append(sample3)
+    ds2.append(sample4)
+
+    # Append ds2 into ds1
+    ds1.append_dataset(ds2)
+
+    # Check that ds1 now contains all samples
+    assert len(ds1) == 4
+
+    # Extract all samples and check their values
+    samples = [ds1[i] for i in range(len(ds1))]
+    expected = [sample1, sample2, sample3, sample4]
+    for s, e in zip(samples, expected):
+        np.testing.assert_array_equal(s.image, e.image)
+        np.testing.assert_array_equal(s.bbox, e.bbox.reshape(1, -1))
+
+
 def test_filter_by_subset_raises_without_subset_field():
     class NoSubsetSample(Sample):
         image: np.ndarray = image_field(dtype=pl.UInt8, format="RGB")
@@ -63,10 +110,10 @@ def test_dataset_creation_from_schema():
     """Test Dataset creation from explicit Schema."""
     schema = Schema(
         attributes={
-            "image": AttributeInfo(type=np.ndarray, annotation=image_field(dtype=pl.UInt8, format="RGB")),
+            "image": AttributeInfo(type=np.ndarray, field=image_field(dtype=pl.UInt8, format="RGB")),
             "bbox": AttributeInfo(
                 type=np.ndarray,
-                annotation=bbox_field(dtype=pl.Float32, normalize=False),
+                field=bbox_field(dtype=pl.Float32, normalize=False),
             ),
         }
     )
@@ -227,12 +274,12 @@ def test_dynamic_schema_definition():
     """Test dataset creation with dynamic schema without explicit Sample class."""
     schema = Schema(
         attributes={
-            "image": AttributeInfo(type=np.ndarray, annotation=image_field(dtype=pl.UInt8, format="RGB")),
+            "image": AttributeInfo(type=np.ndarray, field=image_field(dtype=pl.UInt8, format="RGB")),
             "bbox": AttributeInfo(
                 type=np.ndarray,
-                annotation=bbox_field(dtype=pl.Float32, normalize=False),
+                field=bbox_field(dtype=pl.Float32, normalize=False),
             ),
-            "image_info": AttributeInfo(type=ImageInfo, annotation=image_info_field()),
+            "image_info": AttributeInfo(type=ImageInfo, field=image_info_field()),
         }
     )
 

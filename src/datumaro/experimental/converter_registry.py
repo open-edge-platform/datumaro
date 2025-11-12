@@ -583,10 +583,10 @@ def _group_fields_by_semantic(schema: Schema) -> dict[Semantic, _SchemaState]:
     groups: dict[Semantic, dict[type[Field], AttributeSpec[Field]]] = defaultdict(dict)
 
     for attr_name, attr_info in schema.attributes.items():
-        semantic = attr_info.annotation.semantic
+        semantic = attr_info.field.semantic
 
-        field_type = type(attr_info.annotation)
-        attr_spec = AttributeSpec(name=attr_name, field=attr_info.annotation, categories=attr_info.categories)
+        field_type = type(attr_info.field)
+        attr_spec = AttributeSpec(name=attr_name, field=attr_info.field, categories=attr_info.categories)
         groups[semantic][field_type] = attr_spec
 
     # Convert to SchemaState objects
@@ -861,8 +861,8 @@ def find_conversion_path(from_schema: Schema, to_schema: Schema) -> tuple[Conver
     # We do not want to include those attributes into the inferred_categories.
     inferred_categories: dict[str, Categories] = {}
     for attr_name, attr_info in to_schema.attributes.items():
-        semantic = attr_info.annotation.semantic
-        attr_spec = target_groups[semantic].field_to_attr_spec[type(attr_info.annotation)]
+        semantic = attr_info.field.semantic
+        attr_spec = target_groups[semantic].field_to_attr_spec[type(attr_info.field)]
         if attr_spec.categories is not None:
             inferred_categories[attr_name] = attr_spec.categories
 

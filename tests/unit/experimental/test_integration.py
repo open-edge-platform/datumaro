@@ -82,8 +82,8 @@ def test_stereo_camera_workflow():
 
     # Check semantic fields were preserved
     schema = StereoSample.infer_schema()
-    left_field = schema.attributes["left_image"].annotation
-    right_field = schema.attributes["right_image"].annotation
+    left_field = schema.attributes["left_image"].field
+    right_field = schema.attributes["right_image"].field
 
     assert isinstance(left_field, ImageField)
     assert isinstance(right_field, ImageField)
@@ -100,13 +100,13 @@ def test_dynamic_schema_workflow():
         attributes={
             "bboxes": AttributeInfo(
                 type=np.ndarray,
-                annotation=bbox_field(dtype=pl.Float32),
+                field=bbox_field(dtype=pl.Float32),
             ),
             "image": AttributeInfo(
                 type=np.ndarray,
-                annotation=image_field(dtype=pl.UInt8, format="RGB"),
+                field=image_field(dtype=pl.UInt8, format="RGB"),
             ),
-            "image_info": AttributeInfo(type=ImageInfo, annotation=image_info_field()),
+            "image_info": AttributeInfo(type=ImageInfo, field=image_info_field()),
         }
     )
 

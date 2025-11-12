@@ -22,6 +22,8 @@ from datumaro.experimental.fields import (
     MaskCallableField,
     PolygonField,
     RotatedBBoxField,
+    Subset,
+    SubsetField,
     TensorField,
     bbox_field,
     image_bytes_field,
@@ -34,6 +36,7 @@ from datumaro.experimental.fields import (
     mask_callable_field,
     polygon_field,
     rotated_bbox_field,
+    subset_field,
     tensor_field,
 )
 from datumaro.experimental.schema import AttributeInfo, Schema, Semantic
@@ -540,17 +543,17 @@ def test_image_callable_field_complex_callable():
 def test_attribute_info_creation():
     """Test AttributeInfo creation."""
     field = tensor_field(dtype=pl.Float32)
-    attr_info = AttributeInfo(type=np.ndarray, annotation=field)
+    attr_info = AttributeInfo(type=np.ndarray, field=field)
 
     assert attr_info.type == np.ndarray
-    assert attr_info.annotation == field
+    assert attr_info.field == field
 
 
 def test_schema_creation():
     """Test Schema creation."""
     attributes = {
-        "image": AttributeInfo(type=np.ndarray, annotation=image_field(dtype=pl.UInt8, format="RGB")),
-        "bbox": AttributeInfo(type=np.ndarray, annotation=bbox_field(dtype=pl.Float32, normalize=False)),
+        "image": AttributeInfo(type=np.ndarray, field=image_field(dtype=pl.UInt8, format="RGB")),
+        "bbox": AttributeInfo(type=np.ndarray, field=bbox_field(dtype=pl.Float32, normalize=False)),
     }
 
     schema = Schema(attributes=attributes)
@@ -666,3 +669,440 @@ def test_polygon_field_polars_conversion():
     assert len(reconstructed) == 2
     assert np.all(reconstructed[0] == test_polygon_1)
     assert np.all(reconstructed[1] == test_polygon_2)
+
+
+# ==================== Serialization Tests ====================
+
+
+def test_tensor_field_serialization():
+    """Test TensorField to_dict/from_dict serialization."""
+    field = TensorField(dtype=pl.Float32(), semantic=Semantic.Left, channels_first=True)
+
+    # Serialize to dict
+    field_dict = field.to_dict()
+    assert field_dict["type"] == "TensorField"
+    assert field_dict["semantic"] == "Left"
+    assert field_dict["channels_first"] is True
+    assert "Float32" in str(field_dict["dtype"])
+
+    # Deserialize from dict
+    from datumaro.experimental.schema import Field
+
+    reconstructed = Field.from_dict(field_dict)
+    assert isinstance(reconstructed, TensorField)
+
+    # Compare with original
+    assert reconstructed.semantic == field.semantic
+    assert reconstructed.channels_first == field.channels_first
+    assert str(reconstructed.dtype) == str(field.dtype)
+
+
+def test_image_field_serialization():
+    """Test ImageField to_dict/from_dict serialization."""
+    field = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Right)
+
+    # Serialize to dict
+    field_dict = field.to_dict()
+    assert field_dict["type"] == "ImageField"
+    assert field_dict["semantic"] == "Right"
+    assert field_dict["format"] == "RGB"
+    assert "UInt8" in str(field_dict["dtype"])
+
+    # Deserialize from dict
+    from datumaro.experimental.schema import Field
+
+    reconstructed = Field.from_dict(field_dict)
+    assert isinstance(reconstructed, ImageField)
+
+    # Compare with original
+    assert reconstructed.semantic == field.semantic
+    assert reconstructed.format == field.format
+    assert str(reconstructed.dtype) == str(field.dtype)
+
+
+def test_bbox_field_serialization():
+    """Test BBoxField to_dict/from_dict serialization."""
+    field = bbox_field(dtype=pl.Float32, format="xywh", normalize=True, semantic=Semantic.Default)
+
+    # Serialize to dict
+    field_dict = field.to_dict()
+    assert field_dict["type"] == "BBoxField"
+    assert field_dict["semantic"] == "Default"
+    assert field_dict["format"] == "xywh"
+    assert field_dict["normalize"] is True
+
+    # Deserialize from dict
+    from datumaro.experimental.schema import Field
+
+    reconstructed = Field.from_dict(field_dict)
+    assert isinstance(reconstructed, BBoxField)
+
+    # Compare with original
+    assert reconstructed.format == field.format
+    assert reconstructed.normalize == field.normalize
+    assert reconstructed.semantic == field.semantic
+    assert str(reconstructed.dtype) == str(field.dtype)
+
+
+def test_rotated_bbox_field_serialization():
+    """Test RotatedBBoxField to_dict/from_dict serialization."""
+    field = rotated_bbox_field(dtype=pl.Float32, format="xywha")
+
+    # Serialize to dict
+    field_dict = field.to_dict()
+    assert field_dict["type"] == "RotatedBBoxField"
+    assert field_dict["format"] == "xywha"
+
+    # Deserialize from dict
+    from datumaro.experimental.schema import Field
+
+    reconstructed = Field.from_dict(field_dict)
+    assert isinstance(reconstructed, RotatedBBoxField)
+
+    # Compare with original
+    assert reconstructed.format == field.format
+    assert reconstructed.semantic == field.semantic
+    assert str(reconstructed.dtype) == str(field.dtype)
+
+
+def test_polygon_field_serialization():
+    """Test PolygonField to_dict/from_dict serialization."""
+    field = polygon_field(dtype=pl.Float64, format="xy", normalize=True)
+
+    # Serialize to dict
+    field_dict = field.to_dict()
+    assert field_dict["type"] == "PolygonField"
+    assert field_dict["format"] == "xy"
+    assert field_dict["normalize"] is True
+
+    # Deserialize from dict
+    from datumaro.experimental.schema import Field
+
+    reconstructed = Field.from_dict(field_dict)
+    assert isinstance(reconstructed, PolygonField)
+
+    # Compare with original
+    assert reconstructed.format == field.format
+    assert reconstructed.normalize == field.normalize
+    assert reconstructed.semantic == field.semantic
+    assert str(reconstructed.dtype) == str(field.dtype)
+
+
+def test_mask_field_serialization():
+    """Test MaskField to_dict/from_dict serialization."""
+    field = mask_field(dtype=pl.UInt8)
+
+    # Serialize to dict
+    field_dict = field.to_dict()
+    assert field_dict["type"] == "MaskField"
+    assert "UInt8" in str(field_dict["dtype"])
+
+    # Deserialize from dict
+    from datumaro.experimental.schema import Field
+
+    reconstructed = Field.from_dict(field_dict)
+    assert isinstance(reconstructed, MaskField)
+
+    # Compare with original
+    assert reconstructed.semantic == field.semantic
+    assert str(reconstructed.dtype) == str(field.dtype)
+
+
+def test_instance_mask_field_serialization():
+    """Test InstanceMaskField to_dict/from_dict serialization."""
+    field = instance_mask_field(dtype=pl.Boolean, semantic=Semantic.Anomaly)
+
+    # Serialize to dict
+    field_dict = field.to_dict()
+    assert field_dict["type"] == "InstanceMaskField"
+    assert field_dict["semantic"] == "Anomaly"
+
+    # Deserialize from dict
+    from datumaro.experimental.schema import Field
+
+    reconstructed = Field.from_dict(field_dict)
+    assert isinstance(reconstructed, InstanceMaskField)
+
+    # Compare with original
+    assert reconstructed.semantic == field.semantic
+    assert str(reconstructed.dtype) == str(field.dtype)
+
+
+def test_image_path_field_serialization():
+    """Test ImagePathField to_dict/from_dict serialization."""
+    field = image_path_field(semantic=Semantic.Left)
+
+    # Serialize to dict
+    field_dict = field.to_dict()
+    assert field_dict["type"] == "ImagePathField"
+    assert field_dict["semantic"] == "Left"
+
+    # Deserialize from dict
+    from datumaro.experimental.schema import Field
+
+    reconstructed = Field.from_dict(field_dict)
+    assert isinstance(reconstructed, ImagePathField)
+
+    # Compare with original
+    assert reconstructed.semantic == field.semantic
+
+
+def test_image_bytes_field_serialization():
+    """Test ImageBytesField to_dict/from_dict serialization."""
+    field = image_bytes_field(semantic=Semantic.Right)
+
+    # Serialize to dict
+    field_dict = field.to_dict()
+    assert field_dict["type"] == "ImageBytesField"
+    assert field_dict["semantic"] == "Right"
+
+    # Deserialize from dict
+    from datumaro.experimental.schema import Field
+
+    reconstructed = Field.from_dict(field_dict)
+    assert isinstance(reconstructed, ImageBytesField)
+
+    # Compare with original
+    assert reconstructed.semantic == field.semantic
+
+
+def test_image_info_field_serialization():
+    """Test ImageInfoField to_dict/from_dict serialization."""
+    field = image_info_field(semantic=Semantic.Default)
+
+    # Serialize to dict
+    field_dict = field.to_dict()
+    assert field_dict["type"] == "ImageInfoField"
+    assert field_dict["semantic"] == "Default"
+
+    # Deserialize from dict
+    from datumaro.experimental.schema import Field
+
+    reconstructed = Field.from_dict(field_dict)
+    assert isinstance(reconstructed, ImageInfoField)
+
+    # Compare with original
+    assert reconstructed.semantic == field.semantic
+
+
+def test_schema_serialization_simple():
+    """Test Schema to_dict/from_dict with simple attributes."""
+    from datumaro.experimental.schema import AttributeInfo, Schema
+
+    # Create a simple schema
+    schema = Schema(
+        attributes={
+            "image": AttributeInfo(type=np.ndarray, field=image_field(dtype=pl.UInt8)),
+            "bbox": AttributeInfo(type=np.ndarray, field=bbox_field(dtype=pl.Float32)),
+        }
+    )
+
+    # Serialize to dict
+    schema_dict = schema.to_dict()
+    assert "attributes" in schema_dict
+    assert "categories" in schema_dict
+    assert "image" in schema_dict["attributes"]
+    assert "bbox" in schema_dict["attributes"]
+    assert schema_dict["attributes"]["image"]["field"]["type"] == "ImageField"
+    assert schema_dict["attributes"]["bbox"]["field"]["type"] == "BBoxField"
+
+    # Deserialize from dict
+    reconstructed = Schema.from_dict(schema_dict)
+    assert isinstance(reconstructed, Schema)
+
+    # Compare with original
+    assert set(reconstructed.attributes.keys()) == set(schema.attributes.keys())
+    assert isinstance(reconstructed.attributes["image"].field, ImageField)
+    assert isinstance(reconstructed.attributes["bbox"].field, BBoxField)
+    assert type(reconstructed.attributes["image"].type) == type(schema.attributes["image"].type)
+    assert type(reconstructed.attributes["bbox"].type) == type(schema.attributes["bbox"].type)
+
+
+def test_schema_serialization_with_categories():
+    """Test Schema to_dict/from_dict with categories."""
+    from datumaro.experimental.categories import LabelCategories
+    from datumaro.experimental.schema import AttributeInfo, Schema
+
+    # Create schema with categories
+    label_cats = LabelCategories(labels=("cat", "dog", "bird"))
+    schema = Schema(
+        attributes={
+            "label": AttributeInfo(
+                type=str, field=tensor_field(dtype=pl.Int32), categories=label_cats
+            )
+        }
+    )
+
+    # Serialize to dict
+    schema_dict = schema.to_dict()
+    assert "label" in schema_dict["attributes"]
+    assert "label" in schema_dict["categories"]
+    assert schema_dict["categories"]["label"]["type"] == "LabelCategories"
+    assert schema_dict["categories"]["label"]["labels"] == ["cat", "dog", "bird"]
+
+    # Deserialize from dict
+    reconstructed = Schema.from_dict(schema_dict)
+
+    # Compare with original
+    assert "label" in reconstructed.attributes
+    assert reconstructed.attributes["label"].categories is not None
+    assert isinstance(reconstructed.attributes["label"].categories, LabelCategories)
+    assert (
+        reconstructed.attributes["label"].categories.labels
+        == schema.attributes["label"].categories.labels
+    )
+    assert reconstructed.attributes["label"].categories.labels == ("cat", "dog", "bird")
+
+
+def test_schema_serialization_builtin_types():
+    """Test Schema serialization handles built-in Python types correctly."""
+    from datumaro.experimental.schema import AttributeInfo, Schema
+
+    # Create schema with built-in Python types and different semantics to avoid conflicts
+    schema = Schema(
+        attributes={
+            "score": AttributeInfo(
+                type=float, field=tensor_field(dtype=pl.Float32, semantic=Semantic.Default)
+            ),
+            "count": AttributeInfo(
+                type=int, field=tensor_field(dtype=pl.Int32, semantic=Semantic.Left)
+            ),
+            "name": AttributeInfo(
+                type=str, field=tensor_field(dtype=pl.Utf8, semantic=Semantic.Right)
+            ),
+        }
+    )
+
+    # Serialize and deserialize
+    schema_dict = schema.to_dict()
+    reconstructed = Schema.from_dict(schema_dict)
+
+    # Compare with original
+    assert set(reconstructed.attributes.keys()) == set(schema.attributes.keys())
+    assert "score" in reconstructed.attributes
+    assert "count" in reconstructed.attributes
+    assert "name" in reconstructed.attributes
+    # Verify semantics are preserved
+    assert (
+        reconstructed.attributes["score"].field.semantic
+        == schema.attributes["score"].field.semantic
+    )
+    assert (
+        reconstructed.attributes["count"].field.semantic
+        == schema.attributes["count"].field.semantic
+    )
+    assert (
+        reconstructed.attributes["name"].field.semantic == schema.attributes["name"].field.semantic
+    )
+
+
+def test_schema_with_categories_method():
+    """Test Schema.with_categories method with serialization."""
+    from datumaro.experimental.categories import LabelCategories
+    from datumaro.experimental.schema import AttributeInfo, Schema
+
+    # Create base schema without categories (use different semantics to avoid conflicts)
+    schema = Schema(
+        attributes={
+            "label": AttributeInfo(
+                type=str, field=tensor_field(dtype=pl.Int32, semantic=Semantic.Default)
+            ),
+            "mask": AttributeInfo(
+                type=np.ndarray, field=mask_field(dtype=pl.UInt8, semantic=Semantic.Left)
+            ),
+        }
+    )
+
+    # Add categories
+    label_cats = LabelCategories(labels=("cat", "dog"))
+    schema_with_cats = schema.with_categories({"label": label_cats})
+
+    # Serialize and deserialize
+    schema_dict = schema_with_cats.to_dict()
+    reconstructed = Schema.from_dict(schema_dict)
+
+    # Compare with original
+    assert reconstructed.attributes["label"].categories is not None
+    assert isinstance(reconstructed.attributes["label"].categories, LabelCategories)
+    assert (
+        reconstructed.attributes["label"].categories.labels
+        == schema_with_cats.attributes["label"].categories.labels
+    )
+    assert reconstructed.attributes["label"].categories.labels == ("cat", "dog")
+    assert reconstructed.attributes["mask"].categories is None
+
+
+def test_subset_field_to_polars_with_none():
+    """Test SubsetField conversion to Polars with None value."""
+    field = subset_field()
+    result = field.to_polars("subset", None)
+
+    assert "subset" in result
+    assert result["subset"][0] is None
+
+
+def test_subset_field_from_polars_with_direct_enum_type():
+    """Test SubsetField reconstruction from Polars with direct Subset type."""
+    field = subset_field()
+
+    # Create a DataFrame with subset values
+    df = pl.DataFrame(
+        {"subset": pl.Series(["TRAINING", "TESTING", "VALIDATION"], dtype=pl.Categorical)}
+    )
+
+    # Test reconstruction with direct Subset type
+    value1 = field.from_polars("subset", 0, df, Subset)
+    assert value1 == Subset.TRAINING
+    assert isinstance(value1, Subset)
+
+    value2 = field.from_polars("subset", 1, df, Subset)
+    assert value2 == Subset.TESTING
+
+    value3 = field.from_polars("subset", 2, df, Subset)
+    assert value3 == Subset.VALIDATION
+
+
+def test_subset_field_roundtrip():
+    """Test SubsetField roundtrip conversion (to_polars -> from_polars)."""
+    from typing import Union
+
+    field = subset_field()
+
+    # Test with TRAINING
+    polars_data = field.to_polars("subset", Subset.TRAINING)
+    df = pl.DataFrame(polars_data)
+    reconstructed = field.from_polars("subset", 0, df, Union[Subset, None])
+    assert reconstructed == Subset.TRAINING
+
+    # Test with TESTING
+    polars_data = field.to_polars("subset", Subset.TESTING)
+    df = pl.DataFrame(polars_data)
+    reconstructed = field.from_polars("subset", 0, df, Union[Subset, None])
+    assert reconstructed == Subset.TESTING
+
+    # Test with None
+    polars_data = field.to_polars("subset", None)
+    df = pl.DataFrame(polars_data)
+    reconstructed = field.from_polars("subset", 0, df, Union[Subset, None])
+    assert reconstructed is None
+
+
+def test_subset_field_in_sample_with_union_type():
+    """Test SubsetField usage in a Sample class with union type annotation."""
+
+    class TestSample(Sample):
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
+        subset: Subset | None = subset_field()
+
+    # Test with TRAINING subset
+    sample1 = TestSample(image=np.array([[[255, 0, 0]]], dtype=np.uint8), subset=Subset.TRAINING)
+    assert sample1.subset == Subset.TRAINING
+
+    # Test with None subset
+    sample2 = TestSample(image=np.array([[[0, 255, 0]]], dtype=np.uint8), subset=None)
+    assert sample2.subset is None
+
+    # Test schema inference
+    schema = TestSample.infer_schema()
+    assert "subset" in schema.attributes
+    assert isinstance(schema.attributes["subset"].field, SubsetField)
