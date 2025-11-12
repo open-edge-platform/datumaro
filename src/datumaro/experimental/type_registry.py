@@ -194,23 +194,40 @@ def from_polars_data(polars_data: Any, target_type: type) -> Any:
     is_union = False
     union_args = None
 
-    # Check for types.UnionType (Python 3.10+ syntax: A | B)
-    if isinstance(target_type, types.UnionType):
+    if (hasattr(target_type, "__origin__") and target_type.__origin__ is Union) or isinstance(
+        target_type, types.UnionType
+    ):
         is_union = True
         union_args = target_type.__args__
 
-    # Check for typing.Union (older syntax: Union[A, B])
-    try:
-        from typing import get_args, get_origin
+    if is_union and union_args:
+        for arg in union_args:
+            try:
+                return from_polars_data(polars_data, arg)
+            except TypeError:
+                continue
+        raise TypeError(f"No converter registered for type {target_type}")
 
-        if get_origin(target_type) is Union:
-            is_union = True
-            union_args = get_args(target_type)
-    except Exception as e:
-        logger.error(f"Error handling Union type: {e}")
+    """
+    # Convertheck for types.UnionType (Python 3.10+ syntax: A | B)
+    breakpoint()
+    if isinstance(target_type, types.UnionType):
+        is_union = True
+        union_args = target_type.__args__
+    else:
+        # Check for typing.Union (older syntax: Union[A, B])
+        try:
+            from typing import get_args, get_origin
+
+            if get_origin(target_type) is Union:
+                is_union = True
+                union_args = get_args(target_type)
+        except Exception as e:
+            logger.error(f"Error handling Union type: {e}")
 
     if is_union and union_args:
         return _convert_union_types(union_args=union_args, polars_data=polars_data)
+    """
     raise TypeError(f"No converter registered for type {target_type}")
 
 

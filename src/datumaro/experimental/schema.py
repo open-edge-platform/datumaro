@@ -7,10 +7,9 @@ Schema definitions for the dataset system.
 
 import copy
 import importlib
-from dataclasses import dataclass
+from dataclasses import dataclass, is_dataclass
 from dataclasses import field as dataclass_field
 from dataclasses import fields as dataclass_fields
-from dataclasses import is_dataclass
 from enum import Flag, auto
 from typing import Any, Generic, Optional, TypeVar
 
@@ -104,7 +103,7 @@ class Field:
 
         return value
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """
         Serialize this Field to a JSON-compatible dictionary.
 
@@ -137,7 +136,7 @@ class Field:
         return field_dict
 
     @classmethod
-    def from_dict(cls, field_dict: Dict[str, Any]) -> "Field":
+    def from_dict(cls, field_dict: dict[str, Any]) -> "Field":
         """
         Deserialize a Field from a JSON dictionary.
 
@@ -157,7 +156,7 @@ class Field:
         field_class = getattr(fields_module, field_type)
 
         # Prepare kwargs for field construction
-        kwargs: Dict[str, Any] = {}
+        kwargs: dict[str, Any] = {}
 
         # Use dataclass introspection to get all expected fields
         if is_dataclass(field_class):
@@ -291,7 +290,7 @@ class Schema:
                 raise ValueError(f"Attribute '{attr_name}' not found in schema")
         return new_schema
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """
         Serialize this Schema to a JSON-compatible dictionary.
 
@@ -304,14 +303,8 @@ class Schema:
 
         for name, attr_info in self.attributes.items():
             # Store both module and name for better type reconstruction
-            type_info = (
-                attr_info.type.__name__
-                if hasattr(attr_info.type, "__name__")
-                else str(attr_info.type)
-            )
-            type_module = (
-                attr_info.type.__module__ if hasattr(attr_info.type, "__module__") else None
-            )
+            type_info = attr_info.type.__name__ if hasattr(attr_info.type, "__name__") else str(attr_info.type)
+            type_module = attr_info.type.__module__ if hasattr(attr_info.type, "__module__") else None
 
             attributes[name] = {
                 "type": type_info,
@@ -327,7 +320,7 @@ class Schema:
         }
 
     @classmethod
-    def from_dict(cls, schema_dict: Dict[str, Any]) -> "Schema":
+    def from_dict(cls, schema_dict: dict[str, Any]) -> "Schema":
         """
         Deserialize a Schema from a JSON dictionary.
 

@@ -21,7 +21,7 @@ import tempfile
 from importlib.metadata import PackageNotFoundError
 from importlib.metadata import version as _pkg_version
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, Type, Union
+from typing import TYPE_CHECKING
 from zipfile import ZIP_DEFLATED, ZipFile, is_zipfile
 
 import numpy as np
@@ -46,9 +46,9 @@ except PackageNotFoundError:
 
 
 def _export_images_from_dataset(
-    dataset: "Dataset[DType]",
+    dataset: Dataset[DType],
     output_dir: Path,
-) -> Dict[str, Dict[int, str]]:
+) -> dict[str, dict[int, str]]:
     """
     Export images from callable or path fields in the dataset.
 
@@ -65,7 +65,7 @@ def _export_images_from_dataset(
     """
 
     output_dir.mkdir(parents=True, exist_ok=True)
-    image_paths: Dict[str, Dict[int, str]] = {}
+    image_paths: dict[str, dict[int, str]] = {}
 
     # Find all image-related fields
     image_fields = []
@@ -126,9 +126,7 @@ def _export_images_from_dataset(
                 try:
                     img_data = value()
                 except Exception as e:
-                    print(
-                        f"Warning: Failed to call image callable for field {field_name}, idx {idx}: {e}"
-                    )
+                    print(f"Warning: Failed to call image callable for field {field_name}, idx {idx}: {e}")
                     continue
 
                 # Convert to PIL Image and save as PNG (lossless)
@@ -158,9 +156,7 @@ def _export_images_from_dataset(
                         pil_img.save(abs_path)
                         image_paths[field_name][idx] = str(rel_path)
                     except Exception as e:
-                        print(
-                            f"Warning: Failed to save image for field {field_name}, idx {idx}: {e}"
-                        )
+                        print(f"Warning: Failed to save image for field {field_name}, idx {idx}: {e}")
                         continue
 
             elif isinstance(field, (InstanceMaskCallableField, MaskCallableField)):
@@ -171,9 +167,7 @@ def _export_images_from_dataset(
                 try:
                     img_data = value()
                 except Exception as e:
-                    print(
-                        f"Warning: Failed to call mask callable for field {field_name}, idx {idx}: {e}"
-                    )
+                    print(f"Warning: Failed to call mask callable for field {field_name}, idx {idx}: {e}")
                     continue
 
                 # Convert to PIL Image and save as PNG (best for masks)
@@ -191,9 +185,7 @@ def _export_images_from_dataset(
                                 # Multi-channel mask
                                 pil_img = Image.fromarray(img_data.astype(np.uint8))
                         else:
-                            print(
-                                f"Warning: Unsupported mask shape {img_data.shape} for field {field_name}, idx {idx}"
-                            )
+                            print(f"Warning: Unsupported mask shape {img_data.shape} for field {field_name}, idx {idx}")
                             continue
 
                         # Save as PNG (best for masks - lossless)
@@ -202,17 +194,15 @@ def _export_images_from_dataset(
                         pil_img.save(abs_path)
                         image_paths[field_name][idx] = str(rel_path)
                     except Exception as e:
-                        print(
-                            f"Warning: Failed to save mask for field {field_name}, idx {idx}: {e}"
-                        )
+                        print(f"Warning: Failed to save mask for field {field_name}, idx {idx}: {e}")
                         continue
 
     return image_paths
 
 
 def export_dataset(
-    dataset: "Dataset[DType]",
-    output_path: Union[str, Path],
+    dataset: Dataset[DType],
+    output_path: str | Path,
     export_images: bool = True,
     as_zip: bool = False,
 ) -> None:
@@ -291,9 +281,9 @@ def export_dataset(
 
 
 def import_dataset(
-    input_path: Union[str, Path],
-    dtype: Type["DType"] | None = None,
-) -> "Dataset[DType]":
+    input_path: str | Path,
+    dtype: type[DType] | None = None,
+) -> Dataset[DType]:
     """
     Import a dataset from an exported format.
 
@@ -326,8 +316,8 @@ def import_dataset(
 
 def _import_dataset_from_dir(
     input_dir: Path,
-    dtype: Type["DType"] | None = None,
-) -> "Dataset[DType]":
+    dtype: type[DType] | None = None,
+) -> Dataset[DType]:
     """
     Import dataset from a directory.
 
@@ -376,9 +366,7 @@ def _import_dataset_from_dir(
                 continue
 
             is_path_field = isinstance(field, ImagePathField)
-            is_callable_field = isinstance(
-                field, (ImageCallableField, InstanceMaskCallableField, MaskCallableField)
-            )
+            is_callable_field = isinstance(field, (ImageCallableField, InstanceMaskCallableField, MaskCallableField))
 
             if not (is_path_field or is_callable_field):
                 continue
@@ -392,29 +380,27 @@ def _import_dataset_from_dir(
 
                 if is_path_field:
                     values.append(str(file_path) if file_path is not None else None)
+                elif file_path is None:
+                    values.append(None)
                 else:
-                    if file_path is None:
-                        values.append(None)
-                    else:
 
-                        def make_loader(path: Path):
-                            def load_image():
-                                return np.array(Image.open(path))
+                    def make_loader(path: Path):
+                        def load_image():
+                            return np.array(Image.open(path))
 
-                            return load_image
+                        return load_image
 
-                        values.append(make_loader(file_path))
+                    values.append(make_loader(file_path))
 
             # Update or add the column
             if is_path_field:
                 if field_name in df.columns:
                     df = df.drop(field_name)
                 df = df.with_columns(pl.Series(field_name, values, dtype=pl.String))
+            elif field_name in df.columns:
+                df = df.with_columns(pl.Series(field_name, values))
             else:
-                if field_name in df.columns:
-                    df = df.with_columns(pl.Series(field_name, values))
-                else:
-                    df = df.with_columns(pl.Series(field_name, values, dtype=pl.Object))
+                df = df.with_columns(pl.Series(field_name, values, dtype=pl.Object))
 
     # Add back any other object columns that weren't reconstructed from images
     for col_name in object_columns:
