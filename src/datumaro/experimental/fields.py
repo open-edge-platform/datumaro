@@ -12,7 +12,7 @@ learning and computer vision applications.
 import types
 from dataclasses import dataclass, field
 from enum import Enum, auto
-from typing import Any, TypeAlias, TypeVar, get_args, get_origin
+from typing import Any, TypeAlias, TypeVar, Union, get_args, get_origin
 
 import numpy as np
 import polars as pl

@@ -45,6 +45,128 @@ except PackageNotFoundError:
     VERSION = "0.0.0"
 
 
+def _get_image_fields(dataset: Dataset[DType]) -> list[tuple[str, object]]:
+    """Extract all image-related fields from the dataset schema."""
+    image_fields = []
+    for name, attr_info in dataset.schema.attributes.items():
+        if isinstance(
+            attr_info.field,
+            ImageCallableField | ImagePathField | InstanceMaskCallableField | MaskCallableField,
+        ):
+            image_fields.append((name, attr_info.field))
+    return image_fields
+
+
+def _get_field_value(dataset: Dataset[DType], idx: int, field_name: str) -> object:
+    """Get the value of a field for a specific row index."""
+    if dataset._transforms is None:
+        row_df = dataset.df.slice(idx, 1)
+    else:
+        transforms = dataset._transforms.slice(idx, 1)
+        row_df = transforms.apply([field_name])
+    return row_df[field_name][0]
+
+
+def _export_image_path_field(
+    value: object,
+    field_name: str,
+    idx: int,
+    output_dir: Path,
+) -> str | None:
+    """Export an ImagePathField by copying the file from the filesystem."""
+    try:
+        source_path = Path(value)
+        if not source_path.exists():
+            print(f"Warning: Image file not found: {value}")
+            return None
+
+        extension = source_path.suffix if source_path.suffix else ".png"
+        rel_path = f"{field_name}/{idx:06d}{extension}"
+        abs_path = output_dir / rel_path.replace("/", "_")
+
+        shutil.copy2(source_path, abs_path)
+        return str(rel_path)
+    except Exception as e:
+        print(f"Warning: Failed to copy image from {value}: {e}")
+        return None
+
+
+def _array_to_pil_image(img_data: np.ndarray, field_name: str, idx: int) -> Image.Image | None:
+    """Convert a numpy array to a PIL Image."""
+    if len(img_data.shape) == 2:
+        return Image.fromarray(img_data.astype(np.uint8))
+    if len(img_data.shape) == 3:
+        if img_data.shape[2] == 1:
+            return Image.fromarray(img_data[:, :, 0].astype(np.uint8))
+        return Image.fromarray(img_data.astype(np.uint8))
+    print(f"Warning: Unsupported image shape {img_data.shape} for field {field_name}, idx {idx}")
+    return None
+
+
+def _export_callable_field(
+    value: object,
+    field_name: str,
+    idx: int,
+    output_dir: Path,
+    is_mask: bool = False,
+) -> str | None:
+    """Export an ImageCallableField or MaskCallableField by calling it and saving as PNG."""
+    if not callable(value):
+        return None
+
+    try:
+        img_data = value()
+    except Exception as e:
+        field_type = "mask" if is_mask else "image"
+        print(f"Warning: Failed to call {field_type} callable for field {field_name}, idx {idx}: {e}")
+        return None
+
+    if img_data is None:
+        return None
+
+    try:
+        pil_img = _array_to_pil_image(img_data, field_name, idx)
+        if pil_img is None:
+            return None
+
+        rel_path = f"{field_name}_{idx:06d}.png"
+        abs_path = output_dir / rel_path
+        pil_img.save(abs_path)
+        return str(rel_path)
+    except Exception as e:
+        field_type = "mask" if is_mask else "image"
+        print(f"Warning: Failed to save {field_type} for field {field_name}, idx {idx}: {e}")
+        return None
+
+
+def _export_single_field(
+    dataset: Dataset[DType],
+    field_name: str,
+    field: object,
+    output_dir: Path,
+) -> dict[int, str]:
+    """Export images for a single field across all rows."""
+    field_paths: dict[int, str] = {}
+
+    for idx in range(len(dataset)):
+        value = _get_field_value(dataset, idx, field_name)
+        if value is None:
+            continue
+
+        rel_path = None
+        if isinstance(field, ImagePathField):
+            rel_path = _export_image_path_field(value, field_name, idx, output_dir)
+        elif isinstance(field, ImageCallableField):
+            rel_path = _export_callable_field(value, field_name, idx, output_dir, is_mask=False)
+        elif isinstance(field, InstanceMaskCallableField | MaskCallableField):
+            rel_path = _export_callable_field(value, field_name, idx, output_dir, is_mask=True)
+
+        if rel_path is not None:
+            field_paths[idx] = rel_path
+
+    return field_paths
+
+
 def _export_images_from_dataset(
     dataset: Dataset[DType],
     output_dir: Path,
@@ -63,139 +185,15 @@ def _export_images_from_dataset(
     Returns:
         Dictionary mapping field names to dictionaries of row_idx -> relative path
     """
-
     output_dir.mkdir(parents=True, exist_ok=True)
     image_paths: dict[str, dict[int, str]] = {}
 
-    # Find all image-related fields
-    image_fields = []
-    for name, attr_info in dataset.schema.attributes.items():
-        if isinstance(
-            attr_info.field,
-            (ImageCallableField, ImagePathField, InstanceMaskCallableField, MaskCallableField),
-        ):
-            image_fields.append((name, attr_info.field))
-
+    image_fields = _get_image_fields(dataset)
     if not image_fields:
         return image_paths
 
-    # Export images for each field
     for field_name, field in image_fields:
-        image_paths[field_name] = {}
-
-        for idx in range(len(dataset)):
-            # Get the raw dataframe value
-            if dataset._transforms is None:
-                row_df = dataset.df.slice(idx, 1)
-            else:
-                # For transformed datasets, we need to access the original df
-                transforms = dataset._transforms.slice(idx, 1)
-                row_df = transforms.apply([field_name])
-
-            value = row_df[field_name][0]
-
-            if value is None:
-                continue
-
-            # Handle different field types
-            if isinstance(field, ImagePathField):
-                # For ImagePathField: Copy image directly from filesystem
-                try:
-                    source_path = Path(value)
-                    if not source_path.exists():
-                        print(f"Warning: Image file not found: {value}")
-                        continue
-
-                    # Preserve original extension/format
-                    extension = source_path.suffix if source_path.suffix else ".png"
-                    rel_path = f"{field_name}/{idx:06d}{extension}"
-                    abs_path = output_dir / rel_path.replace("/", "_")
-
-                    # Direct file copy - no loading into memory
-                    shutil.copy2(source_path, abs_path)
-                    image_paths[field_name][idx] = str(rel_path)
-                except Exception as e:
-                    print(f"Warning: Failed to copy image from {value}: {e}")
-                    continue
-
-            elif isinstance(field, ImageCallableField):
-                # Call the callable to get the image data
-                if not callable(value):
-                    continue
-
-                try:
-                    img_data = value()
-                except Exception as e:
-                    print(f"Warning: Failed to call image callable for field {field_name}, idx {idx}: {e}")
-                    continue
-
-                # Convert to PIL Image and save as PNG (lossless)
-                if img_data is not None:
-                    try:
-                        # Handle different image formats
-                        if len(img_data.shape) == 2:
-                            # Grayscale
-                            pil_img = Image.fromarray(img_data.astype(np.uint8))
-                        elif len(img_data.shape) == 3:
-                            if img_data.shape[2] == 1:
-                                # Single channel
-                                pil_img = Image.fromarray(img_data[:, :, 0].astype(np.uint8))
-                            else:
-                                # RGB or RGBA
-                                pil_img = Image.fromarray(img_data.astype(np.uint8))
-                        else:
-                            print(
-                                f"Warning: Unsupported image shape {img_data.shape} for field {field_name}, idx {idx}"
-                            )
-                            continue
-
-                        # Save as PNG (lossless)
-                        # Use underscore instead of slash to avoid directory creation issues
-                        rel_path = f"{field_name}_{idx:06d}.png"
-                        abs_path = output_dir / rel_path
-                        pil_img.save(abs_path)
-                        image_paths[field_name][idx] = str(rel_path)
-                    except Exception as e:
-                        print(f"Warning: Failed to save image for field {field_name}, idx {idx}: {e}")
-                        continue
-
-            elif isinstance(field, (InstanceMaskCallableField, MaskCallableField)):
-                # Call the callable to get the mask data
-                if not callable(value):
-                    continue
-
-                try:
-                    img_data = value()
-                except Exception as e:
-                    print(f"Warning: Failed to call mask callable for field {field_name}, idx {idx}: {e}")
-                    continue
-
-                # Convert to PIL Image and save as PNG (best for masks)
-                if img_data is not None:
-                    try:
-                        # Handle different image formats
-                        if len(img_data.shape) == 2:
-                            # Grayscale mask
-                            pil_img = Image.fromarray(img_data.astype(np.uint8))
-                        elif len(img_data.shape) == 3:
-                            if img_data.shape[2] == 1:
-                                # Single channel mask
-                                pil_img = Image.fromarray(img_data[:, :, 0].astype(np.uint8))
-                            else:
-                                # Multi-channel mask
-                                pil_img = Image.fromarray(img_data.astype(np.uint8))
-                        else:
-                            print(f"Warning: Unsupported mask shape {img_data.shape} for field {field_name}, idx {idx}")
-                            continue
-
-                        # Save as PNG (best for masks - lossless)
-                        rel_path = f"{field_name}_{idx:06d}.png"
-                        abs_path = output_dir / rel_path
-                        pil_img.save(abs_path)
-                        image_paths[field_name][idx] = str(rel_path)
-                    except Exception as e:
-                        print(f"Warning: Failed to save mask for field {field_name}, idx {idx}: {e}")
-                        continue
+        image_paths[field_name] = _export_single_field(dataset, field_name, field, output_dir)
 
     return image_paths
 
@@ -314,6 +312,127 @@ def import_dataset(
         return _import_dataset_from_dir(input_path, dtype)
 
 
+def _load_metadata(input_dir: Path) -> dict:
+    """Load and validate metadata file."""
+    metadata_path = input_dir / METADATA_FILE
+    if not metadata_path.exists():
+        raise FileNotFoundError(f"Metadata file not found: {metadata_path}")
+
+    with open(metadata_path) as f:
+        metadata = json.load(f)
+
+    if metadata.get("version") != VERSION:
+        print(
+            f"Warning: Dataset version {metadata.get('version')} may not be fully "
+            f"compatible with current version {VERSION}"
+        )
+
+    return metadata
+
+
+def _load_dataframe(input_dir: Path) -> pl.DataFrame:
+    """Load DataFrame from parquet file."""
+    parquet_path = input_dir / DATAFRAME_FILE
+    if not parquet_path.exists():
+        raise FileNotFoundError(f"DataFrame file not found: {parquet_path}")
+
+    return pl.read_parquet(parquet_path)
+
+
+def _make_image_loader(path: Path):
+    """Create a closure that loads an image from a path."""
+
+    def load_image():
+        return np.array(Image.open(path))
+
+    return load_image
+
+
+def _reconstruct_field_values(
+    field_name: str,
+    field: object,
+    images_base_dir: Path,
+    num_rows: int,
+) -> tuple[list[object | None], bool, bool]:
+    """
+    Reconstruct values for a single image-related field.
+
+    Returns:
+        Tuple of (values list, is_path_field, is_callable_field)
+    """
+    is_path_field = isinstance(field, ImagePathField)
+    is_callable_field = isinstance(field, ImageCallableField | InstanceMaskCallableField | MaskCallableField)
+
+    if not (is_path_field or is_callable_field):
+        return [], False, False
+
+    values: list[object | None] = []
+    for idx in range(num_rows):
+        pattern = f"{field_name}_{idx:06d}.*"
+        matches = sorted(images_base_dir.glob(pattern))
+        file_path = matches[0] if matches else None
+
+        if is_path_field:
+            values.append(str(file_path) if file_path is not None else None)
+        elif file_path is None:
+            values.append(None)
+        else:
+            values.append(_make_image_loader(file_path))
+
+    return values, is_path_field, is_callable_field
+
+
+def _update_dataframe_with_field(
+    df: pl.DataFrame,
+    field_name: str,
+    values: list[object | None],
+    is_path_field: bool,
+) -> pl.DataFrame:
+    """Update DataFrame with reconstructed field values."""
+    if is_path_field:
+        if field_name in df.columns:
+            df = df.drop(field_name)
+        return df.with_columns(pl.Series(field_name, values, dtype=pl.String))
+    if field_name in df.columns:
+        return df.with_columns(pl.Series(field_name, values))
+    return df.with_columns(pl.Series(field_name, values, dtype=pl.Object))
+
+
+def _reconstruct_image_fields(
+    df: pl.DataFrame,
+    schema: Schema,
+    images_base_dir: Path,
+) -> pl.DataFrame:
+    """Reconstruct image-related fields from the images directory."""
+    if not images_base_dir.exists():
+        return df
+
+    for field_name, attr_info in schema.attributes.items():
+        field = getattr(attr_info, "field", None)
+        if field is None:
+            continue
+
+        values, is_path_field, is_callable_field = _reconstruct_field_values(
+            field_name, field, images_base_dir, len(df)
+        )
+
+        if is_path_field or is_callable_field:
+            df = _update_dataframe_with_field(df, field_name, values, is_path_field)
+
+    return df
+
+
+def _add_missing_object_columns(
+    df: pl.DataFrame,
+    object_columns: list[str],
+) -> pl.DataFrame:
+    """Add back any object columns that weren't reconstructed from images."""
+    for col_name in object_columns:
+        if col_name not in df.columns:
+            df = df.with_columns(pl.Series(col_name, [None] * len(df), dtype=pl.Object))
+    return df
+
+
 def _import_dataset_from_dir(
     input_dir: Path,
     dtype: type[DType] | None = None,
@@ -328,89 +447,17 @@ def _import_dataset_from_dir(
     Returns:
         The imported Dataset instance
     """
-    metadata_path = input_dir / METADATA_FILE
-    if not metadata_path.exists():
-        raise FileNotFoundError(f"Metadata file not found: {metadata_path}")
-
-    parquet_path = input_dir / DATAFRAME_FILE
-    if not parquet_path.exists():
-        raise FileNotFoundError(f"DataFrame file not found: {parquet_path}")
-
-    # Load metadata
-    with open(metadata_path) as f:
-        metadata = json.load(f)
-
-    # Check version
-    if metadata.get("version") != VERSION:
-        print(
-            f"Warning: Dataset version {metadata.get('version')} may not be fully "
-            f"compatible with current version {VERSION}"
-        )
-
-    # Load schema
+    metadata = _load_metadata(input_dir)
+    df = _load_dataframe(input_dir)  # Check DataFrame exists before processing schema
     schema = Schema.from_dict(metadata["schema"])
 
-    # Load DataFrame
-    df = pl.read_parquet(parquet_path)
-
-    # Get object columns that were excluded from parquet
     object_columns = metadata.get("object_columns", [])
-
-    # Reconstruct image-related fields from images directory (no per-row mapping stored)
     images_base_dir = input_dir / IMAGES_DIR
-    if images_base_dir.exists():
-        # Identify image-related fields from schema
-        for field_name, attr_info in schema.attributes.items():
-            field = getattr(attr_info, "field", None)
-            if field is None:
-                continue
 
-            is_path_field = isinstance(field, ImagePathField)
-            is_callable_field = isinstance(field, (ImageCallableField, InstanceMaskCallableField, MaskCallableField))
+    df = _reconstruct_image_fields(df, schema, images_base_dir)
+    df = _add_missing_object_columns(df, object_columns)
 
-            if not (is_path_field or is_callable_field):
-                continue
-
-            # Build per-row values by discovering files following naming convention
-            values: list[object | None] = []
-            for idx in range(len(df)):
-                pattern = f"{field_name}_{idx:06d}.*"
-                matches = sorted(images_base_dir.glob(pattern))
-                file_path = matches[0] if matches else None
-
-                if is_path_field:
-                    values.append(str(file_path) if file_path is not None else None)
-                elif file_path is None:
-                    values.append(None)
-                else:
-
-                    def make_loader(path: Path):
-                        def load_image():
-                            return np.array(Image.open(path))
-
-                        return load_image
-
-                    values.append(make_loader(file_path))
-
-            # Update or add the column
-            if is_path_field:
-                if field_name in df.columns:
-                    df = df.drop(field_name)
-                df = df.with_columns(pl.Series(field_name, values, dtype=pl.String))
-            elif field_name in df.columns:
-                df = df.with_columns(pl.Series(field_name, values))
-            else:
-                df = df.with_columns(pl.Series(field_name, values, dtype=pl.Object))
-
-    # Add back any other object columns that weren't reconstructed from images
-    for col_name in object_columns:
-        if col_name not in df.columns:
-            # Add a column of Nones
-            df = df.with_columns(pl.Series(col_name, [None] * len(df), dtype=pl.Object))
-
-    # Determine dtype
     if dtype is None:
         dtype = Sample  # type: ignore
 
-    # Create and return dataset
     return Dataset.from_dataframe(df, dtype, schema=schema)

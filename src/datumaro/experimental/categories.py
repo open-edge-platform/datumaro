@@ -17,7 +17,6 @@ from enum import IntEnum
 from functools import cache
 from typing import TYPE_CHECKING, Any, NamedTuple
 
-
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
@@ -72,7 +71,7 @@ class Categories:
         return {"type": self.__class__.__name__}
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "Categories":
+    def from_dict(cls, data: dict[str, Any]) -> Categories:
         """
         Deserialize a Categories instance from a JSON dictionary.
 
@@ -99,10 +98,9 @@ class Categories:
 
         if cat_type in subclass_map:
             return subclass_map[cat_type].from_dict(data)
-        else:
-            # Unknown type - return base Categories with just the type info
-            # This allows forward compatibility with new category types
-            raise ValueError(f"Unknown categories type: {cat_type}")
+        # Unknown type - return base Categories with just the type info
+        # This allows forward compatibility with new category types
+        raise ValueError(f"Unknown categories type: {cat_type}")
 
 
 @dataclass(frozen=True)
@@ -193,13 +191,12 @@ class LabelCategories(Categories):
             "labels": list(self.labels),
             "group_type": self.group_type.name,
             "label_semantics": {
-                k.name if isinstance(k, LabelSemantic) else str(k): v
-                for k, v in self.label_semantics.items()
+                k.name if isinstance(k, LabelSemantic) else str(k): v for k, v in self.label_semantics.items()
             },
         }
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "LabelCategories":
+    def from_dict(cls, data: dict[str, Any]) -> LabelCategories:
         """
         Deserialize from a JSON dictionary.
 
@@ -423,8 +420,7 @@ class HierarchicalLabelCategories(Categories):
                     "name": item.name,
                     "parent": item.parent,
                     "label_semantics": {
-                        k.name if isinstance(k, LabelSemantic) else str(k): v
-                        for k, v in item.label_semantics.items()
+                        k.name if isinstance(k, LabelSemantic) else str(k): v for k, v in item.label_semantics.items()
                     },
                 }
                 for item in self.items
@@ -438,13 +434,12 @@ class HierarchicalLabelCategories(Categories):
                 for group in self.label_groups
             ],
             "label_semantics": {
-                k.name if isinstance(k, LabelSemantic) else str(k): v
-                for k, v in self.label_semantics.items()
+                k.name if isinstance(k, LabelSemantic) else str(k): v for k, v in self.label_semantics.items()
             },
         }
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "HierarchicalLabelCategories":
+    def from_dict(cls, data: dict[str, Any]) -> HierarchicalLabelCategories:
         """
         Deserialize from a JSON dictionary.
 
@@ -581,13 +576,11 @@ class MaskCategories(Categories):
         return {
             "type": "MaskCategories",
             "labels": list(self.labels),
-            "colormap": {
-                str(idx): [color.r, color.g, color.b] for idx, color in self.colormap.data.items()
-            },
+            "colormap": {str(idx): [color.r, color.g, color.b] for idx, color in self.colormap.data.items()},
         }
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "MaskCategories":
+    def from_dict(cls, data: dict[str, Any]) -> MaskCategories:
         """
         Deserialize from a JSON dictionary.
 
