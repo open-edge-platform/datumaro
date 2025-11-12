@@ -23,6 +23,8 @@ from datumaro.experimental.fields import (
     MaskField,
     PolygonField,
     RotatedBBoxField,
+    Subset,
+    SubsetField,
     TensorField,
     bbox_field,
     image_bytes_field,
@@ -36,6 +38,7 @@ from datumaro.experimental.fields import (
     mask_field,
     polygon_field,
     rotated_bbox_field,
+    subset_field,
     tensor_field,
 )
 from datumaro.experimental.schema import AttributeInfo, Schema, Semantic
@@ -977,7 +980,7 @@ def test_schema_serialization_with_categories():
 
 
 def test_schema_serialization_builtin_types():
-    """Test Schema serialization handles built-in types correctly."""
+    """Test Schema serialization handles built-in Python types correctly."""
     from datumaro.experimental.schema import AttributeInfo, Schema
 
     # Create schema with built-in Python types and different semantics to avoid conflicts
@@ -1052,3 +1055,79 @@ def test_schema_with_categories_method():
     )
     assert reconstructed.attributes["label"].categories.labels == ("cat", "dog")
     assert reconstructed.attributes["mask"].categories is None
+
+
+def test_subset_field_to_polars_with_none():
+    """Test SubsetField conversion to Polars with None value."""
+    field = subset_field()
+    result = field.to_polars("subset", None)
+
+    assert "subset" in result
+    assert result["subset"][0] is None
+
+
+def test_subset_field_from_polars_with_direct_enum_type():
+    """Test SubsetField reconstruction from Polars with direct Subset type."""
+    field = subset_field()
+
+    # Create a DataFrame with subset values
+    df = pl.DataFrame(
+        {"subset": pl.Series(["TRAINING", "TESTING", "VALIDATION"], dtype=pl.Categorical)}
+    )
+
+    # Test reconstruction with direct Subset type
+    value1 = field.from_polars("subset", 0, df, Subset)
+    assert value1 == Subset.TRAINING
+    assert isinstance(value1, Subset)
+
+    value2 = field.from_polars("subset", 1, df, Subset)
+    assert value2 == Subset.TESTING
+
+    value3 = field.from_polars("subset", 2, df, Subset)
+    assert value3 == Subset.VALIDATION
+
+
+def test_subset_field_roundtrip():
+    """Test SubsetField roundtrip conversion (to_polars -> from_polars)."""
+    from typing import Union
+
+    field = subset_field()
+
+    # Test with TRAINING
+    polars_data = field.to_polars("subset", Subset.TRAINING)
+    df = pl.DataFrame(polars_data)
+    reconstructed = field.from_polars("subset", 0, df, Union[Subset, None])
+    assert reconstructed == Subset.TRAINING
+
+    # Test with TESTING
+    polars_data = field.to_polars("subset", Subset.TESTING)
+    df = pl.DataFrame(polars_data)
+    reconstructed = field.from_polars("subset", 0, df, Union[Subset, None])
+    assert reconstructed == Subset.TESTING
+
+    # Test with None
+    polars_data = field.to_polars("subset", None)
+    df = pl.DataFrame(polars_data)
+    reconstructed = field.from_polars("subset", 0, df, Union[Subset, None])
+    assert reconstructed is None
+
+
+def test_subset_field_in_sample_with_union_type():
+    """Test SubsetField usage in a Sample class with union type annotation."""
+
+    class TestSample(Sample):
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
+        subset: Subset | None = subset_field()
+
+    # Test with TRAINING subset
+    sample1 = TestSample(image=np.array([[[255, 0, 0]]], dtype=np.uint8), subset=Subset.TRAINING)
+    assert sample1.subset == Subset.TRAINING
+
+    # Test with None subset
+    sample2 = TestSample(image=np.array([[[0, 255, 0]]], dtype=np.uint8), subset=None)
+    assert sample2.subset is None
+
+    # Test schema inference
+    schema = TestSample.infer_schema()
+    assert "subset" in schema.attributes
+    assert isinstance(schema.attributes["subset"].field, SubsetField)

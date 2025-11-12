@@ -1165,35 +1165,28 @@ class SubsetField(Field):
     def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
         """Reconstruct subset value from Polars data.
 
-        If target_type is an Enum, converts string back to enum value.
-        Otherwise, returns the string value directly.
-        Handles Union types (e.g., Subset | None) by extracting the actual enum type.
+        Converts categorical string back to Subset enum value, or None if missing.
+        Handles Union types (e.g., Subset | None).
         """
         value = df[name][row_index]
 
         if value is None:
-            return None
+            return None  # type: ignore
 
         # Handle Union types (e.g., Subset | None)
         origin = get_origin(target_type)
-        is_union = isinstance(target_type, types.UnionType) or origin is Union
-
-        if is_union:
-            # Extract non-None types from the union
+        if isinstance(target_type, types.UnionType) or origin is Union:
+            # Extract the Subset type from the union
             args = get_args(target_type)
-            # Find the first non-None type that is a subclass of Enum
             for arg in args:
                 if arg is not type(None) and isinstance(arg, type) and issubclass(arg, Enum):
                     return arg[value]  # type: ignore
-            # If no Enum type found, return the string value
-            return value
 
         # Handle direct Enum types
         if isinstance(target_type, type) and issubclass(target_type, Enum):
-            return target_type[value]
+            return target_type[value]  # type: ignore
 
-        # For string type or no type specified, return the value
-        return value
+        return value  # type: ignore
 
 
 def subset_field(subset_type: Optional[type] = None, semantic: Semantic = Semantic.Default) -> Any:
