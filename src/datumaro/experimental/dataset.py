@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import types
 from functools import cache
 from typing import TYPE_CHECKING, Annotated, Any, Generic, TypeGuard, Union, cast, get_args, get_origin, get_type_hints
 
@@ -85,7 +86,7 @@ class Sample:
             type_origin = get_origin(annotation)
 
             # For Union types, keep the original annotation (the Union instance)
-            if isinstance(annotation, type(Union)) or type_origin is Union:
+            if isinstance(annotation, types.UnionType) or type_origin is Union:
                 final_type = annotation
             else:
                 final_type = type_origin if type_origin is not None else annotation

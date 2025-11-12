@@ -194,23 +194,7 @@ def from_polars_data(polars_data: Any, target_type: type) -> Any:
     is_union = False
     union_args = None
 
-    if (hasattr(target_type, "__origin__") and target_type.__origin__ is Union) or isinstance(
-        target_type, types.UnionType
-    ):
-        is_union = True
-        union_args = target_type.__args__
-
-    if is_union and union_args:
-        for arg in union_args:
-            try:
-                return from_polars_data(polars_data, arg)
-            except TypeError:
-                continue
-        raise TypeError(f"No converter registered for type {target_type}")
-
-    """
-    # Convertheck for types.UnionType (Python 3.10+ syntax: A | B)
-    breakpoint()
+    # Check for types.UnionType (Python 3.10+ syntax: A | B)
     if isinstance(target_type, types.UnionType):
         is_union = True
         union_args = target_type.__args__
@@ -227,7 +211,6 @@ def from_polars_data(polars_data: Any, target_type: type) -> Any:
 
     if is_union and union_args:
         return _convert_union_types(union_args=union_args, polars_data=polars_data)
-    """
     raise TypeError(f"No converter registered for type {target_type}")
 
 
