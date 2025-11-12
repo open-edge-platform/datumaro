@@ -369,7 +369,7 @@ class VocFormatImportExportTest(TestDataFormatBase):
             ]
         )
 
-        assert np.array_equal(reference, list(VOC.VocColormap.values())) == True
+        assert np.array_equal(reference, list(VOC.VocColormap.values()))
 
     def test_can_write_and_parse_labelmap(self, test_dir: str):
         src_label_map = VOC.make_voc_label_map()

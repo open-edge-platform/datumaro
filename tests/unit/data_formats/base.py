@@ -43,7 +43,7 @@ class TestDataFormatBase:
 
         helper_tc = request.getfixturevalue("helper_tc")
         dataset = dataset_cls.import_from(fxt_dataset_dir, importer.NAME, **fxt_import_kwargs)
-        stream = True if dataset_cls == StreamDataset else False
+        stream = dataset_cls == StreamDataset
         check_is_stream(dataset, stream)
 
         compare_datasets(helper_tc, fxt_expected_dataset, dataset, require_media=True)
@@ -69,7 +69,7 @@ class TestDataFormatBase:
 
         helper_tc = request.getfixturevalue("helper_tc")
 
-        stream = True if dataset_cls == StreamDataset else False
+        stream = dataset_cls == StreamDataset
         exporter.convert(
             fxt_expected_dataset,
             save_dir=test_dir,

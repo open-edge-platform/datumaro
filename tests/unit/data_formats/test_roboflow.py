@@ -230,8 +230,7 @@ def fxt_yolo_obb_dataset():
 
 @pytest.fixture
 def fxt_createml_dataset(fxt_yolo_dataset):
-    createml_dataset = deepcopy(fxt_yolo_dataset)
-    return createml_dataset
+    return deepcopy(fxt_yolo_dataset)
 
 
 @pytest.fixture

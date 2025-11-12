@@ -56,8 +56,8 @@ from tests.utils.test_utils import TestDir, compare_datasets, compare_datasets_s
 class DatasetTest(TestCase):
     def build_default_environment(
         self,
-        importers_override: Callable[[Environment], List] = None,
-        extractors_override: Callable[[Environment], List] = None,
+        importers_override: Callable[[Environment], List] | None = None,
+        extractors_override: Callable[[Environment], List] | None = None,
     ) -> Environment:
         env = Environment(use_lazy_import=False)
         default_importers = [env.importers[DEFAULT_FORMAT]]
@@ -2178,12 +2178,11 @@ def fxt_sample_dataset_factory():
         if categories is None:
             categories = ["cat", "dog"]
 
-        dataset = Dataset.from_iterable(
+        return Dataset.from_iterable(
             items,
             infos=infos,
             categories=categories,
         )
-        return dataset
 
     return sample_dataset_factory
 

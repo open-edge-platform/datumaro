@@ -1178,7 +1178,7 @@ def test_find_conversion_path_inferred_categories():
     """Test that find_conversion_path returns inferred categories."""
 
     # Create test data for polygon to mask conversion
-    df = pl.DataFrame(
+    pl.DataFrame(
         {
             "polygons": [[[10, 20, 30, 25, 20, 40]]],  # Triangle coordinates
             "labels": [[2]],  # Label 2
@@ -1213,9 +1213,7 @@ def test_find_conversion_path_inferred_categories():
 
     # Create target schema (polygon to mask conversion)
     target_schema = Schema(
-        attributes={
-            "mask": AttributeInfo(type=np.ndarray, field=MaskField(dtype=pl.UInt8, semantic=Semantic.Default))
-        }
+        attributes={"mask": AttributeInfo(type=np.ndarray, field=MaskField(dtype=pl.UInt8, semantic=Semantic.Default))}
     )
 
     # Get conversion path and check inferred categories
@@ -1297,16 +1295,16 @@ def test_polygon_to_instance_mask_converter():
 
     # Check that each instance is properly filled
     # Triangle should be in first mask
-    assert masks[0, 15, 15] == True  # Point inside triangle
-    assert masks[0, 5, 5] == False  # Point outside triangle
+    assert masks[0, 15, 15]  # Point inside triangle
+    assert not masks[0, 5, 5]  # Point outside triangle
 
     # Rectangle should be in second mask
-    assert masks[1, 35, 35] == True  # Point inside rectangle
-    assert masks[1, 5, 5] == False  # Point outside rectangle
+    assert masks[1, 35, 35]  # Point inside rectangle
+    assert not masks[1, 5, 5]  # Point outside rectangle
 
     # Pentagon should be in third mask
-    assert masks[2, 55, 55] == True  # Point inside pentagon
-    assert masks[2, 5, 5] == False  # Point outside pentagon
+    assert masks[2, 55, 55]  # Point inside pentagon
+    assert not masks[2, 5, 5]  # Point outside pentagon
 
     # No overlap between instances
     assert not np.any(masks[0] & masks[1])  # Triangle and rectangle don't overlap
@@ -1366,12 +1364,12 @@ def test_polygon_to_instance_mask_converter_normalized():
 
     # Check that polygons were filled correctly after denormalization
     # Triangle: 0.1 * 100 = 10, 0.2 * 100 = 20, etc.
-    assert masks[0, 15, 15] == True  # Point inside the scaled triangle
-    assert masks[0, 5, 5] == False  # Background point
+    assert masks[0, 15, 15]  # Point inside the scaled triangle
+    assert not masks[0, 5, 5]  # Background point
 
     # Rectangle: 0.3 * 100 = 30, 0.4 * 100 = 40, etc.
-    assert masks[1, 35, 35] == True  # Point inside the scaled rectangle
-    assert masks[1, 5, 5] == False  # Background point
+    assert masks[1, 35, 35]  # Point inside the scaled rectangle
+    assert not masks[1, 5, 5]  # Background point
 
 
 def test_instance_mask_callable_to_instance_mask_converter():

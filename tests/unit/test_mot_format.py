@@ -301,7 +301,7 @@ DUMMY_SEQINFO_DATASET_DIR = get_test_asset_path("mot_dataset", "mot_seq_with_seq
 
 class MotImporterTest(TestCase):
     def _define_expected_dataset(self):
-        expected_dataset = Dataset.from_iterable(
+        return Dataset.from_iterable(
             [
                 DatasetItem(
                     id=1,
@@ -324,8 +324,6 @@ class MotImporterTest(TestCase):
             ],
             categories=["label_" + str(label) for label in range(10)],
         )
-
-        return expected_dataset
 
     def test_can_detect(self):
         detected_formats = Environment().detect_dataset(DUMMY_DATASET_DIR)

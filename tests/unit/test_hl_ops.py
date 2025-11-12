@@ -100,7 +100,7 @@ class HLOpsTest:
                 filter_annotations=True,
                 remove_empty=True,
             )
-            actual_anns = [item for item in actual][0].annotations
+            actual_anns = next(iter(actual)).annotations
             assert len(actual_anns) == len(allowed_types)
 
     def test_can_merge(self):

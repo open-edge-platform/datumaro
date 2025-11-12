@@ -177,7 +177,9 @@ class ColormapOperationsTest(TestCase):
 
     def test_can_remap_mask(self):
         class_count = 10
-        remap_fn = lambda c: class_count - c
+
+        def remap_fn(c):
+            return class_count - c
 
         src = np.empty((class_count, class_count), dtype=np.uint8)
         for c in range(class_count):

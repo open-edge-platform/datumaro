@@ -63,7 +63,7 @@ def fxt_image_dataset(fxt_image_dataset_expected_mean_std: Tuple[List[int], List
 
 @pytest.fixture
 def fxt_point_cloud_dataset():
-    dataset = Dataset.from_iterable(
+    return Dataset.from_iterable(
         [
             DatasetItem(
                 id=i,
@@ -73,7 +73,6 @@ def fxt_point_cloud_dataset():
         ],
         media_type=PointCloud,
     )
-    return dataset
 
 
 class ImageStatisticsTest:

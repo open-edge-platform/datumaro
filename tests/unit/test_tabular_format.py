@@ -146,9 +146,7 @@ class TabularImporterTest:
         path = osp.join(fxt_tabular_root, "adopt-a-buddy")
         dataset = Dataset.import_from(path, "tabular", target=target)
 
-        included_lables_result = [
-            False if len(cat.labels) == 0 else True for cat in dataset.categories()[AnnotationType.tabular].items
-        ]
+        included_lables_result = [len(cat.labels) != 0 for cat in dataset.categories()[AnnotationType.tabular].items]
 
         assert included_lables_result == expected_included_labels
 

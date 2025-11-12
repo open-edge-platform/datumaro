@@ -12,8 +12,7 @@ import numpy as np
 from datumaro.util.scope import scope_add, scoped
 from tests.utils.test_utils import TestDir
 from tests.utils.test_utils import run_datum as run
-
-from ...utils.video import make_sample_video
+from tests.utils.video import make_sample_video
 
 
 class VideoSplittingTest:

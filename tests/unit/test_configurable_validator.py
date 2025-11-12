@@ -485,8 +485,7 @@ def fxt_tbl_dataset():
             ],
         },
     )
-    tabular_dataset = transforms.AstypeAnnotations(tabular_dataset)
-    return tabular_dataset
+    return transforms.AstypeAnnotations(tabular_dataset)
 
 
 @pytest.fixture
@@ -507,8 +506,7 @@ def fxt_tbl_imbal_dataset():
             ],
         },
     )
-    tabular_dataset = transforms.AstypeAnnotations(tabular_dataset)
-    return tabular_dataset
+    return transforms.AstypeAnnotations(tabular_dataset)
 
 
 ANN_TASK_MAPPING = {

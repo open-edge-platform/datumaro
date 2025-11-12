@@ -855,8 +855,7 @@ def fxt_original_tabular_dataset():
         },
         media_type=TableRow,
     )
-    tabular_dataset = transforms.AstypeAnnotations(tabular_dataset)
-    return tabular_dataset
+    return transforms.AstypeAnnotations(tabular_dataset)
 
 
 @pytest.fixture
@@ -899,8 +898,7 @@ def fxt_refined_tabular_dataset():
         },
         media_type=TableRow,
     )
-    tabular_dataset = transforms.AstypeAnnotations(tabular_dataset)
-    return tabular_dataset
+    return transforms.AstypeAnnotations(tabular_dataset)
 
 
 class ValidationCorrectionTest:

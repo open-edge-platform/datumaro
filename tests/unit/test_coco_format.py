@@ -2643,7 +2643,7 @@ class CocoExporterTest:
 
         assert {"image_info_a.json", "image_info_b.json"} == set(os.listdir(osp.join(test_dir, "annotations")))
         assert osp.isfile(osp.join(test_dir, "images", "a", "2.jpg"))
-        assert osp.isfile(osp.join(test_dir, "images", "c", "3.jpg")) == False
+        assert not osp.isfile(osp.join(test_dir, "images", "c", "3.jpg"))
         compare_datasets(
             TestCase(),
             expected,

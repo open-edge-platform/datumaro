@@ -24,7 +24,7 @@ class SegmentAnythingTest(TestDataFormatBase):
 
     @pytest.fixture
     def fxt_expected_dataset(self):
-        expected_dataset = Dataset.from_iterable(
+        return Dataset.from_iterable(
             [
                 DatasetItem(
                     id="a",
@@ -96,8 +96,6 @@ class SegmentAnythingTest(TestDataFormatBase):
                 ),
             ],
         )
-
-        return expected_dataset
 
     @pytest.fixture
     def fxt_dataset_dir(self) -> str:

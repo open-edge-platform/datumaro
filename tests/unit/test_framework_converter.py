@@ -347,7 +347,7 @@ class MultiframeworkConverterTest:
         for exp_item, dm_torch_item in zip(expected_dataset, dm_torch_dataset):
             image = exp_item.media.data
             if fxt_task == "classification":
-                label = [ann.label for ann in exp_item.annotations if ann.type == TASK_ANN_TYPE[fxt_task]][0]
+                label = next(ann.label for ann in exp_item.annotations if ann.type == TASK_ANN_TYPE[fxt_task])
             elif fxt_task == "multilabel_classification":
                 label = [ann.label for ann in exp_item.annotations if ann.type == TASK_ANN_TYPE[fxt_task]]
             elif fxt_task in ["detection", "instance_segmentation"]:
@@ -812,7 +812,7 @@ class MultiframeworkConverterTest:
             "label": tf.TensorSpec(shape=(), dtype=tf.uint8),
         }
 
-        with tempfile.TemporaryDirectory() as tmp_dir:
+        with tempfile.TemporaryDirectory():
             (_, _), (x_test, y_test) = tf.keras.datasets.fashion_mnist.load_data()
             tf_dataset = tf.data.Dataset.from_tensor_slices((x_test, y_test))
 
@@ -837,4 +837,4 @@ class MultiframeworkConverterTest:
         multi_framework_dataset = FrameworkConverter(dm_dataset, subset="train", task="tabular")
 
         with pytest.raises(ValueError):
-            dm_torch_dataset = multi_framework_dataset.to_framework(framework="torch", target={"input": "text"})
+            multi_framework_dataset.to_framework(framework="torch", target={"input": "text"})

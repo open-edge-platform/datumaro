@@ -59,8 +59,7 @@ class SplitterTest(TestCase):
                         )
                     )
         categories = {AnnotationType.label: label_cat}
-        dataset = Dataset.from_iterable(iterable, categories=categories)
-        return dataset
+        return Dataset.from_iterable(iterable, categories=categories)
 
     def test_split_for_classification_multi_class_no_attr(self):
         config = {
@@ -608,8 +607,7 @@ class SplitterTest(TestCase):
             "widerface": append_bbox_widerface,
         }
 
-        func = functions.get(dataset_type, append_bbox_cvat)
-        return func
+        return functions.get(dataset_type, append_bbox_cvat)
 
     @staticmethod
     def _get_append_mask(dataset_type):
@@ -673,8 +671,7 @@ class SplitterTest(TestCase):
             "mot": append_mask_mot,
         }
 
-        func = functions.get(dataset_type, append_mask_coco)
-        return func
+        return functions.get(dataset_type, append_mask_coco)
 
     @staticmethod
     def _get_append_polygon(dataset_type):
@@ -746,8 +743,7 @@ class SplitterTest(TestCase):
             "labelme": append_polygon_labelme,
         }
 
-        func = functions.get(dataset_type, append_polygon_coco)
-        return func
+        return functions.get(dataset_type, append_polygon_coco)
 
     def test_split_for_detection(self):
         dtypes = ["coco", "voc", "yolo", "cvat", "labelme", "mot", "widerface"]

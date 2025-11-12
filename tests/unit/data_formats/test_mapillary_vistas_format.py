@@ -31,7 +31,7 @@ def fxt_dataset_instances_w_polygon():
     )
     mask_cat = MaskCategories({0: (165, 42, 42), 1: (128, 128, 128), 2: (119, 11, 32)})
 
-    expected_dataset = Dataset.from_iterable(
+    return Dataset.from_iterable(
         [
             DatasetItem(
                 id="0",
@@ -78,8 +78,6 @@ def fxt_dataset_instances_w_polygon():
         categories={AnnotationType.label: label_cat, AnnotationType.mask: mask_cat},
     )
 
-    return expected_dataset
-
 
 @pytest.fixture
 def fxt_dataset_instances_wo_polygon():
@@ -88,7 +86,7 @@ def fxt_dataset_instances_wo_polygon():
     )
     mask_cat = MaskCategories({0: (165, 42, 42), 1: (128, 128, 128), 2: (119, 11, 32)})
 
-    expected_dataset = Dataset.from_iterable(
+    return Dataset.from_iterable(
         [
             DatasetItem(
                 id="0",
@@ -124,8 +122,6 @@ def fxt_dataset_instances_wo_polygon():
         ],
         categories={AnnotationType.label: label_cat, AnnotationType.mask: mask_cat},
     )
-
-    return expected_dataset
 
 
 @pytest.fixture
@@ -139,7 +135,7 @@ def fxt_dataset_panoptic_w_polygon():
     )
     mask_cat = MaskCategories({0: (165, 42, 42), 1: (128, 128, 128), 2: (119, 11, 32)})
 
-    expected_dataset = Dataset.from_iterable(
+    return Dataset.from_iterable(
         [
             DatasetItem(
                 id="0",
@@ -246,8 +242,6 @@ def fxt_dataset_panoptic_w_polygon():
         categories={AnnotationType.label: label_cat, AnnotationType.mask: mask_cat},
     )
 
-    return expected_dataset
-
 
 @pytest.fixture
 def fxt_dataset_panoptic_wo_polygon():
@@ -260,7 +254,7 @@ def fxt_dataset_panoptic_wo_polygon():
     )
     mask_cat = MaskCategories({0: (165, 42, 42), 1: (128, 128, 128), 2: (119, 11, 32)})
 
-    expected_dataset = Dataset.from_iterable(
+    return Dataset.from_iterable(
         [
             DatasetItem(
                 id="0",
@@ -356,8 +350,6 @@ def fxt_dataset_panoptic_wo_polygon():
         ],
         categories={AnnotationType.label: label_cat, AnnotationType.mask: mask_cat},
     )
-
-    return expected_dataset
 
 
 @pytest.fixture

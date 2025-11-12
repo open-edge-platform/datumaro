@@ -140,12 +140,14 @@ class ImagenetWithSubsetDirsFormatTest(ImagenetFormatTest):
         fxt_name = request.param
         source, expected = request.getfixturevalue(fxt_name)
 
-        _to_subsets = lambda dataset: Dataset.from_extractors(
-            *[
-                deepcopy(dataset).transform("map_subsets", mapping={"default": subset})
-                for subset in ["train", "val", "test"]
-            ]
-        )
+        def _to_subsets(dataset):
+            return Dataset.from_extractors(
+                *[
+                    deepcopy(dataset).transform("map_subsets", mapping={"default": subset})
+                    for subset in ["train", "val", "test"]
+                ]
+            )
+
         return _to_subsets(source), _to_subsets(expected)
 
     @pytest.mark.parametrize(

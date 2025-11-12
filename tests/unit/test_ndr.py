@@ -37,8 +37,7 @@ class NDRTest(TestCase):
                         )
                     )
         categories = {AnnotationType.label: label_cat}
-        dataset = Dataset.from_iterable(iterable, categories)
-        return dataset
+        return Dataset.from_iterable(iterable, categories)
 
     def test_ndr_with_error(self):
         config = {"label1": 100, "label2": 100, "label3": 100}

@@ -167,7 +167,7 @@ def test_invalid_schema():
         }
     )
 
-    df = pl.DataFrame({"image": [np.zeros((100, 100, 3)).flatten()], "image_shape": [(100, 100, 3)]})
+    pl.DataFrame({"image": [np.zeros((100, 100, 3)).flatten()], "image_shape": [(100, 100, 3)]})
     config = TilingConfig(tile_width=50, tile_height=50)
 
     # Should raise error due to missing ImageInfoField
