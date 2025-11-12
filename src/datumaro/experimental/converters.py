@@ -305,11 +305,10 @@ class ImagePathToImageConverter(Converter):
             # Load image using PIL
             with Image.open(path) as img:
                 # Convert to RGB if needed
-                if img.mode != "RGB":
-                    img = img.convert("RGB")
+                rgb_img = img if img.mode == "RGB" else img.convert("RGB")
 
                 # Convert to numpy array
-                img_array = np.array(img, dtype=np.uint8)
+                img_array = np.array(rgb_img, dtype=np.uint8)
                 image_data.append(img_array.flatten())
                 image_shapes.append(list(img_array.shape))
 
@@ -318,14 +317,12 @@ class ImagePathToImageConverter(Converter):
 
         result_df = df.clone()
 
-        result_df = result_df.with_columns(
+        return result_df.with_columns(
             [
                 pl.Series(output_col, image_data, dtype=image_schema["image"]),
                 pl.Series(output_col + "_shape", image_shapes, dtype=image_schema["image_shape"]),
             ]
         )
-
-        return result_df
 
 
 @converter
@@ -366,14 +363,12 @@ class ImageToImageInfo(Converter):
         output_col = self.output_info.name
 
         # Set image info
-        result_df = df.with_columns(
+        return df.with_columns(
             pl.struct(
                 pl.col(input_col).list.get(0).alias("height"),
                 pl.col(input_col).list.get(1).alias("width"),
             ).alias(output_col)
         )
-
-        return result_df
 
 
 @converter(lazy=True)
@@ -426,24 +421,21 @@ class ImageBytesToImageConverter(Converter):
 
             with Image.open(BytesIO(image_bytes)) as img:
                 # Convert to RGB if needed
-                if img.mode != "RGB":
-                    img = img.convert("RGB")
+                rgb_img = img if img.mode == "RGB" else img.convert("RGB")
 
                 # Convert to numpy array
-                img_array = np.array(img, dtype=np.uint8)
+                img_array = np.array(rgb_img, dtype=np.uint8)
                 image_data.append(img_array.reshape(-1))
                 image_shapes.append(list(img_array.shape))
 
         # Create output DataFrame
         result_df = df.clone()
-        result_df = result_df.with_columns(
+        return result_df.with_columns(
             [
                 pl.Series(output_col, image_data),
                 pl.Series(output_col + "_shape", image_shapes),
             ]
         )
-
-        return result_df
 
 
 def list_eval_ref(
@@ -577,9 +569,7 @@ class BBoxCoordinateConverter(Converter):
         )
 
         # Clean up temporary columns
-        result_df = result_df.drop([temp_width_col, temp_height_col])
-
-        return result_df
+        return result_df.drop([temp_width_col, temp_height_col])
 
 
 @converter
@@ -684,18 +674,17 @@ class PolygonToMaskConverter(Converter):
 
         # Copy label categories and create mask categories
         mask_categories = None
-        if self.input_labels.categories is not None:
+        if self.input_labels.categories is not None and isinstance(self.input_labels.categories, LabelCategories):
             # Create mask categories based on label categories
-            if isinstance(self.input_labels.categories, LabelCategories):
-                # Create a colormap for mask categories
-                # Generate colors for all labels plus background
-                num_classes = len(self.input_labels.categories) + 1  # +1 for background
-                colormap_dict = generate_colormap(num_classes, include_background=True)
-                colormap_struct_dict = {i: RgbColor(*color) for i, color in colormap_dict.items()}
+            # Create a colormap for mask categories
+            # Generate colors for all labels plus background
+            num_classes = len(self.input_labels.categories) + 1  # +1 for background
+            colormap_dict = generate_colormap(num_classes, include_background=True)
+            colormap_struct_dict = {i: RgbColor(*color) for i, color in colormap_dict.items()}
 
-                # Create mask categories with the generated colormap
-                labels = ("background",) + self.input_labels.categories.labels
-                mask_categories = MaskCategories(colormap=colormap_struct_dict, labels=labels)
+            # Create mask categories with the generated colormap
+            labels = ("background", *self.input_labels.categories.labels)
+            mask_categories = MaskCategories(colormap=colormap_struct_dict, labels=labels)
 
         # Configure output for mask format
         self.output_mask = AttributeSpec(
@@ -902,7 +891,7 @@ class PolygonToInstanceMaskConverter(Converter):
             return stacked_masks.reshape(-1), list(stacked_masks.shape)
 
         # Apply conversion using map_batches
-        def apply_conversion_batch(batch_df: pl.DataFrame, **kwargs) -> pl.DataFrame:
+        def apply_conversion_batch(batch_df: pl.DataFrame, **kwargs) -> pl.DataFrame:  # noqa: ARG001
             """Apply polygon-to-instance-mask conversion for a batch."""
             batch_polygons = batch_df.struct["polygons"]
             batch_img_infos = batch_df.struct["img_info"]
@@ -1097,14 +1086,12 @@ class ImageCallableToImageConverter(Converter):
 
         # Create output DataFrame
         result_df = df.clone()
-        result_df = result_df.with_columns(
+        return result_df.with_columns(
             [
                 pl.Series(output_col, image_data),
                 pl.Series(output_col + "_shape", image_shapes),
             ]
         )
-
-        return result_df
 
 
 @converter(lazy=True)
@@ -1318,7 +1305,7 @@ class RotatedBBoxToPolygonConverter(Converter):
             sin_theta = r.sin()
             return pl.concat_arr(cos_theta * px - sin_theta * py + cx, sin_theta * px + cos_theta * py + cy)
 
-        df = df.with_columns(
+        return df.with_columns(
             pl.col(input_column_name)
             .list.eval(
                 pl.concat_list(
@@ -1330,5 +1317,3 @@ class RotatedBBoxToPolygonConverter(Converter):
             )
             .alias(output_column_name)
         )
-
-        return df

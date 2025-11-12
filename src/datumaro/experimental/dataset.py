@@ -4,23 +4,21 @@
 
 from __future__ import annotations
 
-import sys
-import types
-from collections.abc import Callable
 from functools import cache
-from typing import TYPE_CHECKING, Annotated, Any, Generic, TypeGuard, Union, cast, get_args, get_origin
+from typing import TYPE_CHECKING, Annotated, Any, Generic, TypeGuard, Union, cast, get_args, get_origin, get_type_hints
 
 import polars as pl
 from typing_extensions import TypeVar, dataclass_transform
 
+from datumaro.experimental.converter_registry import ConverterTransform, find_conversion_path
 from datumaro.experimental.fields import Subset, SubsetField
-
-from .converter_registry import ConverterTransform, find_conversion_path
-from .schema import AttributeInfo, Field, Schema
-from .transform import IdentityTransform, Transform
+from datumaro.experimental.schema import AttributeInfo, Field, Schema
+from datumaro.experimental.transform import IdentityTransform, Transform
 
 if TYPE_CHECKING:
-    from .categories import Categories
+    from collections.abc import Callable
+
+    from datumaro.experimental.categories import Categories
 
 
 @dataclass_transform()
@@ -61,21 +59,20 @@ class Sample:
         """
 
         attributes: dict[str, AttributeInfo] = {}
-        for name, annotation in cls.__annotations__.items():
-            # Resolve string annotations to actual type objects
-            # This handles cases where `from __future__ import annotations` is used
-            if isinstance(annotation, str):
-                try:
-                    # Get the module where the class is defined to resolve annotations
-                    module = sys.modules[cls.__module__]
-                    annotation = eval(annotation, module.__dict__)
-                except Exception as e:
-                    raise TypeError(f"Failed to resolve type annotation '{annotation}' for attribute '{name}': {e}")
 
+        try:
+            # Pass include_extras=True to preserve Annotated metadata
+            resolved_annotations = get_type_hints(cls, include_extras=True)
+        except Exception as e:
+            raise TypeError(f"Failed to resolve type annotations for class '{cls.__name__}': {e}")
+
+        # Iterate over the resolved type annotations
+        for name, annotation in resolved_annotations.items():
             origin = get_origin(annotation)
+
             if origin is Annotated:
                 # Handle Annotated[Type, Field] approach
-                annotation, *annotations = get_args(annotation)
+                annotation, *annotations = get_args(annotation)  # noqa: PLW2901
                 field_annotation = annotations[0] if annotations else None
             else:
                 # Handle Type = field(...) approach
@@ -88,12 +85,13 @@ class Sample:
             type_origin = get_origin(annotation)
 
             # For Union types, keep the original annotation (the Union instance)
-            # instead of the origin (which is just the UnionType class)
-            if (sys.version_info >= (3, 10) and isinstance(annotation, types.UnionType)) or type_origin is Union:
+            if isinstance(annotation, type(Union)) or type_origin is Union:
                 final_type = annotation
             else:
                 final_type = type_origin if type_origin is not None else annotation
+
             attributes[name] = AttributeInfo(type=final_type, annotation=field_annotation)
+
         return Schema(attributes=attributes)
 
     def evaluate_lazy_field(self, name: str) -> Any:
@@ -101,17 +99,15 @@ class Sample:
 
         # Now extract the value from the converted dataframe
         attr_info = self._transforms.schema.attributes[name]
-        value = attr_info.annotation.from_polars(name, 0, row_df, attr_info.type)
-
-        return value
+        return attr_info.annotation.from_polars(name, 0, row_df, attr_info.type)
 
 
 class LazyDescriptor:
-    def __init__(self, attr_name, transforms: Transform):
+    def __init__(self, attr_name: str, transforms: Transform) -> None:
         self._attr_name = attr_name
         self._transforms = transforms
 
-    def __get__(self, instance, _):
+    def __get__(self, instance: Any, _: Any) -> Any:
         """
         Create a lazy property that applies converters on demand.
 
@@ -222,7 +218,7 @@ class Dataset(Generic[DType]):
             schema.update(attr_info.annotation.to_polars_schema(key))
         return pl.Schema(schema)
 
-    def append(self, sample: DType):
+    def append(self, sample: DType) -> None:
         """
         Add a new sample to the dataset.
 
@@ -309,10 +305,9 @@ class Dataset(Generic[DType]):
             # dtype = type(dtype.__name__, (dtype,), attrs)
             # dtype.__annotations__ = self._dtype.__annotations__
 
-        sample = dtype(
+        return dtype(
             **direct_attributes,
         )
-        return sample
 
     def __len__(self) -> int:
         """
@@ -408,7 +403,7 @@ class Dataset(Generic[DType]):
     def convert_to_schema(
         self,
         target_dtype_or_schema: Schema | type[DTargetType],
-        target_categories: dict[str, Categories] = None,
+        target_categories: dict[str, Categories] | None = None,
     ) -> Dataset[DTargetType]:
         """
         Convert this dataset to a new schema using registered converters.

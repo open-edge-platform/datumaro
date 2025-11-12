@@ -85,10 +85,10 @@ class Field:
         """
         return target_type(df[name][row_index])
 
-    def __set_name__(self, _, name):
+    def __set_name__(self, _: Any, name: str):
         object.__setattr__(self, "_name", name)
 
-    def __get__(self, instance, _):
+    def __get__(self, instance: Any, _: Any):
         if instance is None:
             return self
 

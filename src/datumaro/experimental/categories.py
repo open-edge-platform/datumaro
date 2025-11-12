@@ -12,11 +12,13 @@ instead of attrs, taking inspiration from the original Categories implementation
 from __future__ import annotations
 
 from collections import defaultdict
-from collections.abc import Iterator
 from dataclasses import dataclass, field
 from enum import IntEnum
 from functools import cache
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 class LabelSemantic(IntEnum):
@@ -183,6 +185,21 @@ class HierarchicalLabelCategories(Categories):
             raise TypeError("label_groups must be a tuple of LabelGroup")
 
         # Validate no duplicate names
+        all_label_names = self._get_all_label_names()
+
+        # Validate that all parents exist
+        for item in self.items:
+            if item.parent and item.parent not in all_label_names:
+                raise ValueError(f"Parent '{item.parent}' not found for label '{item.name}'")
+
+        # Validate that all labels in groups exist
+        for group in self.label_groups:
+            for label_name in group.labels:
+                if label_name not in all_label_names:
+                    raise ValueError(f"Label '{label_name}' in group '{group.name}' not found in items")
+
+    def _get_all_label_names(self) -> set[str]:
+        """Get all label names and check for duplicates."""
         seen_names = set()
         for item in self.items:
             if item.name in seen_names:
@@ -195,17 +212,7 @@ class HierarchicalLabelCategories(Categories):
                 name = item.label_semantics["name"]
                 if name not in seen_names:
                     seen_names.add(name)
-
-        # Validate that all parents exist
-        for item in self.items:
-            if item.parent and item.parent not in seen_names:
-                raise ValueError(f"Parent '{item.parent}' not found for label '{item.name}'")
-
-        # Validate that all labels in groups exist
-        for group in self.label_groups:
-            for label_name in group.labels:
-                if label_name not in seen_names:
-                    raise ValueError(f"Label '{label_name}' in group '{group.name}' not found in items")
+        return seen_names
 
     @property
     @cache
@@ -340,6 +347,10 @@ class Colormap:
         """Get the inverse colormap (color -> index mapping)."""
         return getattr(self, "_inverse_colormap")
 
+    def __hash__(self):
+        """Compute a hash based on the colormap data."""
+        return hash(frozenset(self.data.items()))
+
     def __getitem__(self, index: int) -> RgbColor:
         """Get color by index."""
         return self.data[index]
@@ -356,11 +367,11 @@ class Colormap:
         """Iterate over colormap items."""
         return iter(self.data.items())
 
-    def get(self, index: int, default=None):
+    def get(self, index: int, default: RgbColor | None = None) -> RgbColor | None:
         """Get color by index with default."""
         return self.data.get(index, default)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Compare with another Colormap or dictionary."""
         if isinstance(other, Colormap):
             return self.data == other.data

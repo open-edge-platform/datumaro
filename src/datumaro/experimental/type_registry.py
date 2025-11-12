@@ -9,7 +9,7 @@ different tensor libraries (PyTorch, NumPy, JAX, TensorFlow, etc.) and Polars
 DataFrames. New types can be registered at runtime without modifying core code.
 """
 
-import sys
+import logging
 import types
 from collections.abc import Callable
 from typing import Any, Union
@@ -18,6 +18,24 @@ import numpy as np
 import polars as pl
 
 from datumaro.components.annotation import Points
+
+logger = logging.getLogger(__name__)
+
+
+POLAR_TO_NUMPY_DTYPE_MAPPING = {
+    pl.Float32: np.dtype(np.float32),
+    pl.Float64: np.dtype(np.float64),
+    pl.Int8: np.dtype(np.int8),
+    pl.Int16: np.dtype(np.int16),
+    pl.Int32: np.dtype(np.int32),
+    pl.Int64: np.dtype(np.int64),
+    pl.UInt8: np.dtype(np.uint8),
+    pl.UInt16: np.dtype(np.uint16),
+    pl.UInt32: np.dtype(np.uint32),
+    pl.UInt64: np.dtype(np.uint64),
+    pl.Boolean: np.dtype(np.bool_),
+    pl.Binary: np.dtype(np.bytes_),
+}
 
 
 def polars_to_numpy_dtype(polars_dtype: pl.DataType) -> np.dtype[Any]:
@@ -37,32 +55,9 @@ def polars_to_numpy_dtype(polars_dtype: pl.DataType) -> np.dtype[Any]:
         >>> numpy_dtype == np.float32
         True
     """
-    # Basic numeric types
-    if polars_dtype == pl.Float32:
-        return np.dtype(np.float32)
-    if polars_dtype == pl.Float64:
-        return np.dtype(np.float64)
-    if polars_dtype == pl.Int8:
-        return np.dtype(np.int8)
-    if polars_dtype == pl.Int16:
-        return np.dtype(np.int16)
-    if polars_dtype == pl.Int32:
-        return np.dtype(np.int32)
-    if polars_dtype == pl.Int64:
-        return np.dtype(np.int64)
-    if polars_dtype == pl.UInt8:
-        return np.dtype(np.uint8)
-    if polars_dtype == pl.UInt16:
-        return np.dtype(np.uint16)
-    if polars_dtype == pl.UInt32:
-        return np.dtype(np.uint32)
-    if polars_dtype == pl.UInt64:
-        return np.dtype(np.uint64)
-    if polars_dtype == pl.Boolean:
-        return np.dtype(np.bool_)
-    if polars_dtype == pl.Binary:
-        return np.dtype(np.bytes_)
-    raise TypeError(f"No NumPy dtype mapping for Polars dtype: {polars_dtype}")
+    if polars_dtype in POLAR_TO_NUMPY_DTYPE_MAPPING:
+        return POLAR_TO_NUMPY_DTYPE_MAPPING[polars_dtype]
+    raise TypeError(f"No NumPy dtype mapping exists for Polars dtype: {polars_dtype}")
 
 
 def points_to_numpy(x: Points) -> np.ndarray:
@@ -200,7 +195,7 @@ def from_polars_data(polars_data: Any, target_type: type) -> Any:
     union_args = None
 
     # Check for types.UnionType (Python 3.10+ syntax: A | B)
-    if sys.version_info >= (3, 10) and isinstance(target_type, types.UnionType):
+    if isinstance(target_type, types.UnionType):
         is_union = True
         union_args = target_type.__args__
 
@@ -211,26 +206,30 @@ def from_polars_data(polars_data: Any, target_type: type) -> Any:
         if get_origin(target_type) is Union:
             is_union = True
             union_args = get_args(target_type)
-    except Exception:
-        pass
+    except Exception as e:
+        logger.error(f"Error handling Union type: {e}")
 
     if is_union and union_args:
-        if types.NoneType in union_args:
-            # Handle optional types in union (e.g. A | None) when Polars data is None
-            if polars_data is None:
-                return None
-
-            union_args = tuple(arg for arg in union_args if arg is not types.NoneType)
-
-        # For non-optional Union types, try each type in the union until one succeeds
-        for union_type in union_args:
-            if union_type in _from_polars_converters:
-                try:
-                    return _from_polars_converters[union_type](polars_data)
-                except KeyError:
-                    # If conversion fails, try the next type in the union
-                    continue
+        return _convert_union_types(union_args=union_args, polars_data=polars_data)
     raise TypeError(f"No converter registered for type {target_type}")
+
+
+def _convert_union_types(union_args: tuple[type], polars_data: Any) -> Any:
+    if types.NoneType in union_args:
+        # Handle optional types in union (e.g. A | None) when Polars data is None
+        if polars_data is None:
+            return None
+
+        union_args = tuple(arg for arg in union_args if arg is not types.NoneType)
+
+    # For non-optional Union types, try each type in the union until one succeeds
+    for union_type in union_args:
+        if union_type in _from_polars_converters:
+            try:
+                return _from_polars_converters[union_type](polars_data)
+            except KeyError:
+                # If conversion fails, try the next type in the union
+                continue
 
 
 # Register PyTorch converters if available

@@ -209,8 +209,9 @@ def _image_callable_impl(bytes_source: Any, is_callable: bool = False):
         raise TypeError(f"Expected bytes data, got {type(bytes_data)}")
     # Convert bytes to image array using PIL
     with PILImage.open(io.BytesIO(bytes_data)) as pil_image:
-        processed_image = pil_image if pil_image.mode == "RGB" else pil_image.convert("RGB")
-        return np.array(processed_image, dtype=np.uint8)
+        if pil_image.mode != "RGB":
+            pil_image = pil_image.convert("RGB")
+        return np.array(pil_image, dtype=np.uint8)
 
 
 class ForwardImageMediaConverter(ForwardMediaConverter):
@@ -397,7 +398,7 @@ class ForwardBboxAnnotationConverter(ForwardAnnotationConverter):
             attributes[self.name_prefix + "labels"] = self.bbox_labels_attribute
         return attributes
 
-    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:  # noqa: ARG002
+    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:
         bboxes: list[list[float]] = []
         labels: list[int | None] = []
 
@@ -480,7 +481,7 @@ class ForwardRotatedBboxAnnotationConverter(ForwardAnnotationConverter):
             attributes[self.name_prefix + "labels"] = self.rotated_bbox_labels_attribute
         return attributes
 
-    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:  # noqa: ARG002
+    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:
         rotated_bboxes: list[list[float]] = []
         labels: list[int | None] = []
 
@@ -563,7 +564,7 @@ class ForwardPolygonAnnotationConverter(ForwardAnnotationConverter):
             attributes[self.name_prefix + "labels"] = self.polygon_labels_attribute
         return attributes
 
-    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:  # noqa: ARG002
+    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:
         polygons: list[list[float]] = []
         labels: list[int | None] = []
 
@@ -636,7 +637,7 @@ class ForwardLabelAnnotationConverter(ForwardAnnotationConverter):
     def get_schema_attributes(self) -> dict[str, AttributeInfo]:
         return {self.name_prefix + "label": self.label_attribute}
 
-    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:  # noqa: ARG002
+    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:
         labels = [ann for ann in annotations if isinstance(ann, Label)]
         result = {}
         if len(labels) > 0:
@@ -708,7 +709,7 @@ class ForwardKeypointAnnotationConverter(ForwardAnnotationConverter):
             attributes[self.name_prefix + "labels"] = self.keypoints_labels_attribute
         return attributes
 
-    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:  # noqa: ARG002
+    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:
         keypoints = [ann for ann in annotations if isinstance(ann, Points)]
         # KeypointsField expects individual Points objects, not arrays
         # Only supports single keypoint case

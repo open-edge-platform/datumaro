@@ -16,10 +16,9 @@ import heapq
 import itertools
 from abc import ABC, abstractmethod
 from collections import defaultdict
-from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from functools import cache
-from typing import Any, NamedTuple, TypeVar, cast, get_type_hints, overload
+from typing import TYPE_CHECKING, Any, NamedTuple, TypeVar, cast, get_type_hints, overload
 
 import polars as pl
 from typing_extensions import dataclass_transform
@@ -27,6 +26,9 @@ from typing_extensions import dataclass_transform
 from .categories import Categories
 from .schema import AttributeSpec, Field, Schema, Semantic
 from .transform import Transform
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Sequence
 
 TField = TypeVar("TField", bound=Field)
 
@@ -169,7 +171,7 @@ class Converter(ABC):
         # Get the input attribute names from class type hints
         from_types = self.get_from_types()
 
-        for attr_name in from_types.keys():
+        for attr_name in from_types:
             attr_spec = cast("AttributeSpec[Field]", getattr(self, attr_name))
             input_attr_specs.append(attr_spec)
 
@@ -187,7 +189,7 @@ class Converter(ABC):
         # Get the output attribute names from class type hints
         to_types = self.get_to_types()
 
-        for attr_name in to_types.keys():
+        for attr_name in to_types:
             attr_spec = cast("AttributeSpec[Field]", getattr(self, attr_name))
             output_attr_specs.append(attr_spec)
 
@@ -411,7 +413,7 @@ class _SchemaState:
         if set(self.field_to_attr_spec.keys()) != set(other.field_to_attr_spec.keys()):
             return False
 
-        for field_type in self.field_to_attr_spec.keys():
+        for field_type in self.field_to_attr_spec:
             self_attr_spec = self.field_to_attr_spec[field_type]
             other_attr_spec = other.field_to_attr_spec[field_type]
 
@@ -504,21 +506,14 @@ def _get_applicable_converters(
         # Check if all required input types are available
         from_types = converter_class.get_from_types()
 
-        # Collect available input AttributeSpec instances
-        converter_kwargs = {}
-        all_inputs_available = True
-        for attr_name, field_type in from_types.items():
-            if field_type not in available_field_types:
-                all_inputs_available = False
-                break
-
-            # Add the input attribute to kwargs for the converter constructor
-            attr_spec = state.field_to_attr_spec[field_type]
-            converter_kwargs[attr_name] = attr_spec
-
         # Check if we have the required input types
-        if not all_inputs_available:
+        if not available_field_types.issuperset(from_types.values()):
             continue
+
+        # Collect available input AttributeSpec instances
+        converter_kwargs = {
+            attr_name: state.field_to_attr_spec[field_type] for attr_name, field_type in from_types.items()
+        }
 
         # Collect desired output AttributeSpec instances
         to_types = converter_class.get_to_types()
@@ -617,7 +612,7 @@ def _create_initial_renaming_converter(
     updated_field_to_attr_spec = dict(start_state.field_to_attr_spec)
 
     # Used to check for conflicts when renaming
-    used_names = set(updated_field_to_attr_spec[field_type].name for field_type in updated_field_to_attr_spec)
+    used_names = {updated_field_to_attr_spec[field_type].name for field_type in updated_field_to_attr_spec}
 
     for field_type, start_attr_spec in start_state.field_to_attr_spec.items():
         if field_type in target_state.field_to_attr_spec:
@@ -643,9 +638,7 @@ def _create_initial_renaming_converter(
     return None, start_state
 
 
-def _can_lazy_converter_handle_conversion(
-    from_field_type: type[Field], to_field_type: type[Field], semantic: Semantic
-) -> bool:
+def _can_lazy_converter_handle_conversion(from_field_type: type[Field], to_field_type: type[Field]) -> bool:
     """
     Check if any lazy converter can handle the conversion from one field type to another.
 
@@ -673,7 +666,8 @@ def _can_lazy_converter_handle_conversion(
 
 
 def _create_conversion_error_message(
-    effective_start_state: _SchemaState, target_state: _SchemaState, semantic: Semantic
+    effective_start_state: _SchemaState,
+    target_state: _SchemaState,
 ) -> str:
     """
     Create a detailed error message when no conversion path is found.
@@ -701,24 +695,24 @@ def _create_conversion_error_message(
     required_msg = f"Required target fields: {list(required_target_fields.values())}"
 
     # Check if fields exist by name but need type/dtype conversion
-    source_field_names = set(attr_spec.name for attr_spec in effective_start_state.field_to_attr_spec.values())
+    source_field_names = {attr_spec.name for attr_spec in effective_start_state.field_to_attr_spec.values()}
 
     type_conversion_issues = []
     truly_missing_fields = []
 
-    for field_type, target_attr_spec in target_state.field_to_attr_spec.items():
+    for _, target_attr_spec in target_state.field_to_attr_spec.items():
         if target_attr_spec.name in source_field_names:
             # Find the source field with same name
-            for src_field_type, src_attr_spec in effective_start_state.field_to_attr_spec.items():
+            for _, src_attr_spec in effective_start_state.field_to_attr_spec.items():
                 if src_attr_spec.name == target_attr_spec.name:
-                    if src_attr_spec.field != target_attr_spec.field:
+                    if src_attr_spec.field != target_attr_spec.field and not _can_lazy_converter_handle_conversion(
+                        type(src_attr_spec.field),
+                        type(target_attr_spec.field),
+                    ):
                         # Check if a lazy converter can handle this field property conversion
-                        if not _can_lazy_converter_handle_conversion(
-                            type(src_attr_spec.field), type(target_attr_spec.field), semantic
-                        ):
-                            type_conversion_issues.append(
-                                f"'{target_attr_spec.name}': {src_attr_spec.field} → {target_attr_spec.field}"
-                            )
+                        type_conversion_issues.append(
+                            f"'{target_attr_spec.name}': {src_attr_spec.field} → {target_attr_spec.field}"
+                        )
                     break
         else:
             truly_missing_fields.append(target_attr_spec.name)
@@ -808,7 +802,7 @@ def _find_conversion_path_for_semantic(
             if new_state in closed_set:
                 continue
 
-            new_path = current_node.path + [converter]
+            new_path = [*current_node.path, converter]
             new_g_cost = current_node.g_cost + 1  # Each converter has cost 1
             new_h_cost = _heuristic_cost(new_state, target_state)
 
@@ -817,7 +811,7 @@ def _find_conversion_path_for_semantic(
             heapq.heappush(open_set, new_node)
 
     # No path found - create a more informative error message
-    error_msg = _create_conversion_error_message(effective_start_state, target_state, semantic)
+    error_msg = _create_conversion_error_message(effective_start_state, target_state)
     raise ConversionError(error_msg)
 
 
@@ -878,6 +872,18 @@ def find_conversion_path(from_schema: Schema, to_schema: Schema) -> tuple[Conver
     return conversion_paths, inferred_categories
 
 
+def _is_converter_lazy(
+    converter: Converter,
+    lazy_fields: dict[str, bool],
+    input_specs: list[AttributeSpec[Field]],
+    output_specs: list[AttributeSpec[Field]],
+) -> None:
+    if converter.lazy or any(attr_spec.name in lazy_fields for attr_spec in input_specs):
+        # Mark all output fields as lazy
+        for attr_spec in output_specs:
+            lazy_fields[attr_spec.name] = True
+
+
 def _separate_batch_and_lazy_converters(
     conversion_path: list[Converter],
 ) -> ConversionPaths:
@@ -906,33 +912,17 @@ def _separate_batch_and_lazy_converters(
 
     required_inputs_by_output: dict[str, set[str]] = defaultdict(set)
 
-    for i, converter in enumerate(conversion_path):
-        lazy = False
+    for converter in conversion_path:
         input_specs = converter.get_input_attr_specs()
-
-        if converter.lazy:
-            # Mark all intrinsically lazy converters as lazy
-            lazy = True
-        else:
-            # Check whether the converter depends on a lazy converter
-            for attr_spec in input_specs:
-                if attr_spec.name in lazy_fields:
-                    lazy = True
-                    break
-
         output_specs = converter.get_output_attr_specs()
+        _is_converter_lazy(
+            converter=converter,
+            lazy_fields=lazy_fields,
+            input_specs=input_specs,
+            output_specs=output_specs,
+        )
 
-        if lazy:
-            # Mark all output fields as lazy
-            for attr_spec in output_specs:
-                lazy_fields[attr_spec.name] = True
-
-        required_inputs = [
-            required_inputs_by_output[attr_spec.name]
-            if attr_spec.name in required_inputs_by_output
-            else {attr_spec.name}
-            for attr_spec in input_specs
-        ]
+        required_inputs = [required_inputs_by_output.get(attr_spec.name, {attr_spec.name}) for attr_spec in input_specs]
         flattened_required_inputs = set(itertools.chain(*required_inputs))
         for attr_spec in output_specs:
             required_inputs_by_output[attr_spec.name] = flattened_required_inputs
@@ -943,7 +933,7 @@ def _separate_batch_and_lazy_converters(
     # Iterate through converters in reverse to propagate output dependencies
     dependents_by_output: dict[str, set[str]] = defaultdict(set)
 
-    for i, converter in reversed(list(enumerate(conversion_path))):
+    for converter in reversed(conversion_path):
         # This is a lazy converter - track its outputs
         dependents = set()
 
@@ -1012,20 +1002,7 @@ class ConverterTransform(Transform):
             if converters is not None:
                 for converter in converters:
                     if id(converter) not in self._applied_converters:
-                        # Only apply the converter when all of its required input columns are present.
-                        # This prevents race conditions when converters are evaluated lazily in
-                        # multi-worker dataloaders, where some columns may not be materialized yet.
-                        can_apply = True
-                        for attr_spec in converter.get_input_attr_specs():
-                            required_cols = attr_spec.field.to_polars_schema(attr_spec.name).keys()
-                            for col in required_cols:
-                                if col not in self._df.columns:
-                                    can_apply = False
-                                    break
-                            if not can_apply:
-                                break
-
-                        if not can_apply:
+                        if not self._can_apply_converter(converter):
                             # Defer this converter; it will be attempted again on future apply() calls
                             # once the necessary input columns have been materialized.
                             continue
@@ -1034,6 +1011,19 @@ class ConverterTransform(Transform):
                         self._applied_converters.add(id(converter))
 
         return self._df
+
+    def _can_apply_converter(self, converter: Converter) -> bool:
+        """
+        Only apply the converter when all of its required input columns are present.
+        This prevents race conditions when converters are evaluated lazily in
+        multi-worker dataloaders, where some columns may not be materialized yet.
+        """
+        for attr_spec in converter.get_input_attr_specs():
+            required_cols = attr_spec.field.to_polars_schema(attr_spec.name).keys()
+            for col in required_cols:
+                if col not in self._df.columns:
+                    return False
+        return True
 
     def get_lazy_attributes(self) -> set[str]:
         return self._lazy_outputs

@@ -18,9 +18,9 @@ from typing import NamedTuple
 
 import polars as pl
 
-from ..fields import ImageInfoField, TileField, TileInfo
-from ..schema import AttributeInfo, AttributeSpec, Field, Schema, Semantic
-from ..transform import Transform
+from datumaro.experimental.fields import ImageInfoField, TileField, TileInfo
+from datumaro.experimental.schema import AttributeInfo, AttributeSpec, Field, Schema, Semantic
+from datumaro.experimental.transform import Transform
 
 
 @dataclass
@@ -418,6 +418,17 @@ def _create_tiling_plan(schema: Schema, config: TilingConfig, threshold_drop_ann
     )
 
 
+def _get_fields_set(fields: set[str], plan: TilingPlan) -> set[str]:
+    """Get all fields including all the other fields in the same groups"""
+    fields_set = set(fields)
+
+    for field in fields:
+        group_id = plan.tilers_filter_group_id.get(field, None)
+        if group_id is not None:
+            fields_set.update(plan.tilers_by_group_id[group_id])
+    return fields_set
+
+
 def _apply_tiling(
     input_df: pl.DataFrame,
     output_df: pl.DataFrame | None,
@@ -461,13 +472,7 @@ def _apply_tiling(
         )
         ```
     """
-    fields_set = set(fields)
-
-    # Include all the other fields in the same groups
-    for field in fields:
-        group_id = plan.tilers_filter_group_id.get(field, None)
-        if group_id is not None:
-            fields_set.update(plan.tilers_by_group_id[group_id])
+    fields_set = _get_fields_set(fields, plan)
 
     if output_df is None:
         output_df = _calculate_tiles(input_df, plan.config, plan.image_info_spec, plan.tile_info_spec, slice_offset)
@@ -634,7 +639,9 @@ class TilingTransform(Transform):
         return len(self._df)
 
 
-def create_tiling_transform(config: TilingConfig, threshold_drop_ann: float = 0.8):
+def create_tiling_transform(
+    config: TilingConfig, threshold_drop_ann: float = 0.8
+) -> Callable[[Transform], TilingTransform]:
     """Create a transform factory for tiling operations.
 
     This is the main entry point for creating a tiling transform. It returns
@@ -661,7 +668,7 @@ def create_tiling_transform(config: TilingConfig, threshold_drop_ann: float = 0.
         ```
     """
 
-    def factory(parent: Transform):
+    def factory(parent: Transform) -> TilingTransform:
         plan = _create_tiling_plan(parent.schema, config, threshold_drop_ann)
         return TilingTransform(parent, plan)
 

@@ -7,14 +7,14 @@ registration and configuration management.
 
 import copy
 from abc import ABC, abstractmethod
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from typing import Any, NamedTuple
 
 import polars as pl
 
-from ..schema import AttributeSpec, Field, Schema
-from ..transform import Transform
+from datumaro.experimental.schema import AttributeSpec, Field, Schema
+from datumaro.experimental.transform import Transform
 
 
 class Filter(ABC):
@@ -303,7 +303,7 @@ class FilteringTransform(Transform):
         return self._length
 
 
-def create_filtering_transform():
+def create_filtering_transform() -> Callable[[Transform], FilteringTransform]:
     """Create a transform factory for filtering operations.
 
     This is the main entry point for creating a filtering transform. It returns

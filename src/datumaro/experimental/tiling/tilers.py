@@ -14,8 +14,8 @@ import polars as pl
 import shapely.geometry as sg
 import shapely.ops as so
 
-from ..converter_registry import AttributeSpec
-from ..fields import (
+from datumaro.experimental.converter_registry import AttributeSpec
+from datumaro.experimental.fields import (
     BBoxField,
     ImageField,
     ImageInfoField,
@@ -25,6 +25,7 @@ from ..fields import (
     PolygonField,
     SubsetField,
 )
+
 from .tiler_registry import Tiler, TilerRegistry
 
 
@@ -383,7 +384,7 @@ class PolygonTiler(Tiler):
                 intersection = polygon.intersection(tile_poly)
 
                 # NOTE: intersection may return a GeometryCollection or MultiPolygon
-                if isinstance(intersection, (sg.GeometryCollection, sg.MultiPolygon)):
+                if isinstance(intersection, sg.GeometryCollection | sg.MultiPolygon):
                     shapes = [(geom, geom.area) for geom in list(intersection.geoms) if geom.is_valid]
                     if not shapes:
                         tiled_polygons.append(None)  # Placeholder for dropped polygon
