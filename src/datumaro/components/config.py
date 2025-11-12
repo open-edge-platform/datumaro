@@ -170,7 +170,7 @@ class Config:
 
     def remove(self, key):
         if not self._mutable:
-            raise ImmutableObjectError()
+            raise ImmutableObjectError
 
         self._config.pop(key, None)
 
@@ -191,7 +191,7 @@ class Config:
 
     def set(self, key, value):
         if not self._mutable:
-            raise ImmutableObjectError()
+            raise ImmutableObjectError
 
         if self._schema is not None:
             if key not in self._schema:

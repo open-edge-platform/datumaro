@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: MIT
 
+import functools
+import operator
 from typing import List, Optional, Union
 
 import numpy as np
@@ -161,7 +163,7 @@ class LabelMatcher(AnnotationMatcher):
         return a_label == b_label
 
     def match_annotations(self, sources):
-        return [sum(sources, [])]
+        return [functools.reduce(operator.iadd, sources, [])]
 
 
 @attrs(kw_only=True)

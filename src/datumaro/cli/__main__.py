@@ -8,7 +8,8 @@ import os.path as osp
 import sys
 import warnings
 
-from ..version import __version__
+from datumaro.version import __version__
+
 from . import contexts, helpers
 from .commands import get_non_project_commands
 from .util import add_subparser, make_subcommands_help

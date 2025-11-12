@@ -212,9 +212,7 @@ try:
             return output_dict
 
         def create(self) -> "tf.data.Dataset":
-            tf_dataset = tf.data.Dataset.range(len(self.dataset)).map(self._process_item)
-            tf_dataset = tf_dataset
-            return tf_dataset
+            return tf.data.Dataset.range(len(self.dataset)).map(self._process_item)
 
         def repeat(self, count=None) -> "tf.data.Dataset":
             return self.create().repeat(count)

@@ -44,7 +44,7 @@ class _VocImporter(Importer):
         # find root path for the dataset and use it for all tasks
         root_path = None
         for extractor_type, task_dir in cls._TASKS.values():
-            if osp.isfile(path) and not osp.basename(osp.dirname(path)) == task_dir:
+            if osp.isfile(path) and osp.basename(osp.dirname(path)) != task_dir:
                 continue
 
             task_subsets = cls._find_sources_recursive(

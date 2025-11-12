@@ -74,7 +74,10 @@ class VocBase(SubsetBase):
         self._categories = self._load_categories(dataset_dir)
 
         if self._task in [VocTask.voc, VocTask.voc_segmentation, VocTask.voc_instance_segmentation]:
-            label_color = lambda label_idx: self._categories[AnnotationType.mask].colormap.get(label_idx, None)
+
+            def label_color(label_idx):
+                return self._categories[AnnotationType.mask].colormap.get(label_idx, None)
+
             log.debug(
                 "Loaded labels: %s",
                 ", ".join(

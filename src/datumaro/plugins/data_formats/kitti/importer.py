@@ -43,10 +43,9 @@ class KittiImporter(Importer):
         sources = []
         for ann_files in subsets.values():
             for ann_type, ann_file in ann_files.items():
-                if ann_type in conflicting_types:
-                    if ann_type is not selected_ann_type:
-                        log.warning("Not implemented: conflicting source '%s' is skipped." % ann_file)
-                        continue
+                if ann_type in conflicting_types and ann_type is not selected_ann_type:
+                    log.warning("Not implemented: conflicting source '%s' is skipped." % ann_file)
+                    continue
                 log.info("Found a dataset at '%s'" % ann_file)
 
                 sources.append(

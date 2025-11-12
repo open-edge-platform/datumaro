@@ -66,9 +66,13 @@ def unpaint_mask(painted_mask, inverse_colormap=None, default_id=None):
         inverse_colormap = _default_unpaint_colormap
 
     if callable(inverse_colormap):
-        map_fn = lambda a: inverse_colormap((a >> 16) & 255, (a >> 8) & 255, a & 255)
+
+        def map_fn(a):
+            return inverse_colormap((a >> 16) & 255, (a >> 8) & 255, a & 255)
     else:
-        map_fn = lambda a: inverse_colormap.get(((a >> 16) & 255, (a >> 8) & 255, a & 255), None)
+
+        def map_fn(a):
+            return inverse_colormap.get(((a >> 16) & 255, (a >> 8) & 255, a & 255), None)
 
     painted_mask = painted_mask.astype(int)
     painted_mask = painted_mask[:, :, 0] + (painted_mask[:, :, 1] << 8) + (painted_mask[:, :, 2] << 16)
@@ -82,9 +86,7 @@ def unpaint_mask(painted_mask, inverse_colormap=None, default_id=None):
             class_id = default_id
         palette.append(class_id)
     palette = np.array(palette, dtype=np.min_scalar_type(len(uvals)))
-    unpainted_mask = palette[unpainted_mask].reshape(painted_mask.shape[:2])
-
-    return unpainted_mask
+    return palette[unpainted_mask].reshape(painted_mask.shape[:2])
 
 
 def paint_mask(mask, colormap=None):
@@ -102,12 +104,14 @@ def paint_mask(mask, colormap=None):
     if callable(colormap):
         map_fn = colormap
     else:
-        map_fn = lambda c: colormap.get(c, (-1, -1, -1))
+
+        def map_fn(c):
+            return colormap.get(c, (-1, -1, -1))
+
     palette = np.mod([map_fn(c)[::-1] for c in range(256)], 256).astype(np.uint8)
 
     mask = mask.astype(np.uint8)
-    painted_mask = palette[mask].reshape((*mask.shape[:2], 3))
-    return painted_mask
+    return palette[mask].reshape((*mask.shape[:2], 3))
 
 
 def remap_mask(mask, map_fn):
@@ -204,9 +208,8 @@ def index2bgr(id_map):
 
 def load_mask(path, inverse_colormap=None, default_id=None):
     mask = load_image(path, dtype=np.uint8)
-    if inverse_colormap is not None:
-        if len(mask.shape) == 3 and mask.shape[2] != 1:
-            mask = unpaint_mask(mask, inverse_colormap, default_id)
+    if inverse_colormap is not None and len(mask.shape) == 3 and mask.shape[2] != 1:
+        mask = unpaint_mask(mask, inverse_colormap, default_id)
     return mask
 
 
@@ -413,8 +416,7 @@ def crop_covered_segments(
 def rles_to_mask(rles, width, height):
     rles = pycocotools_mask.frPyObjects(rles, height, width)
     rles = pycocotools_mask.merge(rles)
-    mask = pycocotools_mask.decode(rles)
-    return mask
+    return pycocotools_mask.decode(rles)
 
 
 def rle_to_mask(rle_uncompressed: Dict[str, np.ndarray]) -> np.ndarray:
@@ -424,8 +426,7 @@ def rle_to_mask(rle_uncompressed: Dict[str, np.ndarray]) -> np.ndarray:
     the datumaro.util.mask_tools.mask_to_rle() function
     """
     resulting_mask = pycocotools_mask.frPyObjects(rle_uncompressed, *rle_uncompressed["size"])
-    resulting_mask = pycocotools_mask.decode(resulting_mask)
-    return resulting_mask
+    return pycocotools_mask.decode(resulting_mask)
 
 
 def find_mask_bbox(mask) -> Tuple[int, int, int, int]:

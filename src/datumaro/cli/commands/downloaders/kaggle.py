@@ -9,9 +9,9 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Dict
 
+from datumaro.cli.util.errors import CliException
 from datumaro.components.dataset import Dataset
 
-from ...util.errors import CliException
 from . import IDatasetDownloader
 
 with open(Path(__file__).parent / "kaggle_formats.json") as f:

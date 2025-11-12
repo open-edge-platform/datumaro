@@ -77,14 +77,12 @@ class MapillaryVistasImporter(Importer):
                     "Failed to find config*.json at '{path}'. See extra args for using original configs.",
                 )
 
-        sources = [
+        return [
             {"url": url, "format": self._TASKS[task].NAME, "options": dict(extra_params)}
             for _, subset_info in subsets.items()
             for task, url in subset_info.items()
             if task == selected_task
         ]
-
-        return sources
 
     @classmethod
     def find_sources(cls, path):

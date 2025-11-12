@@ -196,10 +196,7 @@ class FormatDetectionContext:
             return False
 
         path = osp.normpath(path)
-        if path.startswith(".." + osp.sep):
-            return False
-
-        return True
+        return not path.startswith(".." + osp.sep)
 
     def _start_requirement(self, req_type: str) -> None:
         assert not self._one_or_more_context, (

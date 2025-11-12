@@ -80,7 +80,7 @@ class SegmentAnythingExporter(Exporter):
             rles["counts"] = rles["counts"].decode()
         area = mask_utils.area(rles)
 
-        annotation_data = {
+        return {
             "id": leader.group,
             "segmentation": rles,
             "bbox": bbox,
@@ -92,7 +92,6 @@ class SegmentAnythingExporter(Exporter):
                 set(tuple(point_coord) for ann in anns for point_coord in ann.attributes.get("point_coords", [[]]))
             ),
         }
-        return annotation_data
 
     def _apply_impl(self):
         if self._extractor.media_type() and not issubclass(self._extractor.media_type(), Image):

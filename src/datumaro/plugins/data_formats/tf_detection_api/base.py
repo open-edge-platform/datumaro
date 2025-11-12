@@ -219,15 +219,13 @@ class TfDetectionApiImporter(Importer):
                 subset_name = osp.basename(source["url"]).split(".")[-2]
                 subsets[subset_name] = source["url"]
 
-        sources = [
+        return [
             {
                 "url": url,
                 "format": "tf_detection_api",
             }
             for _, url in subsets.items()
         ]
-
-        return sources
 
     @classmethod
     def get_file_extensions(cls) -> List[str]:

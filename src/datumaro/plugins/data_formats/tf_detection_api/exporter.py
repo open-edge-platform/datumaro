@@ -76,9 +76,15 @@ class TfDetectionApiExporter(Exporter):
         os.makedirs(self._save_dir, exist_ok=True)
 
         label_categories = self._extractor.categories().get(AnnotationType.label, LabelCategories())
-        get_label = lambda label_id: label_categories.items[label_id].name if label_id is not None else ""
+
+        def get_label(label_id):
+            return label_categories.items[label_id].name if label_id is not None else ""
+
         label_ids = OrderedDict((label.name, 1 + idx) for idx, label in enumerate(label_categories.items))
-        map_label_id = lambda label_id: label_ids.get(get_label(label_id), 0)
+
+        def map_label_id(label_id):
+            return label_ids.get(get_label(label_id), 0)
+
         self._get_label = get_label
         self._get_label_id = map_label_id
 
@@ -197,9 +203,7 @@ class TfDetectionApiExporter(Exporter):
         instances = [self._find_instance_parts(i, width, height) for i in instances]
         features.update(self._export_instances(instances, width, height))
 
-        tf_example = tf.train.Example(features=tf.train.Features(feature=features))
-
-        return tf_example
+        return tf.train.Example(features=tf.train.Features(feature=features))
 
     def _save_image(self, item, path=None):  # pylint: disable=arguments-differ
         src_ext = item.media.ext.lower() if item.media.ext else item.media.ext
@@ -212,9 +216,8 @@ class TfDetectionApiExporter(Exporter):
             )
 
         buffer = None
-        if src_ext == dst_ext:
-            if isinstance(item.media, ImageFromBytes):
-                buffer = item.media.bytes
+        if src_ext == dst_ext and isinstance(item.media, ImageFromBytes):
+            buffer = item.media.bytes
         if buffer is None:
             buffer = encode_image(item.media.data, dst_ext)
         return buffer, fmt

@@ -5,12 +5,11 @@
 import argparse
 import logging as log
 
+from datumaro.cli.util import MultilineFormatter
+from datumaro.cli.util.dataset_utils import generate_next_file_name, parse_dataset_pathspec
 from datumaro.components.operations import compute_ann_statistics, compute_image_statistics
 from datumaro.util import dump_json_file, str_to_bool
 from datumaro.util.scope import scoped
-
-from ..util import MultilineFormatter
-from ..util.dataset_utils import generate_next_file_name, parse_dataset_pathspec
 
 __all__ = [
     "build_parser",

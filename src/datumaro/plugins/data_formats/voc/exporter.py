@@ -100,7 +100,7 @@ class VocExporter(Exporter):
         except KeyError:
             import argparse
 
-            raise argparse.ArgumentTypeError()
+            raise argparse.ArgumentTypeError
 
     @classmethod
     def build_cmdline_parser(cls, **kwargs):
@@ -654,10 +654,7 @@ class VocExporter(Exporter):
         return self._label_map.get(s) is not None
 
     def _is_part(self, s):
-        for label_desc in self._label_map.values():
-            if s in label_desc[1]:
-                return True
-        return False
+        return any(s in label_desc[1] for label_desc in self._label_map.values())
 
     def _is_action(self, label, s):
         return s in self._get_actions(label)

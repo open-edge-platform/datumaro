@@ -160,7 +160,7 @@ class _SuperviselyPointCloudDumper:
 
         image_objects = set()
         for ann in item.annotations:
-            if not ann.type == AnnotationType.cuboid_3d:
+            if ann.type != AnnotationType.cuboid_3d:
                 continue
 
             obj_id = cast(ann.attributes.get("track_id", ann.id), int)

@@ -74,7 +74,7 @@ class ImageZipExporter(Exporter):
         except KeyError:
             import argparse
 
-            raise argparse.ArgumentTypeError()
+            raise argparse.ArgumentTypeError
 
     @classmethod
     def build_cmdline_parser(cls, **kwargs):

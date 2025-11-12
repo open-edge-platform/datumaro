@@ -194,13 +194,11 @@ class Visualizer:
         log.warning(f"Ignore unknown ann.type={ann.type}")
 
     def _get_color(self, ann: Annotation) -> str:
-        color = self.color_cycles[ann.label % len(self.color_cycles)]
-        return color
+        return self.color_cycles[ann.label % len(self.color_cycles)]
 
     def _sort_by_z_order(self, annotations: List[Annotation]) -> List[Annotation]:
         def _sort_key(ann: Annotation):
-            z_order = getattr(ann, "z_order", -1)
-            return z_order
+            return getattr(ann, "z_order", -1)
 
         return sorted(annotations, key=_sort_key)
 

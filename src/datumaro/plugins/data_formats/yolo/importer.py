@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: MIT
 
+import functools
+import operator
 import os.path as osp
 from collections import defaultdict
 from io import TextIOWrapper
@@ -40,7 +42,7 @@ class _YoloStrictImporter(Importer):
                 for subset in subsets
             ]
 
-        return sum([_extract_subset_wise_sources(source) for source in sources], [])
+        return functools.reduce(operator.iadd, [_extract_subset_wise_sources(source) for source in sources], [])
 
     @classmethod
     def get_file_extensions(cls) -> List[str]:
@@ -114,7 +116,7 @@ class _YoloLooseImporter(Importer):
         for source in sources:
             subsets[extract_subset_name_from_parent(source["url"], path)].append(source["url"])
 
-        sources = [
+        return [
             {
                 "url": osp.join(path),
                 "format": cls.FORMAT,
@@ -125,7 +127,6 @@ class _YoloLooseImporter(Importer):
             }
             for subset, urls in subsets.items()
         ]
-        return sources
 
     @classmethod
     def find_sources(cls, path: str) -> List[Dict[str, Any]]:

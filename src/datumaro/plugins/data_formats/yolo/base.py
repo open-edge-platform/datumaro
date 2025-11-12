@@ -84,8 +84,7 @@ class _Subset(DatasetBase):
                 label_categories=self._categories[AnnotationType.label],
             )
 
-            item = DatasetItem(id=item_id, subset=self._subset_name, media=image, annotations=annotations)
-            return item
+            return DatasetItem(id=item_id, subset=self._subset_name, media=image, annotations=annotations)
         except (UndeclaredLabelError, InvalidAnnotationError) as e:
             self._ctx.error_policy.report_annotation_error(e, item_id=(item_id, self._subset_name))
         except Exception as e:

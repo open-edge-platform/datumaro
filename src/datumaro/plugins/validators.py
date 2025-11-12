@@ -1177,7 +1177,7 @@ class SegmentationValidator(DetectionValidator):
 
 
 from collections import defaultdict
-from dataclasses import dataclass, field
+from dataclasses import InitVar, dataclass, field
 from typing import Any, List, Optional
 
 
@@ -1192,7 +1192,9 @@ class TabularValidationStats:
         instance.__post_init__(dataset)
         return instance
 
-    def __post_init__(self, dataset: Optional[Any] = None):
+    dataset: InitVar[Optional[Any]] = None
+
+    def __post_init__(self, dataset: Optional[Any]):
         if dataset:
             self.label_categories = dataset.categories().get(AnnotationType.label, LabelCategories())
             self.tabular_categories = dataset.categories().get(AnnotationType.caption, TabularCategories())
@@ -1331,7 +1333,7 @@ class TabularValidator(_TaskValidator):
         return stats.to_dict(), filtered_items
 
     def _check_contain_redundancies(self, text, stats, column, item_key):
-        if column not in stats.redundancies.keys():
+        if column not in stats.redundancies:
             return
 
         import re
@@ -1388,7 +1390,7 @@ class TabularValidator(_TaskValidator):
 
     def _compute_prop_stats_from_dist(self, dist_by_caption):
         for stats in dist_by_caption.values():
-            prop_stats = list(stats.values())[0]
+            prop_stats = next(iter(stats.values()))
 
             prop_dist = prop_stats.pop("distribution", [])
             if prop_dist:
@@ -1572,7 +1574,7 @@ class TabularValidator(_TaskValidator):
         return validation_reports
 
     def _check_far_from_caption_mean(self, caption_name, caption_stats):
-        prop_stats = list(caption_stats.values())[0]
+        prop_stats = next(iter(caption_stats.values()))
 
         if prop_stats["mean"] is not None:
             mean = round(prop_stats["mean"], 2)
@@ -1598,7 +1600,7 @@ class TabularValidator(_TaskValidator):
         return validation_reports
 
     def _check_caption_outliers(self, caption_name, caption_stats):
-        prop_stats = list(caption_stats.values())[0]
+        prop_stats = next(iter(caption_stats.values()))
         lower_bound, upper_bound = prop_stats["outlier"]
         items_outlier = prop_stats["items_outlier"]
 

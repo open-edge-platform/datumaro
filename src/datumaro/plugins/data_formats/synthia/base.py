@@ -95,7 +95,7 @@ class _SynthiaBase(SubsetBase):
         self._img_dir = None
         self._inst_dir = None
         self._seg_dir = None
-        for path_format in vars(path_formats).keys():
+        for path_format in vars(path_formats):
             if path_format == "IMAGES_DIR":
                 self._img_dir = osp.join(path, path_formats.IMAGES_DIR)
             elif path_format == "LABELS_SEGM_DIR":

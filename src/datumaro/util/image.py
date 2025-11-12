@@ -329,7 +329,7 @@ IMAGE_EXTENSIONS = {
 
 def find_images(
     dirpath: str,
-    exts: Union[str, Iterable[str]] = None,
+    exts: Union[str, Iterable[str]] | None = None,
     recursive: bool = False,
     max_depth: Optional[int] = None,
     min_depth: Optional[int] = None,
@@ -352,7 +352,7 @@ class lazy_image:
     def __init__(
         self,
         path: str,
-        loader: Callable[[str], np.ndarray] = None,
+        loader: Callable[[str], np.ndarray] | None = None,
         cache: Union[bool, ImageCache] = True,
         dtype: Optional[DTypeLike] = None,
     ) -> None:

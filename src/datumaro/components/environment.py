@@ -107,7 +107,7 @@ class Environment:
                     continue
                 exports.append(getattr(module, symbol))
 
-        exports = [
+        return [
             s
             for s in exports
             if isclass(s)
@@ -118,8 +118,6 @@ class Environment:
                 or not getmodule(s).__package__.startswith("datumaro.components")
             )
         ]
-
-        return exports
 
     @classmethod
     def _load_plugins(cls, module_names, *, importer, types=None):

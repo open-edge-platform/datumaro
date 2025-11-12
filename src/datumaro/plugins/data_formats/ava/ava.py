@@ -231,8 +231,8 @@ class AvaExporter(Exporter):
                     if bboxes:
                         for bbox in bboxes:
                             csvwriter.writerow(
-                                item_row
-                                + [
+                                [
+                                    *item_row,
                                     bbox.x,
                                     bbox.y,
                                     bbox.x + bbox.w,

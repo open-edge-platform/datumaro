@@ -7,14 +7,13 @@ import logging as log
 import os
 import os.path as osp
 
+from datumaro.cli.util import MultilineFormatter, join_cli_args
+from datumaro.cli.util.dataset_utils import generate_next_file_name, parse_dataset_pathspec
+from datumaro.cli.util.errors import CliException
 from datumaro.components.dataset import DEFAULT_FORMAT
 from datumaro.components.environment import DEFAULT_ENVIRONMENT
 from datumaro.components.hl_ops import HLOps
 from datumaro.components.merge.intersect_merge import IntersectMerge
-
-from ..util import MultilineFormatter, join_cli_args
-from ..util.dataset_utils import generate_next_file_name, parse_dataset_pathspec
-from ..util.errors import CliException
 
 
 def build_parser(parser_ctor=argparse.ArgumentParser):

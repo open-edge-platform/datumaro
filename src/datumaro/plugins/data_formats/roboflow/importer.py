@@ -115,7 +115,7 @@ class RoboflowVocImporter(Importer):
             subset_name = osp.dirname(source["url"]).split(os.sep)[-1]
             subsets[subset_name] = osp.dirname(source["url"])
 
-        sources = [
+        return [
             {
                 "url": url,
                 "format": cls.FORMAT,
@@ -125,8 +125,6 @@ class RoboflowVocImporter(Importer):
             }
             for subset, url in subsets.items()
         ]
-
-        return sources
 
     @classmethod
     def get_file_extensions(cls) -> List[str]:
@@ -166,7 +164,7 @@ class RoboflowYoloImporter(RoboflowVocImporter):
             subset_name = osp.dirname(source["url"]).split(os.sep)[-2]
             subsets[subset_name].append(source["url"])
 
-        sources = [
+        return [
             {
                 "url": osp.dirname(osp.dirname(urls[0])),
                 "format": cls.FORMAT,
@@ -177,8 +175,6 @@ class RoboflowYoloImporter(RoboflowVocImporter):
             }
             for subset, urls in subsets.items()
         ]
-
-        return sources
 
 
 class RoboflowYoloObbImporter(RoboflowYoloImporter):

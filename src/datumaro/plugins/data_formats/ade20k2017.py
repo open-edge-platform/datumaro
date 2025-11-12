@@ -159,8 +159,7 @@ class Ade20k2017Base(DatasetBase):
     def _load_instance_mask(path):
         mask = load_image(path)
         _, instance_mask = np.unique(mask[:, :, 0], return_inverse=True)
-        instance_mask = instance_mask.reshape(mask[:, :, 0].shape)
-        return instance_mask
+        return instance_mask.reshape(mask[:, :, 0].shape)
 
 
 class Ade20k2017Importer(Importer):

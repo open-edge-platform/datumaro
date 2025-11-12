@@ -85,9 +85,7 @@ class RoboflowVocBase(VocBase):
         for _, cat in enumerate(sorted(cats)):
             label_categories.add(cat)
 
-        categories = {AnnotationType.label: label_categories}
-
-        return categories
+        return {AnnotationType.label: label_categories}
 
     def _load_subset_list(self, path):
         return [os.path.splitext(file)[0] for file in os.listdir(path) if file.endswith(".xml")]
@@ -209,9 +207,7 @@ class RoboflowCreateMlBase(SubsetBase):
         for cat in sorted(cats):
             label_categories.add(cat)
 
-        categories = {AnnotationType.label: label_categories}
-
-        return categories
+        return {AnnotationType.label: label_categories}
 
     def _load_items(self, json_data):
         items = {}
@@ -275,9 +271,7 @@ class RoboflowMulticlassBase(SubsetBase):
             label_categories.add(cat)
             self._label_mapping[cat] = idx
 
-        categories = {AnnotationType.label: label_categories}
-
-        return categories
+        return {AnnotationType.label: label_categories}
 
     def _load_items(self, path):
         items = []

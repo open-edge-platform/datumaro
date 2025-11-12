@@ -246,8 +246,7 @@ class _MapillaryVistasBase(SubsetBase):
     @staticmethod
     def _load_pan_mask(path):
         mask = load_image(path)
-        mask = bgr2index(mask)
-        return mask
+        return bgr2index(mask)
 
     def _get_label_id(self, ann):
         cat_id = ann.get("category_id")

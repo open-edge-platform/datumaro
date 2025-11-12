@@ -2,8 +2,10 @@
 #
 # SPDX-License-Identifier: MIT
 
+import functools
 import json
 import logging as log
+import operator
 import os
 import os.path as osp
 from dataclasses import dataclass
@@ -324,7 +326,7 @@ class _InstancesExporter(_TaskExporter):
                 continue
 
             if inst[1]:
-                inst[1] = sum(new_segments, [])
+                inst[1] = functools.reduce(operator.iadd, new_segments, [])
             else:
                 mask = mask_tools.merge_masks(new_segments)
                 inst[2] = mask_tools.mask_to_rle(mask)
@@ -878,10 +880,9 @@ class CocoExporter(Exporter):
                 if task_conv.is_empty() and (not self._tasks or self._patch):
                     if task == CocoTask.panoptic:
                         os.rmdir(self._segmentation_dir)
-                    if self._patch:
-                        if osp.isfile(ann_file):
-                            # Remove subsets that became empty
-                            os.remove(ann_file)
+                    if self._patch and osp.isfile(ann_file):
+                        # Remove subsets that became empty
+                        os.remove(ann_file)
                     continue
 
                 task_conv.write(ann_file)

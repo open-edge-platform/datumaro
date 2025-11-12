@@ -408,8 +408,7 @@ class _CocoBase(SubsetBase):
     @staticmethod
     def _load_pan_mask(path):
         mask = load_image(path)
-        mask = bgr2index(mask)
-        return mask
+        return bgr2index(mask)
 
     @define
     class _lazy_merged_mask:

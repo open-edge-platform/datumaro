@@ -99,8 +99,7 @@ class LabelMeBase(DatasetBase):
     @staticmethod
     def _unescape(s):
         s = unescape(s, LabelMePath.ATTR_IMPORT_ESCAPES)
-        s = unescape(s, LabelMePath.ATTR_EXPORT_ESCAPES)
-        return s
+        return unescape(s, LabelMePath.ATTR_EXPORT_ESCAPES)
 
     @classmethod
     def _parse_annotations(cls, xml_root, path, subset, categories):

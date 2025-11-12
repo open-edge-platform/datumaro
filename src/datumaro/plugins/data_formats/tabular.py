@@ -88,9 +88,8 @@ class TabularDataBase(DatasetBase):
         items: List[DatasetItem] = []
         categories: TabularCategories = TabularCategories()
 
-        if target is not None:
-            if "input" not in target or "output" not in target:
-                raise TypeError('Target should have both "input" and "output"')
+        if target is not None and ("input" not in target or "output" not in target):
+            raise TypeError('Target should have both "input" and "output"')
 
         for path in paths:
             table = Table.from_csv(path, dtype=dtype, **kwargs)

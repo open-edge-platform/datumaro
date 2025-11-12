@@ -126,7 +126,7 @@ class Split(Transform, CliPlugin):
         if len(parts) != 2:
             import argparse
 
-            raise argparse.ArgumentTypeError()
+            raise argparse.ArgumentTypeError
         return (parts[0], float(parts[1]))
 
     def __init__(self, dataset, task, splits, query=None, attr_for_id=None, seed=None):
@@ -270,9 +270,7 @@ class _TaskSpecificSplit:
         for val in iarray[1:]:
             common_divisor = gcd(common_divisor, val)
 
-        required = np.sum(np.array(iarray / common_divisor).astype(int))
-
-        return required
+        return np.sum(np.array(iarray / common_divisor).astype(int))
 
     @staticmethod
     def _get_sections(dataset_size, ratio):
@@ -303,10 +301,7 @@ class _TaskSpecificSplit:
         def _is_float(value):
             if isinstance(value, str):
                 casted = cast(value, float)
-                if casted is not None:
-                    if cast(casted, str) == value:
-                        return True
-                return False
+                return bool(casted is not None and cast(casted, str) == value)
             if isinstance(value, float):
                 cast(value, float)
                 return True

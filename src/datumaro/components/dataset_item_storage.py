@@ -109,8 +109,7 @@ class DatasetItemStorage:
 
     def __getitem__(self, idx: int) -> DatasetItem:
         _id, subset = self._order[idx]
-        item = self.data[subset][_id]
-        return item
+        return self.data[subset][_id]
 
 
 class DatasetItemStorageDatasetView(IDataset):

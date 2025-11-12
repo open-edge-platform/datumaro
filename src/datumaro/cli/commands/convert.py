@@ -7,13 +7,12 @@ import logging as log
 import os
 import os.path as osp
 
+from datumaro.cli.util import MultilineFormatter
+from datumaro.cli.util.dataset_utils import FilterModes, generate_next_file_name
+from datumaro.cli.util.errors import CliException
 from datumaro.components.dataset import Dataset
 from datumaro.components.environment import DEFAULT_ENVIRONMENT
 from datumaro.util.os_util import make_file_name
-
-from ..util import MultilineFormatter
-from ..util.dataset_utils import FilterModes, generate_next_file_name
-from ..util.errors import CliException
 
 
 def build_parser(parser_ctor=argparse.ArgumentParser):

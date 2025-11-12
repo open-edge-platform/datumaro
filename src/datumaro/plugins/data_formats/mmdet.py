@@ -49,9 +49,7 @@ class MmdetCocoImporter(CocoImporter):
     @classmethod
     def _get_subset_name(cls, subset_path: str):
         parts = osp.splitext(osp.basename(subset_path))[0].split("instances_", maxsplit=1)
-        subset_name = parts[1] if len(parts) == 2 else DEFAULT_SUBSET_NAME
-
-        return subset_name
+        return parts[1] if len(parts) == 2 else DEFAULT_SUBSET_NAME
 
 
 class MmdetCocoBase(_CocoBase):

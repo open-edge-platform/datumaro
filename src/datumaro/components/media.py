@@ -126,9 +126,7 @@ class MediaElement(Generic[AnyData]):
 
     def __eq__(self, other: object) -> bool:
         other_type = getattr(other, "type", None)
-        if self.type != other_type:
-            return False
-        return True
+        return self.type == other_type
 
     def save(
         self,
@@ -153,8 +151,7 @@ class FromFileMixin:
     def bytes(self) -> Optional[bytes]:
         if self.has_data:
             with open(self._path, "rb") as f:
-                _bytes = f.read()
-            return _bytes
+                return f.read()
         return None
 
     @property
@@ -732,11 +729,10 @@ class Video(MediaElement, Iterable[VideoFrame]):
         return end_frame
 
     def _includes_frame(self, i):
-        if self._start_frame <= i:
-            if (i - self._start_frame) % self._step == 0:
-                end_frame = self._get_end_frame()
-                if end_frame is None or i <= end_frame:
-                    return True
+        if self._start_frame <= i and (i - self._start_frame) % self._step == 0:
+            end_frame = self._get_end_frame()
+            if end_frame is None or i <= end_frame:
+                return True
 
         return False
 
@@ -771,10 +767,7 @@ class Video(MediaElement, Iterable[VideoFrame]):
         # The video path can vary if a dataset is copied.
         # So, we need to check if the video data is the same instead of checking paths.
         if self._end_frame is not None and self._end_frame == other._end_frame:
-            for idx in range(self._start_frame, self._end_frame + 1, self._step):
-                if self[idx] != other[idx]:
-                    return False
-            return True
+            return all(self[idx] == other[idx] for idx in range(self._start_frame, self._end_frame + 1, self._step))
 
         end_frame = self._end_frame or other._end_frame
         if end_frame is None:
@@ -881,8 +874,7 @@ class PointCloudFromFile(FromFileMixin, PointCloud):
     def data(self) -> Optional[bytes]:
         if self.has_data:
             with open(self.path, "rb") as f:
-                bytes_data = f.read()
-            return bytes_data
+                return f.read()
         return None
 
     def save(
@@ -1458,5 +1450,4 @@ class TableRowFromData(FromDataMixin, TableRow):
 
     @property
     def data(self) -> Dict:
-        data = super().data
-        return data
+        return super().data

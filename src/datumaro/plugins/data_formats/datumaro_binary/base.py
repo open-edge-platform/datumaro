@@ -4,20 +4,21 @@
 
 import os.path as osp
 import struct
-from io import BufferedReader
 from multiprocessing.pool import AsyncResult, Pool
-from typing import Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.errors import DatasetImportError
 from datumaro.components.importer import ImportContext
 from datumaro.components.media import Image, MediaElement, MediaType, PointCloud, Video, VideoFrame
+from datumaro.plugins.data_formats.datumaro.base import DatumaroBase, JsonReader
 from datumaro.plugins.data_formats.datumaro_binary.format import DatumaroBinaryPath
 from datumaro.plugins.data_formats.datumaro_binary.mapper import DictMapper
 from datumaro.plugins.data_formats.datumaro_binary.mapper.common import IntListMapper
 from datumaro.plugins.data_formats.datumaro_binary.mapper.dataset_item import DatasetItemMapper
 
-from ..datumaro.base import DatumaroBase, JsonReader
+if TYPE_CHECKING:
+    from io import BufferedReader
 
 
 class DatumaroBinaryBase(DatumaroBase):
@@ -47,8 +48,7 @@ class DatumaroBinaryBase(DatumaroBase):
         with open(path, "rb") as fp:
             self._fp = fp
             self._check_signature()
-            dm_format_version = self._read_version()
-        return dm_format_version
+            return self._read_version()
 
     def _load_impl(self, path: str) -> None:
         """Actual implementation of loading Datumaro binary format."""

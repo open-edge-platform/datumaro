@@ -5,14 +5,13 @@
 import argparse
 import logging as log
 
+from datumaro.cli.util import MultilineFormatter
+from datumaro.cli.util.dataset_utils import generate_next_file_name, parse_dataset_pathspec
+from datumaro.cli.util.errors import CliException
 from datumaro.components.environment import DEFAULT_ENVIRONMENT
 from datumaro.components.validator import TaskType
 from datumaro.util import dump_json_file
 from datumaro.util.scope import scoped
-
-from ..util import MultilineFormatter
-from ..util.dataset_utils import generate_next_file_name, parse_dataset_pathspec
-from ..util.errors import CliException
 
 
 def build_parser(parser_ctor=argparse.ArgumentParser):
@@ -90,7 +89,7 @@ def validate_command(args):
     def _make_serializable(d):
         for key, val in list(d.items()):
             # tuple key to str
-            if isinstance(key, tuple) or isinstance(key, int):
+            if isinstance(key, (tuple, int)):
                 d[str(key)] = val
                 d.pop(key)
             if isinstance(val, dict):

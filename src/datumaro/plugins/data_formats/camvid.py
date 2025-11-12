@@ -136,7 +136,10 @@ def make_camvid_categories(label_map=None):
     if not has_colors:  # generate new colors
         colormap = generate_colormap(len(label_map))
     else:  # only copy defined colors
-        label_id = lambda label: label_categories.find(label)[0]
+
+        def label_id(label):
+            return label_categories.find(label)[0]
+
         colormap = {label_id(name): (desc[0], desc[1], desc[2]) for name, desc in label_map.items() if desc}
     mask_categories = MaskCategories(colormap)
     mask_categories.inverse_colormap  # pylint: disable=pointless-statement
@@ -288,7 +291,7 @@ class CamvidExporter(Exporter):
         except KeyError:
             import argparse
 
-            raise argparse.ArgumentTypeError()
+            raise argparse.ArgumentTypeError
 
     @classmethod
     def build_cmdline_parser(cls, **kwargs):
@@ -358,9 +361,8 @@ class CamvidExporter(Exporter):
         ann_file = osp.join(self._save_dir, subset_name + ".txt")
 
         if not segm_list:
-            if self._patch and subset_name in self._patch.updated_subsets:
-                if osp.isfile(ann_file):
-                    os.remove(ann_file)
+            if self._patch and subset_name in self._patch.updated_subsets and osp.isfile(ann_file):
+                os.remove(ann_file)
             return
 
         with open(ann_file, "w", encoding="utf-8") as f:

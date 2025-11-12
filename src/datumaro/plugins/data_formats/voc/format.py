@@ -335,7 +335,10 @@ def make_voc_categories(
     if not has_colors:  # generate new colors
         colormap = generate_colormap(len(label_map))
     else:  # only copy defined colors
-        label_id = lambda label: label_categories.find(label)[0]
+
+        def label_id(label):
+            return label_categories.find(label)[0]
+
         colormap = {label_id(name): desc[0] for name, desc in label_map.items() if desc[0] is not None}
     mask_categories = MaskCategories(colormap)
     mask_categories.inverse_colormap  # pylint: disable=pointless-statement

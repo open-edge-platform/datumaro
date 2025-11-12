@@ -37,9 +37,7 @@ def import_foreign_module(name, path):
     module = None
     default_path = sys.path.copy()
     try:
-        sys.path = [
-            osp.abspath(path),
-        ] + default_path
+        sys.path = [osp.abspath(path), *default_path]
         sys.modules.pop(name, None)  # remove from cache
         module = importlib.import_module(name)
         sys.modules.pop(name)  # remove from cache
@@ -216,8 +214,7 @@ def make_file_name(s: str) -> str:
     s = unicodedata.normalize("NFKD", s).encode("ascii", "ignore")
     s = s.decode()
     s = re.sub(r"[^\w\s-]", "", s).strip().lower()
-    s = re.sub(r"[-\s]+", "-", s)
-    return s
+    return re.sub(r"[-\s]+", "-", s)
 
 
 def generate_next_name(

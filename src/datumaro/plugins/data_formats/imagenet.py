@@ -131,13 +131,12 @@ class ImagenetImporter(Importer):
             if cls._MAX_DEPTH is not None and level > cls._MAX_DEPTH and filenames:
                 context.fail("Found files out of the directory level bounds.")
             dpath = Path(context.root_path) / rel_dname
-            if dpath.is_dir():
-                if str(rel_dname).lower() in SUBSET_NAME_BLACKLIST:
-                    context.fail(
-                        f"{dname} is found in {context.root_path}. "
-                        "However, Images must not be under a directory whose name is blacklisted "
-                        f"(SUBSET_NAME_BLACKLIST={SUBSET_NAME_BLACKLIST})."
-                    )
+            if dpath.is_dir() and str(rel_dname).lower() in SUBSET_NAME_BLACKLIST:
+                context.fail(
+                    f"{dname} is found in {context.root_path}. "
+                    "However, Images must not be under a directory whose name is blacklisted "
+                    f"(SUBSET_NAME_BLACKLIST={SUBSET_NAME_BLACKLIST})."
+                )
 
         return super().detect(context)
 

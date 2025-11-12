@@ -355,7 +355,7 @@ class Dataset(IDataset):
                 category_dict[annotation_type] = category_names
         return (
             f"{str(annotation_type).split('.')[-1]}: {list(category_dict.get(annotation_type, []))}\n"
-            for annotation_type in self.categories().keys()
+            for annotation_type in self.categories()
         )
 
     def __contains__(self, x: Union[DatasetItem, str, Tuple[str, str]]) -> bool:
@@ -843,7 +843,7 @@ class Dataset(IDataset):
 
         matches = env.detect_dataset(path, depth=depth)
         if not matches:
-            raise NoMatchingFormatsError()
+            raise NoMatchingFormatsError
         if len(matches) > 1:
             raise MultipleFormatsMatchError(matches)
         return matches[0]
@@ -863,7 +863,7 @@ class Dataset(IDataset):
     def __getitem__(self, idx: int) -> DatasetItem:
         if not self._data.is_stream:
             return self._data[idx]
-        raise StreamedItemError()
+        raise StreamedItemError
 
 
 class StreamDataset(Dataset):

@@ -54,7 +54,7 @@ class DatasetPatch:
         infos: DatasetInfo,
         categories: CategoriesInfo,
         updated_items: Dict[Tuple[str, str], ItemStatus],
-        updated_subsets: Dict[str, ItemStatus] = None,
+        updated_subsets: Dict[str, ItemStatus] | None = None,
     ):
         self.data = data
         self.infos = infos
@@ -397,7 +397,7 @@ class DatasetStorage(IDataset):
 
     def define_infos(self, infos: DatasetInfo):
         if self._infos or self._source is not None:
-            raise DatasetInfosRedefinedError()
+            raise DatasetInfosRedefinedError
         self._infos = infos
 
     def categories(self) -> CategoriesInfo:
@@ -410,7 +410,7 @@ class DatasetStorage(IDataset):
 
     def define_categories(self, categories: CategoriesInfo):
         if self._categories or self._source is not None:
-            raise CategoriesRedefinedError()
+            raise CategoriesRedefinedError
         self._categories = categories
 
     def media_type(self) -> Type[MediaElement]:
@@ -541,7 +541,7 @@ class DatasetStorage(IDataset):
 
         if isinstance(source, DatasetPatch):
             if source.categories() != self.categories():
-                raise ConflictingCategoriesError()
+                raise ConflictingCategoriesError
 
             for item_id, status in source.updated_items.items():
                 if status == ItemStatus.removed:

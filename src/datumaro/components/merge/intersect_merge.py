@@ -2,7 +2,9 @@
 #
 # SPDX-License-Identifier: MIT
 
+import functools
 import logging as log
+import operator
 from collections import OrderedDict
 from typing import Dict, Sequence
 
@@ -232,7 +234,7 @@ class IntersectMerge(Merger):
 
         clusters = self._match_annotations(sources)
 
-        joined_clusters = sum(clusters.values(), [])
+        joined_clusters = functools.reduce(operator.iadd, clusters.values(), [])
         group_map = self._find_cluster_groups(joined_clusters)
 
         annotations = []
@@ -521,9 +523,7 @@ class IntersectMerge(Merger):
             item = self._dataset_map[s][0].get(*self._item_id)
             if not item:
                 return False
-            if len(item.annotations) == 0:
-                return False
-            return True
+            return len(item.annotations) != 0
 
         missing_sources = set(self._dataset_map) - set(self.get_ann_source(id(a)) for a in cluster)
         missing_sources = [self._dataset_map[s][1] for s in missing_sources if _has_item(s)]

@@ -9,13 +9,12 @@ import os.path as osp
 import shutil
 from enum import Enum, auto
 
+from datumaro.cli.util import MultilineFormatter
+from datumaro.cli.util.compare import DistanceCompareVisualizer
+from datumaro.cli.util.dataset_utils import generate_next_file_name, parse_dataset_pathspec
+from datumaro.cli.util.errors import CliException
 from datumaro.components.comparator import DistanceComparator, EqualityComparator, TableComparator
 from datumaro.util.scope import on_error_do, scoped
-
-from ..util import MultilineFormatter
-from ..util.compare import DistanceCompareVisualizer
-from ..util.dataset_utils import generate_next_file_name, parse_dataset_pathspec
-from ..util.errors import CliException
 
 
 class ComparisonMethod(Enum):

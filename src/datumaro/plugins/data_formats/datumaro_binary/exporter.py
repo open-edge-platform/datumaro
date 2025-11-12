@@ -7,9 +7,8 @@
 import os.path as osp
 import struct
 import warnings
-from io import BufferedWriter
 from multiprocessing.pool import ApplyResult, Pool
-from typing import Any, List, Optional, Union
+from typing import TYPE_CHECKING, Any, List, Optional, Union
 
 from datumaro.components.dataset_base import DatasetItem, IDataset
 from datumaro.components.errors import DatumaroError, PathSeparatorInSubsetNameError
@@ -22,6 +21,9 @@ from .format import DatumaroBinaryPath
 from .mapper import DictMapper
 from .mapper.common import IntListMapper
 from .mapper.dataset_item import DatasetItemMapper
+
+if TYPE_CHECKING:
+    from io import BufferedWriter
 
 
 class _SubsetWriter(__SubsetWriter):

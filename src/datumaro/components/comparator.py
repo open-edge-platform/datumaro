@@ -172,9 +172,7 @@ class EqualityComparator:
             a_fields["attributes"] = filter_dict(a.attributes, ignored_attrs)
             b_fields["attributes"] = filter_dict(b.attributes, ignored_attrs)
 
-        result = a.wrap(**a_fields) == b.wrap(**b_fields)
-
-        return result
+        return a.wrap(**a_fields) == b.wrap(**b_fields)
 
     def _compare_items(self, item_a, item_b):
         test = self._test
@@ -254,7 +252,9 @@ class EqualityComparator:
             self._print_output(output)
             return output
 
-        _dist = lambda s: len(s[1]) + len(s[2])
+        def _dist(s):
+            return len(s[1]) + len(s[2])
+
         for a_ids, b_ids in matches:
             # build distance matrix
             match_status = {}  # (a_id, b_id): [matched, unmatched, errors]
@@ -429,8 +429,7 @@ class TableComparator:
             A dictionary where the key is the first element of a row and the value is
             the rest of the row.
         """
-        data_dict = {row[0]: row[1:] for row in rows[1:]}
-        return data_dict
+        return {row[0]: row[1:] for row in rows[1:]}
 
     def _create_high_level_comparison_table(self, first_info: Tuple, second_info: Tuple) -> Tuple[str, Dict]:
         """Generates a high-level comparison table.

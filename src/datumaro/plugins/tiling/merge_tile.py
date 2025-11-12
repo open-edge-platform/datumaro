@@ -216,8 +216,7 @@ class MergeTile(Transform, CliPlugin):
 
     @classmethod
     def build_cmdline_parser(cls, **kwargs):
-        parser = super().build_cmdline_parser(**kwargs)
-        return parser
+        return super().build_cmdline_parser(**kwargs)
 
     def __init__(self, extractor):
         super().__init__(extractor)
@@ -247,7 +246,7 @@ class MergeTile(Transform, CliPlugin):
             max_h = max(max_h, y + h)
         img_size = (max_h, max_w)
 
-        merged_item = self.wrap_item(
+        return self.wrap_item(
             items[0],
             id=item_id,
             media=MosaicImage.from_image_roi_pairs(
@@ -263,8 +262,6 @@ class MergeTile(Transform, CliPlugin):
             attributes=self._merge_tiled_attributes(items),
             annotations=self._merge_tiled_annotations(items, img_size),
         )
-
-        return merged_item
 
     @staticmethod
     def _merge_tiled_attributes(items: List[DatasetItem]) -> Dict[str, Any]:

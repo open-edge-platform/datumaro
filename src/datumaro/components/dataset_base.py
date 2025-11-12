@@ -47,7 +47,7 @@ class DatasetItem:
         subset: Optional[str] = None,
         media: Union[str, MediaElement, None] = None,
         annotations: Optional[List[Annotation]] = None,
-        attributes: Dict[str, Any] = None,
+        attributes: Dict[str, Any] | None = None,
     ):
         self.__attrs_init__(id=id, subset=subset, media=media, annotations=annotations, attributes=attributes)
 
@@ -238,7 +238,7 @@ class SubsetBase(DatasetBase):
         length: Optional[int] = None,
         subset: Optional[str] = None,
         media_type: Type[MediaElement] = Image,
-        ann_types: List[AnnotationType] = None,
+        ann_types: List[AnnotationType] | None = None,
         ctx: Optional[ImportContext] = None,
     ):
         self._subset = subset or DEFAULT_SUBSET_NAME

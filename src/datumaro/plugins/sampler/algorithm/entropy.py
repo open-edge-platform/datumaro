@@ -158,9 +158,7 @@ class SampleEntropy(InferenceResultAnalyzer):
         # 4. Ranked based on Uncertainty score
         res = inference[["ImageID", "Uncertainty"]].groupby("ImageID").mean()
         res["rank"] = res["Uncertainty"].rank(ascending=False, method="first")
-        res = res.reset_index()
-
-        return res
+        return res.reset_index()
 
     def _calculate_uncertainty_from_classprob(self, inference: pd.DataFrame) -> pd.DataFrame:
         """

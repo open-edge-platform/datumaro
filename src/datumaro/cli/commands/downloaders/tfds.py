@@ -9,6 +9,8 @@ import os.path as osp
 import sys
 from typing import Dict, Tuple
 
+from datumaro.cli.util.dataset_utils import generate_next_file_name
+from datumaro.cli.util.errors import CliException
 from datumaro.components.dataset_base import IDataset
 from datumaro.components.environment import DEFAULT_ENVIRONMENT
 from datumaro.components.extractor_tfds import (
@@ -19,8 +21,6 @@ from datumaro.components.extractor_tfds import (
 from datumaro.util import dump_json
 from datumaro.util.os_util import make_file_name
 
-from ...util.dataset_utils import generate_next_file_name
-from ...util.errors import CliException
 from .downloader import IDatasetDownloader
 
 
@@ -127,7 +127,7 @@ class TfdsDatasetDownloader(IDatasetDownloader):
             cls._describe_json(dataset_metas, report_file)
 
     @classmethod
-    def describe_command_description(_):
+    def describe_command_description(cls):
         return """More detailed
         information can be found in the TFDS Catalog:
         <https://www.tensorflow.org/datasets/catalog/overview>."""

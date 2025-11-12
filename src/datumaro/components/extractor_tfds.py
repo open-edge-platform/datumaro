@@ -21,7 +21,7 @@ from datumaro.components.media import Image, MediaElement
 from datumaro.util.import_util import lazy_import
 from datumaro.util.tf_util import import_tf
 
-TFDS_EXTRACTOR_AVAILABLE = True if find_spec("tensorflow_datasets") is not None else False
+TFDS_EXTRACTOR_AVAILABLE = find_spec("tensorflow_datasets") is not None
 
 if TFDS_EXTRACTOR_AVAILABLE:
     try:

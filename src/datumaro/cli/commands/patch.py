@@ -7,12 +7,11 @@ import logging as log
 import os
 import os.path as osp
 
+from datumaro.cli.util import MultilineFormatter
+from datumaro.cli.util.dataset_utils import parse_dataset_pathspec
+from datumaro.cli.util.errors import CliException
 from datumaro.components.environment import DEFAULT_ENVIRONMENT
 from datumaro.util.scope import scoped
-
-from ..util import MultilineFormatter
-from ..util.dataset_utils import parse_dataset_pathspec
-from ..util.errors import CliException
 
 
 def build_parser(parser_ctor=argparse.ArgumentParser):

@@ -269,9 +269,8 @@ class MaskCategories(Categories):
     def inverse_colormap(self) -> Dict[RgbColor, int]:
         from datumaro.util.mask_tools import invert_colormap
 
-        if self._inverse_colormap is None:
-            if self.colormap is not None:
-                self._inverse_colormap = invert_colormap(self.colormap)
+        if self._inverse_colormap is None and self.colormap is not None:
+            self._inverse_colormap = invert_colormap(self.colormap)
         return self._inverse_colormap
 
     def __contains__(self, idx: int) -> bool:
@@ -600,10 +599,9 @@ class CompiledMask:
         class_shift = 16
         m = (self.class_mask.astype(np.uint32) << class_shift) + self.instance_mask.astype(np.uint32)
         keys = np.unique(m)
-        instance_labels = {
+        return {
             int(k & ((1 << class_shift) - 1)): int(k >> class_shift) for k in keys if k & ((1 << class_shift) - 1) != 0
         }
-        return instance_labels
 
     def extract(self, instance_id: int) -> IndexMaskImage:
         """
@@ -873,8 +871,7 @@ class Polygon(Shape):
         # x, y, w, h = self.get_bbox()
         # rle = mask_utils.frPyObjects([self.points], y + h, x + w)
         # area = mask_utils.area(rle)[0]
-        area = self._get_shoelace_area()
-        return area
+        return self._get_shoelace_area()
 
     def as_polygon(self) -> List[float]:
         """
@@ -1354,8 +1351,7 @@ class Cuboid2D(Annotation):
         ground_points_lidar = np.array([[0.0, 0.0, 0.0], [0.0, 1.0, 0.0], [1.0, 1.0, 0.0]])
         ground_points_lidar = np.concatenate((ground_points_lidar, np.ones((ground_points_lidar.shape[0], 1))), axis=1)
         ground_points_cam = np.matmul(Tr_velo_to_cam_homo, ground_points_lidar.T).T
-        denorm = -1 * Cuboid2D._get_plane_equation(ground_points_cam)
-        return denorm
+        return -1 * Cuboid2D._get_plane_equation(ground_points_cam)
 
     @staticmethod
     def _get_3d_points(dim, location, rotation_y, denorm):
@@ -1408,9 +1404,7 @@ class Cuboid2D(Annotation):
         pts_2d = P @ pts_3d_homo
         pts_2d[0, :] = np.divide(pts_2d[0, :], pts_2d[2, :])
         pts_2d[1, :] = np.divide(pts_2d[1, :], pts_2d[2, :])
-        pts_2d = pts_2d[:2, :].T
-
-        return pts_2d
+        return pts_2d[:2, :].T
 
     @classmethod
     def from_3d(
@@ -1588,8 +1582,8 @@ class PointsCategories(Categories):
         self,
         label_id: int,
         labels: Optional[Iterable[str]] = None,
-        joints: Iterable[Tuple[int, int]] = None,
-        positions: Iterable[float] = None,
+        joints: Iterable[Tuple[int, int]] | None = None,
+        positions: Iterable[float] | None = None,
     ):
         if joints is None:
             joints = []

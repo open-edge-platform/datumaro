@@ -185,14 +185,14 @@ class _BaseAnnStats:
 
     def _update_undefined_label(self, item_key, annotation):
         if annotation.label not in self.label_categories:
-            self.stats.undefined_label.add(item_key + (str(annotation.label),))
+            self.stats.undefined_label.add((*item_key, str(annotation.label)))
 
     def _update_missing_attribute(self, item_key, annotation):
         if annotation.label in self.label_categories:
             label_name = self.label_categories[annotation.label].name
             for attr in self.stats.categories[label_name]["attributes"]:
                 if attr not in annotation.attributes:
-                    self.stats.missing_attribute.add(item_key + (label_name, attr))
+                    self.stats.missing_attribute.add((*item_key, label_name, attr))
 
     def _update_undefined_attribute(self, item_key, annotation):
         if annotation.label in self.label_categories:
@@ -200,10 +200,10 @@ class _BaseAnnStats:
             for attr in annotation.attributes:
                 if self.stats.categories[label_name]["attributes"].get(attr, None):
                     continue
-                self.stats.undefined_attribute.add(item_key + (label_name, attr))
+                self.stats.undefined_attribute.add((*item_key, label_name, attr))
         else:
             for attr in annotation.attributes:
-                self.stats.undefined_attribute.add(item_key + (str(annotation.label), attr))
+                self.stats.undefined_attribute.add((*item_key, str(annotation.label), attr))
 
     def _generate_validation_report(self, error, *args, **kwargs):
         return [error(*args, **kwargs)]
@@ -514,19 +514,19 @@ class DetStats(_BaseAnnStats):
         _, _, w, h = annotation.get_bbox()
 
         if w == float("inf") or np.isnan(w):
-            self.stats.invalid_value.add(item_key + (annotation.id, "width", w))
+            self.stats.invalid_value.add((*item_key, annotation.id, "width", w))
 
         if h == float("inf") or np.isnan(h):
-            self.stats.invalid_value.add(item_key + (annotation.id, "height", h))
+            self.stats.invalid_value.add((*item_key, annotation.id, "height", h))
 
     def _update_negative_length(self, item_key: tuple, annotation: Annotation):
         _, _, w, h = annotation.get_bbox()
 
         if w < 1:
-            self.stats.negative_length.add(item_key + (annotation.id, "width", w))
+            self.stats.negative_length.add((*item_key, annotation.id, "width", w))
 
         if h < 1:
-            self.stats.negative_length.add(item_key + (annotation.id, "height", h))
+            self.stats.negative_length.add((*item_key, annotation.id, "height", h))
 
     def _update_bbox_stats(self, item_key: tuple, annotation: Annotation):
         if annotation.label not in self.label_categories:
@@ -543,7 +543,7 @@ class DetStats(_BaseAnnStats):
             w == float("inf") or np.isnan(w) or w < 1 or h == float("inf") or np.isnan(h) or h < 1 or np.isnan(ratio)
         ):
             label_name = self.label_categories[annotation.label].name
-            self.stats.categories[label_name]["pts"].append(item_key + (annotation.id, w, h, area, ratio))
+            self.stats.categories[label_name]["pts"].append((*item_key, annotation.id, w, h, area, ratio))
 
     def _check_far_from_mean(self, stats: StatsData):
         def _far_from_mean(val, mean, stdev):
@@ -695,10 +695,10 @@ class SegStats(_BaseAnnStats):
         _, _, w, h = annotation.get_bbox()
 
         if w == float("inf") or np.isnan(w):
-            self.stats.invalid_value.add(item_key + (annotation.id, "width", w))
+            self.stats.invalid_value.add((*item_key, annotation.id, "width", w))
 
         if h == float("inf") or np.isnan(h):
-            self.stats.invalid_value.add(item_key + (annotation.id, "height", h))
+            self.stats.invalid_value.add((*item_key, annotation.id, "height", h))
 
     def _update_mask_stats(self, item_key: tuple, annotation: Annotation):
         if annotation.label not in self.label_categories:
@@ -709,7 +709,7 @@ class SegStats(_BaseAnnStats):
 
         if not (w == float("inf") or np.isnan(w) or h == float("inf") or np.isnan(h)):
             label_name = self.label_categories[annotation.label].name
-            self.stats.categories[label_name]["pts"].append(item_key + (annotation.id, w, h, area, 1))
+            self.stats.categories[label_name]["pts"].append((*item_key, annotation.id, w, h, area, 1))
 
     def _check_far_from_mean(self, stats: StatsData):
         def _far_from_mean(val, mean, stdev):
@@ -921,7 +921,7 @@ class TblStats(_BaseAnnStats):
                     self.stats.categories[cat]["cnt"] += 1
                     self.stats.categories[cat]["ann_type"].add(annotation.type)
                     caption = annotation.caption.split(cat + ":")[-1]
-                    self.stats.categories[cat]["caption"].append(item_key + (annotation.id, caption))
+                    self.stats.categories[cat]["caption"].append((*item_key, annotation.id, caption))
                     break
 
     def _check_missing_annotation(self, stats: StatsData):
@@ -973,8 +973,8 @@ class TblStats(_BaseAnnStats):
 
         counts = [
             stats.categories[label_name]["cnt"]
-            for label_name in stats.categories.keys()
-            if list(stats.categories[label_name]["ann_type"])[0] == AnnotationType.label
+            for label_name in stats.categories
+            if next(iter(stats.categories[label_name]["ann_type"])) == AnnotationType.label
         ]
 
         if len(counts) == 0:
@@ -993,8 +993,8 @@ class TblStats(_BaseAnnStats):
 
         counts = [
             stats.categories[label_name]["cnt"]
-            for label_name in stats.categories.keys()
-            if list(stats.categories[label_name]["ann_type"])[0] == AnnotationType.caption
+            for label_name in stats.categories
+            if next(iter(stats.categories[label_name]["ann_type"])) == AnnotationType.caption
         ]
 
         if len(counts) == 0:

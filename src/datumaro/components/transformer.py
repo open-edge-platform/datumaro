@@ -131,6 +131,4 @@ class TabularTransform(Transform):
         self,
         batch: List[DatasetItem],
     ) -> List[DatasetItem]:
-        results = [self.transform_item(item) for item in batch]
-
-        return results
+        return [self.transform_item(item) for item in batch]

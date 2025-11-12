@@ -45,9 +45,8 @@ class CliPlugin:
     @staticmethod
     def _get_doc(cls):
         doc = getattr(cls, "__doc__", "")
-        if doc:
-            if any(getattr(t, "__doc__", "") == doc for t in plugin_types()):
-                doc = ""
+        if doc and any(getattr(t, "__doc__", "") == doc for t in plugin_types()):
+            doc = ""
         return doc
 
     @classmethod

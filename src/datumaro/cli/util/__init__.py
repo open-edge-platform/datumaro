@@ -3,7 +3,9 @@
 # SPDX-License-Identifier: MIT
 
 import argparse
+import functools
 import logging as log
+import operator
 import textwrap
 from typing import Iterable, List
 
@@ -29,7 +31,7 @@ class MultilineFormatter(argparse.HelpFormatter):
 
         paragraphs = text.split("|n ")
         if self._keep_natural:
-            paragraphs = sum((p.split("\n ") for p in paragraphs), [])
+            paragraphs = functools.reduce(operator.iadd, (p.split("\n ") for p in paragraphs), [])
 
         multiline_text = ""
         for paragraph in paragraphs:

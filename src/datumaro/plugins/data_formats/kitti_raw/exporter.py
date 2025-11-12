@@ -369,9 +369,8 @@ class KittiRawExporter(Exporter):
                 occlusion = OcclusionStates.VISIBLE
                 if "occlusion" in ann.attributes:
                     occlusion = OcclusionStates(ann.attributes["occlusion"].upper())
-                elif "occluded" in ann.attributes:
-                    if ann.attributes["occluded"]:
-                        occlusion = OcclusionStates.PARTLY
+                elif ann.attributes.get("occluded"):
+                    occlusion = OcclusionStates.PARTLY
 
                 truncation = TruncationStates.IN_IMAGE
                 if "truncation" in ann.attributes:

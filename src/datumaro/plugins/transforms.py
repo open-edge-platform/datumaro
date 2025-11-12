@@ -5,7 +5,9 @@
 from __future__ import annotations
 
 import argparse
+import functools
 import logging as log
+import operator
 import os.path as osp
 import random
 import re
@@ -176,7 +178,7 @@ class MergeInstanceSegments(ItemTransform, CliPlugin):
         h, w = item.media.size
         instances = self.find_instances(segments)
         segments = [self.merge_segments(i, w, h, self._include_polygons) for i in instances]
-        segments = sum(segments, [])
+        segments = functools.reduce(operator.iadd, segments, [])
 
         annotations += segments
         return self.wrap_item(item, annotations=annotations)
@@ -446,7 +448,10 @@ class Sort(Transform, CliPlugin):
             if not callable(key):
                 raise Exception("key must be a function with one argument.")
         else:
-            key = lambda item: item.id
+
+            def key(item):
+                return item.id
+
         self._key = key
 
     def __iter__(self):
@@ -464,7 +469,7 @@ class MapSubsets(ItemTransform, CliPlugin):
     def _mapping_arg(s):
         parts = s.split(":")
         if len(parts) != 2:
-            raise argparse.ArgumentTypeError()
+            raise argparse.ArgumentTypeError
         return parts
 
     @classmethod
@@ -518,7 +523,7 @@ class RandomSplit(Transform, CliPlugin):
     def _split_arg(s):
         parts = s.split(":")
         if len(parts) != 2:
-            raise argparse.ArgumentTypeError()
+            raise argparse.ArgumentTypeError
         return (parts[0], float(parts[1]))
 
     @classmethod
@@ -768,7 +773,7 @@ class RemapLabels(ItemTransform, CliPlugin):
     def _split_arg(s):
         parts = s.split(":")
         if len(parts) != 2:
-            raise argparse.ArgumentTypeError()
+            raise argparse.ArgumentTypeError
         return (parts[0], parts[1])
 
     @classmethod
@@ -1468,7 +1473,7 @@ class Correct(Transform, CliPlugin):
         return self._categories
 
     def _parse_ann_ids(self, desc: str):
-        return [int(s) for s in str.split(desc, "'") if s.isdigit()][0]
+        return next(int(s) for s in str.split(desc, "'") if s.isdigit())
 
     def _analyze_reports(self, report):
         for rep in report:
@@ -1811,7 +1816,7 @@ class AstypeAnnotations(ItemTransform):
         for column in columns:
             parts = column.split(":")
             if len(parts) != 2:
-                raise argparse.ArgumentTypeError()
+                raise argparse.ArgumentTypeError
             results.append((parts[0], parts[1]))
         return results
 
@@ -1862,7 +1867,7 @@ class AstypeAnnotations(ItemTransform):
                     dst_label_cat.add(dst_label, parent=dst_parent, attributes={})
                 dst_label_cat.add_label_group(src_cat.name, src_cat.labels, group_type=0)
             else:
-                self._categories[AnnotationType.caption] = self._categories.get(AnnotationType.caption, []) + [src_cat]
+                self._categories[AnnotationType.caption] = [*self._categories.get(AnnotationType.caption, []), src_cat]
         self._categories[AnnotationType.label] = dst_label_cat
 
     def categories(self):
@@ -1936,8 +1941,7 @@ class Clean(TabularTransform):
         text = text.lower()  # Convert to lowercase
         text = re.sub(r"[^A-Za-z\s]+", "", text)  # Remove special characters and punctuation
         text = re.sub(r"\s+", " ", text).strip()  # Remove extra whitespaces
-        text = " ".join([word for word in text.split() if word not in stop_words])  # Remove stopwords
-        return text
+        return " ".join([word for word in text.split() if word not in stop_words])  # Remove stopwords
 
     def check_outlier(self, table, numeric_cols):
         for col in numeric_cols:
@@ -1988,12 +1992,12 @@ class Clean(TabularTransform):
     def refine_tabular_media(self, item):
         media = item.media
         df = pd.DataFrame(media.data(), index=[media.index])
-        str_cols = [col for col in media.data().keys() if media.table.dtype(col) is str]
-        float_cols = [col for col in media.data().keys() if media.table.dtype(col) is float]
-        int_cols = [col for col in media.data().keys() if media.table.dtype(col) is int]
+        str_cols = [col for col in media.data() if media.table.dtype(col) is str]
+        float_cols = [col for col in media.data() if media.table.dtype(col) is float]
+        int_cols = [col for col in media.data() if media.table.dtype(col) is int]
         countable_cols = [
             col
-            for col in media.data().keys()
+            for col in media.data()
             if isinstance(item.media.table.dtype(col), CategoricalDtype) or item.media.table.dtype(col) is int
         ]
 
@@ -2021,13 +2025,13 @@ class Clean(TabularTransform):
                 if len(item.annotations) != 1:
                     raise ValueError("If the item has a tabular annotation, it should have one annotation.")
                 annotation_values = {
-                    key: refined_media.data[key] for key in item.annotations[0].values.keys()
+                    key: refined_media.data[key] for key in item.annotations[0].values
                 }  # only for tabular
                 ann = ann.wrap(values=annotation_values)
             elif isinstance(ann, Caption):
                 value = [
                     f"{key}{sep_token}{refined_media.data[key]}"
-                    for key in refined_media.data.keys()
+                    for key in refined_media.data
                     if ann.caption.startswith(key)
                 ]
                 ann = ann.wrap(caption=value[0])

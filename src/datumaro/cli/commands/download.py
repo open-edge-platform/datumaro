@@ -5,7 +5,8 @@
 import argparse
 from typing import Dict
 
-from ..util import MultilineFormatter
+from datumaro.cli.util import MultilineFormatter
+
 from .downloaders import IDatasetDownloader, KaggleDatasetDownloader, TfdsDatasetDownloader
 
 

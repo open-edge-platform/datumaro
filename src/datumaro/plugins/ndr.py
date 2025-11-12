@@ -371,8 +371,7 @@ class NDR(Transform, CliPlugin):
 
         # concat and l2 normalize
         res = np.concatenate([rx, ry], axis=-1)
-        res = res / np.sqrt(np.sum(res**2))
-        return res
+        return res / np.sqrt(np.sum(res**2))
 
     @staticmethod
     def _project(feat, hash_dim=32):

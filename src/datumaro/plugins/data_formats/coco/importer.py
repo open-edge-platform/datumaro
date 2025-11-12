@@ -57,7 +57,7 @@ class CocoImporter(Importer):
         context: FormatDetectionContext,
     ) -> FormatDetectionConfidence:
         num_tasks = 0
-        for task in cls._TASKS.keys():
+        for task in cls._TASKS:
             try:
                 context.require_files(f"annotations/{task.name}_*{cls._ANNO_EXT}")
                 num_tasks += 1
@@ -95,10 +95,9 @@ class CocoImporter(Importer):
         sources = []
         for subset, ann_files in subsets.items():
             for ann_type, ann_file in ann_files.items():
-                if ann_type in conflicting_types:
-                    if ann_type is not selected_ann_type:
-                        log.warning("Not implemented: conflicting source '%s' is skipped." % ann_file)
-                        continue
+                if ann_type in conflicting_types and ann_type is not selected_ann_type:
+                    log.warning("Not implemented: conflicting source '%s' is skipped." % ann_file)
+                    continue
                 log.info("Found a dataset at '%s'" % ann_file)
 
                 options = dict(extra_params)

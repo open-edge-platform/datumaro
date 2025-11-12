@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 import hashlib
+import itertools
 import logging as log
 import warnings
 from collections import defaultdict
@@ -74,8 +75,11 @@ class _MeanStdCounter:
             stats[i][0] = v[1].reshape(-1)
             stats[i][1] = v[2].reshape(-1)
 
-        mean = lambda i, s: s[i][0]
-        var = lambda i, s: s[i][1]
+        def mean(i, s):
+            return s[i][0]
+
+        def var(i, s):
+            return s[i][1]
 
         # make variance unbiased
         np.multiply(np.square(stats[:, 1]), (counts / (counts - 1))[:, np.newaxis], out=stats[:, 1])
@@ -347,7 +351,7 @@ def compute_ann_statistics(dataset: IDataset):
                 "count": int(c),
                 "percent": int(c) / len(segm_areas),
             }
-            for c, (bin_min, bin_max) in zip(hist, zip(bins[:-1], bins[1:]))
+            for c, (bin_min, bin_max) in zip(hist, itertools.pairwise(bins))
         ]
 
     return stats

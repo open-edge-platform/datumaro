@@ -191,14 +191,12 @@ class Ade20k2020Base(DatasetBase):
     def _load_instance_mask(path):
         mask = load_image(path)
         _, instance_mask = np.unique(mask, return_inverse=True)
-        instance_mask = instance_mask.reshape(mask.shape)
-        return instance_mask
+        return instance_mask.reshape(mask.shape)
 
     @staticmethod
     def _load_class_mask(path):
         mask = load_image(path)
-        mask = ((mask[:, :, 2] / 10).astype(np.int32) << 8) + mask[:, :, 1].astype(np.int32)
-        return mask
+        return ((mask[:, :, 2] / 10).astype(np.int32) << 8) + mask[:, :, 1].astype(np.int32)
 
     @staticmethod
     def _get_instance_mask(mask: lazy_image) -> np.ndarray:
@@ -220,7 +218,7 @@ class Ade20k2020Importer(Importer):
             page_mapper = JsonSectionPageMapper(fpath)
             sections = page_mapper.sections()
 
-            if "annotation" not in sections.keys():
+            if "annotation" not in sections:
                 raise Exception
 
     @classmethod
