@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 """
-Registry system for tiling operations on experimental datasets.
+Registry system for tiling operations on v2 datasets.
 
 This module provides the foundation for tiling operations, including tiler
 registration and configuration management.

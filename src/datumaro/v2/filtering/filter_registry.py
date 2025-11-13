@@ -1,5 +1,5 @@
 """
-Registry system for filtering operations on experimental datasets.
+Registry system for filtering operations on v2 datasets.
 
 This module provides the foundation for filtering operations, including filter
 registration and configuration management.

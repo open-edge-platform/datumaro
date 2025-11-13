@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 """
-Export and import functionality for experimental datasets.
+Export and import functionality for v2 datasets.
 
 This module provides comprehensive export/import capabilities for Datumaro datasets,
 including support for:

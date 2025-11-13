@@ -5,7 +5,7 @@
 Legacy dataset conversion functionality.
 
 This module provides functionality to convert legacy Datumaro datasets to the new
-experimental dataset format with automatic schema inference and type conversion.
+v2 dataset format with automatic schema inference and type conversion.
 """
 
 from __future__ import annotations
@@ -101,7 +101,7 @@ class ForwardMediaConverter(ABC):
 
     @abstractmethod
     def convert_item_media(self, item: DatasetItem) -> dict[str, Any]:
-        """Convert media from a DatasetItem to experimental format."""
+        """Convert media from a DatasetItem to v2 format."""
 
 
 class ForwardAnnotationConverter(ABC):
@@ -131,7 +131,7 @@ class ForwardAnnotationConverter(ABC):
 
     @abstractmethod
     def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:
-        """Convert annotations of this type to experimental format."""
+        """Convert annotations of this type to v2 format."""
 
 
 # Global registries
@@ -965,12 +965,12 @@ def _convert_legacy_item(item: DatasetItem, analysis_result: AnalysisResult) -> 
 
 
 def convert_from_legacy(legacy_dataset: LegacyDataset) -> Dataset[Sample]:
-    """Convert legacy dataset to experimental format with automatic schema inference.
+    """Convert legacy dataset to v2 format with automatic schema inference.
 
     Args:
         legacy_dataset: The legacy Datumaro dataset to convert
     Returns:
-        A new experimental Dataset with inferred schema and converted data
+        A new v2 Dataset with inferred schema and converted data
 
     Example:
         >>> legacy_ds = Dataset.import_from("path/to/coco", "coco")
@@ -983,12 +983,12 @@ def convert_from_legacy(legacy_dataset: LegacyDataset) -> Dataset[Sample]:
     # Step 1: Analyze dataset to infer schema
     analysis_result = analyze_legacy_dataset(legacy_dataset)
 
-    # Step 2: Create experimental dataset with inferred schema
+    # Step 2: Create v2 dataset with inferred schema
     experimental_dataset = Dataset(analysis_result.schema)
 
     # Step 3: Convert all items
     for legacy_item in legacy_dataset:
-        # Convert legacy item to experimental sample
+        # Convert legacy item to v2 sample
         sample_data = _convert_legacy_item(legacy_item, analysis_result)
         if analysis_result.is_hierarchical and isinstance(sample_data["label"], int):
             # Convert single labels in hierarchical project to be a list
@@ -1035,7 +1035,7 @@ class BackwardMediaConverter(ABC):
 
     @abstractmethod
     def convert_to_legacy_media(self, sample: Sample) -> MediaElement[Any]:
-        """Convert experimental sample media to legacy MediaElement."""
+        """Convert v2 sample media to legacy MediaElement."""
 
 
 class BackwardAnnotationConverter(ABC):
@@ -1052,11 +1052,11 @@ class BackwardAnnotationConverter(ABC):
 
     @abstractmethod
     def infer_categories(self, experimental_dataset: Dataset[Sample]) -> CategoriesInfo:
-        """Infer legacy categories from experimental dataset."""
+        """Infer legacy categories from v2 dataset."""
 
     @abstractmethod
     def convert_to_legacy_annotations(self, sample: Sample, categories: CategoriesInfo) -> list[Annotation]:
-        """Convert experimental sample annotations to legacy format."""
+        """Convert v2 sample annotations to legacy format."""
 
 
 # Global registries for backward converters
@@ -1389,7 +1389,7 @@ class BackwardRotatedBboxAnnotationConverter(BackwardAnnotationConverter):
         return AnnotationType.rotated_bbox
 
     def convert_to_legacy_annotations(self, sample: Sample, categories: CategoriesInfo) -> list[Annotation]:  # noqa: ARG002
-        """Convert experimental rotated bbox data to legacy RotatedBbox annotations."""
+        """Convert v2 rotated bbox data to legacy RotatedBbox annotations."""
         rotated_bboxes = getattr(sample, self.rotated_bboxes_attr, None)
         if rotated_bboxes is None or len(rotated_bboxes) == 0:
             return []
@@ -1514,7 +1514,7 @@ class BackwardPolygonAnnotationConverter(BackwardAnnotationConverter):
 
 @dataclass
 class BackwardAnalysisResult:
-    """Result of experimental dataset analysis for backward conversion."""
+    """Result of v2 dataset analysis for backward conversion."""
 
     media_type: type[MediaElement[Any]] | None
     ann_types: set[AnnotationType]
@@ -1524,10 +1524,10 @@ class BackwardAnalysisResult:
 
 
 def analyze_experimental_dataset(experimental_dataset: Dataset[Sample]) -> BackwardAnalysisResult:
-    """Analyze experimental dataset schema to determine legacy format.
+    """Analyze v2 dataset schema to determine legacy format.
 
     Args:
-        experimental_dataset: The experimental dataset to analyze
+        experimental_dataset: The v2 dataset to analyze
 
     Returns:
         BackwardAnalysisResult containing legacy format information
@@ -1571,7 +1571,7 @@ def analyze_experimental_dataset(experimental_dataset: Dataset[Sample]) -> Backw
 
 
 def _convert_experimental_item(index: int, sample: Sample, backward_analysis: BackwardAnalysisResult) -> DatasetItem:
-    """Convert experimental sample to legacy DatasetItem."""
+    """Convert v2 sample to legacy DatasetItem."""
 
     # Convert media
     media: MediaElement[Any] | None = None
@@ -1595,10 +1595,10 @@ def _convert_experimental_item(index: int, sample: Sample, backward_analysis: Ba
 
 
 def convert_to_legacy(experimental_dataset: Dataset[Sample]) -> LegacyDataset:
-    """Convert experimental dataset to legacy format.
+    """Convert v2 dataset to legacy format.
 
     Args:
-        experimental_dataset: The experimental Dataset to convert
+        experimental_dataset: The v2 Dataset to convert
 
     Returns:
         A new legacy Datumaro Dataset with converted data
@@ -1610,7 +1610,7 @@ def convert_to_legacy(experimental_dataset: Dataset[Sample]) -> LegacyDataset:
         >>> legacy_ds.export("output", "coco")
     """
 
-    # Step 1: Analyze experimental dataset
+    # Step 1: Analyze v2 dataset
     backward_analysis = analyze_experimental_dataset(experimental_dataset)
 
     # Step 2: Create legacy dataset items
