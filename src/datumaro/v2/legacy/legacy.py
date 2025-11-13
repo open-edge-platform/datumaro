@@ -37,7 +37,7 @@ from datumaro.components.dataset import Dataset as LegacyDataset
 from datumaro.components.dataset_base import CategoriesInfo, DatasetItem
 from datumaro.components.media import FromDataMixin, FromFileMixin, Image, MediaElement
 
-from src.datumaro.v2.categories import (
+from datumaro.v2.categories import (
     GroupType,
     HierarchicalLabelCategories,
     HierarchicalLabelCategory,
@@ -47,31 +47,16 @@ from src.datumaro.v2.categories import (
     MaskCategories,
     RgbColor,
 )
-from src.datumaro.v2.converters import generate_colormap
-from src.datumaro.v2.dataset import Dataset, Sample
-from src.datumaro.v2.fields import (
-    BBoxField,
-    EllipseField,
-    ImageInfo,
-    ImagePathField,
-    LabelField,
-    PolygonField,
-    RotatedBBoxField,
-    Subset,
-    bbox_field,
-    image_bytes_field,
-    image_callable_field,
-    image_info_field,
-    image_path_field,
-    instance_mask_callable_field,
-    keypoints_field,
-    label_field,
-    mask_callable_field,
-    polygon_field,
-    rotated_bbox_field,
-    subset_field,
-)
-from src.datumaro.v2.schema import AttributeInfo, Schema, Semantic
+from datumaro.v2.converters import generate_colormap
+from datumaro.v2.dataset import Dataset, Sample
+from datumaro.v2.fields.datasets import Subset, subset_field
+from datumaro.v2.fields.images import image_bytes_field
+from datumaro.v2.fields.annotations import keypoints_field, EllipseField
+from datumaro.v2 import BBoxField, bbox_field, RotatedBBoxField, rotated_bbox_field, LabelField, label_field, \
+    PolygonField, polygon_field, ImageInfo, image_info_field, ImagePathField, image_path_field, image_callable_field, \
+    Semantic
+from datumaro.v2.fields.masks import instance_mask_callable_field, mask_callable_field
+from datumaro.v2.schema import AttributeInfo, Schema
 
 
 class ForwardMediaConverter(ABC):

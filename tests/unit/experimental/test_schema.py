@@ -43,6 +43,8 @@ from datumaro.experimental.fields import (
 )
 from datumaro.experimental.schema import AttributeInfo, Schema, Semantic
 
+import datumaro.v2.fields.base
+
 
 def test_tensor_field_creation():
     """Test TensorField creation and properties."""
@@ -385,7 +387,7 @@ def test_image_info_field_polars_schema():
     field = image_info_field()
     schema = field.to_polars_schema("image_info")
 
-    expected = {"image_info": pl.Struct([pl.Field("width", pl.Int32()), pl.Field("height", pl.Int32())])}
+    expected = {"image_info": pl.Struct([datumaro.v2.fields.fields.Field("width", pl.Int32()), datumaro.v2.fields.fields.Field("height", pl.Int32())])}
     assert schema == expected
 
 

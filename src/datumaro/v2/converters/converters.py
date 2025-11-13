@@ -19,24 +19,13 @@ from PIL import Image
 
 from datumaro.util.mask_tools import generate_colormap
 
-from src.datumaro.v2.categories import LabelCategories, MaskCategories, RgbColor
+from datumaro.v2.categories import LabelCategories, MaskCategories, RgbColor
 from .converter_registry import AttributeSpec, Converter, converter
-from src.datumaro.v2.fields import (
-    BBoxField,
-    ImageBytesField,
-    ImageCallableField,
-    ImageField,
-    ImageInfoField,
-    ImagePathField,
-    InstanceMaskCallableField,
-    InstanceMaskField,
-    LabelField,
-    MaskCallableField,
-    MaskField,
-    PolygonField,
-    RotatedBBoxField,
-)
-from src.datumaro.v2.type_registry import polars_to_numpy_dtype
+from ..fields.images import ImageBytesField
+from .. import BBoxField, RotatedBBoxField, LabelField, PolygonField, ImageField, ImageInfoField, ImagePathField, \
+    ImageCallableField
+from ..fields.masks import MaskField, InstanceMaskField, InstanceMaskCallableField, MaskCallableField
+from datumaro.v2.type_registry import polars_to_numpy_dtype
 
 
 @converter

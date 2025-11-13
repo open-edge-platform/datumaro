@@ -23,9 +23,10 @@ from typing import TYPE_CHECKING, Any, NamedTuple, TypeVar, cast, get_type_hints
 import polars as pl
 from typing_extensions import dataclass_transform
 
-from src.datumaro.v2.categories import Categories
-from src.datumaro.v2.schema import AttributeSpec, Field, Schema, Semantic
-from src.datumaro.v2.transform import Transform
+from datumaro.v2.categories import Categories
+from datumaro.v2.schema import AttributeSpec, Schema
+from datumaro.v2 import Semantic, Field
+from datumaro.v2.transform import Transform
 
 if TYPE_CHECKING:
     from collections.abc import Callable, Sequence

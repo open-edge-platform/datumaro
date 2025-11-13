@@ -50,6 +50,8 @@ from datumaro.components.transformer import ItemTransform, Transform
 from datumaro.util.log_utils import logging_disabled
 from datumaro.util.scope import on_error_do, scoped
 
+import datumaro.v2.fields.datasets
+
 DEFAULT_FORMAT = "datumaro"
 
 __all__ = ["Dataset", "eager_mode"]
@@ -65,7 +67,7 @@ class DatasetSubset(IDataset):  # non-owning view
         yield from self.parent._data.get_subset(self.name)
 
     def __len__(self):
-        subset: DatasetItemStorageDatasetView.Subset = self.parent._data.get_subset(self.name)
+        subset: datumaro.v2.fields.datasets.Subset = self.parent._data.get_subset(self.name)
 
         return len(subset)
 

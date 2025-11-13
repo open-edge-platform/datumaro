@@ -23,6 +23,8 @@ from datumaro.experimental.tiling.tiler_registry import (
     _create_tiling_plan,
 )
 
+import datumaro.v2.fields.base
+
 
 @pytest.fixture
 def sample_schema():
@@ -60,7 +62,7 @@ def sample_df():
         schema={
             "image": pl.List(pl.UInt8),
             "image_shape": pl.List(pl.Int32),
-            "image_info": pl.Struct([pl.Field("height", pl.Int32), pl.Field("width", pl.Int32)]),
+            "image_info": pl.Struct([datumaro.v2.fields.fields.Field("height", pl.Int32), datumaro.v2.fields.fields.Field("width", pl.Int32)]),
         },
     )
 

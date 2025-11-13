@@ -29,7 +29,8 @@ import polars as pl
 from PIL import Image
 
 from .dataset import Dataset, Sample
-from .fields import ImageCallableField, ImagePathField, InstanceMaskCallableField, MaskCallableField
+from . import ImagePathField, ImageCallableField
+from .fields.masks import InstanceMaskCallableField, MaskCallableField
 from .schema import Schema
 
 if TYPE_CHECKING:
