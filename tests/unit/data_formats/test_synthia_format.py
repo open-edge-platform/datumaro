@@ -14,20 +14,11 @@ from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image
 from datumaro.plugins.data_formats.synthia.base import make_categories
-from datumaro.plugins.data_formats.synthia.format import (
-    SynthiaAlLabelMap,
-    SynthiaRandLabelMap,
-    SynthiaSfLabelMap,
-)
-from datumaro.plugins.data_formats.synthia.importer import (
-    SynthiaAlImporter,
-    SynthiaRandImporter,
-    SynthiaSfImporter,
-)
+from datumaro.plugins.data_formats.synthia.format import SynthiaAlLabelMap, SynthiaRandLabelMap, SynthiaSfLabelMap
+from datumaro.plugins.data_formats.synthia.importer import SynthiaAlImporter, SynthiaRandImporter, SynthiaSfImporter
+from tests.utils.assets import get_test_asset_path
 
 from .base import TestDataFormatBase
-
-from tests.utils.assets import get_test_asset_path
 
 DUMMY_RAND_DATASET_DIR = get_test_asset_path("synthia_dataset", "rand")
 DUMMY_SF_DATASET_DIR = get_test_asset_path("synthia_dataset", "sf")
@@ -100,9 +91,7 @@ def fxt_synthia_rand_custom_label_dataset():
             ),
         ],
         categories={
-            AnnotationType.label: LabelCategories.from_iterable(
-                ["background", "sky", "building", "person", "road"]
-            ),
+            AnnotationType.label: LabelCategories.from_iterable(["background", "sky", "building", "person", "road"]),
             AnnotationType.mask: MaskCategories(
                 {
                     0: (0, 0, 0),
@@ -139,9 +128,7 @@ def fxt_synthia_rand_meta_file_dataset():
             ),
         ],
         categories={
-            AnnotationType.label: LabelCategories.from_iterable(
-                ["background", "sky", "building", "person", "road"]
-            ),
+            AnnotationType.label: LabelCategories.from_iterable(["background", "sky", "building", "person", "road"]),
             AnnotationType.mask: MaskCategories(
                 {
                     0: (0, 0, 0),

@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: MIT
 
-# ruff: noqa: F405
 
 from .dataset_item import *
 from .media import *

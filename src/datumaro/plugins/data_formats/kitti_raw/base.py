@@ -147,9 +147,7 @@ class KittiRawBase(SubsetBase):
         common_attrs = ["occluded"]
 
         if has_meta_file(path):
-            categories = {
-                AnnotationType.label: LabelCategories.from_iterable(parse_meta_file(path).keys())
-            }
+            categories = {AnnotationType.label: LabelCategories.from_iterable(parse_meta_file(path).keys())}
         else:
             label_cat = LabelCategories(attributes=common_attrs)
             for label, attrs in sorted(labels.items(), key=lambda e: e[0]):
@@ -170,14 +168,13 @@ class KittiRawBase(SubsetBase):
     def _parse_attr(cls, value):
         if value == "true":
             return True
-        elif value == "false":
+        if value == "false":
             return False
-        elif str(cast(value, int, 0)) == value:
+        if str(cast(value, int, 0)) == value:
             return int(value)
-        elif str(cast(value, float, 0)) == value:
+        if str(cast(value, float, 0)) == value:
             return float(value)
-        else:
-            return value
+        return value
 
     @classmethod
     def _parse_track(cls, track_id, track, categories):
@@ -239,9 +236,7 @@ class KittiRawBase(SubsetBase):
                 image_name = osp.splitext(osp.relpath(p, image_dir))[0]
                 images.setdefault(image_name, []).append(p)
 
-        name_mapping = self._parse_name_mapping(
-            osp.join(self._rootdir, KittiRawPath.NAME_MAPPING_FILE)
-        )
+        name_mapping = self._parse_name_mapping(osp.join(self._rootdir, KittiRawPath.NAME_MAPPING_FILE))
 
         items = {}
         for frame_id, item_desc in parsed.items():
@@ -251,9 +246,7 @@ class KittiRawBase(SubsetBase):
                 subset=self._subset,
                 media=PointCloud.from_file(
                     path=osp.join(self._rootdir, KittiRawPath.PCD_DIR, name + ".pcd"),
-                    extra_images=[
-                        Image.from_file(path=image) for image in sorted(images.get(name, []))
-                    ],
+                    extra_images=[Image.from_file(path=image) for image in sorted(images.get(name, []))],
                 ),
                 annotations=item_desc.get("annotations"),
                 attributes={"frame": int(frame_id)},
@@ -270,9 +263,7 @@ class KittiRawBase(SubsetBase):
                 subset=self._subset,
                 media=PointCloud.from_file(
                     path=osp.join(self._rootdir, KittiRawPath.PCD_DIR, name + ".pcd"),
-                    extra_images=[
-                        Image.from_file(path=image) for image in sorted(images.get(name, []))
-                    ],
+                    extra_images=[Image.from_file(path=image) for image in sorted(images.get(name, []))],
                 ),
                 attributes={"frame": int(frame_id)},
             )

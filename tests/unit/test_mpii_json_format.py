@@ -2,32 +2,17 @@ from unittest import TestCase
 
 import numpy as np
 
-from datumaro.components.annotation import (
-    AnnotationType,
-    Bbox,
-    LabelCategories,
-    Points,
-    PointsCategories,
-)
+from datumaro.components.annotation import AnnotationType, Bbox, LabelCategories, Points, PointsCategories
 from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.environment import Environment
 from datumaro.components.media import Image
-from datumaro.plugins.data_formats.mpii.mpii_json import (
-    MPII_POINTS_JOINTS,
-    MPII_POINTS_LABELS,
-    MpiiJsonImporter,
-)
-
+from datumaro.plugins.data_formats.mpii.mpii_json import MPII_POINTS_JOINTS, MPII_POINTS_LABELS, MpiiJsonImporter
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import compare_datasets
 
-DUMMY_DATASET_DIR_WITH_NUMPY_FILES = get_test_asset_path(
-    "mpii_json_dataset", "dataset_with_numpy_files"
-)
-DUMMY_DATASET_DIR_WO_NUMPY_FILES = get_test_asset_path(
-    "mpii_json_dataset", "dataset_wo_numpy_files"
-)
+DUMMY_DATASET_DIR_WITH_NUMPY_FILES = get_test_asset_path("mpii_json_dataset", "dataset_with_numpy_files")
+DUMMY_DATASET_DIR_WO_NUMPY_FILES = get_test_asset_path("mpii_json_dataset", "dataset_wo_numpy_files")
 
 
 class MpiiJsonImporterTest(TestCase):
@@ -258,9 +243,7 @@ class MpiiJsonImporterTest(TestCase):
             ],
             categories={
                 AnnotationType.label: LabelCategories.from_iterable(["human"]),
-                AnnotationType.points: PointsCategories.from_iterable(
-                    [(0, MPII_POINTS_LABELS, MPII_POINTS_JOINTS)]
-                ),
+                AnnotationType.points: PointsCategories.from_iterable([(0, MPII_POINTS_LABELS, MPII_POINTS_JOINTS)]),
             },
         )
 
@@ -412,9 +395,7 @@ class MpiiJsonImporterTest(TestCase):
             ],
             categories={
                 AnnotationType.label: LabelCategories.from_iterable(["human"]),
-                AnnotationType.points: PointsCategories.from_iterable(
-                    [(0, MPII_POINTS_LABELS, MPII_POINTS_JOINTS)]
-                ),
+                AnnotationType.points: PointsCategories.from_iterable([(0, MPII_POINTS_LABELS, MPII_POINTS_JOINTS)]),
             },
         )
 

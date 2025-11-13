@@ -74,7 +74,7 @@ class ImageZipExporter(Exporter):
         except KeyError:
             import argparse
 
-            raise argparse.ArgumentTypeError()
+            raise argparse.ArgumentTypeError
 
     @classmethod
     def build_cmdline_parser(cls, **kwargs):
@@ -91,8 +91,9 @@ class ImageZipExporter(Exporter):
             "--compression",
             type=cls._get_compression_method,
             default=ImageZipPath.DEFAULT_COMPRESSION.name,
-            help="Archive compression method.\nAvailable methods: {} "
-            "(default: %(default)s)".format(", ".join(e.name for e in Compression)),
+            help="Archive compression method.\nAvailable methods: {} (default: %(default)s)".format(
+                ", ".join(e.name for e in Compression)
+            ),
         )
 
         return parser
@@ -103,9 +104,7 @@ class ImageZipExporter(Exporter):
         if name is None:
             name = ImageZipPath.DEFAULT_ARCHIVE_NAME
 
-        compression = parse_str_enum_value(
-            compression, Compression, default=ImageZipPath.DEFAULT_COMPRESSION
-        )
+        compression = parse_str_enum_value(compression, Compression, default=ImageZipPath.DEFAULT_COMPRESSION)
 
         self._archive_name = name
         self._compression = compression.value
@@ -117,8 +116,7 @@ class ImageZipExporter(Exporter):
 
         if osp.exists(archive_path):
             raise FileExistsError(
-                "Zip file: %s, already exist, "
-                "specify archive name with --name extra argument" % archive_path
+                "Zip file: %s, already exist, specify archive name with --name extra argument" % archive_path
             )
 
         with ZipFile(archive_path, "w", self._compression) as zf:

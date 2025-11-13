@@ -20,14 +20,7 @@ from datumaro.util.image import save_image
 from datumaro.util.mask_tools import paint_mask
 from datumaro.util.meta_file_util import is_meta_file, parse_meta_file
 
-from .format import (
-    KittiLabelMap,
-    KittiPath,
-    KittiTask,
-    make_kitti_categories,
-    parse_label_map,
-    write_label_map,
-)
+from .format import KittiLabelMap, KittiPath, KittiTask, make_kitti_categories, parse_label_map, write_label_map
 
 
 class LabelmapType(Enum):
@@ -51,7 +44,7 @@ class KittiExporter(Exporter):
         except KeyError:
             import argparse
 
-            raise argparse.ArgumentTypeError()
+            raise argparse.ArgumentTypeError
 
     @classmethod
     def build_cmdline_parser(cls, **kwargs):
@@ -106,9 +99,7 @@ class KittiExporter(Exporter):
             self._load_categories(label_map)
         elif KittiTask.detection in self._tasks:
             self._categories = {
-                AnnotationType.label: self._extractor.categories().get(
-                    AnnotationType.label, LabelCategories()
-                )
+                AnnotationType.label: self._extractor.categories().get(AnnotationType.label, LabelCategories())
             }
 
     def _apply_impl(self):
@@ -119,9 +110,7 @@ class KittiExporter(Exporter):
 
         for subset_name, subset in self._extractor.subsets().items():
             if KittiTask.segmentation in self._tasks:
-                os.makedirs(
-                    osp.join(self._save_dir, subset_name, KittiPath.INSTANCES_DIR), exist_ok=True
-                )
+                os.makedirs(osp.join(self._save_dir, subset_name, KittiPath.INSTANCES_DIR), exist_ok=True)
 
             for item in subset:
                 if self._save_media:
@@ -132,16 +121,10 @@ class KittiExporter(Exporter):
                     compiled_class_mask = CompiledMask.from_instance_masks(
                         masks, instance_labels=[self._label_id_mapping(m.label) for m in masks]
                     )
-                    color_mask_path = osp.join(
-                        subset_name, KittiPath.SEMANTIC_RGB_DIR, item.id + KittiPath.MASK_EXT
-                    )
-                    self.save_mask(
-                        osp.join(self._save_dir, color_mask_path), compiled_class_mask.class_mask
-                    )
+                    color_mask_path = osp.join(subset_name, KittiPath.SEMANTIC_RGB_DIR, item.id + KittiPath.MASK_EXT)
+                    self.save_mask(osp.join(self._save_dir, color_mask_path), compiled_class_mask.class_mask)
 
-                    labelids_mask_path = osp.join(
-                        subset_name, KittiPath.SEMANTIC_DIR, item.id + KittiPath.MASK_EXT
-                    )
+                    labelids_mask_path = osp.join(subset_name, KittiPath.SEMANTIC_DIR, item.id + KittiPath.MASK_EXT)
                     self.save_mask(
                         osp.join(self._save_dir, labelids_mask_path),
                         compiled_class_mask.class_mask,
@@ -152,13 +135,9 @@ class KittiExporter(Exporter):
                     # TODO: optimize second merging
                     compiled_instance_mask = CompiledMask.from_instance_masks(
                         masks,
-                        instance_labels=[
-                            (self._label_id_mapping(m.label) << 8) + m.id for m in masks
-                        ],
+                        instance_labels=[(self._label_id_mapping(m.label) << 8) + m.id for m in masks],
                     )
-                    inst_path = osp.join(
-                        subset_name, KittiPath.INSTANCES_DIR, item.id + KittiPath.MASK_EXT
-                    )
+                    inst_path = osp.join(subset_name, KittiPath.INSTANCES_DIR, item.id + KittiPath.MASK_EXT)
                     self.save_mask(
                         osp.join(self._save_dir, inst_path),
                         compiled_instance_mask.class_mask,
@@ -168,26 +147,18 @@ class KittiExporter(Exporter):
 
                 bboxes = [a for a in item.annotations if a.type == AnnotationType.bbox]
                 if bboxes and KittiTask.detection in self._tasks:
-                    labels_file = osp.join(
-                        self._save_dir, subset_name, KittiPath.LABELS_DIR, "%s.txt" % item.id
-                    )
+                    labels_file = osp.join(self._save_dir, subset_name, KittiPath.LABELS_DIR, "%s.txt" % item.id)
                     os.makedirs(osp.dirname(labels_file), exist_ok=True)
                     with open(labels_file, "w", encoding="utf-8") as f:
                         for bbox in bboxes:
                             label_line = [-1] * 16
                             label_line[0] = self.get_label(bbox.label)
-                            label_line[1] = cast(
-                                bbox.attributes.get("truncated"), float, KittiPath.DEFAULT_TRUNCATED
-                            )
-                            label_line[2] = cast(
-                                bbox.attributes.get("occluded"), int, KittiPath.DEFAULT_OCCLUDED
-                            )
+                            label_line[1] = cast(bbox.attributes.get("truncated"), float, KittiPath.DEFAULT_TRUNCATED)
+                            label_line[2] = cast(bbox.attributes.get("occluded"), int, KittiPath.DEFAULT_OCCLUDED)
                             x, y, h, w = bbox.get_bbox()
                             label_line[4:8] = x, y, x + h, y + w
 
-                            label_line[15] = cast(
-                                bbox.attributes.get("score"), float, KittiPath.DEFAULT_SCORE
-                            )
+                            label_line[15] = cast(bbox.attributes.get("score"), float, KittiPath.DEFAULT_SCORE)
 
                             label_line = " ".join(str(v) for v in label_line)
                             f.write("%s\n" % label_line)
@@ -210,18 +181,12 @@ class KittiExporter(Exporter):
             # use the default KITTI colormap
             label_map = KittiLabelMap
 
-        elif (
-            label_map_source == LabelmapType.source.name
-            and AnnotationType.mask not in self._extractor.categories()
-        ):
+        elif label_map_source == LabelmapType.source.name and AnnotationType.mask not in self._extractor.categories():
             # generate colormap for input labels
             labels = self._extractor.categories().get(AnnotationType.label, LabelCategories())
             label_map = OrderedDict((item.name, None) for item in labels.items)
 
-        elif (
-            label_map_source == LabelmapType.source.name
-            and AnnotationType.mask in self._extractor.categories()
-        ):
+        elif label_map_source == LabelmapType.source.name and AnnotationType.mask in self._extractor.categories():
             # use source colormap
             labels = self._extractor.categories()[AnnotationType.label]
             colors = self._extractor.categories()[AnnotationType.mask]
@@ -242,8 +207,7 @@ class KittiExporter(Exporter):
 
         else:
             raise InvalidAnnotationError(
-                "Wrong labelmap specified, "
-                "expected one of %s or a file path" % ", ".join(t.name for t in LabelmapType)
+                "Wrong labelmap specified, expected one of %s or a file path" % ", ".join(t.name for t in LabelmapType)
             )
 
         self._categories = make_kitti_categories(label_map)
@@ -256,13 +220,9 @@ class KittiExporter(Exporter):
             self._categories[AnnotationType.label],
         )
 
-        void_labels = [
-            src_label for src_id, src_label in src_labels.items() if src_label not in dst_labels
-        ]
+        void_labels = [src_label for src_id, src_label in src_labels.items() if src_label not in dst_labels]
         if void_labels:
-            log.warning(
-                "The following labels are remapped to background: %s" % ", ".join(void_labels)
-            )
+            log.warning("The following labels are remapped to background: %s" % ", ".join(void_labels))
         log.debug(
             "Saving segmentations with the following label mapping: \n%s"
             % "\n".join(

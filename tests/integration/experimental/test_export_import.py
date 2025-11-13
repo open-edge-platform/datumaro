@@ -21,7 +21,7 @@ import pytest
 from PIL import Image as PILImage
 
 from datumaro.experimental.categories import LabelCategories
-from datumaro.experimental.dataset import Dataset, Sample, Schema
+from datumaro.experimental.dataset import Dataset, Sample
 from datumaro.experimental.export_import import (
     DATAFRAME_FILE,
     IMAGES_DIR,
@@ -325,10 +325,6 @@ def test_export_dataset_with_images_to_directory(tmp_path):
     assert (output_dir / DATAFRAME_FILE).exists()
     assert (output_dir / IMAGES_DIR).exists()
 
-    # Check metadata does not include per-row image paths
-    with open(output_dir / METADATA_FILE) as f:
-        metadata = json.load(f)
-
     # Check images were exported
     images_dir = output_dir / IMAGES_DIR
     assert len(list(images_dir.glob("image_*.png"))) == 2
@@ -422,10 +418,6 @@ def test_export_images_false_skips_image_export(tmp_path):
 
     # Images directory should not exist
     assert not (output_dir / IMAGES_DIR).exists()
-
-    # Metadata should not include per-row image paths
-    with open(output_dir / METADATA_FILE) as f:
-        metadata = json.load(f)
 
 
 def test_import_basic_dataset_from_directory(tmp_path):

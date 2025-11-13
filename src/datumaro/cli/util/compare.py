@@ -5,7 +5,6 @@
 import logging as log
 import os
 import os.path as osp
-import warnings
 from collections import Counter
 from enum import Enum, auto
 from typing import TYPE_CHECKING, Union
@@ -21,6 +20,8 @@ from datumaro.util.image import save_image
 from datumaro.util.import_util import lazy_import
 
 if TYPE_CHECKING:
+    import warnings
+
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         import tensorboardX as tb
@@ -36,14 +37,10 @@ class DistanceCompareVisualizer:
     DEFAULT_FORMAT = OutputFormat.simple
     _UNMATCHED_LABEL = -1
 
-    def __init__(
-        self, comparator, save_dir: str, output_format: Union[None, str, OutputFormat] = None
-    ):
+    def __init__(self, comparator, save_dir: str, output_format: Union[None, str, OutputFormat] = None):
         self._cmp = comparator
 
-        self._output_format = parse_str_enum_value(
-            output_format, self.OutputFormat, default=self.DEFAULT_FORMAT
-        )
+        self._output_format = parse_str_enum_value(output_format, self.OutputFormat, default=self.DEFAULT_FORMAT)
 
         self._save_dir = save_dir
 
@@ -188,8 +185,8 @@ class DistanceCompareVisualizer:
         text_size, baseline = cv2.getTextSize(text, font, scale, thickness)
         cv2.rectangle(
             frame,
-            tuple((origin + (0, baseline)).astype(int)),
-            tuple((origin + (text_size[0], -text_size[1])).astype(int)),
+            tuple((origin + (0, baseline)).astype(int)),  # noqa: RUF005
+            tuple((origin + (text_size[0], -text_size[1])).astype(int)),  # noqa: RUF005
             bgcolor,
             cv2.FILLED,
         )
@@ -227,21 +224,17 @@ class DistanceCompareVisualizer:
 
     def draw_bbox(self, img, shape, label, color):
         x, y, w, h = shape.get_bbox()
-        self.draw_detection_roi(
-            img, int(x), int(y), int(w), int(h), label, shape.attributes.get("score", 1), color
-        )
+        self.draw_detection_roi(img, int(x), int(y), int(w), int(h), label, shape.attributes.get("score", 1), color)
 
     def get_label_diff_file(self):
         if self._label_diff_writer is None:
-            self._label_diff_writer = open(
-                osp.join(self._save_dir, "label_diff.txt"), "w", encoding="utf-8"
-            )
+            self._label_diff_writer = open(osp.join(self._save_dir, "label_diff.txt"), "w", encoding="utf-8")  # noqa: SIM115
         return self._label_diff_writer
 
     def save_item_label_diff(self, item_a, item_b, diff):
         _, a_unmatched, b_unmatched = diff
 
-        if 0 < len(a_unmatched) + len(b_unmatched):
+        if len(a_unmatched) + len(b_unmatched) > 0:
             if self._output_format is self.OutputFormat.simple:
                 f = self.get_label_diff_file()
                 f.write(item_a.id + "\n")
@@ -259,9 +252,9 @@ class DistanceCompareVisualizer:
     def save_item_bbox_diff(self, item_a, item_b, diff):
         _, mispred, a_unmatched, b_unmatched = diff
 
-        if 0 < len(a_unmatched) + len(b_unmatched) + len(mispred):
+        if len(a_unmatched) + len(b_unmatched) + len(mispred) > 0:
             if not isinstance(item_a.media, Image) or not item_a.media.has_data:
-                log.warning("Item %s: item has no image data, " "it will be skipped" % (item_a.id))
+                log.warning("Item %s: item has no image data, it will be skipped" % (item_a.id))
                 return
             img_a = item_a.media.data.copy()
             img_b = img_a.copy()

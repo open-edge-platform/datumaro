@@ -41,13 +41,9 @@ class _KittiBase(SubsetBase):
     def _load_categories(self, path):
         if self._task == KittiTask.segmentation:
             return self._load_categories_segmentation(path)
-        elif self._task == KittiTask.detection:
+        if self._task == KittiTask.detection:
             if has_meta_file(path):
-                return {
-                    AnnotationType.label: LabelCategories.from_iterable(
-                        parse_meta_file(path).keys()
-                    )
-                }
+                return {AnnotationType.label: LabelCategories.from_iterable(parse_meta_file(path).keys())}
 
             return {AnnotationType.label: LabelCategories()}
 
@@ -69,8 +65,7 @@ class _KittiBase(SubsetBase):
         items = {}
         image_dir = osp.join(self._path, KittiPath.IMAGES_DIR)
         image_path_by_id = {
-            osp.splitext(osp.relpath(p, image_dir))[0]: p
-            for p in find_images(image_dir, recursive=True)
+            osp.splitext(osp.relpath(p, image_dir))[0]: p for p in find_images(image_dir, recursive=True)
         }
 
         segm_dir = osp.join(self._path, KittiPath.INSTANCES_DIR)
@@ -101,9 +96,7 @@ class _KittiBase(SubsetBase):
                 if image:
                     image = Image.from_file(path=image)
 
-                items[item_id] = DatasetItem(
-                    id=item_id, annotations=anns, media=image, subset=self._subset
-                )
+                items[item_id] = DatasetItem(id=item_id, annotations=anns, media=image, subset=self._subset)
 
         det_dir = osp.join(self._path, KittiPath.LABELS_DIR)
         if self._task == KittiTask.detection:
@@ -149,17 +142,13 @@ class _KittiBase(SubsetBase):
                 if image:
                     image = Image.from_file(path=image)
 
-                items[item_id] = DatasetItem(
-                    id=item_id, annotations=anns, media=image, subset=self._subset
-                )
+                items[item_id] = DatasetItem(id=item_id, annotations=anns, media=image, subset=self._subset)
 
         for item_id, image_path in image_path_by_id.items():
             if item_id in items:
                 continue
 
-            items[item_id] = DatasetItem(
-                id=item_id, subset=self._subset, media=Image.from_file(path=image_path)
-            )
+            items[item_id] = DatasetItem(id=item_id, subset=self._subset, media=Image.from_file(path=image_path))
 
         return items
 

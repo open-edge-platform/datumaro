@@ -9,7 +9,6 @@ from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.environment import Environment
 from datumaro.components.media import Image
 from datumaro.plugins.data_formats.vgg_face2 import VggFace2Exporter, VggFace2Importer
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, compare_datasets
 
@@ -32,9 +31,7 @@ class VggFace2FormatTest(TestCase):
                     subset="train",
                     media=Image.from_numpy(data=np.ones((10, 10, 3))),
                     annotations=[
-                        Points(
-                            [4.23, 4.32, 5.34, 4.45, 3.54, 3.56, 4.52, 3.51, 4.78, 3.34], label=1
-                        ),
+                        Points([4.23, 4.32, 5.34, 4.45, 3.54, 3.56, 4.52, 3.51, 4.78, 3.34], label=1),
                     ],
                 ),
                 DatasetItem(
@@ -87,9 +84,7 @@ class VggFace2FormatTest(TestCase):
                     media=Image.from_numpy(data=np.ones((8, 8, 3))),
                     annotations=[
                         Bbox(0, 2, 4, 2, label=0),
-                        Points(
-                            [4.23, 4.32, 5.34, 4.45, 3.54, 3.56, 4.52, 3.51, 4.78, 3.34], label=0
-                        ),
+                        Points([4.23, 4.32, 5.34, 4.45, 3.54, 3.56, 4.52, 3.51, 4.78, 3.34], label=0),
                     ],
                 ),
             ],
@@ -109,9 +104,7 @@ class VggFace2FormatTest(TestCase):
                     id="a/кириллица с пробелом",
                     media=Image.from_numpy(data=np.ones((8, 8, 3))),
                     annotations=[
-                        Points(
-                            [4.23, 4.32, 5.34, 4.45, 3.54, 3.56, 4.52, 3.51, 4.78, 3.34], label=0
-                        ),
+                        Points([4.23, 4.32, 5.34, 4.45, 3.54, 3.56, 4.52, 3.51, 4.78, 3.34], label=0),
                     ],
                 ),
             ],
@@ -132,9 +125,7 @@ class VggFace2FormatTest(TestCase):
                     media=Image.from_numpy(data=np.ones((8, 8, 3))),
                     annotations=[
                         Bbox(0, 2, 4, 2, label=0),
-                        Points(
-                            [4.23, 4.32, 5.34, 4.45, 3.54, 3.56, 4.52, 3.51, 4.78, 3.34], label=0
-                        ),
+                        Points([4.23, 4.32, 5.34, 4.45, 3.54, 3.56, 4.52, 3.51, 4.78, 3.34], label=0),
                     ],
                 ),
             ],
@@ -191,9 +182,7 @@ class VggFace2FormatTest(TestCase):
 
         target_dataset = Dataset.from_iterable(
             [
-                DatasetItem(
-                    id="no_label/1", media=Image.from_numpy(data=np.ones((8, 8, 3))), annotations=[]
-                ),
+                DatasetItem(id="no_label/1", media=Image.from_numpy(data=np.ones((8, 8, 3))), annotations=[]),
             ],
             categories=[],
         )
@@ -207,17 +196,13 @@ class VggFace2FormatTest(TestCase):
     def test_can_save_and_load_image_with_arbitrary_extension(self):
         dataset = Dataset.from_iterable(
             [
-                DatasetItem(
-                    "no_label/q/1", media=Image.from_numpy(data=np.zeros((4, 3, 3)), ext=".JPEG")
-                ),
+                DatasetItem("no_label/q/1", media=Image.from_numpy(data=np.zeros((4, 3, 3)), ext=".JPEG")),
                 DatasetItem(
                     "a/b/c/2",
                     media=Image.from_numpy(data=np.zeros((3, 4, 3)), ext=".bmp"),
                     annotations=[
                         Bbox(0, 2, 4, 2, label=0),
-                        Points(
-                            [4.23, 4.32, 5.34, 4.45, 3.54, 3.56, 4.52, 3.51, 4.78, 3.34], label=0
-                        ),
+                        Points([4.23, 4.32, 5.34, 4.45, 3.54, 3.56, 4.52, 3.51, 4.78, 3.34], label=0),
                     ],
                 ),
             ],
@@ -247,23 +232,17 @@ class VggFace2FormatTest(TestCase):
                     subset="train",
                     media=Image.from_numpy(data=np.ones((10, 10, 3))),
                     annotations=[
-                        Points(
-                            [4.23, 4.32, 5.34, 4.45, 3.54, 3.56, 4.52, 3.51, 4.78, 3.34], label=1
-                        ),
+                        Points([4.23, 4.32, 5.34, 4.45, 3.54, 3.56, 4.52, 3.51, 4.78, 3.34], label=1),
                     ],
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    [("class_%s" % i) for i in range(5)]
-                ),
+                AnnotationType.label: LabelCategories.from_iterable([("class_%s" % i) for i in range(5)]),
             },
         )
 
         with TestDir() as test_dir:
-            VggFace2Exporter.convert(
-                source_dataset, test_dir, save_media=True, save_dataset_meta=True
-            )
+            VggFace2Exporter.convert(source_dataset, test_dir, save_media=True, save_dataset_meta=True)
             parsed_dataset = Dataset.import_from(test_dir, "vgg_face2")
 
             self.assertTrue(osp.isfile(osp.join(test_dir, "dataset_meta.json")))
@@ -287,9 +266,7 @@ class VggFace2ImporterTest(TestCase):
                     media=Image.from_numpy(data=np.ones((10, 15, 3))),
                     annotations=[
                         Bbox(2, 2, 1, 2, label=0),
-                        Points(
-                            [2.787, 2.898, 2.965, 2.79, 2.8, 2.456, 2.81, 2.32, 2.89, 2.3], label=0
-                        ),
+                        Points([2.787, 2.898, 2.965, 2.79, 2.8, 2.456, 2.81, 2.32, 2.89, 2.3], label=0),
                     ],
                 ),
                 DatasetItem(

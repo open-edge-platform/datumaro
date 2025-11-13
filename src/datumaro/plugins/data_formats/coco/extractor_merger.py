@@ -34,11 +34,7 @@ class COCOTaskMergedBase(SubsetBase):
             yield from self._sources[0]
         else:
             for item_key in self.item_keys:
-                items = [
-                    item
-                    for s in self._sources
-                    if (item := s.get_dataset_item(item_key)) is not None
-                ]
+                items = [item for s in self._sources if (item := s.get_dataset_item(item_key)) is not None]
                 assert len(items) > 0
 
                 item, remainders = items[0], items[1:]
@@ -50,8 +46,7 @@ class COCOTaskMergedBase(SubsetBase):
     def __len__(self):
         if len(self._sources) == 1:
             return len(self._sources[0])
-        else:
-            return len(self.item_keys)
+        return len(self.item_keys)
 
     @property
     def item_keys(self):
@@ -89,7 +84,4 @@ class COCOExtractorMerger(ExtractorMerger):
         for s in sources:
             grouped_by_subset[s.subset] += [s]
 
-        self._subsets = {
-            subset: [COCOTaskMergedBase(sources, subset)]
-            for subset, sources in grouped_by_subset.items()
-        }
+        self._subsets = {subset: [COCOTaskMergedBase(sources, subset)] for subset, sources in grouped_by_subset.items()}

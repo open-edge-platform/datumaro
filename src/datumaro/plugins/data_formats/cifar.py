@@ -69,9 +69,7 @@ class CifarBase(SubsetBase):
 
     def _load_categories(self, path):
         if has_meta_file(path):
-            return {
-                AnnotationType.label: LabelCategories.from_iterable(parse_meta_file(path).keys())
-            }
+            return {AnnotationType.label: LabelCategories.from_iterable(parse_meta_file(path).keys())}
 
         label_cat = LabelCategories()
 
@@ -128,14 +126,10 @@ class CifarBase(SubsetBase):
         size = annotation_dict.get("image_sizes")
 
         if len(labels) != len(filenames):
-            raise InvalidAnnotationError(
-                "The sizes of the arrays 'filenames', " "'labels' don't match."
-            )
+            raise InvalidAnnotationError("The sizes of the arrays 'filenames', 'labels' don't match.")
 
-        if 0 < len(images_data) and len(images_data) != len(filenames):
-            raise InvalidAnnotationError(
-                "The sizes of the arrays 'data', " "'filenames', 'labels' don't match."
-            )
+        if len(images_data) > 0 and len(images_data) != len(filenames):
+            raise InvalidAnnotationError("The sizes of the arrays 'data', 'filenames', 'labels' don't match.")
 
         for i, (filename, label) in enumerate(zip(filenames, labels)):
             item_id = osp.splitext(filename)[0]
@@ -143,31 +137,23 @@ class CifarBase(SubsetBase):
             if label is not None:
                 annotations.append(Label(label))
                 self._ann_types.add(AnnotationType.label)
-                if (
-                    0 < len(coarse_labels)
-                    and coarse_labels[i] is not None
-                    and label_cat[label].parent == ""
-                ):
+                if len(coarse_labels) > 0 and coarse_labels[i] is not None and label_cat[label].parent == "":
                     label_cat[label].parent = self._coarse_labels[coarse_labels[i]]
 
             image = None
-            if 0 < len(images_data):
+            if len(images_data) > 0:
                 image = images_data[i]
                 if size is not None and image is not None:
                     image = image.astype(np.uint8).reshape(3, size[i][0], size[i][1])
                     image = np.transpose(image, (1, 2, 0))
                 elif image is not None:
-                    image = image.astype(np.uint8).reshape(
-                        3, CifarPath.IMAGE_SIZE, CifarPath.IMAGE_SIZE
-                    )
+                    image = image.astype(np.uint8).reshape(3, CifarPath.IMAGE_SIZE, CifarPath.IMAGE_SIZE)
                     image = np.transpose(image, (1, 2, 0))
 
             if image is not None:
                 image = Image.from_numpy(data=image)
 
-            items[item_id] = DatasetItem(
-                id=item_id, subset=self._subset, media=image, annotations=annotations
-            )
+            items[item_id] = DatasetItem(id=item_id, subset=self._subset, media=image, annotations=annotations)
         return items
 
 
@@ -280,10 +266,7 @@ class CifarExporter(Exporter):
                     else:
                         image = image.data
                         data.append(np.transpose(image, (2, 0, 1)).reshape(-1).astype(np.uint8))
-                        if (
-                            image.shape[0] != CifarPath.IMAGE_SIZE
-                            or image.shape[1] != CifarPath.IMAGE_SIZE
-                        ):
+                        if image.shape[0] != CifarPath.IMAGE_SIZE or image.shape[1] != CifarPath.IMAGE_SIZE:
                             image_sizes[len(data) - 1] = (image.shape[0], image.shape[1])
 
             annotation_dict = {}
@@ -300,9 +283,7 @@ class CifarExporter(Exporter):
                 size = (CifarPath.IMAGE_SIZE, CifarPath.IMAGE_SIZE)
                 # 'image_sizes' isn't included in the standard format,
                 # needed for different image sizes
-                annotation_dict["image_sizes"] = [
-                    image_sizes.get(p, size) for p in range(len(data))
-                ]
+                annotation_dict["image_sizes"] = [image_sizes.get(p, size) for p in range(len(data))]
 
             batch_label = None
             if subset_name.startswith(CifarPath.TRAIN_FILE_PREFIX):
@@ -317,11 +298,7 @@ class CifarExporter(Exporter):
 
             annotation_file = osp.join(self._save_dir, subset_name)
 
-            if (
-                self._patch
-                and subset_name in self._patch.updated_subsets
-                and not annotation_dict["filenames"]
-            ):
+            if self._patch and subset_name in self._patch.updated_subsets and not annotation_dict["filenames"]:
                 if osp.isfile(annotation_file):
                     # Remove subsets that became empty
                     os.remove(annotation_file)

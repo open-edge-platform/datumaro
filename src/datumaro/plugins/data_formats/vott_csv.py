@@ -36,9 +36,7 @@ class VottCsvBase(SubsetBase):
         super().__init__(subset=subset, ctx=ctx)
 
         if has_meta_file(path):
-            self._categories = {
-                AnnotationType.label: LabelCategories.from_iterable(parse_meta_file(path).keys())
-            }
+            self._categories = {AnnotationType.label: LabelCategories.from_iterable(parse_meta_file(path).keys())}
         else:
             self._categories = {AnnotationType.label: LabelCategories()}
 

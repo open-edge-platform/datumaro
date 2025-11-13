@@ -7,7 +7,6 @@ from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image, save_image
 from datumaro.plugins.data_formats.image_zip import ImageZipExporter, ImageZipPath
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, compare_datasets
 
@@ -88,9 +87,7 @@ DUMMY_DATASET_DIR = get_test_asset_path("image_zip_dataset")
 
 class ImageZipImporterTest(TestCase):
     def test_can_import(self):
-        source_dataset = Dataset.from_iterable(
-            [DatasetItem(id="1", media=Image.from_numpy(data=np.ones((10, 10, 3))))]
-        )
+        source_dataset = Dataset.from_iterable([DatasetItem(id="1", media=Image.from_numpy(data=np.ones((10, 10, 3))))])
 
         zip_path = osp.join(DUMMY_DATASET_DIR, "1.zip")
         parsed_dataset = Dataset.import_from(zip_path, format="image_zip")

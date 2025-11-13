@@ -33,8 +33,6 @@ class DatasetItemMapper(Mapper):
         attributes, offset = DictMapper.backward(_bytes, offset)
         annotations, offset = AnnotationListMapper.backward(_bytes, offset)
         return (
-            DatasetItem(
-                id=id, subset=subset, media=media, attributes=attributes, annotations=annotations
-            ),
+            DatasetItem(id=id, subset=subset, media=media, attributes=attributes, annotations=annotations),
             offset,
         )

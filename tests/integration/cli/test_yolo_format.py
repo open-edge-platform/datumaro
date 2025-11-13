@@ -13,7 +13,6 @@ from datumaro.components.annotation import AnnotationType, Bbox
 from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, compare_datasets
 from tests.utils.test_utils import run_datum as run
@@ -106,10 +105,7 @@ class YoloIntegrationScenarios(TestCase):
                     media=Image.from_numpy(data=np.ones((10, 20, 3))),
                 ),
             ],
-            categories=[
-                label.name
-                for label in VOC.make_voc_categories(task=VOC.VocTask.voc)[AnnotationType.label]
-            ],
+            categories=[label.name for label in VOC.make_voc_categories(task=VOC.VocTask.voc)[AnnotationType.label]],
         )
 
         with TestDir() as test_dir:

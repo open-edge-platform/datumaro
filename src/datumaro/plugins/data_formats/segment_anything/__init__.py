@@ -6,4 +6,4 @@ from .base import SegmentAnythingBase
 from .exporter import SegmentAnythingExporter
 from .importer import SegmentAnythingImporter
 
-__all__ = ["SegmentAnythingBase", "SegmentAnythingImporter", "SegmentAnythingExporter"]
+__all__ = ["SegmentAnythingBase", "SegmentAnythingExporter", "SegmentAnythingImporter"]

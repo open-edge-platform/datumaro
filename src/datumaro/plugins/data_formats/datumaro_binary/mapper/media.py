@@ -17,18 +17,17 @@ class MediaMapper(Mapper):
     def forward(cls, obj: Optional[MediaElement]) -> bytes:
         if obj is None:
             return struct.pack("<I", MediaType.NONE)
-        elif obj._type == MediaType.IMAGE:
+        if obj._type == MediaType.IMAGE:
             return ImageMapper.forward(obj)
-        elif obj._type == MediaType.POINT_CLOUD:
+        if obj._type == MediaType.POINT_CLOUD:
             return PointCloudMapper.forward(obj)
-        elif obj._type == MediaType.VIDEO:
+        if obj._type == MediaType.VIDEO:
             return VideoMapper.forward(obj)
-        elif obj._type == MediaType.VIDEO_FRAME:
+        if obj._type == MediaType.VIDEO_FRAME:
             return VideoFrameMapper.forward(obj)
-        elif obj._type == MediaType.MEDIA_ELEMENT:
+        if obj._type == MediaType.MEDIA_ELEMENT:
             return MediaElementMapper.forward(obj)
-        else:
-            raise DatumaroError(f"{obj._type} is not allowed for MediaMapper.")
+        raise DatumaroError(f"{obj._type} is not allowed for MediaMapper.")
 
     @classmethod
     def backward(
@@ -41,18 +40,17 @@ class MediaMapper(Mapper):
 
         if media_type == MediaType.NONE:
             return None, offset + 4
-        elif media_type == MediaType.IMAGE:
+        if media_type == MediaType.IMAGE:
             return ImageMapper.backward(_bytes, offset, media_path_prefix)
-        elif media_type == MediaType.POINT_CLOUD:
+        if media_type == MediaType.POINT_CLOUD:
             return PointCloudMapper.backward(_bytes, offset, media_path_prefix)
-        elif media_type == MediaType.VIDEO:
+        if media_type == MediaType.VIDEO:
             return VideoMapper.backward(_bytes, offset, media_path_prefix)
-        elif media_type == MediaType.VIDEO_FRAME:
+        if media_type == MediaType.VIDEO_FRAME:
             return VideoFrameMapper.backward(_bytes, offset, media_path_prefix)
-        elif media_type == MediaType.MEDIA_ELEMENT:
+        if media_type == MediaType.MEDIA_ELEMENT:
             return MediaElementMapper.backward(_bytes, offset, media_path_prefix)
-        else:
-            raise DatumaroError(f"{media_type} is not allowed for MediaMapper.")
+        raise DatumaroError(f"{media_type} is not allowed for MediaMapper.")
 
 
 class MediaElementMapper(Mapper):
@@ -125,9 +123,7 @@ class ImageMapper(MediaElementMapper):
         size = (height, width)
         offset += 8
         return (
-            Image.from_file(
-                path=media_dict["path"], size=size if size != cls.MAGIC_SIZE_FOR_NONE else None
-            ),
+            Image.from_file(path=media_dict["path"], size=size if size != cls.MAGIC_SIZE_FOR_NONE else None),
             offset,
         )
 

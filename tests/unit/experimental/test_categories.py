@@ -134,9 +134,7 @@ def test_mask_categories_inverse_colormap():
 
 
 def test_mask_categories_inverse_colormap_caching():
-    categories = MaskCategories(
-        colormap=Colormap(data={0: RgbColor(255, 255, 255), 1: RgbColor(0, 0, 0)})
-    )
+    categories = MaskCategories(colormap=Colormap(data={0: RgbColor(255, 255, 255), 1: RgbColor(0, 0, 0)}))
 
     # Access inverse colormap multiple times - should use cache
     inverse1 = categories.colormap.inverse_colormap
@@ -166,12 +164,8 @@ def test_hierarchical_label_category_empty_name_raises_error():
 
 def test_hierarchical_label_category_hash():
     """Test that categories with same attributes have same hash."""
-    cat1 = HierarchicalLabelCategory(
-        name="person", parent="human", label_semantics={"type": "living"}
-    )
-    cat2 = HierarchicalLabelCategory(
-        name="person", parent="human", label_semantics={"type": "living"}
-    )
+    cat1 = HierarchicalLabelCategory(name="person", parent="human", label_semantics={"type": "living"})
+    cat2 = HierarchicalLabelCategory(name="person", parent="human", label_semantics={"type": "living"})
     cat3 = HierarchicalLabelCategory(name="person", parent="", label_semantics={"type": "living"})
 
     assert hash(cat1) == hash(cat2)
@@ -231,9 +225,7 @@ def test_hierarchical_label_categories_invalid_group_label_raises_error():
     items = (HierarchicalLabelCategory("existing"),)
     groups = (LabelGroup("test_group", labels=("nonexistent",)),)
 
-    with pytest.raises(
-        ValueError, match="Label 'nonexistent' in group 'test_group' not found in items"
-    ):
+    with pytest.raises(ValueError, match="Label 'nonexistent' in group 'test_group' not found in items"):
         HierarchicalLabelCategories(items=items, label_groups=groups)
 
 
@@ -452,9 +444,7 @@ def test_hierarchical_label_categories_serialization_with_groups():
         HierarchicalLabelCategory("green"),
         HierarchicalLabelCategory("blue"),
     )
-    groups = (
-        LabelGroup("colors", labels=("red", "green", "blue"), group_type=GroupType.EXCLUSIVE),
-    )
+    groups = (LabelGroup("colors", labels=("red", "green", "blue"), group_type=GroupType.EXCLUSIVE),)
     categories = HierarchicalLabelCategories(items=items, label_groups=groups)
 
     # Serialize to dict
@@ -483,13 +473,9 @@ def test_hierarchical_label_categories_serialization_with_semantics():
 
     items = (
         HierarchicalLabelCategory("normal", label_semantics={LabelSemantic.NORMAL: "normal_class"}),
-        HierarchicalLabelCategory(
-            "defect", label_semantics={LabelSemantic.ANOMALOUS: "defect_class"}
-        ),
+        HierarchicalLabelCategory("defect", label_semantics={LabelSemantic.ANOMALOUS: "defect_class"}),
     )
-    categories = HierarchicalLabelCategories(
-        items=items, label_semantics={LabelSemantic.NORMAL: "normal"}
-    )
+    categories = HierarchicalLabelCategories(items=items, label_semantics={LabelSemantic.NORMAL: "normal"})
 
     # Serialize to dict
     cat_dict = categories.to_dict()
@@ -540,9 +526,7 @@ def test_mask_categories_serialization_with_colormap():
         2: RgbColor(0, 255, 0),
         3: RgbColor(0, 0, 255),
     }
-    categories = MaskCategories(
-        labels=["background", "cat", "dog", "bird"], colormap=Colormap(data=colormap_data)
-    )
+    categories = MaskCategories(labels=["background", "cat", "dog", "bird"], colormap=Colormap(data=colormap_data))
 
     # Serialize to dict
     cat_dict = categories.to_dict()

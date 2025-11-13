@@ -12,7 +12,6 @@ from datumaro.components.dataset import Dataset, DatasetItem
 from datumaro.components.environment import Environment
 from datumaro.components.media import Video
 from datumaro.plugins.data_formats.kinetics import KineticsImporter
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import compare_datasets
 
@@ -62,7 +61,7 @@ def fxt_kinetics_dataset(test_dir):
 class KineticsImporterTest:
     def test_can_detect(self):
         detected_formats = Environment().detect_dataset(KINETICS_DATASET_DIR)
-        assert [KineticsImporter.NAME] == detected_formats
+        assert detected_formats == [KineticsImporter.NAME]
 
     def test_can_import_with_video(self, helper_tc, fxt_kinetics_dataset):
         expected_dataset = fxt_kinetics_dataset

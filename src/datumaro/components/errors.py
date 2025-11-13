@@ -139,7 +139,7 @@ class ProjectAlreadyExists(DatumaroError):
     path = field()
 
     def __str__(self):
-        return f"Can't create project: a project already exists " f"at '{self.path}'"
+        return f"Can't create project: a project already exists at '{self.path}'"
 
 
 @define(auto_exc=False)
@@ -147,7 +147,7 @@ class VcsAlreadyExists(DatumaroError):
     path = field()
 
     def __str__(self):
-        return f"Can't create project: a version control system already exists " f"at '{self.path}'"
+        return f"Can't create project: a version control system already exists at '{self.path}'"
 
 
 @define(auto_exc=False)
@@ -265,9 +265,7 @@ class ItemImportError(DatasetImportError):
     The error itself is supposed to be in the `__cause__` member.
     """
 
-    item_id: Tuple[Optional[str], Optional[str]] = field(
-        validator=[validators.instance_of(tuple), has_length(2)]
-    )
+    item_id: Tuple[Optional[str], Optional[str]] = field(validator=[validators.instance_of(tuple), has_length(2)])
     """
     (id, subset) of the item with problem.
     If id or subset cannot be reported, such field is set to None.
@@ -297,15 +295,14 @@ class MultipleFormatsMatchError(DatasetImportError):
     formats = field()
 
     def __str__(self):
-        return (
-            "Failed to detect dataset format automatically:"
-            " data matches more than one format: %s" % ", ".join(self.formats)
+        return "Failed to detect dataset format automatically: data matches more than one format: %s" % ", ".join(
+            self.formats
         )
 
 
 class NoMatchingFormatsError(DatasetImportError):
     def __str__(self):
-        return "Failed to detect dataset format automatically: " "no matching formats found"
+        return "Failed to detect dataset format automatically: no matching formats found"
 
 
 class DatasetError(DatumaroError):
@@ -347,9 +344,7 @@ class PathSeparatorInSubsetNameError(DatasetError):
     subset: str = field()
 
     def __str__(self):
-        return (
-            f"Failed to export the subset '{self.subset}': subset name contains path separator(s)."
-        )
+        return f"Failed to export the subset '{self.subset}': subset name contains path separator(s)."
 
 
 class DatasetQualityError(DatasetError):
@@ -380,7 +375,7 @@ class WrongGroupError(DatasetQualityError):
     group = field(converter=list)
 
     def __str__(self):
-        return "Item %s: annotation group has wrong labels: " "found %s, expected %s, group %s" % (
+        return "Item %s: annotation group has wrong labels: found %s, expected %s, group %s" % (
             self.item_id,
             self.found,
             self.expected,
@@ -458,7 +453,7 @@ class NoMatchingAnnError(DatasetMergeError):
     ann = field()
 
     def __str__(self):
-        return "Item %s: can't find matching annotation " "in sources %s, annotation is %s" % (
+        return "Item %s: can't find matching annotation in sources %s, annotation is %s" % (
             self.item_id,
             self.sources,
             self.ann,
@@ -496,7 +491,7 @@ class FailedAttrVotingError(DatasetMergeError):
     ann = field()
 
     def __str__(self):
-        return "Item %s: attribute voting failed " "for ann %s, votes %s, sources %s" % (
+        return "Item %s: attribute voting failed for ann %s, votes %s, sources %s" % (
             self.item_id,
             self.ann,
             self.votes,
@@ -539,7 +534,7 @@ class DatasetItemValidationError(DatasetValidationError):
 @define(auto_exc=False)
 class MissingLabelCategories(DatasetValidationError):
     def __str__(self):
-        return "Metadata (ex. LabelCategories) should be defined" " to validate a dataset."
+        return "Metadata (ex. LabelCategories) should be defined to validate a dataset."
 
 
 @define(auto_exc=False)
@@ -547,7 +542,7 @@ class MissingAnnotation(DatasetItemValidationError):
     ann_type = field()
 
     def __str__(self):
-        return f"Item needs '{self.ann_type}' annotation(s), " "but not found."
+        return f"Item needs '{self.ann_type}' annotation(s), but not found."
 
 
 @define(auto_exc=False)
@@ -555,7 +550,7 @@ class BrokenAnnotation(DatasetItemValidationError):
     ann_type = field()
 
     def __str__(self):
-        return f"Item needs whole '{self.ann_type}' annotation(s), " "but missed some."
+        return f"Item needs whole '{self.ann_type}' annotation(s), but missed some."
 
 
 @define(auto_exc=False)
@@ -563,7 +558,7 @@ class EmptyLabel(DatasetItemValidationError):
     label_name = field()
 
     def __str__(self):
-        return f"Item should have the label '{self.label_name}' annotation(s), " "but not found."
+        return f"Item should have the label '{self.label_name}' annotation(s), but not found."
 
 
 @define(auto_exc=False)
@@ -571,9 +566,7 @@ class EmptyCaption(DatasetItemValidationError):
     caption_name = field()
 
     def __str__(self):
-        return (
-            f"Item should have the caption '{self.caption_name}' annotation(s), " "but not found."
-        )
+        return f"Item should have the caption '{self.caption_name}' annotation(s), but not found."
 
 
 @define(auto_exc=False)
@@ -588,7 +581,7 @@ class MissingAttribute(DatasetItemValidationError):
     attr_name = field()
 
     def __str__(self):
-        return f"Item needs the attribute '{self.attr_name}' " f"for the label '{self.label_name}'."
+        return f"Item needs the attribute '{self.attr_name}' for the label '{self.label_name}'."
 
 
 @define(auto_exc=False)
@@ -596,7 +589,7 @@ class UndefinedLabel(DatasetItemValidationError):
     label_name = field()
 
     def __str__(self):
-        return f"Item has the label '{self.label_name}' which " "is not defined in metadata."
+        return f"Item has the label '{self.label_name}' which is not defined in metadata."
 
 
 @define(auto_exc=False)
@@ -616,10 +609,7 @@ class LabelDefinedButNotFound(DatasetValidationError):
     label_name = field()
 
     def __str__(self):
-        return (
-            f"The label '{self.label_name}' is defined in "
-            "metadata, but not found in the dataset."
-        )
+        return f"The label '{self.label_name}' is defined in metadata, but not found in the dataset."
 
 
 @define(auto_exc=False)
@@ -663,10 +653,7 @@ class FewSamplesInLabel(DatasetValidationError):
     count = field()
 
     def __str__(self):
-        return (
-            f"The number of samples in the label '{self.label_name}'"
-            f" might be too low. Found '{self.count}' samples."
-        )
+        return f"The number of samples in the label '{self.label_name}' might be too low. Found '{self.count}' samples."
 
 
 @define(auto_exc=False)
@@ -730,7 +717,7 @@ class ImbalancedAttribute(DatasetValidationError):
     def __str__(self):
         return (
             "There is an imbalance in the distribution of attribute"
-            f" '{self. attr_name}' for the label '{self.label_name}'."
+            f" '{self.attr_name}' for the label '{self.label_name}'."
         )
 
 
@@ -740,9 +727,7 @@ class ImbalancedDistInLabel(DatasetValidationError):
     prop = field()
 
     def __str__(self):
-        return (
-            f"Values of '{self.prop}' are not evenly " f"distributed for '{self.label_name}' label."
-        )
+        return f"Values of '{self.prop}' are not evenly distributed for '{self.label_name}' label."
 
 
 @define(auto_exc=False)
@@ -750,7 +735,7 @@ class ImbalancedDistInCaption(DatasetValidationError):
     caption_name = field()
 
     def __str__(self):
-        return f"Values are not evenly " f"distributed for '{self.caption_name}' caption."
+        return f"Values are not evenly distributed for '{self.caption_name}' caption."
 
 
 @define(auto_exc=False)
@@ -788,11 +773,7 @@ class InvalidValue(DatasetItemValidationError):
     prop = field()
 
     def __str__(self):
-        return (
-            f"Annotation '{self.ann_id}' in "
-            "the item has an inf or a NaN value of "
-            f"'{self.prop}'."
-        )
+        return f"Annotation '{self.ann_id}' in the item has an inf or a NaN value of '{self.prop}'."
 
 
 @define(auto_exc=False)

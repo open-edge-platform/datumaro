@@ -24,7 +24,6 @@ from datumaro.components.media import Image
 from datumaro.plugins.data_formats.yolo.base import YoloStrictBase
 from datumaro.plugins.data_formats.yolo.exporter import YoloExporter
 from datumaro.util.image import save_image
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, compare_datasets, compare_datasets_strict
 
@@ -93,18 +92,14 @@ class YoloExportertTest:
 
         YoloExporter.convert(source_dataset, test_dir, stream=is_stream)
 
-        save_image(
-            osp.join(test_dir, "obj_train_data", "1.jpg"), np.ones((10, 15, 3))
-        )  # put the image for dataset
+        save_image(osp.join(test_dir, "obj_train_data", "1.jpg"), np.ones((10, 15, 3)))  # put the image for dataset
         parsed_dataset = dataset_cls.import_from(test_dir, "yolo")
         assert parsed_dataset.is_stream == is_stream
 
         compare_datasets(helper_tc, source_dataset, parsed_dataset)
 
     @pytest.mark.parametrize("dataset_cls, is_stream", [(Dataset, False), (StreamDataset, True)])
-    def test_can_load_dataset_with_exact_image_info(
-        self, dataset_cls, is_stream, test_dir, helper_tc
-    ):
+    def test_can_load_dataset_with_exact_image_info(self, dataset_cls, is_stream, test_dir, helper_tc):
         source_dataset = Dataset.from_iterable(
             [
                 DatasetItem(
@@ -128,9 +123,7 @@ class YoloExportertTest:
         compare_datasets(helper_tc, source_dataset, parsed_dataset)
 
     @pytest.mark.parametrize("dataset_cls, is_stream", [(Dataset, False), (StreamDataset, True)])
-    def test_can_save_dataset_with_cyrillic_and_spaces_in_filename(
-        self, dataset_cls, is_stream, test_dir, helper_tc
-    ):
+    def test_can_save_dataset_with_cyrillic_and_spaces_in_filename(self, dataset_cls, is_stream, test_dir, helper_tc):
         source_dataset = Dataset.from_iterable(
             [
                 DatasetItem(
@@ -157,15 +150,9 @@ class YoloExportertTest:
     def test_relative_paths(self, dataset_cls, is_stream, save_media, test_dir, helper_tc):
         source_dataset = Dataset.from_iterable(
             [
-                DatasetItem(
-                    id="1", subset="train", media=Image.from_numpy(data=np.ones((4, 2, 3)))
-                ),
-                DatasetItem(
-                    id="subdir1/1", subset="train", media=Image.from_numpy(data=np.ones((2, 6, 3)))
-                ),
-                DatasetItem(
-                    id="subdir2/1", subset="train", media=Image.from_numpy(data=np.ones((5, 4, 3)))
-                ),
+                DatasetItem(id="1", subset="train", media=Image.from_numpy(data=np.ones((4, 2, 3)))),
+                DatasetItem(id="subdir1/1", subset="train", media=Image.from_numpy(data=np.ones((2, 6, 3)))),
+                DatasetItem(id="subdir2/1", subset="train", media=Image.from_numpy(data=np.ones((5, 4, 3)))),
             ],
             categories=[],
         )
@@ -177,9 +164,7 @@ class YoloExportertTest:
         compare_datasets(helper_tc, source_dataset, parsed_dataset)
 
     @pytest.mark.parametrize("dataset_cls, is_stream", [(Dataset, False), (StreamDataset, True)])
-    def test_can_save_and_load_image_with_arbitrary_extension(
-        self, dataset_cls, is_stream, test_dir, helper_tc
-    ):
+    def test_can_save_and_load_image_with_arbitrary_extension(self, dataset_cls, is_stream, test_dir, helper_tc):
         dataset = Dataset.from_iterable(
             [
                 DatasetItem(
@@ -203,9 +188,7 @@ class YoloExportertTest:
         compare_datasets(helper_tc, dataset, parsed_dataset, require_media=True)
 
     @pytest.mark.parametrize("dataset_cls, is_stream", [(Dataset, False), (StreamDataset, True)])
-    def test_inplace_save_writes_only_updated_data(
-        self, dataset_cls, is_stream, test_dir, helper_tc
-    ):
+    def test_inplace_save_writes_only_updated_data(self, dataset_cls, is_stream, test_dir, helper_tc):
         expected = Dataset.from_iterable(
             [
                 DatasetItem(1, subset="train", media=Image.from_numpy(data=np.ones((2, 4, 3)))),
@@ -228,9 +211,7 @@ class YoloExportertTest:
         dataset.remove(3, "valid")
         dataset.save(save_media=True, stream=is_stream)
 
-        assert {"1.txt", "2.txt", "1.jpg", "2.jpg"} == set(
-            os.listdir(osp.join(test_dir, "obj_train_data"))
-        )
+        assert {"1.txt", "2.txt", "1.jpg", "2.jpg"} == set(os.listdir(osp.join(test_dir, "obj_train_data")))
         assert set() == set(os.listdir(osp.join(test_dir, "obj_valid_data")))
         actual = dataset_cls.import_from(test_dir, "yolo")
         assert actual.is_stream == is_stream
@@ -274,9 +255,7 @@ class YoloExportertTest:
             categories=["label_" + str(i) for i in range(10)],
         )
 
-        YoloExporter.convert(
-            source_dataset, test_dir, save_media=True, save_dataset_meta=True, stream=is_stream
-        )
+        YoloExporter.convert(source_dataset, test_dir, save_media=True, save_dataset_meta=True, stream=is_stream)
         parsed_dataset = dataset_cls.import_from(test_dir, "yolo")
         assert parsed_dataset.is_stream == is_stream
 
@@ -284,9 +263,7 @@ class YoloExportertTest:
         compare_datasets(helper_tc, source_dataset, parsed_dataset)
 
     @pytest.mark.parametrize("dataset_cls, is_stream", [(Dataset, False), (StreamDataset, True)])
-    def test_can_save_and_load_with_custom_subset_name(
-        self, dataset_cls, is_stream, test_dir, helper_tc
-    ):
+    def test_can_save_and_load_with_custom_subset_name(self, dataset_cls, is_stream, test_dir, helper_tc):
         source_dataset = Dataset.from_iterable(
             [
                 DatasetItem(
@@ -321,14 +298,11 @@ class YoloExportertTest:
                 categories=["a"],
             )
 
-            with TestDir() as test_dir:
-                with pytest.raises(DatasetExportError, match=f"Can't export '{subset}' subset"):
-                    YoloExporter.convert(dataset, test_dir)
+            with TestDir() as test_dir, pytest.raises(DatasetExportError, match=f"Can't export '{subset}' subset"):
+                YoloExporter.convert(dataset, test_dir)
 
     @pytest.mark.parametrize("dataset_cls, is_stream", [(Dataset, False), (StreamDataset, True)])
-    def test_can_save_and_load_without_path_prefix(
-        self, dataset_cls, is_stream, test_dir, helper_tc
-    ):
+    def test_can_save_and_load_without_path_prefix(self, dataset_cls, is_stream, test_dir, helper_tc):
         source_dataset = Dataset.from_iterable(
             [
                 DatasetItem(
@@ -343,9 +317,7 @@ class YoloExportertTest:
             categories=["a", "b"],
         )
 
-        YoloExporter.convert(
-            source_dataset, test_dir, save_media=True, add_path_prefix=False, stream=is_stream
-        )
+        YoloExporter.convert(source_dataset, test_dir, save_media=True, add_path_prefix=False, stream=is_stream)
         parsed_dataset = dataset_cls.import_from(test_dir, "yolo")
         assert parsed_dataset.is_stream == is_stream
 

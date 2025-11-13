@@ -35,9 +35,7 @@ class _VocImporter(Importer):
             task_dirs = {task_dir for _, task_dir in cls._TASKS.values()}
             for task_dir in sorted(task_dirs):
                 with context.alternative():
-                    context.require_file(
-                        osp.join(VocPath.SUBSETS_DIR, task_dir, f"*{cls.ANNO_EXT}")
-                    )
+                    context.require_file(osp.join(VocPath.SUBSETS_DIR, task_dir, f"*{cls.ANNO_EXT}"))
 
     @classmethod
     def find_sources(cls, path):
@@ -46,7 +44,7 @@ class _VocImporter(Importer):
         # find root path for the dataset and use it for all tasks
         root_path = None
         for extractor_type, task_dir in cls._TASKS.values():
-            if osp.isfile(path) and not osp.basename(osp.dirname(path)) == task_dir:
+            if osp.isfile(path) and osp.basename(osp.dirname(path)) != task_dir:
                 continue
 
             task_subsets = cls._find_sources_recursive(

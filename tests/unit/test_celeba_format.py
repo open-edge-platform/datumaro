@@ -2,20 +2,12 @@ from unittest import TestCase
 
 import numpy as np
 
-from datumaro.components.annotation import (
-    AnnotationType,
-    Bbox,
-    Label,
-    LabelCategories,
-    Points,
-    PointsCategories,
-)
+from datumaro.components.annotation import AnnotationType, Bbox, Label, LabelCategories, Points, PointsCategories
 from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.environment import Environment
 from datumaro.components.media import Image
 from datumaro.plugins.data_formats.celeba import CelebaImporter
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import compare_datasets
 
@@ -99,9 +91,7 @@ class CelebaImporterTest(TestCase):
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    f"class-{i}" for i in range(13)
-                ),
+                AnnotationType.label: LabelCategories.from_iterable(f"class-{i}" for i in range(13)),
                 AnnotationType.points: PointsCategories.from_iterable(
                     [
                         (0, ["lefteye_x"]),

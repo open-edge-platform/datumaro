@@ -170,7 +170,7 @@ class Config:
 
     def remove(self, key):
         if not self._mutable:
-            raise ImmutableObjectError()
+            raise ImmutableObjectError
 
         self._config.pop(key, None)
 
@@ -191,11 +191,11 @@ class Config:
 
     def set(self, key, value):
         if not self._mutable:
-            raise ImmutableObjectError()
+            raise ImmutableObjectError
 
         if self._schema is not None:
             if key not in self._schema:
-                raise KeyError("Can not set key '%s' - schema mismatch: " "unknown key" % (key,))
+                raise KeyError("Can not set key '%s' - schema mismatch: unknown key" % (key,))
 
             schema_entry = self._schema[key]
             schema_entry_instance = schema_entry()
@@ -206,8 +206,7 @@ class Config:
             elif not isinstance(value, type(schema_entry_instance)):
                 raise ValueError(
                     "Can not set key '%s' - schema mismatch:"
-                    "unexpected value type %s, expected %s"
-                    % (key, type(value), type(schema_entry_instance))
+                    "unexpected value type %s, expected %s" % (key, type(value), type(schema_entry_instance))
                 )
 
         self._config[key] = value
@@ -234,9 +233,7 @@ class Config:
 
 
 yaml.add_multi_representer(Config, Config.yaml_representer, Dumper=yaml.SafeDumper)
-yaml.add_multi_representer(
-    tuple, lambda dumper, value: dumper.represent_data(list(value)), Dumper=yaml.SafeDumper
-)
+yaml.add_multi_representer(tuple, lambda dumper, value: dumper.represent_data(list(value)), Dumper=yaml.SafeDumper)
 
 
 class DictConfig(Config):
@@ -253,8 +250,7 @@ class DictConfig(Config):
             elif not isinstance(value, type(schema_entry_instance)):
                 raise ValueError(
                     "Can not set key '%s' - schema mismatch:"
-                    "unexpected value type %s, expected %s"
-                    % (key, type(value), type(schema_entry_instance))
+                    "unexpected value type %s, expected %s" % (key, type(value), type(schema_entry_instance))
                 )
 
         return super().set(key, value)

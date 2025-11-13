@@ -44,19 +44,18 @@ class DistanceComparator:
         # pylint: disable=no-value-for-parameter
         if t == AnnotationType.label:
             return self.match_labels(*args)
-        elif t == AnnotationType.bbox:
+        if t == AnnotationType.bbox:
             return self.match_boxes(*args)
-        elif t == AnnotationType.polygon:
+        if t == AnnotationType.polygon:
             return self.match_polygons(*args)
-        elif t == AnnotationType.mask:
+        if t == AnnotationType.mask:
             return self.match_masks(*args)
-        elif t == AnnotationType.points:
+        if t == AnnotationType.points:
             return self.match_points(*args)
-        elif t == AnnotationType.polyline:
+        if t == AnnotationType.polyline:
             return self.match_lines(*args)
         # pylint: enable=no-value-for-parameter
-        else:
-            raise NotImplementedError("Unexpected annotation type %s" % t)
+        raise NotImplementedError("Unexpected annotation type %s" % t)
 
     @staticmethod
     def _get_ann_type(t, item):
@@ -98,9 +97,7 @@ class DistanceComparator:
                     instance_map[id(ann)] = [inst, inst_bbox]
         matcher = PointsMatcher(instance_map=instance_map)
 
-        return match_segments_pair(
-            a_points, b_points, dist_thresh=self.iou_threshold, distance=matcher.distance
-        )
+        return match_segments_pair(a_points, b_points, dist_thresh=self.iou_threshold, distance=matcher.distance)
 
     def match_lines(self, item_a, item_b):
         a_lines = self._get_ann_type(AnnotationType.polyline, item_a)
@@ -108,9 +105,7 @@ class DistanceComparator:
 
         matcher = LineMatcher()
 
-        return match_segments_pair(
-            a_lines, b_lines, dist_thresh=self.iou_threshold, distance=matcher.distance
-        )
+        return match_segments_pair(a_lines, b_lines, dist_thresh=self.iou_threshold, distance=matcher.distance)
 
 
 @attrs
@@ -131,8 +126,7 @@ class EqualityComparator:
     def _match_items(self, a, b):
         if self.match_images:
             return match_items_by_image_hash(a, b)
-        else:
-            return match_items_by_id(a, b)
+        return match_items_by_id(a, b)
 
     def _compare_categories(self, a, b):
         test = self._test
@@ -178,9 +172,7 @@ class EqualityComparator:
             a_fields["attributes"] = filter_dict(a.attributes, ignored_attrs)
             b_fields["attributes"] = filter_dict(b.attributes, ignored_attrs)
 
-        result = a.wrap(**a_fields) == b.wrap(**b_fields)
-
-        return result
+        return a.wrap(**a_fields) == b.wrap(**b_fields)
 
     def _compare_items(self, item_a, item_b):
         test = self._test
@@ -217,8 +209,7 @@ class EqualityComparator:
                     }
                 )
                 continue
-            else:
-                ann_b = ann_b_candidates[ann_b[0]]
+            ann_b = ann_b_candidates[ann_b[0]]
 
             b_annotations.remove(ann_b)  # avoid repeats
             matched.append({"a_item": a_id, "b_item": b_id, "a": str(ann_a), "b": str(ann_b)})
@@ -261,7 +252,9 @@ class EqualityComparator:
             self._print_output(output)
             return output
 
-        _dist = lambda s: len(s[1]) + len(s[2])
+        def _dist(s):
+            return len(s[1]) + len(s[2])
+
         for a_ids, b_ids in matches:
             # build distance matrix
             match_status = {}  # (a_id, b_id): [matched, unmatched, errors]
@@ -301,7 +294,7 @@ class EqualityComparator:
                     if b_matches[b_id] is not None:
                         continue
                     d = _dist(match_status[a_id][b_id])
-                    if d < min_dist and 0 <= min_dist:
+                    if d < min_dist and min_dist >= 0:
                         continue
                     min_dist = d
                     matched_b = b_id
@@ -436,12 +429,9 @@ class TableComparator:
             A dictionary where the key is the first element of a row and the value is
             the rest of the row.
         """
-        data_dict = {row[0]: row[1:] for row in rows[1:]}
-        return data_dict
+        return {row[0]: row[1:] for row in rows[1:]}
 
-    def _create_high_level_comparison_table(
-        self, first_info: Tuple, second_info: Tuple
-    ) -> Tuple[str, Dict]:
+    def _create_high_level_comparison_table(self, first_info: Tuple, second_info: Tuple) -> Tuple[str, Dict]:
         """Generates a high-level comparison table.
 
         Args:
@@ -498,9 +488,7 @@ class TableComparator:
 
         return table, data_dict
 
-    def _create_mid_level_comparison_table(
-        self, first_info: Tuple, second_info: Tuple
-    ) -> Tuple[str, Dict]:
+    def _create_mid_level_comparison_table(self, first_info: Tuple, second_info: Tuple) -> Tuple[str, Dict]:
         """Generates a mid-level comparison table.
 
         Args:
@@ -566,29 +554,21 @@ class TableComparator:
             rows.append([f"{subset_name} - Image Std (RGB)", std_str_first, std_str_second])
 
         first_labels = sorted(list(first_ann_stats["annotations"]["labels"]["distribution"].keys()))
-        second_labels = sorted(
-            list(second_ann_stats["annotations"]["labels"]["distribution"].keys())
-        )
+        second_labels = sorted(list(second_ann_stats["annotations"]["labels"]["distribution"].keys()))
 
         label_names = first_labels.copy()
         label_names.extend(item for item in second_labels if item not in first_labels)
 
         for label_name in label_names:
-            count_dist_first = first_ann_stats["annotations"]["labels"]["distribution"].get(
-                label_name, [0, 0.0]
-            )
-            count_dist_second = second_ann_stats["annotations"]["labels"]["distribution"].get(
-                label_name, [0, 0.0]
-            )
+            count_dist_first = first_ann_stats["annotations"]["labels"]["distribution"].get(label_name, [0, 0.0])
+            count_dist_second = second_ann_stats["annotations"]["labels"]["distribution"].get(label_name, [0, 0.0])
             count_first, dist_first = count_dist_first if count_dist_first[0] != 0 else ["", ""]
             count_second, dist_second = count_dist_second if count_dist_second[0] != 0 else ["", ""]
             rows.append(
                 [
                     f"Label - {label_name}",
                     f"imgs: {count_first}, percent: {dist_first:.4f}" if count_first != "" else "",
-                    f"imgs: {count_second}, percent: {dist_second:.4f}"
-                    if count_second != ""
-                    else "",
+                    f"imgs: {count_second}, percent: {dist_second:.4f}" if count_second != "" else "",
                 ]
             )
 
@@ -597,9 +577,7 @@ class TableComparator:
 
         return table, data_dict
 
-    def compare_datasets(
-        self, first: Dataset, second: Dataset, mode: str = "all"
-    ) -> Tuple[str, str, Dict]:
+    def compare_datasets(self, first: Dataset, second: Dataset, mode: str = "all") -> Tuple[str, str, Dict]:
         """Compares two datasets and generates comparison reports.
 
         Args:
@@ -617,13 +595,9 @@ class TableComparator:
         mid_level_table, mid_level_dict = None, {}
 
         if mode in ["high", "all"]:
-            high_level_table, high_level_dict = self._create_high_level_comparison_table(
-                first_info, second_info
-            )
+            high_level_table, high_level_dict = self._create_high_level_comparison_table(first_info, second_info)
         if mode in ["mid", "all"]:
-            mid_level_table, mid_level_dict = self._create_mid_level_comparison_table(
-                first_info, second_info
-            )
+            mid_level_table, mid_level_dict = self._create_mid_level_comparison_table(first_info, second_info)
 
         comparison_dict = dict(high_level=high_level_dict, mid_level=mid_level_dict)
 
@@ -651,9 +625,7 @@ class TableComparator:
         json_output_file = osp.join(
             report_dir, generate_next_file_name("table_compare", ext=".json", basedir=report_dir)
         )
-        txt_output_file = osp.join(
-            report_dir, generate_next_file_name("table_compare", ext=".txt", basedir=report_dir)
-        )
+        txt_output_file = osp.join(report_dir, generate_next_file_name("table_compare", ext=".txt", basedir=report_dir))
 
         log.info(f"Saving compare json to {json_output_file}")
         log.info(f"Saving compare table to {txt_output_file}")

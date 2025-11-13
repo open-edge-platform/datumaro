@@ -36,9 +36,7 @@ class Merger(IMergerContext, CliPlugin):
         for source in sources:
             for k, v in source.items():
                 if k in infos:
-                    log.warning(
-                        "Duplicated infos field %s: overwrite from %s to %s", k, infos[k], v
-                    )
+                    log.warning("Duplicated infos field %s: overwrite from %s to %s", k, infos[k], v)
                 infos[k] = v
         return infos
 
@@ -53,8 +51,7 @@ class Merger(IMergerContext, CliPlugin):
                         categories[cat_type] = source_cat
                     else:
                         raise ConflictingCategoriesError(
-                            "Merging of datasets with different categories is "
-                            "only allowed in 'merge' command.",
+                            "Merging of datasets with different categories is only allowed in 'merge' command.",
                             sources=list(range(source_idx)),
                         )
         return categories
@@ -64,9 +61,7 @@ class Merger(IMergerContext, CliPlugin):
         if sources:
             media_type = sources[0].media_type()
             for s in sources:
-                if not issubclass(s.media_type(), media_type) or not issubclass(
-                    media_type, s.media_type()
-                ):
+                if not issubclass(s.media_type(), media_type) or not issubclass(media_type, s.media_type()):
                     # Symmetric comparison is needed in the case of subclasses:
                     # eg. Image and RoIImage
                     raise MediaTypeError("Datasets have different media types")

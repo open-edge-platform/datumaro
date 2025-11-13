@@ -10,13 +10,7 @@ from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 
-from datumaro.components.annotation import (
-    AnnotationType,
-    Colormap,
-    LabelCategories,
-    MaskCategories,
-    RgbColor,
-)
+from datumaro.components.annotation import AnnotationType, Colormap, LabelCategories, MaskCategories, RgbColor
 from datumaro.components.dataset_base import CategoriesInfo
 from datumaro.components.errors import InvalidAnnotationError
 from datumaro.util import dump_json_file, find, parse_json_file
@@ -101,9 +95,7 @@ def generate_colormap(length: int = 256) -> Colormap:
     return OrderedDict((id, tuple(color)) for id, color in enumerate(colormap))
 
 
-VocColormap: Colormap = {
-    id: color for id, color in generate_colormap(256).items() if id in {l.value for l in VocLabel}
-}
+VocColormap: Colormap = {id: color for id, color in generate_colormap(256).items() if id in {l.value for l in VocLabel}}
 VocInstColormap = generate_colormap(256)
 
 
@@ -170,14 +162,10 @@ def make_voc_label_map(task: VocTask = None) -> LabelMapConfig:
         VocTask.voc_instance_segmentation,
     ]:
         labels = sorted(VocLabel, key=lambda l: l.value)
-        label_map = OrderedDict(
-            (label.name, [VocColormap[label.value], [], []]) for label in labels
-        )
+        label_map = OrderedDict((label.name, [VocColormap[label.value], [], []]) for label in labels)
     else:
         labels = sorted(VocLabel, key=lambda l: l.value)
-        label_map = OrderedDict(
-            (label.name, [VocColormap[label.value], [], []]) for label in labels
-        )
+        label_map = OrderedDict((label.name, [VocColormap[label.value], [], []]) for label in labels)
         label_map[VocLabel.person.name][1] = [p.name for p in VocBodyPart]
         label_map[VocLabel.person.name][2] = [a.name for a in VocAction]
 
@@ -216,7 +204,7 @@ def parse_label_map(path: str) -> LabelMapConfig:
             if name in label_map:
                 raise InvalidAnnotationError(f"Label '{name}' is already defined in the label map")
 
-            if 1 < len(label_desc) and label_desc[1]:
+            if len(label_desc) > 1 and label_desc[1]:
                 color = label_desc[1].split(",")
                 if len(color) != 3:
                     raise InvalidAnnotationError(
@@ -226,12 +214,12 @@ def parse_label_map(path: str) -> LabelMapConfig:
             else:
                 color = None
 
-            if 2 < len(label_desc) and label_desc[2]:
+            if len(label_desc) > 2 and label_desc[2]:
                 parts = [s.strip() for s in label_desc[2].split(",")]
             else:
                 parts = []
 
-            if 3 < len(label_desc) and label_desc[3]:
+            if len(label_desc) > 3 and label_desc[3]:
                 actions = [s.strip() for s in label_desc[3].split(",")]
             else:
                 actions = []
@@ -296,9 +284,7 @@ def write_meta_file(path: str, label_map: LabelMapConfig):
         labels.append(label_name)
         if label_desc[0]:
             labels_dict[str(i)] = label_name
-            segmentation_colors.append(
-                [int(label_desc[0][0]), int(label_desc[0][1]), int(label_desc[0][2])]
-            )
+            segmentation_colors.append([int(label_desc[0][0]), int(label_desc[0][1]), int(label_desc[0][2])])
 
         parts[str(i)] = label_desc[1]
         actions[str(i)] = label_desc[2]
@@ -337,9 +323,7 @@ def make_voc_categories(
         label_categories.add(label, attributes=desc[2])
 
     if task in [VocTask.voc, VocTask.voc_layout]:
-        for part in OrderedDict(
-            (k, None) for k in chain(*(desc[1] for desc in label_map.values()))
-        ):
+        for part in OrderedDict((k, None) for k in chain(*(desc[1] for desc in label_map.values()))):
             label_categories.add(part)
 
     categories[AnnotationType.label] = label_categories
@@ -351,10 +335,11 @@ def make_voc_categories(
     if not has_colors:  # generate new colors
         colormap = generate_colormap(len(label_map))
     else:  # only copy defined colors
-        label_id = lambda label: label_categories.find(label)[0]
-        colormap = {
-            label_id(name): desc[0] for name, desc in label_map.items() if desc[0] is not None
-        }
+
+        def label_id(label):
+            return label_categories.find(label)[0]
+
+        colormap = {label_id(name): desc[0] for name, desc in label_map.items() if desc[0] is not None}
     mask_categories = MaskCategories(colormap)
     mask_categories.inverse_colormap  # pylint: disable=pointless-statement
     categories[AnnotationType.mask] = mask_categories

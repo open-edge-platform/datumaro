@@ -11,7 +11,7 @@ from datumaro.components.dataset_base import CategoriesInfo, DatasetInfo, Datase
 from datumaro.components.media import MediaElement
 from datumaro.util.definitions import DEFAULT_SUBSET_NAME
 
-__all__ = ["ItemStatus", "DatasetItemStorage", "DatasetItemStorageDatasetView"]
+__all__ = ["DatasetItemStorage", "DatasetItemStorageDatasetView", "ItemStatus"]
 
 
 class ItemStatus(Enum):
@@ -109,8 +109,7 @@ class DatasetItemStorage:
 
     def __getitem__(self, idx: int) -> DatasetItem:
         _id, subset = self._order[idx]
-        item = self.data[subset][_id]
-        return item
+        return self.data[subset][_id]
 
 
 class DatasetItemStorageDatasetView(IDataset):

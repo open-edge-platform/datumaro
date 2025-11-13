@@ -10,7 +10,6 @@ import numpy as np
 import pytest
 
 import datumaro.util.image as image_module
-
 from tests.utils.test_utils import TestDir
 
 
@@ -42,8 +41,7 @@ class ImageOperationsTest(TestCase):
                 if (
                     c == 3
                     and load_backend == image_module.ImageBackend.PIL
-                    and image_module.IMAGE_COLOR_CHANNEL.get()
-                    == image_module.ImageColorChannel.UNCHANGED
+                    and image_module.IMAGE_COLOR_CHANNEL.get() == image_module.ImageColorChannel.UNCHANGED
                 ):
                     dst_image = np.flip(dst_image, -1)
 
@@ -71,8 +69,7 @@ class ImageOperationsTest(TestCase):
             if (
                 c == 3
                 and load_backend == image_module.ImageBackend.PIL
-                and image_module.IMAGE_COLOR_CHANNEL.get()
-                == image_module.ImageColorChannel.UNCHANGED
+                and image_module.IMAGE_COLOR_CHANNEL.get() == image_module.ImageColorChannel.UNCHANGED
             ):
                 dst_image = np.flip(dst_image, -1)
 
@@ -97,26 +94,18 @@ class ImageDecodeTest:
     def fxt_img_four_channels(self) -> np.ndarray:
         return np.random.randint(low=0, high=256, size=(5, 4, 4), dtype=np.uint8)
 
-    @pytest.mark.parametrize(
-        "image_backend", [image_module.ImageBackend.cv2, image_module.ImageBackend.PIL]
-    )
-    def test_decode_image_context(
-        self, fxt_img_four_channels: np.ndarray, image_backend: image_module.ImageBackend
-    ):
+    @pytest.mark.parametrize("image_backend", [image_module.ImageBackend.cv2, image_module.ImageBackend.PIL])
+    def test_decode_image_context(self, fxt_img_four_channels: np.ndarray, image_backend: image_module.ImageBackend):
         img_bytes = image_module.encode_image(fxt_img_four_channels, ".png")
 
         # 3 channels from ImageColorScale.COLOR_BGR
-        with image_module.decode_image_context(
-            image_backend, image_module.ImageColorChannel.COLOR_BGR
-        ):
+        with image_module.decode_image_context(image_backend, image_module.ImageColorChannel.COLOR_BGR):
             img_decoded = image_module.decode_image(img_bytes)
             assert img_decoded.shape[-1] == 3
             assert np.allclose(fxt_img_four_channels[:, :, :3], img_decoded)
 
         # 3 channels from ImageColorScale.COLOR_RGB
-        with image_module.decode_image_context(
-            image_backend, image_module.ImageColorChannel.COLOR_RGB
-        ):
+        with image_module.decode_image_context(image_backend, image_module.ImageColorChannel.COLOR_RGB):
             img_decoded = image_module.decode_image(img_bytes)
             assert img_decoded.shape[-1] == 3
             assert np.allclose(
@@ -125,9 +114,7 @@ class ImageDecodeTest:
             )
 
         # 4 channels from ImageColorScale.UNCHANGED
-        with image_module.decode_image_context(
-            image_backend, image_module.ImageColorChannel.UNCHANGED
-        ):
+        with image_module.decode_image_context(image_backend, image_module.ImageColorChannel.UNCHANGED):
             img_decoded = image_module.decode_image(img_bytes)
             assert img_decoded.shape[-1] == 4
 

@@ -6,13 +6,7 @@ from collections import defaultdict
 from typing import Dict, Iterator, List, Optional, Sequence, TypeVar
 
 from datumaro.components.contexts.importer import _ImportFail
-from datumaro.components.dataset_base import (
-    CategoriesInfo,
-    DatasetBase,
-    DatasetInfo,
-    DatasetItem,
-    SubsetBase,
-)
+from datumaro.components.dataset_base import CategoriesInfo, DatasetBase, DatasetInfo, DatasetItem, SubsetBase
 
 T = TypeVar("T")
 
@@ -20,7 +14,7 @@ T = TypeVar("T")
 def check_identicalness(seq: Sequence[T], raise_error_on_empty: bool = True) -> Optional[T]:
     if len(seq) == 0 and raise_error_on_empty:
         raise _ImportFail("It should not be empty.")
-    elif len(seq) == 0 and not raise_error_on_empty:
+    if len(seq) == 0 and not raise_error_on_empty:
         return None
 
     if seq.count(seq[0]) != len(seq):

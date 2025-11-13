@@ -16,16 +16,16 @@ class IDatasetDownloader:
         subset: str,
         extra_args: Any,
     ):
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @classmethod
     def describe(cls, report_format, report_file=None) -> str:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @classmethod
     def get_command_description(cls, *args, **kwargs) -> str:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @classmethod
     def describe_command_description(cls):
-        raise NotImplementedError()
+        raise NotImplementedError

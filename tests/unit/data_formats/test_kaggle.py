@@ -13,23 +13,18 @@ from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.importer import Importer
 from datumaro.components.media import Image
 from datumaro.plugins.data_formats.kaggle.base import *
-
-from .base import TestDataFormatBase
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import compare_datasets
 
+from .base import TestDataFormatBase
+
 DUMMY_DATASET_IMAGE_CSV_DIR = get_test_asset_path("kaggle_dataset", "image_csv")
-DUMMY_DATASET_IMAGE_CSV_MULTI_LB_DIR = get_test_asset_path(
-    "kaggle_dataset", "image_csv_multi_label"
-)
+DUMMY_DATASET_IMAGE_CSV_MULTI_LB_DIR = get_test_asset_path("kaggle_dataset", "image_csv_multi_label")
 DUMMY_DATASET_IMAGE_CSV_DET_DIR = get_test_asset_path("kaggle_dataset", "image_csv_det")
 DUMMY_DATASET_IMAGE_TXT_DIR = get_test_asset_path("kaggle_dataset", "image_txt")
 DUMMY_DATASET_IMAGE_TXT_DET_DIR = get_test_asset_path("kaggle_dataset", "image_txt_det")
 DUMMY_DATASET_IMAGE_MASK = get_test_asset_path("kaggle_dataset", "image_mask")
-DUMMY_DATASET_IMAGE_MASK_LABELMAP = get_test_asset_path(
-    "kaggle_dataset", "image_mask_with_labelmap"
-)
+DUMMY_DATASET_IMAGE_MASK_LABELMAP = get_test_asset_path("kaggle_dataset", "image_mask_with_labelmap")
 DUMMY_DATASET_VOC1_DIR = get_test_asset_path("kaggle_dataset", "relaxed_voc1")
 DUMMY_DATASET_VOC2_DIR = get_test_asset_path("kaggle_dataset", "relaxed_voc2")
 DUMMY_DATASET_YOLO_DIR = get_test_asset_path("kaggle_dataset", "relaxed_yolo")
@@ -348,18 +343,14 @@ def fxt_coco_dataset() -> Dataset:
                 subset="default",
                 media=Image.from_numpy(data=np.ones((5, 10, 3))),
                 attributes={"id": 1},
-                annotations=[
-                    Bbox(2, 1, 3, 1, label=0, group=0, id=0, attributes={"is_crowd": False})
-                ],
+                annotations=[Bbox(2, 1, 3, 1, label=0, group=0, id=0, attributes={"is_crowd": False})],
             ),
             DatasetItem(
                 id="train_002",
                 subset="default",
                 media=Image.from_numpy(data=np.ones((10, 5, 3))),
                 attributes={"id": 2},
-                annotations=[
-                    Bbox(0, 0, 2, 4, label=1, group=1, id=1, attributes={"is_crowd": False})
-                ],
+                annotations=[Bbox(0, 0, 2, 4, label=1, group=1, id=1, attributes={"is_crowd": False})],
             ),
         ],
         categories=["label_0", "label_1"],

@@ -42,7 +42,6 @@ from datumaro.experimental.fields import (
     tensor_field,
 )
 from datumaro.experimental.schema import AttributeInfo, Schema, Semantic
-from datumaro.util.image import decode_image, encode_image
 
 
 def test_tensor_field_creation():
@@ -68,7 +67,7 @@ def test_tensor_field_polars_schema():
 
 def test_tensor_field_polars_conversion():
     """Test TensorField to/from Polars conversion."""
-    field = cast(TensorField, tensor_field(dtype=pl.Float32))
+    field = cast("TensorField", tensor_field(dtype=pl.Float32))
     test_tensor = np.array([[1.0, 2.0], [3.0, 4.0]], dtype=np.float32)
 
     # Test to_polars
@@ -78,7 +77,7 @@ def test_tensor_field_polars_conversion():
 
     # Create DataFrame and test from_polars
     df = pl.DataFrame(polars_data)
-    reconstructed = cast(np.ndarray[Any, Any], field.from_polars("test_tensor", 0, df, np.ndarray))
+    reconstructed = cast("np.ndarray[Any, Any]", field.from_polars("test_tensor", 0, df, np.ndarray))
 
     assert isinstance(reconstructed, np.ndarray)
     assert np.allclose(reconstructed, test_tensor)
@@ -159,9 +158,7 @@ def test_image_bytes_field_polars_conversion_with_bytes():
 
 def test_bbox_field_creation():
     """Test BBoxField creation and properties."""
-    field = bbox_field(
-        dtype=pl.Float32, format="x1y1x2y2", normalize=True, semantic=Semantic.Default
-    )
+    field = bbox_field(dtype=pl.Float32, format="x1y1x2y2", normalize=True, semantic=Semantic.Default)
 
     assert isinstance(field, BBoxField)
     assert field.dtype == pl.Float32
@@ -202,10 +199,8 @@ def test_instance_mask_field_polars_schema():
 
 def test_instance_mask_field_polars_conversion():
     """Test InstanceMaskField to/from Polars conversion."""
-    field = cast(InstanceMaskField, instance_mask_field(dtype=pl.Boolean))
-    test_mask = np.array(
-        [[[True, False], [False, True]], [[False, True], [True, False]]], dtype=bool
-    )  # (2,2,2)
+    field = cast("InstanceMaskField", instance_mask_field(dtype=pl.Boolean))
+    test_mask = np.array([[[True, False], [False, True]], [[False, True], [True, False]]], dtype=bool)  # (2,2,2)
 
     # Test to_polars
     polars_data = field.to_polars("instance_mask", test_mask)
@@ -214,9 +209,7 @@ def test_instance_mask_field_polars_conversion():
 
     # Create DataFrame and test from_polars
     df = pl.DataFrame(polars_data)
-    reconstructed = cast(
-        np.ndarray[Any, Any], field.from_polars("instance_mask", 0, df, np.ndarray)
-    )
+    reconstructed = cast("np.ndarray[Any, Any]", field.from_polars("instance_mask", 0, df, np.ndarray))
 
     assert isinstance(reconstructed, np.ndarray)
     assert np.array_equal(reconstructed, test_mask)
@@ -245,15 +238,13 @@ def test_instance_mask_callable_field_polars_schema():
 def test_instance_mask_callable_field_polars_conversion():
     """Test InstanceMaskCallableField to/from Polars conversion."""
     field = cast(
-        InstanceMaskCallableField,
+        "InstanceMaskCallableField",
         instance_mask_callable_field(dtype=pl.Boolean, semantic=Semantic.Default),
     )
 
     def get_instance_masks():
         # Return a (2,2,2) array of boolean masks
-        return np.array(
-            [[[True, False], [False, True]], [[False, True], [True, False]]], dtype=bool
-        )
+        return np.array([[[True, False], [False, True]], [[False, True], [True, False]]], dtype=bool)
 
     # Test to_polars
     polars_data = field.to_polars("instance_mask_callable", get_instance_masks)
@@ -291,7 +282,7 @@ def test_mask_callable_field_polars_schema():
 def test_mask_callable_field_polars_conversion():
     """Test MaskCallableField to/from Polars conversion."""
     field = cast(
-        MaskCallableField,
+        "MaskCallableField",
         mask_callable_field(dtype=pl.UInt8, semantic=Semantic.Default),
     )
 
@@ -307,7 +298,7 @@ def test_mask_callable_field_polars_conversion():
 
 def test_bbox_field_polars_conversion():
     """Test BBoxField to/from Polars conversion."""
-    field = cast(BBoxField, bbox_field(dtype=pl.Float32, normalize=False))
+    field = cast("BBoxField", bbox_field(dtype=pl.Float32, normalize=False))
     test_bbox = np.array([[0.1, 0.2, 0.3, 0.4], [0.5, 0.6, 0.7, 0.8]], dtype=np.float32)
 
     # Test to_polars
@@ -317,7 +308,7 @@ def test_bbox_field_polars_conversion():
 
     # Create DataFrame and test from_polars
     df = pl.DataFrame(polars_data)
-    reconstructed = cast(np.ndarray[Any, Any], field.from_polars("bbox", 0, df, np.ndarray))
+    reconstructed = cast("np.ndarray[Any, Any]", field.from_polars("bbox", 0, df, np.ndarray))
 
     assert isinstance(reconstructed, np.ndarray)
     assert np.allclose(reconstructed, test_bbox)
@@ -325,9 +316,7 @@ def test_bbox_field_polars_conversion():
 
 def test_rotated_bbox_field_creation():
     """Test RotatedBBoxField creation and properties."""
-    field = rotated_bbox_field(
-        dtype=pl.Float32, format="cxcywhr", normalize=True, semantic=Semantic.Default
-    )
+    field = rotated_bbox_field(dtype=pl.Float32, format="cxcywhr", normalize=True, semantic=Semantic.Default)
 
     assert isinstance(field, RotatedBBoxField)
     assert field.dtype == pl.Float32
@@ -358,11 +347,9 @@ def test_rotated_bbox_field_polars_schema():
 
 def test_rotated_bbox_field_polars_conversion():
     """Test RotatedBBoxField to/from Polars conversion."""
-    field = cast(RotatedBBoxField, rotated_bbox_field(dtype=pl.Float32, normalize=False))
+    field = cast("RotatedBBoxField", rotated_bbox_field(dtype=pl.Float32, normalize=False))
     # Test with rotated bboxes: [cx, cy, w, h, r]
-    test_rotated_bbox = np.array(
-        [[50.0, 60.0, 30.0, 20.0, 0.785], [100.0, 120.0, 40.0, 25.0, 1.57]], dtype=np.float32
-    )
+    test_rotated_bbox = np.array([[50.0, 60.0, 30.0, 20.0, 0.785], [100.0, 120.0, 40.0, 25.0, 1.57]], dtype=np.float32)
 
     # Test to_polars
     polars_data = field.to_polars("rotated_bbox", test_rotated_bbox)
@@ -371,7 +358,7 @@ def test_rotated_bbox_field_polars_conversion():
 
     # Create DataFrame and test from_polars
     df = pl.DataFrame(polars_data)
-    reconstructed = cast(np.ndarray[Any, Any], field.from_polars("rotated_bbox", 0, df, np.ndarray))
+    reconstructed = cast("np.ndarray[Any, Any]", field.from_polars("rotated_bbox", 0, df, np.ndarray))
 
     assert isinstance(reconstructed, np.ndarray)
     assert np.allclose(reconstructed, test_rotated_bbox)
@@ -398,9 +385,7 @@ def test_image_info_field_polars_schema():
     field = image_info_field()
     schema = field.to_polars_schema("image_info")
 
-    expected = {
-        "image_info": pl.Struct([pl.Field("width", pl.Int32()), pl.Field("height", pl.Int32())])
-    }
+    expected = {"image_info": pl.Struct([pl.Field("width", pl.Int32()), pl.Field("height", pl.Int32())])}
     assert schema == expected
 
 
@@ -528,7 +513,7 @@ def test_image_callable_field_complex_callable():
     import numpy as np
 
     field = image_callable_field(format="RGBA")  # Test with lambda
-    lambda_callable = lambda: np.zeros((5, 5, 4), dtype=np.uint8)
+    lambda_callable = lambda: np.zeros((5, 5, 4), dtype=np.uint8)  # noqa: E731
 
     polars_data = field.to_polars("image_callable", lambda_callable)
     df = pl.DataFrame(polars_data)
@@ -617,24 +602,16 @@ def test_schema_duplicate_field_type_assertion():
     with pytest.raises(ValueError):
 
         class InvalidSample(Sample):
-            image1: np.ndarray[Any, Any] = image_field(
-                dtype=pl.UInt8, format="RGB", semantic=Semantic.Default
-            )
-            image2: np.ndarray[Any, Any] = image_field(
-                dtype=pl.UInt8, format="RGB", semantic=Semantic.Default
-            )
+            image1: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Default)
+            image2: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Default)
 
         # This should trigger the assertion error when schema is inferred
         InvalidSample.infer_schema()
 
     # This should work because the fields have different semantic contexts
     class ValidSample(Sample):
-        left_image: np.ndarray[Any, Any] = image_field(
-            dtype=pl.UInt8, format="RGB", semantic=Semantic.Left
-        )
-        right_image: np.ndarray[Any, Any] = image_field(
-            dtype=pl.UInt8, format="RGB", semantic=Semantic.Right
-        )
+        left_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Left)
+        right_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Right)
 
     # This should not raise an assertion error
     schema = ValidSample.infer_schema()
@@ -676,7 +653,7 @@ def test_polygon_field_polars_schema():
 
 def test_polygon_field_polars_conversion():
     """Test PolygonField to/from Polars conversion with simple polygon."""
-    field = cast(PolygonField, polygon_field(dtype=pl.Float32, normalize=False))
+    field = cast("PolygonField", polygon_field(dtype=pl.Float32, normalize=False))
     # Triangle: (0,0) -> (10,0) -> (5,10) -> (0,0)
     test_polygon_1 = np.array([[0.0, 0.0], [10.0, 0.0], [5.0, 10.0]], dtype=np.float32)
     test_polygon_2 = np.array([[2.0, 2.0], [10.0, 2.0], [5.0, 10.0], [6.0, 11.0]], dtype=np.float32)
@@ -689,7 +666,7 @@ def test_polygon_field_polars_conversion():
 
     # Create DataFrame and test from_polars
     df = pl.DataFrame(polars_data)
-    reconstructed = cast(np.ndarray[Any, Any], field.from_polars("polygon", 0, df, np.ndarray))
+    reconstructed = cast("np.ndarray[Any, Any]", field.from_polars("polygon", 0, df, np.ndarray))
 
     assert len(reconstructed) == 2
     assert np.all(reconstructed[0] == test_polygon_1)
@@ -939,8 +916,8 @@ def test_schema_serialization_simple():
     assert set(reconstructed.attributes.keys()) == set(schema.attributes.keys())
     assert isinstance(reconstructed.attributes["image"].field, ImageField)
     assert isinstance(reconstructed.attributes["bbox"].field, BBoxField)
-    assert type(reconstructed.attributes["image"].type) == type(schema.attributes["image"].type)
-    assert type(reconstructed.attributes["bbox"].type) == type(schema.attributes["bbox"].type)
+    assert type(reconstructed.attributes["image"].type) is type(schema.attributes["image"].type)
+    assert type(reconstructed.attributes["bbox"].type) is type(schema.attributes["bbox"].type)
 
 
 def test_schema_serialization_with_categories():
@@ -951,11 +928,7 @@ def test_schema_serialization_with_categories():
     # Create schema with categories
     label_cats = LabelCategories(labels=("cat", "dog", "bird"))
     schema = Schema(
-        attributes={
-            "label": AttributeInfo(
-                type=str, field=tensor_field(dtype=pl.Int32), categories=label_cats
-            )
-        }
+        attributes={"label": AttributeInfo(type=str, field=tensor_field(dtype=pl.Int32), categories=label_cats)}
     )
 
     # Serialize to dict
@@ -972,10 +945,7 @@ def test_schema_serialization_with_categories():
     assert "label" in reconstructed.attributes
     assert reconstructed.attributes["label"].categories is not None
     assert isinstance(reconstructed.attributes["label"].categories, LabelCategories)
-    assert (
-        reconstructed.attributes["label"].categories.labels
-        == schema.attributes["label"].categories.labels
-    )
+    assert reconstructed.attributes["label"].categories.labels == schema.attributes["label"].categories.labels
     assert reconstructed.attributes["label"].categories.labels == ("cat", "dog", "bird")
 
 
@@ -986,15 +956,9 @@ def test_schema_serialization_builtin_types():
     # Create schema with built-in Python types and different semantics to avoid conflicts
     schema = Schema(
         attributes={
-            "score": AttributeInfo(
-                type=float, field=tensor_field(dtype=pl.Float32, semantic=Semantic.Default)
-            ),
-            "count": AttributeInfo(
-                type=int, field=tensor_field(dtype=pl.Int32, semantic=Semantic.Left)
-            ),
-            "name": AttributeInfo(
-                type=str, field=tensor_field(dtype=pl.Utf8, semantic=Semantic.Right)
-            ),
+            "score": AttributeInfo(type=float, field=tensor_field(dtype=pl.Float32, semantic=Semantic.Default)),
+            "count": AttributeInfo(type=int, field=tensor_field(dtype=pl.Int32, semantic=Semantic.Left)),
+            "name": AttributeInfo(type=str, field=tensor_field(dtype=pl.Utf8, semantic=Semantic.Right)),
         }
     )
 
@@ -1008,17 +972,9 @@ def test_schema_serialization_builtin_types():
     assert "count" in reconstructed.attributes
     assert "name" in reconstructed.attributes
     # Verify semantics are preserved
-    assert (
-        reconstructed.attributes["score"].field.semantic
-        == schema.attributes["score"].field.semantic
-    )
-    assert (
-        reconstructed.attributes["count"].field.semantic
-        == schema.attributes["count"].field.semantic
-    )
-    assert (
-        reconstructed.attributes["name"].field.semantic == schema.attributes["name"].field.semantic
-    )
+    assert reconstructed.attributes["score"].field.semantic == schema.attributes["score"].field.semantic
+    assert reconstructed.attributes["count"].field.semantic == schema.attributes["count"].field.semantic
+    assert reconstructed.attributes["name"].field.semantic == schema.attributes["name"].field.semantic
 
 
 def test_schema_with_categories_method():
@@ -1029,12 +985,8 @@ def test_schema_with_categories_method():
     # Create base schema without categories (use different semantics to avoid conflicts)
     schema = Schema(
         attributes={
-            "label": AttributeInfo(
-                type=str, field=tensor_field(dtype=pl.Int32, semantic=Semantic.Default)
-            ),
-            "mask": AttributeInfo(
-                type=np.ndarray, field=mask_field(dtype=pl.UInt8, semantic=Semantic.Left)
-            ),
+            "label": AttributeInfo(type=str, field=tensor_field(dtype=pl.Int32, semantic=Semantic.Default)),
+            "mask": AttributeInfo(type=np.ndarray, field=mask_field(dtype=pl.UInt8, semantic=Semantic.Left)),
         }
     )
 
@@ -1049,10 +1001,7 @@ def test_schema_with_categories_method():
     # Compare with original
     assert reconstructed.attributes["label"].categories is not None
     assert isinstance(reconstructed.attributes["label"].categories, LabelCategories)
-    assert (
-        reconstructed.attributes["label"].categories.labels
-        == schema_with_cats.attributes["label"].categories.labels
-    )
+    assert reconstructed.attributes["label"].categories.labels == schema_with_cats.attributes["label"].categories.labels
     assert reconstructed.attributes["label"].categories.labels == ("cat", "dog")
     assert reconstructed.attributes["mask"].categories is None
 
@@ -1071,9 +1020,7 @@ def test_subset_field_from_polars_with_direct_enum_type():
     field = subset_field()
 
     # Create a DataFrame with subset values
-    df = pl.DataFrame(
-        {"subset": pl.Series(["TRAINING", "TESTING", "VALIDATION"], dtype=pl.Categorical)}
-    )
+    df = pl.DataFrame({"subset": pl.Series(["TRAINING", "TESTING", "VALIDATION"], dtype=pl.Categorical)})
 
     # Test reconstruction with direct Subset type
     value1 = field.from_polars("subset", 0, df, Subset)

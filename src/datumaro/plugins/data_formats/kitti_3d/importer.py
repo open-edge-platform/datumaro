@@ -23,9 +23,7 @@ class Kitti3dImporter(Importer):
 
     @classmethod
     def _check_ann_file(cls, fpath: str, context: FormatDetectionContext) -> bool:
-        with context.probe_text_file(
-            fpath, "Requirements for the annotation file of Kitti 3D format"
-        ) as fp:
+        with context.probe_text_file(fpath, "Requirements for the annotation file of Kitti 3D format") as fp:
             for line in fp:
                 fields = line.rstrip("\n").split(" ")
                 if len(fields) == 15 or len(fields) == 16:
@@ -49,5 +47,4 @@ class Kitti3dImporter(Importer):
         )
         if len(sources) == 0:
             return [{"url": path, "format": "kitti3d"}]
-        else:
-            return sources
+        return sources

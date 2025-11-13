@@ -14,7 +14,6 @@ from datumaro.components.format_detection import (
     apply_format_detector,
     detect_dataset_format,
 )
-
 from tests.utils.test_utils import TestDir
 
 
@@ -212,9 +211,7 @@ class ApplyFormatDetectorTest(FormatDetectionTest):
         with self.assertRaises(FormatRequirementsUnmet) as result:
             apply_format_detector(self._dataset_root, detect)
 
-        self.assertEqual(
-            result.exception.failed_alternatives, ("bad alternative 1", "bad alternative 2")
-        )
+        self.assertEqual(result.exception.failed_alternatives, ("bad alternative 1", "bad alternative 2"))
 
     def test_raise_unsupported(self):
         def detect(context):
@@ -246,9 +243,7 @@ class DetectDatasetFormat(FormatDetectionTest):
         def rejection_callback(format, reason, message):
             rejected_formats[format] = (reason, message)
 
-        detected_datasets = detect_dataset_format(
-            formats, self._dataset_root, rejection_callback=rejection_callback
-        )
+        detected_datasets = detect_dataset_format(formats, self._dataset_root, rejection_callback=rejection_callback)
 
         detected_dataset_names = [detected_dataset.name for detected_dataset in detected_datasets]
 

@@ -36,12 +36,11 @@ SpatialAnnotation = Union[_Shape, Mask]
 def _get_bbox(ann: Union[Sequence, SpatialAnnotation]) -> BboxCoords:
     if isinstance(ann, (Shape, Mask)):
         return ann.get_bbox()
-    elif hasattr(ann, "__len__") and len(ann) == 4:
+    if hasattr(ann, "__len__") and len(ann) == 4:
         return ann
-    elif hasattr(ann, "__len__") and len(ann) == 0:
+    if hasattr(ann, "__len__") and len(ann) == 0:
         return [0, 0, 0, 0]
-    else:
-        raise ValueError("The value of type '%s' can't be treated as a " "bounding box" % type(ann))
+    raise ValueError("The value of type '%s' can't be treated as a bounding box" % type(ann))
 
 
 def max_bbox(annotations: Iterable[Union[BboxCoords, SpatialAnnotation]]) -> BboxCoords:
@@ -151,12 +150,11 @@ def segment_iou(a, b):
         def _to_rle(ann):
             if ann.type == AnnotationType.polygon:
                 return mask_utils.frPyObjects([ann.points], h, w)
-            elif isinstance(ann, RleMask):
+            if isinstance(ann, RleMask):
                 return [ann.rle]
-            elif ann.type == AnnotationType.mask:
+            if ann.type == AnnotationType.mask:
                 return mask_utils.frPyObjects([mask_to_rle(ann.image)], h, w)
-            else:
-                raise TypeError("Unexpected arguments: %s, %s" % (a, b))
+            raise TypeError("Unexpected arguments: %s, %s" % (a, b))
 
         a = _to_rle(a)
         b = _to_rle(b)
@@ -231,8 +229,8 @@ def approximate_line(points: Sequence[float], segments: int) -> np.ndarray:
         The size is [(segments + 1) * 2], the layout is [x0, y0, x1, y1, ...].
     """
 
-    assert 2 <= len(points) // 2 and len(points) % 2 == 0
-    assert 0 < segments
+    assert len(points) // 2 >= 2 and len(points) % 2 == 0
+    assert segments > 0
 
     points = list(points)
     if len(points) == 2:
@@ -283,10 +281,7 @@ def make_label_id_mapping(
 
     source_labels = {id: label.name for id, label in enumerate(src_labels or ())}
     target_labels = {label.name: id for id, label in enumerate(dst_labels or ())}
-    id_mapping = {
-        src_id: target_labels.get(src_label, fallback)
-        for src_id, src_label in source_labels.items()
-    }
+    id_mapping = {src_id: target_labels.get(src_label, fallback) for src_id, src_label in source_labels.items()}
 
     def map_id(src_id):
         return id_mapping.get(src_id, fallback)

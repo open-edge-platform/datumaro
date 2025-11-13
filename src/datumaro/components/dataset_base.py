@@ -38,7 +38,7 @@ class DatasetItem:
 
     def media_as(self, t: Type[T]) -> T:
         assert issubclass(t, MediaElement)
-        return cast(t, self.media)
+        return cast("t", self.media)
 
     def __init__(
         self,
@@ -47,11 +47,9 @@ class DatasetItem:
         subset: Optional[str] = None,
         media: Union[str, MediaElement, None] = None,
         annotations: Optional[List[Annotation]] = None,
-        attributes: Dict[str, Any] = None,
+        attributes: Dict[str, Any] | None = None,
     ):
-        self.__attrs_init__(
-            id=id, subset=subset, media=media, annotations=annotations, attributes=attributes
-        )
+        self.__attrs_init__(id=id, subset=subset, media=media, annotations=annotations, attributes=attributes)
 
 
 DatasetInfo = Dict[str, Any]
@@ -63,10 +61,10 @@ class IDataset:
         """
         Provides sequential access to dataset items.
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def __len__(self) -> int:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def __bool__(self):  # avoid __len__ use for truth checking
         return True
@@ -75,28 +73,28 @@ class IDataset:
         """
         Enumerates subsets in the dataset. Each subset can be a dataset itself.
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def get_subset(self, name) -> IDataset:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def infos(self) -> DatasetInfo:
         """
         Returns meta-info of dataset.
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def categories(self) -> CategoriesInfo:
         """
         Returns metainfo about dataset labels.
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def get(self, id: str, subset: Optional[str] = None) -> Optional[DatasetItem]:
         """
         Provides random access to dataset items.
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def media_type(self) -> Type[MediaElement]:
         """
@@ -106,13 +104,13 @@ class IDataset:
         Supposed to be constant and known immediately after the
         object construction (i.e. doesn't require dataset iteration).
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def ann_types(self) -> List[AnnotationType]:
         """
         Returns available task type from dataset annotation types.
         """
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @property
     def is_stream(self) -> bool:
@@ -161,10 +159,7 @@ class _DatasetBase(IDataset):
             subset = self.select(lambda item: item.subset == name)
             subset._subsets = [name]
             return subset
-        else:
-            raise KeyError(
-                "Unknown subset '%s', available subsets: %s" % (name, set(self._subsets))
-            )
+        raise KeyError("Unknown subset '%s', available subsets: %s" % (name, set(self._subsets)))
 
     def transform(self, method, *args, **kwargs):
         return method(self, *args, **kwargs)
@@ -243,7 +238,7 @@ class SubsetBase(DatasetBase):
         length: Optional[int] = None,
         subset: Optional[str] = None,
         media_type: Type[MediaElement] = Image,
-        ann_types: List[AnnotationType] = None,
+        ann_types: List[AnnotationType] | None = None,
         ctx: Optional[ImportContext] = None,
     ):
         self._subset = subset or DEFAULT_SUBSET_NAME

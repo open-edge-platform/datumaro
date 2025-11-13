@@ -145,18 +145,14 @@ class MotSeqBase(SubsetBase):
                     id=frame_id,
                     subset=self._subset,
                     media=Image.from_file(
-                        path=osp.join(
-                            self._image_dir, "%06d%s" % (frame_id, self._seq_info["imext"])
-                        ),
+                        path=osp.join(self._image_dir, "%06d%s" % (frame_id, self._seq_info["imext"])),
                         size=(self._seq_info["imheight"], self._seq_info["imwidth"]),
                     ),
                 )
         elif osp.isdir(self._image_dir):
             for p in find_images(self._image_dir):
                 frame_id = int(osp.splitext(osp.relpath(p, self._image_dir))[0])
-                items[frame_id] = DatasetItem(
-                    id=frame_id, subset=self._subset, media=Image.from_file(path=p)
-                )
+                items[frame_id] = DatasetItem(id=frame_id, subset=self._subset, media=Image.from_file(path=p))
 
         with open(path, newline="", encoding="utf-8") as csv_file:
             # NOTE: Different MOT files have different count of fields
@@ -183,7 +179,7 @@ class MotSeqBase(SubsetBase):
 
                 # Annotations for detection task are not related to any track
                 track_id = int(row["track_id"])
-                if 0 < track_id:
+                if track_id > 0:
                     attributes["track_id"] = track_id
 
                 confidence = cast(row.get("confidence"), float, 1)
@@ -210,7 +206,7 @@ class MotSeqBase(SubsetBase):
                 if len(entry) == 2:
                     fields[entry[0]] = entry[1]
         cls._check_seq_info(fields)
-        for k in {"framerate", "seqlength", "imwidth", "imheight"}:
+        for k in ("framerate", "seqlength", "imwidth", "imheight"):
             fields[k] = int(fields[k])
         return fields
 
@@ -293,9 +289,7 @@ class MotSeqGtExporter(Exporter):
                             "confidence": int(anno.attributes.get("ignored") is not True),
                             "class_id": 1 + cast(anno.label, int, -2),
                             "visibility": float(
-                                anno.attributes.get(
-                                    "visibility", 1 - float(anno.attributes.get("occluded", False))
-                                )
+                                anno.attributes.get("visibility", 1 - float(anno.attributes.get("occluded", False)))
                             ),
                         }
                     )

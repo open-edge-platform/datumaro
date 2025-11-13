@@ -4,7 +4,7 @@ default_language_version:
 repos:
   # EOF and whitespace checker
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v6.0.0
     hooks:
       - id: end-of-file-fixer
         exclude: |
@@ -14,24 +14,14 @@ repos:
           )$
 
   # Ruff
-  - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: "v0.5.0"
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.14.4
     hooks:
-      - id: ruff
-        exclude: "tests"
-
-  # python code formatting
-  - repo: https://github.com/psf/black
-    rev: 23.1.0
-    hooks:
-      - id: black
-
-  # Sort Python import
-  - repo: https://github.com/pycqa/isort
-    rev: 5.11.5
-    hooks:
-      - id: isort
-        name: isort (python)
+    - id: ruff
+      name: Ruff linter on all Python files
+      args: ["--fix"]
+    - id: ruff-format
+      name: Ruff formatter on all Python files
 
   # TODO: Enable mypy as soon as possible
   # python static type checking
@@ -58,22 +48,22 @@ repos:
 
   # notebooks
   - repo: https://github.com/nbQA-dev/nbQA
-    rev: 1.8.5
+    rev: 1.9.1
     hooks:
-      - id: nbqa-black
       - id: nbqa-ruff
-        additional_dependencies: [ruff==0.4.10]
+        additional_dependencies: [ruff==0.14.4]
+        args: [--fix]
 
   # zizmor detects security issues in GitHub Actions workflows.
   - repo: https://github.com/woodruffw/zizmor-pre-commit
-    rev: v1.11.0
+    rev: v1.16.3
     hooks:
       - id: zizmor
         args: ["--min-severity", "low", "--min-confidence", "low"]
 
   # add bandit for security checks
   - repo: https://github.com/PyCQA/bandit
-    rev: 1.8.3
+    rev: 1.8.6
     hooks:
       - id: bandit
         args:

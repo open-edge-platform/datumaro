@@ -13,13 +13,7 @@ from typing import List, Optional
 
 import numpy as np
 
-from datumaro.components.annotation import (
-    AnnotationType,
-    ExtractedMask,
-    LabelCategories,
-    Mask,
-    Polygon,
-)
+from datumaro.components.annotation import AnnotationType, ExtractedMask, LabelCategories, Mask, Polygon
 from datumaro.components.dataset_base import DatasetBase, DatasetItem
 from datumaro.components.format_detection import FormatDetectionContext
 from datumaro.components.importer import ImportContext, Importer
@@ -57,11 +51,7 @@ class Ade20k2020Base(DatasetBase):
         self._categories = {}
 
         if has_meta_file(self._path):
-            self._categories = {
-                AnnotationType.label: LabelCategories.from_iterable(
-                    parse_meta_file(self._path).keys()
-                )
-            }
+            self._categories = {AnnotationType.label: LabelCategories.from_iterable(parse_meta_file(self._path).keys())}
 
         for subset in self._subsets:
             self._load_items(subset)
@@ -99,11 +89,7 @@ class Ade20k2020Base(DatasetBase):
 
                 mask = lazy_image(mask_path, loader=self._load_class_mask)
 
-                classes = {
-                    (v["class_idx"], v["label_name"])
-                    for v in item_info
-                    if v["part_level"] == part_level
-                }
+                classes = {(v["class_idx"], v["label_name"]) for v in item_info if v["part_level"] == part_level}
 
                 for class_idx, label_name in classes:
                     label_id = labels.find(label_name)[0]
@@ -144,7 +130,7 @@ class Ade20k2020Base(DatasetBase):
                     )
                 )
 
-                if len(item["polygon_points"]) % 2 == 0 and 3 <= len(item["polygon_points"]) // 2:
+                if len(item["polygon_points"]) % 2 == 0 and len(item["polygon_points"]) // 2 >= 3:
                     item_annotations.append(
                         Polygon(
                             polygon_points,
@@ -171,9 +157,7 @@ class Ade20k2020Base(DatasetBase):
         json_path = osp.splitext(path)[0] + ".json"
         item_info = []
         if not osp.isfile(json_path):
-            raise FileNotFoundError(
-                errno.ENOENT, "Can't find annotation file for image %s" % path, json_path
-            )
+            raise FileNotFoundError(errno.ENOENT, "Can't find annotation file for image %s" % path, json_path)
 
         with open(json_path, "r", encoding="latin-1") as f:
             item_objects = parse_json(f.read())["annotation"]["object"]
@@ -207,14 +191,12 @@ class Ade20k2020Base(DatasetBase):
     def _load_instance_mask(path):
         mask = load_image(path)
         _, instance_mask = np.unique(mask, return_inverse=True)
-        instance_mask = instance_mask.reshape(mask.shape)
-        return instance_mask
+        return instance_mask.reshape(mask.shape)
 
     @staticmethod
     def _load_class_mask(path):
         mask = load_image(path)
-        mask = ((mask[:, :, 2] / 10).astype(np.int32) << 8) + mask[:, :, 1].astype(np.int32)
-        return mask
+        return ((mask[:, :, 2] / 10).astype(np.int32) << 8) + mask[:, :, 1].astype(np.int32)
 
     @staticmethod
     def _get_instance_mask(mask: lazy_image) -> np.ndarray:
@@ -236,7 +218,7 @@ class Ade20k2020Importer(Importer):
             page_mapper = JsonSectionPageMapper(fpath)
             sections = page_mapper.sections()
 
-            if "annotation" not in sections.keys():
+            if "annotation" not in sections:
                 raise Exception
 
     @classmethod

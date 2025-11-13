@@ -28,9 +28,7 @@ def fxt_categories() -> CategoriesInfo:
 
 
 @pytest.fixture
-def fxt_stream_extractor(
-    fxt_n_items: int, fxt_infos: DatasetInfo, fxt_categories: CategoriesInfo
-) -> MagicMock:
+def fxt_stream_extractor(fxt_n_items: int, fxt_infos: DatasetInfo, fxt_categories: CategoriesInfo) -> MagicMock:
     stream_extractor = MagicMock(spec=IDataset)
 
     items = [

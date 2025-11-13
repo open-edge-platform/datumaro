@@ -13,7 +13,7 @@ from datumaro.util import parse_json
 
 
 class SegmentAnythingImporter(Importer):
-    _N_JSON_TO_TEST = 10
+    _N_JSON_TO_TEST = 9
     _MAX_ANNOTATION_SECTION_BYTES = 100 * 1024 * 1024  # 100 MiB
     _ANNO_EXT = ".json"
 
@@ -23,9 +23,7 @@ class SegmentAnythingImporter(Importer):
         context: FormatDetectionContext,
     ) -> Optional[FormatDetectionConfidence]:
         # test maximum 10 annotation files only
-        ctr = 0
-        for file in context.require_files_iter(f"*{cls._ANNO_EXT}"):
-            ctr += 1
+        for ctr, file in enumerate(context.require_files_iter(f"*{cls._ANNO_EXT}")):
             with context.probe_text_file(
                 file, "Annotation format is not Segmentat-Anything format", is_binary_file=True
             ) as f:

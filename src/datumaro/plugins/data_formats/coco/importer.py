@@ -57,19 +57,16 @@ class CocoImporter(Importer):
         context: FormatDetectionContext,
     ) -> FormatDetectionConfidence:
         num_tasks = 0
-        for task in cls._TASKS.keys():
+        for task in cls._TASKS:
             try:
                 context.require_files(f"annotations/{task.name}_*{cls._ANNO_EXT}")
                 num_tasks += 1
             except Exception:
                 pass
         if num_tasks > 1:
-            log.warning(
-                "Multiple COCO tasks are detected. The detected format will be `coco` instead."
-            )
+            log.warning("Multiple COCO tasks are detected. The detected format will be `coco` instead.")
             return FormatDetectionConfidence.MEDIUM
-        else:
-            context.raise_unsupported()
+        context.raise_unsupported()
 
     def __call__(self, path, stream: bool = False, **extra_params):
         subsets = self.find_sources(path)
@@ -86,25 +83,21 @@ class CocoImporter(Importer):
             CocoTask.stuff,
         }
         ann_types = set(t for s in subsets.values() for t in s) & conflicting_types
-        if 1 <= len(ann_types):
+        if len(ann_types) >= 1:
             selected_ann_type = sorted(ann_types, key=lambda x: x.name)[0]
-        if 1 < len(ann_types):
+        if len(ann_types) > 1:
             log.warning(
                 "Not implemented: "
                 "Found potentially conflicting source types with labels: %s. "
-                "Only one type will be used: %s"
-                % (", ".join(t.name for t in ann_types), selected_ann_type.name)
+                "Only one type will be used: %s" % (", ".join(t.name for t in ann_types), selected_ann_type.name)
             )
 
         sources = []
         for subset, ann_files in subsets.items():
             for ann_type, ann_file in ann_files.items():
-                if ann_type in conflicting_types:
-                    if ann_type is not selected_ann_type:
-                        log.warning(
-                            "Not implemented: " "conflicting source '%s' is skipped." % ann_file
-                        )
-                        continue
+                if ann_type in conflicting_types and ann_type is not selected_ann_type:
+                    log.warning("Not implemented: conflicting source '%s' is skipped." % ann_file)
+                    continue
                 log.info("Found a dataset at '%s'" % ann_file)
 
                 options = dict(extra_params)
@@ -147,14 +140,11 @@ class CocoImporter(Importer):
             if ann_type not in cls._TASKS:
                 log.warning(
                     "File '%s' was skipped, could't match this file "
-                    "with any of these tasks: %s"
-                    % (subset_path, ",".join(e.NAME for e in cls._TASKS.values()))
+                    "with any of these tasks: %s" % (subset_path, ",".join(e.NAME for e in cls._TASKS.values()))
                 )
                 continue
 
-            parts = osp.splitext(osp.basename(subset_path))[0].split(
-                ann_type.name + "_", maxsplit=1
-            )
+            parts = osp.splitext(osp.basename(subset_path))[0].split(ann_type.name + "_", maxsplit=1)
             subset_name = parts[1] if len(parts) == 2 else DEFAULT_SUBSET_NAME
             subsets.setdefault(subset_name, {})[ann_type] = subset_path
 

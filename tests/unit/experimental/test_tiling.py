@@ -167,9 +167,7 @@ def test_invalid_schema():
         }
     )
 
-    df = pl.DataFrame(
-        {"image": [np.zeros((100, 100, 3)).flatten()], "image_shape": [(100, 100, 3)]}
-    )
+    pl.DataFrame({"image": [np.zeros((100, 100, 3)).flatten()], "image_shape": [(100, 100, 3)]})
     config = TilingConfig(tile_width=50, tile_height=50)
 
     # Should raise error due to missing ImageInfoField
@@ -334,7 +332,7 @@ def test_polygon_and_label_tiling():
 
     # Apply tiling
     plan = _create_tiling_plan(schema, config, threshold_drop_ann=0.1)
-    result_df, result_schema = _apply_tiling(df, None, plan, ["polygons", "labels"])
+    result_df, _ = _apply_tiling(df, None, plan, ["polygons", "labels"])
 
     # There should be 4 tiles (2x2 grid)
     assert len(result_df) == 4
