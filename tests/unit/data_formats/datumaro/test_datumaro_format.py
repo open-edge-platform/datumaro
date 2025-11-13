@@ -139,7 +139,7 @@ class DatumaroFormatTest:
         helper_tc,
         request,
     ):
-        if stream and type(self) != DatumaroFormatTest:
+        if stream and type(self) is not DatumaroFormatTest:
             # TODO: Remove this skip in the future
             pytest.skip(
                 "stream=True is only available for DatumaroFormatTest for now "

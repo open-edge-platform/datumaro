@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: MIT
 
-# ruff: noqa: F405
 
 from .annotation import *
 from .common import DictMapper, FloatListMapper, IntListMapper, Mapper, StringMapper

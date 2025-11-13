@@ -326,7 +326,6 @@ class RoboflowImporterTest(TestDataFormatBase):
             (DUMMY_DATASET_COCO_DIR, "fxt_coco_dataset", RoboflowCocoImporter),
             (DUMMY_DATASET_VOC_DIR, "fxt_voc_dataset", RoboflowVocImporter),
             (DUMMY_DATASET_YOLO_DIR, "fxt_yolo_dataset", RoboflowYoloImporter),
-            # (DUMMY_DATASET_YOLO_OBB_DIR, "fxt_yolo_obb_dataset", RoboflowYoloObbImporter), # deprecated by supporting DOTA format
             (DUMMY_DATASET_CREATEML_DIR, "fxt_createml_dataset", RoboflowCreateMlImporter),
             (DUMMY_DATASET_MULTICLASS_DIR, "fxt_multiclass_dataset", RoboflowMulticlassImporter),
         ],

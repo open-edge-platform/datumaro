@@ -528,16 +528,19 @@ class OpenImagesBase(DatasetBase):
                         mask_box_coords = np.array([float(mask_description[field]) for field in box_coord_fields])
 
                         for annotation in item.annotations:
-                            if annotation.type is AnnotationType.bbox and annotation.label == label_index:
-                                # In the original OID, mask box coordinates are stored
-                                # with 6 digit precision, hence the tolerance.
-                                if np.allclose(
+                            if (
+                                annotation.type is AnnotationType.bbox
+                                and annotation.label == label_index
+                                and np.allclose(
                                     mask_box_coords,
                                     normalized_coords[id(annotation)],
                                     rtol=0,
                                     atol=1e-6,
-                                ):
-                                    group = annotation.group
+                                )
+                            ):
+                                # In the original OID, mask box coordinates are stored
+                                # with 6 digit precision, hence the tolerance.
+                                group = annotation.group
 
                     if mask_description["PredictedIoU"]:
                         attributes["predicted_iou"] = float(mask_description["PredictedIoU"])

@@ -70,7 +70,7 @@ class TemporaryWriters:
 
         self._writers = tuple(
             _Writer(
-                fp=open(osp.join(self._ann_dir, f"__{self._task.name}_{self._subset}_{key}.tmp"), "wb"),
+                fp=open(osp.join(self._ann_dir, f"__{self._task.name}_{self._subset}_{key}.tmp"), "wb"),  # noqa: SIM115
                 is_empty=True,
             )
             for key in ["imgs", "anns"]

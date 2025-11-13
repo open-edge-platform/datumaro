@@ -1817,7 +1817,7 @@ def test_image_callable_converter_error_handling():
 
     # Test TypeError for non-numpy return
     df1 = pl.DataFrame({"my_callable": [bad_callable_1]}, schema={"my_callable": pl.Object})
-    with pytest.raises(RuntimeError, match="must return numpy.ndarray"):
+    with pytest.raises(RuntimeError, match="must return numpy\.ndarray"):
         converter_instance.convert(df1)
 
     # Test ValueError for wrong shape
@@ -1883,28 +1883,6 @@ def test_image_callable_converter_dtype_handling():
     assert image_data2[0, 0, 0] == 1.0
     assert image_data2[0, 0, 1] == 0.5
     assert image_data2[0, 0, 2] == 0.25
-
-
-def test_rotated_bbox_to_polygon_converter():
-    """Test conversion from RotatedBBox to Polygon format."""
-    converter_instance = RotatedBBoxToPolygonConverter()
-
-    input_bbox = np.array([[100, 200, 50, 30, 45]], dtype=np.float32)
-    df = pl.DataFrame({"bbox": [input_bbox]}, schema={"bbox": pl.Array(pl.Float32, 5)})
-
-    input_field = RotatedBBoxField(semantic=Semantic.Default)
-    output_field = PolygonField(semantic=Semantic.Default)
-
-    setattr(converter_instance, "input_bbox", AttributeSpec("bbox", input_field))
-    setattr(converter_instance, "output_polygon", AttributeSpec("polygon", output_field))
-
-    assert converter_instance.filter_output_spec() is True
-
-    result_df = converter_instance.convert(df)
-    points = result_df["polygon"][0]
-
-    # Should output 4 points (8 coordinates)
-    assert len(points) == 8
 
 
 def test_label_index_converter():

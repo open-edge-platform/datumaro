@@ -4,7 +4,7 @@
 
 import struct
 from dataclasses import dataclass
-from typing import Any, Dict, Iterator, List, Optional, Set, Type
+from typing import Any, Dict, Iterator, List, Optional, Type
 
 import pyarrow as pa
 
@@ -31,7 +31,7 @@ class ArrowSubsetBase(SubsetBase):
         categories: Dict[AnnotationType, Categories],
         subset: str,
         media_type: Type[MediaElement] = Image,
-        ann_types: Set[AnnotationType] = None,
+        ann_types: set[AnnotationType] | None = None,
     ):
         super().__init__(length=len(lookup), subset=subset, media_type=media_type, ann_types=ann_types, ctx=None)
 

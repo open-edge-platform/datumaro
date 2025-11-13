@@ -241,7 +241,7 @@ class RoIImageTest(TestCase):
             with self.subTest(**args):
                 try:
                     roi_img.save(osp.join(test_dir, "test.png"))
-                except:
+                except:  # noqa: E722
                     self.fail("Cannot save RoIImage")
 
     def test_ctors_from_image(self):

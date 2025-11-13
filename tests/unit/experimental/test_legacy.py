@@ -73,7 +73,7 @@ def test_image_media_converter_get_schema_attributes():
     attributes = converter.get_schema_attributes()
 
     assert "image_path" in attributes
-    assert attributes["image_path"].type == str
+    assert attributes["image_path"].type is str
 
 
 def test_image_media_converter_convert_item_media_with_path_and_size():
@@ -141,7 +141,7 @@ def test_image_bytes_media_converter_get_schema_attributes():
     attributes = converter.get_schema_attributes()
 
     assert "image_bytes" in attributes
-    assert attributes["image_bytes"].type == bytes
+    assert attributes["image_bytes"].type is bytes
 
 
 def test_image_bytes_media_converter_convert_item_media():
@@ -1045,9 +1045,7 @@ def test_backward_image_media_converter_create_from_schema_no_image_field():
     """Test BackwardImageMediaConverter with schema that has no image field."""
 
     # Create schema without image_path field
-    schema = Schema(
-        attributes={"some_tensor": AttributeInfo(type=np.ndarray, field=tensor_field(dtype=pl.Float32))}
-    )
+    schema = Schema(attributes={"some_tensor": AttributeInfo(type=np.ndarray, field=tensor_field(dtype=pl.Float32))})
 
     converter = BackwardImageMediaConverter.create_from_schema(schema)
     assert converter is None

@@ -148,7 +148,8 @@ def fxt_text_example():
                     Image preprocessing
                 a dataset storage
                 a tool to debug datasets
-                A network can be used to generate informative data subsets (e.g., with false-positives) to be analyzed further
+                A network can be used to generate informative data subsets 
+                (e.g., with false-positives) to be analyzed further
             """
 
 

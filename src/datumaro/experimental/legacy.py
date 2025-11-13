@@ -675,9 +675,7 @@ class ForwardKeypointAnnotationConverter(ForwardAnnotationConverter):
         # Extract label categories if available
         legacy_label_categories = categories.get(AnnotationType.label, None)
 
-        keypoints_attribute = AttributeInfo(
-            type=np.ndarray, field=keypoints_field(dtype=pl.Float32, semantic=semantic)
-        )
+        keypoints_attribute = AttributeInfo(type=np.ndarray, field=keypoints_field(dtype=pl.Float32, semantic=semantic))
 
         keypoints_labels_attribute = None
         # Only add keypoints_labels if we have label categories

@@ -444,9 +444,7 @@ def test_hierarchical_label_categories_serialization_with_groups():
         HierarchicalLabelCategory("green"),
         HierarchicalLabelCategory("blue"),
     )
-    groups = (
-        LabelGroup("colors", labels=("red", "green", "blue"), group_type=GroupType.EXCLUSIVE),
-    )
+    groups = (LabelGroup("colors", labels=("red", "green", "blue"), group_type=GroupType.EXCLUSIVE),)
     categories = HierarchicalLabelCategories(items=items, label_groups=groups)
 
     # Serialize to dict
@@ -475,13 +473,9 @@ def test_hierarchical_label_categories_serialization_with_semantics():
 
     items = (
         HierarchicalLabelCategory("normal", label_semantics={LabelSemantic.NORMAL: "normal_class"}),
-        HierarchicalLabelCategory(
-            "defect", label_semantics={LabelSemantic.ANOMALOUS: "defect_class"}
-        ),
+        HierarchicalLabelCategory("defect", label_semantics={LabelSemantic.ANOMALOUS: "defect_class"}),
     )
-    categories = HierarchicalLabelCategories(
-        items=items, label_semantics={LabelSemantic.NORMAL: "normal"}
-    )
+    categories = HierarchicalLabelCategories(items=items, label_semantics={LabelSemantic.NORMAL: "normal"})
 
     # Serialize to dict
     cat_dict = categories.to_dict()
@@ -532,9 +526,7 @@ def test_mask_categories_serialization_with_colormap():
         2: RgbColor(0, 255, 0),
         3: RgbColor(0, 0, 255),
     }
-    categories = MaskCategories(
-        labels=["background", "cat", "dog", "bird"], colormap=Colormap(data=colormap_data)
-    )
+    categories = MaskCategories(labels=["background", "cat", "dog", "bird"], colormap=Colormap(data=colormap_data))
 
     # Serialize to dict
     cat_dict = categories.to_dict()

@@ -63,8 +63,8 @@ class DetectedFormat:
     confidence: FormatDetectionConfidence = field(compare=True)
     name: str = field(compare=False)
 
-    def __eq__(self, __o: "DetectedFormat") -> bool:
-        return self.name == __o.name
+    def __eq__(self, other: "DetectedFormat") -> bool:
+        return self.name == other.name
 
     def __str__(self) -> str:
         return self.name

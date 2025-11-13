@@ -298,9 +298,8 @@ class YoloExportertTest:
                 categories=["a"],
             )
 
-            with TestDir() as test_dir:
-                with pytest.raises(DatasetExportError, match=f"Can't export '{subset}' subset"):
-                    YoloExporter.convert(dataset, test_dir)
+            with TestDir() as test_dir, pytest.raises(DatasetExportError, match=f"Can't export '{subset}' subset"):
+                YoloExporter.convert(dataset, test_dir)
 
     @pytest.mark.parametrize("dataset_cls, is_stream", [(Dataset, False), (StreamDataset, True)])
     def test_can_save_and_load_without_path_prefix(self, dataset_cls, is_stream, test_dir, helper_tc):

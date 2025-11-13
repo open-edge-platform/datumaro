@@ -5,7 +5,6 @@
 import logging as log
 import os
 import os.path as osp
-import warnings
 from collections import Counter
 from enum import Enum, auto
 from typing import TYPE_CHECKING, Union
@@ -21,6 +20,8 @@ from datumaro.util.image import save_image
 from datumaro.util.import_util import lazy_import
 
 if TYPE_CHECKING:
+    import warnings
+
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         import tensorboardX as tb
@@ -184,8 +185,8 @@ class DistanceCompareVisualizer:
         text_size, baseline = cv2.getTextSize(text, font, scale, thickness)
         cv2.rectangle(
             frame,
-            tuple((origin + (0, baseline)).astype(int)),
-            tuple((origin + (text_size[0], -text_size[1])).astype(int)),
+            tuple((origin + (0, baseline)).astype(int)),  # noqa: RUF005
+            tuple((origin + (text_size[0], -text_size[1])).astype(int)),  # noqa: RUF005
             bgcolor,
             cv2.FILLED,
         )
@@ -227,7 +228,7 @@ class DistanceCompareVisualizer:
 
     def get_label_diff_file(self):
         if self._label_diff_writer is None:
-            self._label_diff_writer = open(osp.join(self._save_dir, "label_diff.txt"), "w", encoding="utf-8")
+            self._label_diff_writer = open(osp.join(self._save_dir, "label_diff.txt"), "w", encoding="utf-8")  # noqa: SIM115
         return self._label_diff_writer
 
     def save_item_label_diff(self, item_a, item_b, diff):

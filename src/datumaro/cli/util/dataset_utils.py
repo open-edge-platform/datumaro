@@ -53,11 +53,11 @@ class FilterModes(Enum):
     items_annotations = 3
 
     # shortcuts
-    i = 1
-    a = 2
-    i_a = 3
-    a_i = 3
-    annotations_items = 3
+    i = 1  # noqa: PIE796
+    a = 2  # noqa: PIE796
+    i_a = 3  # noqa: PIE796
+    a_i = 3  # noqa: PIE796
+    annotations_items = 3  # noqa: PIE796
 
     @staticmethod
     def parse(s):

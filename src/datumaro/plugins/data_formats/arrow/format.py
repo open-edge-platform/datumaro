@@ -21,7 +21,6 @@ class DatumaroArrow:
 
     ID_FIELD = "id"
     SUBSET_FIELD = "subset"
-    MEDIA_FIELD = "media"
 
     IMAGE_FIELD = pa.struct(
         [

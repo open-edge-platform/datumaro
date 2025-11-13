@@ -154,13 +154,11 @@ def copyto_image(src: Union[str, IOBase], dst: Union[str, IOBase]) -> None:
 
     @contextmanager
     def _open(fp, mode):
-        was_file = False
         if not isinstance(fp, IOBase):
-            was_file = True
-            fp = open(fp, mode)
-        yield fp
-        if was_file:
-            fp.close()
+            with open(fp, mode) as fp:
+                yield fp
+        else:
+            yield fp
 
     with _open(src, "rb") as src_fp:
         _bytes = src_fp.read()
