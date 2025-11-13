@@ -3,15 +3,21 @@
 # SPDX-License-Identifier: MIT
 from __future__ import annotations
 
+import copy
 import heapq
 import itertools
 from collections import defaultdict
 from dataclasses import dataclass
 from typing import Callable, NamedTuple, Sequence, get_type_hints, overload
 
+from datumaro.v2 import Schema
+from datumaro.v2.categories import Categories
+from datumaro.v2.converters import Converter
+
 from datumaro.v2.converters.base import AttributeRemapperConverter, ConversionError, Converter
 from datumaro.v2.fields.base import Field, Semantic
 from datumaro.v2.schema import AttributeSpec, Schema
+from datumaro.v2.transform import Transform
 
 
 class ConversionPaths(NamedTuple):
@@ -646,3 +652,137 @@ def converter(
 
     # Called without parentheses: @converter
     return decorator(cls)
+
+
+def find_conversion_path(from_schema: Schema, to_schema: Schema) -> tuple[ConversionPaths, dict[str, Categories]]:
+    """
+    Find an optimal sequence of converters using A* search, grouped by semantic.
+
+    Fields with the same semantic can be converted between each other, but
+    conversion across semantic boundaries is not allowed.
+
+    Args:
+        from_schema: Source schema
+        to_schema: Target schema
+
+    Returns:
+        Tuple of (ConversionPaths with separated batch and lazy converter lists,
+                 dictionary of attribute names to inferred categories)
+
+    Raises:
+        ConversionError: If no conversion path is found
+    """
+    # Group fields by semantic in both schemas
+    start_groups = _group_fields_by_semantic(from_schema)
+    target_groups = _group_fields_by_semantic(to_schema)
+
+    # Collect all converters needed across all semantic groups
+    all_converters: list[Converter] = []
+
+    # Process each semantic group in the target schema
+    for semantic, target_state in target_groups.items():
+        # Get corresponding source state for this semantic (if any)
+        start_state = start_groups.get(semantic, _SchemaState({}))
+
+        # Find conversion path for this semantic group
+        semantic_converters, updated_target_state = _find_conversion_path_for_semantic(
+            start_state, target_state, semantic
+        )
+
+        # Update the target state with any inferred categories
+        target_groups[semantic] = updated_target_state
+
+        all_converters.extend(semantic_converters)
+
+    # Reconstruct the updated schema with inferred categories
+    # Use the list of attributes from to_schema rather than just the target_groups
+    # because the target_groups may include attributes which are deleted in the final to_schema.
+    # We do not want to include those attributes into the inferred_categories.
+    inferred_categories: dict[str, Categories] = {}
+    for attr_name, attr_info in to_schema.attributes.items():
+        semantic = attr_info.field.semantic
+        attr_spec = target_groups[semantic].field_to_attr_spec[type(attr_info.field)]
+        if attr_spec.categories is not None:
+            inferred_categories[attr_name] = attr_spec.categories
+
+    # Separate batch and lazy converters
+    conversion_paths = _separate_batch_and_lazy_converters(all_converters)
+
+    return conversion_paths, inferred_categories
+
+
+class ConverterTransform(Transform):
+    def __init__(self, parent: Transform, schema: Schema, conversion_paths: ConversionPaths):
+        super().__init__(schema)
+
+        lazy_inputs = parent.get_lazy_attributes()
+
+        lazy_outputs = set(conversion_paths.lazy_outputs)
+        for input in lazy_inputs:
+            lazy_outputs.update(conversion_paths.dependent_outputs_by_input[input])
+        self._lazy_outputs = lazy_outputs
+
+        batch_outputs = self.get_batch_attributes()
+
+        self._parent = parent
+        self._conversion_paths = conversion_paths
+        self._df_input_columns = set()
+        self._df = pl.DataFrame()
+        self._applied_converters = set()
+
+        self.apply(batch_outputs)
+
+    def apply(self, fields: Sequence[str]) -> pl.DataFrame:
+        required_inputs = set()
+        for field in fields:
+            if field in self._conversion_paths.converters:
+                required_inputs.update(self._conversion_paths.required_inputs_by_output[field])
+
+        parent_df = self._parent.apply(required_inputs)
+        input_columns = set(parent_df.columns)
+        new_columns = set(parent_df.columns) - self._df_input_columns
+
+        self._df = self._df.with_columns(parent_df.select(new_columns))
+        self._df_input_columns = input_columns
+
+        for field in fields:
+            converters = self._conversion_paths.converters.get(field, None)
+
+            if converters is not None:
+                for converter in converters:
+                    if id(converter) not in self._applied_converters:
+                        if not self._can_apply_converter(converter):
+                            # Defer this converter; it will be attempted again on future apply() calls
+                            # once the necessary input columns have been materialized.
+                            continue
+
+                        self._df = converter.convert(self._df)
+                        self._applied_converters.add(id(converter))
+
+        return self._df
+
+    def _can_apply_converter(self, converter: Converter) -> bool:
+        """
+        Only apply the converter when all of its required input columns are present.
+        This prevents race conditions when converters are evaluated lazily in
+        multi-worker dataloaders, where some columns may not be materialized yet.
+        """
+        for attr_spec in converter.get_input_attr_specs():
+            required_cols = attr_spec.field.to_polars_schema(attr_spec.name).keys()
+            for col in required_cols:
+                if col not in self._df.columns:
+                    return False
+        return True
+
+    def get_lazy_attributes(self) -> set[str]:
+        return self._lazy_outputs
+
+    def slice(self, offset: int, length: int | None = None) -> Transform:
+        instance = copy.copy(self)
+        instance._parent = self._parent.slice(offset, length)
+        instance._applied_converters = copy.copy(self._applied_converters)
+        instance._df = self._df.slice(offset, length)
+        return instance
+
+    def __len__(self):
+        return len(self._df)

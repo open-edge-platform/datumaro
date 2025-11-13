@@ -14,8 +14,6 @@ from datumaro.v2.converters.base import (
     AttributeRemapperConverter,
     ConversionError,
     Converter,
-    ConverterTransform,
-    find_conversion_path,
     list_eval_ref,
 )
 from datumaro.v2.converters.image_converters import (
@@ -44,7 +42,7 @@ from datumaro.v2.converters.registry import (
     _heuristic_cost,
     _is_converter_lazy,
     _separate_batch_and_lazy_converters,
-    converter,
+    converter, find_conversion_path, ConverterTransform,
 )
 
 __all__ = [
