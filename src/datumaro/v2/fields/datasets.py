@@ -50,11 +50,11 @@ class TileField(Field):
         return {
             name: pl.Struct(
                 [
-                    Field("source_sample_idx", pl.Int32()),
-                    Field("x", pl.Int32()),
-                    Field("y", pl.Int32()),
-                    Field("width", pl.Int32()),
-                    Field("height", pl.Int32()),
+                    pl.Field("source_sample_idx", pl.Int32()),
+                    pl.Field("x", pl.Int32()),
+                    pl.Field("y", pl.Int32()),
+                    pl.Field("width", pl.Int32()),
+                    pl.Field("height", pl.Int32()),
                 ]
             )
         }

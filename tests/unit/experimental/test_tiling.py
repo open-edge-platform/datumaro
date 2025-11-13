@@ -63,8 +63,8 @@ def sample_df():
             "image_shape": pl.List(pl.Int32),
             "image_info": pl.Struct(
                 [
-                    datumaro.v2.fields.fields.Field("height", pl.Int32),
-                    datumaro.v2.fields.fields.Field("width", pl.Int32),
+                    pl.Field("height", pl.Int32),
+                    pl.Field("width", pl.Int32),
                 ]
             ),
         },

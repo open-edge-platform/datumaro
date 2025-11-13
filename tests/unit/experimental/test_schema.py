@@ -389,8 +389,8 @@ def test_image_info_field_polars_schema():
     expected = {
         "image_info": pl.Struct(
             [
-                datumaro.v2.fields.fields.Field("width", pl.Int32()),
-                datumaro.v2.fields.fields.Field("height", pl.Int32()),
+                pl.Field("width", pl.Int32()),
+                pl.Field("height", pl.Int32()),
             ]
         )
     }

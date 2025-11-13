@@ -179,8 +179,8 @@ class ImageInfoField(Field):
         return {
             name: pl.Struct(
                 [
-                    Field("width", pl.Int32()),
-                    Field("height", pl.Int32()),
+                    pl.Field("width", pl.Int32()),
+                    pl.Field("height", pl.Int32()),
                 ]
             )
         }
