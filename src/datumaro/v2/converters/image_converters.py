@@ -7,9 +7,10 @@ import numpy as np
 import polars as pl
 from PIL import Image
 
-from datumaro.v2 import ImageCallableField, ImageField, ImageInfoField, ImagePathField, converter
-from datumaro.v2.converters import Converter
+from datumaro.v2.converters.base import Converter
+from datumaro.v2.converters.registry import converter
 from datumaro.v2.fields import ImageBytesField
+from datumaro.v2.fields.images import ImageCallableField, ImageField, ImageInfoField, ImagePathField
 from datumaro.v2.schema import AttributeSpec
 from datumaro.v2.type_registry import polars_to_numpy_dtype
 

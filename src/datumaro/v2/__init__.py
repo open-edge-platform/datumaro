@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: MIT
 
-from . import converters, find_conversion_path  # Import converters to register them
 from .converters import ConverterRegistry, converter
 from .dataset import Dataset, Sample
 from .export_import import export_dataset, import_dataset

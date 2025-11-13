@@ -11,15 +11,15 @@ from typing import TYPE_CHECKING, Annotated, Any, Generic, TypeGuard, Union, cas
 import polars as pl
 from typing_extensions import TypeVar, dataclass_transform
 
-from datumaro.experimental.converter_registry import ConverterTransform, find_conversion_path
-from datumaro.experimental.fields import Subset, SubsetField
-from datumaro.experimental.schema import AttributeInfo, Field, Schema
-from datumaro.experimental.transform import IdentityTransform, Transform
+from datumaro.v2.converters.registry import ConverterTransform, find_conversion_path
+from datumaro.v2.fields.datasets import Subset, SubsetField
+from datumaro.v2.schema import AttributeInfo, Field, Schema
+from datumaro.v2.transform import IdentityTransform, Transform
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
-    from datumaro.experimental.categories import Categories
+    from datumaro.v2.categories import Categories
 
 
 @dataclass_transform()

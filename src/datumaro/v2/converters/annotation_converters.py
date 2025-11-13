@@ -4,7 +4,7 @@
 import polars as pl
 
 from datumaro.v2.categories import LabelCategories
-from datumaro.v2.converters import Converter, list_eval_ref
+from datumaro.v2.converters.base import Converter, list_eval_ref
 from datumaro.v2.converters.registry import converter
 from datumaro.v2.fields.annotations import BBoxField, LabelField, PolygonField, RotatedBBoxField
 from datumaro.v2.fields.images import ImageField

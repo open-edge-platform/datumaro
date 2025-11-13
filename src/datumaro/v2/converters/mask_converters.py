@@ -8,10 +8,12 @@ import numpy as np
 import polars as pl
 
 from datumaro.util.mask_tools import generate_colormap
-from datumaro.v2 import ImageInfoField, LabelField, PolygonField, converter
 from datumaro.v2.categories import LabelCategories, MaskCategories, RgbColor
-from datumaro.v2.converters import Converter
-from datumaro.v2.fields import InstanceMaskCallableField, InstanceMaskField, MaskCallableField, MaskField
+from datumaro.v2.converters.base import Converter
+from datumaro.v2.converters.registry import converter
+from datumaro.v2.fields.annotations import LabelField, PolygonField
+from datumaro.v2.fields.images import ImageInfoField
+from datumaro.v2.fields.masks import InstanceMaskCallableField, InstanceMaskField, MaskCallableField, MaskField
 from datumaro.v2.schema import AttributeSpec
 from datumaro.v2.type_registry import polars_to_numpy_dtype
 

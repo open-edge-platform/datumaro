@@ -17,9 +17,10 @@ from dataclasses import dataclass
 from typing import NamedTuple
 
 import polars as pl
-from datumaro.experimental.fields import ImageInfoField, TileField, TileInfo
-from datumaro.experimental.schema import AttributeInfo, AttributeSpec, Field, Schema, Semantic
-from datumaro.experimental.transform import Transform
+
+from datumaro.v2.fields import ImageInfoField, TileField, TileInfo
+from datumaro.v2.schema import AttributeInfo, AttributeSpec, Field, Schema, Semantic
+from datumaro.v2.transform import Transform
 
 
 @dataclass

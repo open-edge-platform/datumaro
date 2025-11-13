@@ -10,12 +10,7 @@ from datumaro.v2.converters.annotation_converters import (
     PolygonToBBoxConverter,
     RotatedBBoxToPolygonConverter,
 )
-from datumaro.v2.converters.base import (
-    AttributeRemapperConverter,
-    ConversionError,
-    Converter,
-    list_eval_ref,
-)
+from datumaro.v2.converters.base import AttributeRemapperConverter, ConversionError, Converter, list_eval_ref
 from datumaro.v2.converters.image_converters import (
     ImageBytesToImageConverter,
     ImageCallableToImageConverter,
@@ -33,6 +28,7 @@ from datumaro.v2.converters.mask_converters import (
 from datumaro.v2.converters.registry import (
     ConversionPaths,
     ConverterRegistry,
+    ConverterTransform,
     _can_lazy_converter_handle_conversion,
     _create_conversion_error_message,
     _create_initial_renaming_converter,
@@ -42,7 +38,8 @@ from datumaro.v2.converters.registry import (
     _heuristic_cost,
     _is_converter_lazy,
     _separate_batch_and_lazy_converters,
-    converter, find_conversion_path, ConverterTransform,
+    converter,
+    find_conversion_path,
 )
 
 __all__ = [

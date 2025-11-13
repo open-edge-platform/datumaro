@@ -10,10 +10,9 @@ from collections import defaultdict
 from dataclasses import dataclass
 from typing import Callable, NamedTuple, Sequence, get_type_hints, overload
 
-from datumaro.v2 import Schema
-from datumaro.v2.categories import Categories
-from datumaro.v2.converters import Converter
+import polars as pl
 
+from datumaro.v2.categories import Categories
 from datumaro.v2.converters.base import AttributeRemapperConverter, ConversionError, Converter
 from datumaro.v2.fields.base import Field, Semantic
 from datumaro.v2.schema import AttributeSpec, Schema
