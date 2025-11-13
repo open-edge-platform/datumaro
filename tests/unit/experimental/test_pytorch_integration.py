@@ -111,9 +111,9 @@ def test_pytorch_schema_duplicate_field_type_assertion():
 
     # This should work because the fields have different semantic contexts
     class ValidSample(Sample):
-        left_image: torch.Tensor = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Left)
+        left_image: torch.Tensor = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Bbox)
         right_image: torch.Tensor = image_field(
-            dtype=pl.UInt8, format="RGB", semantic=Semantic.Right
+            dtype=pl.UInt8, format="RGB", semantic=Semantic.Polygon
         )
 
     # This should not raise an assertion error

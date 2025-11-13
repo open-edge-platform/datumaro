@@ -8,8 +8,10 @@ from .dataset import Dataset, Sample
 from .export_import import export_dataset, import_dataset
 from .fields import (
     BBoxField,
+    CaptionField,
     ImageCallableField,
     ImageField,
+    ImageIdField,
     ImageInfo,
     ImageInfoField,
     ImagePathField,
@@ -19,8 +21,10 @@ from .fields import (
     ScoreField,
     TensorField,
     bbox_field,
+    caption_field,
     image_callable_field,
     image_field,
+    image_id_field,
     image_info_field,
     image_path_field,
     label_field,

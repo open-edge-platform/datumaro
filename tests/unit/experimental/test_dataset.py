@@ -260,14 +260,14 @@ def test_stereo_sample_with_semantics():
 
     class StereoSample(Sample):
         left_image: np.ndarray[Any, Any] = image_field(
-            dtype=pl.UInt8, format="RGB", semantic=Semantic.Left
+            dtype=pl.UInt8, format="RGB", semantic=Semantic.Bbox
         )
         right_image: np.ndarray[Any, Any] = image_field(
-            dtype=pl.UInt8, format="BGR", semantic=Semantic.Right
+            dtype=pl.UInt8, format="BGR", semantic=Semantic.Polygon
         )
         bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=True)
-        left_image_info: ImageInfo = image_info_field(Semantic.Left)
-        right_image_info: ImageInfo = image_info_field(Semantic.Right)
+        left_image_info: ImageInfo = image_info_field(Semantic.Bbox)
+        right_image_info: ImageInfo = image_info_field(Semantic.Polygon)
 
     dataset = Dataset(StereoSample)
 

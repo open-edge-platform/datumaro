@@ -915,7 +915,7 @@ def test_partial_schema_matching():
         {
             "field_a": AttributeInfo(type=str, field=FieldA(semantic=Semantic.Default)),
             "other_field": AttributeInfo(
-                type=str, field=FieldA(semantic=Semantic.Left)
+                type=str, field=FieldA(semantic=Semantic.Bbox)
             ),  # Extra field with different semantic
         }
     )

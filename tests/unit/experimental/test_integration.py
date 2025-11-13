@@ -61,13 +61,13 @@ def test_stereo_camera_workflow():
     class StereoSample(Sample):
         bboxes: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32)
         left_image: np.ndarray[Any, Any] = image_field(
-            dtype=pl.UInt8, format="RGB", semantic=Semantic.Left
+            dtype=pl.UInt8, format="RGB", semantic=Semantic.Bbox
         )
         right_image: np.ndarray[Any, Any] = image_field(
-            dtype=pl.UInt8, format="BGR", semantic=Semantic.Right
+            dtype=pl.UInt8, format="BGR", semantic=Semantic.Polygon
         )
-        left_image_info: ImageInfo = image_info_field(Semantic.Left)
-        right_image_info: ImageInfo = image_info_field(Semantic.Right)
+        left_image_info: ImageInfo = image_info_field(Semantic.Bbox)
+        right_image_info: ImageInfo = image_info_field(Semantic.Polygon)
 
     dataset = Dataset(StereoSample)
 
@@ -91,8 +91,8 @@ def test_stereo_camera_workflow():
 
     assert isinstance(left_field, ImageField)
     assert isinstance(right_field, ImageField)
-    assert left_field.semantic == Semantic.Left
-    assert right_field.semantic == Semantic.Right
+    assert left_field.semantic == Semantic.Bbox
+    assert right_field.semantic == Semantic.Polygon
     assert left_field.format == "RGB"
     assert right_field.format == "BGR"
 

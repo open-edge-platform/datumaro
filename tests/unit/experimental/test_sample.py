@@ -88,10 +88,10 @@ def test_sample_with_semantic_fields():
 
     class StereoSample(Sample):
         left_image: np.ndarray[Any, Any] = image_field(
-            dtype=pl.UInt8, format="RGB", semantic=Semantic.Left
+            dtype=pl.UInt8, format="RGB", semantic=Semantic.Bbox
         )
         right_image: np.ndarray[Any, Any] = image_field(
-            dtype=pl.UInt8, format="BGR", semantic=Semantic.Right
+            dtype=pl.UInt8, format="BGR", semantic=Semantic.Polygon
         )
         bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=True)
 
@@ -108,8 +108,8 @@ def test_sample_with_semantic_fields():
     right_field = schema.attributes["right_image"].field
     bbox = schema.attributes["bbox"].field
 
-    assert left_field.semantic == Semantic.Left
-    assert right_field.semantic == Semantic.Right
+    assert left_field.semantic == Semantic.Bbox
+    assert right_field.semantic == Semantic.Polygon
     assert bbox.semantic == Semantic.Default
 
     assert isinstance(left_field, ImageField)

@@ -439,7 +439,7 @@ def image_info_field(semantic: Semantic = Semantic.Default) -> Any:
     Create an ImageInfoField instance for storing image width and height.
 
     Args:
-        semantic: Optional semantic tags for disambiguation (e.g., Semantic.Left)
+        semantic: Optional semantic tags for disambiguation
 
     Returns:
         ImageInfoField instance configured with the given semantic tags
@@ -1089,10 +1089,15 @@ class KeypointsField(Field):
         """Convert keypoints tensor to Polars list format."""
         numpy_value = to_numpy(value, self.dtype)
 
+        if numpy_value is not None:
+            data: Any = numpy_value.reshape(1, -1, 3)
+        else:
+            data = [None]
+
         return {
             name: pl.Series(
                 name,
-                numpy_value.reshape(1, -1, 3),
+                data,
                 dtype=pl.List(pl.Array(self.dtype, 3)),
             )
         }
@@ -1237,3 +1242,128 @@ class EllipseField(Field):
         """Reconstruct an ellipse tensor from Polars data."""
         polars_data = df[name][row_index]
         return from_polars_data(polars_data, target_type)  # type: ignore
+
+
+def ellipse_field(
+    dtype: Any,
+    format: str = "x1y1x2y2",
+    normalize: bool = False,
+    semantic: Semantic = Semantic.Default,
+) -> Any:
+    """
+    Create an EllipseField instance with the specified parameters.
+
+    Args:
+        dtype: Polars data type for coordinate values
+        format: Coordinate format (defaults to "x1y1x2y2")
+        normalize: Whether coordinates are normalized (defaults to False)
+        semantic: Semantic tags describing the ellipses purpose (optional)
+
+    Returns:
+        EllipseField instance configured with the given parameters
+    """
+    return EllipseField(semantic=semantic, dtype=dtype, format=format, normalize=normalize)
+
+
+@dataclass(frozen=True)
+class CaptionField(Field):
+    """
+    Represents a text caption field.
+
+    Stores either a single caption string or a list of caption strings when
+    is_list=True. Useful for tasks like image captioning, multi-caption datasets,
+    or storing alternative textual descriptions.
+
+    Attributes:
+        semantic: Semantic tags describing the caption's purpose
+        is_list: Whether this field stores multiple captions (list[str])
+    """
+
+    semantic: Semantic
+    is_list: bool = False
+
+    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+        """Generate schema for caption column (string or list of strings)."""
+        dtype = pl.List(pl.Utf8()) if self.is_list else pl.Utf8()
+        return {name: dtype}
+
+    def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
+        """Convert caption value(s) to Polars series."""
+        dtype = pl.List(pl.Utf8()) if self.is_list else pl.Utf8()
+        return {name: pl.Series(name, [value], dtype=dtype)}
+
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+        """Reconstruct caption value(s) from Polars data."""
+        data = df[name][row_index]
+        if self.is_list and target_type is list:
+            return list(data) if data is not None else None  # type: ignore[return-value]
+        # Single caption
+        return from_polars_data(data, target_type)
+
+
+def caption_field(semantic: Semantic = Semantic.Default, is_list: bool = False) -> Any:
+    """
+    Create a CaptionField instance.
+
+    Args:
+        semantic: Semantic tags describing the caption purpose (optional)
+        is_list: Whether this field stores multiple captions (defaults to False)
+
+    Returns:
+        CaptionField instance configured with the given parameters
+    """
+    return CaptionField(semantic=semantic, is_list=is_list)
+
+
+@dataclass(frozen=True)
+class ImageIdField(Field):
+    """
+    Represents an image ID field.
+
+    Stores image identifiers which can be either integers or strings depending
+    on the dataset format.
+
+    Attributes:
+        semantic: Semantic tags describing the image ID's purpose
+        dtype: Polars data type for the ID (Int32, Int64, or Utf8/String)
+    """
+
+    semantic: Semantic
+    dtype: PolarsDataType = pl.Int32()
+
+    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+        """Generate schema for image ID column."""
+        return {name: self.dtype}
+
+    def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
+        """Convert image ID value to Polars series.
+
+        Handles None values by storing them as null in the Polars series.
+        """
+        return {name: pl.Series(name, [value], dtype=self.dtype)}
+
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+        """Reconstruct image ID value from Polars data.
+
+        Properly handles None values for optional image ID fields (e.g., int | None).
+        """
+        data = df[name][row_index]
+        if data is None:
+            return None  # type: ignore[return-value]
+        return from_polars_data(data, target_type)
+
+
+def image_id_field(
+    dtype: PolarsDataType = pl.Int32(), semantic: Semantic = Semantic.Default
+) -> Any:
+    """
+    Create an ImageIdField instance.
+
+    Args:
+        dtype: Polars data type for the ID (
+        semantic: Semantic tags describing the image ID purpose
+
+    Returns:
+        ImageIdField instance configured with the given parameters
+    """
+    return ImageIdField(semantic=semantic, dtype=dtype)

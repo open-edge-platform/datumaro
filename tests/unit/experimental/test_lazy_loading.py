@@ -158,17 +158,17 @@ def test_lazy_loading_with_semantic_fields():
     """Test lazy loading with semantic field variations."""
 
     class StereoPathSample(Sample):
-        left_image_path: str = image_path_field(semantic=Semantic.Left)
-        right_image_path: str = image_path_field(semantic=Semantic.Right)
+        left_image_path: str = image_path_field(semantic=Semantic.Bbox)
+        right_image_path: str = image_path_field(semantic=Semantic.Polygon)
 
     class StereoImageSample(Sample):
-        left_image_path: str = image_path_field(semantic=Semantic.Left)
-        right_image_path: str = image_path_field(semantic=Semantic.Right)
+        left_image_path: str = image_path_field(semantic=Semantic.Bbox)
+        right_image_path: str = image_path_field(semantic=Semantic.Polygon)
         left_image: np.ndarray[Any, Any] = image_field(
-            dtype=pl.UInt8, format="RGB", semantic=Semantic.Left
+            dtype=pl.UInt8, format="RGB", semantic=Semantic.Bbox
         )
         right_image: np.ndarray[Any, Any] = image_field(
-            dtype=pl.UInt8, format="RGB", semantic=Semantic.Right
+            dtype=pl.UInt8, format="RGB", semantic=Semantic.Polygon
         )
 
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -201,8 +201,8 @@ def test_lazy_loading_with_semantic_fields():
         left_field = schema.attributes["left_image_path"].field
         right_field = schema.attributes["right_image_path"].field
 
-        assert left_field.semantic == Semantic.Left
-        assert right_field.semantic == Semantic.Right
+        assert left_field.semantic == Semantic.Bbox
+        assert right_field.semantic == Semantic.Polygon
 
         # Convert to image dataset - this should trigger lazy loading
         image_dataset = path_dataset.convert_to_schema(StereoImageSample)

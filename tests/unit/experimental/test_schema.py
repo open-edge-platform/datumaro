@@ -83,12 +83,12 @@ def test_tensor_field_polars_conversion():
 
 def test_image_field_creation():
     """Test ImageField creation and properties."""
-    field = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Left)
+    field = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Bbox)
 
     assert isinstance(field, ImageField)
     assert field.dtype == pl.UInt8
     assert field.format == "RGB"
-    assert field.semantic == Semantic.Left
+    assert field.semantic == Semantic.Bbox
 
 
 def test_image_field_polars_schema():
@@ -102,10 +102,10 @@ def test_image_field_polars_schema():
 
 def test_image_bytes_field_creation():
     """Test ImageBytesField creation and properties."""
-    field = image_bytes_field(semantic=Semantic.Left)
+    field = image_bytes_field(semantic=Semantic.Bbox)
 
     assert isinstance(field, ImageBytesField)
-    assert field.semantic == Semantic.Left
+    assert field.semantic == Semantic.Bbox
 
 
 def test_image_bytes_field_polars_schema():
@@ -384,10 +384,10 @@ def test_image_info_creation():
 
 def test_image_info_field_creation():
     """Test ImageInfoField creation."""
-    field = image_info_field(semantic=Semantic.Left)
+    field = image_info_field(semantic=Semantic.Bbox)
 
     assert isinstance(field, ImageInfoField)
-    assert field.semantic == Semantic.Left
+    assert field.semantic == Semantic.Bbox
 
 
 def test_image_info_field_polars_schema():
@@ -464,9 +464,9 @@ def test_image_callable_field_creation():
     assert field.semantic == Semantic.Default
 
     # Test with different format
-    field_bgr = image_callable_field(format="BGR", semantic=Semantic.Left)
+    field_bgr = image_callable_field(format="BGR", semantic=Semantic.Bbox)
     assert field_bgr.format == "BGR"
-    assert field_bgr.semantic == Semantic.Left
+    assert field_bgr.semantic == Semantic.Bbox
 
 
 def test_image_callable_field_polars_schema():
@@ -594,16 +594,16 @@ def test_field_equality():
 
 def test_field_semantic_variations():
     """Test fields with different semantic values."""
-    left_field = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Left)
-    right_field = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Right)
+    left_field = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Bbox)
+    right_field = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Polygon)
     default_field = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Default)
 
     assert left_field != right_field
     assert left_field != default_field
     assert right_field != default_field
 
-    assert left_field.semantic == Semantic.Left
-    assert right_field.semantic == Semantic.Right
+    assert left_field.semantic == Semantic.Bbox
+    assert right_field.semantic == Semantic.Polygon
     assert default_field.semantic == Semantic.Default
 
 
@@ -627,10 +627,10 @@ def test_schema_duplicate_field_type_assertion():
     # This should work because the fields have different semantic contexts
     class ValidSample(Sample):
         left_image: np.ndarray[Any, Any] = image_field(
-            dtype=pl.UInt8, format="RGB", semantic=Semantic.Left
+            dtype=pl.UInt8, format="RGB", semantic=Semantic.Bbox
         )
         right_image: np.ndarray[Any, Any] = image_field(
-            dtype=pl.UInt8, format="RGB", semantic=Semantic.Right
+            dtype=pl.UInt8, format="RGB", semantic=Semantic.Polygon
         )
 
     # This should not raise an assertion error
@@ -698,7 +698,7 @@ def test_polygon_field_polars_conversion():
 
 def test_tensor_field_serialization():
     """Test TensorField to_dict/from_dict serialization."""
-    field = TensorField(dtype=pl.Float32(), semantic=Semantic.Left, channels_first=True)
+    field = TensorField(dtype=pl.Float32(), semantic=Semantic.Bbox, channels_first=True)
 
     # Serialize to dict
     field_dict = field.to_dict()
@@ -721,7 +721,7 @@ def test_tensor_field_serialization():
 
 def test_image_field_serialization():
     """Test ImageField to_dict/from_dict serialization."""
-    field = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Right)
+    field = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Polygon)
 
     # Serialize to dict
     field_dict = field.to_dict()
@@ -852,7 +852,7 @@ def test_instance_mask_field_serialization():
 
 def test_image_path_field_serialization():
     """Test ImagePathField to_dict/from_dict serialization."""
-    field = image_path_field(semantic=Semantic.Left)
+    field = image_path_field(semantic=Semantic.Bbox)
 
     # Serialize to dict
     field_dict = field.to_dict()
@@ -871,7 +871,7 @@ def test_image_path_field_serialization():
 
 def test_image_bytes_field_serialization():
     """Test ImageBytesField to_dict/from_dict serialization."""
-    field = image_bytes_field(semantic=Semantic.Right)
+    field = image_bytes_field(semantic=Semantic.Polygon)
 
     # Serialize to dict
     field_dict = field.to_dict()
@@ -987,10 +987,10 @@ def test_schema_serialization_builtin_types():
                 type=float, field=tensor_field(dtype=pl.Float32, semantic=Semantic.Default)
             ),
             "count": AttributeInfo(
-                type=int, field=tensor_field(dtype=pl.Int32, semantic=Semantic.Left)
+                type=int, field=tensor_field(dtype=pl.Int32, semantic=Semantic.Bbox)
             ),
             "name": AttributeInfo(
-                type=str, field=tensor_field(dtype=pl.Utf8, semantic=Semantic.Right)
+                type=str, field=tensor_field(dtype=pl.Utf8, semantic=Semantic.Polygon)
             ),
         }
     )
@@ -1030,7 +1030,7 @@ def test_schema_with_categories_method():
                 type=str, field=tensor_field(dtype=pl.Int32, semantic=Semantic.Default)
             ),
             "mask": AttributeInfo(
-                type=np.ndarray, field=mask_field(dtype=pl.UInt8, semantic=Semantic.Left)
+                type=np.ndarray, field=mask_field(dtype=pl.UInt8, semantic=Semantic.Bbox)
             ),
         }
     )
