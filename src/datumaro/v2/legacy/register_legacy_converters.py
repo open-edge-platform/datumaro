@@ -10,10 +10,11 @@ v2 dataset format with automatic schema inference and type conversion.
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
+from datumaro import Dataset as LegacyDataset
 from datumaro.components.media import MediaElement
-from datumaro.v2.legacy import ForwardMaskAnnotationConverter
+from datumaro.v2 import Semantic
 from datumaro.v2.legacy.annotation_converters import (
     BackwardAnnotationConverter,
     BackwardBboxAnnotationConverter,
@@ -101,3 +102,24 @@ def register_builtin_backward_converters() -> None:
 # Auto-register built-in converters when module is imported
 register_builtin_forward_converters()
 register_builtin_backward_converters()
+
+
+def get_forward_media_converter(
+    dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+) -> ForwardMediaConverter | None:
+    """Get forward converter for a dataset by trying registered converters.
+
+    Args:
+        dataset: Legacy dataset to create converter from
+        semantic: The semantic type for the converted fields
+        name_prefix: Prefix to prepend to all field names
+    """
+    # Get the dataset's media type
+    media_type = cast("type[MediaElement[Any]]", dataset.media_type())
+
+    # Try converter registered for this specific media type
+    if media_type in _media_converter_classes:
+        converter_class = _media_converter_classes[media_type]
+        return converter_class.create(dataset, semantic, name_prefix)
+
+    return None

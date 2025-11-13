@@ -26,11 +26,10 @@ from datumaro.v2.legacy.annotation_converters import (
 from datumaro.v2.legacy.media_converters import (
     BackwardMediaConverter,
     ForwardMediaConverter,
-    get_forward_media_converter,
 )
 from datumaro.v2.legacy.register_legacy_converters import (
     _backward_annotation_converter_classes,
-    _backward_media_converter_classes,
+    _backward_media_converter_classes, get_forward_media_converter,
 )
 from datumaro.v2.schema import AttributeInfo, Schema
 

@@ -3,7 +3,7 @@ from __future__ import annotations
 import io
 from abc import ABC, abstractmethod
 from functools import partial as _partial
-from typing import Any, cast
+from typing import Any
 
 import numpy as np
 from PIL import Image as PILImage
@@ -23,7 +23,6 @@ from datumaro.v2 import (
     image_path_field,
 )
 from datumaro.v2.fields import image_bytes_field
-from datumaro.v2.legacy.register_legacy_converters import _media_converter_classes
 
 
 class ForwardMediaConverter(ABC):
@@ -54,27 +53,6 @@ class ForwardMediaConverter(ABC):
     @abstractmethod
     def convert_item_media(self, item: DatasetItem) -> dict[str, Any]:
         """Convert media from a DatasetItem to v2 format."""
-
-
-def get_forward_media_converter(
-    dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
-) -> ForwardMediaConverter | None:
-    """Get forward converter for a dataset by trying registered converters.
-
-    Args:
-        dataset: Legacy dataset to create converter from
-        semantic: The semantic type for the converted fields
-        name_prefix: Prefix to prepend to all field names
-    """
-    # Get the dataset's media type
-    media_type = cast("type[MediaElement[Any]]", dataset.media_type())
-
-    # Try converter registered for this specific media type
-    if media_type in _media_converter_classes:
-        converter_class = _media_converter_classes[media_type]
-        return converter_class.create(dataset, semantic, name_prefix)
-
-    return None
 
 
 def _image_callable_impl(bytes_source: Any, is_callable: bool = False):
