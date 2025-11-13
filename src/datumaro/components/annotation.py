@@ -1382,7 +1382,7 @@ class Cuboid2D(Annotation):
         theta = -1 * math.acos(np.dot(denorm_norm, ori_denorm))
         n_vector = np.cross(denorm, ori_denorm)
         n_vector_norm = n_vector / np.sqrt(n_vector[0] ** 2 + n_vector[1] ** 2 + n_vector[2] ** 2)
-        rotation_matrix, j = cv2.Rodrigues(theta * n_vector_norm)
+        rotation_matrix, _ = cv2.Rodrigues(theta * n_vector_norm)
         corners_3d = np.dot(rotation_matrix, corners_3d)
         corners_3d = corners_3d + np.array(location, dtype=np.float32).reshape(3, 1)
         return corners_3d.transpose(1, 0)

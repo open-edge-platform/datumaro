@@ -332,7 +332,7 @@ def test_polygon_and_label_tiling():
 
     # Apply tiling
     plan = _create_tiling_plan(schema, config, threshold_drop_ann=0.1)
-    result_df, result_schema = _apply_tiling(df, None, plan, ["polygons", "labels"])
+    result_df, _ = _apply_tiling(df, None, plan, ["polygons", "labels"])
 
     # There should be 4 tiles (2x2 grid)
     assert len(result_df) == 4

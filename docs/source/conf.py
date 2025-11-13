@@ -188,9 +188,8 @@ def replace(app, what, name, obj, options, lines):
             prog = str("%(prog)s")
             lines[i] = lines[i].replace(prog, prog_name)
             lines[i] = lines[i].replace("'frame_'", r"'frame\_'")  # fix unwanted link
-            if "'|n'" not in lines[i]:
-                if "'|s'" not in lines[i]:
-                    lines[i] = lines[i].replace("|n", "\n").replace("|s", " ")
+            if "'|n'" not in lines[i] and "'|s'" not in lines[i]:
+                lines[i] = lines[i].replace("|n", "\n").replace("|s", " ")
 
 
 def setup(app):
