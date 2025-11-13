@@ -14,7 +14,6 @@ from contextlib import contextmanager
 from copy import copy, deepcopy
 from typing import Any, Callable, Dict, Iterable, Iterator, List, Optional, Set, Tuple, Type, Union, overload
 
-import datumaro.v2.fields.datasets
 from datumaro.components.annotation import Annotation, AnnotationType, LabelCategories, TabularCategories
 from datumaro.components.config_model import Source
 from datumaro.components.dataset_base import (
@@ -25,6 +24,7 @@ from datumaro.components.dataset_base import (
     DatasetItem,
     IDataset,
 )
+from datumaro.components.dataset_item_storage import DatasetItemStorageDatasetView
 from datumaro.components.dataset_storage import DatasetPatch, DatasetStorage, StreamDatasetStorage
 from datumaro.components.environment import DEFAULT_ENVIRONMENT, Environment
 from datumaro.components.errors import (
@@ -65,7 +65,7 @@ class DatasetSubset(IDataset):  # non-owning view
         yield from self.parent._data.get_subset(self.name)
 
     def __len__(self):
-        subset: datumaro.v2.fields.datasets.Subset = self.parent._data.get_subset(self.name)
+        subset: DatasetItemStorageDatasetView.Subset = self.parent._data.get_subset(self.name)
 
         return len(subset)
 
