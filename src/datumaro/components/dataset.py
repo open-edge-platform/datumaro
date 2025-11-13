@@ -14,6 +14,7 @@ from contextlib import contextmanager
 from copy import copy, deepcopy
 from typing import Any, Callable, Dict, Iterable, Iterator, List, Optional, Set, Tuple, Type, Union, overload
 
+import datumaro.v2.fields.datasets
 from datumaro.components.annotation import Annotation, AnnotationType, LabelCategories, TabularCategories
 from datumaro.components.config_model import Source
 from datumaro.components.dataset_base import (
@@ -24,7 +25,6 @@ from datumaro.components.dataset_base import (
     DatasetItem,
     IDataset,
 )
-from datumaro.components.dataset_item_storage import DatasetItemStorageDatasetView
 from datumaro.components.dataset_storage import DatasetPatch, DatasetStorage, StreamDatasetStorage
 from datumaro.components.environment import DEFAULT_ENVIRONMENT, Environment
 from datumaro.components.errors import (
@@ -49,8 +49,6 @@ from datumaro.components.progress_reporting import NullProgressReporter, Progres
 from datumaro.components.transformer import ItemTransform, Transform
 from datumaro.util.log_utils import logging_disabled
 from datumaro.util.scope import on_error_do, scoped
-
-import datumaro.v2.fields.datasets
 
 DEFAULT_FORMAT = "datumaro"
 

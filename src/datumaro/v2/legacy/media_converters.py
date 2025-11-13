@@ -5,10 +5,23 @@ from abc import ABC, abstractmethod
 from functools import partial as _partial
 from typing import Any, cast
 
-from datumaro import MediaElement, Dataset as LegacyDataset, DatasetItem, Image
+import numpy as np
+from PIL import Image as PILImage
+
+from datumaro import Dataset as LegacyDataset
+from datumaro import DatasetItem, Image, MediaElement
 from datumaro.components.media import FromDataMixin, FromFileMixin
-from datumaro.v2 import Semantic, AttributeInfo, image_callable_field, image_path_field, ImageInfo, image_info_field, \
-    Schema, Sample, ImagePathField
+from datumaro.v2 import (
+    AttributeInfo,
+    ImageInfo,
+    ImagePathField,
+    Sample,
+    Schema,
+    Semantic,
+    image_callable_field,
+    image_info_field,
+    image_path_field,
+)
 from datumaro.v2.fields import image_bytes_field
 from datumaro.v2.legacy.register_legacy_converters import _media_converter_classes
 

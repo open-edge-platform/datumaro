@@ -12,20 +12,28 @@ from __future__ import annotations
 
 from typing import Any
 
-import numpy as np
-import polars as pl
-from PIL import Image as PILImage
-
 from datumaro.components.media import MediaElement
-
-from datumaro.v2.converters import generate_colormap
 from datumaro.v2.legacy import ForwardMaskAnnotationConverter
-from datumaro.v2.legacy.annotation_converters import ForwardAnnotationConverter, _annotation_converters, \
-    ForwardBboxAnnotationConverter, ForwardRotatedBboxAnnotationConverter, \
-    ForwardPolygonAnnotationConverter, ForwardLabelAnnotationConverter, ForwardKeypointAnnotationConverter, \
-    ForwardEllipseAnnotationConverter, BackwardAnnotationConverter, BackwardBboxAnnotationConverter, \
-    BackwardRotatedBboxAnnotationConverter, BackwardPolygonAnnotationConverter
-from datumaro.v2.legacy.media_converters import ForwardMediaConverter, ForwardImageMediaConverter, BackwardMediaConverter, BackwardImageMediaConverter
+from datumaro.v2.legacy.annotation_converters import (
+    BackwardAnnotationConverter,
+    BackwardBboxAnnotationConverter,
+    BackwardPolygonAnnotationConverter,
+    BackwardRotatedBboxAnnotationConverter,
+    ForwardAnnotationConverter,
+    ForwardBboxAnnotationConverter,
+    ForwardEllipseAnnotationConverter,
+    ForwardKeypointAnnotationConverter,
+    ForwardLabelAnnotationConverter,
+    ForwardPolygonAnnotationConverter,
+    ForwardRotatedBboxAnnotationConverter,
+    _annotation_converters,
+)
+from datumaro.v2.legacy.media_converters import (
+    BackwardImageMediaConverter,
+    BackwardMediaConverter,
+    ForwardImageMediaConverter,
+    ForwardMediaConverter,
+)
 
 # Global registries
 _media_converter_classes: dict[type[MediaElement[Any]], type[ForwardMediaConverter]] = {}

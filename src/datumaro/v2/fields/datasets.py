@@ -4,10 +4,12 @@
 import types
 from dataclasses import dataclass
 from enum import Enum, auto
-from typing import Any, get_origin, Union, get_args
+from typing import Any, Union, get_args, get_origin
+
+import polars as pl
 
 from datumaro.v2 import Field, Semantic
-from datumaro.v2.fields import T
+from datumaro.v2.fields.base import T
 
 
 class Subset(Enum):

@@ -3,7 +3,11 @@
 # SPDX-License-Identifier: MIT
 from typing import Any
 
-from datumaro.v2 import converter, ImageField, ImagePathField, ImageInfoField, ImageCallableField
+import numpy as np
+import polars as pl
+from PIL import Image
+
+from datumaro.v2 import ImageCallableField, ImageField, ImageInfoField, ImagePathField, converter
 from datumaro.v2.converters import Converter
 from datumaro.v2.fields import ImageBytesField
 from datumaro.v2.schema import AttributeSpec

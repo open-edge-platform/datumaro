@@ -11,9 +11,7 @@ from dataclasses import dataclass
 from dataclasses import field as dataclass_field
 from typing import Any, Generic, Optional, TypeVar
 
-import polars as pl
-
-from . import Semantic, Field
+from . import Field, Semantic
 from .categories import Categories
 
 

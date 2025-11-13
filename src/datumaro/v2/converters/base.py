@@ -8,26 +8,30 @@ This module contains concrete converter implementations that handle various
 data transformations such as format conversions, dtype conversions, and
 multi-field transformations.
 """
+
 from __future__ import annotations
 
 import copy
 from abc import ABC, abstractmethod
-from collections.abc import Callable
 from functools import cache
-from typing import TypeVar, dataclass_transform, Any, get_type_hints, cast, overload, Sequence
+from typing import TYPE_CHECKING, Any, Sequence, TypeVar, cast, dataclass_transform, get_type_hints
 
-import cv2
-import numpy as np
 import polars as pl
-from PIL import Image
 
 from datumaro.v2 import Field, Schema
 from datumaro.v2.categories import Categories
-from datumaro.v2.converters import ConversionPaths
-from datumaro.v2.converters.registry import ConversionPaths, _group_fields_by_semantic, _SchemaState, \
-    _find_conversion_path_for_semantic, _separate_batch_and_lazy_converters
+from datumaro.v2.converters.registry import (
+    ConversionPaths,
+    _find_conversion_path_for_semantic,
+    _group_fields_by_semantic,
+    _SchemaState,
+    _separate_batch_and_lazy_converters,
+)
 from datumaro.v2.schema import AttributeSpec
 from datumaro.v2.transform import Transform
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 def list_eval_ref(

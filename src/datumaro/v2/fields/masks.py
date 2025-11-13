@@ -4,9 +4,12 @@
 from dataclasses import dataclass, field
 from typing import Any
 
+import numpy as np
+import polars as pl
+
 from datumaro.v2 import Field, Semantic
 from datumaro.v2.fields import PolarsDataType, T
-from datumaro.v2.type_registry import to_numpy, from_polars_data
+from datumaro.v2.type_registry import from_polars_data, to_numpy
 
 
 @dataclass(frozen=True)
@@ -186,7 +189,7 @@ class InstanceMaskCallableField(Field):
             raise TypeError(f"Expected callable, got {type(value)}")
         return {name: pl.Series(name, [value])}
 
-    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> callable:  # noqa: ARG002
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> callable:
         """
         Extract instance mask callable from Polars dataframe.
 
@@ -257,7 +260,7 @@ class MaskCallableField(Field):
             raise TypeError(f"Expected callable, got {type(value)}")
         return {name: pl.Series(name, [value])}
 
-    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> callable:  # noqa: ARG002
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> callable:
         """
         Extract mask callable from Polars dataframe.
 

@@ -73,7 +73,7 @@ class Sample:
 
             if origin is Annotated:
                 # Handle Annotated[Type, Field] approach
-                annotation, *annotations = get_args(annotation)  # noqa: PLW2901
+                annotation, *annotations = get_args(annotation)
                 field_annotation = annotations[0] if annotations else None
             else:
                 # Handle Type = field(...) approach

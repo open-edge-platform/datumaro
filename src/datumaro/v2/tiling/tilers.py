@@ -13,7 +13,6 @@ import numpy as np
 import polars as pl
 import shapely.geometry as sg
 import shapely.ops as so
-
 from datumaro.experimental.converter_registry import AttributeSpec
 from datumaro.experimental.fields import (
     BBoxField,

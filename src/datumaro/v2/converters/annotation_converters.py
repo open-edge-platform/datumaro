@@ -1,7 +1,9 @@
 # Copyright (C) 2025 Intel Corporation
 #
 # SPDX-License-Identifier: MIT
-from datumaro.v2 import converter, LabelField, BBoxField, ImageField, PolygonField, RotatedBBoxField
+import polars as pl
+
+from datumaro.v2 import BBoxField, ImageField, LabelField, PolygonField, RotatedBBoxField, converter
 from datumaro.v2.categories import LabelCategories
 from datumaro.v2.converters import Converter, list_eval_ref
 from datumaro.v2.schema import AttributeSpec

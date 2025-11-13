@@ -3,11 +3,15 @@
 # SPDX-License-Identifier: MIT
 from typing import Any
 
+import cv2
+import numpy as np
+import polars as pl
+
 from datumaro.util.mask_tools import generate_colormap
-from datumaro.v2 import converter, PolygonField, LabelField, ImageInfoField
-from datumaro.v2.categories import LabelCategories, RgbColor, MaskCategories
+from datumaro.v2 import ImageInfoField, LabelField, PolygonField, converter
+from datumaro.v2.categories import LabelCategories, MaskCategories, RgbColor
 from datumaro.v2.converters import Converter
-from datumaro.v2.fields import MaskField, InstanceMaskField, InstanceMaskCallableField, MaskCallableField
+from datumaro.v2.fields import InstanceMaskCallableField, InstanceMaskField, MaskCallableField, MaskField
 from datumaro.v2.schema import AttributeSpec
 from datumaro.v2.type_registry import polars_to_numpy_dtype
 
@@ -256,7 +260,7 @@ class PolygonToInstanceMaskConverter(Converter):
             return stacked_masks.reshape(-1), list(stacked_masks.shape)
 
         # Apply conversion using map_batches
-        def apply_conversion_batch(batch_df: pl.DataFrame, **kwargs) -> pl.DataFrame:  # noqa: ARG001
+        def apply_conversion_batch(batch_df: pl.DataFrame, **kwargs) -> pl.DataFrame:
             """Apply polygon-to-instance-mask conversion for a batch."""
             batch_polygons = batch_df.struct["polygons"]
             batch_img_infos = batch_df.struct["img_info"]

@@ -9,8 +9,9 @@ to/from Polars DataFrames for different data types commonly used in machine
 learning and computer vision applications.
 """
 
-from dataclasses import is_dataclass, fields as dataclass_fields
-from enum import auto, Flag
+from dataclasses import fields as dataclass_fields
+from dataclasses import is_dataclass
+from enum import Flag, auto
 from typing import Any, TypeAlias, TypeVar
 
 import numpy as np
@@ -19,6 +20,19 @@ import polars as pl
 T = TypeVar("T")
 
 PolarsDataType: TypeAlias = type[pl.DataType] | pl.DataType
+
+
+class Semantic(Flag):
+    """
+    Used for disambiguation when multiple fields of the same type exist.
+    Default is used for fields that don't need disambiguation.
+    Left/Right are used for stereo vision scenarios.
+    """
+
+    Default = auto()
+    Left = auto()
+    Right = auto()
+    Anomaly = auto()
 
 
 class Field:
@@ -182,19 +196,6 @@ class Field:
         return field_class(**kwargs)
 
 
-class Semantic(Flag):
-    """
-    Used for disambiguation when multiple fields of the same type exist.
-    Default is used for fields that don't need disambiguation.
-    Left/Right are used for stereo vision scenarios.
-    """
-
-    Default = auto()
-    Left = auto()
-    Right = auto()
-    Anomaly = auto()
-
-
 def convert_numpy_object_array_to_series(data: np.ndarray) -> pl.Series:
     """
     Convert ragged numpy object arrays to Polars Series recursively.
@@ -233,5 +234,3 @@ def convert_numpy_object_array_to_series(data: np.ndarray) -> pl.Series:
     if data is not None and data.dtype == object:
         return pl.Series([convert_numpy_object_array_to_series(elem) for elem in data])
     return pl.Series(data)
-
-

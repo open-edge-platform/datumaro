@@ -4,9 +4,10 @@
 from dataclasses import dataclass, field
 from typing import Any
 
-from datumaro.v2 import Field, Semantic
-from datumaro.v2.fields import PolarsDataType, T, convert_numpy_object_array_to_series
-from datumaro.v2.type_registry import to_numpy, from_polars_data
+import polars as pl
+
+from datumaro.v2.fields.base import Field, PolarsDataType, Semantic, T, convert_numpy_object_array_to_series
+from datumaro.v2.type_registry import from_polars_data, to_numpy
 
 
 @dataclass(frozen=True)

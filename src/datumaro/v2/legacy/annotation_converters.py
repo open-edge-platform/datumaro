@@ -4,13 +4,31 @@ import math
 from abc import ABC, abstractmethod
 from typing import Any
 
-from datumaro import AnnotationType, Dataset as LegacyDataset, Annotation, DatasetItem, Bbox, Polygon, Label, Points, \
-    Ellipse, CategoriesInfo, LabelCategories as LegacyLabelCategories
-from datumaro.components.annotation import RotatedBbox, ExtractedMask
-from datumaro.v2 import Semantic, AttributeInfo, bbox_field, label_field, rotated_bbox_field, polygon_field, Schema, \
-    Dataset, Sample, BBoxField, LabelField, RotatedBBoxField, PolygonField
-from datumaro.v2.categories import LabelCategories, RgbColor, MaskCategories
-from datumaro.v2.fields import keypoints_field, EllipseField, mask_callable_field, instance_mask_callable_field
+import numpy as np
+import polars as pl
+
+from datumaro import Annotation, AnnotationType, Bbox, CategoriesInfo, DatasetItem, Ellipse, Label, Points, Polygon
+from datumaro import Dataset as LegacyDataset
+from datumaro import LabelCategories as LegacyLabelCategories
+from datumaro.components.annotation import ExtractedMask, RotatedBbox
+from datumaro.util.mask_tools import generate_colormap
+from datumaro.v2 import (
+    AttributeInfo,
+    BBoxField,
+    Dataset,
+    LabelField,
+    PolygonField,
+    RotatedBBoxField,
+    Sample,
+    Schema,
+    Semantic,
+    bbox_field,
+    label_field,
+    polygon_field,
+    rotated_bbox_field,
+)
+from datumaro.v2.categories import LabelCategories, MaskCategories, RgbColor
+from datumaro.v2.fields import EllipseField, instance_mask_callable_field, keypoints_field, mask_callable_field
 
 
 class ForwardAnnotationConverter(ABC):
@@ -125,7 +143,7 @@ class ForwardBboxAnnotationConverter(ForwardAnnotationConverter):
             attributes[self.name_prefix + "labels"] = self.bbox_labels_attribute
         return attributes
 
-    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:  # noqa: ARG002
+    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:
         bboxes: list[list[float]] = []
         labels: list[int | None] = []
 
@@ -208,7 +226,7 @@ class ForwardRotatedBboxAnnotationConverter(ForwardAnnotationConverter):
             attributes[self.name_prefix + "labels"] = self.rotated_bbox_labels_attribute
         return attributes
 
-    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:  # noqa: ARG002
+    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:
         rotated_bboxes: list[list[float]] = []
         labels: list[int | None] = []
 
@@ -291,7 +309,7 @@ class ForwardPolygonAnnotationConverter(ForwardAnnotationConverter):
             attributes[self.name_prefix + "labels"] = self.polygon_labels_attribute
         return attributes
 
-    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:  # noqa: ARG002
+    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:
         polygons: list[list[float]] = []
         labels: list[int | None] = []
 
@@ -364,7 +382,7 @@ class ForwardLabelAnnotationConverter(ForwardAnnotationConverter):
     def get_schema_attributes(self) -> dict[str, AttributeInfo]:
         return {self.name_prefix + "label": self.label_attribute}
 
-    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:  # noqa: ARG002
+    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:
         labels = [ann for ann in annotations if isinstance(ann, Label)]
         result = {}
         if len(labels) > 0:
@@ -434,7 +452,7 @@ class ForwardKeypointAnnotationConverter(ForwardAnnotationConverter):
             attributes[self.name_prefix + "labels"] = self.keypoints_labels_attribute
         return attributes
 
-    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:  # noqa: ARG002
+    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:
         keypoints = [ann for ann in annotations if isinstance(ann, Points)]
         # KeypointsField expects individual Points objects, not arrays
         # Only supports single keypoint case
@@ -508,7 +526,7 @@ class ForwardEllipseAnnotationConverter(ForwardAnnotationConverter):
             attributes[self.name_prefix + "labels"] = self.ellipse_labels_attribute
         return attributes
 
-    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:  # noqa: ARG002
+    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:
         ellipses: list[list[float]] = []
         labels: list[int | None] = []
 
@@ -585,7 +603,7 @@ class BackwardBboxAnnotationConverter(BackwardAnnotationConverter):
     def get_annotation_type(self) -> AnnotationType:
         return AnnotationType.bbox
 
-    def convert_to_legacy_annotations(self, sample: Sample, categories: CategoriesInfo) -> list[Annotation]:  # noqa: ARG002
+    def convert_to_legacy_annotations(self, sample: Sample, categories: CategoriesInfo) -> list[Annotation]:
         """Convert bboxes and bbox_labels back to legacy Bbox annotations."""
         bboxes = getattr(sample, self.bboxes_attr, None)
         bbox_labels = getattr(sample, self.bbox_labels_attr, None)
@@ -654,7 +672,7 @@ class BackwardRotatedBboxAnnotationConverter(BackwardAnnotationConverter):
     def get_annotation_type(self) -> AnnotationType:
         return AnnotationType.rotated_bbox
 
-    def convert_to_legacy_annotations(self, sample: Sample, categories: CategoriesInfo) -> list[Annotation]:  # noqa: ARG002
+    def convert_to_legacy_annotations(self, sample: Sample, categories: CategoriesInfo) -> list[Annotation]:
         """Convert v2 rotated bbox data to legacy RotatedBbox annotations."""
         rotated_bboxes = getattr(sample, self.rotated_bboxes_attr, None)
         if rotated_bboxes is None or len(rotated_bboxes) == 0:
@@ -740,7 +758,7 @@ class BackwardPolygonAnnotationConverter(BackwardAnnotationConverter):
     def get_annotation_type(self) -> AnnotationType:
         return AnnotationType.polygon
 
-    def convert_to_legacy_annotations(self, sample: Sample, categories: CategoriesInfo) -> list[Annotation]:  # noqa: ARG002
+    def convert_to_legacy_annotations(self, sample: Sample, categories: CategoriesInfo) -> list[Annotation]:
         """Convert polygons and polygon_labels back to legacy Polygon annotations."""
         polygons = getattr(sample, self.polygons_attr)
         polygon_labels = getattr(sample, self.polygon_labels_attr) if self.polygon_labels_attr else None
@@ -905,7 +923,7 @@ class ForwardMaskAnnotationConverter(ForwardAnnotationConverter):
             attributes[self.name_prefix + "labels"] = self.mask_labels_attribute
         return attributes
 
-    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:  # noqa: ARG002
+    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:
         """Convert legacy mask annotations to either semantic or instance segmentation format."""
         # Extract mask annotations
         extracted_masks = [ann for ann in annotations if isinstance(ann, ExtractedMask)]

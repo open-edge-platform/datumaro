@@ -7,7 +7,6 @@ from typing import Any, cast
 import numpy as np
 import polars as pl
 import pytest
-
 from datumaro.experimental.dataset import Sample
 from datumaro.experimental.fields import (
     BBoxField,
@@ -387,7 +386,14 @@ def test_image_info_field_polars_schema():
     field = image_info_field()
     schema = field.to_polars_schema("image_info")
 
-    expected = {"image_info": pl.Struct([datumaro.v2.fields.fields.Field("width", pl.Int32()), datumaro.v2.fields.fields.Field("height", pl.Int32())])}
+    expected = {
+        "image_info": pl.Struct(
+            [
+                datumaro.v2.fields.fields.Field("width", pl.Int32()),
+                datumaro.v2.fields.fields.Field("height", pl.Int32()),
+            ]
+        )
+    }
     assert schema == expected
 
 

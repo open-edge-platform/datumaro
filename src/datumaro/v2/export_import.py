@@ -28,8 +28,8 @@ import numpy as np
 import polars as pl
 from PIL import Image
 
+from . import ImageCallableField, ImagePathField
 from .dataset import Dataset, Sample
-from . import ImagePathField, ImageCallableField
 from .fields.masks import InstanceMaskCallableField, MaskCallableField
 from .schema import Schema
 

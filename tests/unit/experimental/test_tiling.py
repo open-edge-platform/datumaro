@@ -1,7 +1,6 @@
 import numpy as np
 import polars as pl
 import pytest
-
 from datumaro.experimental.dataset import AttributeInfo
 from datumaro.experimental.fields import (
     TileInfo,
@@ -62,7 +61,12 @@ def sample_df():
         schema={
             "image": pl.List(pl.UInt8),
             "image_shape": pl.List(pl.Int32),
-            "image_info": pl.Struct([datumaro.v2.fields.fields.Field("height", pl.Int32), datumaro.v2.fields.fields.Field("width", pl.Int32)]),
+            "image_info": pl.Struct(
+                [
+                    datumaro.v2.fields.fields.Field("height", pl.Int32),
+                    datumaro.v2.fields.fields.Field("width", pl.Int32),
+                ]
+            ),
         },
     )
 

@@ -4,9 +4,12 @@
 from dataclasses import dataclass, field
 from typing import Any
 
+import numpy as np
+import polars as pl
+
 from datumaro.v2 import Field, Semantic
-from datumaro.v2.fields import PolarsDataType, T
-from datumaro.v2.type_registry import to_numpy, from_polars_data
+from datumaro.v2.fields.base import PolarsDataType, T
+from datumaro.v2.type_registry import from_polars_data, to_numpy
 
 
 @dataclass(frozen=True)
@@ -174,7 +177,14 @@ class ImageInfoField(Field):
     semantic: Semantic
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
-        return {name: pl.Struct([datumaro.v2.fields.fields.Field("width", pl.Int32()), datumaro.v2.fields.fields.Field("height", pl.Int32())])}
+        return {
+            name: pl.Struct(
+                [
+                    Field("width", pl.Int32()),
+                    Field("height", pl.Int32()),
+                ]
+            )
+        }
 
     def to_polars(self, name: str, value: ImageInfo | None) -> dict[str, pl.Series]:
         schema = self.to_polars_schema("info")
@@ -274,7 +284,7 @@ class ImageCallableField(Field):
             raise TypeError(f"Expected callable, got {type(value)}")
         return {name: pl.Series(name, [value])}
 
-    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> callable:  # noqa: ARG002
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> callable:
         """Extract callable from Polars dataframe."""
         value = df[name][row_index]
         if not callable(value) and value is not None:

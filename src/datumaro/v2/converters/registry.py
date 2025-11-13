@@ -7,10 +7,10 @@ import heapq
 import itertools
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import NamedTuple, Sequence, Callable, get_type_hints, overload
+from typing import Callable, NamedTuple, Sequence, get_type_hints, overload
 
-from datumaro.v2 import Field, Semantic, Schema
-from datumaro.v2.converters import Converter, ConversionError, AttributeRemapperConverter
+from datumaro.v2 import Field, Schema, Semantic
+from datumaro.v2.converters import AttributeRemapperConverter, ConversionError, Converter
 from datumaro.v2.schema import AttributeSpec
 
 
@@ -576,13 +576,16 @@ def _separate_batch_and_lazy_converters(
         dependent_outputs_by_input=dependents_by_output,
     )
 
+
 @overload
 def converter(cls: type[Converter], /) -> type[Converter]:
     """Overload for @converter (no parentheses)."""
 
+
 @overload
 def converter(*, lazy: bool = False) -> Callable[[type[Converter]], type[Converter]]:
     """Overload for @converter() or @converter(lazy=True)."""
+
 
 def converter(
     cls: type[Converter] | None = None, /, *, lazy: bool = False
