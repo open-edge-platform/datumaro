@@ -10,17 +10,12 @@ import polars as pl
 import pytest
 
 from datumaro.v2.categories import LabelCategories, MaskCategories
-from datumaro.v2.converter_registry import (
+from datumaro.v2.converters import (
     AttributeRemapperConverter,
-    AttributeSpec,
+    BBoxCoordinateConverter,
     ConversionError,
     Converter,
     ConverterRegistry,
-    converter,
-    find_conversion_path,
-)
-from datumaro.v2.converters import (
-    BBoxCoordinateConverter,
     ImageBytesToImageConverter,
     ImageCallableToImageConverter,
     ImagePathToImageConverter,
@@ -33,6 +28,8 @@ from datumaro.v2.converters import (
     RGBToBGRConverter,
     RotatedBBoxToPolygonConverter,
     UInt8ToFloat32Converter,
+    converter,
+    find_conversion_path,
 )
 from datumaro.v2.fields import (
     BBoxField,
@@ -53,7 +50,7 @@ from datumaro.v2.fields import (
     image_field,
     image_info_field,
 )
-from datumaro.v2.schema import AttributeInfo, Schema, Semantic
+from datumaro.v2.schema import AttributeInfo, AttributeSpec, Schema, Semantic
 
 
 def test_converter_decorator(request: pytest.FixtureRequest):

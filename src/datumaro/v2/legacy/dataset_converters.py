@@ -7,7 +7,6 @@ import polars as pl
 
 from datumaro import Annotation, AnnotationType, CategoriesInfo, DatasetItem, MediaElement
 from datumaro import Dataset as LegacyDataset
-from datumaro.v2 import AttributeInfo, Dataset, Sample, Schema, Semantic, label_field
 from datumaro.v2.categories import (
     GroupType,
     HierarchicalLabelCategories,
@@ -16,19 +15,24 @@ from datumaro.v2.categories import (
     LabelGroup,
     LabelSemantic,
 )
-from datumaro.v2.fields import Subset, subset_field
-from datumaro.v2.legacy import (
+from datumaro.v2.dataset import Dataset, Sample
+from datumaro.v2.fields.annotations import Semantic, label_field
+from datumaro.v2.fields.datasets import Subset, subset_field
+from datumaro.v2.legacy.annotation_converters import (
     BackwardAnnotationConverter,
-    BackwardMediaConverter,
     ForwardAnnotationConverter,
-    ForwardMediaConverter,
     get_forward_annotation_converter,
+)
+from datumaro.v2.legacy.media_converters import (
+    BackwardMediaConverter,
+    ForwardMediaConverter,
     get_forward_media_converter,
 )
 from datumaro.v2.legacy.register_legacy_converters import (
     _backward_annotation_converter_classes,
     _backward_media_converter_classes,
 )
+from datumaro.v2.schema import AttributeInfo, Schema
 
 
 @dataclass
