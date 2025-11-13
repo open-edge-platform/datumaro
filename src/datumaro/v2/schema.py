@@ -11,8 +11,8 @@ from dataclasses import dataclass
 from dataclasses import field as dataclass_field
 from typing import Any, Generic, Optional, TypeVar
 
-from . import Field, Semantic
-from .categories import Categories
+from datumaro.v2.categories import Categories
+from datumaro.v2.fields.base import Field, Semantic
 
 
 @dataclass

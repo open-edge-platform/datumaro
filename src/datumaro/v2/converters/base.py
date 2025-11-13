@@ -14,11 +14,11 @@ from __future__ import annotations
 import copy
 from abc import ABC, abstractmethod
 from functools import cache
-from typing import TYPE_CHECKING, Any, Sequence, TypeVar, cast, dataclass_transform, get_type_hints
+from typing import TYPE_CHECKING, Any, Sequence, TypeVar, cast, get_type_hints
 
 import polars as pl
+from typing_extensions import dataclass_transform
 
-from datumaro.v2 import Field, Schema
 from datumaro.v2.categories import Categories
 from datumaro.v2.converters.registry import (
     ConversionPaths,
@@ -27,7 +27,8 @@ from datumaro.v2.converters.registry import (
     _SchemaState,
     _separate_batch_and_lazy_converters,
 )
-from datumaro.v2.schema import AttributeSpec
+from datumaro.v2.fields.base import Field
+from datumaro.v2.schema import AttributeSpec, Schema
 from datumaro.v2.transform import Transform
 
 if TYPE_CHECKING:

@@ -7,8 +7,7 @@ from typing import Any
 import numpy as np
 import polars as pl
 
-from datumaro.v2 import Field, Semantic
-from datumaro.v2.fields.base import PolarsDataType, T
+from datumaro.v2.fields.base import Field, PolarsDataType, Semantic, T
 from datumaro.v2.type_registry import from_polars_data, to_numpy
 
 

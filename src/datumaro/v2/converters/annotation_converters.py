@@ -3,9 +3,11 @@
 # SPDX-License-Identifier: MIT
 import polars as pl
 
-from datumaro.v2 import BBoxField, ImageField, LabelField, PolygonField, RotatedBBoxField, converter
 from datumaro.v2.categories import LabelCategories
 from datumaro.v2.converters import Converter, list_eval_ref
+from datumaro.v2.converters.registry import converter
+from datumaro.v2.fields.annotations import BBoxField, LabelField, PolygonField, RotatedBBoxField
+from datumaro.v2.fields.images import ImageField
 from datumaro.v2.schema import AttributeSpec
 
 

@@ -9,9 +9,9 @@ from collections import defaultdict
 from dataclasses import dataclass
 from typing import Callable, NamedTuple, Sequence, get_type_hints, overload
 
-from datumaro.v2 import Field, Schema, Semantic
-from datumaro.v2.converters import AttributeRemapperConverter, ConversionError, Converter
-from datumaro.v2.schema import AttributeSpec
+from datumaro.v2.converters.base import AttributeRemapperConverter, ConversionError, Converter
+from datumaro.v2.fields.base import Field, Semantic
+from datumaro.v2.schema import AttributeSpec, Schema
 
 
 class ConversionPaths(NamedTuple):
