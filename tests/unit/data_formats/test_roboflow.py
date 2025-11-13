@@ -19,13 +19,11 @@ from datumaro.plugins.data_formats.roboflow.importer import (
     RoboflowMulticlassImporter,
     RoboflowVocImporter,
     RoboflowYoloImporter,
-    RoboflowYoloObbImporter,
 )
-
-from .base import TestDataFormatBase
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import compare_datasets
+
+from .base import TestDataFormatBase
 
 try:
     import tensorflow as tf
@@ -35,10 +33,7 @@ else:
     TF_AVAILABLE = True
 
 if TF_AVAILABLE:
-    from datumaro.plugins.data_formats.roboflow.base_tfrecord import (
-        RoboflowTfrecordBase,
-        RoboflowTfrecordImporter,
-    )
+    from datumaro.plugins.data_formats.roboflow.base_tfrecord import RoboflowTfrecordBase, RoboflowTfrecordImporter
 else:
     RoboflowTfrecordBase = None
     RoboflowTfrecordImporter = None
@@ -61,18 +56,14 @@ def fxt_coco_dataset():
                 id="train_001",
                 subset="train",
                 media=Image.from_numpy(data=np.ones((5, 10, 3))),
-                annotations=[
-                    Bbox(2, 1, 3, 1, label=0, group=0, id=0, attributes={"is_crowd": False})
-                ],
+                annotations=[Bbox(2, 1, 3, 1, label=0, group=0, id=0, attributes={"is_crowd": False})],
                 attributes={"id": 1},
             ),
             DatasetItem(
                 id="train_002",
                 subset="train",
                 media=Image.from_numpy(data=np.ones((5, 10, 3))),
-                annotations=[
-                    Bbox(0, 0, 2, 4, label=1, group=1, id=1, attributes={"is_crowd": False})
-                ],
+                annotations=[Bbox(0, 0, 2, 4, label=1, group=1, id=1, attributes={"is_crowd": False})],
                 attributes={"id": 2},
             ),
             DatasetItem(
@@ -239,8 +230,7 @@ def fxt_yolo_obb_dataset():
 
 @pytest.fixture
 def fxt_createml_dataset(fxt_yolo_dataset):
-    createml_dataset = deepcopy(fxt_yolo_dataset)
-    return createml_dataset
+    return deepcopy(fxt_yolo_dataset)
 
 
 @pytest.fixture
@@ -336,7 +326,6 @@ class RoboflowImporterTest(TestDataFormatBase):
             (DUMMY_DATASET_COCO_DIR, "fxt_coco_dataset", RoboflowCocoImporter),
             (DUMMY_DATASET_VOC_DIR, "fxt_voc_dataset", RoboflowVocImporter),
             (DUMMY_DATASET_YOLO_DIR, "fxt_yolo_dataset", RoboflowYoloImporter),
-            # (DUMMY_DATASET_YOLO_OBB_DIR, "fxt_yolo_obb_dataset", RoboflowYoloObbImporter), # deprecated by supporting DOTA format
             (DUMMY_DATASET_CREATEML_DIR, "fxt_createml_dataset", RoboflowCreateMlImporter),
             (DUMMY_DATASET_MULTICLASS_DIR, "fxt_multiclass_dataset", RoboflowMulticlassImporter),
         ],
@@ -367,7 +356,7 @@ class RoboflowImporterTest(TestDataFormatBase):
     )
     def test_can_detect_roboflow_tfrecord(self, fxt_dataset_dir: str, importer: Importer):
         detected_formats = DEFAULT_ENVIRONMENT.detect_dataset(fxt_dataset_dir)
-        assert [importer.NAME] == detected_formats
+        assert detected_formats == [importer.NAME]
 
     @pytest.mark.skipif(not TF_AVAILABLE, reason="Tensorflow is not installed")
     @pytest.mark.parametrize(

@@ -12,27 +12,9 @@ import shutil
 import warnings
 from contextlib import contextmanager
 from copy import copy, deepcopy
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    Iterable,
-    Iterator,
-    List,
-    Optional,
-    Set,
-    Tuple,
-    Type,
-    Union,
-    overload,
-)
+from typing import Any, Callable, Dict, Iterable, Iterator, List, Optional, Set, Tuple, Type, Union, overload
 
-from datumaro.components.annotation import (
-    Annotation,
-    AnnotationType,
-    LabelCategories,
-    TabularCategories,
-)
+from datumaro.components.annotation import Annotation, AnnotationType, LabelCategories, TabularCategories
 from datumaro.components.config_model import Source
 from datumaro.components.dataset_base import (
     DEFAULT_SUBSET_NAME,
@@ -347,10 +329,7 @@ class Dataset(IDataset):
         return self._data.get_datasetitem_by_path(path)
 
     def get_label_cat_names(self):
-        return [
-            label.name
-            for label in self._data.categories().get(AnnotationType.label, LabelCategories())
-        ]
+        return [label.name for label in self._data.categories().get(AnnotationType.label, LabelCategories())]
 
     def get_subset_info(self) -> str:
         return (
@@ -363,8 +342,7 @@ class Dataset(IDataset):
     def get_infos(self) -> Tuple[str]:
         if self.infos() is not None:
             return (f"{k}: {v}\n" for k, v in self.infos().items())
-        else:
-            return ("\n",)
+        return ("\n",)
 
     def get_categories_info(self) -> Tuple[str]:
         category_dict = {}
@@ -377,7 +355,7 @@ class Dataset(IDataset):
                 category_dict[annotation_type] = category_names
         return (
             f"{str(annotation_type).split('.')[-1]}: {list(category_dict.get(annotation_type, []))}\n"
-            for annotation_type in self.categories().keys()
+            for annotation_type in self.categories()
         )
 
     def __contains__(self, x: Union[DatasetItem, str, Tuple[str, str]]) -> bool:
@@ -387,9 +365,7 @@ class Dataset(IDataset):
             x = [x]
         return self.get(*x) is not None
 
-    def put(
-        self, item: DatasetItem, id: Optional[str] = None, subset: Optional[str] = None
-    ) -> None:
+    def put(self, item: DatasetItem, id: Optional[str] = None, subset: Optional[str] = None) -> None:
         overrides = {}
         if id is not None:
             overrides["id"] = id
@@ -428,14 +404,11 @@ class Dataset(IDataset):
 
         Returns: self
         """
-        ...
 
     @overload
     def filter(
         self,
-        filter_func: Union[
-            Callable[[DatasetItem], bool], Callable[[DatasetItem, Annotation], bool]
-        ],
+        filter_func: Union[Callable[[DatasetItem], bool], Callable[[DatasetItem, Annotation], bool]],
         *,
         filter_annotations: bool = False,
         remove_empty: bool = False,
@@ -491,13 +464,10 @@ class Dataset(IDataset):
                 # No bounding boxes with a size greater than 50% of their image
                 filtered_items = [item for item in filtered]
         """
-        ...
 
     def filter(
         self,
-        expr_or_filter_func: Union[
-            str, Callable[[DatasetItem], bool], Callable[[DatasetItem, Annotation], bool]
-        ],
+        expr_or_filter_func: Union[str, Callable[[DatasetItem], bool], Callable[[DatasetItem, Annotation], bool]],
         *,
         filter_annotations: bool = False,
         remove_empty: bool = False,
@@ -509,7 +479,7 @@ class Dataset(IDataset):
                 if filter_annotations
                 else self.transform(XPathDatasetFilter, xpath=expr)
             )
-        elif callable(expr_or_filter_func):
+        if callable(expr_or_filter_func):
             filter_func = expr_or_filter_func
             return (
                 self.transform(
@@ -615,9 +585,7 @@ class Dataset(IDataset):
     def is_bound(self) -> bool:
         return bool(self._source_path) and bool(self._format)
 
-    def bind(
-        self, path: str, format: Optional[str] = None, *, options: Optional[Dict[str, Any]] = None
-    ) -> None:
+    def bind(self, path: str, format: Optional[str] = None, *, options: Optional[Dict[str, Any]] = None) -> None:
         """
         Binds the dataset to a speific directory.
         Allows to set default saving parameters.
@@ -683,9 +651,7 @@ class Dataset(IDataset):
         assert "ctx" not in kwargs
         exporter_kwargs = copy(kwargs)
         exporter_kwargs["stream"] = self._stream
-        exporter_kwargs["ctx"] = ExportContext(
-            progress_reporter=progress_reporter, error_policy=error_policy
-        )
+        exporter_kwargs["ctx"] = ExportContext(progress_reporter=progress_reporter, error_policy=error_policy)
 
         try:
             if not inplace:
@@ -782,9 +748,7 @@ class Dataset(IDataset):
             importer = env.make_importer(format)
             with logging_disabled(log.INFO):
                 detected_sources = (
-                    importer(path, stream=cls._stream, **kwargs)
-                    if importer.can_stream
-                    else importer(path, **kwargs)
+                    importer(path, stream=cls._stream, **kwargs) if importer.can_stream else importer(path, **kwargs)
                 )
             extractor_merger = importer.get_extractor_merger()
         elif format in env.extractors:
@@ -812,16 +776,12 @@ class Dataset(IDataset):
                 extractor_kwargs = dict(src_conf.options)
 
                 assert "ctx" not in extractor_kwargs
-                extractor_kwargs["ctx"] = ImportContext(
-                    progress_reporter=pbar, error_policy=error_policy
-                )
+                extractor_kwargs["ctx"] = ImportContext(progress_reporter=pbar, error_policy=error_policy)
 
                 merge_policy = extractor_kwargs.get("merge_policy", DEFAULT_MERGE_POLICY)
 
                 try:
-                    extractors.append(
-                        env.make_extractor(src_conf.format, src_conf.url, **extractor_kwargs)
-                    )
+                    extractors.append(env.make_extractor(src_conf.format, src_conf.url, **extractor_kwargs))
                 except TypeError as e:
                     # TODO: for backward compatibility. To be removed after 0.3
                     if "unexpected keyword argument 'ctx'" not in str(e):
@@ -836,9 +796,7 @@ class Dataset(IDataset):
                         )
                     extractor_kwargs.pop("ctx")
 
-                    extractors.append(
-                        env.make_extractor(src_conf.format, src_conf.url, **extractor_kwargs)
-                    )
+                    extractors.append(env.make_extractor(src_conf.format, src_conf.url, **extractor_kwargs))
             dataset = (
                 cls(source=extractor_merger(extractors), env=env)
                 if extractor_merger is not None
@@ -885,11 +843,10 @@ class Dataset(IDataset):
 
         matches = env.detect_dataset(path, depth=depth)
         if not matches:
-            raise NoMatchingFormatsError()
-        elif 1 < len(matches):
+            raise NoMatchingFormatsError
+        if len(matches) > 1:
             raise MultipleFormatsMatchError(matches)
-        else:
-            return matches[0]
+        return matches[0]
 
     @property
     def is_stream(self) -> bool:
@@ -906,7 +863,7 @@ class Dataset(IDataset):
     def __getitem__(self, idx: int) -> DatasetItem:
         if not self._data.is_stream:
             return self._data[idx]
-        raise StreamedItemError()
+        raise StreamedItemError
 
 
 class StreamDataset(Dataset):

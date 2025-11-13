@@ -99,9 +99,8 @@ class BratsBase(SubsetBase):
 class BratsImporter(Importer):
     @classmethod
     def detect(cls, context: FormatDetectionContext) -> None:
-        with context.require_any():
-            with context.alternative():
-                context.require_file(f"*/*{BratsPath.DATA_EXT}")
+        with context.require_any(), context.alternative():
+            context.require_file(f"*/*{BratsPath.DATA_EXT}")
 
     @classmethod
     def find_sources(cls, path):

@@ -111,9 +111,7 @@ class BratsNumpyImporter(Importer):
 
     @classmethod
     def find_sources(cls, path):
-        return cls._find_sources_recursive(
-            path, "", "brats_numpy", filename=BratsNumpyPath.IDS_FILE
-        )
+        return cls._find_sources_recursive(path, "", "brats_numpy", filename=BratsNumpyPath.IDS_FILE)
 
     @classmethod
     def get_file_extensions(cls) -> List[str]:

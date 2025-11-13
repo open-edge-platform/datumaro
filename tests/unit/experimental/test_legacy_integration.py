@@ -45,11 +45,7 @@ def fxt_dataset() -> LegacyDataset:
             for subset in ["Test", "Train", "Validation"]
             for item_id in range(n_items)
         ],
-        categories={
-            AnnotationType.label: LabelCategories.from_iterable(
-                [f"label_{idx}" for idx in range(n_labels)]
-            )
-        },
+        categories={AnnotationType.label: LabelCategories.from_iterable([f"label_{idx}" for idx in range(n_labels)])},
     )
 
 
@@ -63,14 +59,10 @@ def test_object_detection(
     with tempfile.TemporaryDirectory() as temp_dir:
         # Step 1: Export the fixture dataset to the specified format
         src_dir = osp.join(temp_dir, "src")
-        fxt_dataset.export(
-            src_dir, format=input_format, save_media=True
-        )  # pyright: ignore[reportUnknownMemberType]
+        fxt_dataset.export(src_dir, format=input_format, save_media=True)  # pyright: ignore[reportUnknownMemberType]
 
         # Step 2: Import it back as a legacy dataset
-        legacy_dataset = LegacyDataset.import_from(
-            src_dir, format=input_format
-        )  # pyright: ignore[reportUnknownMemberType]
+        legacy_dataset = LegacyDataset.import_from(src_dir, format=input_format)  # pyright: ignore[reportUnknownMemberType]
 
         # Step 3: Convert to experimental format
         experimental_dataset = convert_from_legacy(legacy_dataset)
@@ -89,9 +81,7 @@ def test_object_detection(
         # Verify data conversion for first few samples
         for legacy_item, experimental_sample in zip(legacy_dataset, experimental_dataset):
             # Check image path is preserved
-            assert (
-                getattr(experimental_sample, "image_path") == legacy_item.media.path
-            )  # pyright: ignore[reportUnknownMemberType, reportAttributeAccessIssue, reportOptionalMemberAccess]
+            assert getattr(experimental_sample, "image_path") == legacy_item.media.path  # pyright: ignore[reportUnknownMemberType, reportAttributeAccessIssue, reportOptionalMemberAccess]
 
             # Check bbox data
             assert hasattr(experimental_sample, "bboxes")
@@ -130,27 +120,19 @@ def test_object_detection(
         # Verify data consistency in round-trip conversion
         for original_item, reconstructed_item in zip(legacy_dataset, reconstructed_legacy_dataset):
             # Check media paths are preserved
-            original_media = cast(
-                ImageFromFile, original_item.media
-            )  # pyright: ignore[reportUnknownMemberType]
-            reconstructed_media = cast(
-                ImageFromFile, reconstructed_item.media
-            )  # pyright: ignore[reportUnknownMemberType]
+            original_media = cast("ImageFromFile", original_item.media)  # pyright: ignore[reportUnknownMemberType]
+            reconstructed_media = cast("ImageFromFile", reconstructed_item.media)  # pyright: ignore[reportUnknownMemberType]
             assert original_media.path == reconstructed_media.path
 
             # Get bbox annotations from both datasets
             original_bboxes = [ann for ann in original_item.annotations if isinstance(ann, Bbox)]
-            reconstructed_bboxes = [
-                ann for ann in reconstructed_item.annotations if isinstance(ann, Bbox)
-            ]
+            reconstructed_bboxes = [ann for ann in reconstructed_item.annotations if isinstance(ann, Bbox)]
 
             assert len(original_bboxes) == len(reconstructed_bboxes)
 
             # Sort both lists by bbox coordinates for consistent comparison
             original_bboxes_sorted = sorted(original_bboxes, key=lambda b: (b.x, b.y, b.w, b.h))
-            reconstructed_bboxes_sorted = sorted(
-                reconstructed_bboxes, key=lambda b: (b.x, b.y, b.w, b.h)
-            )
+            reconstructed_bboxes_sorted = sorted(reconstructed_bboxes, key=lambda b: (b.x, b.y, b.w, b.h))
 
             # Verify each bbox is preserved through round-trip conversion
             for orig_bbox, recon_bbox in zip(original_bboxes_sorted, reconstructed_bboxes_sorted):

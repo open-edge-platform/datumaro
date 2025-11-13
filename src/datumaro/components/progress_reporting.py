@@ -50,11 +50,9 @@ class ProgressReporter:
 
     def finish(self):
         """Finishes the progress bar"""
-        pass  # pylint: disable=unnecessary-pass
+        # pylint: disable=unnecessary-pass
 
-    def iter(
-        self, iterable: Iterable[T], *, total: Optional[int] = None, desc: Optional[str] = None
-    ) -> Iterable[T]:
+    def iter(self, iterable: Iterable[T], *, total: Optional[int] = None, desc: Optional[str] = None) -> Iterable[T]:
         """
         Traverses the iterable and reports progress simultaneously.
 
@@ -80,11 +78,7 @@ class ProgressReporter:
 
         s = time.time()
         for i, elem in enumerate(iterable):
-            if (
-                not total
-                or (display_step and i % display_step == 0)
-                or time.time() - s > self.interval
-            ):
+            if not total or (display_step and i % display_step == 0) or time.time() - s > self.interval:
                 s = time.time()
                 self.report_status(i)
 
@@ -118,9 +112,7 @@ class NullProgressReporter(ProgressReporter):
     def report_status(self, progress: int):
         pass
 
-    def iter(
-        self, iterable: Iterable[T], *, total: Optional[int] = None, desc: Optional[str] = None
-    ) -> Iterable[T]:
+    def iter(self, iterable: Iterable[T], *, total: Optional[int] = None, desc: Optional[str] = None) -> Iterable[T]:
         yield from iterable
 
     def split(self, count: int) -> Tuple[ProgressReporter]:
@@ -146,10 +138,7 @@ class SimpleProgressReporter(ProgressReporter):
 
     def report_status(self, progress: int):
         status = str(self._desc) if self._desc else ""
-        status += (
-            f" {progress:0{len(str(self._total))}d}/{self._total}"
-            f" ({progress/self._total*100:6.2f}%)"
-        )
+        status += f" {progress:0{len(str(self._total))}d}/{self._total} ({progress / self._total * 100:6.2f}%)"
         print(status)
 
     def finish(self):

@@ -13,8 +13,8 @@ from datumaro.experimental.filtering.filter_registry import (
     create_filtering_plan,
     create_filtering_transform,
 )
-from datumaro.experimental.schema import AttributeInfo, AttributeSpec, Schema, Semantic
-from datumaro.experimental.transform import IdentityTransform, Transform
+from datumaro.experimental.schema import AttributeInfo, Schema
+from datumaro.experimental.transform import IdentityTransform
 
 
 @pytest.fixture

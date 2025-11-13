@@ -7,13 +7,7 @@ import polars as pl
 import pytest
 
 from datumaro.experimental.dataset import Dataset, Sample
-from datumaro.experimental.fields import (
-    ImageInfo,
-    bbox_field,
-    image_field,
-    image_info_field,
-    tensor_field,
-)
+from datumaro.experimental.fields import ImageInfo, bbox_field, image_field, image_info_field, tensor_field
 from datumaro.experimental.schema import AttributeInfo, Schema, Semantic
 
 try:
@@ -77,9 +71,7 @@ def test_pytorch_schema_creation():
     """Test Schema creation with PyTorch tensor types."""
     attributes = {
         "image": AttributeInfo(type=torch.Tensor, field=image_field(dtype=pl.UInt8, format="RGB")),
-        "bbox": AttributeInfo(
-            type=torch.Tensor, field=bbox_field(dtype=pl.Float32, normalize=False)
-        ),
+        "bbox": AttributeInfo(type=torch.Tensor, field=bbox_field(dtype=pl.Float32, normalize=False)),
     }
 
     schema = Schema(attributes=attributes)
@@ -99,12 +91,8 @@ def test_pytorch_schema_duplicate_field_type_assertion():
     with pytest.raises(ValueError):
 
         class InvalidSample(Sample):
-            image1: torch.Tensor = image_field(
-                dtype=pl.UInt8, format="RGB", semantic=Semantic.Default
-            )
-            image2: torch.Tensor = image_field(
-                dtype=pl.UInt8, format="RGB", semantic=Semantic.Default
-            )
+            image1: torch.Tensor = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Default)
+            image2: torch.Tensor = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Default)
 
         # This should trigger the assertion error when schema is inferred
         InvalidSample.infer_schema()
@@ -112,9 +100,7 @@ def test_pytorch_schema_duplicate_field_type_assertion():
     # This should work because the fields have different semantic contexts
     class ValidSample(Sample):
         left_image: torch.Tensor = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Bbox)
-        right_image: torch.Tensor = image_field(
-            dtype=pl.UInt8, format="RGB", semantic=Semantic.Polygon
-        )
+        right_image: torch.Tensor = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Polygon)
 
     # This should not raise an assertion error
     schema = ValidSample.infer_schema()
@@ -133,9 +119,7 @@ def test_pytorch_sample_integration():
         label: torch.Tensor = tensor_field(dtype=pl.Int32)
 
     # Create PyTorch tensors
-    image_data = torch.tensor(
-        [[[255, 0, 0], [0, 255, 0]], [[0, 0, 255], [255, 255, 0]]], dtype=torch.uint8
-    )
+    image_data = torch.tensor([[[255, 0, 0], [0, 255, 0]], [[0, 0, 255], [255, 255, 0]]], dtype=torch.uint8)
     bbox_data = torch.tensor([0.1, 0.1, 0.9, 0.9], dtype=torch.float32)
     label_data = torch.tensor(1, dtype=torch.int32)
 

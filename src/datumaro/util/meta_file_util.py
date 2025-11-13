@@ -61,9 +61,7 @@ def save_meta_file(path, categories):
         dataset_meta["label_map"] = label_map
         dataset_meta["segmentation_colors"] = segmentation_colors
 
-        bg_label = find(
-            categories[AnnotationType.mask].colormap.items(), lambda x: x[1] == (0, 0, 0)
-        )
+        bg_label = find(categories[AnnotationType.mask].colormap.items(), lambda x: x[1] == (0, 0, 0))
         if bg_label is not None:
             dataset_meta["background_label"] = str(bg_label[0])
 

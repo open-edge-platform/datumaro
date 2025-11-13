@@ -179,9 +179,7 @@ class CvatBase(SubsetBase):
 
                     if subset is None or subset == self._subset:
                         frame_desc = items.get(shape["frame"], {"annotations": []})
-                        frame_desc["annotations"].append(
-                            self._parse_shape_ann(shape, categories, image)
-                        )
+                        frame_desc["annotations"].append(self._parse_shape_ann(shape, categories, image))
                         items[shape["frame"]] = frame_desc
 
                     shape = None
@@ -219,7 +217,7 @@ class CvatBase(SubsetBase):
 
         if len(original_size) > 1:
             raise DatasetImportError("CVAT XML file should have only one <original_size> tag.")
-        elif len(original_size) == 1:
+        if len(original_size) == 1:
             frame_size = (
                 int(original_size[0].find("height").text),
                 int(original_size[0].find("width").text),
@@ -288,7 +286,7 @@ class CvatBase(SubsetBase):
                 group=group,
             )
 
-        elif ann_type == "polygon":
+        if ann_type == "polygon":
             return Polygon(
                 points,
                 label=label_id,
@@ -298,7 +296,7 @@ class CvatBase(SubsetBase):
                 group=group,
             )
 
-        elif ann_type == "points":
+        if ann_type == "points":
             return Points(
                 points,
                 label=label_id,
@@ -308,7 +306,7 @@ class CvatBase(SubsetBase):
                 group=group,
             )
 
-        elif ann_type == "box":
+        if ann_type == "box":
             x1, y1 = points[0], points[1]  # xtl, ytl
             x2, y2 = points[2], points[3]  # xbr, ybr
             w = x2 - x1
@@ -346,7 +344,7 @@ class CvatBase(SubsetBase):
                 group=group,
             )
 
-        elif ann_type == "mask":
+        if ann_type == "mask":
             rle = ann.get("rle")
             mask_w, mask_h = int(ann.get("width")), int(ann.get("height"))
             mask_l, mask_t = int(ann.get("left")), int(ann.get("top"))
@@ -375,8 +373,7 @@ class CvatBase(SubsetBase):
                 group=group,
             )
 
-        else:
-            raise NotImplementedError("Unknown annotation type '%s'" % ann_type)
+        raise NotImplementedError("Unknown annotation type '%s'" % ann_type)
 
     @classmethod
     def _parse_tag_ann(cls, ann, categories):
@@ -391,9 +388,7 @@ class CvatBase(SubsetBase):
             name = item_desc.get("name", "frame_%06d.png" % int(frame_id))
 
             image_path_opt_1 = osp.join(self._images_dir, name)
-            image_path_opt_2 = (
-                osp.join(self._images_dir, self._subset, name) if self._subset is not None else None
-            )
+            image_path_opt_2 = osp.join(self._images_dir, self._subset, name) if self._subset is not None else None
             if osp.exists(image_path_opt_1):
                 image = image_path_opt_1
             elif image_path_opt_2 and osp.exists(image_path_opt_2):
@@ -463,9 +458,7 @@ class CvatImporter(Importer):
             elif meta_root.find("task") is not None:
                 sources += [source]
             else:
-                raise DatasetImportError(
-                    "CVAT XML file should have a <meta> -> <task> or <meta> -> <project> subtree."
-                )
+                raise DatasetImportError("CVAT XML file should have a <meta> -> <task> or <meta> -> <project> subtree.")
 
         return sources
 

@@ -113,9 +113,7 @@ class Market1501Importer(Importer):
     @classmethod
     def find_sources(cls, path):
         for dirname in os.listdir(path):
-            if dirname.startswith(
-                (Market1501Path.BBOX_DIR, Market1501Path.QUERY_DIR, Market1501Path.LIST_PREFIX)
-            ):
+            if dirname.startswith((Market1501Path.BBOX_DIR, Market1501Path.QUERY_DIR, Market1501Path.LIST_PREFIX)):
                 return [{"url": path, "format": Market1501Base.NAME}]
 
     @classmethod
@@ -153,14 +151,8 @@ class Market1501Exporter(Exporter):
                     cid = int(item.attributes.get("camera_id", 0)) + 1
                     tid = int(item.attributes.get("track_id", 1))
                     bbid = int(item.attributes.get("bbox_id", 0))
-                    fid = int(
-                        item.attributes.get(
-                            "frame_id", max(used_frames.get((pid, cid, tid), [-1])) + 1
-                        )
-                    )
-                    image_name = osp.join(
-                        osp.dirname(image_name), f"{pid}_c{cid}s{tid}_{fid:06d}_{bbid:02d}"
-                    )
+                    fid = int(item.attributes.get("frame_id", max(used_frames.get((pid, cid, tid), [-1])) + 1))
+                    image_name = osp.join(osp.dirname(image_name), f"{pid}_c{cid}s{tid}_{fid:06d}_{bbid:02d}")
 
                 image_path = self._make_image_filename(item, name=image_name, subdir=dirname)
                 if self._save_media and item.media:
@@ -172,8 +164,6 @@ class Market1501Exporter(Exporter):
                     used_frames.setdefault(attrs[0:2], []).append(int(attrs[3]))
                 annotation += "%s\n" % image_path
 
-            annotation_file = osp.join(
-                self._save_dir, Market1501Path.LIST_PREFIX + subset_name + ".txt"
-            )
+            annotation_file = osp.join(self._save_dir, Market1501Path.LIST_PREFIX + subset_name + ".txt")
             with open(annotation_file, "w", encoding="utf-8") as f:
                 f.write(annotation)

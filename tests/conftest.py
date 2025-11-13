@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: MIT
 
-import shutil
-from time import sleep
 
 import pytest
 

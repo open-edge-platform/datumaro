@@ -15,7 +15,6 @@ from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.environment import Environment
 from datumaro.components.media import Image
 from datumaro.plugins.data_formats.open_images import OpenImagesExporter, OpenImagesImporter
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, compare_datasets
 
@@ -24,9 +23,7 @@ class OpenImagesFormatTest(TestCase):
     def test_can_save_and_load(self):
         source_dataset = Dataset.from_iterable(
             [
-                DatasetItem(
-                    id="a", subset="train", annotations=[Label(0, attributes={"score": 0.7})]
-                ),
+                DatasetItem(id="a", subset="train", annotations=[Label(0, attributes={"score": 0.7})]),
                 DatasetItem(
                     id="b",
                     subset="train",
@@ -152,12 +149,8 @@ class OpenImagesFormatTest(TestCase):
     def test_can_save_and_load_image_with_arbitrary_extension(self):
         dataset = Dataset.from_iterable(
             [
-                DatasetItem(
-                    id="a/1", media=Image.from_numpy(data=np.zeros((4, 3, 3)), ext=".JPEG")
-                ),
-                DatasetItem(
-                    id="b/c/d/2", media=Image.from_numpy(data=np.zeros((3, 4, 3)), ext=".bmp")
-                ),
+                DatasetItem(id="a/1", media=Image.from_numpy(data=np.zeros((4, 3, 3)), ext=".JPEG")),
+                DatasetItem(id="b/c/d/2", media=Image.from_numpy(data=np.zeros((3, 4, 3)), ext=".bmp")),
             ],
             categories=[],
         )
@@ -238,9 +231,7 @@ class OpenImagesFormatTest(TestCase):
             expected_images = {f"{id}.jpg" for id in ["a", "b", "d", "e"]}
 
             actual_images = {
-                file_name
-                for _, _, file_names in os.walk(osp.join(path, "images"))
-                for file_name in file_names
+                file_name for _, _, file_names in os.walk(osp.join(path, "images")) for file_name in file_names
             }
 
             self.assertEqual(actual_images, expected_images)
@@ -391,12 +382,8 @@ class OpenImagesImporterTest(TestCase):
     def test_can_import_v5(self):
         expected_dataset = Dataset.from_iterable(
             [
-                DatasetItem(
-                    id="aa", subset="train", media=Image.from_numpy(data=np.zeros((8, 6, 3)))
-                ),
-                DatasetItem(
-                    id="cc", subset="test", media=Image.from_numpy(data=np.ones((10, 5, 3)))
-                ),
+                DatasetItem(id="aa", subset="train", media=Image.from_numpy(data=np.zeros((8, 6, 3)))),
+                DatasetItem(id="cc", subset="test", media=Image.from_numpy(data=np.ones((10, 5, 3)))),
             ],
             categories=[
                 "/m/0",

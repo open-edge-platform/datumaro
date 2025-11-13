@@ -66,15 +66,10 @@ class WiderFaceBase(SubsetBase):
                     label_cat.add(line.strip())
         else:
             label_cat.add(WiderFacePath.DEFAULT_LABEL)
-            subset_path = osp.join(
-                self._dataset_dir, WiderFacePath.SUBSET_DIR + self._subset, WiderFacePath.IMAGES_DIR
-            )
+            subset_path = osp.join(self._dataset_dir, WiderFacePath.SUBSET_DIR + self._subset, WiderFacePath.IMAGES_DIR)
             if osp.isdir(subset_path):
                 for images_dir in sorted(os.listdir(subset_path)):
-                    if (
-                        osp.isdir(osp.join(subset_path, images_dir))
-                        and images_dir != WiderFacePath.IMAGES_DIR_NO_LABEL
-                    ):
+                    if osp.isdir(osp.join(subset_path, images_dir)) and images_dir != WiderFacePath.IMAGES_DIR_NO_LABEL:
                         if "--" in images_dir:
                             images_dir = images_dir.split("--")[1]
                         if images_dir != WiderFacePath.DEFAULT_LABEL:
@@ -91,9 +86,7 @@ class WiderFaceBase(SubsetBase):
             lines = f.readlines()
 
         line_ids = [
-            line_idx
-            for line_idx, line in enumerate(lines)
-            if ("/" in line or "\\" in line) and "." in line
+            line_idx for line_idx, line in enumerate(lines) if ("/" in line or "\\" in line) and "." in line
         ]  # a heuristic for paths
 
         for line_idx in line_ids:
@@ -137,7 +130,7 @@ class WiderFaceBase(SubsetBase):
             bbox_lines = lines[line_idx + 2 : line_idx + bbox_count + 2]
             for bbox in bbox_lines:
                 bbox_list = bbox.split()
-                if 4 <= len(bbox_list):
+                if len(bbox_list) >= 4:
                     label = label_categories.find(WiderFacePath.DEFAULT_LABEL)[0]
                     if len(bbox_list) == 5 or len(bbox_list) == 11:
                         label_name = bbox_list[-1]
@@ -147,7 +140,7 @@ class WiderFaceBase(SubsetBase):
                         label = label_categories.find(WiderFacePath.DEFAULT_LABEL)[0]
 
                     attributes = {}
-                    if 10 <= len(bbox_list):
+                    if len(bbox_list) >= 10:
                         i = 4
                         for attr in WiderFacePath.BBOX_ATTRIBUTES:
                             if bbox_list[i] != "-":
@@ -181,9 +174,7 @@ class WiderFaceImporter(Importer):
 
     @classmethod
     def find_sources(cls, path):
-        return cls._find_sources_recursive(
-            path, cls._ANNO_EXT, "wider_face", dirname=WiderFacePath.ANNOTATIONS_DIR
-        )
+        return cls._find_sources_recursive(path, cls._ANNO_EXT, "wider_face", dirname=WiderFacePath.ANNOTATIONS_DIR)
 
     @classmethod
     def get_file_extensions(cls) -> List[str]:
@@ -220,17 +211,13 @@ class WiderFaceExporter(Exporter):
                         item, subdir="%s--%s" % (labels[0], label_categories[labels[0]].name)
                     )
                 else:
-                    image_path = self._make_image_filename(
-                        item, subdir=WiderFacePath.IMAGES_DIR_NO_LABEL
-                    )
+                    image_path = self._make_image_filename(item, subdir=WiderFacePath.IMAGES_DIR_NO_LABEL)
                 wider_annotation += image_path + "\n"
                 if item.media and self._save_media:
-                    self._save_image(
-                        item, osp.join(save_dir, subset_dir, WiderFacePath.IMAGES_DIR, image_path)
-                    )
+                    self._save_image(item, osp.join(save_dir, subset_dir, WiderFacePath.IMAGES_DIR, image_path))
 
                 bboxes = [a for a in item.annotations if a.type == AnnotationType.bbox]
-                if 0 < len(bboxes):
+                if len(bboxes) > 0:
                     wider_annotation += "%s\n" % len(bboxes)
                 for bbox in bboxes:
                     wider_bb = " ".join("%s" % p for p in bbox.get_bbox())
@@ -244,12 +231,9 @@ class WiderFaceExporter(Exporter):
                                 attr_counter += 1
                             else:
                                 wider_attr += "- "
-                        if 0 < attr_counter:
+                        if attr_counter > 0:
                             wider_annotation += wider_attr
-                    if (
-                        label_categories[bbox.label].name != WiderFacePath.DEFAULT_LABEL
-                        and bbox.label is not None
-                    ):
+                    if label_categories[bbox.label].name != WiderFacePath.DEFAULT_LABEL and bbox.label is not None:
                         wider_annotation += "%s" % label_categories[bbox.label].name
                     wider_annotation += "\n"
 

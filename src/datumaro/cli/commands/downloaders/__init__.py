@@ -6,4 +6,4 @@ from .downloader import IDatasetDownloader
 from .kaggle import KaggleDatasetDownloader
 from .tfds import TfdsDatasetDownloader
 
-__all__ = [IDatasetDownloader, KaggleDatasetDownloader, TfdsDatasetDownloader]
+__all__ = ["IDatasetDownloader", "KaggleDatasetDownloader", "TfdsDatasetDownloader"]

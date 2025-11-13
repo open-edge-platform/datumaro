@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: MIT
 
-# ruff: noqa: F401
-
 
 class ApiTest:
     def test_can_import_core(self):

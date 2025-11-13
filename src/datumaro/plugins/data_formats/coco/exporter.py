@@ -2,8 +2,10 @@
 #
 # SPDX-License-Identifier: MIT
 
+import functools
 import json
 import logging as log
+import operator
 import os
 import os.path as osp
 from dataclasses import dataclass
@@ -18,13 +20,7 @@ from json_stream.writer import streamable_dict, streamable_list
 
 import datumaro.util.annotation_util as anno_tools
 import datumaro.util.mask_tools as mask_tools
-from datumaro.components.annotation import (
-    COORDINATE_ROUNDING_DIGITS,
-    AnnotationType,
-    Ellipse,
-    Points,
-    Polygon,
-)
+from datumaro.components.annotation import COORDINATE_ROUNDING_DIGITS, AnnotationType, Ellipse, Points, Polygon
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.dataset_item_storage import ItemStatus
 from datumaro.components.errors import MediaTypeError
@@ -74,9 +70,7 @@ class TemporaryWriters:
 
         self._writers = tuple(
             _Writer(
-                fp=open(
-                    osp.join(self._ann_dir, f"__{self._task.name}_{self._subset}_{key}.tmp"), "wb"
-                ),
+                fp=open(osp.join(self._ann_dir, f"__{self._task.name}_{self._subset}_{key}.tmp"), "wb"),  # noqa: SIM115
                 is_empty=True,
             )
             for key in ["imgs", "anns"]
@@ -146,9 +140,7 @@ class TemporaryWriters:
 
 
 class _TaskExporter:
-    def __init__(
-        self, context: "CocoExporter", subset: str, task: CocoTask, ann_dir: str, stream: bool
-    ):
+    def __init__(self, context: "CocoExporter", subset: str, task: CocoTask, ann_dir: str, stream: bool):
         self._min_ann_id = 1
         self._context = context
         self._subset = subset
@@ -176,11 +168,7 @@ class _TaskExporter:
         )
 
     def is_empty(self):
-        return (
-            len(self._data["annotations"]) == 0
-            if not self._stream
-            else self._temporary_writers.anns.is_empty
-        )
+        return len(self._data["annotations"]) == 0 if not self._stream else self._temporary_writers.anns.is_empty
 
     def _get_image_id(self, item):
         return self._context._get_image_id(item)
@@ -208,10 +196,10 @@ class _TaskExporter:
             self._temporary_writers.add_item(item_desc)
 
     def save_categories(self, dataset):
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def save_annotations(self, item):
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def write(self, path):
         next_id = self._min_ann_id
@@ -250,11 +238,7 @@ class _TaskExporter:
 
 class _ImageInfoExporter(_TaskExporter):
     def is_empty(self):
-        return (
-            len(self._data["images"]) == 0
-            if not self._stream
-            else self._temporary_writers.imgs.is_empty
-        )
+        return len(self._data["images"]) == 0 if not self._stream else self._temporary_writers.imgs.is_empty
 
     def save_categories(self, dataset):
         pass
@@ -282,10 +266,7 @@ class _CaptionsExporter(_TaskExporter):
                 try:
                     elem["score"] = float(ann.attributes["score"])
                 except Exception as e:
-                    log.warning(
-                        "Item '%s', ann #%s: failed to convert "
-                        "attribute 'score': %e" % (item.id, ann_idx, e)
-                    )
+                    log.warning("Item '%s', ann #%s: failed to convert attribute 'score': %e" % (item.id, ann_idx, e))
             if self._context._allow_attributes:
                 attrs = self._convert_attributes(ann)
                 if attrs:
@@ -345,7 +326,7 @@ class _InstancesExporter(_TaskExporter):
                 continue
 
             if inst[1]:
-                inst[1] = sum(new_segments, [])
+                inst[1] = functools.reduce(operator.iadd, new_segments, [])
             else:
                 mask = mask_tools.merge_masks(new_segments)
                 inst[2] = mask_tools.mask_to_rle(mask)
@@ -354,9 +335,7 @@ class _InstancesExporter(_TaskExporter):
 
     def find_instance_parts(self, group, img_width, img_height):
         boxes = [a for a in group if a.type == AnnotationType.bbox]
-        polygons: List[Union[Polygon, Ellipse]] = [
-            a for a in group if a.type in self._polygon_types
-        ]
+        polygons: List[Union[Polygon, Ellipse]] = [a for a in group if a.type in self._polygon_types]
         masks = [a for a in group if a.type == AnnotationType.mask]
 
         anns = boxes + polygons + masks
@@ -377,9 +356,7 @@ class _InstancesExporter(_TaskExporter):
         elif self._context._segmentation_mode == SegmentationMode.mask:
             use_masks = True
         else:
-            raise NotImplementedError(
-                "Unexpected segmentation mode '%s'" % self._context._segmentation_mode
-            )
+            raise NotImplementedError("Unexpected segmentation mode '%s'" % self._context._segmentation_mode)
 
         if use_masks:
             if polygons and img_width > 0 and img_height > 0:
@@ -417,9 +394,7 @@ class _InstancesExporter(_TaskExporter):
 
         if not item.media or not item.media.size:
             h, w = 0, 0
-            log.warning(
-                "Item '%s': Mask annotations can be skipped since no image info available" % item.id
-            )
+            log.warning("Item '%s': Mask annotations can be skipped since no image info available" % item.id)
         else:
             h, w = item.media.size
 
@@ -487,7 +462,7 @@ class _InstancesExporter(_TaskExporter):
             try:
                 elem["score"] = float(ann.attributes["score"])
             except Exception as e:
-                log.warning("Item '%s': failed to convert attribute " "'score': %e" % (item.id, e))
+                log.warning("Item '%s': failed to convert attribute 'score': %e" % (item.id, e))
         if self._context._allow_attributes:
             attrs = self._convert_attributes(ann)
             if attrs:
@@ -547,7 +522,7 @@ class _KeypointsExporter(_InstancesExporter):
         solitary_points = []
 
         for g_id, group in groupby(annotations, lambda a: a.group):
-            if not g_id or g_id and not cls.find_instance_anns(group):
+            if not g_id or (g_id and not cls.find_instance_anns(group)):
                 group = [a for a in group if a.type == AnnotationType.points]
                 solitary_points.extend(group)
 
@@ -573,9 +548,7 @@ class _KeypointsExporter(_InstancesExporter):
     def convert_instance(self, instance, item) -> Optional[Dict]:
         points_ann = find(
             item.annotations,
-            lambda x: x.type == AnnotationType.points
-            and instance[0].group
-            and x.group == instance[0].group,
+            lambda x: x.type == AnnotationType.points and instance[0].group and x.group == instance[0].group,
         )
         if not points_ann:
             return None
@@ -615,9 +588,7 @@ class _LabelsExporter(_TaskExporter):
                 try:
                     elem["score"] = float(ann.attributes["score"])
                 except Exception as e:
-                    log.warning(
-                        "Item '%s': failed to convert attribute " "'score': %e" % (item.id, e)
-                    )
+                    log.warning("Item '%s': failed to convert attribute 'score': %e" % (item.id, e))
             if self._context._allow_attributes:
                 attrs = self._convert_attributes(ann)
                 if attrs:
@@ -710,9 +681,7 @@ class CocoExporter(Exporter):
 
     @classmethod
     def build_cmdline_parser(cls, **kwargs):
-        kwargs[
-            "description"
-        ] = """
+        kwargs["description"] = """
             Segmentation mask modes ('--segmentation-mode'):|n
             - '{sm.guess.name}': guess the mode for each instance,|n
             |s|suse 'is_crowd' attribute as hint|n
@@ -735,9 +704,7 @@ class CocoExporter(Exporter):
             images. When enabled, the dataset images are saved into a single
             directory, otherwise they are saved in separate directories
             by subsets.
-            """.format(
-            sm=SegmentationMode
-        )
+            """.format(sm=SegmentationMode)
         parser = super().build_cmdline_parser(**kwargs)
         parser.add_argument(
             "--segmentation-mode",
@@ -761,20 +728,18 @@ class CocoExporter(Exporter):
             "--reindex",
             type=str_to_bool,
             default=True,
-            help="Assign new indices to images and annotations, "
-            "useful to avoid merge conflicts (default: %(default)s)",
+            help="Assign new indices to images and annotations, useful to avoid merge conflicts (default: %(default)s)",
         )
         parser.add_argument(
             "--merge-images",
             type=str_to_bool,
             default=False,
-            help="Save all images into a single " "directory (default: %(default)s)",
+            help="Save all images into a single directory (default: %(default)s)",
         )
         parser.add_argument(
             "--tasks",
             type=cls._split_tasks_string,
-            help="COCO task filter, comma-separated list of {%s} "
-            "(default: all)" % ", ".join(t.name for t in CocoTask),
+            help="COCO task filter, comma-separated list of {%s} (default: all)" % ", ".join(t.name for t in CocoTask),
         )
         return parser
 
@@ -820,11 +785,7 @@ class CocoExporter(Exporter):
             tasks = set()
         self._tasks = tasks
 
-        assert (
-            segmentation_mode is None
-            or isinstance(segmentation_mode, str)
-            or segmentation_mode in SegmentationMode
-        )
+        assert segmentation_mode is None or isinstance(segmentation_mode, str) or segmentation_mode in SegmentationMode
         if segmentation_mode is None:
             segmentation_mode = SegmentationMode.guess
         if isinstance(segmentation_mode, str):
@@ -848,14 +809,12 @@ class CocoExporter(Exporter):
         os.makedirs(self._ann_dir, exist_ok=True)
 
     def _make_segmentation_dir(self, subset_name):
-        self._segmentation_dir = osp.join(
-            self._save_dir, CocoPath.ANNOTATIONS_DIR, "panoptic_" + subset_name
-        )
+        self._segmentation_dir = osp.join(self._save_dir, CocoPath.ANNOTATIONS_DIR, "panoptic_" + subset_name)
         os.makedirs(self._segmentation_dir, exist_ok=True)
 
     def _make_task_converter(self, task: CocoTask, subset: str) -> _TaskExporter:
         if task not in self._TASK_CONVERTER:
-            raise NotImplementedError()
+            raise NotImplementedError
         return self._TASK_CONVERTER[task](
             context=self,
             subset=subset,
@@ -865,10 +824,7 @@ class CocoExporter(Exporter):
         )
 
     def _make_task_converters(self, subset: str):
-        return {
-            task: self._make_task_converter(task, subset)
-            for task in (self._tasks or self._TASK_CONVERTER)
-        }
+        return {task: self._make_task_converter(task, subset) for task in (self._tasks or self._TASK_CONVERTER)}
 
     def _get_image_id(self, item):
         image_id = self._image_ids.get(item.id)
@@ -904,9 +860,7 @@ class CocoExporter(Exporter):
                         if item.media:
                             self._save_image(
                                 item,
-                                subdir=osp.join(
-                                    self._images_dir, "" if self._merge_images else subset_name
-                                ),
+                                subdir=osp.join(self._images_dir, "" if self._merge_images else subset_name),
                             )
                         else:
                             log.debug("Item '%s' has no image info", item.id)
@@ -926,10 +880,9 @@ class CocoExporter(Exporter):
                 if task_conv.is_empty() and (not self._tasks or self._patch):
                     if task == CocoTask.panoptic:
                         os.rmdir(self._segmentation_dir)
-                    if self._patch:
-                        if osp.isfile(ann_file):
-                            # Remove subsets that became empty
-                            os.remove(ann_file)
+                    if self._patch and osp.isfile(ann_file):
+                        # Remove subsets that became empty
+                        os.remove(ann_file)
                     continue
 
                 task_conv.write(ann_file)

@@ -1,8 +1,6 @@
 # Copyright (C) 2023 Intel Corporation
 #
 # SPDX-License-Identifier: MIT
-import contextlib
-import io
 import os.path as osp
 
 import numpy as np
@@ -12,7 +10,6 @@ from datumaro.components.annotation import AnnotationType, Bbox, LabelCategories
 from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image
-
 from tests.utils.test_utils import IGNORE_ALL, TestCaseHelper, compare_datasets
 from tests.utils.test_utils import run_datum as run
 
@@ -28,9 +25,7 @@ def fxt_dataset():
             DatasetItem(
                 id=f"img_{item_id}",
                 subset=subset,
-                media=Image.from_numpy(
-                    data=np.random.randint(0, 255, size=(h, w, 3), dtype=np.uint8), ext=".png"
-                ),
+                media=Image.from_numpy(data=np.random.randint(0, 255, size=(h, w, 3), dtype=np.uint8), ext=".png"),
                 annotations=[
                     Bbox(
                         *np.random.randint(0, h, size=(4,)).tolist(),
@@ -45,20 +40,12 @@ def fxt_dataset():
             for subset in ["Test", "Train", "Validation"]
             for item_id in range(n_items)
         ],
-        categories={
-            AnnotationType.label: LabelCategories.from_iterable(
-                [f"label_{idx}" for idx in range(n_labels)]
-            )
-        },
+        categories={AnnotationType.label: LabelCategories.from_iterable([f"label_{idx}" for idx in range(n_labels)])},
     )
 
 
-@pytest.mark.parametrize(
-    "input_format", ["coco", "yolo", "datumaro", "datumaro_binary"], ids=lambda x: f"[if:{x}]"
-)
-@pytest.mark.parametrize(
-    "output_format", ["coco", "yolo", "datumaro", "datumaro_binary"], ids=lambda x: f"[of:{x}]"
-)
+@pytest.mark.parametrize("input_format", ["coco", "yolo", "datumaro", "datumaro_binary"], ids=lambda x: f"[if:{x}]")
+@pytest.mark.parametrize("output_format", ["coco", "yolo", "datumaro", "datumaro_binary"], ids=lambda x: f"[of:{x}]")
 @pytest.mark.parametrize("give_input_format", [True, False])
 def test_convert_object_detection(
     fxt_dataset: Dataset,
@@ -101,11 +88,7 @@ def test_convert_object_detection(
 
     if not give_input_format:
         # If no input_format => detect msg
-        matched = [
-            msg
-            for msg in caplog.messages
-            if msg == f"Source dataset format detected as {input_format}"
-        ]
+        matched = [msg for msg in caplog.messages if msg == f"Source dataset format detected as {input_format}"]
         assert len(matched) == 1
 
     # All conversions now succeed
@@ -115,10 +98,7 @@ def test_convert_object_detection(
     # because they do not exist in their schemas.
     # Therefore, we should ignore them when comparison.
     data_formats_forcing_reindex = {"coco", "yolo"}
-    if (
-        input_format in data_formats_forcing_reindex
-        or output_format in data_formats_forcing_reindex
-    ):
+    if input_format in data_formats_forcing_reindex or output_format in data_formats_forcing_reindex:
         ignore_ann_id, ignore_ann_group = True, True
     else:
         ignore_ann_id, ignore_ann_group = False, False

@@ -74,8 +74,7 @@ def get_lazy_plugin(
             module_name = ".".join(splits[:-1])
             class_name = splits[-1]
             module = import_module(module_name)
-            plugin_cls = getattr(module, class_name)
-            return plugin_cls
+            return getattr(module, class_name)
 
     return LazyPluginImpl
 

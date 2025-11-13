@@ -4,20 +4,21 @@
 
 import os.path as osp
 import struct
-from io import BufferedReader
 from multiprocessing.pool import AsyncResult, Pool
-from typing import Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.errors import DatasetImportError
 from datumaro.components.importer import ImportContext
 from datumaro.components.media import Image, MediaElement, MediaType, PointCloud, Video, VideoFrame
+from datumaro.plugins.data_formats.datumaro.base import DatumaroBase, JsonReader
 from datumaro.plugins.data_formats.datumaro_binary.format import DatumaroBinaryPath
 from datumaro.plugins.data_formats.datumaro_binary.mapper import DictMapper
 from datumaro.plugins.data_formats.datumaro_binary.mapper.common import IntListMapper
 from datumaro.plugins.data_formats.datumaro_binary.mapper.dataset_item import DatasetItemMapper
 
-from ..datumaro.base import DatumaroBase, JsonReader
+if TYPE_CHECKING:
+    from io import BufferedReader
 
 
 class DatumaroBinaryBase(DatumaroBase):
@@ -47,8 +48,7 @@ class DatumaroBinaryBase(DatumaroBase):
         with open(path, "rb") as fp:
             self._fp = fp
             self._check_signature()
-            dm_format_version = self._read_version()
-        return dm_format_version
+            return self._read_version()
 
     def _load_impl(self, path: str) -> None:
         """Actual implementation of loading Datumaro binary format."""
@@ -74,9 +74,7 @@ class DatumaroBinaryBase(DatumaroBase):
         _bytes = self._fp.read(struct.unpack("I", len_byte)[0])
 
         if _bytes != b"":
-            raise DatasetImportError(
-                "Encrypted files are no longer supported since Datumaro 1.12.0."
-            )
+            raise DatasetImportError("Encrypted files are no longer supported since Datumaro 1.12.0.")
 
     def _read_header(self):
         len_byte = self._fp.read(4)
@@ -131,9 +129,7 @@ class DatumaroBinaryBase(DatumaroBase):
             for ann in item.annotations:
                 self._ann_types.add(ann.type)
 
-    def _read_items_mp(
-        self, blob_sizes: List[int], media_path_prefix: Dict[MediaType, str]
-    ) -> List[DatasetItem]:
+    def _read_items_mp(self, blob_sizes: List[int], media_path_prefix: Dict[MediaType, str]) -> List[DatasetItem]:
         async_results: List[AsyncResult] = []
 
         with Pool(processes=self._num_workers) as pool:
@@ -155,12 +151,8 @@ class DatumaroBinaryBase(DatumaroBase):
                 for item in async_result.get(timeout=DatumaroBinaryPath.MP_TIMEOUT)
             ]
 
-    def _read_items_sp(
-        self, blob_sizes: List[int], media_path_prefix: Dict[MediaType, str]
-    ) -> List[DatasetItem]:
-        items_list = [
-            self._read_blob(self._fp.read(blob_size), media_path_prefix) for blob_size in blob_sizes
-        ]
+    def _read_items_sp(self, blob_sizes: List[int], media_path_prefix: Dict[MediaType, str]) -> List[DatasetItem]:
+        items_list = [self._read_blob(self._fp.read(blob_size), media_path_prefix) for blob_size in blob_sizes]
 
         return [item for items in items_list for item in items]
 

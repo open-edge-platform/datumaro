@@ -21,13 +21,11 @@ class DatumaroImporter(Importer):
         cls,
         context: FormatDetectionContext,
     ) -> Optional[FormatDetectionConfidence]:
-        annot_file = context.require_file(
-            osp.join(cls.PATH_CLS.ANNOTATIONS_DIR, "*" + cls.PATH_CLS.ANNOTATION_EXT)
-        )
+        annot_file = context.require_file(osp.join(cls.PATH_CLS.ANNOTATIONS_DIR, "*" + cls.PATH_CLS.ANNOTATION_EXT))
 
         with context.probe_text_file(
             annot_file,
-            'must be a JSON object with "categories" ' 'and "items" keys',
+            'must be a JSON object with "categories" and "items" keys',
         ):
             fpath = osp.join(context.root_path, annot_file)
             page_mapper = JsonSectionPageMapper(fpath)

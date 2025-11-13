@@ -3,14 +3,7 @@ from unittest import TestCase
 import numpy as np
 
 import datumaro.plugins.splitter as splitter
-from datumaro.components.annotation import (
-    AnnotationType,
-    Bbox,
-    Label,
-    LabelCategories,
-    Mask,
-    Polygon,
-)
+from datumaro.components.annotation import AnnotationType, Bbox, Label, LabelCategories, Mask, Polygon
 from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image
@@ -66,8 +59,7 @@ class SplitterTest(TestCase):
                         )
                     )
         categories = {AnnotationType.label: label_cat}
-        dataset = Dataset.from_iterable(iterable, categories=categories)
-        return dataset
+        return Dataset.from_iterable(iterable, categories=categories)
 
     def test_split_for_classification_multi_class_no_attr(self):
         config = {
@@ -288,10 +280,9 @@ class SplitterTest(TestCase):
                 splits = [("train", 0.5), ("test", 0.5), ("val", 0.5)]
                 splitter.Split(source, task, splits)
 
-        with self.subTest("duplicated subset name"):
-            with self.assertRaisesRegex(Exception, "duplicated"):
-                splits = [("train", 0.5), ("train", 0.2), ("test", 0.3)]
-                splitter.Split(source, task, splits)
+        with self.subTest("duplicated subset name"), self.assertRaisesRegex(Exception, "duplicated"):
+            splits = [("train", 0.5), ("train", 0.2), ("test", 0.3)]
+            splitter.Split(source, task, splits)
 
     def test_split_for_reidentification(self):
         """
@@ -450,15 +441,13 @@ class SplitterTest(TestCase):
                 splits = [("train", 0.5), ("val", 0.2), ("test", 0.3)]
                 actual = splitter.Split(source, task, splits, -query)
 
-        with self.subTest("duplicated subset name"):
-            with self.assertRaisesRegex(Exception, "duplicated"):
-                splits = [("train", 0.5), ("train", 0.2), ("test", 0.3)]
-                splitter.Split(source, task, splits, query)
+        with self.subTest("duplicated subset name"), self.assertRaisesRegex(Exception, "duplicated"):
+            splits = [("train", 0.5), ("train", 0.2), ("test", 0.3)]
+            splitter.Split(source, task, splits, query)
 
-        with self.subTest("wrong subset name"):
-            with self.assertRaisesRegex(Exception, "Subset name"):
-                splits = [("_train", 0.5), ("val", 0.2), ("test", 0.3)]
-                splitter.Split(source, task, splits, query)
+        with self.subTest("wrong subset name"), self.assertRaisesRegex(Exception, "Subset name"):
+            splits = [("_train", 0.5), ("val", 0.2), ("test", 0.3)]
+            splitter.Split(source, task, splits, query)
 
         with self.subTest("wrong attribute name for person id"):
             splits = [("train", 0.5), ("val", 0.2), ("test", 0.3)]
@@ -618,8 +607,7 @@ class SplitterTest(TestCase):
             "widerface": append_bbox_widerface,
         }
 
-        func = functions.get(dataset_type, append_bbox_cvat)
-        return func
+        return functions.get(dataset_type, append_bbox_cvat)
 
     @staticmethod
     def _get_append_mask(dataset_type):
@@ -683,8 +671,7 @@ class SplitterTest(TestCase):
             "mot": append_mask_mot,
         }
 
-        func = functions.get(dataset_type, append_mask_coco)
-        return func
+        return functions.get(dataset_type, append_mask_coco)
 
     @staticmethod
     def _get_append_polygon(dataset_type):
@@ -756,8 +743,7 @@ class SplitterTest(TestCase):
             "labelme": append_polygon_labelme,
         }
 
-        func = functions.get(dataset_type, append_polygon_coco)
-        return func
+        return functions.get(dataset_type, append_polygon_coco)
 
     def test_split_for_detection(self):
         dtypes = ["coco", "voc", "yolo", "cvat", "labelme", "mot", "widerface"]
@@ -842,10 +828,9 @@ class SplitterTest(TestCase):
                 splits = [("train", 0.5), ("test", 0.5), ("val", 0.5)]
                 splitter.Split(source, task, splits)
 
-        with self.subTest("duplicated subset name"):
-            with self.assertRaisesRegex(Exception, "duplicated"):
-                splits = [("train", 0.5), ("train", 0.2), ("test", 0.3)]
-                splitter.Split(source, task, splits)
+        with self.subTest("duplicated subset name"), self.assertRaisesRegex(Exception, "duplicated"):
+            splits = [("train", 0.5), ("train", 0.2), ("test", 0.3)]
+            splitter.Split(source, task, splits)
 
     def test_no_subset_name_and_count_restriction(self):
         splits = [
@@ -1070,10 +1055,9 @@ class SplitterTest(TestCase):
                     splits = [("train", 0.5), ("test", 0.5), ("val", 0.5)]
                     splitter.Split(source, task, splits)
 
-            with self.subTest("duplicated subset name"):
-                with self.assertRaisesRegex(Exception, "duplicated"):
-                    splits = [("train", 0.5), ("train", 0.2), ("test", 0.3)]
-                    splitter.Split(source, task, splits)
+            with self.subTest("duplicated subset name"), self.assertRaisesRegex(Exception, "duplicated"):
+                splits = [("train", 0.5), ("train", 0.2), ("test", 0.3)]
+                splitter.Split(source, task, splits)
 
         with self.subTest("polygon annotation"):
             source, _ = self._generate_detection_segmentation_dataset(
@@ -1092,7 +1076,6 @@ class SplitterTest(TestCase):
                     splits = [("train", 0.5), ("test", 0.5), ("val", 0.5)]
                     splitter.Split(source, task, splits)
 
-            with self.subTest("duplicated subset name"):
-                with self.assertRaisesRegex(Exception, "duplicated"):
-                    splits = [("train", 0.5), ("train", 0.2), ("test", 0.3)]
-                    splitter.Split(source, task, splits)
+            with self.subTest("duplicated subset name"), self.assertRaisesRegex(Exception, "duplicated"):
+                splits = [("train", 0.5), ("train", 0.2), ("test", 0.3)]
+                splitter.Split(source, task, splits)

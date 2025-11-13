@@ -11,7 +11,6 @@ from datumaro.components.annotation import AnnotationType, TabularCategories
 from datumaro.components.dataset import Dataset
 from datumaro.components.environment import Environment
 from datumaro.plugins.data_formats.tabular import *
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, compare_datasets
 
@@ -79,9 +78,7 @@ class TabularImporterTest:
         for idx, item in enumerate(train):
             assert idx == item.media.index
             assert len(item.annotations) == 1
-            assert (
-                item.media.data()["breed_category"] == item.annotations[0].values["breed_category"]
-            )
+            assert item.media.data()["breed_category"] == item.annotations[0].values["breed_category"]
             assert item.media.data()["pet_category"] == item.annotations[0].values["pet_category"]
 
         for idx, item in enumerate(test):
@@ -90,14 +87,12 @@ class TabularImporterTest:
 
     def test_can_detect_tabular(self, fxt_tabular_root: str) -> None:
         detected_formats = Environment().detect_dataset(fxt_tabular_root)
-        assert [TabularDataImporter.NAME] == detected_formats
+        assert detected_formats == [TabularDataImporter.NAME]
         with TestDir() as test_dir:
             detected_formats = Environment().detect_dataset(test_dir)
             assert TabularDataImporter.NAME not in detected_formats
 
-    @pytest.mark.parametrize(
-        "fxt,target", [("fxt_electricity", None), ("fxt_buddy", "fxt_buddy_target")]
-    )
+    @pytest.mark.parametrize("fxt,target", [("fxt_electricity", None), ("fxt_buddy", "fxt_buddy_target")])
     def test_can_export_tabular(self, fxt: str, target, request) -> None:
         dataset: Type[Dataset] = request.getfixturevalue(fxt)
         if isinstance(target, str):
@@ -135,10 +130,7 @@ class TabularImporterTest:
         path = osp.join(fxt_tabular_root, "adopt-a-buddy")
         dataset = Dataset.import_from(path, "tabular", target=target)
 
-        assert (
-            list(next(iter(dataset.get_subset("train"))).media.data().keys())
-            == expected_media_data_keys
-        )
+        assert list(next(iter(dataset.get_subset("train"))).media.data().keys()) == expected_media_data_keys
         assert [
             (cat.name, cat.dtype) for cat in dataset.categories()[AnnotationType.tabular].items
         ] == expected_categories_keys
@@ -154,10 +146,7 @@ class TabularImporterTest:
         path = osp.join(fxt_tabular_root, "adopt-a-buddy")
         dataset = Dataset.import_from(path, "tabular", target=target)
 
-        included_lables_result = [
-            False if len(cat.labels) == 0 else True
-            for cat in dataset.categories()[AnnotationType.tabular].items
-        ]
+        included_lables_result = [len(cat.labels) != 0 for cat in dataset.categories()[AnnotationType.tabular].items]
 
         assert included_lables_result == expected_included_labels
 

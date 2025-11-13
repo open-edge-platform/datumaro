@@ -179,7 +179,7 @@ def replace(app, what, name, obj, options, lines):
             for b in exclude_plugins_name:
                 if a.lower() == b:
                     names.pop(n)
-    if all(1 == len(a) for a in names):
+    if all(len(a) == 1 for a in names):
         prog_name = "".join(names).lower()
     else:
         prog_name = "_".join(names).lower()
@@ -188,9 +188,8 @@ def replace(app, what, name, obj, options, lines):
             prog = str("%(prog)s")
             lines[i] = lines[i].replace(prog, prog_name)
             lines[i] = lines[i].replace("'frame_'", r"'frame\_'")  # fix unwanted link
-            if "'|n'" not in lines[i]:
-                if "'|s'" not in lines[i]:
-                    lines[i] = lines[i].replace("|n", "\n").replace("|s", " ")
+            if "'|n'" not in lines[i] and "'|s'" not in lines[i]:
+                lines[i] = lines[i].replace("|n", "\n").replace("|s", " ")
 
 
 def setup(app):

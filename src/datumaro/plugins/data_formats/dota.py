@@ -11,12 +11,7 @@ from typing import Any, Dict, List, Optional, Type, TypeVar
 
 from datumaro.components.annotation import Annotation, AnnotationType, LabelCategories, RotatedBbox
 from datumaro.components.dataset_base import DEFAULT_SUBSET_NAME, DatasetItem, SubsetBase
-from datumaro.components.errors import (
-    DatasetExportError,
-    DatasetImportError,
-    InvalidAnnotationError,
-    MediaTypeError,
-)
+from datumaro.components.errors import DatasetExportError, DatasetImportError, InvalidAnnotationError, MediaTypeError
 from datumaro.components.exporter import Exporter
 from datumaro.components.format_detection import FormatDetectionConfidence, FormatDetectionContext
 from datumaro.components.importer import ImportContext, Importer
@@ -65,11 +60,7 @@ class DotaBase(SubsetBase):
     def _load_categories(self, path):
         label_names = []
         for ann_file in os.listdir(path):
-            label_names.extend(
-                self._parse_annotations(
-                    ann_file=osp.join(self._path, ann_file), only_label_names=True
-                )
-            )
+            label_names.extend(self._parse_annotations(ann_file=osp.join(self._path, ann_file), only_label_names=True))
 
         label_categories = LabelCategories()
         for label_name in sorted(set(label_names)):
@@ -82,9 +73,7 @@ class DotaBase(SubsetBase):
         for ann_file in os.listdir(path):
             fname = osp.splitext(ann_file)[0]
             img = Image.from_file(path=self._img_files[fname])
-            anns = self._parse_annotations(
-                ann_file=osp.join(self._path, ann_file), only_label_names=False
-            )
+            anns = self._parse_annotations(ann_file=osp.join(self._path, ann_file), only_label_names=False)
             items.append(DatasetItem(id=fname, subset=self._subset, media=img, annotations=anns))
         return items
 
@@ -130,9 +119,7 @@ class DotaBase(SubsetBase):
             difficulty = self._parse_field(parts[-1], int, "difficulty")
 
             annotations.append(
-                RotatedBbox.from_rectangle(
-                    coords, label=label_id, attributes={"difficulty": difficulty}
-                )
+                RotatedBbox.from_rectangle(coords, label=label_id, attributes={"difficulty": difficulty})
             )
             self._ann_types.add(AnnotationType.rotated_bbox)
 
@@ -143,9 +130,7 @@ class DotaBase(SubsetBase):
         try:
             return desired_type(value)
         except Exception as e:
-            raise InvalidAnnotationError(
-                f"Can't parse {field_name} from '{value}'. Expected {desired_type}"
-            ) from e
+            raise InvalidAnnotationError(f"Can't parse {field_name} from '{value}'. Expected {desired_type}") from e
 
 
 class DotaImporter(Importer):
@@ -221,9 +206,7 @@ class DotaExporter(Exporter):
     def _export_media(self, item: DatasetItem, subset_dir: str) -> str:
         try:
             if not item.media or not (item.media.has_data or item.media.has_size):
-                raise DatasetExportError(
-                    "Failed to export item '%s': " "item has no image info" % item.id
-                )
+                raise DatasetExportError("Failed to export item '%s': item has no image info" % item.id)
 
             image_name = self._make_image_filename(item)
             image_fpath = osp.join(subset_dir, DotaFormat.IMAGE_DIR, image_name)
@@ -234,9 +217,7 @@ class DotaExporter(Exporter):
         except Exception as e:
             self._ctx.error_policy.report_item_error(e, item_id=(item.id, item.subset))
 
-    def _export_item_annotation(
-        self, item: DatasetItem, subset_dir: str, label_categories: LabelCategories
-    ) -> None:
+    def _export_item_annotation(self, item: DatasetItem, subset_dir: str, label_categories: LabelCategories) -> None:
         try:
             annotations = ""
             for bbox in item.annotations:

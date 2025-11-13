@@ -53,11 +53,7 @@ class _SuperviselyPointCloudDumper:
         img_dir = self._related_images_dir
 
         for idx, img in enumerate(item.media.extra_images):
-            name = (
-                osp.splitext(osp.basename(img.path))[0]
-                if hasattr(img, "path")
-                else f"extra_image_{idx}"
-            )
+            name = osp.splitext(osp.basename(img.path))[0] if hasattr(img, "path") else f"extra_image_{idx}"
             img_path = osp.join(img_dir, item.id + "_pcd", name + self._find_image_ext(img))
             if img.has_data:
                 img.save(img_path)
@@ -84,9 +80,7 @@ class _SuperviselyPointCloudDumper:
             tag["classes"] = list(tag["classes"])
         self._meta_data["tags"] = list(self._tag_meta.values())
 
-        dump_json_file(
-            osp.join(self._save_dir, PointCloudPath.META_FILE), self._meta_data, indent=True
-        )
+        dump_json_file(osp.join(self._save_dir, PointCloudPath.META_FILE), self._meta_data, indent=True)
 
     def _write_key_id(self):
         objects = self._objects
@@ -94,9 +88,7 @@ class _SuperviselyPointCloudDumper:
 
         key_id_data["objects"] = {v: k for k, v in objects.items()}
 
-        dump_json_file(
-            osp.join(self._save_dir, PointCloudPath.KEY_ID_FILE), key_id_data, indent=True
-        )
+        dump_json_file(osp.join(self._save_dir, PointCloudPath.KEY_ID_FILE), key_id_data, indent=True)
 
     def _write_item_annotations(self, item):
         key_id_data = self._key_id_data
@@ -108,9 +100,7 @@ class _SuperviselyPointCloudDumper:
         item_key = str(uuid.uuid4())
         key_id_data["videos"][item_key] = item_id
 
-        item_user_info = {
-            k: item.attributes.get(k, default_v) for k, default_v in self._default_user_info.items()
-        }
+        item_user_info = {k: item.attributes.get(k, default_v) for k, default_v in self._default_user_info.items()}
 
         item_ann_data = {
             "description": item.attributes.get("description", ""),
@@ -144,8 +134,7 @@ class _SuperviselyPointCloudDumper:
             elif tag["value_type"] != value_type:
                 raise DatasetExportError(
                     "Item %s: mismatching "
-                    "value types for tag %s: %s vs %s"
-                    % (item.id, attr_name, tag["value_type"], value_type)
+                    "value types for tag %s: %s vs %s" % (item.id, attr_name, tag["value_type"], value_type)
                 )
 
             tag_key = str(uuid.uuid4())
@@ -171,7 +160,7 @@ class _SuperviselyPointCloudDumper:
 
         image_objects = set()
         for ann in item.annotations:
-            if not ann.type == AnnotationType.cuboid_3d:
+            if ann.type != AnnotationType.cuboid_3d:
                 continue
 
             obj_id = cast(ann.attributes.get("track_id", ann.id), int)
@@ -184,9 +173,7 @@ class _SuperviselyPointCloudDumper:
             object_key = objects.setdefault(obj_id, str(uuid.uuid4()))
             object_label = label_cat[ann.label].name
             if obj_id not in image_objects:
-                ann_user_info = {
-                    k: ann.attributes.get(k, default_v) for k, default_v in item_user_info.items()
-                }
+                ann_user_info = {k: ann.attributes.get(k, default_v) for k, default_v in item_user_info.items()}
 
                 obj_ann_data = {
                     "key": object_key,
@@ -230,8 +217,7 @@ class _SuperviselyPointCloudDumper:
                     elif tag["value_type"] != value_type:
                         raise DatasetExportError(
                             "Item %s: mismatching "
-                            "value types for tag %s: %s vs %s"
-                            % (item.id, attr_name, tag["value_type"], value_type)
+                            "value types for tag %s: %s vs %s" % (item.id, attr_name, tag["value_type"], value_type)
                         )
 
                     tag_key = str(uuid.uuid4())
@@ -402,7 +388,7 @@ class SuperviselyPointCloudExporter(Exporter):
         if self._extractor.media_type() and self._extractor.media_type() is not PointCloud:
             raise MediaTypeError("Media type is not an image")
 
-        if 1 < len(self._extractor.subsets()):
+        if len(self._extractor.subsets()) > 1:
             log.warning(
                 "Supervisely pointcloud format supports only a single "
                 "subset. Subset information will be ignored on export."
@@ -435,9 +421,7 @@ class SuperviselyPointCloudExporter(Exporter):
             if osp.isfile(ann_path):
                 os.remove(ann_path)
 
-            pcd_path = osp.join(
-                save_dir, PointCloudPath.BASE_DIR, PointCloudPath.POINT_CLOUD_DIR, pcd_name
-            )
+            pcd_path = osp.join(save_dir, PointCloudPath.BASE_DIR, PointCloudPath.POINT_CLOUD_DIR, pcd_name)
             if osp.isfile(pcd_path):
                 os.remove(pcd_path)
 

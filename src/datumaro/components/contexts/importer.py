@@ -27,8 +27,7 @@ class ImportErrorPolicy:
             ie = ItemImportError(item_id)
             ie.__cause__ = error
             return self._handle_item_error(ie)
-        else:
-            raise error
+        raise error
 
     def report_annotation_error(self, error: Exception, *, item_id: Tuple[str, str]) -> None:
         """
@@ -40,8 +39,7 @@ class ImportErrorPolicy:
             ie = AnnotationImportError(item_id)
             ie.__cause__ = error
             return self._handle_annotation_error(ie)
-        else:
-            raise error
+        raise error
 
     def _handle_item_error(self, error: ItemImportError) -> None:
         """This function must either call fail() or return."""

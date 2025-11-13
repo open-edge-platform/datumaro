@@ -23,13 +23,11 @@ from datumaro.components.media import Image
 from datumaro.plugins.data_formats.cvat.base import CvatImporter
 from datumaro.plugins.data_formats.cvat.exporter import CvatExporter
 from datumaro.plugins.transforms import ProjectLabels
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, check_save_and_load, compare_datasets
 
 DUMMY_IMAGE_DATASET_DIRS = [
-    get_test_asset_path("cvat_dataset", "for_images", export_type)
-    for export_type in ["export_project", "export_task"]
+    get_test_asset_path("cvat_dataset", "for_images", export_type) for export_type in ["export_project", "export_task"]
 ]
 
 DUMMY_VIDEO_DATASET_DIR = get_test_asset_path("cvat_dataset", "for_video")
@@ -271,9 +269,7 @@ class CvatImporterTest(TestCase):
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    [["klhg", "", {"hgl"}], ["z U k"], ["II"]]
-                ),
+                AnnotationType.label: LabelCategories.from_iterable([["klhg", "", {"hgl"}], ["z U k"], ["II"]]),
             },
         )
 
@@ -368,9 +364,7 @@ class CvatExporterTest(TestCase):
             categories={AnnotationType.label: src_label_cat},
         )
 
-        target_label_cat = LabelCategories(
-            attributes={"occluded"}
-        )  # unable to represent a common attribute
+        target_label_cat = LabelCategories(attributes={"occluded"})  # unable to represent a common attribute
         for i in range(10):
             target_label_cat.add(str(i), attributes={"common"})
         target_label_cat.items[2].attributes.update(["a1", "a2", "empty", "common"])
@@ -402,9 +396,7 @@ class CvatExporterTest(TestCase):
                     media=Image.from_numpy(data=np.zeros((5, 10, 3))),
                     subset="s1",
                     annotations=[
-                        PolyLine(
-                            [0, 0, 4, 0, 4, 4], label=3, group=4, attributes={"occluded": False}
-                        ),
+                        PolyLine([0, 0, 4, 0, 4, 4], label=3, group=4, attributes={"occluded": False}),
                         Bbox(5, 0, 1, 9, label=3, group=4, attributes={"occluded": False}),
                     ],
                     attributes={"frame": 1},
@@ -485,9 +477,7 @@ class CvatExporterTest(TestCase):
                     media=Image.from_numpy(data=np.zeros((5, 10, 3))),
                     annotations=[
                         Label(0, attributes={"x": "4", "y": "2"}),
-                        Bbox(
-                            1, 2, 3, 4, label=0, attributes={"x": "1", "y": "1", "occluded": False}
-                        ),
+                        Bbox(1, 2, 3, 4, label=0, attributes={"x": "1", "y": "1", "occluded": False}),
                     ],
                     attributes={"frame": 0},
                 ),
@@ -515,9 +505,7 @@ class CvatExporterTest(TestCase):
 
         target_dataset = Dataset.from_iterable(
             [
-                DatasetItem(
-                    id="1", media=Image.from_numpy(data=np.ones((4, 2, 3))), attributes={"frame": 0}
-                ),
+                DatasetItem(id="1", media=Image.from_numpy(data=np.ones((4, 2, 3))), attributes={"frame": 0}),
                 DatasetItem(
                     id="subdir1/1",
                     media=Image.from_numpy(data=np.ones((2, 6, 3))),

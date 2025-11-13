@@ -1,15 +1,12 @@
 import os.path as osp
 from unittest import TestCase
 
-import numpy as np
-
 from datumaro.components.annotation import AnnotationType, Bbox, LabelCategories
 from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.environment import Environment
-from datumaro.components.media import Image, PointCloud
+from datumaro.components.media import Image
 from datumaro.plugins.data_formats.kitti_3d.importer import Kitti3dImporter
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import compare_datasets_3d
 
@@ -178,14 +175,8 @@ class Kitti3DImporterTest(TestCase):
                             },
                         ),
                     ],
-                    media=Image.from_file(
-                        path=osp.join(DUMMY_SUBSET_DATASET_DIR, "image_2", "train", "000000.png")
-                    ),
-                    attributes={
-                        "calib_path": osp.join(
-                            DUMMY_SUBSET_DATASET_DIR, "calib", "train", "000000.txt"
-                        )
-                    },
+                    media=Image.from_file(path=osp.join(DUMMY_SUBSET_DATASET_DIR, "image_2", "train", "000000.png")),
+                    attributes={"calib_path": osp.join(DUMMY_SUBSET_DATASET_DIR, "calib", "train", "000000.txt")},
                 ),
                 DatasetItem(
                     id="000001",
@@ -224,14 +215,8 @@ class Kitti3DImporterTest(TestCase):
                             },
                         ),
                     ],
-                    media=Image.from_file(
-                        path=osp.join(DUMMY_SUBSET_DATASET_DIR, "image_2", "val", "000001.png")
-                    ),
-                    attributes={
-                        "calib_path": osp.join(
-                            DUMMY_SUBSET_DATASET_DIR, "calib", "val", "000001.txt"
-                        )
-                    },
+                    media=Image.from_file(path=osp.join(DUMMY_SUBSET_DATASET_DIR, "image_2", "val", "000001.png")),
+                    attributes={"calib_path": osp.join(DUMMY_SUBSET_DATASET_DIR, "calib", "val", "000001.txt")},
                 ),
                 DatasetItem(
                     id="000002",
@@ -270,14 +255,8 @@ class Kitti3DImporterTest(TestCase):
                             },
                         ),
                     ],
-                    media=Image.from_file(
-                        path=osp.join(DUMMY_SUBSET_DATASET_DIR, "image_2", "test", "000002.png")
-                    ),
-                    attributes={
-                        "calib_path": osp.join(
-                            DUMMY_SUBSET_DATASET_DIR, "calib", "test", "000002.txt"
-                        )
-                    },
+                    media=Image.from_file(path=osp.join(DUMMY_SUBSET_DATASET_DIR, "image_2", "test", "000002.png")),
+                    attributes={"calib_path": osp.join(DUMMY_SUBSET_DATASET_DIR, "calib", "test", "000002.txt")},
                 ),
             ],
             categories={AnnotationType.label: expected_label_cat},

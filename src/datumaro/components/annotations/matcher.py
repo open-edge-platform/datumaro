@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: MIT
 
+import functools
+import operator
 from typing import List, Optional, Union
 
 import numpy as np
@@ -10,30 +12,23 @@ from attr import attrib, attrs
 from datumaro.components.abstracts import IMergerContext
 from datumaro.components.abstracts.merger import IMatcherContext
 from datumaro.components.annotation import Annotation, Points
-from datumaro.util.annotation_util import (
-    OKS,
-    approximate_line,
-    bbox_iou,
-    max_bbox,
-    mean_bbox,
-    segment_iou,
-)
+from datumaro.util.annotation_util import OKS, approximate_line, bbox_iou, max_bbox, mean_bbox, segment_iou
 
 __all__ = [
-    "match_segments_pair",
-    "match_segments_more_than_pair",
     "AnnotationMatcher",
-    "LabelMatcher",
-    "ShapeMatcher",
     "BboxMatcher",
-    "PolygonMatcher",
-    "MaskMatcher",
-    "PointsMatcher",
-    "LineMatcher",
     "CaptionsMatcher",
+    "Cuboid2DMatcher",
     "Cuboid3dMatcher",
     "ImageAnnotationMatcher",
-    "Cuboid2DMatcher",
+    "LabelMatcher",
+    "LineMatcher",
+    "MaskMatcher",
+    "PointsMatcher",
+    "PolygonMatcher",
+    "ShapeMatcher",
+    "match_segments_more_than_pair",
+    "match_segments_pair",
 ]
 
 
@@ -73,7 +68,7 @@ def match_segments_pair(
                 [not label_matcher(a_segm, b_segm) for b_segm in b_segms], kind="stable"
             )  # prioritize those with same label, keep score order
             for b_idx in b_indices:
-                if 0 <= b_matches[b_idx]:  # assign a_segm with max conf
+                if b_matches[b_idx] >= 0:  # assign a_segm with max conf
                     continue
                 d = distances[a_idx, b_idx]
                 if d < dist_thresh or d <= max_dist:
@@ -157,7 +152,7 @@ class AnnotationMatcher:
     _context: Optional[Union[IMatcherContext, IMergerContext]] = attrib(default=None)
 
     def match_annotations(self, sources):
-        raise NotImplementedError()
+        raise NotImplementedError
 
 
 @attrs
@@ -168,7 +163,7 @@ class LabelMatcher(AnnotationMatcher):
         return a_label == b_label
 
     def match_annotations(self, sources):
-        return [sum(sources, [])]
+        return [functools.reduce(operator.iadd, sources, [])]
 
 
 @attrs(kw_only=True)
@@ -237,7 +232,7 @@ class ShapeMatcher(AnnotationMatcher):
                 for i in adjacent[c]:
                     if i in visited:
                         continue
-                    if 0 < cluster_dist and not _is_close_enough(cluster, i):
+                    if cluster_dist > 0 and not _is_close_enough(cluster, i):
                         continue
                     if _has_same_source(cluster, i):
                         continue
@@ -335,25 +330,25 @@ class LineMatcher(ShapeMatcher):
 @attrs
 class CaptionsMatcher(AnnotationMatcher):
     def match_annotations(self, sources):
-        raise NotImplementedError()
+        raise NotImplementedError
 
 
 @attrs
 class Cuboid3dMatcher(ShapeMatcher):
     def distance(self, a, b):
-        raise NotImplementedError()
+        raise NotImplementedError
 
 
 @attrs
 class ImageAnnotationMatcher(AnnotationMatcher):
     def match_annotations(self, sources):
-        raise NotImplementedError()
+        raise NotImplementedError
 
 
 @attrs
 class TabularMatcher(AnnotationMatcher):
     def match_annotations(self, sources):
-        raise NotImplementedError()
+        raise NotImplementedError
 
 
 @attrs

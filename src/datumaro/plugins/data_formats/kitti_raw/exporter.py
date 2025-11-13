@@ -69,9 +69,7 @@ class _XmlAnnotationWriter:
 
     def _open_serialization(self):
         self._indent(newline=True)
-        self._xmlgen.startElement(
-            "boost_serialization", {"version": "9", "signature": "serialization::archive"}
-        )
+        self._xmlgen.startElement("boost_serialization", {"version": "9", "signature": "serialization::archive"})
 
     def _close_serialization(self):
         self._indent(newline=True)
@@ -302,9 +300,7 @@ class KittiRawExporter(Exporter):
             frame_id = self._write_item(item, frame_id)
 
             if frame_id in name_mapping:
-                raise DatasetExportError(
-                    "Item %s: frame id %s is repeated in the dataset" % (item.id, frame_id)
-                )
+                raise DatasetExportError("Item %s: frame id %s is repeated in the dataset" % (item.id, frame_id))
             name_mapping[frame_id] = item.id
 
             for ann in item.annotations:
@@ -350,16 +346,12 @@ class KittiRawExporter(Exporter):
                 else:
                     if [track["h"], track["w"], track["l"]] != ann.scale:
                         # Tracks have fixed scale in the format
-                        raise DatasetExportError(
-                            "Item %s: mismatching track shapes, "
-                            "track id %s" % (item.id, track_id)
-                        )
+                        raise DatasetExportError("Item %s: mismatching track shapes, track id %s" % (item.id, track_id))
 
                     if track["objectType"] != label:
                         raise DatasetExportError(
                             "Item %s: mismatching track labels, "
-                            "track id %s: %s vs. %s"
-                            % (item.id, track_id, track["objectType"], label)
+                            "track id %s: %s vs. %s" % (item.id, track_id, track["objectType"], label)
                         )
 
                     # If there is a skip in track frames, add missing as outside
@@ -377,9 +369,8 @@ class KittiRawExporter(Exporter):
                 occlusion = OcclusionStates.VISIBLE
                 if "occlusion" in ann.attributes:
                     occlusion = OcclusionStates(ann.attributes["occlusion"].upper())
-                elif "occluded" in ann.attributes:
-                    if ann.attributes["occluded"]:
-                        occlusion = OcclusionStates.PARTLY
+                elif ann.attributes.get("occluded"):
+                    occlusion = OcclusionStates.PARTLY
 
                 truncation = TruncationStates.IN_IMAGE
                 if "truncation" in ann.attributes:
@@ -423,9 +414,7 @@ class KittiRawExporter(Exporter):
         return [e[1] for e in sorted(tracks.items(), key=lambda e: e[0])]
 
     def _write_name_mapping(self, name_mapping):
-        with open(
-            osp.join(self._save_dir, KittiRawPath.NAME_MAPPING_FILE), "w", encoding="utf-8"
-        ) as f:
+        with open(osp.join(self._save_dir, KittiRawPath.NAME_MAPPING_FILE), "w", encoding="utf-8") as f:
             f.writelines("%s %s\n" % (frame_id, name) for frame_id, name in name_mapping.items())
 
     def _get_label(self, label_id):
@@ -441,9 +430,7 @@ class KittiRawExporter(Exporter):
         if self._save_media and item.media:
             self._save_point_cloud(item, subdir=KittiRawPath.PCD_DIR)
 
-            images = sorted(
-                item.media.extra_images, key=lambda img: img.path if hasattr(img, "path") else ""
-            )
+            images = sorted(item.media.extra_images, key=lambda img: img.path if hasattr(img, "path") else "")
             for i, image in enumerate(images):
                 if image.has_data:
                     image.save(
@@ -469,11 +456,8 @@ class KittiRawExporter(Exporter):
         if self._save_dataset_meta:
             self._save_meta_file(self._save_dir)
 
-        if 1 < len(self._extractor.subsets()):
-            log.warning(
-                "Kitti RAW format supports only a single "
-                "subset. Subset information will be ignored on export."
-            )
+        if len(self._extractor.subsets()) > 1:
+            log.warning("Kitti RAW format supports only a single subset. Subset information will be ignored on export.")
 
         tracklets = self._create_tracklets(self._extractor)
         with open(osp.join(self._save_dir, KittiRawPath.ANNO_FILE), "w", encoding="utf-8") as f:

@@ -4,12 +4,11 @@
 
 import argparse
 
+from datumaro.cli.util import MultilineFormatter
+from datumaro.cli.util.dataset_utils import parse_dataset_pathspec
 from datumaro.components.annotation import AnnotationType
 from datumaro.components.errors import MissingObjectError
 from datumaro.util.scope import scoped
-
-from ..util import MultilineFormatter
-from ..util.dataset_utils import parse_dataset_pathspec
 
 
 def build_parser(parser_ctor=argparse.ArgumentParser):

@@ -48,9 +48,7 @@ class _IcdarBase(SubsetBase):
             self._items = list(self._load_recognition_items().values())
         elif task in {IcdarTask.text_localization, IcdarTask.text_segmentation}:
             if not osp.isdir(path):
-                raise NotADirectoryError(
-                    errno.ENOTDIR, "Can't read dataset directory with annotation files", path
-                )
+                raise NotADirectoryError(errno.ENOTDIR, "Can't read dataset directory with annotation files", path)
 
             if not subset:
                 subset = osp.basename(path)
@@ -75,7 +73,7 @@ class _IcdarBase(SubsetBase):
                     captions = []
                     for caption in objects[1:]:
                         if caption[0] != '"' or caption[-1] != '"':
-                            log.warning("Line %s: unexpected number " "of quotes" % line)
+                            log.warning("Line %s: unexpected number of quotes" % line)
                         else:
                             captions.append(caption.replace("\\", "")[1:-1])
                 else:
@@ -85,9 +83,7 @@ class _IcdarBase(SubsetBase):
                 item_id = osp.splitext(image)[0]
                 image_path = osp.join(osp.dirname(self._path), IcdarPath.IMAGES_DIR, image)
                 if item_id not in items:
-                    items[item_id] = DatasetItem(
-                        item_id, subset=self._subset, media=Image.from_file(path=image_path)
-                    )
+                    items[item_id] = DatasetItem(item_id, subset=self._subset, media=Image.from_file(path=image_path))
 
                 annotations = items[item_id].annotations
                 for caption in captions:
@@ -129,38 +125,36 @@ class _IcdarBase(SubsetBase):
                 for line in f:
                     line = line.strip()
                     objects = line.split('"')
-                    if 1 < len(objects):
+                    if len(objects) > 1:
                         if len(objects) == 3:
                             text = objects[1]
                         else:
-                            raise InvalidAnnotationError(
-                                "Line %s: unexpected number " "of quotes in filename" % line
-                            )
+                            raise InvalidAnnotationError("Line %s: unexpected number of quotes in filename" % line)
                     else:
                         text = ""
                     objects = objects[0].split()
                     if len(objects) == 1:
                         objects = objects[0].split(",")
 
-                    if 8 <= len(objects):
+                    if len(objects) >= 8:
                         points = [float(p) for p in objects[:8]]
 
                         attributes = {}
-                        if 0 < len(text):
+                        if len(text) > 0:
                             attributes["text"] = text
                         elif len(objects) == 9:
                             text = objects[8]
                             attributes["text"] = text
 
                         annotations.append(Polygon(points, attributes=attributes))
-                    elif 4 <= len(objects):
+                    elif len(objects) >= 4:
                         x = float(objects[0])
                         y = float(objects[1])
                         w = float(objects[2]) - x
                         h = float(objects[3]) - y
 
                         attributes = {}
-                        if 0 < len(text):
+                        if len(text) > 0:
                             attributes["text"] = text
                         elif len(objects) == 5:
                             text = objects[4]
@@ -224,8 +218,7 @@ class _IcdarBase(SubsetBase):
                         objects.pop()
                     if len(objects) != 10:
                         raise InvalidAnnotationError(
-                            "Line %s contains the wrong number "
-                            'of arguments, e.g. \'241 73 144 1 4 0 3 1 4 "h"' % line
+                            'Line %s contains the wrong number of arguments, e.g. \'241 73 144 1 4 0 3 1 4 "h"' % line
                         )
 
                     centers.append(objects[3] + " " + objects[4])

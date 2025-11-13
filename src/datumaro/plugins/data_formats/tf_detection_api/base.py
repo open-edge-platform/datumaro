@@ -115,9 +115,7 @@ class TfDetectionApiBase(SubsetBase):
         if osp.exists(labelmap_path):
             with open(labelmap_path, "r", encoding="utf-8") as f:
                 labelmap_text = f.read()
-            dataset_labels.update(
-                {label: id - 1 for label, id in self._parse_labelmap(labelmap_text).items()}
-            )
+            dataset_labels.update({label: id - 1 for label, id in self._parse_labelmap(labelmap_text).items()})
 
         dataset_items = []
 
@@ -134,12 +132,8 @@ class TfDetectionApiBase(SubsetBase):
             xmaxs = tf.sparse.to_dense(parsed_record["image/object/bbox/xmax"]).numpy()
             ymaxs = tf.sparse.to_dense(parsed_record["image/object/bbox/ymax"]).numpy()
             label_ids = tf.sparse.to_dense(parsed_record["image/object/class/label"]).numpy()
-            labels = tf.sparse.to_dense(
-                parsed_record["image/object/class/text"], default_value=b""
-            ).numpy()
-            masks = tf.sparse.to_dense(
-                parsed_record["image/object/mask"], default_value=b""
-            ).numpy()
+            labels = tf.sparse.to_dense(parsed_record["image/object/class/text"], default_value=b"").numpy()
+            masks = tf.sparse.to_dense(parsed_record["image/object/mask"], default_value=b"").numpy()
 
             for label, label_id in zip(labels, label_ids):
                 label = label.decode("utf-8")
@@ -225,15 +219,13 @@ class TfDetectionApiImporter(Importer):
                 subset_name = osp.basename(source["url"]).split(".")[-2]
                 subsets[subset_name] = source["url"]
 
-        sources = [
+        return [
             {
                 "url": url,
                 "format": "tf_detection_api",
             }
             for _, url in subsets.items()
         ]
-
-        return sources
 
     @classmethod
     def get_file_extensions(cls) -> List[str]:

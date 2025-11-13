@@ -34,7 +34,6 @@ from datumaro.errors import (
     NoMatchingItemError,
     WrongGroupError,
 )
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import compare_datasets
 
@@ -49,9 +48,7 @@ class TestOperations(TestCase):
             [
                 DatasetItem(
                     id=i,
-                    media=Image.from_numpy(
-                        data=np.random.normal(expected_mean, expected_std, size=(h, w, 3))
-                    ),
+                    media=Image.from_numpy(data=np.random.normal(expected_mean, expected_std, size=(h, w, 3))),
                 )
                 for i, (w, h) in enumerate([(3000, 100), (800, 600), (400, 200), (700, 300)])
             ]
@@ -492,9 +489,7 @@ class TestMultimerge(TestCase):
         merger = IntersectMerge(conf={"groups": [["a", "a_g1", "a_g2_opt?"], ["c", "c_g1_opt?"]]})
         merger(dataset, dataset)
 
-        self.assertEqual(
-            3, len([e for e in merger.errors if isinstance(e, WrongGroupError)]), merger.errors
-        )
+        self.assertEqual(3, len([e for e in merger.errors if isinstance(e, WrongGroupError)]), merger.errors)
 
     def test_can_merge_classes(self):
         source0 = Dataset.from_iterable(
@@ -644,12 +639,8 @@ class TestMultimerge(TestCase):
         pcd1 = osp.join(dataset_dir, "ds0", "pointcloud", "frame1.pcd")
         pcd2 = osp.join(dataset_dir, "ds0", "pointcloud", "frame2.pcd")
 
-        image1 = Image.from_file(
-            path=osp.join(dataset_dir, "ds0", "related_images", "frame1_pcd", "img2.png")
-        )
-        image2 = Image.from_file(
-            path=osp.join(dataset_dir, "ds0", "related_images", "frame2_pcd", "img1.png")
-        )
+        image1 = Image.from_file(path=osp.join(dataset_dir, "ds0", "related_images", "frame1_pcd", "img2.png"))
+        image2 = Image.from_file(path=osp.join(dataset_dir, "ds0", "related_images", "frame2_pcd", "img1.png"))
 
         source0 = Dataset.from_iterable(
             [
@@ -678,9 +669,7 @@ class TestMultimerge(TestCase):
         expected = Dataset.from_iterable(
             [
                 DatasetItem(1, media=PointCloud.from_file(path=pcd1, extra_images=[image1])),
-                DatasetItem(
-                    2, media=PointCloud.from_file(path=pcd1, extra_images=[image1, image2])
-                ),
+                DatasetItem(2, media=PointCloud.from_file(path=pcd1, extra_images=[image1, image2])),
                 DatasetItem(3, media=PointCloud.from_file(path=pcd2)),
                 DatasetItem(4, media=PointCloud.from_file(path=pcd2)),
                 DatasetItem(5, media=PointCloud.from_file(path=pcd2, extra_images=[image2])),

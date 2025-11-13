@@ -19,10 +19,9 @@ from datumaro.components.media import Image
 from datumaro.plugins.data_formats.yolo.exporter import YoloExporter, YoloUltralyticsExporter
 from datumaro.plugins.data_formats.yolo.importer import YoloImporter
 from datumaro.util.definitions import DEFAULT_SUBSET_NAME
+from tests.utils.assets import get_test_asset_path
 
 from .base import TestDataFormatBase
-
-from tests.utils.assets import get_test_asset_path
 
 STRICT_DIR = get_test_asset_path("yolo_dataset", "strict")
 ANNOTATIONS_DIR = get_test_asset_path("yolo_dataset", "annotations")

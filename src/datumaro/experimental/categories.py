@@ -15,7 +15,10 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from enum import IntEnum
 from functools import cache
-from typing import Any, Dict, Iterator, List, NamedTuple, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, NamedTuple
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 class LabelSemantic(IntEnum):
@@ -55,7 +58,7 @@ class Categories:
     label attributes etc.
     """
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """
         Serialize this Categories instance to a JSON-compatible dictionary.
 
@@ -68,7 +71,7 @@ class Categories:
         return {"type": self.__class__.__name__}
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "Categories":
+    def from_dict(cls, data: dict[str, Any]) -> Categories:
         """
         Deserialize a Categories instance from a JSON dictionary.
 
@@ -95,10 +98,9 @@ class Categories:
 
         if cat_type in subclass_map:
             return subclass_map[cat_type].from_dict(data)
-        else:
-            # Unknown type - return base Categories with just the type info
-            # This allows forward compatibility with new category types
-            raise ValueError(f"Unknown categories type: {cat_type}")
+        # Unknown type - return base Categories with just the type info
+        # This allows forward compatibility with new category types
+        raise ValueError(f"Unknown categories type: {cat_type}")
 
 
 @dataclass(frozen=True)
@@ -108,7 +110,7 @@ class LabelCategories(Categories):
     Use this for simple, non-hierarchical tasks.
     """
 
-    labels: Tuple[str, ...] = field(default_factory=tuple)
+    labels: tuple[str, ...] = field(default_factory=tuple)
     group_type: GroupType = GroupType.EXCLUSIVE
     label_semantics: dict = field(default_factory=dict)
 
@@ -127,11 +129,11 @@ class LabelCategories(Categories):
 
     @property
     @cache
-    def _index_map(self) -> Dict[str, int]:
+    def _index_map(self) -> dict[str, int]:
         """Cached mapping from label names to indices."""
         return {label: idx for idx, label in enumerate(self.labels)}
 
-    def find(self, name_or_semantic: str) -> Tuple[Optional[int], Optional[str]]:
+    def find(self, name_or_semantic: str) -> tuple[int | None, str | None]:
         """
         Find a label by name or LabelSemantic.
 
@@ -157,14 +159,13 @@ class LabelCategories(Categories):
         """Get category by index."""
         return self.labels[idx]
 
-    def __contains__(self, value: Union[int, str, LabelSemantic]) -> bool:
+    def __contains__(self, value: int | str | LabelSemantic) -> bool:
         """Check if a label exists by name, index, or semantic."""
         if isinstance(value, LabelSemantic):
             return value in self.label_semantics
-        elif isinstance(value, str):
+        if isinstance(value, str):
             return value in self.labels
-        else:
-            return 0 <= value < len(self.labels)
+        return 0 <= value < len(self.labels)
 
     def __len__(self) -> int:
         """Get the number of labels."""
@@ -178,7 +179,7 @@ class LabelCategories(Categories):
         # Include label_semantics in the hash
         return hash((self.labels, self.group_type, frozenset(self.label_semantics.items())))
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """
         Serialize to a JSON-compatible dictionary.
 
@@ -190,13 +191,12 @@ class LabelCategories(Categories):
             "labels": list(self.labels),
             "group_type": self.group_type.name,
             "label_semantics": {
-                k.name if isinstance(k, LabelSemantic) else str(k): v
-                for k, v in self.label_semantics.items()
+                k.name if isinstance(k, LabelSemantic) else str(k): v for k, v in self.label_semantics.items()
             },
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "LabelCategories":
+    def from_dict(cls, data: dict[str, Any]) -> LabelCategories:
         """
         Deserialize from a JSON dictionary.
 
@@ -244,7 +244,7 @@ class LabelGroup:
     """Represents a group of labels with a specific group type."""
 
     name: str
-    labels: Tuple[str, ...] = field(default_factory=tuple)
+    labels: tuple[str, ...] = field(default_factory=tuple)
     group_type: GroupType = GroupType.EXCLUSIVE
 
     def __post_init__(self):
@@ -260,8 +260,8 @@ class HierarchicalLabelCategories(Categories):
     Use this for complex hierarchical classification tasks.
     """
 
-    items: Tuple[HierarchicalLabelCategory, ...] = field(default_factory=tuple)
-    label_groups: Tuple[LabelGroup, ...] = field(default_factory=tuple)
+    items: tuple[HierarchicalLabelCategory, ...] = field(default_factory=tuple)
+    label_groups: tuple[LabelGroup, ...] = field(default_factory=tuple)
     label_semantics: dict = field(default_factory=dict)
 
     def __post_init__(self):
@@ -271,6 +271,21 @@ class HierarchicalLabelCategories(Categories):
             raise TypeError("label_groups must be a tuple of LabelGroup")
 
         # Validate no duplicate names
+        all_label_names = self._get_all_label_names()
+
+        # Validate that all parents exist
+        for item in self.items:
+            if item.parent and item.parent not in all_label_names:
+                raise ValueError(f"Parent '{item.parent}' not found for label '{item.name}'")
+
+        # Validate that all labels in groups exist
+        for group in self.label_groups:
+            for label_name in group.labels:
+                if label_name not in all_label_names:
+                    raise ValueError(f"Label '{label_name}' in group '{group.name}' not found in items")
+
+    def _get_all_label_names(self) -> set[str]:
+        """Get all label names and check for duplicates."""
         seen_names = set()
         for item in self.items:
             if item.name in seen_names:
@@ -283,42 +298,30 @@ class HierarchicalLabelCategories(Categories):
                 name = item.label_semantics["name"]
                 if name not in seen_names:
                     seen_names.add(name)
-
-        # Validate that all parents exist
-        for item in self.items:
-            if item.parent and item.parent not in seen_names:
-                raise ValueError(f"Parent '{item.parent}' not found for label '{item.name}'")
-
-        # Validate that all labels in groups exist
-        for group in self.label_groups:
-            for label_name in group.labels:
-                if label_name not in seen_names:
-                    raise ValueError(
-                        f"Label '{label_name}' in group '{group.name}' not found in items"
-                    )
+        return seen_names
 
     @property
     @cache
-    def _index_map(self) -> Dict[str, int]:
+    def _index_map(self) -> dict[str, int]:
         """Cached mapping from label names to indices."""
         return {item.name: idx for idx, item in enumerate(self.items)}
 
     @property
     @cache
-    def _children_map(self) -> Dict[str, Tuple[str, ...]]:
+    def _children_map(self) -> dict[str, tuple[str, ...]]:
         """Cached mapping from parent names to child names."""
-        children_map: defaultdict[str, List[str]] = defaultdict(list)
+        children_map: defaultdict[str, list[str]] = defaultdict(list)
         for item in self.items:
             if item.parent:
                 children_map[item.parent].append(item.name)
         return {parent: tuple(children) for parent, children in children_map.items()}
 
     @property
-    def labels(self) -> Tuple[str, ...]:
+    def labels(self) -> tuple[str, ...]:
         """Get all label names for compatibility."""
         return tuple(item.name for item in self.items)
 
-    def find(self, name: str) -> Tuple[Optional[int], Optional[HierarchicalLabelCategory]]:
+    def find(self, name: str) -> tuple[int | None, HierarchicalLabelCategory | None]:
         """
         Find a label by name.
 
@@ -333,7 +336,7 @@ class HierarchicalLabelCategories(Categories):
             return index, self.items[index]
         return None, None
 
-    def get_children(self, parent_name: str) -> Tuple[str, ...]:
+    def get_children(self, parent_name: str) -> tuple[str, ...]:
         """
         Get all children of a parent label.
 
@@ -345,7 +348,7 @@ class HierarchicalLabelCategories(Categories):
         """
         return self._children_map.get(parent_name, ())
 
-    def get_parent(self, label_name: str) -> Optional[str]:
+    def get_parent(self, label_name: str) -> str | None:
         """
         Get the parent of a label.
 
@@ -384,12 +387,11 @@ class HierarchicalLabelCategories(Categories):
         """Get category by index."""
         return self.items[idx]
 
-    def __contains__(self, value: Union[int, str]) -> bool:
+    def __contains__(self, value: int | str) -> bool:
         """Check if a label exists by name or index."""
         if isinstance(value, str):
             return value in self._index_map
-        else:
-            return 0 <= value < len(self.items)
+        return 0 <= value < len(self.items)
 
     def __len__(self) -> int:
         """Get the number of labels."""
@@ -404,7 +406,7 @@ class HierarchicalLabelCategories(Categories):
         lg_repr = tuple((lg.name, tuple(lg.labels), lg.group_type) for lg in self.label_groups)
         return hash((self.items, lg_repr, frozenset(self.label_semantics.items())))
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """
         Serialize to a JSON-compatible dictionary.
 
@@ -418,8 +420,7 @@ class HierarchicalLabelCategories(Categories):
                     "name": item.name,
                     "parent": item.parent,
                     "label_semantics": {
-                        k.name if isinstance(k, LabelSemantic) else str(k): v
-                        for k, v in item.label_semantics.items()
+                        k.name if isinstance(k, LabelSemantic) else str(k): v for k, v in item.label_semantics.items()
                     },
                 }
                 for item in self.items
@@ -433,13 +434,12 @@ class HierarchicalLabelCategories(Categories):
                 for group in self.label_groups
             ],
             "label_semantics": {
-                k.name if isinstance(k, LabelSemantic) else str(k): v
-                for k, v in self.label_semantics.items()
+                k.name if isinstance(k, LabelSemantic) else str(k): v for k, v in self.label_semantics.items()
             },
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "HierarchicalLabelCategories":
+    def from_dict(cls, data: dict[str, Any]) -> HierarchicalLabelCategories:
         """
         Deserialize from a JSON dictionary.
 
@@ -510,16 +510,20 @@ class Colormap:
     reverse lookup via an inverse colormap property.
     """
 
-    data: Dict[int, RgbColor] = field(default_factory=dict)
+    data: dict[int, RgbColor] = field(default_factory=dict)
 
     def __post_init__(self):
         """Validate that there are no duplicate colors."""
         object.__setattr__(self, "_inverse_colormap", {v: k for k, v in self.data.items()})
 
     @property
-    def inverse_colormap(self) -> Dict[RgbColor, int]:
+    def inverse_colormap(self) -> dict[RgbColor, int]:
         """Get the inverse colormap (color -> index mapping)."""
         return getattr(self, "_inverse_colormap")
+
+    def __hash__(self):
+        """Compute a hash based on the colormap data."""
+        return hash(frozenset(self.data.items()))
 
     def __getitem__(self, index: int) -> RgbColor:
         """Get color by index."""
@@ -533,19 +537,19 @@ class Colormap:
         """Get the number of colors in the colormap."""
         return len(self.data)
 
-    def __iter__(self) -> Iterator[Tuple[int, RgbColor]]:
+    def __iter__(self) -> Iterator[tuple[int, RgbColor]]:
         """Iterate over colormap items."""
         return iter(self.data.items())
 
-    def get(self, index: int, default=None):
+    def get(self, index: int, default: RgbColor | None = None) -> RgbColor | None:
         """Get color by index with default."""
         return self.data.get(index, default)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         """Compare with another Colormap or dictionary."""
         if isinstance(other, Colormap):
             return self.data == other.data
-        elif isinstance(other, dict):
+        if isinstance(other, dict):
             return self.data == other
         return False
 
@@ -556,13 +560,13 @@ class MaskCategories(Categories):
     Describes a color map for segmentation masks.
     """
 
-    labels: List[str] = field(default_factory=list)
+    labels: list[str] = field(default_factory=list)
     colormap: Colormap = field(default_factory=Colormap)
 
     def __hash__(self):
         return hash((tuple(self.labels), frozenset(self.colormap.items())))
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """
         Serialize to a JSON-compatible dictionary.
 
@@ -572,13 +576,11 @@ class MaskCategories(Categories):
         return {
             "type": "MaskCategories",
             "labels": list(self.labels),
-            "colormap": {
-                str(idx): [color.r, color.g, color.b] for idx, color in self.colormap.data.items()
-            },
+            "colormap": {str(idx): [color.r, color.g, color.b] for idx, color in self.colormap.data.items()},
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "MaskCategories":
+    def from_dict(cls, data: dict[str, Any]) -> MaskCategories:
         """
         Deserialize from a JSON dictionary.
 
@@ -600,7 +602,7 @@ class MaskCategories(Categories):
         return cls(labels=labels, colormap=colormap)
 
     @classmethod
-    def generate(cls, size: int = 255, include_background: bool = True) -> "MaskCategories":
+    def generate(cls, size: int = 255, include_background: bool = True) -> MaskCategories:
         """
         Generates MaskCategories with the specified size.
 

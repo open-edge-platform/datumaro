@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: MIT
 
-from copy import deepcopy
 
 import numpy as np
 import pytest
@@ -14,11 +13,9 @@ from datumaro.components.environment import DEFAULT_ENVIRONMENT
 from datumaro.components.importer import Importer
 from datumaro.components.media import Image
 from datumaro.plugins.data_formats.mmdet import MmdetCocoImporter
+from tests.utils.assets import get_test_asset_path
 
 from .base import TestDataFormatBase
-
-from tests.utils.assets import get_test_asset_path
-from tests.utils.test_utils import compare_datasets
 
 DUMMY_DATASET_DIR = get_test_asset_path("coco_dataset", "mmdet_coco")
 
@@ -32,9 +29,7 @@ def fxt_mmdet_coco_dataset():
                 subset="train",
                 media=Image.from_numpy(data=np.ones((5, 10, 3))),
                 attributes={"id": 5},
-                annotations=[
-                    Bbox(2, 2, 3, 1, label=1, group=1, id=1, attributes={"is_crowd": False})
-                ],
+                annotations=[Bbox(2, 2, 3, 1, label=1, group=1, id=1, attributes={"is_crowd": False})],
             ),
             DatasetItem(
                 id="b",

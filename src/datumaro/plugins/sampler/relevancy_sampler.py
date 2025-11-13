@@ -62,17 +62,13 @@ class RelevancySampler(Transform, CliPlugin):
     @classmethod
     def build_cmdline_parser(cls, **kwargs):
         parser = super().build_cmdline_parser(**kwargs)
-        parser.add_argument(
-            "-k", "--count", type=int, required=True, help="Number of items to sample"
-        )
+        parser.add_argument("-k", "--count", type=int, required=True, help="Number of items to sample")
         parser.add_argument(
             "-a",
             "--algorithm",
             default=Algorithm.entropy.name,
             choices=[t.name for t in Algorithm],
-            help="Sampling algorithm (one of {}; default: %(default)s)".format(
-                ", ".join(t.name for t in Algorithm)
-            ),
+            help="Sampling algorithm (one of {}; default: %(default)s)".format(", ".join(t.name for t in Algorithm)),
         )
         parser.add_argument(
             "-i",
@@ -97,9 +93,7 @@ class RelevancySampler(Transform, CliPlugin):
             "--sampling_method",
             default=SamplingMethod.topk.name,
             choices=[t.name for t in SamplingMethod],
-            help="Sampling method (one of {}; default: %(default)s)".format(
-                ", ".join(t.name for t in SamplingMethod)
-            ),
+            help="Sampling method (one of {}; default: %(default)s)".format(", ".join(t.name for t in SamplingMethod)),
         )
         parser.add_argument("-d", "--output_file", help="A .csv file path to dump sampling results")
         return parser
@@ -177,15 +171,13 @@ class RelevancySampler(Transform, CliPlugin):
 
             for annotation in item.annotations:
                 if "scores" not in annotation.attributes:
-                    raise Exception(
-                        f"Item {item.id} - an annotation " "does not have 'scores' attribute"
-                    )
+                    raise Exception(f"Item {item.id} - an annotation does not have 'scores' attribute")
                 probs = annotation.attributes["scores"]
 
                 infer_df["ImageID"].append(item.id)
 
                 for prob_idx, prob in enumerate(probs):
-                    infer_df[f"ClassProbability{prob_idx+1}"].append(prob)
+                    infer_df[f"ClassProbability{prob_idx + 1}"].append(prob)
 
         data_df = pd.DataFrame(data_df)
         infer_df = pd.DataFrame(infer_df)
@@ -201,10 +193,7 @@ class RelevancySampler(Transform, CliPlugin):
             # Data delivery, uncertainty score calculations also proceed.
             sampler = SampleEntropy(data, inference)
         else:
-            raise Exception(
-                f"Unknown algorithm '{algorithm}', available "
-                f"algorithms: {[a.name for a in Algorithm]}"
-            )
+            raise Exception(f"Unknown algorithm '{algorithm}', available algorithms: {[a.name for a in Algorithm]}")
         return sampler
 
     def _get_sample_subset(self, image):
@@ -212,11 +201,9 @@ class RelevancySampler(Transform, CliPlugin):
             # 1. Returns the sample subset if the id belongs to samples.
             if image.id in self.sample_id:
                 return self.sampled_subset
-            else:
-                return self.unsampled_subset
-        else:
-            # 2. Returns the existing subset name if it is not a sample
-            return image.subset
+            return self.unsampled_subset
+        # 2. Returns the existing subset name if it is not a sample
+        return image.subset
 
     def __iter__(self):
         # Import data into a subset name and convert it

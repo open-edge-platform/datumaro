@@ -54,11 +54,7 @@ class MnistBase(SubsetBase):
 
     def _load_categories(self):
         if has_meta_file(self._dataset_dir):
-            return {
-                AnnotationType.label: LabelCategories.from_iterable(
-                    parse_meta_file(self._dataset_dir).keys()
-                )
-            }
+            return {AnnotationType.label: LabelCategories.from_iterable(parse_meta_file(self._dataset_dir).keys())}
 
         label_cat = LabelCategories()
 
@@ -90,9 +86,7 @@ class MnistBase(SubsetBase):
 
         # support for single-channel image only
         images = None
-        images_file = osp.join(
-            self._dataset_dir, osp.basename(path).replace("labels-idx1", "images-idx3")
-        )
+        images_file = osp.join(self._dataset_dir, osp.basename(path).replace("labels-idx1", "images-idx3"))
         if osp.isfile(images_file):
             with gzip.open(images_file, "rb") as imgpath:
                 images = np.frombuffer(imgpath.read(), dtype=np.uint8, offset=16)
@@ -109,7 +103,7 @@ class MnistBase(SubsetBase):
 
             image = None
             if images is not None:
-                if 0 < len(meta) and 1 < len(meta[i]):
+                if len(meta) > 0 and len(meta[i]) > 1:
                     h, w = int(meta[i][-2]), int(meta[i][-1])
                     image = images[pix_num : pix_num + h * w].reshape(h, w)
                     pix_num += h * w
@@ -119,7 +113,7 @@ class MnistBase(SubsetBase):
             if image is not None:
                 image = Image.from_numpy(data=image)
 
-            if 0 < len(meta) and (len(meta[i]) == 1 or len(meta[i]) == 3):
+            if len(meta) > 0 and (len(meta[i]) == 1 or len(meta[i]) == 3):
                 i = meta[i][0]
 
             items[i] = DatasetItem(id=i, subset=self._subset, media=image, annotations=annotations)
@@ -136,8 +130,7 @@ class MnistImporter(Importer):
             path,
             cls._FORMAT_EXT,
             "mnist",
-            file_filter=lambda p: 1 < len(osp.basename(p).split("-"))
-            and osp.basename(p).split("-")[1] == "labels",
+            file_filter=lambda p: len(osp.basename(p).split("-")) > 1 and osp.basename(p).split("-")[1] == "labels",
         )
 
     @classmethod
@@ -177,10 +170,7 @@ class MnistExporter(Exporter):
                         image_sizes[len(images) - 1] = [0, 0]
                     else:
                         image = image.data
-                        if (
-                            image.shape[0] != MnistPath.IMAGE_SIZE
-                            or image.shape[1] != MnistPath.IMAGE_SIZE
-                        ):
+                        if image.shape[0] != MnistPath.IMAGE_SIZE or image.shape[1] != MnistPath.IMAGE_SIZE:
                             image_sizes[len(labels) - 1] = [image.shape[0], image.shape[1]]
                         images = np.append(images, image.reshape(-1).astype(np.uint8))
 
@@ -190,7 +180,7 @@ class MnistExporter(Exporter):
                 labels_file = osp.join(self._save_dir, subset_name + MnistPath.LABELS_FILE)
             self.save_annotations(labels_file, labels)
 
-            if 0 < len(images):
+            if len(images) > 0:
                 if subset_name == "test":
                     images_file = osp.join(self._save_dir, MnistPath.TEST_IMAGES_FILE)
                 else:
@@ -199,21 +189,21 @@ class MnistExporter(Exporter):
 
             # it is't in the original format,
             # this is for storng other names and sizes of images
-            if len(item_ids) or len(image_sizes):
+            if item_ids or image_sizes:
                 meta = []
-                if len(item_ids) and len(image_sizes):
+                if item_ids and image_sizes:
                     # other names and sizes of images
                     size = [MnistPath.IMAGE_SIZE, MnistPath.IMAGE_SIZE]
                     for i in range(len(labels)):
                         w, h = image_sizes.get(i, size)
                         meta.append([item_ids.get(i, i), w, h])
 
-                elif len(item_ids):
+                elif item_ids:
                     # other names of images
                     for i in range(len(labels)):
                         meta.append([item_ids.get(i, i)])
 
-                elif len(image_sizes):
+                elif image_sizes:
                     # other sizes of images
                     size = [MnistPath.IMAGE_SIZE, MnistPath.IMAGE_SIZE]
                     for i in range(len(labels)):
@@ -236,17 +226,12 @@ class MnistExporter(Exporter):
         with gzip.open(path, "wb") as f:
             # magic number = 0x0803 (2051, hexadecimal representation),
             # this is used to verify the file with MNIST image data
-            f.write(
-                np.array(
-                    [0x0803, len(data), MnistPath.IMAGE_SIZE, MnistPath.IMAGE_SIZE], dtype=">i4"
-                ).tobytes()
-            )
+            f.write(np.array([0x0803, len(data), MnistPath.IMAGE_SIZE, MnistPath.IMAGE_SIZE], dtype=">i4").tobytes())
             f.write(np.array(data, dtype="uint8").tobytes())
 
     def save_labels(self):
         labels_file = osp.join(self._save_dir, "labels.txt")
         with open(labels_file, "w", encoding="utf-8") as f:
             f.writelines(
-                l.name + "\n"
-                for l in self._extractor.categories().get(AnnotationType.label, LabelCategories())
+                l.name + "\n" for l in self._extractor.categories().get(AnnotationType.label, LabelCategories())
             )

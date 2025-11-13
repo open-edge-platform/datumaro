@@ -7,12 +7,11 @@ import logging as log
 import os
 import os.path as osp
 
+from datumaro.cli.util import MultilineFormatter
+from datumaro.cli.util.dataset_utils import parse_dataset_pathspec
+from datumaro.cli.util.errors import CliException
 from datumaro.components.environment import DEFAULT_ENVIRONMENT
 from datumaro.util.scope import scoped
-
-from ..util import MultilineFormatter
-from ..util.dataset_utils import parse_dataset_pathspec
-from ..util.errors import CliException
 
 
 def build_parser(parser_ctor=argparse.ArgumentParser):
@@ -70,7 +69,7 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
     parser.add_argument(
         "--overwrite",
         action="store_true",
-        help="Overwrite existing files in the save directory, " "if it is not empty",
+        help="Overwrite existing files in the save directory, if it is not empty",
     )
     parser.add_argument(
         "extra_args",
@@ -96,9 +95,7 @@ def patch_command(args):
     dst_dir = args.dst_dir or target_dataset.data_path
 
     if not args.overwrite and osp.isdir(dst_dir) and os.listdir(dst_dir):
-        raise CliException(
-            "Directory '%s' already exists " "(pass --overwrite to overwrite)" % dst_dir
-        )
+        raise CliException("Directory '%s' already exists (pass --overwrite to overwrite)" % dst_dir)
     dst_dir = osp.abspath(dst_dir)
 
     # Get the exporter for the target format

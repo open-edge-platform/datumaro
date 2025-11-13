@@ -102,8 +102,7 @@ class Split(Transform, CliPlugin):
             action="append",
             type=cls._split_arg,
             dest="splits",
-            help="Subsets in the form: '<subset>:<ratio>' "
-            "(repeatable, default: %s)" % dict(cls._default_split),
+            help="Subsets in the form: '<subset>:<ratio>' (repeatable, default: %s)" % dict(cls._default_split),
         )
         parser.add_argument(
             "--query",
@@ -127,7 +126,7 @@ class Split(Transform, CliPlugin):
         if len(parts) != 2:
             import argparse
 
-            raise argparse.ArgumentTypeError()
+            raise argparse.ArgumentTypeError
         return (parts[0], float(parts[1]))
 
     def __init__(self, dataset, task, splits, query=None, attr_for_id=None, seed=None):
@@ -156,10 +155,7 @@ class Split(Transform, CliPlugin):
                 attr_for_id=attr_for_id,
             )
         else:
-            raise Exception(
-                f"Unknown task '{task}', available "
-                f"splitter format: {[a.name for a in SplitTask]}"
-            )
+            raise Exception(f"Unknown task '{task}', available splitter format: {[a.name for a in SplitTask]}")
         return splitter
 
     def __iter__(self):
@@ -237,9 +233,7 @@ class _TaskSpecificSplit:
                     valid,
                     subset,
                 )
-            assert (
-                0.0 <= ratio and ratio <= 1.0
-            ), "Ratio is expected to be in the range " "[0, 1], but got %s for %s" % (
+            assert ratio >= 0.0 and ratio <= 1.0, "Ratio is expected to be in the range [0, 1], but got %s for %s" % (
                 ratio,
                 subset,
             )
@@ -256,9 +250,7 @@ class _TaskSpecificSplit:
 
         total_ratio = np.sum(ratios)
         if not abs(total_ratio - 1.0) <= NEAR_ZERO:
-            raise Exception(
-                "Sum of ratios is expected to be 1, got %s, which is %s" % (splits, total_ratio)
-            )
+            raise Exception("Sum of ratios is expected to be 1, got %s, which is %s" % (splits, total_ratio))
 
         return snames, ratios, subsets
 
@@ -278,9 +270,7 @@ class _TaskSpecificSplit:
         for val in iarray[1:]:
             common_divisor = gcd(common_divisor, val)
 
-        required = np.sum(np.array(iarray / common_divisor).astype(int))
-
-        return required
+        return np.sum(np.array(iarray / common_divisor).astype(int))
 
     @staticmethod
     def _get_sections(dataset_size, ratio):
@@ -290,7 +280,7 @@ class _TaskSpecificSplit:
         # if there are splits with zero samples even if ratio is not 0,
         # borrow one from the split who has one or more.
         for ii, num_split in enumerate(n_splits):
-            if num_split == 0 and NEAR_ZERO < ratio[ii]:
+            if num_split == 0 and ratio[ii] > NEAR_ZERO:
                 midx = np.argmax(n_splits)
                 if n_splits[midx] > 0:
                     n_splits[ii] += 1
@@ -311,11 +301,8 @@ class _TaskSpecificSplit:
         def _is_float(value):
             if isinstance(value, str):
                 casted = cast(value, float)
-                if casted is not None:
-                    if cast(casted, str) == value:
-                        return True
-                return False
-            elif isinstance(value, float):
+                return bool(casted is not None and cast(casted, str) == value)
+            if isinstance(value, float):
                 cast(value, float)
                 return True
             return False
@@ -341,7 +328,7 @@ class _TaskSpecificSplit:
             sections, _ = self._get_sections(len(indice), ratio)
             splits = np.array_split(indice, sections)
             for subset, split in zip(snames, splits):
-                if 0 < len(split):
+                if len(split) > 0:
                     out_splits[subset].extend(split)
 
         required = self._get_required(ratio)
@@ -391,7 +378,7 @@ class _TaskSpecificSplit:
         np.random.shuffle(unlabeled)
         splits = np.array_split(unlabeled, sections)
         for subset, split in zip(self._snames, splits):
-            if 0 < len(split):
+            if len(split) > 0:
                 by_splits[subset].extend(split)
 
     def _find_split(self, index):
@@ -401,7 +388,7 @@ class _TaskSpecificSplit:
         return DEFAULT_SUBSET_NAME  # all the possible remainder --> default
 
     def _split_dataset(self):
-        raise NotImplementedError()
+        raise NotImplementedError
 
 
 class _ClassificationSplit(_TaskSpecificSplit):
@@ -532,9 +519,7 @@ class _ReidentificationSplit(_TaskSpecificSplit):
         if query is None:
             query = self._default_query_ratio
 
-        assert 0.0 <= query and query <= 1.0, (
-            "Query ratio is expected to be in the range " "[0, 1], but got %f" % query
-        )
+        assert query >= 0.0 and query <= 1.0, "Query ratio is expected to be in the range [0, 1], but got %f" % query
         test_splits = [("test-query", query), ("test-gallery", 1.0 - query)]
 
         # remove subset name restriction
@@ -562,9 +547,7 @@ class _ReidentificationSplit(_TaskSpecificSplit):
         else:  # use attr_for_id
             for idx, ann in enumerate(annotations):
                 attributes = dict(ann.attributes.items())
-                assert attr_for_id in attributes, (
-                    "'%s' is expected as an attribute name" % attr_for_id
-                )
+                assert attr_for_id in attributes, "'%s' is expected as an attribute name" % attr_for_id
                 ID = attributes[attr_for_id]
                 if ID not in by_id:
                     by_id[ID] = []
@@ -573,14 +556,13 @@ class _ReidentificationSplit(_TaskSpecificSplit):
         required = self._get_required(id_ratio)
         if len(by_id) < required:
             log.warning(
-                "There's not enough IDs, which is %s, "
-                "so train/val/test ratio can't be guaranteed." % len(by_id)
+                "There's not enough IDs, which is %s, so train/val/test ratio can't be guaranteed." % len(by_id)
             )
 
         # 1. split dataset into trval and test
         #    IDs in test set should not exist in train/val set.
         test = id_ratio[id_snames.index("test")] if "test" in id_snames else 0
-        if NEAR_ZERO < test:  # has testset
+        if test > NEAR_ZERO:  # has testset
             split_ratio = np.array([test, 1.0 - test])
             IDs = list(by_id.keys())
             np.random.shuffle(IDs)
@@ -602,16 +584,14 @@ class _ReidentificationSplit(_TaskSpecificSplit):
             by_splits[subset] = []
 
         # 2. split 'test' into 'test-gallery' and 'test-query'
-        if 0 < len(testset):
+        if len(testset) > 0:
             test_snames = []
             test_ratio = []
             for sname, ratio in self._test_splits:
                 test_snames.append(sname)
                 test_ratio.append(float(ratio))
 
-            self._split_by_attr(
-                testset, test_snames, test_ratio, by_splits, merge_small_classes=False
-            )
+            self._split_by_attr(testset, test_snames, test_ratio, by_splits, merge_small_classes=False)
 
         # 3. split 'trval' into  'train' and 'val'
         trval_snames = ["train", "val"]
@@ -626,15 +606,10 @@ class _ReidentificationSplit(_TaskSpecificSplit):
         total_ratio = np.sum(trval_ratio)
         if total_ratio < NEAR_ZERO:
             trval_splits = list(zip(["train", "val"], trval_ratio))
-            log.warning(
-                "Sum of ratios is expected to be positive, "
-                "got %s, which is %s" % (trval_splits, total_ratio)
-            )
+            log.warning("Sum of ratios is expected to be positive, got %s, which is %s" % (trval_splits, total_ratio))
         else:
             trval_ratio /= total_ratio  # normalize
-            self._split_by_attr(
-                trval, trval_snames, trval_ratio, by_splits, merge_small_classes=False
-            )
+            self._split_by_attr(trval, trval_snames, trval_ratio, by_splits, merge_small_classes=False)
 
         # split unlabeled data into 'not-supported'.
         if len(unlabeled) > 0:
@@ -679,7 +654,7 @@ class _ReidentificationSplit(_TaskSpecificSplit):
                     if id1 == id_test or id2 == id_trval:
                         continue
                     new_list.append((id1, id2))
-                if 0 < len(new_list):
+                if len(new_list) > 0:
                     new_diffs[diff] = new_list
             diffs = new_diffs
             exchanges.append((id_test, id_trval))

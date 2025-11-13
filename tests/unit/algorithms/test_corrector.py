@@ -9,26 +9,13 @@ import numpy as np
 import pytest
 
 import datumaro.plugins.transforms as transforms
-from datumaro.components.annotation import (
-    AnnotationType,
-    Bbox,
-    Caption,
-    Label,
-    LabelCategories,
-    Tabular,
-    TabularCategories,
-)
+from datumaro.components.annotation import AnnotationType, Bbox, Label, LabelCategories, Tabular, TabularCategories
 from datumaro.components.dataset import Dataset, DatasetItem
 from datumaro.components.media import Image, Table, TableRow
 from datumaro.components.validator import Validator
-from datumaro.plugins.validators import (
-    ClassificationValidator,
-    DetectionValidator,
-    TabularValidator,
-)
-
+from datumaro.plugins.validators import ClassificationValidator, DetectionValidator, TabularValidator
 from tests.utils.assets import get_test_asset_path
-from tests.utils.test_utils import _compare_annotations, compare_datasets
+from tests.utils.test_utils import compare_datasets
 
 
 @pytest.fixture
@@ -497,18 +484,10 @@ def fxt_original_far_from_mean_attr_dataset():
                 id="normal_train_0",
                 subset="train",
                 annotations=[
-                    Bbox(
-                        0, 0, 100, 100, label=0, attributes={"truncated": False, "occluded": False}
-                    ),
-                    Bbox(
-                        0, 0, 100, 100, label=0, attributes={"truncated": False, "occluded": True}
-                    ),
-                    Bbox(
-                        0, 0, 100, 100, label=1, attributes={"truncated": False, "occluded": False}
-                    ),
-                    Bbox(
-                        0, 0, 100, 100, label=1, attributes={"truncated": False, "occluded": True}
-                    ),
+                    Bbox(0, 0, 100, 100, label=0, attributes={"truncated": False, "occluded": False}),
+                    Bbox(0, 0, 100, 100, label=0, attributes={"truncated": False, "occluded": True}),
+                    Bbox(0, 0, 100, 100, label=1, attributes={"truncated": False, "occluded": False}),
+                    Bbox(0, 0, 100, 100, label=1, attributes={"truncated": False, "occluded": True}),
                 ]
                 * 100,
             ),
@@ -534,18 +513,14 @@ def fxt_original_far_from_mean_attr_dataset():
                         label=0,
                         attributes={"truncated": False, "occluded": False},
                     ),
-                    Bbox(
-                        0, 0, 1, 1, id=3, label=1, attributes={"truncated": False, "occluded": True}
-                    ),
+                    Bbox(0, 0, 1, 1, id=3, label=1, attributes={"truncated": False, "occluded": True}),
                 ],
             ),
             DatasetItem(
                 id="far_from_mean_1",
                 subset="train",
                 annotations=[
-                    Bbox(
-                        0, 0, 1, 1, id=1, label=0, attributes={"truncated": False, "occluded": True}
-                    ),
+                    Bbox(0, 0, 1, 1, id=1, label=0, attributes={"truncated": False, "occluded": True}),
                     Bbox(
                         0,
                         0,
@@ -711,9 +686,7 @@ def fxt_original_cls_dataset():
             ),
         ],
         categories={
-            AnnotationType.label: LabelCategories.from_iterable(
-                "label_" + str(label) for label in range(4)
-            ),
+            AnnotationType.label: LabelCategories.from_iterable("label_" + str(label) for label in range(4)),
         },
     )
 
@@ -794,9 +767,7 @@ def fxt_original_det_dataset():
             ),
         ],
         categories={
-            AnnotationType.label: LabelCategories.from_iterable(
-                "label_" + str(label) for label in range(4)
-            ),
+            AnnotationType.label: LabelCategories.from_iterable("label_" + str(label) for label in range(4)),
         },
     )
 
@@ -846,9 +817,7 @@ from pandas.api.types import CategoricalDtype
 
 @pytest.fixture
 def fxt_original_tabular_dataset():
-    path = osp.join(
-        get_test_asset_path("tabular_dataset"), "women-clothing", "women_clothing_orig.csv"
-    )
+    path = osp.join(get_test_asset_path("tabular_dataset"), "women-clothing", "women_clothing_orig.csv")
     table = Table.from_csv(path)
     tabular_dataset = Dataset.from_iterable(
         [
@@ -868,7 +837,7 @@ def fxt_original_tabular_dataset():
                     )
                 ],
             )
-            for i in range(0, 53)
+            for i in range(53)
         ],
         categories={
             AnnotationType.tabular: TabularCategories.from_iterable(
@@ -886,15 +855,12 @@ def fxt_original_tabular_dataset():
         },
         media_type=TableRow,
     )
-    tabular_dataset = transforms.AstypeAnnotations(tabular_dataset)
-    return tabular_dataset
+    return transforms.AstypeAnnotations(tabular_dataset)
 
 
 @pytest.fixture
 def fxt_refined_tabular_dataset():
-    path = osp.join(
-        get_test_asset_path("tabular_dataset"), "women-clothing", "women_clothing_refined.csv"
-    )
+    path = osp.join(get_test_asset_path("tabular_dataset"), "women-clothing", "women_clothing_refined.csv")
     table = Table.from_csv(path)
     tabular_dataset = Dataset.from_iterable(
         [
@@ -914,7 +880,7 @@ def fxt_refined_tabular_dataset():
                     )
                 ],
             )
-            for i in range(0, 51)
+            for i in range(51)
         ],
         categories={
             AnnotationType.tabular: TabularCategories.from_iterable(
@@ -932,8 +898,7 @@ def fxt_refined_tabular_dataset():
         },
         media_type=TableRow,
     )
-    tabular_dataset = transforms.AstypeAnnotations(tabular_dataset)
-    return tabular_dataset
+    return transforms.AstypeAnnotations(tabular_dataset)
 
 
 class ValidationCorrectionTest:

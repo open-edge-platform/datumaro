@@ -87,8 +87,7 @@ class Environment:
                 # a module with a dot in the name won't load correctly
                 if any("." in part for part in name_parts):
                     log.warning(
-                        "Python file '%s' in directory '%s' can't be imported "
-                        "due to a dot in the name; skipping.",
+                        "Python file '%s' in directory '%s' can't be imported due to a dot in the name; skipping.",
                         path_rel,
                         plugins_dir,
                     )
@@ -108,20 +107,17 @@ class Environment:
                     continue
                 exports.append(getattr(module, symbol))
 
-        exports = [
+        return [
             s
             for s in exports
             if isclass(s)
             and issubclass(s, types)
             and s not in types
             and (
-                getmodule(s)
-                is None  # Custom plugin (in the Datumaro project) can be a single file and have no module
+                getmodule(s) is None  # Custom plugin (in the Datumaro project) can be a single file and have no module
                 or not getmodule(s).__package__.startswith("datumaro.components")
             )
         ]
-
-        return exports
 
     @classmethod
     def _load_plugins(cls, module_names, *, importer, types=None):
@@ -143,8 +139,7 @@ class Environment:
                 continue
 
             log.debug(
-                "Imported the following symbols from %s: %s"
-                % (module_name, ", ".join(s.__name__ for s in exports))
+                "Imported the following symbols from %s: %s" % (module_name, ", ".join(s.__name__ for s in exports))
             )
             all_exports.extend(exports)
 
@@ -166,25 +161,19 @@ class Environment:
             import datumaro.plugins
 
             plugins_dir = osp.dirname(datumaro.plugins.__file__)
-            module_names = [
-                datumaro.plugins.__name__ + "." + name for name in cls._find_plugins(plugins_dir)
-            ]
+            module_names = [datumaro.plugins.__name__ + "." + name for name in cls._find_plugins(plugins_dir)]
             cls._builtin_plugins = cls._load_plugins(module_names, importer=importlib.import_module)
         return cls._builtin_plugins
 
     def load_plugins(self, plugins_dir):
         module_names = self._find_plugins(plugins_dir)
-        plugins = self._load_plugins(
-            module_names, importer=partial(import_foreign_module, path=plugins_dir)
-        )
+        plugins = self._load_plugins(module_names, importer=partial(import_foreign_module, path=plugins_dir))
 
         self.register_plugins(plugins)
 
     def _register_builtin_plugins(self):
         self.register_plugins(
-            self._load_builtin_plugins()
-            if self._use_lazy_import
-            else self._load_builtin_plugins_from_importlib()
+            self._load_builtin_plugins() if self._use_lazy_import else self._load_builtin_plugins_from_importlib()
         )
 
     def register_plugins(self, plugins):
@@ -245,14 +234,10 @@ class Environment:
                 break
 
         max_conf = (
-            max(all_matched_formats).confidence
-            if len(all_matched_formats) > 0
-            else FormatDetectionConfidence.NONE
+            max(all_matched_formats).confidence if len(all_matched_formats) > 0 else FormatDetectionConfidence.NONE
         )
 
-        return sorted(
-            [str(format) for format in all_matched_formats if format.confidence == max_conf]
-        )
+        return sorted([str(format) for format in all_matched_formats if format.confidence == max_conf])
 
     def __reduce__(self):
         return (self.__class__, ())

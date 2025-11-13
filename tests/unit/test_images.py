@@ -15,7 +15,6 @@ from datumaro.util.image import (
     save_image_meta_file,
 )
 from datumaro.util.image_cache import ImageCache
-
 from tests.utils.test_utils import TestDir
 
 
@@ -36,9 +35,7 @@ class ImageCacheTest(TestCase):
         capacity = 2
         cache = ImageCache(capacity)
 
-        loaders = [
-            lazy_image(None, loader=lambda p: object(), cache=cache) for _ in range(capacity + 1)
-        ]
+        loaders = [lazy_image(None, loader=lambda p: object(), cache=cache) for _ in range(capacity + 1)]
 
         first_request = [loader() for loader in loaders[1:]]
         loaders[0]()  # pop something from the cache
@@ -165,9 +162,8 @@ class ImageTest(TestCase):
                 self.assertEqual(img2.path, "otherpath")
 
     def test_ctor_errors(self):
-        with self.subTest("no data specified"):
-            with self.assertRaisesRegex(Exception, "Directly initalizing"):
-                Image(ext="jpg")
+        with self.subTest("no data specified"), self.assertRaisesRegex(Exception, "Directly initalizing"):
+            Image(ext="jpg")
 
     def test_ext_detection(self):
         image_data = np.zeros((3, 4))
@@ -245,7 +241,7 @@ class RoIImageTest(TestCase):
             with self.subTest(**args):
                 try:
                     roi_img.save(osp.join(test_dir, "test.png"))
-                except:
+                except:  # noqa: E722
                     self.fail("Cannot save RoIImage")
 
     def test_ctors_from_image(self):

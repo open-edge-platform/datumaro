@@ -12,7 +12,6 @@ from datumaro.components.environment import Environment
 from datumaro.components.media import Image, PointCloud
 from datumaro.plugins.data_formats.sly_pointcloud.base import SuperviselyPointCloudImporter
 from datumaro.plugins.data_formats.sly_pointcloud.exporter import SuperviselyPointCloudExporter
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import Dimensions, TestDir, check_save_and_load, compare_datasets_3d
 
@@ -28,12 +27,8 @@ class SuperviselyPointcloudImporterTest(TestCase):
         pcd1 = osp.join(DUMMY_DATASET_DIR, "ds0", "pointcloud", "frame1.pcd")
         pcd2 = osp.join(DUMMY_DATASET_DIR, "ds0", "pointcloud", "frame2.pcd")
 
-        image1 = Image.from_file(
-            path=osp.join(DUMMY_DATASET_DIR, "ds0", "related_images", "frame1_pcd", "img2.png")
-        )
-        image2 = Image.from_file(
-            path=osp.join(DUMMY_DATASET_DIR, "ds0", "related_images", "frame2_pcd", "img1.png")
-        )
+        image1 = Image.from_file(path=osp.join(DUMMY_DATASET_DIR, "ds0", "related_images", "frame1_pcd", "img2.png"))
+        image2 = Image.from_file(path=osp.join(DUMMY_DATASET_DIR, "ds0", "related_images", "frame2_pcd", "img1.png"))
 
         label_cat = LabelCategories(attributes={"tag1", "tag3"})
         label_cat.add("car")
@@ -89,12 +84,8 @@ class PointCloudConverterTest(TestCase):
     pcd1 = osp.join(DUMMY_DATASET_DIR, "ds0", "pointcloud", "frame1.pcd")
     pcd2 = osp.join(DUMMY_DATASET_DIR, "ds0", "pointcloud", "frame2.pcd")
 
-    image1 = Image.from_file(
-        path=osp.join(DUMMY_DATASET_DIR, "ds0", "related_images", "frame1_pcd", "img2.png")
-    )
-    image2 = Image.from_file(
-        path=osp.join(DUMMY_DATASET_DIR, "ds0", "related_images", "frame2_pcd", "img1.png")
-    )
+    image1 = Image.from_file(path=osp.join(DUMMY_DATASET_DIR, "ds0", "related_images", "frame1_pcd", "img2.png"))
+    image2 = Image.from_file(path=osp.join(DUMMY_DATASET_DIR, "ds0", "related_images", "frame2_pcd", "img1.png"))
 
     def _test_save_and_load(
         self, source_dataset, converter, test_dir, target_dataset=None, importer_args=None, **kwargs
@@ -196,9 +187,7 @@ class PointCloudConverterTest(TestCase):
                                 attributes={"occluded": True, "track_id": 2},
                             ),
                         ],
-                        media=PointCloud.from_file(
-                            path=osp.join(test_dir, "ds0", "pointcloud", "frame_1.pcd")
-                        ),
+                        media=PointCloud.from_file(path=osp.join(test_dir, "ds0", "pointcloud", "frame_1.pcd")),
                         attributes={"frame": 0, "description": "zzz"},
                     ),
                     DatasetItem(
@@ -215,9 +204,7 @@ class PointCloudConverterTest(TestCase):
                             path=osp.join(test_dir, "ds0", "pointcloud", "frm2.pcd"),
                             extra_images=[
                                 Image.from_file(
-                                    path=osp.join(
-                                        test_dir, "ds0", "related_images", "frm2_pcd", "img1.png"
-                                    )
+                                    path=osp.join(test_dir, "ds0", "related_images", "frm2_pcd", "img1.png")
                                 )
                             ],
                         ),
@@ -410,9 +397,7 @@ class PointCloudConverterTest(TestCase):
                 [
                     DatasetItem(
                         id="a/b/c235",
-                        media=PointCloud.from_file(
-                            path=pcd_path, extra_images=[Image.from_file(path=img_path)]
-                        ),
+                        media=PointCloud.from_file(path=pcd_path, extra_images=[Image.from_file(path=img_path)]),
                         attributes={"frame": 20},
                     ),
                 ],
@@ -466,9 +451,5 @@ class PointCloudConverterTest(TestCase):
 
             self.assertEqual({"frame2.pcd.json"}, set(os.listdir(osp.join(path, "ds0", "ann"))))
             self.assertEqual({"frame2.pcd"}, set(os.listdir(osp.join(path, "ds0", "pointcloud"))))
-            self.assertTrue(
-                osp.isfile(osp.join(path, "ds0", "related_images", "frame2_pcd", "img1.png"))
-            )
-            self.assertFalse(
-                osp.isfile(osp.join(path, "ds0", "related_images", "frame1_pcd", "img2.png"))
-            )
+            self.assertTrue(osp.isfile(osp.join(path, "ds0", "related_images", "frame2_pcd", "img1.png")))
+            self.assertFalse(osp.isfile(osp.join(path, "ds0", "related_images", "frame1_pcd", "img2.png")))

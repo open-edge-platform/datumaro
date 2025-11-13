@@ -9,6 +9,8 @@ import os.path as osp
 import sys
 from typing import Dict, Tuple
 
+from datumaro.cli.util.dataset_utils import generate_next_file_name
+from datumaro.cli.util.errors import CliException
 from datumaro.components.dataset_base import IDataset
 from datumaro.components.environment import DEFAULT_ENVIRONMENT
 from datumaro.components.extractor_tfds import (
@@ -19,8 +21,6 @@ from datumaro.components.extractor_tfds import (
 from datumaro.util import dump_json
 from datumaro.util.os_util import make_file_name
 
-from ...util.dataset_utils import generate_next_file_name
-from ...util.errors import CliException
 from .downloader import IDatasetDownloader
 
 
@@ -35,18 +35,15 @@ class TfdsDatasetDownloader(IDatasetDownloader):
                     default_output_format = tfds_ds.metadata.default_output_format
                     extractor_factory = tfds_ds.make_extractor
                     return default_output_format, extractor_factory
-                else:
-                    raise CliException(f"Unsupported TFDS dataset '{tfds_ds_name}'")
-            else:
-                raise CliException(
-                    "TFDS datasets are not available, because TFDS and/or"
-                    "TensorFlow are not installed.\n"
-                    "You can install them with: pip install datumaro[tf,tfds]"
-                )
-        else:
+                raise CliException(f"Unsupported TFDS dataset '{tfds_ds_name}'")
             raise CliException(
-                f"Unknown dataset ID TFDS dataset '{dataset_id}': TFDS datasets must start with the prefix 'tfds:'"
+                "TFDS datasets are not available, because TFDS and/or"
+                "TensorFlow are not installed.\n"
+                "You can install them with: pip install datumaro[tf,tfds]"
             )
+        raise CliException(
+            f"Unknown dataset ID TFDS dataset '{dataset_id}': TFDS datasets must start with the prefix 'tfds:'"
+        )
 
     @staticmethod
     def _describe_txt(dataset_metas: Dict[str, TfdsDatasetRemoteMetadata], report_file=None):
@@ -65,14 +62,14 @@ class TfdsDatasetDownloader(IDatasetDownloader):
                         print(f"    {line}", file=report_file)
                     print(
                         f"""  download size: {meta.download_size} bytes
-  home URL: {meta.home_url or 'N/A'}
+  home URL: {meta.home_url or "N/A"}
   number of classes: {meta.num_classes}
   subsets:""",
                         file=report_file,
                     )
                     for subset_name, subset_meta in sorted(meta.subsets.items()):
                         print(f"    {subset_name}: {subset_meta.num_items} items", file=report_file)
-                    print(f"  version: {meta.version}" "", file=report_file)
+                    print(f"  version: {meta.version}", file=report_file)
             else:
                 print(
                     """No datasets available.
@@ -102,15 +99,11 @@ class TfdsDatasetDownloader(IDatasetDownloader):
             ):
                 raw[attribute] = getattr(meta, attribute)
 
-            raw["subsets"] = {
-                name: {"num_items": subset.num_items} for name, subset in meta.subsets.items()
-            }
+            raw["subsets"] = {name: {"num_items": subset.num_items} for name, subset in meta.subsets.items()}
 
             return raw
 
-        with (
-            open(report_file, "w") if report_file else contextlib.nullcontext(sys.stdout)
-        ) as report_file:
+        with open(report_file, "w") if report_file else contextlib.nullcontext(sys.stdout) as report_file:
             report_file.write(
                 dump_json(
                     {name: meta_to_raw(meta) for name, meta in dataset_metas.items()},
@@ -134,7 +127,7 @@ class TfdsDatasetDownloader(IDatasetDownloader):
             cls._describe_json(dataset_metas, report_file)
 
     @classmethod
-    def describe_command_description(_):
+    def describe_command_description(cls):
         return """More detailed
         information can be found in the TFDS Catalog:
         <https://www.tensorflow.org/datasets/catalog/overview>."""
@@ -174,13 +167,9 @@ format into a specific directory:|n
 
         if dst_dir:
             if not overwrite and osp.isdir(dst_dir) and os.listdir(dst_dir):
-                raise CliException(
-                    f"Directory '{dst_dir}' already exists (pass --overwrite to overwrite)"
-                )
+                raise CliException(f"Directory '{dst_dir}' already exists (pass --overwrite to overwrite)")
         else:
-            dst_dir = generate_next_file_name(
-                f"{make_file_name(dataset_id)}-{make_file_name(output_format)}"
-            )
+            dst_dir = generate_next_file_name(f"{make_file_name(dataset_id)}-{make_file_name(output_format)}")
         dst_dir = osp.abspath(dst_dir)
 
         log.info("Downloading the dataset")

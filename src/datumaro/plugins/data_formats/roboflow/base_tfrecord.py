@@ -41,7 +41,7 @@ class RoboflowTfrecordImporter(Importer):
             subset_name = os.path.dirname(source["url"]).split(os.sep)[-1]
             subsets[subset_name] = source["url"]
 
-        sources = [
+        return [
             {
                 "url": url,
                 "format": "roboflow_tfrecord",
@@ -51,8 +51,6 @@ class RoboflowTfrecordImporter(Importer):
             }
             for subset, url in subsets.items()
         ]
-
-        return sources
 
     @classmethod
     def get_file_extensions(cls) -> List[str]:
@@ -81,6 +79,4 @@ class RoboflowTfrecordBase(TfDetectionApiBase):
 
         matches = re.findall(entry_pattern, text)
 
-        labelmap = {name: int(id) for name, id in matches}
-
-        return labelmap
+        return {name: int(id) for name, id in matches}

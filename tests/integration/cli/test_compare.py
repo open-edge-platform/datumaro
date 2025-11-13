@@ -24,7 +24,6 @@ from datumaro.components.comparator import DistanceComparator
 from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image
-
 from tests.utils.test_utils import TestDir
 from tests.utils.test_utils import run_datum as run
 
@@ -181,7 +180,7 @@ class CompareTest:
             captured = capsys.readouterr()
             assert expected_output1 in captured.out
             assert expected_output2 in captured.out
-            assert 0 != os.listdir(osp.join(test_dir))
+            assert os.listdir(osp.join(test_dir)) != 0
 
     def test_can_run_distance_diff(self, helper_tc):
         dataset1 = Dataset.from_iterable(

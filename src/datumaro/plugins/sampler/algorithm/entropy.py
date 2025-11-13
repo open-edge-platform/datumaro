@@ -92,7 +92,7 @@ class SampleEntropy(InferenceResultAnalyzer):
             else:
                 raise ValueError(f"Unknown sampling method '{method}'")
         else:
-            log.warning("The number of samples is greater than the size of the " "selected subset.")
+            log.warning("The number of samples is greater than the size of the selected subset.")
 
         columns = list(self.data.columns)
         merged_df = pd.merge(temp_rank, self.data, how="inner", on=["ImageID"])
@@ -158,9 +158,7 @@ class SampleEntropy(InferenceResultAnalyzer):
         # 4. Ranked based on Uncertainty score
         res = inference[["ImageID", "Uncertainty"]].groupby("ImageID").mean()
         res["rank"] = res["Uncertainty"].rank(ascending=False, method="first")
-        res = res.reset_index()
-
-        return res
+        return res.reset_index()
 
     def _calculate_uncertainty_from_classprob(self, inference: pd.DataFrame) -> pd.DataFrame:
         """
@@ -177,7 +175,7 @@ class SampleEntropy(InferenceResultAnalyzer):
         for i in range(len(inference)):
             entropy = 0
             for j in range(self.num_classes):
-                p = inference.loc[i][f"ClassProbability{j+1}"]
+                p = inference.loc[i][f"ClassProbability{j + 1}"]
                 if p < 0 or p > 1:
                     raise Exception("Invalid data, Math domain Error! p is between 0 and 1")
                 entropy -= p * math.log(p + 1e-14, math.e)

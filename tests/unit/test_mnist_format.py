@@ -9,7 +9,6 @@ from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.environment import Environment
 from datumaro.components.media import Image
 from datumaro.plugins.data_formats.mnist import MnistExporter, MnistImporter
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, compare_datasets
 
@@ -33,9 +32,7 @@ class MnistFormatTest(TestCase):
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    str(label) for label in range(10)
-                ),
+                AnnotationType.label: LabelCategories.from_iterable(str(label) for label in range(10)),
             },
         )
 
@@ -52,9 +49,7 @@ class MnistFormatTest(TestCase):
                 DatasetItem(id=1, subset="train", annotations=[Label(1)]),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    str(label) for label in range(10)
-                ),
+                AnnotationType.label: LabelCategories.from_iterable(str(label) for label in range(10)),
             },
         )
 
@@ -67,17 +62,11 @@ class MnistFormatTest(TestCase):
     def test_can_save_and_load_with_different_image_size(self):
         source_dataset = Dataset.from_iterable(
             [
-                DatasetItem(
-                    id=0, media=Image.from_numpy(data=np.ones((3, 4))), annotations=[Label(0)]
-                ),
-                DatasetItem(
-                    id=1, media=Image.from_numpy(data=np.ones((2, 2))), annotations=[Label(1)]
-                ),
+                DatasetItem(id=0, media=Image.from_numpy(data=np.ones((3, 4))), annotations=[Label(0)]),
+                DatasetItem(id=1, media=Image.from_numpy(data=np.ones((2, 2))), annotations=[Label(1)]),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    str(label) for label in range(10)
-                ),
+                AnnotationType.label: LabelCategories.from_iterable(str(label) for label in range(10)),
             },
         )
 
@@ -97,9 +86,7 @@ class MnistFormatTest(TestCase):
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    str(label) for label in range(10)
-                ),
+                AnnotationType.label: LabelCategories.from_iterable(str(label) for label in range(10)),
             },
         )
 
@@ -113,14 +100,10 @@ class MnistFormatTest(TestCase):
         dataset = Dataset.from_iterable(
             [
                 DatasetItem(id="q/1", media=Image.from_numpy(data=np.zeros((28, 28)), ext=".JPEG")),
-                DatasetItem(
-                    id="a/b/c/2", media=Image.from_numpy(data=np.zeros((28, 28)), ext=".bmp")
-                ),
+                DatasetItem(id="a/b/c/2", media=Image.from_numpy(data=np.zeros((28, 28)), ext=".bmp")),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    str(label) for label in range(10)
-                ),
+                AnnotationType.label: LabelCategories.from_iterable(str(label) for label in range(10)),
             },
         )
 
@@ -134,9 +117,7 @@ class MnistFormatTest(TestCase):
         dataset = Dataset.from_iterable(
             [DatasetItem(id=0, annotations=[Label(0)]), DatasetItem(id=1)],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    str(label) for label in range(10)
-                ),
+                AnnotationType.label: LabelCategories.from_iterable(str(label) for label in range(10)),
             },
         )
 
@@ -149,17 +130,11 @@ class MnistFormatTest(TestCase):
     def test_can_save_and_load_with_other_labels(self):
         dataset = Dataset.from_iterable(
             [
-                DatasetItem(
-                    id=0, media=Image.from_numpy(data=np.ones((28, 28))), annotations=[Label(0)]
-                ),
-                DatasetItem(
-                    id=1, media=Image.from_numpy(data=np.ones((28, 28))), annotations=[Label(1)]
-                ),
+                DatasetItem(id=0, media=Image.from_numpy(data=np.ones((28, 28))), annotations=[Label(0)]),
+                DatasetItem(id=1, media=Image.from_numpy(data=np.ones((28, 28))), annotations=[Label(1)]),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    "label_%s" % label for label in range(2)
-                ),
+                AnnotationType.label: LabelCategories.from_iterable("label_%s" % label for label in range(2)),
             },
         )
 
@@ -187,9 +162,7 @@ class MnistFormatTest(TestCase):
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    str(label) for label in range(10)
-                ),
+                AnnotationType.label: LabelCategories.from_iterable(str(label) for label in range(10)),
             },
         )
 
@@ -240,9 +213,7 @@ class MnistImporterTest(TestCase):
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    str(label) for label in range(10)
-                ),
+                AnnotationType.label: LabelCategories.from_iterable(str(label) for label in range(10)),
             },
         )
 

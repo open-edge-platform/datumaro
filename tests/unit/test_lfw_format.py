@@ -11,7 +11,6 @@ from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.environment import Environment
 from datumaro.components.media import Image
 from datumaro.plugins.data_formats.lfw import LfwExporter, LfwImporter
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, compare_datasets
 
@@ -203,9 +202,7 @@ class LfwFormatTest(TestCase):
     def test_can_save_dataset_with_cyrillic_and_spaces_in_filename(self):
         dataset = Dataset.from_iterable(
             [
-                DatasetItem(
-                    id="кириллица с пробелом", media=Image.from_numpy(data=np.ones((2, 5, 3)))
-                ),
+                DatasetItem(id="кириллица с пробелом", media=Image.from_numpy(data=np.ones((2, 5, 3)))),
                 DatasetItem(
                     id="name0_0002",
                     media=Image.from_numpy(data=np.ones((2, 5, 3))),

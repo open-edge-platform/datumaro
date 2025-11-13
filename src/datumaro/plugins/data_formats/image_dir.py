@@ -27,7 +27,7 @@ class ImageDirImporter(Importer):
         parser = super().build_cmdline_parser(**kwargs)
         parser.add_argument(
             "--subset",
-            help="The name of the subset for the produced dataset items " "(default: none)",
+            help="The name of the subset for the produced dataset items (default: none)",
         )
         return parser
 
@@ -68,9 +68,7 @@ class ImageDirBase(SubsetBase):
 
         for path in find_images(str(url)):
             item_id = Path(path).stem
-            self._items.append(
-                DatasetItem(id=item_id, subset=self._subset, media=Image.from_file(path=path))
-            )
+            self._items.append(DatasetItem(id=item_id, subset=self._subset, media=Image.from_file(path=path)))
         self._ann_types = set()
 
     @property

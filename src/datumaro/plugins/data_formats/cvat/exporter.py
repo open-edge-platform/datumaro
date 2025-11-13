@@ -227,9 +227,7 @@ class _SubsetWriter:
             if not valid_label:
                 continue
 
-            tracks.append(
-                {"track_id": tid, "label": annotations[0].label, "annotations": annotations}
-            )
+            tracks.append({"track_id": tid, "label": annotations[0].label, "annotations": annotations})
 
         return tracks
 
@@ -366,15 +364,9 @@ class _SubsetWriter:
 
         if write_frame:
             shape_data.update(OrderedDict([("frame", str(int(shape.attributes.get("frame", 0))))]))
-        shape_data.update(
-            OrderedDict([("occluded", str(int(shape.attributes.get("occluded", False))))])
-        )
-        shape_data.update(
-            OrderedDict([("outside", str(int(shape.attributes.get("outside", False))))])
-        )
-        shape_data.update(
-            OrderedDict([("keyframe", str(int(shape.attributes.get("keyframe", False))))])
-        )
+        shape_data.update(OrderedDict([("occluded", str(int(shape.attributes.get("occluded", False))))]))
+        shape_data.update(OrderedDict([("outside", str(int(shape.attributes.get("outside", False))))]))
+        shape_data.update(OrderedDict([("keyframe", str(int(shape.attributes.get("keyframe", False))))]))
 
         if shape.type == AnnotationType.bbox:
             shape_data.update(
@@ -434,10 +426,7 @@ class _SubsetWriter:
                         (
                             "points",
                             ";".join(
-                                (
-                                    ",".join(("{:.2f}".format(x), "{:.2f}".format(y)))
-                                    for x, y in pairs(shape.points)
-                                )
+                                (",".join(("{:.2f}".format(x), "{:.2f}".format(y))) for x, y in pairs(shape.points))
                             ),
                         ),
                     ]
@@ -467,9 +456,7 @@ class _SubsetWriter:
                     continue
                 if isinstance(attr_value, bool):
                     attr_value = "true" if attr_value else "false"
-                if self._context._allow_undeclared_attrs or attr_name in self._get_label_attrs(
-                    shape.label
-                ):
+                if self._context._allow_undeclared_attrs or attr_name in self._get_label_attrs(shape.label):
                     self._writer.add_attribute(
                         OrderedDict(
                             [
@@ -521,9 +508,7 @@ class _SubsetWriter:
                 continue
             if isinstance(attr_value, bool):
                 attr_value = "true" if attr_value else "false"
-            if self._context._allow_undeclared_attrs or attr_name in self._get_label_attrs(
-                label.label
-            ):
+            if self._context._allow_undeclared_attrs or attr_name in self._get_label_attrs(label.label):
                 self._writer.add_attribute(
                     OrderedDict(
                         [

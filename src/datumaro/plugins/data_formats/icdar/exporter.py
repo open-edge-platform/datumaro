@@ -113,9 +113,7 @@ class IcdarTextSegmentationExporter(Exporter):
                 if color:
                     color = color.split()
                     if len(color) != 3:
-                        raise DatasetExportError(
-                            "Item %s: mask #%s has invalid color" % (item.id, i)
-                        )
+                        raise DatasetExportError("Item %s: mask #%s has invalid color" % (item.id, i))
 
                     color = tuple(map(int, color))
                 else:
@@ -144,9 +142,7 @@ class IcdarTextSegmentationExporter(Exporter):
                 annotation += "\n"
                 group = ann.group
 
-            mask = CompiledMask.from_instance_masks(
-                anns, instance_labels=[m.attributes["index"] + 1 for m in anns]
-            )
+            mask = CompiledMask.from_instance_masks(anns, instance_labels=[m.attributes["index"] + 1 for m in anns])
             mask = paint_mask(mask.class_mask, {i: colormap[i] for i in range(len(colormap))})
             save_image(
                 osp.join(self._save_dir, subset_name, item.id + "_GT" + IcdarPath.GT_EXT),

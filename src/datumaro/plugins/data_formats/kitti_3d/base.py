@@ -50,8 +50,7 @@ class Kitti3dBase(SubsetBase):
 
         image_dir = osp.join(self._path, Kitti3dPath.IMAGE_DIR)
         image_path_by_id = {
-            osp.split(osp.splitext(osp.relpath(p, image_dir))[0])[-1]: p
-            for p in find_images(image_dir, recursive=True)
+            osp.split(osp.splitext(osp.relpath(p, image_dir))[0])[-1]: p for p in find_images(image_dir, recursive=True)
         }
 
         if self._subset == "default":
@@ -75,9 +74,7 @@ class Kitti3dBase(SubsetBase):
             for line_idx, line in enumerate(lines):
                 line = line.split()
                 if len(line) not in [15, 16]:
-                    logging.warning(
-                        f"Unexpected line length {len(line)} in file {labels_path} at line {line_idx + 1}"
-                    )
+                    logging.warning(f"Unexpected line length {len(line)} in file {labels_path} at line {line_idx + 1}")
                     continue
 
                 label_name = line[0]
@@ -131,9 +128,7 @@ class Kitti3dBase(SubsetBase):
             if self._subset == "default":
                 calib_path = osp.join(self._path, Kitti3dPath.CALIB_DIR, item_id + ".txt")
             else:
-                calib_path = osp.join(
-                    self._path, Kitti3dPath.CALIB_DIR, self._subset, item_id + ".txt"
-                )
+                calib_path = osp.join(self._path, Kitti3dPath.CALIB_DIR, self._subset, item_id + ".txt")
             items.append(
                 DatasetItem(
                     id=item_id,
@@ -150,6 +145,4 @@ class Kitti3dBase(SubsetBase):
         try:
             return desired_type(value)
         except Exception as e:
-            raise InvalidAnnotationError(
-                f"Can't parse {field_name} from '{value}'. Expected {desired_type}"
-            ) from e
+            raise InvalidAnnotationError(f"Can't parse {field_name} from '{value}'. Expected {desired_type}") from e

@@ -9,7 +9,6 @@ from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.environment import Environment
 from datumaro.components.media import Image
 from datumaro.plugins.data_formats.imagenet_txt import ImagenetTxtExporter, ImagenetTxtImporter
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, compare_datasets
 
@@ -27,9 +26,7 @@ class ImagenetTxtFormatTest(TestCase):
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    "label_" + str(label) for label in range(4)
-                ),
+                AnnotationType.label: LabelCategories.from_iterable("label_" + str(label) for label in range(4)),
             },
         )
 
@@ -83,9 +80,7 @@ class ImagenetTxtFormatTest(TestCase):
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    "label_" + str(label) for label in range(10)
-                ),
+                AnnotationType.label: LabelCategories.from_iterable("label_" + str(label) for label in range(10)),
             },
         )
 
@@ -106,9 +101,7 @@ class ImagenetTxtFormatTest(TestCase):
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    "label_" + str(label) for label in range(10)
-                ),
+                AnnotationType.label: LabelCategories.from_iterable("label_" + str(label) for label in range(10)),
             },
         )
 
@@ -129,9 +122,7 @@ class ImagenetTxtFormatTest(TestCase):
                 ),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    "label_" + str(label) for label in range(2)
-                ),
+                AnnotationType.label: LabelCategories.from_iterable("label_" + str(label) for label in range(2)),
             },
         )
 
@@ -145,12 +136,8 @@ class ImagenetTxtFormatTest(TestCase):
     def test_can_save_and_load_image_with_arbitrary_extension(self):
         dataset = Dataset.from_iterable(
             [
-                DatasetItem(
-                    id="a/1", media=Image.from_numpy(data=np.zeros((4, 3, 3)), ext=".JPEG")
-                ),
-                DatasetItem(
-                    id="b/c/d/2", media=Image.from_numpy(data=np.zeros((3, 4, 3)), ext=".bmp")
-                ),
+                DatasetItem(id="a/1", media=Image.from_numpy(data=np.zeros((4, 3, 3)), ext=".JPEG")),
+                DatasetItem(id="b/c/d/2", media=Image.from_numpy(data=np.zeros((3, 4, 3)), ext=".bmp")),
             ],
             categories=[],
         )
@@ -188,9 +175,7 @@ class ImagenetTxtImporterTest(TestCase):
                 DatasetItem(id="4", subset="train", annotations=[Label(5)]),
             ],
             categories={
-                AnnotationType.label: LabelCategories.from_iterable(
-                    "label_%s" % label for label in range(10)
-                ),
+                AnnotationType.label: LabelCategories.from_iterable("label_%s" % label for label in range(10)),
             },
         )
 
@@ -220,9 +205,7 @@ class ImagenetTxtImporterTest(TestCase):
             categories=["class-%s" % label for label in range(5)],
         )
 
-        dataset = Dataset.import_from(
-            DUMMY_DATASET_WITH_NO_LABELS_DIR, "imagenet_txt", labels="generate"
-        )
+        dataset = Dataset.import_from(DUMMY_DATASET_WITH_NO_LABELS_DIR, "imagenet_txt", labels="generate")
 
         compare_datasets(self, expected_dataset, dataset, require_media=True)
 

@@ -9,14 +9,33 @@ different tensor libraries (PyTorch, NumPy, JAX, TensorFlow, etc.) and Polars
 DataFrames. New types can be registered at runtime without modifying core code.
 """
 
-import sys
+import logging
 import types
-from typing import Any, Callable, Union
+from collections.abc import Callable
+from typing import Any, Union
 
 import numpy as np
 import polars as pl
 
 from datumaro.components.annotation import Points
+
+logger = logging.getLogger(__name__)
+
+
+POLAR_TO_NUMPY_DTYPE_MAPPING = {
+    pl.Float32: np.dtype(np.float32),
+    pl.Float64: np.dtype(np.float64),
+    pl.Int8: np.dtype(np.int8),
+    pl.Int16: np.dtype(np.int16),
+    pl.Int32: np.dtype(np.int32),
+    pl.Int64: np.dtype(np.int64),
+    pl.UInt8: np.dtype(np.uint8),
+    pl.UInt16: np.dtype(np.uint16),
+    pl.UInt32: np.dtype(np.uint32),
+    pl.UInt64: np.dtype(np.uint64),
+    pl.Boolean: np.dtype(np.bool_),
+    pl.Binary: np.dtype(np.bytes_),
+}
 
 
 def polars_to_numpy_dtype(polars_dtype: pl.DataType) -> np.dtype[Any]:
@@ -36,33 +55,9 @@ def polars_to_numpy_dtype(polars_dtype: pl.DataType) -> np.dtype[Any]:
         >>> numpy_dtype == np.float32
         True
     """
-    # Basic numeric types
-    if polars_dtype == pl.Float32:
-        return np.dtype(np.float32)
-    elif polars_dtype == pl.Float64:
-        return np.dtype(np.float64)
-    elif polars_dtype == pl.Int8:
-        return np.dtype(np.int8)
-    elif polars_dtype == pl.Int16:
-        return np.dtype(np.int16)
-    elif polars_dtype == pl.Int32:
-        return np.dtype(np.int32)
-    elif polars_dtype == pl.Int64:
-        return np.dtype(np.int64)
-    elif polars_dtype == pl.UInt8:
-        return np.dtype(np.uint8)
-    elif polars_dtype == pl.UInt16:
-        return np.dtype(np.uint16)
-    elif polars_dtype == pl.UInt32:
-        return np.dtype(np.uint32)
-    elif polars_dtype == pl.UInt64:
-        return np.dtype(np.uint64)
-    elif polars_dtype == pl.Boolean:
-        return np.dtype(np.bool_)
-    elif polars_dtype == pl.Binary:
-        return np.dtype(np.bytes_)
-    else:
-        raise TypeError(f"No NumPy dtype mapping for Polars dtype: {polars_dtype}")
+    if polars_dtype in POLAR_TO_NUMPY_DTYPE_MAPPING:
+        return POLAR_TO_NUMPY_DTYPE_MAPPING[polars_dtype]
+    raise TypeError(f"No NumPy dtype mapping exists for Polars dtype: {polars_dtype}")
 
 
 def points_to_numpy(x: Points) -> np.ndarray:
@@ -100,9 +95,7 @@ _from_polars_converters: dict[type, Callable[[Any], Any]] = {
 }
 
 
-def register_numpy_converter(
-    source_type: type, converter_func: Callable[[Any], np.ndarray[Any, Any]]
-) -> None:
+def register_numpy_converter(source_type: type, converter_func: Callable[[Any], np.ndarray[Any, Any]]) -> None:
     """Register a converter function to convert from source_type to numpy array.
 
     Args:
@@ -161,9 +154,7 @@ def to_numpy(value: Any, dtype: Any = None) -> np.ndarray[Any, Any] | None:
                 return None
 
             if numpy_value.dtype == object:
-                nested_func = np.vectorize(
-                    lambda x: to_numpy(x, dtype), otypes=numpy_value.dtype.char
-                )
+                nested_func = np.vectorize(lambda x: to_numpy(x, dtype), otypes=numpy_value.dtype.char)
                 numpy_value = nested_func(numpy_value)
             else:
                 target_numpy_dtype = polars_to_numpy_dtype(dtype)
@@ -204,36 +195,41 @@ def from_polars_data(polars_data: Any, target_type: type) -> Any:
     union_args = None
 
     # Check for types.UnionType (Python 3.10+ syntax: A | B)
-    if sys.version_info >= (3, 10) and isinstance(target_type, types.UnionType):
+    if isinstance(target_type, types.UnionType):
         is_union = True
         union_args = target_type.__args__
+    else:
+        # Check for typing.Union (older syntax: Union[A, B])
+        try:
+            from typing import get_args, get_origin
 
-    # Check for typing.Union (older syntax: Union[A, B])
-    try:
-        from typing import get_args, get_origin
-
-        if get_origin(target_type) is Union:
-            is_union = True
-            union_args = get_args(target_type)
-    except Exception:
-        pass
+            if get_origin(target_type) is Union:
+                is_union = True
+                union_args = get_args(target_type)
+        except Exception as e:
+            logger.error(f"Error handling Union type: {e}")
 
     if is_union and union_args:
-        if types.NoneType in union_args:
-            # Handle optional types in union (e.g. A | None) when Polars data is None
-            if polars_data is None:
-                return None
+        return _convert_union_types(union_args=union_args, polars_data=polars_data, target_type=target_type)
+    raise TypeError(f"No converter registered for type {target_type}")
 
-            union_args = tuple(arg for arg in union_args if arg is not types.NoneType)
 
-        # For non-optional Union types, try each type in the union until one succeeds
-        for union_type in union_args:
-            if union_type in _from_polars_converters:
-                try:
-                    return _from_polars_converters[union_type](polars_data)
-                except KeyError:
-                    # If conversion fails, try the next type in the union
-                    continue
+def _convert_union_types(union_args: tuple[type], polars_data: Any, target_type: type) -> Any:
+    if types.NoneType in union_args:
+        # Handle optional types in union (e.g. A | None) when Polars data is None
+        if polars_data is None:
+            return None
+
+        union_args = tuple(arg for arg in union_args if arg is not types.NoneType)
+
+    # For non-optional Union types, try each type in the union until one succeeds
+    for union_type in union_args:
+        if union_type in _from_polars_converters:
+            try:
+                return _from_polars_converters[union_type](polars_data)
+            except KeyError:
+                # If conversion fails, try the next type in the union
+                continue
     raise TypeError(f"No converter registered for type {target_type}")
 
 
@@ -241,12 +237,8 @@ def from_polars_data(polars_data: Any, target_type: type) -> Any:
 try:
     import torch  # pyright: ignore[reportMissingImports]
 
-    register_numpy_converter(
-        torch.Tensor, lambda x: x.detach().cpu().numpy()
-    )  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
-    register_from_polars_converter(
-        torch.Tensor, lambda x: torch.tensor(x)
-    )  # pyright: ignore[reportUnknownMemberType, reportUnknownLambdaType, reportUnknownArgumentType]
+    register_numpy_converter(torch.Tensor, lambda x: x.detach().cpu().numpy())  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+    register_from_polars_converter(torch.Tensor, lambda x: torch.tensor(x))  # pyright: ignore[reportUnknownMemberType, reportUnknownLambdaType, reportUnknownArgumentType]
 except ImportError:
     pass
 
@@ -254,27 +246,17 @@ except ImportError:
 try:
     from torchvision import tv_tensors  # pyright: ignore[reportMissingImports]
 
-    register_numpy_converter(
-        tv_tensors.Image, lambda x: x.detach().cpu().numpy()
-    )  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+    register_numpy_converter(tv_tensors.Image, lambda x: x.detach().cpu().numpy())  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
 
-    register_numpy_converter(
-        tv_tensors.BoundingBoxes, lambda x: x.detach().cpu().numpy()
-    )  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+    register_numpy_converter(tv_tensors.BoundingBoxes, lambda x: x.detach().cpu().numpy())  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
 
-    register_numpy_converter(
-        tv_tensors.Mask, lambda x: x.detach().cpu().numpy()
-    )  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
+    register_numpy_converter(tv_tensors.Mask, lambda x: x.detach().cpu().numpy())  # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
 
     # Conversion from Polars to tv_tensors BoundingBoxes and Keypoints are not supported
     # because tv_tensors BoundingBoxes and Keypoints require the image size which is not available during conversion.
-    register_from_polars_converter(
-        tv_tensors.Image, lambda x: tv_tensors.Image(x)
-    )  # pyright: ignore[reportUnknownMemberType, reportUnknownLambdaType, reportUnknownArgumentType]
+    register_from_polars_converter(tv_tensors.Image, lambda x: tv_tensors.Image(x))  # pyright: ignore[reportUnknownMemberType, reportUnknownLambdaType, reportUnknownArgumentType]
 
-    register_from_polars_converter(
-        tv_tensors.Mask, lambda x: tv_tensors.Mask(x)
-    )  # pyright: ignore[reportUnknownMemberType, reportUnknownLambdaType, reportUnknownArgumentType]
+    register_from_polars_converter(tv_tensors.Mask, lambda x: tv_tensors.Mask(x))  # pyright: ignore[reportUnknownMemberType, reportUnknownLambdaType, reportUnknownArgumentType]
 except ImportError:
     pass
 
@@ -320,9 +302,7 @@ def convert_image_type(image: Any, target_type: type) -> Any:
     # Validate that target_type is a supported image type
     if target_type not in supported_image_types:
         supported_names = [t.__name__ for t in supported_image_types]
-        raise TypeError(
-            f"Target type {target_type.__name__} not supported. Supported image types: {supported_names}"
-        )
+        raise TypeError(f"Target type {target_type.__name__} not supported. Supported image types: {supported_names}")
 
     # If already the target type, return as-is
     if current_type == target_type:
@@ -339,9 +319,8 @@ def convert_image_type(image: Any, target_type: type) -> Any:
         # Then convert from numpy to target type
         if target_type == np.ndarray:
             return numpy_image
-        else:
-            # Convert numpy to target via polars-style conversion
-            return _from_polars_converters[target_type](numpy_image)
+        # Convert numpy to target via polars-style conversion
+        return _from_polars_converters[target_type](numpy_image)
 
     except Exception as e:
         raise TypeError(f"Cannot convert from {current_type} to {target_type}: {e}")

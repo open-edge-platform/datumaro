@@ -81,9 +81,7 @@ class MvtecExporter(Exporter):
 
                 bboxes = [a for a in item.annotations if a.type == AnnotationType.bbox]
                 if bboxes and MvtecTask.detection in self._tasks:
-                    mask_path = osp.join(
-                        MvtecPath.MASK_DIR, item.id + MvtecPath.MASK_POSTFIX + MvtecPath.MASK_EXT
-                    )
+                    mask_path = osp.join(MvtecPath.MASK_DIR, item.id + MvtecPath.MASK_POSTFIX + MvtecPath.MASK_EXT)
 
                     mask = np.zeros((*item.media.size,), dtype=np.uint8)
                     for bbox in bboxes:
@@ -102,15 +100,11 @@ class MvtecExporter(Exporter):
 
                 masks = [a for a in item.annotations if a.type == AnnotationType.mask]
                 if masks and MvtecTask.segmentation in self._tasks:
-                    mask_path = osp.join(
-                        MvtecPath.MASK_DIR, item.id + MvtecPath.MASK_POSTFIX + MvtecPath.MASK_EXT
-                    )
+                    mask_path = osp.join(MvtecPath.MASK_DIR, item.id + MvtecPath.MASK_POSTFIX + MvtecPath.MASK_EXT)
 
                     if not osp.exists(osp.join(self._save_dir, osp.dirname(mask_path))):
                         os.mkdir(osp.join(self._save_dir, osp.dirname(mask_path)))
-                    cv2.imwrite(
-                        osp.join(self._save_dir, mask_path), masks[0].image.astype(np.uint8) * 255
-                    )
+                    cv2.imwrite(osp.join(self._save_dir, mask_path), masks[0].image.astype(np.uint8) * 255)
 
     def get_label(self, label_id):
         return self._extractor.categories()[AnnotationType.label].items[label_id].name

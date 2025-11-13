@@ -5,7 +5,6 @@ from datumaro.components.dataset import Dataset, StreamDataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image
 from datumaro.plugins.data_formats.image_dir import ImageDirExporter
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, check_save_and_load, compare_datasets
 
@@ -49,16 +48,12 @@ class ImageDirFormatTest:
     def test_can_save_dataset_with_cyrillic_and_spaces_in_filename(self, helper_tc):
         dataset = Dataset.from_iterable(
             [
-                DatasetItem(
-                    id="кириллица с пробелом", media=Image.from_numpy(data=np.ones((4, 2, 3)))
-                ),
+                DatasetItem(id="кириллица с пробелом", media=Image.from_numpy(data=np.ones((4, 2, 3)))),
             ]
         )
 
         with TestDir() as test_dir:
-            check_save_and_load(
-                helper_tc, dataset, ImageDirExporter.convert, test_dir, importer=FORMAT_NAME
-            )
+            check_save_and_load(helper_tc, dataset, ImageDirExporter.convert, test_dir, importer=FORMAT_NAME)
 
     def test_can_save_and_load_image_with_arbitrary_extension(self, helper_tc):
         dataset = Dataset.from_iterable(

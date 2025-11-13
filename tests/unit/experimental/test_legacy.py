@@ -73,7 +73,7 @@ def test_image_media_converter_get_schema_attributes():
     attributes = converter.get_schema_attributes()
 
     assert "image_path" in attributes
-    assert attributes["image_path"].type == str
+    assert attributes["image_path"].type is str
 
 
 def test_image_media_converter_convert_item_media_with_path_and_size():
@@ -85,9 +85,7 @@ def test_image_media_converter_convert_item_media_with_path_and_size():
     converter = ForwardImageMediaConverter.create(dataset)
     assert converter is not None
 
-    image_media = Image.from_file(
-        "/path/to/image.jpg", size=(480, 640)
-    )  # pyright: ignore[reportUnknownMemberType]
+    image_media = Image.from_file("/path/to/image.jpg", size=(480, 640))  # pyright: ignore[reportUnknownMemberType]
 
     item = DatasetItem(id="test", media=image_media)
     result = converter.convert_item_media(item)
@@ -143,7 +141,7 @@ def test_image_bytes_media_converter_get_schema_attributes():
     attributes = converter.get_schema_attributes()
 
     assert "image_bytes" in attributes
-    assert attributes["image_bytes"].type == bytes
+    assert attributes["image_bytes"].type is bytes
 
 
 def test_image_bytes_media_converter_convert_item_media():
@@ -477,12 +475,8 @@ def test_image_converter_with_mixed_callable_and_bytes_data():
 
     # Create dataset with mixed callable and non-callable data
     items = [
-        DatasetItem(
-            id="item1", media=ImageFromData(data=get_image_bytes), annotations=[]
-        ),  # callable
-        DatasetItem(
-            id="item2", media=ImageFromData(data=image_bytes), annotations=[]
-        ),  # non-callable
+        DatasetItem(id="item1", media=ImageFromData(data=get_image_bytes), annotations=[]),  # callable
+        DatasetItem(id="item2", media=ImageFromData(data=image_bytes), annotations=[]),  # non-callable
     ]
 
     legacy_dataset = LegacyDataset.from_iterable(items)
@@ -738,9 +732,7 @@ def test_analyze_image_and_bbox_dataset():
         temp_path = Path(temp_dir)
 
         image_path = str(temp_path / "image1.jpg")
-        image_media = Image.from_file(
-            image_path, size=(480, 640)
-        )  # pyright: ignore[reportUnknownMemberType]
+        image_media = Image.from_file(image_path, size=(480, 640))  # pyright: ignore[reportUnknownMemberType]
         bbox = Bbox(10, 20, 30, 40, label=1)
         item = DatasetItem(id="item1", media=image_media, annotations=[bbox])
 
@@ -769,9 +761,7 @@ def test_analyze_image_only_dataset():
         temp_path = Path(temp_dir)
 
         image_path = str(temp_path / "image1.jpg")
-        image_media = Image.from_file(
-            image_path, size=(480, 640)
-        )  # pyright: ignore[reportUnknownMemberType]
+        image_media = Image.from_file(image_path, size=(480, 640))  # pyright: ignore[reportUnknownMemberType]
         item = DatasetItem(id="item1", media=image_media, annotations=[])
 
         dataset = LegacyDataset.from_iterable([item])  # pyright: ignore[reportUnknownMemberType]
@@ -790,9 +780,7 @@ def test_analyze_unknown_annotation_type():
         temp_path = Path(temp_dir)
 
         image_path = str(temp_path / "image1.jpg")
-        image_media = Image.from_file(
-            image_path, size=(480, 640)
-        )  # pyright: ignore[reportUnknownMemberType]
+        image_media = Image.from_file(image_path, size=(480, 640))  # pyright: ignore[reportUnknownMemberType]
 
         class UnknownAnnotation(Bbox):
             _type = AnnotationType.unknown
@@ -807,9 +795,7 @@ def test_analyze_unknown_annotation_type():
         # Should skip unknown annotation type
         assert "image_path" in analysis_result.schema.attributes
         assert "image_info" in analysis_result.schema.attributes
-        assert (
-            len(analysis_result.schema.attributes) == 3
-        )  # Only image_path, image_info, and subset fields
+        assert len(analysis_result.schema.attributes) == 3  # Only image_path, image_info, and subset fields
 
 
 def test_convert_simple_bbox_dataset():
@@ -818,9 +804,7 @@ def test_convert_simple_bbox_dataset():
         temp_path = Path(temp_dir)
 
         image_path = str(temp_path / "image1.jpg")
-        image_media = Image.from_file(
-            image_path, size=(480, 640)
-        )  # pyright: ignore[reportUnknownMemberType]
+        image_media = Image.from_file(image_path, size=(480, 640))  # pyright: ignore[reportUnknownMemberType]
 
         bbox1 = Bbox(10, 20, 30, 40, label=1)
         bbox2 = Bbox(50, 60, 70, 80, label=2)
@@ -880,9 +864,7 @@ def test_convert_mask_dataset():
 
     # Create dataset item with the mask
     item = DatasetItem(id="item1", annotations=annotations)
-    dataset = LegacyDataset.from_iterable(
-        [item], categories=categories
-    )  # pyright: ignore[reportUnknownMemberType]
+    dataset = LegacyDataset.from_iterable([item], categories=categories)  # pyright: ignore[reportUnknownMemberType]
 
     # Convert to experimental dataset
     experimental_ds = convert_from_legacy(dataset)
@@ -916,9 +898,7 @@ def test_convert_image_only_dataset():
         temp_path = Path(temp_dir)
 
         image_path = str(temp_path / "image1.jpg")
-        image_media = Image.from_file(
-            image_path, size=(480, 640)
-        )  # pyright: ignore[reportUnknownMemberType]
+        image_media = Image.from_file(image_path, size=(480, 640))  # pyright: ignore[reportUnknownMemberType]
         item = DatasetItem(id="item1", media=image_media, annotations=[])
 
         dataset = LegacyDataset.from_iterable([item])  # pyright: ignore[reportUnknownMemberType]
@@ -953,22 +933,14 @@ def test_builtin_converters_registration():
 # Define a sample schema for testing convert_to_legacy
 class DetectionSample(Sample):
     image_path: Annotated[str, image_path_field()]
-    bboxes: Annotated[
-        np.ndarray[Any, np.dtype[np.float32]], bbox_field(dtype=pl.Float32, format="x1y1x2y2")
-    ]
-    bbox_labels: Annotated[
-        np.ndarray[Any, np.dtype[np.int32]], label_field(dtype=pl.Int32, is_list=True)
-    ]
+    bboxes: Annotated[np.ndarray[Any, np.dtype[np.float32]], bbox_field(dtype=pl.Float32, format="x1y1x2y2")]
+    bbox_labels: Annotated[np.ndarray[Any, np.dtype[np.int32]], label_field(dtype=pl.Int32, is_list=True)]
 
 
 class RotatedDetectionSample(Sample):
     image_path: Annotated[str, image_path_field()]
-    rotated_bboxes: Annotated[
-        np.ndarray[Any, np.dtype[np.float32]], rotated_bbox_field(dtype=pl.Float32)
-    ]
-    rotated_bbox_labels: Annotated[
-        np.ndarray[Any, np.dtype[np.int32]], label_field(dtype=pl.Int32, is_list=True)
-    ]
+    rotated_bboxes: Annotated[np.ndarray[Any, np.dtype[np.float32]], rotated_bbox_field(dtype=pl.Float32)]
+    rotated_bbox_labels: Annotated[np.ndarray[Any, np.dtype[np.int32]], label_field(dtype=pl.Int32, is_list=True)]
 
 
 def test_convert_to_legacy_simple():
@@ -1029,7 +1001,7 @@ def test_convert_to_legacy_simple():
 
     # Check second item
     second_item = items[1]
-    second_item_media = cast(Any, second_item.media)  # pyright: ignore[reportUnknownMemberType]
+    second_item_media = cast("Any", second_item.media)  # pyright: ignore[reportUnknownMemberType]
     assert isinstance(second_item_media, ImageFromFile)
     assert second_item_media.path == "/path/to/image2.jpg"
     assert len(second_item.annotations) == 1
@@ -1073,11 +1045,7 @@ def test_backward_image_media_converter_create_from_schema_no_image_field():
     """Test BackwardImageMediaConverter with schema that has no image field."""
 
     # Create schema without image_path field
-    schema = Schema(
-        attributes={
-            "some_tensor": AttributeInfo(type=np.ndarray, field=tensor_field(dtype=pl.Float32))
-        }
-    )
+    schema = Schema(attributes={"some_tensor": AttributeInfo(type=np.ndarray, field=tensor_field(dtype=pl.Float32))})
 
     converter = BackwardImageMediaConverter.create_from_schema(schema)
     assert converter is None
@@ -1331,9 +1299,7 @@ def test_analyze_experimental_dataset():
     # Check annotation types and converters
     assert AnnotationType.bbox in analysis_result.ann_types
     assert AnnotationType.bbox in analysis_result.ann_converters
-    assert isinstance(
-        analysis_result.ann_converters[AnnotationType.bbox], BackwardBboxAnnotationConverter
-    )
+    assert isinstance(analysis_result.ann_converters[AnnotationType.bbox], BackwardBboxAnnotationConverter)
 
     # Check categories
     assert AnnotationType.label in analysis_result.categories
@@ -1388,14 +1354,14 @@ def test_convert_to_legacy_with_only_images():
 
     # Check first item
     first_item = items[0]
-    first_item_media = cast(Any, first_item.media)  # pyright: ignore[reportUnknownMemberType]
+    first_item_media = cast("Any", first_item.media)  # pyright: ignore[reportUnknownMemberType]
     assert isinstance(first_item_media, ImageFromFile)
     assert first_item_media.path == "/path/to/image1.jpg"
     assert len(first_item.annotations) == 0  # No annotations
 
     # Check second item
     second_item = items[1]
-    second_item_media = cast(Any, second_item.media)  # pyright: ignore[reportUnknownMemberType]
+    second_item_media = cast("Any", second_item.media)  # pyright: ignore[reportUnknownMemberType]
     assert isinstance(second_item_media, ImageFromFile)
     assert second_item_media.path == "/path/to/image2.jpg"
     assert len(second_item.annotations) == 0
@@ -1465,9 +1431,7 @@ def test_backward_polygon_annotation_converter_create_from_schema():
     schema = Schema(
         attributes={
             "polygons": AttributeInfo(type=list, field=polygon_field(dtype=pl.Float32)),
-            "polygon_labels": AttributeInfo(
-                type=np.ndarray, field=label_field(dtype=pl.Int32, multi_label=True)
-            ),
+            "polygon_labels": AttributeInfo(type=np.ndarray, field=label_field(dtype=pl.Int32, multi_label=True)),
         }
     )
 
@@ -1530,9 +1494,7 @@ def test_polygon_conversion_with_labels():
 
         # Create an image file for the test
         image_path = str(temp_path / "image1.jpg")
-        image_media = Image.from_file(
-            image_path, size=(480, 640)
-        )  # pyright: ignore[reportUnknownMemberType]
+        image_media = Image.from_file(image_path, size=(480, 640))  # pyright: ignore[reportUnknownMemberType]
 
         # Create polygon annotations with different shapes
         triangle = Polygon(points=[10, 20, 30, 25, 20, 40], label=1)  # Triangle
@@ -1568,9 +1530,7 @@ def test_polygon_conversion_with_labels():
         # Check polygon data
         assert len(exp_sample.polygons) == 2
         assert np.all(exp_sample.polygons[0] == [[10, 20], [30, 25], [20, 40]])  # Triangle
-        assert np.all(
-            exp_sample.polygons[1] == [[50, 60], [80, 60], [80, 90], [50, 90]]
-        )  # Rectangle
+        assert np.all(exp_sample.polygons[1] == [[50, 60], [80, 60], [80, 90], [50, 90]])  # Rectangle
 
         # Check labels
         np.testing.assert_array_equal(exp_sample.labels, [1, 2])
@@ -1608,9 +1568,7 @@ def test_polygon_conversion_without_labels():
 
         # Create an image file for the test
         image_path = str(temp_path / "image1.jpg")
-        image_media = Image.from_file(
-            image_path, size=(480, 640)
-        )  # pyright: ignore[reportUnknownMemberType]
+        image_media = Image.from_file(image_path, size=(480, 640))  # pyright: ignore[reportUnknownMemberType]
 
         # Create polygon annotation without label categories
         triangle = Polygon(points=[10, 20, 30, 25, 20, 40])  # No label
@@ -1618,9 +1576,7 @@ def test_polygon_conversion_without_labels():
         item = DatasetItem(id="polygon_no_labels", media=image_media, annotations=[triangle])
 
         # Create legacy dataset without label categories
-        legacy_dataset = LegacyDataset.from_iterable(
-            [item], ann_types={AnnotationType.polygon}
-        )  # pyright: ignore[reportUnknownMemberType]
+        legacy_dataset = LegacyDataset.from_iterable([item], ann_types={AnnotationType.polygon})  # pyright: ignore[reportUnknownMemberType]
 
         # Convert to experimental format
         experimental_dataset = convert_from_legacy(legacy_dataset)
@@ -2053,9 +2009,7 @@ def test_analyze_legacy_dataset_hierarchical():
 
     # Create item with label annotation
     item = DatasetItem(id="test", annotations=[Label(label=1)])
-    legacy_dataset = LegacyDataset.from_iterable(
-        [item], categories={AnnotationType.label: legacy_categories}
-    )
+    legacy_dataset = LegacyDataset.from_iterable([item], categories={AnnotationType.label: legacy_categories})
 
     # Analyze the dataset
     analysis_result = analyze_legacy_dataset(legacy_dataset)
@@ -2084,9 +2038,7 @@ def test_analyze_legacy_dataset_non_hierarchical():
 
     # Create a simple item
     item = DatasetItem(id="test", annotations=[])
-    legacy_dataset = LegacyDataset.from_iterable(
-        [item], categories={AnnotationType.label: legacy_categories}
-    )
+    legacy_dataset = LegacyDataset.from_iterable([item], categories={AnnotationType.label: legacy_categories})
 
     # Analyze the dataset
     analysis_result = analyze_legacy_dataset(legacy_dataset)

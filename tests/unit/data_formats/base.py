@@ -9,7 +9,6 @@ from datumaro.components.dataset import Dataset, StreamDataset
 from datumaro.components.environment import DEFAULT_ENVIRONMENT
 from datumaro.components.exporter import Exporter
 from datumaro.components.importer import Importer
-
 from tests.utils.test_utils import check_is_stream, compare_datasets
 
 
@@ -25,7 +24,7 @@ class TestDataFormatBase:
             pytest.skip(reason="importer is None.")
 
         detected_formats = DEFAULT_ENVIRONMENT.detect_dataset(fxt_dataset_dir)
-        assert [importer.NAME] == detected_formats, f"{[importer.NAME]} != {detected_formats}"
+        assert detected_formats == [importer.NAME], f"{[importer.NAME]} != {detected_formats}"
 
     def test_can_import(
         self,
@@ -44,7 +43,7 @@ class TestDataFormatBase:
 
         helper_tc = request.getfixturevalue("helper_tc")
         dataset = dataset_cls.import_from(fxt_dataset_dir, importer.NAME, **fxt_import_kwargs)
-        stream = True if dataset_cls == StreamDataset else False
+        stream = dataset_cls == StreamDataset
         check_is_stream(dataset, stream)
 
         compare_datasets(helper_tc, fxt_expected_dataset, dataset, require_media=True)
@@ -70,7 +69,7 @@ class TestDataFormatBase:
 
         helper_tc = request.getfixturevalue("helper_tc")
 
-        stream = True if dataset_cls == StreamDataset else False
+        stream = dataset_cls == StreamDataset
         exporter.convert(
             fxt_expected_dataset,
             save_dir=test_dir,

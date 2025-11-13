@@ -39,9 +39,7 @@ class RandomSampler(Transform, CliPlugin):
     @classmethod
     def build_cmdline_parser(cls, **kwargs):
         parser = super().build_cmdline_parser(**kwargs)
-        parser.add_argument(
-            "-k", "--count", type=int, required=True, help="Maximum number of items to sample"
-        )
+        parser.add_argument("-k", "--count", type=int, required=True, help="Maximum number of items to sample")
         parser.add_argument(
             "-s",
             "--subset",

@@ -48,11 +48,7 @@ class MnistCsvBase(SubsetBase):
 
     def _load_categories(self):
         if has_meta_file(self._dataset_dir):
-            return {
-                AnnotationType.label: LabelCategories.from_iterable(
-                    parse_meta_file(self._dataset_dir).keys()
-                )
-            }
+            return {AnnotationType.label: LabelCategories.from_iterable(parse_meta_file(self._dataset_dir).keys())}
 
         label_cat = LabelCategories()
 
@@ -92,13 +88,13 @@ class MnistCsvBase(SubsetBase):
                 item_anno.append(Label(label))
                 self._ann_types.add(AnnotationType.label)
 
-            if 0 < len(meta):
+            if len(meta) > 0:
                 meta[i] = meta[i].strip().split(",")
 
             # support for single-channel image only
             image = None
-            if 1 < len(data):
-                if 0 < len(meta) and 1 < len(meta[i]):
+            if len(data) > 1:
+                if len(meta) > 0 and len(meta[i]) > 1:
                     image = np.array([int(pix) for pix in data[1:]], dtype="uint8").reshape(
                         int(meta[i][-2]), int(meta[i][-1])
                     )
@@ -108,7 +104,7 @@ class MnistCsvBase(SubsetBase):
             if image is not None:
                 image = Image.from_numpy(data=image)
 
-            if 0 < len(meta) and len(meta[i]) in [1, 3]:
+            if len(meta) > 0 and len(meta[i]) in [1, 3]:
                 i = meta[i][0]
 
             items[i] = DatasetItem(id=i, subset=self._subset, media=image, annotations=item_anno)
@@ -179,21 +175,21 @@ class MnistCsvExporter(Exporter):
 
             # it is't in the original format,
             # this is for storng other names and sizes of images
-            if len(item_ids) or len(image_sizes):
+            if item_ids or image_sizes:
                 meta = []
-                if len(item_ids) and len(image_sizes):
+                if item_ids and image_sizes:
                     # other names and sizes of images
                     size = [MnistCsvPath.IMAGE_SIZE, MnistCsvPath.IMAGE_SIZE]
                     for i in range(len(data)):
                         w, h = image_sizes.get(i, size)
                         meta.append([item_ids.get(i, i), w, h])
 
-                elif len(item_ids):
+                elif item_ids:
                     # other names of images
                     for i in range(len(data)):
                         meta.append([item_ids.get(i, i)])
 
-                elif len(image_sizes):
+                elif image_sizes:
                     # other sizes of images
                     size = [MnistCsvPath.IMAGE_SIZE, MnistCsvPath.IMAGE_SIZE]
                     for i in range(len(data)):
@@ -213,6 +209,5 @@ class MnistCsvExporter(Exporter):
         labels_file = osp.join(self._save_dir, "labels.txt")
         with open(labels_file, "w", encoding="utf-8") as f:
             f.writelines(
-                l.name + "\n"
-                for l in self._extractor.categories().get(AnnotationType.label, LabelCategories())
+                l.name + "\n" for l in self._extractor.categories().get(AnnotationType.label, LabelCategories())
             )

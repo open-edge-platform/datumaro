@@ -31,9 +31,9 @@ class KittiImporter(Importer):
         # TODO: should be removed when proper label merging is implemented
         conflicting_types = {"kitti_segmentation", "kitti_detection"}
         ann_types = set(t for s in subsets.values() for t in s) & conflicting_types
-        if 1 <= len(ann_types):
+        if len(ann_types) >= 1:
             selected_ann_type = sorted(ann_types)[0]
-        if 1 < len(ann_types):
+        if len(ann_types) > 1:
             log.warning(
                 "Not implemented: "
                 "Found potentially conflicting source types with labels: %s. "
@@ -43,12 +43,9 @@ class KittiImporter(Importer):
         sources = []
         for ann_files in subsets.values():
             for ann_type, ann_file in ann_files.items():
-                if ann_type in conflicting_types:
-                    if ann_type is not selected_ann_type:
-                        log.warning(
-                            "Not implemented: " "conflicting source '%s' is skipped." % ann_file
-                        )
-                        continue
+                if ann_type in conflicting_types and ann_type is not selected_ann_type:
+                    log.warning("Not implemented: conflicting source '%s' is skipped." % ann_file)
+                    continue
                 log.info("Found a dataset at '%s'" % ann_file)
 
                 sources.append(

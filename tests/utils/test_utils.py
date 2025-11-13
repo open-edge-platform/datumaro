@@ -51,7 +51,8 @@ class FileRemover:
                 except PermissionError:
                     # Suppress permission errors from Windows
                     # as files cannot be reliably deleted to this flaky error:
-                    # PermissionError: [WinError 32] The process cannot access the file because it is being used by another process
+                    # PermissionError: [WinError 32] The process cannot access
+                    # the file because it is being used by another process
                     if sys.platform != "win32":
                         raise
             else:
@@ -111,9 +112,7 @@ def compare_categories(test, expected, actual):
             sorted(actual[AnnotationType.label].items, key=lambda t: t.name),
         )
         if expected[AnnotationType.label].label_groups:
-            assert len(expected[AnnotationType.label].label_groups) == len(
-                actual[AnnotationType.label].label_groups
-            )
+            assert len(expected[AnnotationType.label].label_groups) == len(actual[AnnotationType.label].label_groups)
             for expected_group, actual_group in zip(
                 expected[AnnotationType.label].label_groups,
                 actual[AnnotationType.label].label_groups,
@@ -303,9 +302,7 @@ def compare_datasets_3d(
             ann_b_matches = [x for x in item_b.annotations if x.type == ann_a.type]
             test.assertFalse(len(ann_b_matches) == 0, "ann id: %s" % ann_a.id)
 
-            ann_b = find(
-                ann_b_matches, lambda x: _compare_annotations(x, ann_a, ignored_attrs=ignored_attrs)
-            )
+            ann_b = find(ann_b_matches, lambda x: _compare_annotations(x, ann_a, ignored_attrs=ignored_attrs))
             if ann_b is None:
                 test.fail("ann %s, candidates %s" % (ann_a, ann_b_matches))
             item_b.annotations.remove(ann_b)  # avoid repeats
@@ -341,9 +338,7 @@ def check_save_and_load(
             if item.media:
                 if hasattr(item.media, "path") and item.media.path:
                     if isinstance(item.media, VideoFrame):
-                        path = (
-                            item.media.video._path
-                        )  # _path includes the OS-specific directory separator
+                        path = item.media.video._path  # _path includes the OS-specific directory separator
                     else:
                         path = item.media._path
                     item.media = item.media.from_self(path=path.replace(source_path, target_path))
@@ -352,9 +347,7 @@ def check_save_and_load(
                     for image in item.media.extra_images:
                         if hasattr(image, "path"):
                             path = image._path
-                            new_images.append(
-                                image.from_self(path=path.replace(source_path, target_path))
-                            )
+                            new_images.append(image.from_self(path=path.replace(source_path, target_path)))
                         else:
                             new_images.append(image)
                     item.media._extra_images = new_images
@@ -449,9 +442,7 @@ def mock_tfds_data(example=None, subsets=("train",)):
             self.info.set_splits(
                 tfds.core.SplitDict(
                     [
-                        tfds.core.SplitInfo(
-                            name=subset_name, shard_lengths=[NUM_EXAMPLES], num_bytes=1234
-                        )
+                        tfds.core.SplitInfo(name=subset_name, shard_lengths=[NUM_EXAMPLES], num_bytes=1234)
                         for subset_name in subsets
                     ],
                     dataset_name=self.name,

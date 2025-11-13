@@ -175,9 +175,7 @@ class _BaseAnnStats:
             label_name = self.label_categories[annotation.label].name
             for attr, value in annotation.attributes.items():
                 if attr in self.stats.categories[label_name]["attributes"]:
-                    attr_cnt = self.stats.categories[label_name]["attributes"][attr].get(
-                        str(value), 0
-                    )
+                    attr_cnt = self.stats.categories[label_name]["attributes"][attr].get(str(value), 0)
                     attr_cnt += 1
 
     def _update_missing_annotation(self, item):
@@ -187,14 +185,14 @@ class _BaseAnnStats:
 
     def _update_undefined_label(self, item_key, annotation):
         if annotation.label not in self.label_categories:
-            self.stats.undefined_label.add(item_key + (str(annotation.label),))
+            self.stats.undefined_label.add((*item_key, str(annotation.label)))
 
     def _update_missing_attribute(self, item_key, annotation):
         if annotation.label in self.label_categories:
             label_name = self.label_categories[annotation.label].name
             for attr in self.stats.categories[label_name]["attributes"]:
                 if attr not in annotation.attributes:
-                    self.stats.missing_attribute.add(item_key + (label_name, attr))
+                    self.stats.missing_attribute.add((*item_key, label_name, attr))
 
     def _update_undefined_attribute(self, item_key, annotation):
         if annotation.label in self.label_categories:
@@ -202,10 +200,10 @@ class _BaseAnnStats:
             for attr in annotation.attributes:
                 if self.stats.categories[label_name]["attributes"].get(attr, None):
                     continue
-                self.stats.undefined_attribute.add(item_key + (label_name, attr))
+                self.stats.undefined_attribute.add((*item_key, label_name, attr))
         else:
             for attr in annotation.attributes:
-                self.stats.undefined_attribute.add(item_key + (str(annotation.label), attr))
+                self.stats.undefined_attribute.add((*item_key, str(annotation.label), attr))
 
     def _generate_validation_report(self, error, *args, **kwargs):
         return [error(*args, **kwargs)]
@@ -214,9 +212,7 @@ class _BaseAnnStats:
         validation_reports = []
 
         if len(stats.categories) == 0:
-            validation_reports += self._generate_validation_report(
-                MissingLabelCategories, Severity.error
-            )
+            validation_reports += self._generate_validation_report(MissingLabelCategories, Severity.error)
 
         return validation_reports
 
@@ -249,9 +245,7 @@ class _BaseAnnStats:
         items_undefined_label = stats.undefined_label
         for item_id, item_subset, label_name in items_undefined_label:
             details = (item_subset, label_name)
-            validation_reports += self._generate_validation_report(
-                UndefinedLabel, Severity.error, item_id, *details
-            )
+            validation_reports += self._generate_validation_report(UndefinedLabel, Severity.error, item_id, *details)
 
         return validation_reports
 
@@ -300,9 +294,7 @@ class _BaseAnnStats:
 
         validation_reports = []
         if len(labels_found) == 1:
-            validation_reports += self._generate_validation_report(
-                OnlyOneLabel, Severity.info, labels_found[0]
-            )
+            validation_reports += self._generate_validation_report(OnlyOneLabel, Severity.info, labels_found[0])
 
         return validation_reports
 
@@ -522,19 +514,19 @@ class DetStats(_BaseAnnStats):
         _, _, w, h = annotation.get_bbox()
 
         if w == float("inf") or np.isnan(w):
-            self.stats.invalid_value.add(item_key + (annotation.id, "width", w))
+            self.stats.invalid_value.add((*item_key, annotation.id, "width", w))
 
         if h == float("inf") or np.isnan(h):
-            self.stats.invalid_value.add(item_key + (annotation.id, "height", h))
+            self.stats.invalid_value.add((*item_key, annotation.id, "height", h))
 
     def _update_negative_length(self, item_key: tuple, annotation: Annotation):
         _, _, w, h = annotation.get_bbox()
 
         if w < 1:
-            self.stats.negative_length.add(item_key + (annotation.id, "width", w))
+            self.stats.negative_length.add((*item_key, annotation.id, "width", w))
 
         if h < 1:
-            self.stats.negative_length.add(item_key + (annotation.id, "height", h))
+            self.stats.negative_length.add((*item_key, annotation.id, "height", h))
 
     def _update_bbox_stats(self, item_key: tuple, annotation: Annotation):
         if annotation.label not in self.label_categories:
@@ -548,18 +540,10 @@ class DetStats(_BaseAnnStats):
             ratio = float("nan")
 
         if not (
-            w == float("inf")
-            or np.isnan(w)
-            or w < 1
-            or h == float("inf")
-            or np.isnan(h)
-            or h < 1
-            or np.isnan(ratio)
+            w == float("inf") or np.isnan(w) or w < 1 or h == float("inf") or np.isnan(h) or h < 1 or np.isnan(ratio)
         ):
             label_name = self.label_categories[annotation.label].name
-            self.stats.categories[label_name]["pts"].append(
-                item_key + (annotation.id, w, h, area, ratio)
-            )
+            self.stats.categories[label_name]["pts"].append((*item_key, annotation.id, w, h, area, ratio))
 
     def _check_far_from_mean(self, stats: StatsData):
         def _far_from_mean(val, mean, stdev):
@@ -585,7 +569,7 @@ class DetStats(_BaseAnnStats):
             for item_id, item_subset, ann_id, w, h, a, r in stats.categories[label_name]["pts"]:
                 item_prop = {"width": w, "height": h, "ratio": r, "area": a}
 
-                for p in prop_stats.keys():
+                for p in prop_stats:
                     if _far_from_mean(item_prop[p], prop_stats[p]["mean"], prop_stats[p]["stdev"]):
                         details = (
                             item_subset,
@@ -637,9 +621,7 @@ class DetStats(_BaseAnnStats):
         items_neg_len = stats.negative_length
         for item_id, item_subset, ann_id, prop, val in items_neg_len:
             details = (item_subset, ann_id, f"bbox {prop}", val)
-            validation_reports += self._generate_validation_report(
-                NegativeLength, Severity.error, item_id, *details
-            )
+            validation_reports += self._generate_validation_report(NegativeLength, Severity.error, item_id, *details)
 
         return validation_reports
 
@@ -649,9 +631,7 @@ class DetStats(_BaseAnnStats):
         items_invalid_val = stats.invalid_value
         for item_id, item_subset, ann_id, prop, val in items_invalid_val:
             details = (item_subset, ann_id, f"bbox {prop}")
-            validation_reports += self._generate_validation_report(
-                InvalidValue, Severity.error, item_id, *details
-            )
+            validation_reports += self._generate_validation_report(InvalidValue, Severity.error, item_id, *details)
 
         return validation_reports
 
@@ -715,10 +695,10 @@ class SegStats(_BaseAnnStats):
         _, _, w, h = annotation.get_bbox()
 
         if w == float("inf") or np.isnan(w):
-            self.stats.invalid_value.add(item_key + (annotation.id, "width", w))
+            self.stats.invalid_value.add((*item_key, annotation.id, "width", w))
 
         if h == float("inf") or np.isnan(h):
-            self.stats.invalid_value.add(item_key + (annotation.id, "height", h))
+            self.stats.invalid_value.add((*item_key, annotation.id, "height", h))
 
     def _update_mask_stats(self, item_key: tuple, annotation: Annotation):
         if annotation.label not in self.label_categories:
@@ -729,9 +709,7 @@ class SegStats(_BaseAnnStats):
 
         if not (w == float("inf") or np.isnan(w) or h == float("inf") or np.isnan(h)):
             label_name = self.label_categories[annotation.label].name
-            self.stats.categories[label_name]["pts"].append(
-                item_key + (annotation.id, w, h, area, 1)
-            )
+            self.stats.categories[label_name]["pts"].append((*item_key, annotation.id, w, h, area, 1))
 
     def _check_far_from_mean(self, stats: StatsData):
         def _far_from_mean(val, mean, stdev):
@@ -756,7 +734,7 @@ class SegStats(_BaseAnnStats):
             for item_id, item_subset, ann_id, w, h, a, _ in stats.categories[label_name]["pts"]:
                 item_prop = {"width": w, "height": h, "area": a}
 
-                for p in prop_stats.keys():
+                for p in prop_stats:
                     if _far_from_mean(item_prop[p], prop_stats[p]["mean"], prop_stats[p]["stdev"]):
                         details = (
                             item_subset,
@@ -807,9 +785,7 @@ class SegStats(_BaseAnnStats):
         items_invalid_val = stats.invalid_value
         for item_id, item_subset, ann_id, prop, val in items_invalid_val:
             details = (item_subset, ann_id, f"polygon/mask/ellipse {prop}")
-            validation_reports += self._generate_validation_report(
-                InvalidValue, Severity.error, item_id, *details
-            )
+            validation_reports += self._generate_validation_report(InvalidValue, Severity.error, item_id, *details)
 
         return validation_reports
 
@@ -848,8 +824,7 @@ class TblStats(_BaseAnnStats):
         )
 
         all_categories = [(cat.name, cat.dtype) for cat in self.caption_categories] + [
-            (label_group.name, CategoricalDtype)
-            for label_group in self.label_categories.label_groups
+            (label_group.name, CategoricalDtype) for label_group in self.label_categories.label_groups
         ]
         for name, dtype in all_categories:
             self.stats.categories[name] = {
@@ -861,9 +836,7 @@ class TblStats(_BaseAnnStats):
         self.categories_len = len(all_categories)
 
         self.caption_columns = [cat.name for cat in self.caption_categories]
-        self.label_columns = [
-            label_group.name for label_group in self.label_categories.label_groups
-        ]
+        self.label_columns = [label_group.name for label_group in self.label_categories.label_groups]
 
         # Create a dictionary that maps warning types to their corresponding update functions
         self.update_item_functions = set()
@@ -931,9 +904,7 @@ class TblStats(_BaseAnnStats):
             annotation_check = deepcopy(self.caption_columns)
             for ann in item.annotations:
                 if ann.type == AnnotationType.caption:
-                    label = next(
-                        (cat for cat in self.caption_columns if ann.caption.startswith(cat)), None
-                    )
+                    label = next((cat for cat in self.caption_columns if ann.caption.startswith(cat)), None)
                     annotation_check.remove(label)
             for ann in annotation_check:
                 item_key = (item.id, item.subset, ann)
@@ -950,9 +921,7 @@ class TblStats(_BaseAnnStats):
                     self.stats.categories[cat]["cnt"] += 1
                     self.stats.categories[cat]["ann_type"].add(annotation.type)
                     caption = annotation.caption.split(cat + ":")[-1]
-                    self.stats.categories[cat]["caption"].append(
-                        item_key + (annotation.id, caption)
-                    )
+                    self.stats.categories[cat]["caption"].append((*item_key, annotation.id, caption))
                     break
 
     def _check_missing_annotation(self, stats: StatsData):
@@ -1004,8 +973,8 @@ class TblStats(_BaseAnnStats):
 
         counts = [
             stats.categories[label_name]["cnt"]
-            for label_name in stats.categories.keys()
-            if list(stats.categories[label_name]["ann_type"])[0] == AnnotationType.label
+            for label_name in stats.categories
+            if next(iter(stats.categories[label_name]["ann_type"])) == AnnotationType.label
         ]
 
         if len(counts) == 0:
@@ -1024,8 +993,8 @@ class TblStats(_BaseAnnStats):
 
         counts = [
             stats.categories[label_name]["cnt"]
-            for label_name in stats.categories.keys()
-            if list(stats.categories[label_name]["ann_type"])[0] == AnnotationType.caption
+            for label_name in stats.categories
+            if next(iter(stats.categories[label_name]["ann_type"])) == AnnotationType.caption
         ]
 
         if len(counts) == 0:
@@ -1035,9 +1004,7 @@ class TblStats(_BaseAnnStats):
         count_min = np.min(counts)
         balance = count_max / count_min if count_min > 0 else float("inf")
         if balance >= self.imbalance_ratio_thr:
-            validation_reports += self._generate_validation_report(
-                ImbalancedCaptions, Severity.info
-            )
+            validation_reports += self._generate_validation_report(ImbalancedCaptions, Severity.info)
 
         return validation_reports
 
@@ -1051,18 +1018,14 @@ class TblStats(_BaseAnnStats):
         for label_name in stats.categories:
             type_ = stats.categories[label_name]["type"]
             if type_ in [float, int]:
-                captions = [
-                    type_(caption[3]) for caption in stats.categories[label_name]["caption"]
-                ]
+                captions = [type_(caption[3]) for caption in stats.categories[label_name]["caption"]]
                 prop_stats = {}
                 prop_stats["mean"] = np.mean(captions)
                 prop_stats["stdev"] = np.std(captions)
 
                 upper_bound = prop_stats["mean"] + (self.far_from_mean_thr * prop_stats["stdev"])
                 lower_bound = prop_stats["mean"] - (self.far_from_mean_thr * prop_stats["stdev"])
-                for item_id, item_subset, ann_id, caption in stats.categories[label_name][
-                    "caption"
-                ]:
+                for item_id, item_subset, ann_id, caption in stats.categories[label_name]["caption"]:
                     if _far_from_mean(type_(caption), prop_stats["mean"], prop_stats["stdev"]):
                         details = (
                             item_subset,
@@ -1084,9 +1047,7 @@ class TblStats(_BaseAnnStats):
         for label_name in stats.categories:
             type_ = stats.categories[label_name]["type"]
             if type_ in [float, int]:
-                captions = [
-                    type_(caption[3]) for caption in stats.categories[label_name]["caption"]
-                ]
+                captions = [type_(caption[3]) for caption in stats.categories[label_name]["caption"]]
                 counts, _ = np.histogram(captions)
 
                 n_bucket = len(counts)
@@ -1178,8 +1139,7 @@ class ConfigurableValidator(Validator, CliPlugin):
             "--few-samples-thr",
             default=cls.DEFAULT_FEW_SAMPLES_THR,
             type=int,
-            help="Threshold for giving a warning for minimum number of "
-            "samples per class (default: %(default)s)",
+            help="Threshold for giving a warning for minimum number of samples per class (default: %(default)s)",
         )
         parser.add_argument(
             "-ir",
@@ -1240,15 +1200,9 @@ class ConfigurableValidator(Validator, CliPlugin):
         self.all_stats = {task: None for task in tasks}
 
         self.few_samples_thr = few_samples_thr if few_samples_thr else self.DEFAULT_FEW_SAMPLES_THR
-        self.imbalance_ratio_thr = (
-            imbalance_ratio_thr if imbalance_ratio_thr else self.DEFAULT_IMBALANCE_RATIO_THR
-        )
-        self.far_from_mean_thr = (
-            far_from_mean_thr if far_from_mean_thr else self.DEFAULT_FAR_FROM_MEAN_THR
-        )
-        self.dominance_thr = (
-            dominance_ratio_thr if dominance_ratio_thr else self.DEFAULT_DOMINANCE_RATIO_THR
-        )
+        self.imbalance_ratio_thr = imbalance_ratio_thr if imbalance_ratio_thr else self.DEFAULT_IMBALANCE_RATIO_THR
+        self.far_from_mean_thr = far_from_mean_thr if far_from_mean_thr else self.DEFAULT_FAR_FROM_MEAN_THR
+        self.dominance_thr = dominance_ratio_thr if dominance_ratio_thr else self.DEFAULT_DOMINANCE_RATIO_THR
         self.topk_bins_ratio = topk_bins if topk_bins else self.DEFAULT_TOPK_BINS
 
     def _init_stats_collector(self, categories):
@@ -1261,38 +1215,28 @@ class ConfigurableValidator(Validator, CliPlugin):
                 "topk_bins_ratio": self.topk_bins_ratio,
             }
             if task == TaskType.classification:
-                self.all_stats[task] = ClsStats(
-                    label_categories=categories, warnings=self.warnings, **kwargs
-                )
+                self.all_stats[task] = ClsStats(label_categories=categories, warnings=self.warnings, **kwargs)
             elif task == TaskType.detection:
-                self.all_stats[task] = DetStats(
-                    label_categories=categories, warnings=self.warnings, **kwargs
-                )
+                self.all_stats[task] = DetStats(label_categories=categories, warnings=self.warnings, **kwargs)
             elif task == TaskType.segmentation:
-                self.all_stats[task] = SegStats(
-                    label_categories=categories, warnings=self.warnings, **kwargs
-                )
+                self.all_stats[task] = SegStats(label_categories=categories, warnings=self.warnings, **kwargs)
             elif task == TaskType.tabular:
-                self.all_stats[task] = TblStats(
-                    categories=categories, warnings=self.warnings, **kwargs
-                )
+                self.all_stats[task] = TblStats(categories=categories, warnings=self.warnings, **kwargs)
 
     def _get_stats_collector(self, ann_type, task_type):
         if task_type == [TaskType.tabular]:
             return self.all_stats.get(TaskType.tabular, None)
-        else:
-            if ann_type == AnnotationType.label:
-                return self.all_stats.get(TaskType.classification, None)
-            elif ann_type == AnnotationType.bbox:
-                return self.all_stats.get(TaskType.detection, None)
-            elif ann_type in [
-                AnnotationType.mask,
-                AnnotationType.polygon,
-                AnnotationType.ellipse,
-            ]:
-                return self.all_stats.get(TaskType.segmentation, None)
-            else:
-                return None
+        if ann_type == AnnotationType.label:
+            return self.all_stats.get(TaskType.classification, None)
+        if ann_type == AnnotationType.bbox:
+            return self.all_stats.get(TaskType.detection, None)
+        if ann_type in [
+            AnnotationType.mask,
+            AnnotationType.polygon,
+            AnnotationType.ellipse,
+        ]:
+            return self.all_stats.get(TaskType.segmentation, None)
+        return None
 
     def compute_statistics(self, dataset):
         if self.tasks == [TaskType.tabular]:
@@ -1307,9 +1251,7 @@ class ConfigurableValidator(Validator, CliPlugin):
 
             item_key = (item.id, item.subset)
             for annotation in item.annotations:
-                stats_collector = self._get_stats_collector(
-                    ann_type=annotation.type, task_type=self.tasks
-                )
+                stats_collector = self._get_stats_collector(ann_type=annotation.type, task_type=self.tasks)
                 if stats_collector:
                     stats_collector.update_ann(item_key, annotation)
 

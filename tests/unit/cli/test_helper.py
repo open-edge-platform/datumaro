@@ -25,12 +25,8 @@ class FormatTest:
         args = parser.parse_args(["--delimiter", ","])
         assert args.delimiter == ","
 
-    @pytest.mark.parametrize(
-        "list_import,list_export", [(True, False), (False, True), (False, False)]
-    )
-    def test_format_command(
-        self, list_import: bool, list_export: bool, capsys: pytest.CaptureFixture
-    ):
+    @pytest.mark.parametrize("list_import,list_export", [(True, False), (False, True), (False, False)])
+    def test_format_command(self, list_import: bool, list_export: bool, capsys: pytest.CaptureFixture):
         format_command(Namespace(delimiter="\n", list_import=list_import, list_export=list_export))
         out, _ = capsys.readouterr()
         assert "coco" in out

@@ -56,11 +56,7 @@ class LfwBase(SubsetBase):
 
     def _load_categories(self, path):
         if has_meta_file(self._dataset_dir):
-            return {
-                AnnotationType.label: LabelCategories.from_iterable(
-                    parse_meta_file(self._dataset_dir).keys()
-                )
-            }
+            return {AnnotationType.label: LabelCategories.from_iterable(parse_meta_file(self._dataset_dir).keys())}
 
         label_cat = LabelCategories()
         if osp.isfile(path):
@@ -100,7 +96,7 @@ class LfwBase(SubsetBase):
                     image = pair[0]
                     item_id = pair[0]
                     objects = item_id.split("/")
-                    if 1 < len(objects):
+                    if len(objects) > 1:
                         label_name = objects[0]
                         label = get_label_id(label_name)
                         if label is not None:
@@ -127,9 +123,7 @@ class LfwBase(SubsetBase):
                         if image:
                             image = Image.from_file(path=image)
 
-                        items[id1] = DatasetItem(
-                            id=id1, subset=self._subset, media=image, annotations=annotations
-                        )
+                        items[id1] = DatasetItem(id=id1, subset=self._subset, media=image, annotations=annotations)
                     if id2 not in items:
                         annotations = []
                         annotations.append(Label(label))
@@ -138,9 +132,7 @@ class LfwBase(SubsetBase):
                         if image:
                             image = Image.from_file(path=image)
 
-                        items[id2] = DatasetItem(
-                            id=id2, subset=self._subset, media=image, annotations=annotations
-                        )
+                        items[id2] = DatasetItem(id=id2, subset=self._subset, media=image, annotations=annotations)
 
                     # pairs form a directed graph
                     if not items[id1].annotations[0].attributes.get("positive_pairs"):
@@ -163,9 +155,7 @@ class LfwBase(SubsetBase):
                         if image:
                             image = Image.from_file(path=image)
 
-                        items[id1] = DatasetItem(
-                            id=id1, subset=self._subset, media=image, annotations=annotations
-                        )
+                        items[id1] = DatasetItem(id=id1, subset=self._subset, media=image, annotations=annotations)
                     if id2 not in items:
                         annotations = []
                         if pair[2] != "-":
@@ -176,9 +166,7 @@ class LfwBase(SubsetBase):
                         if image:
                             image = Image.from_file(path=image)
 
-                        items[id2] = DatasetItem(
-                            id=id2, subset=self._subset, media=image, annotations=annotations
-                        )
+                        items[id2] = DatasetItem(id=id2, subset=self._subset, media=image, annotations=annotations)
 
                     # pairs form a directed graph
                     if not items[id1].annotations[0].attributes.get("negative_pairs"):
@@ -193,7 +181,7 @@ class LfwBase(SubsetBase):
 
                     item_id = osp.splitext(line[0])[0]
                     objects = item_id.split("/")
-                    if 1 < len(objects):
+                    if len(objects) > 1:
                         label_name = objects[0]
                         label = get_label_id(label_name)
                         if label is not None:
@@ -234,9 +222,7 @@ class LfwImporter(Importer):
     @classmethod
     def find_sources(cls, path):
         base, ext = osp.splitext(LfwPath.PAIRS_FILE)
-        return cls._find_sources_recursive(
-            path, ext, "lfw", filename=base, dirname=LfwPath.ANNOTATION_DIR
-        )
+        return cls._find_sources_recursive(path, ext, "lfw", filename=base, dirname=LfwPath.ANNOTATION_DIR)
 
     @classmethod
     def get_file_extensions(cls) -> List[str]:
@@ -316,7 +302,7 @@ class LfwExporter(Exporter):
                                 person2 = "-"
                                 num2 = pair
                                 objects = pair.split("/")
-                                if 1 < len(objects) and objects[0] in labels:
+                                if len(objects) > 1 and objects[0] in labels:
                                     person2 = objects[0]
                                     num2 = pair.replace(person2, "")[1:]
                                     curr_item += person2 + "/"
@@ -340,8 +326,7 @@ class LfwExporter(Exporter):
                 item_landmarks = [p for p in item.annotations if p.type == AnnotationType.points]
                 for landmark in item_landmarks:
                     landmarks.append(
-                        "%s\t%s"
-                        % (item.id + LfwPath.IMAGE_EXT, "\t".join(str(p) for p in landmark.points))
+                        "%s\t%s" % (item.id + LfwPath.IMAGE_EXT, "\t".join(str(p) for p in landmark.points))
                     )
 
             annotations_dir = osp.join(self._save_dir, subset_name, LfwPath.ANNOTATION_DIR)

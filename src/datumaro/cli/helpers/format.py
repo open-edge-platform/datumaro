@@ -73,9 +73,7 @@ def format_command(args: argparse.Namespace) -> None:
     delimiter = args.delimiter
 
     if args.list_import:
-        builtin_readers = sorted(
-            set(DEFAULT_ENVIRONMENT.importers) | set(DEFAULT_ENVIRONMENT.extractors)
-        )
+        builtin_readers = sorted(set(DEFAULT_ENVIRONMENT.importers) | set(DEFAULT_ENVIRONMENT.extractors))
         print(delimiter.join(builtin_readers))
         return
 
@@ -84,9 +82,7 @@ def format_command(args: argparse.Namespace) -> None:
         print(delimiter.join(builtin_writers))
         return
 
-    builtin_readers = sorted(
-        set(DEFAULT_ENVIRONMENT.importers) | set(DEFAULT_ENVIRONMENT.extractors)
-    )
+    builtin_readers = sorted(set(DEFAULT_ENVIRONMENT.importers) | set(DEFAULT_ENVIRONMENT.extractors))
     builtin_writers = sorted(DEFAULT_ENVIRONMENT.exporters)
     print(f"Supported import formats:\n{delimiter.join(builtin_readers)}")
     print(f"Supported export formats:\n{delimiter.join(builtin_writers)}")
