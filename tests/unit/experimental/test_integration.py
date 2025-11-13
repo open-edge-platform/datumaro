@@ -13,8 +13,8 @@ import polars as pl
 import pytest
 from PIL import Image as PILImage
 
-from datumaro.experimental.dataset import AttributeInfo, Dataset, Sample, Schema
-from datumaro.experimental.fields import (
+from datumaro.v2.dataset import AttributeInfo, Dataset, Sample, Schema
+from datumaro.v2.fields import (
     ImageField,
     ImageInfo,
     bbox_field,
@@ -22,7 +22,7 @@ from datumaro.experimental.fields import (
     image_info_field,
     image_path_field,
 )
-from datumaro.experimental.schema import Semantic
+from datumaro.v2.schema import Semantic
 
 
 def test_basic_sample_workflow():

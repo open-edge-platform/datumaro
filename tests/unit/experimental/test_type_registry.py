@@ -9,7 +9,7 @@ from typing import Optional, Union
 
 import numpy as np
 import pytest
-from datumaro.experimental.type_registry import from_polars_data, register_from_polars_converter, to_numpy
+from datumaro.v2.type_registry import from_polars_data, register_from_polars_converter, to_numpy
 
 
 def test_basic_type_conversion():

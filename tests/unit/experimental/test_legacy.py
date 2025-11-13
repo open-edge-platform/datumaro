@@ -8,8 +8,8 @@ from typing import Any, cast
 
 import numpy as np
 import polars as pl
-from datumaro.experimental.dataset import Dataset, Sample
-from datumaro.experimental.fields import (
+from datumaro.v2.dataset import Dataset, Sample
+from datumaro.v2.fields import (
     ImageInfo,
     bbox_field,
     image_path_field,
@@ -18,7 +18,7 @@ from datumaro.experimental.fields import (
     rotated_bbox_field,
     tensor_field,
 )
-from datumaro.experimental.legacy import (
+from datumaro.v2.legacy import (
     BackwardBboxAnnotationConverter,
     BackwardImageMediaConverter,
     BackwardPolygonAnnotationConverter,
@@ -41,7 +41,7 @@ from datumaro.experimental.legacy import (
     register_forward_annotation_converter,
     register_forward_media_converter,
 )
-from datumaro.experimental.schema import AttributeInfo, Schema
+from datumaro.v2.schema import AttributeInfo, Schema
 from PIL import Image as PILImage
 from typing_extensions import Annotated
 
@@ -1994,7 +1994,7 @@ def test_has_derived_labels():
 
 def test_analyze_legacy_dataset_hierarchical():
     """Test analyze_legacy_dataset with hierarchical labels."""
-    from datumaro.experimental.categories import HierarchicalLabelCategories
+    from datumaro.v2.categories import HierarchicalLabelCategories
 
     from datumaro.components.annotation import Label
     from datumaro.components.annotation import LabelCategories as LegacyLabelCategories

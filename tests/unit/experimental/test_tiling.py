@@ -1,8 +1,8 @@
 import numpy as np
 import polars as pl
 import pytest
-from datumaro.experimental.dataset import AttributeInfo
-from datumaro.experimental.fields import (
+from datumaro.v2.dataset import AttributeInfo
+from datumaro.v2.fields import (
     TileInfo,
     bbox_field,
     image_field,
@@ -13,8 +13,8 @@ from datumaro.experimental.fields import (
     polygon_field,
     tile_field,
 )
-from datumaro.experimental.schema import Schema
-from datumaro.experimental.tiling.tiler_registry import (
+from datumaro.v2.schema import Schema
+from datumaro.v2.tiling.tiler_registry import (
     AttributeSpec,
     TilingConfig,
     _apply_tiling,

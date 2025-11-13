@@ -8,8 +8,8 @@ from typing import cast
 
 import numpy as np
 import pytest
-from datumaro.experimental.dataset import Dataset as ExperimentalDataset
-from datumaro.experimental.legacy import convert_from_legacy, convert_to_legacy
+from datumaro.v2.dataset import Dataset as ExperimentalDataset
+from datumaro.v2.legacy import convert_from_legacy, convert_to_legacy
 
 from datumaro.components.annotation import AnnotationType, Bbox, LabelCategories
 from datumaro.components.dataset import Dataset as LegacyDataset

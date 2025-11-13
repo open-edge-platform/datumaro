@@ -7,9 +7,9 @@ in the dataset schema.
 
 import polars as pl
 
-from datumaro.experimental.fields import BBoxField, PolygonField
-from datumaro.experimental.filtering.filter_registry import Filter, FilterRegistry
-from datumaro.experimental.schema import AttributeSpec
+from datumaro.v2.fields import BBoxField, PolygonField
+from datumaro.v2.filtering.filter_registry import Filter, FilterRegistry
+from datumaro.v2.schema import AttributeSpec
 
 
 @FilterRegistry.register(BBoxField)

@@ -9,9 +9,9 @@ import numpy as np
 import polars as pl
 import pytest
 
-from datumaro.experimental.categories import LabelCategories, MaskCategories
-from datumaro.experimental.dataset import AttributeInfo, Dataset, Sample, Schema, convert_sample_to_schema
-from datumaro.experimental.fields import (
+from datumaro.v2.categories import LabelCategories, MaskCategories
+from datumaro.v2.dataset import AttributeInfo, Dataset, Sample, Schema, convert_sample_to_schema
+from datumaro.v2.fields import (
     ImageInfo,
     Subset,
     bbox_field,
@@ -20,7 +20,7 @@ from datumaro.experimental.fields import (
     mask_field,
     subset_field,
 )
-from datumaro.experimental.schema import Semantic
+from datumaro.v2.schema import Semantic
 
 
 def test_append_dataset():
@@ -654,7 +654,7 @@ def test_union_type_handling():
 
     from typing import Union
 
-    from datumaro.experimental.type_registry import from_polars_data
+    from datumaro.v2.type_registry import from_polars_data
 
     polars_data = [1.0, 2.0, 3.0]
 

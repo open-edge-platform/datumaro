@@ -4,9 +4,9 @@ import numpy as np
 import polars as pl
 import pytest
 
-from datumaro.experimental.dataset import Dataset, Sample
-from datumaro.experimental.fields import ImageInfo, image_field, image_info_field
-from datumaro.experimental.tiling.tiler_registry import TilingConfig, create_tiling_transform
+from datumaro.v2.dataset import Dataset, Sample
+from datumaro.v2.fields import ImageInfo, image_field, image_info_field
+from datumaro.v2.tiling.tiler_registry import TilingConfig, create_tiling_transform
 
 
 class TiledSample(Sample):
