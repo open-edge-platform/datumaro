@@ -19,9 +19,9 @@ from PIL import Image
 
 from datumaro.util.mask_tools import generate_colormap
 
-from .categories import LabelCategories, MaskCategories, RgbColor
+from src.datumaro.v2.categories import LabelCategories, MaskCategories, RgbColor
 from .converter_registry import AttributeSpec, Converter, converter
-from .fields import (
+from src.datumaro.v2.fields import (
     BBoxField,
     ImageBytesField,
     ImageCallableField,
@@ -36,7 +36,7 @@ from .fields import (
     PolygonField,
     RotatedBBoxField,
 )
-from .type_registry import polars_to_numpy_dtype
+from src.datumaro.v2.type_registry import polars_to_numpy_dtype
 
 
 @converter

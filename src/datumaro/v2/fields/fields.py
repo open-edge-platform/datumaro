@@ -17,8 +17,8 @@ from typing import Any, TypeAlias, TypeVar, Union, get_args, get_origin
 import numpy as np
 import polars as pl
 
-from .schema import Field, Semantic
-from .type_registry import from_polars_data, to_numpy
+from src.datumaro.v2.schema import Field, Semantic
+from src.datumaro.v2.type_registry import from_polars_data, to_numpy
 
 
 class Subset(Enum):

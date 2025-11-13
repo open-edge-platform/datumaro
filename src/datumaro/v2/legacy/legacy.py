@@ -37,7 +37,7 @@ from datumaro.components.dataset import Dataset as LegacyDataset
 from datumaro.components.dataset_base import CategoriesInfo, DatasetItem
 from datumaro.components.media import FromDataMixin, FromFileMixin, Image, MediaElement
 
-from .categories import (
+from src.datumaro.v2.categories import (
     GroupType,
     HierarchicalLabelCategories,
     HierarchicalLabelCategory,
@@ -47,9 +47,9 @@ from .categories import (
     MaskCategories,
     RgbColor,
 )
-from .converters import generate_colormap
-from .dataset import Dataset, Sample
-from .fields import (
+from src.datumaro.v2.converters import generate_colormap
+from src.datumaro.v2.dataset import Dataset, Sample
+from src.datumaro.v2.fields import (
     BBoxField,
     EllipseField,
     ImageInfo,
@@ -71,7 +71,7 @@ from .fields import (
     rotated_bbox_field,
     subset_field,
 )
-from .schema import AttributeInfo, Schema, Semantic
+from src.datumaro.v2.schema import AttributeInfo, Schema, Semantic
 
 
 class ForwardMediaConverter(ABC):

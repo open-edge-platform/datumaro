@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 from . import converters  # Import converters to register them
-from .converter_registry import ConverterRegistry, converter, find_conversion_path
+from src.datumaro.v2.converters.converter_registry import ConverterRegistry, converter, find_conversion_path
 from .dataset import Dataset, Sample
 from .export_import import export_dataset, import_dataset
 from .fields import (
