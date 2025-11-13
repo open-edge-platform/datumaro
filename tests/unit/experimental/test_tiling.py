@@ -1,6 +1,8 @@
 import numpy as np
 import polars as pl
 import pytest
+
+import datumaro.v2.fields.base
 from datumaro.v2.dataset import AttributeInfo
 from datumaro.v2.fields import (
     TileInfo,
@@ -21,8 +23,6 @@ from datumaro.v2.tiling.tiler_registry import (
     _calculate_tiles,
     _create_tiling_plan,
 )
-
-import datumaro.v2.fields.base
 
 
 @pytest.fixture

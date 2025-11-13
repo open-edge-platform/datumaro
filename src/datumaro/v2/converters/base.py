@@ -295,5 +295,3 @@ class AttributeRemapperConverter(Converter):
     def filter_output_spec(self) -> bool:
         """Always return True as renaming is always applicable."""
         return True
-
-

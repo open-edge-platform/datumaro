@@ -11,15 +11,7 @@ import pytest
 
 from datumaro.v2.categories import LabelCategories, MaskCategories
 from datumaro.v2.dataset import AttributeInfo, Dataset, Sample, Schema, convert_sample_to_schema
-from datumaro.v2.fields import (
-    ImageInfo,
-    Subset,
-    bbox_field,
-    image_field,
-    image_info_field,
-    mask_field,
-    subset_field,
-)
+from datumaro.v2.fields import ImageInfo, Subset, bbox_field, image_field, image_info_field, mask_field, subset_field
 from datumaro.v2.schema import Semantic
 
 

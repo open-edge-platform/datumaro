@@ -25,6 +25,7 @@ from datumaro.v2.legacy.annotation_converters import (
     ForwardEllipseAnnotationConverter,
     ForwardKeypointAnnotationConverter,
     ForwardLabelAnnotationConverter,
+    ForwardMaskAnnotationConverter,
     ForwardPolygonAnnotationConverter,
     ForwardRotatedBboxAnnotationConverter,
     _annotation_converters,

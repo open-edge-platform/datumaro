@@ -7,6 +7,8 @@ from typing import Any, cast
 import numpy as np
 import polars as pl
 import pytest
+
+import datumaro.v2.fields.base
 from datumaro.v2.dataset import Sample
 from datumaro.v2.fields import (
     BBoxField,
@@ -41,8 +43,6 @@ from datumaro.v2.fields import (
     tensor_field,
 )
 from datumaro.v2.schema import AttributeInfo, Schema, Semantic
-
-import datumaro.v2.fields.base
 
 
 def test_tensor_field_creation():

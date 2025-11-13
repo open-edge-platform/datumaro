@@ -8,6 +8,23 @@ from typing import Any, cast
 
 import numpy as np
 import polars as pl
+from PIL import Image as PILImage
+from typing_extensions import Annotated
+
+from datumaro.components.annotation import (
+    AnnotationType,
+    Bbox,
+    Ellipse,
+    ExtractedMask,
+    LabelCategories,
+    Points,
+    Polygon,
+    RotatedBbox,
+)
+from datumaro.components.dataset import Dataset as LegacyDataset
+from datumaro.components.dataset_base import CategoriesInfo, DatasetItem
+from datumaro.components.media import Image, ImageFromData, ImageFromFile, Video
+from datumaro.util.image import encode_image
 from datumaro.v2.dataset import Dataset, Sample
 from datumaro.v2.fields import (
     ImageInfo,
@@ -30,35 +47,17 @@ from datumaro.v2.legacy import (
     ForwardMaskAnnotationConverter,
     ForwardPolygonAnnotationConverter,
     ForwardRotatedBboxAnnotationConverter,
-    _attributes_to_dict,
-    _has_derived_labels,
     analyze_experimental_dataset,
     analyze_legacy_dataset,
     convert_from_legacy,
     convert_to_legacy,
-    get_forward_annotation_converter,
-    get_forward_media_converter,
     register_forward_annotation_converter,
     register_forward_media_converter,
 )
+from datumaro.v2.legacy.annotation_converters import get_forward_annotation_converter
+from datumaro.v2.legacy.dataset_converters import _attributes_to_dict, _has_derived_labels
+from datumaro.v2.legacy.register_legacy_converters import get_forward_media_converter
 from datumaro.v2.schema import AttributeInfo, Schema
-from PIL import Image as PILImage
-from typing_extensions import Annotated
-
-from datumaro.components.annotation import (
-    AnnotationType,
-    Bbox,
-    Ellipse,
-    ExtractedMask,
-    LabelCategories,
-    Points,
-    Polygon,
-    RotatedBbox,
-)
-from datumaro.components.dataset import Dataset as LegacyDataset
-from datumaro.components.dataset_base import CategoriesInfo, DatasetItem
-from datumaro.components.media import Image, ImageFromData, ImageFromFile, Video
-from datumaro.util.image import encode_image
 
 
 def test_image_media_converter_get_schema_attributes():
@@ -1994,12 +1993,11 @@ def test_has_derived_labels():
 
 def test_analyze_legacy_dataset_hierarchical():
     """Test analyze_legacy_dataset with hierarchical labels."""
-    from datumaro.v2.categories import HierarchicalLabelCategories
-
     from datumaro.components.annotation import Label
     from datumaro.components.annotation import LabelCategories as LegacyLabelCategories
     from datumaro.components.dataset import Dataset as LegacyDataset
     from datumaro.components.dataset_base import DatasetItem
+    from datumaro.v2.categories import HierarchicalLabelCategories
 
     # Create legacy label categories with hierarchical structure
     legacy_categories = LegacyLabelCategories()
