@@ -24,7 +24,7 @@ class MaskField(Field):
         semantic: Semantic tags describing the mask purpose
         dtype: Polars data type for mask values (defaults to uint8)
         channels_first: Whether the mask uses channels-first format (C, H, W) vs channels-last (H, W, C)
-        has_channels_dim: Whether the mask includes a channels dimension (e.g., (H,t
+        has_channels_dim: Whether the mask includes a channels dimension (e.g., (H, W, C) vs (H, W))
     """
 
     semantic: Semantic
