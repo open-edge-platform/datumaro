@@ -11,27 +11,21 @@ from datumaro import Annotation, AnnotationType, Bbox, CategoriesInfo, DatasetIt
 from datumaro import Dataset as LegacyDataset
 from datumaro import LabelCategories as LegacyLabelCategories
 from datumaro.components.annotation import ExtractedMask, RotatedBbox
-from datumaro.experimental import (
-    AttributeInfo,
+from datumaro.experimental import AttributeInfo, Dataset, Sample, Schema, Semantic
+from datumaro.experimental.categories import LabelCategories, MaskCategories, RgbColor
+from datumaro.experimental.fields import (
     BBoxField,
-    Dataset,
+    EllipseField,
     LabelField,
     PolygonField,
     RotatedBBoxField,
-    Sample,
-    Schema,
-    Semantic,
     bbox_field,
-    label_field,
-    polygon_field,
-    rotated_bbox_field,
-)
-from datumaro.experimental.categories import LabelCategories, MaskCategories, RgbColor
-from datumaro.experimental.fields import (
-    EllipseField,
     instance_mask_callable_field,
     keypoints_field,
+    label_field,
     mask_callable_field,
+    polygon_field,
+    rotated_bbox_field,
 )
 from datumaro.util.mask_tools import generate_colormap
 
