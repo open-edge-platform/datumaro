@@ -28,10 +28,10 @@ import numpy as np
 import polars as pl
 from PIL import Image
 
-from datumaro.v2.dataset import Dataset, Sample
-from datumaro.v2.fields.images import ImageCallableField, ImagePathField
-from datumaro.v2.fields.masks import InstanceMaskCallableField, MaskCallableField
-from datumaro.v2.schema import Schema
+from datumaro.experimental.dataset import Dataset, Sample
+from datumaro.experimental.fields.images import ImageCallableField, ImagePathField
+from datumaro.experimental.fields.masks import InstanceMaskCallableField, MaskCallableField
+from datumaro.experimental.schema import Schema
 
 if TYPE_CHECKING:
     from .dataset import DType

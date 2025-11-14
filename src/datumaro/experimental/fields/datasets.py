@@ -8,7 +8,7 @@ from typing import Any, Union, get_args, get_origin
 
 import polars as pl
 
-from datumaro.v2.fields.base import Field, Semantic, T
+from datumaro.experimental.fields.base import Field, Semantic, T
 
 
 class Subset(Enum):

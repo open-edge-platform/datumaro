@@ -7,9 +7,9 @@ in the dataset schema.
 
 import polars as pl
 
-from datumaro.v2.fields import BBoxField, PolygonField
-from datumaro.v2.filtering.filter_registry import Filter, FilterRegistry
-from datumaro.v2.schema import AttributeSpec
+from datumaro.experimental.fields import BBoxField, PolygonField
+from datumaro.experimental.filtering.filter_registry import Filter, FilterRegistry
+from datumaro.experimental.schema import AttributeSpec
 
 
 @FilterRegistry.register(BBoxField)
@@ -18,7 +18,7 @@ class EmptyBBoxFilter(Filter):
 
     field_spec: AttributeSpec[BBoxField]
 
-    def filter(self, df: pl.DataFrame) -> pl.Expr:
+    def filter(self, df: pl.DataFrame) -> pl.Expr:  # noqa: ARG002
         """Filter out rows where bounding box list is empty.
 
         Args:
@@ -38,7 +38,7 @@ class EmptyPolygonFilter(Filter):
 
     field_spec: AttributeSpec[PolygonField]
 
-    def filter(self, df: pl.DataFrame) -> pl.Expr:
+    def filter(self, df: pl.DataFrame) -> pl.Expr:  # noqa: ARG002
         """Filter out rows where polygon list is empty.
 
         Args:

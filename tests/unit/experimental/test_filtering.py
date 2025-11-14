@@ -6,15 +6,15 @@ import numpy as np
 import polars as pl
 import pytest
 
-from datumaro.v2.fields import BBoxField, PolygonField, bbox_field, polygon_field
-from datumaro.v2.filtering.filter_registry import (
+from datumaro.experimental.fields import BBoxField, PolygonField, bbox_field, polygon_field
+from datumaro.experimental.filtering.filter_registry import (
     FilterRegistry,
     _compute_filter_mask,
     create_filtering_plan,
     create_filtering_transform,
 )
-from datumaro.v2.schema import AttributeInfo, Schema
-from datumaro.v2.transform import IdentityTransform
+from datumaro.experimental.schema import AttributeInfo, Schema
+from datumaro.experimental.transform import IdentityTransform
 
 
 @pytest.fixture

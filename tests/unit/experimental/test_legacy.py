@@ -24,9 +24,8 @@ from datumaro.components.annotation import (
 from datumaro.components.dataset import Dataset as LegacyDataset
 from datumaro.components.dataset_base import CategoriesInfo, DatasetItem
 from datumaro.components.media import Image, ImageFromData, ImageFromFile, Video
-from datumaro.util.image import encode_image
-from datumaro.v2.dataset import Dataset, Sample
-from datumaro.v2.fields import (
+from datumaro.experimental.dataset import Dataset, Sample
+from datumaro.experimental.fields import (
     ImageInfo,
     bbox_field,
     image_path_field,
@@ -35,7 +34,7 @@ from datumaro.v2.fields import (
     rotated_bbox_field,
     tensor_field,
 )
-from datumaro.v2.legacy import (
+from datumaro.experimental.legacy import (
     BackwardBboxAnnotationConverter,
     BackwardImageMediaConverter,
     BackwardPolygonAnnotationConverter,
@@ -54,10 +53,11 @@ from datumaro.v2.legacy import (
     register_forward_annotation_converter,
     register_forward_media_converter,
 )
-from datumaro.v2.legacy.annotation_converters import get_forward_annotation_converter
-from datumaro.v2.legacy.dataset_converters import _attributes_to_dict, _has_derived_labels
-from datumaro.v2.legacy.register_legacy_converters import get_forward_media_converter
-from datumaro.v2.schema import AttributeInfo, Schema
+from datumaro.experimental.legacy.annotation_converters import get_forward_annotation_converter
+from datumaro.experimental.legacy.dataset_converters import _attributes_to_dict, _has_derived_labels
+from datumaro.experimental.legacy.register_legacy_converters import get_forward_media_converter
+from datumaro.experimental.schema import AttributeInfo, Schema
+from datumaro.util.image import encode_image
 
 
 def test_image_media_converter_get_schema_attributes():
@@ -1997,7 +1997,7 @@ def test_analyze_legacy_dataset_hierarchical():
     from datumaro.components.annotation import LabelCategories as LegacyLabelCategories
     from datumaro.components.dataset import Dataset as LegacyDataset
     from datumaro.components.dataset_base import DatasetItem
-    from datumaro.v2.categories import HierarchicalLabelCategories
+    from datumaro.experimental.categories import HierarchicalLabelCategories
 
     # Create legacy label categories with hierarchical structure
     legacy_categories = LegacyLabelCategories()

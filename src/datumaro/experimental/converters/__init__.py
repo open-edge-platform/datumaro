@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
-from datumaro.v2.converters.annotation_converters import (
+from datumaro.experimental.converters.annotation_converters import (
     BBoxCoordinateConverter,
     BBoxDtypeConverter,
     LabelDtypeConverter,
@@ -10,8 +10,8 @@ from datumaro.v2.converters.annotation_converters import (
     PolygonToBBoxConverter,
     RotatedBBoxToPolygonConverter,
 )
-from datumaro.v2.converters.base import AttributeRemapperConverter, ConversionError, Converter, list_eval_ref
-from datumaro.v2.converters.image_converters import (
+from datumaro.experimental.converters.base import AttributeRemapperConverter, ConversionError, Converter, list_eval_ref
+from datumaro.experimental.converters.image_converters import (
     ImageBytesToImageConverter,
     ImageCallableToImageConverter,
     ImagePathToImageConverter,
@@ -19,13 +19,13 @@ from datumaro.v2.converters.image_converters import (
     RGBToBGRConverter,
     UInt8ToFloat32Converter,
 )
-from datumaro.v2.converters.mask_converters import (
+from datumaro.experimental.converters.mask_converters import (
     InstanceMaskCallableToInstanceMaskConverter,
     MaskCallableToMaskConverter,
     PolygonToInstanceMaskConverter,
     PolygonToMaskConverter,
 )
-from datumaro.v2.converters.registry import (
+from datumaro.experimental.converters.registry import (
     ConversionPaths,
     ConverterRegistry,
     ConverterTransform,

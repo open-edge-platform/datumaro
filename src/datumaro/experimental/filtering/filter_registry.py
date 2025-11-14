@@ -13,8 +13,8 @@ from typing import Any, NamedTuple
 
 import polars as pl
 
-from datumaro.v2.schema import AttributeSpec, Field, Schema
-from datumaro.v2.transform import Transform
+from datumaro.experimental.schema import AttributeSpec, Field, Schema
+from datumaro.experimental.transform import Transform
 
 
 class Filter(ABC):

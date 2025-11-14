@@ -1,15 +1,6 @@
 # Copyright (C) 2025 Intel Corporation
 #
 # SPDX-License-Identifier: MIT
-"""
-Legacy dataset conversion functionality.
-
-This module provides functionality to convert legacy Datumaro datasets to the new
-v2 dataset format with automatic schema inference and type conversion.
-"""
-# Copyright (C) 2025 Intel Corporation
-#
-# SPDX-License-Identifier: MIT
 
 """
 This module provides functionality to convert legacy Datumaro datasets to the new

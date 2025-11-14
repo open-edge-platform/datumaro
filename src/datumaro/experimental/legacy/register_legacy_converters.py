@@ -14,8 +14,8 @@ from typing import Any, cast
 
 from datumaro import Dataset as LegacyDataset
 from datumaro.components.media import MediaElement
-from datumaro.v2 import Semantic
-from datumaro.v2.legacy.annotation_converters import (
+from datumaro.experimental import Semantic
+from datumaro.experimental.legacy.annotation_converters import (
     BackwardAnnotationConverter,
     BackwardBboxAnnotationConverter,
     BackwardPolygonAnnotationConverter,
@@ -30,7 +30,7 @@ from datumaro.v2.legacy.annotation_converters import (
     ForwardRotatedBboxAnnotationConverter,
     _annotation_converters,
 )
-from datumaro.v2.legacy.media_converters import (
+from datumaro.experimental.legacy.media_converters import (
     BackwardImageMediaConverter,
     BackwardMediaConverter,
     ForwardImageMediaConverter,

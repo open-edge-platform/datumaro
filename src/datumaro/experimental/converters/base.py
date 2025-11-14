@@ -18,8 +18,8 @@ from typing import TYPE_CHECKING, Any, TypeVar, cast, get_type_hints
 import polars as pl
 from typing_extensions import dataclass_transform
 
-from datumaro.v2.fields.base import Field
-from datumaro.v2.schema import AttributeSpec
+from datumaro.experimental.fields.base import Field
+from datumaro.experimental.schema import AttributeSpec
 
 if TYPE_CHECKING:
     from collections.abc import Callable

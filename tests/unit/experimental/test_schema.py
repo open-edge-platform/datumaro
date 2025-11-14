@@ -8,9 +8,9 @@ import numpy as np
 import polars as pl
 import pytest
 
-import datumaro.v2.fields.base
-from datumaro.v2.dataset import Sample
-from datumaro.v2.fields import (
+import datumaro.experimental.fields.base
+from datumaro.experimental.dataset import Sample
+from datumaro.experimental.fields import (
     BBoxField,
     ImageBytesField,
     ImageCallableField,
@@ -42,7 +42,7 @@ from datumaro.v2.fields import (
     subset_field,
     tensor_field,
 )
-from datumaro.v2.schema import AttributeInfo, Schema, Semantic
+from datumaro.experimental.schema import AttributeInfo, Schema, Semantic
 
 
 def test_tensor_field_creation():
@@ -696,7 +696,7 @@ def test_tensor_field_serialization():
     assert "Float32" in str(field_dict["dtype"])
 
     # Deserialize from dict
-    from datumaro.v2.schema import Field
+    from datumaro.experimental.schema import Field
 
     reconstructed = Field.from_dict(field_dict)
     assert isinstance(reconstructed, TensorField)
@@ -719,7 +719,7 @@ def test_image_field_serialization():
     assert "UInt8" in str(field_dict["dtype"])
 
     # Deserialize from dict
-    from datumaro.v2.schema import Field
+    from datumaro.experimental.schema import Field
 
     reconstructed = Field.from_dict(field_dict)
     assert isinstance(reconstructed, ImageField)
@@ -742,7 +742,7 @@ def test_bbox_field_serialization():
     assert field_dict["normalize"] is True
 
     # Deserialize from dict
-    from datumaro.v2.schema import Field
+    from datumaro.experimental.schema import Field
 
     reconstructed = Field.from_dict(field_dict)
     assert isinstance(reconstructed, BBoxField)
@@ -764,7 +764,7 @@ def test_rotated_bbox_field_serialization():
     assert field_dict["format"] == "xywha"
 
     # Deserialize from dict
-    from datumaro.v2.schema import Field
+    from datumaro.experimental.schema import Field
 
     reconstructed = Field.from_dict(field_dict)
     assert isinstance(reconstructed, RotatedBBoxField)
@@ -786,7 +786,7 @@ def test_polygon_field_serialization():
     assert field_dict["normalize"] is True
 
     # Deserialize from dict
-    from datumaro.v2.schema import Field
+    from datumaro.experimental.schema import Field
 
     reconstructed = Field.from_dict(field_dict)
     assert isinstance(reconstructed, PolygonField)
@@ -808,7 +808,7 @@ def test_mask_field_serialization():
     assert "UInt8" in str(field_dict["dtype"])
 
     # Deserialize from dict
-    from datumaro.v2.schema import Field
+    from datumaro.experimental.schema import Field
 
     reconstructed = Field.from_dict(field_dict)
     assert isinstance(reconstructed, MaskField)
@@ -828,7 +828,7 @@ def test_instance_mask_field_serialization():
     assert field_dict["semantic"] == "Anomaly"
 
     # Deserialize from dict
-    from datumaro.v2.schema import Field
+    from datumaro.experimental.schema import Field
 
     reconstructed = Field.from_dict(field_dict)
     assert isinstance(reconstructed, InstanceMaskField)
@@ -848,7 +848,7 @@ def test_image_path_field_serialization():
     assert field_dict["semantic"] == "Left"
 
     # Deserialize from dict
-    from datumaro.v2.schema import Field
+    from datumaro.experimental.schema import Field
 
     reconstructed = Field.from_dict(field_dict)
     assert isinstance(reconstructed, ImagePathField)
@@ -867,7 +867,7 @@ def test_image_bytes_field_serialization():
     assert field_dict["semantic"] == "Right"
 
     # Deserialize from dict
-    from datumaro.v2.schema import Field
+    from datumaro.experimental.schema import Field
 
     reconstructed = Field.from_dict(field_dict)
     assert isinstance(reconstructed, ImageBytesField)
@@ -886,7 +886,7 @@ def test_image_info_field_serialization():
     assert field_dict["semantic"] == "Default"
 
     # Deserialize from dict
-    from datumaro.v2.schema import Field
+    from datumaro.experimental.schema import Field
 
     reconstructed = Field.from_dict(field_dict)
     assert isinstance(reconstructed, ImageInfoField)
@@ -897,7 +897,7 @@ def test_image_info_field_serialization():
 
 def test_schema_serialization_simple():
     """Test Schema to_dict/from_dict with simple attributes."""
-    from datumaro.v2.schema import AttributeInfo, Schema
+    from datumaro.experimental.schema import AttributeInfo, Schema
 
     # Create a simple schema
     schema = Schema(
@@ -930,8 +930,8 @@ def test_schema_serialization_simple():
 
 def test_schema_serialization_with_categories():
     """Test Schema to_dict/from_dict with categories."""
-    from datumaro.v2.categories import LabelCategories
-    from datumaro.v2.schema import AttributeInfo, Schema
+    from datumaro.experimental.categories import LabelCategories
+    from datumaro.experimental.schema import AttributeInfo, Schema
 
     # Create schema with categories
     label_cats = LabelCategories(labels=("cat", "dog", "bird"))
@@ -959,7 +959,7 @@ def test_schema_serialization_with_categories():
 
 def test_schema_serialization_builtin_types():
     """Test Schema serialization handles built-in Python types correctly."""
-    from datumaro.v2.schema import AttributeInfo, Schema
+    from datumaro.experimental.schema import AttributeInfo, Schema
 
     # Create schema with built-in Python types and different semantics to avoid conflicts
     schema = Schema(
@@ -987,8 +987,8 @@ def test_schema_serialization_builtin_types():
 
 def test_schema_with_categories_method():
     """Test Schema.with_categories method with serialization."""
-    from datumaro.v2.categories import LabelCategories
-    from datumaro.v2.schema import AttributeInfo, Schema
+    from datumaro.experimental.categories import LabelCategories
+    from datumaro.experimental.schema import AttributeInfo, Schema
 
     # Create base schema without categories (use different semantics to avoid conflicts)
     schema = Schema(

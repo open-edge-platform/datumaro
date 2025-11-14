@@ -152,7 +152,7 @@ class Field:
         Returns:
             Reconstructed Field instance
         """
-        import datumaro.v2.fields as fields_module
+        import datumaro.experimental.fields as fields_module
 
         field_type = field_dict["type"]
 

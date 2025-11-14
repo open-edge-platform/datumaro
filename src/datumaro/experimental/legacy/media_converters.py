@@ -11,7 +11,7 @@ from PIL import Image as PILImage
 from datumaro import Dataset as LegacyDataset
 from datumaro import DatasetItem, Image, MediaElement
 from datumaro.components.media import FromDataMixin, FromFileMixin
-from datumaro.v2 import (
+from datumaro.experimental import (
     AttributeInfo,
     ImageInfo,
     ImagePathField,
@@ -22,7 +22,7 @@ from datumaro.v2 import (
     image_info_field,
     image_path_field,
 )
-from datumaro.v2.fields import image_bytes_field
+from datumaro.experimental.fields import image_bytes_field
 
 
 class ForwardMediaConverter(ABC):

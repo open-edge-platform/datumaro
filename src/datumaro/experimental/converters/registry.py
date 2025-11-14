@@ -8,15 +8,18 @@ import heapq
 import itertools
 from collections import defaultdict
 from dataclasses import dataclass
-from typing import Callable, NamedTuple, Sequence, get_type_hints, overload
+from typing import TYPE_CHECKING, NamedTuple, get_type_hints, overload
 
 import polars as pl
 
-from datumaro.v2.categories import Categories
-from datumaro.v2.converters.base import AttributeRemapperConverter, ConversionError, Converter
-from datumaro.v2.fields.base import Field, Semantic
-from datumaro.v2.schema import AttributeSpec, Schema
-from datumaro.v2.transform import Transform
+from datumaro.experimental.categories import Categories
+from datumaro.experimental.converters.base import AttributeRemapperConverter, ConversionError, Converter
+from datumaro.experimental.fields.base import Field, Semantic
+from datumaro.experimental.schema import AttributeSpec, Schema
+from datumaro.experimental.transform import Transform
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Sequence
 
 
 class ConversionPaths(NamedTuple):

@@ -7,7 +7,7 @@ import polars as pl
 
 from datumaro import Annotation, AnnotationType, CategoriesInfo, DatasetItem, MediaElement
 from datumaro import Dataset as LegacyDataset
-from datumaro.v2.categories import (
+from datumaro.experimental.categories import (
     GroupType,
     HierarchicalLabelCategories,
     HierarchicalLabelCategory,
@@ -15,21 +15,21 @@ from datumaro.v2.categories import (
     LabelGroup,
     LabelSemantic,
 )
-from datumaro.v2.dataset import Dataset, Sample
-from datumaro.v2.fields.annotations import Semantic, label_field
-from datumaro.v2.fields.datasets import Subset, subset_field
-from datumaro.v2.legacy.annotation_converters import (
+from datumaro.experimental.dataset import Dataset, Sample
+from datumaro.experimental.fields.annotations import Semantic, label_field
+from datumaro.experimental.fields.datasets import Subset, subset_field
+from datumaro.experimental.legacy.annotation_converters import (
     BackwardAnnotationConverter,
     ForwardAnnotationConverter,
     get_forward_annotation_converter,
 )
-from datumaro.v2.legacy.media_converters import BackwardMediaConverter, ForwardMediaConverter
-from datumaro.v2.legacy.register_legacy_converters import (
+from datumaro.experimental.legacy.media_converters import BackwardMediaConverter, ForwardMediaConverter
+from datumaro.experimental.legacy.register_legacy_converters import (
     _backward_annotation_converter_classes,
     _backward_media_converter_classes,
     get_forward_media_converter,
 )
-from datumaro.v2.schema import AttributeInfo, Schema
+from datumaro.experimental.schema import AttributeInfo, Schema
 
 
 @dataclass
@@ -394,7 +394,7 @@ class SubsetConverter(ForwardAnnotationConverter):
     @classmethod
     def create(
         cls,
-        dataset: LegacyDataset,
+        dataset: LegacyDataset,  # noqa: ARG003
         semantic: Semantic = Semantic.Default,
         name_prefix: str = "",
     ) -> ForwardAnnotationConverter | None:
@@ -422,7 +422,7 @@ class SubsetConverter(ForwardAnnotationConverter):
             )
         }
 
-    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:
+    def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:  # noqa: ARG002
         """Convert dataset item subset to standardized format.
 
         Args:

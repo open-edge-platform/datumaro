@@ -13,8 +13,8 @@ from datumaro.components.annotation import AnnotationType, Bbox, LabelCategories
 from datumaro.components.dataset import Dataset as LegacyDataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image, ImageFromFile
-from datumaro.v2.dataset import Dataset as ExperimentalDataset
-from datumaro.v2.legacy import convert_from_legacy, convert_to_legacy
+from datumaro.experimental.dataset import Dataset as ExperimentalDataset
+from datumaro.experimental.legacy import convert_from_legacy, convert_to_legacy
 
 
 @pytest.fixture()

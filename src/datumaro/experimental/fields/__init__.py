@@ -9,7 +9,7 @@ to/from Polars DataFrames for different data types commonly used in machine
 learning and computer vision applications.
 """
 
-from datumaro.v2.fields.annotations import (
+from datumaro.experimental.fields.annotations import (
     BBoxField,
     EllipseField,
     KeypointsField,
@@ -24,9 +24,9 @@ from datumaro.v2.fields.annotations import (
     rotated_bbox_field,
     score_field,
 )
-from datumaro.v2.fields.base import Field, Semantic, convert_numpy_object_array_to_series
-from datumaro.v2.fields.datasets import Subset, SubsetField, TileField, TileInfo, subset_field, tile_field
-from datumaro.v2.fields.images import (
+from datumaro.experimental.fields.base import Field, Semantic, convert_numpy_object_array_to_series
+from datumaro.experimental.fields.datasets import Subset, SubsetField, TileField, TileInfo, subset_field, tile_field
+from datumaro.experimental.fields.images import (
     ImageBytesField,
     ImageCallableField,
     ImageField,
@@ -41,7 +41,7 @@ from datumaro.v2.fields.images import (
     image_path_field,
     tensor_field,
 )
-from datumaro.v2.fields.masks import (
+from datumaro.experimental.fields.masks import (
     InstanceMaskCallableField,
     InstanceMaskField,
     MaskCallableField,

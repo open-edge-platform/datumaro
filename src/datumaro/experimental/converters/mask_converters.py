@@ -7,15 +7,20 @@ import cv2
 import numpy as np
 import polars as pl
 
+from datumaro.experimental.categories import LabelCategories, MaskCategories, RgbColor
+from datumaro.experimental.converters.base import Converter
+from datumaro.experimental.converters.registry import converter
+from datumaro.experimental.fields.annotations import LabelField, PolygonField
+from datumaro.experimental.fields.images import ImageInfoField
+from datumaro.experimental.fields.masks import (
+    InstanceMaskCallableField,
+    InstanceMaskField,
+    MaskCallableField,
+    MaskField,
+)
+from datumaro.experimental.schema import AttributeSpec
+from datumaro.experimental.type_registry import polars_to_numpy_dtype
 from datumaro.util.mask_tools import generate_colormap
-from datumaro.v2.categories import LabelCategories, MaskCategories, RgbColor
-from datumaro.v2.converters.base import Converter
-from datumaro.v2.converters.registry import converter
-from datumaro.v2.fields.annotations import LabelField, PolygonField
-from datumaro.v2.fields.images import ImageInfoField
-from datumaro.v2.fields.masks import InstanceMaskCallableField, InstanceMaskField, MaskCallableField, MaskField
-from datumaro.v2.schema import AttributeSpec
-from datumaro.v2.type_registry import polars_to_numpy_dtype
 
 
 @converter(lazy=True)
@@ -262,7 +267,7 @@ class PolygonToInstanceMaskConverter(Converter):
             return stacked_masks.reshape(-1), list(stacked_masks.shape)
 
         # Apply conversion using map_batches
-        def apply_conversion_batch(batch_df: pl.DataFrame, **kwargs) -> pl.DataFrame:
+        def apply_conversion_batch(batch_df: pl.DataFrame, **kwargs) -> pl.DataFrame:  # noqa: ARG001
             """Apply polygon-to-instance-mask conversion for a batch."""
             batch_polygons = batch_df.struct["polygons"]
             batch_img_infos = batch_df.struct["img_info"]

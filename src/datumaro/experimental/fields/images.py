@@ -7,8 +7,8 @@ from typing import Any
 import numpy as np
 import polars as pl
 
-from datumaro.v2.fields.base import Field, PolarsDataType, Semantic, T
-from datumaro.v2.type_registry import from_polars_data, to_numpy
+from datumaro.experimental.fields.base import Field, PolarsDataType, Semantic, T
+from datumaro.experimental.type_registry import from_polars_data, to_numpy
 
 
 @dataclass(frozen=True)
@@ -283,7 +283,7 @@ class ImageCallableField(Field):
             raise TypeError(f"Expected callable, got {type(value)}")
         return {name: pl.Series(name, [value])}
 
-    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> callable:
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> callable:  # noqa: ARG002
         """Extract callable from Polars dataframe."""
         value = df[name][row_index]
         if not callable(value) and value is not None:

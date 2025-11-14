@@ -6,9 +6,9 @@ import numpy as np
 import polars as pl
 import pytest
 
-from datumaro.v2.dataset import Dataset, Sample
-from datumaro.v2.fields import ImageInfo, bbox_field, image_field, image_info_field, tensor_field
-from datumaro.v2.schema import AttributeInfo, Schema, Semantic
+from datumaro.experimental.dataset import Dataset, Sample
+from datumaro.experimental.fields import ImageInfo, bbox_field, image_field, image_info_field, tensor_field
+from datumaro.experimental.schema import AttributeInfo, Schema, Semantic
 
 try:
     import torch

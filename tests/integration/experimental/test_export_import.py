@@ -20,9 +20,9 @@ import polars as pl
 import pytest
 from PIL import Image as PILImage
 
-from datumaro.v2.categories import LabelCategories
-from datumaro.v2.dataset import Dataset, Sample
-from datumaro.v2.export_import import (
+from datumaro.experimental.categories import LabelCategories
+from datumaro.experimental.dataset import Dataset, Sample
+from datumaro.experimental.export_import import (
     DATAFRAME_FILE,
     IMAGES_DIR,
     METADATA_FILE,
@@ -31,7 +31,7 @@ from datumaro.v2.export_import import (
     export_dataset,
     import_dataset,
 )
-from datumaro.v2.fields import (
+from datumaro.experimental.fields import (
     ImageInfo,
     Subset,
     TileInfo,

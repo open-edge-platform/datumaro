@@ -4,7 +4,7 @@
 
 import pytest
 
-from datumaro.v2.categories import (
+from datumaro.experimental.categories import (
     Colormap,
     GroupType,
     HierarchicalLabelCategories,
@@ -349,7 +349,7 @@ def test_label_categories_serialization_simple():
     assert cat_dict["group_type"] == "EXCLUSIVE"
 
     # Deserialize from dict
-    from datumaro.v2.categories import Categories
+    from datumaro.experimental.categories import Categories
 
     reconstructed = Categories.from_dict(cat_dict)
     assert isinstance(reconstructed, LabelCategories)
@@ -369,7 +369,7 @@ def test_label_categories_serialization_with_group_type():
     assert cat_dict["group_type"] == "INCLUSIVE"
 
     # Deserialize from dict
-    from datumaro.v2.categories import Categories
+    from datumaro.experimental.categories import Categories
 
     reconstructed = Categories.from_dict(cat_dict)
     assert isinstance(reconstructed, LabelCategories)
@@ -381,7 +381,7 @@ def test_label_categories_serialization_with_group_type():
 
 def test_label_categories_serialization_with_semantics():
     """Test LabelCategories serialization with label semantics."""
-    from datumaro.v2.categories import LabelSemantic
+    from datumaro.experimental.categories import LabelSemantic
 
     categories = LabelCategories(
         labels=("normal", "anomaly"),
@@ -394,7 +394,7 @@ def test_label_categories_serialization_with_semantics():
     assert cat_dict["label_semantics"]["ANOMALOUS"] == "anomaly"
 
     # Deserialize from dict
-    from datumaro.v2.categories import Categories, LabelSemantic
+    from datumaro.experimental.categories import Categories, LabelSemantic
 
     reconstructed = Categories.from_dict(cat_dict)
     assert isinstance(reconstructed, LabelCategories)
@@ -424,7 +424,7 @@ def test_hierarchical_label_categories_serialization_simple():
     assert cat_dict["items"][1]["parent"] == "animal"
 
     # Deserialize from dict
-    from datumaro.v2.categories import Categories
+    from datumaro.experimental.categories import Categories
 
     reconstructed = Categories.from_dict(cat_dict)
     assert isinstance(reconstructed, HierarchicalLabelCategories)
@@ -455,7 +455,7 @@ def test_hierarchical_label_categories_serialization_with_groups():
     assert cat_dict["label_groups"][0]["group_type"] == "EXCLUSIVE"
 
     # Deserialize from dict
-    from datumaro.v2.categories import Categories
+    from datumaro.experimental.categories import Categories
 
     reconstructed = Categories.from_dict(cat_dict)
     assert isinstance(reconstructed, HierarchicalLabelCategories)
@@ -469,7 +469,7 @@ def test_hierarchical_label_categories_serialization_with_groups():
 
 def test_hierarchical_label_categories_serialization_with_semantics():
     """Test HierarchicalLabelCategories serialization with label semantics."""
-    from datumaro.v2.categories import LabelSemantic
+    from datumaro.experimental.categories import LabelSemantic
 
     items = (
         HierarchicalLabelCategory("normal", label_semantics={LabelSemantic.NORMAL: "normal_class"}),
@@ -484,7 +484,7 @@ def test_hierarchical_label_categories_serialization_with_semantics():
     assert cat_dict["label_semantics"]["NORMAL"] == "normal"
 
     # Deserialize from dict
-    from datumaro.v2.categories import Categories, LabelSemantic
+    from datumaro.experimental.categories import Categories, LabelSemantic
 
     reconstructed = Categories.from_dict(cat_dict)
     assert isinstance(reconstructed, HierarchicalLabelCategories)
@@ -508,7 +508,7 @@ def test_mask_categories_serialization_empty():
     assert cat_dict["colormap"] == {}
 
     # Deserialize from dict
-    from datumaro.v2.categories import Categories
+    from datumaro.experimental.categories import Categories
 
     reconstructed = Categories.from_dict(cat_dict)
     assert isinstance(reconstructed, MaskCategories)
@@ -538,7 +538,7 @@ def test_mask_categories_serialization_with_colormap():
     assert cat_dict["colormap"]["3"] == [0, 0, 255]
 
     # Deserialize from dict
-    from datumaro.v2.categories import Categories
+    from datumaro.experimental.categories import Categories
 
     reconstructed = Categories.from_dict(cat_dict)
     assert isinstance(reconstructed, MaskCategories)
@@ -561,7 +561,7 @@ def test_mask_categories_serialization_generated():
     assert len(cat_dict["colormap"]) > 0
 
     # Deserialize from dict
-    from datumaro.v2.categories import Categories
+    from datumaro.experimental.categories import Categories
 
     reconstructed = Categories.from_dict(cat_dict)
     assert isinstance(reconstructed, MaskCategories)
@@ -575,7 +575,7 @@ def test_mask_categories_serialization_generated():
 
 def test_categories_polymorphic_deserialization():
     """Test that Categories.from_dict dispatches to correct subclass."""
-    from datumaro.v2.categories import Categories
+    from datumaro.experimental.categories import Categories
 
     # Test LabelCategories
     label_dict = {
@@ -605,7 +605,7 @@ def test_categories_polymorphic_deserialization():
 
 def test_categories_unknown_type_raises_error():
     """Test that unknown category type raises ValueError."""
-    from datumaro.v2.categories import Categories
+    from datumaro.experimental.categories import Categories
 
     unknown_dict = {"type": "UnknownCategoryType"}
     with pytest.raises(ValueError, match="Unknown categories type"):
@@ -626,7 +626,7 @@ def test_colormap_serialization_round_trip():
 
     # Serialize and deserialize
     cat_dict = categories.to_dict()
-    from datumaro.v2.categories import Categories
+    from datumaro.experimental.categories import Categories
 
     reconstructed_cats = Categories.from_dict(cat_dict)
 

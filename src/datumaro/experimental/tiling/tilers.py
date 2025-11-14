@@ -14,7 +14,7 @@ import polars as pl
 import shapely.geometry as sg
 import shapely.ops as so
 
-from datumaro.v2.fields import (
+from datumaro.experimental.fields import (
     BBoxField,
     ImageField,
     ImageInfoField,
@@ -24,7 +24,7 @@ from datumaro.v2.fields import (
     PolygonField,
     SubsetField,
 )
-from datumaro.v2.schema import AttributeSpec
+from datumaro.experimental.schema import AttributeSpec
 
 from .tiler_registry import Tiler, TilerRegistry
 

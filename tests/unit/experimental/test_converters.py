@@ -9,8 +9,8 @@ import numpy as np
 import polars as pl
 import pytest
 
-from datumaro.v2.categories import LabelCategories, MaskCategories
-from datumaro.v2.converters import (
+from datumaro.experimental.categories import LabelCategories, MaskCategories
+from datumaro.experimental.converters import (
     AttributeRemapperConverter,
     BBoxCoordinateConverter,
     ConversionError,
@@ -31,7 +31,7 @@ from datumaro.v2.converters import (
     converter,
     find_conversion_path,
 )
-from datumaro.v2.fields import (
+from datumaro.experimental.fields import (
     BBoxField,
     Field,
     ImageBytesField,
@@ -50,7 +50,7 @@ from datumaro.v2.fields import (
     image_field,
     image_info_field,
 )
-from datumaro.v2.schema import AttributeInfo, AttributeSpec, Schema, Semantic
+from datumaro.experimental.schema import AttributeInfo, AttributeSpec, Schema, Semantic
 
 
 def test_converter_decorator(request: pytest.FixtureRequest):

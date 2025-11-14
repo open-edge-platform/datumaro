@@ -6,8 +6,8 @@ from typing import Any
 
 import polars as pl
 
-from datumaro.v2.fields.base import Field, PolarsDataType, Semantic, T, convert_numpy_object_array_to_series
-from datumaro.v2.type_registry import from_polars_data, to_numpy
+from datumaro.experimental.fields.base import Field, PolarsDataType, Semantic, T, convert_numpy_object_array_to_series
+from datumaro.experimental.type_registry import from_polars_data, to_numpy
 
 
 @dataclass(frozen=True)
