@@ -7,12 +7,11 @@ import logging as log
 import os
 import os.path as osp
 
+from datumaro.cli.util import MultilineFormatter
+from datumaro.cli.util.dataset_utils import FilterModes, parse_dataset_pathspec
+from datumaro.cli.util.errors import CliException
 from datumaro.components.filter import DatasetItemEncoder
 from datumaro.util.scope import scoped
-
-from ..util import MultilineFormatter
-from ..util.dataset_utils import FilterModes, parse_dataset_pathspec
-from ..util.errors import CliException
 
 
 def build_parser(parser_ctor=argparse.ArgumentParser):
@@ -78,21 +77,16 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
         "--mode",
         default=FilterModes.i.name,
         type=FilterModes.parse,
-        help="Filter mode (options: %s; default: %s)"
-        % (", ".join(FilterModes.list_options()), "%(default)s"),
+        help="Filter mode (options: %s; default: %s)" % (", ".join(FilterModes.list_options()), "%(default)s"),
     )
-    parser.add_argument(
-        "--dry-run", action="store_true", help="Print XML representations to be filtered and exit"
-    )
+    parser.add_argument("--dry-run", action="store_true", help="Print XML representations to be filtered and exit")
     parser.add_argument(
         "-o",
         "--output-dir",
         dest="dst_dir",
         help="Output directory. If not specified, the results will be saved inplace.",
     )
-    parser.add_argument(
-        "--overwrite", action="store_true", help="Overwrite existing files in the save directory"
-    )
+    parser.add_argument("--overwrite", action="store_true", help="Overwrite existing files in the save directory")
     parser.set_defaults(command=filter_command)
 
     return parser
@@ -124,9 +118,7 @@ def filter_command(args):
 
     dst_dir = args.dst_dir or dataset.data_path
     if not args.overwrite and osp.isdir(dst_dir) and os.listdir(dst_dir):
-        raise CliException(
-            "Directory '%s' already exists " "(pass --overwrite to overwrite)" % dst_dir
-        )
+        raise CliException("Directory '%s' already exists (pass --overwrite to overwrite)" % dst_dir)
     dst_dir = osp.abspath(dst_dir)
 
     dataset = dataset.filter(filter_expr, **filter_args)

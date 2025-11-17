@@ -33,7 +33,6 @@ from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.media import Image, MediaElement, PointCloud, Video, VideoFrame
 from datumaro.plugins.data_formats.datumaro.format import DatumaroPath
 from datumaro.util.mask_tools import generate_colormap
-
 from tests.utils.video import make_sample_video
 
 
@@ -191,9 +190,7 @@ def fxt_test_datumaro_format_dataset():
                 media=Image.from_numpy(data=np.ones((10, 6, 3))),
                 # id and group integer value can be higher than 32bits limits (COCO instances).
                 annotations=[
-                    Mask(
-                        id=900100087038, group=900100087038, image=np.ones((2, 3), dtype=np.uint8)
-                    ),
+                    Mask(id=900100087038, group=900100087038, image=np.ones((2, 3), dtype=np.uint8)),
                     RleMask(
                         rle=mask_tools.encode(np.ones((2, 3), dtype=np.uint8, order="F")),
                         id=900100087038,
@@ -376,9 +373,7 @@ def fxt_test_datumaro_format_dataset_with_path_separator():
                 media=Image.from_numpy(data=np.ones((10, 6, 3))),
                 # id and group integer value can be higher than 32bits limits (COCO instances).
                 annotations=[
-                    Mask(
-                        id=900100087038, group=900100087038, image=np.ones((2, 3), dtype=np.uint8)
-                    ),
+                    Mask(id=900100087038, group=900100087038, image=np.ones((2, 3), dtype=np.uint8)),
                     RleMask(
                         rle=mask_tools.encode(np.ones((2, 3), dtype=np.uint8, order="F")),
                         id=900100087038,
@@ -635,9 +630,7 @@ def fxt_point_cloud_dataset_pair(test_dir):
 
 @pytest.fixture
 def fxt_legacy_dataset_pair(test_dir):
-    source_dataset = Dataset.import_from(
-        "./tests/assets/datumaro_dataset/legacy", format="datumaro"
-    )
+    source_dataset = Dataset.import_from("./tests/assets/datumaro_dataset/legacy", format="datumaro")
 
     target_dataset = Dataset.from_iterable(
         [

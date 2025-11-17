@@ -4,19 +4,12 @@
 
 import struct
 from dataclasses import dataclass
-from typing import Any, Dict, Iterator, List, Optional, Set, Type
+from typing import Any, Dict, Iterator, List, Optional, Type
 
 import pyarrow as pa
 
 from datumaro.components.annotation import AnnotationType, Categories
-from datumaro.components.dataset_base import (
-    CategoriesInfo,
-    DatasetBase,
-    DatasetInfo,
-    DatasetItem,
-    IDataset,
-    SubsetBase,
-)
+from datumaro.components.dataset_base import CategoriesInfo, DatasetBase, DatasetInfo, DatasetItem, IDataset, SubsetBase
 from datumaro.components.importer import ImportContext
 from datumaro.components.media import Image, MediaElement, MediaType
 from datumaro.components.merge.extractor_merger import check_identicalness
@@ -38,11 +31,9 @@ class ArrowSubsetBase(SubsetBase):
         categories: Dict[AnnotationType, Categories],
         subset: str,
         media_type: Type[MediaElement] = Image,
-        ann_types: Set[AnnotationType] = None,
+        ann_types: set[AnnotationType] | None = None,
     ):
-        super().__init__(
-            length=len(lookup), subset=subset, media_type=media_type, ann_types=ann_types, ctx=None
-        )
+        super().__init__(length=len(lookup), subset=subset, media_type=media_type, ann_types=ann_types, ctx=None)
 
         self._lookup = lookup
         self._infos = infos
@@ -102,9 +93,7 @@ class ArrowBase(DatasetBase):
         _infos, _ = DictMapper.backward(schema.metadata.get(b"infos", b"\x00\x00\x00\x00"))
         infos = JsonReader._load_infos({"infos": _infos})
 
-        _categories, _ = DictMapper.backward(
-            schema.metadata.get(b"categories", b"\x00\x00\x00\x00")
-        )
+        _categories, _ = DictMapper.backward(schema.metadata.get(b"categories", b"\x00\x00\x00\x00"))
         categories = JsonReader._load_categories({"categories": _categories})
 
         (media_type,) = struct.unpack("<I", schema.metadata.get(b"media_type", b"\x00\x00\x00\x00"))
@@ -133,16 +122,15 @@ class ArrowBase(DatasetBase):
 
         ann_types = set()
         for table_path in file_paths:
-            with pa.OSFile(table_path, "r") as source:
-                with pa.ipc.open_file(source) as reader:
-                    table = reader.read_all()
-                    for idx in range(len(table)):
-                        item = DatasetItemMapper.backward(idx, table, table_path)
-                        self._lookup[item.subset][item.id] = item
-                        for ann in item.annotations:
-                            ann_types.add(ann.type)
-                        pbar.report_status(cnt)
-                        cnt += 1
+            with pa.OSFile(table_path, "r") as source, pa.ipc.open_file(source) as reader:
+                table = reader.read_all()
+                for idx in range(len(table)):
+                    item = DatasetItemMapper.backward(idx, table, table_path)
+                    self._lookup[item.subset][item.id] = item
+                    for ann in item.annotations:
+                        ann_types.add(ann.type)
+                    pbar.report_status(cnt)
+                    cnt += 1
         self._ann_types = ann_types
 
         self._subsets = {

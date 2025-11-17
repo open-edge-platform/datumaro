@@ -67,9 +67,8 @@ class ArrowImporter(Importer):
 
     @staticmethod
     def _verify_datumaro_arrow_format(file: str) -> None:
-        with pa.memory_map(file, "r") as mm_file:
-            with pa.ipc.open_file(mm_file) as reader:
-                schema = reader.schema
+        with pa.memory_map(file, "r") as mm_file, pa.ipc.open_file(mm_file) as reader:
+            schema = reader.schema
         DatumaroArrow.check_signature(schema.metadata.get(b"signature", b"").decode())
         DatumaroArrow.check_version(schema.metadata.get(b"version", b"").decode())
         DatumaroArrow.check_schema(schema)

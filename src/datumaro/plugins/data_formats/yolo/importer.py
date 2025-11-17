@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: MIT
 
+import functools
+import operator
 import os.path as osp
 from collections import defaultdict
 from io import TextIOWrapper
@@ -40,7 +42,7 @@ class _YoloStrictImporter(Importer):
                 for subset in subsets
             ]
 
-        return sum([_extract_subset_wise_sources(source) for source in sources], [])
+        return functools.reduce(operator.iadd, [_extract_subset_wise_sources(source) for source in sources], [])
 
     @classmethod
     def get_file_extensions(cls) -> List[str]:
@@ -65,9 +67,7 @@ class _YoloLooseImporter(Importer):
 
     @classmethod
     def _check_ann_file(cls, fpath: str, context: FormatDetectionContext) -> None:
-        with context.probe_text_file(
-            fpath, "Requirements for the annotation file of yolo format"
-        ) as fp:
+        with context.probe_text_file(fpath, "Requirements for the annotation file of yolo format") as fp:
             cls._check_ann_file_impl(fp)
 
     @classmethod
@@ -116,7 +116,7 @@ class _YoloLooseImporter(Importer):
         for source in sources:
             subsets[extract_subset_name_from_parent(source["url"], path)].append(source["url"])
 
-        sources = [
+        return [
             {
                 "url": osp.join(path),
                 "format": cls.FORMAT,
@@ -127,7 +127,6 @@ class _YoloLooseImporter(Importer):
             }
             for subset, urls in subsets.items()
         ]
-        return sources
 
     @classmethod
     def find_sources(cls, path: str) -> List[Dict[str, Any]]:
@@ -209,10 +208,4 @@ class YoloImporter(Importer):
 
     @classmethod
     def get_file_extensions(cls) -> List[str]:
-        return list(
-            {
-                ext
-                for importer in cls.SUB_IMPORTERS.values()
-                for ext in importer.get_file_extensions()
-            }
-        )
+        return list({ext for importer in cls.SUB_IMPORTERS.values() for ext in importer.get_file_extensions()})

@@ -92,8 +92,8 @@ class ExactMerge(Merger):
         merged = {}
 
         for name in a.keys() | b.keys():
-            a_val = a.get(name, None)
-            b_val = b.get(name, None)
+            a_val = a.get(name)
+            b_val = b.get(name)
 
             if name not in a:
                 m_val = b_val
@@ -109,9 +109,7 @@ class ExactMerge(Merger):
         return merged
 
     @classmethod
-    def _merge_media(
-        cls, item_a: DatasetItem, item_b: DatasetItem
-    ) -> Union[Image, PointCloud, Video]:
+    def _merge_media(cls, item_a: DatasetItem, item_b: DatasetItem) -> Union[Image, PointCloud, Video]:
         if (not item_a.media or isinstance(item_a.media, Image)) and (
             not item_b.media or isinstance(item_b.media, Image)
         ):
@@ -136,13 +134,9 @@ class ExactMerge(Merger):
                 item_b_path = getattr(item_b.media, "path", None)
 
                 if item_a_path and item_b_path and item_a_path != item_b_path:
-                    raise MismatchingMediaPathError(
-                        (item_a.id, item_a.subset), item_a_path, item_b_path
-                    )
-                elif item_a_path is None and item_b_path is None:
-                    raise MismatchingMediaError(
-                        (item_a.id, item_a.subset), item_a.media, item_b.media
-                    )
+                    raise MismatchingMediaPathError((item_a.id, item_a.subset), item_a_path, item_b_path)
+                if item_a_path is None and item_b_path is None:
+                    raise MismatchingMediaError((item_a.id, item_a.subset), item_a.media, item_b.media)
 
                 media = item_a.media if item_a_path else item_b.media
 
@@ -178,18 +172,10 @@ class ExactMerge(Merger):
                 # Different paths can aclually point to the same file,
                 # but it's not the case we'd like to allow here to be
                 # a "simple" merging strategy used for extractor joining
-                raise MismatchingMediaPathError(
-                    (item_a.id, item_a.subset), item_a_path, item_b_path
-                )
+                raise MismatchingMediaPathError((item_a.id, item_a.subset), item_a_path, item_b_path)
 
-            if (
-                item_a.media.has_size
-                and item_b.media.has_size
-                and item_a.media.size != item_b.media.size
-            ):
-                raise MismatchingImageInfoError(
-                    (item_a.id, item_a.subset), item_a.media.size, item_b.media.size
-                )
+            if item_a.media.has_size and item_b.media.has_size and item_a.media.size != item_b.media.size:
+                raise MismatchingImageInfoError((item_a.id, item_a.subset), item_a.media.size, item_b.media.size)
 
             # Avoid direct comparison here for better performance
             # If there are 2 "data-only" images, they won't be compared and
@@ -230,9 +216,7 @@ class ExactMerge(Merger):
             item_b_path = getattr(item_b.media, "path", None)
 
             if item_a_path and item_b_path and item_a_path != item_b_path:
-                raise MismatchingMediaPathError(
-                    (item_a.id, item_a.subset), item_a_path, item_b_path
-                )
+                raise MismatchingMediaPathError((item_a.id, item_a.subset), item_a_path, item_b_path)
 
             # Avoid direct comparison here for better performance
             # If there are 2 "data-only" pointclouds, they won't be compared and
@@ -288,9 +272,7 @@ class ExactMerge(Merger):
 
         if isinstance(item_a.media, MultiframeImage) and isinstance(item_b.media, MultiframeImage):
             if item_a.media.path and item_b.media.path and item_a.media.path != item_b.media.path:
-                raise MismatchingMediaPathError(
-                    (item_a.id, item_a.subset), item_a.media.path, item_b.media.path
-                )
+                raise MismatchingMediaPathError((item_a.id, item_a.subset), item_a.media.path, item_b.media.path)
 
             if item_a.media.path or item_a.media.data:
                 media = item_a.media

@@ -33,10 +33,7 @@ class MarsBase(DatasetBase):
         self._subsets = {
             subset_dir.split("_", maxsplit=1)[1]: osp.join(path, subset_dir)
             for subset_dir in os.listdir(path)
-            if (
-                osp.isdir(osp.join(path, subset_dir))
-                and fnmatch.fnmatch(subset_dir, MarsPath.SUBSET_DIR_PATTERN)
-            )
+            if (osp.isdir(osp.join(path, subset_dir)) and fnmatch.fnmatch(subset_dir, MarsPath.SUBSET_DIR_PATTERN))
         }
 
         self._categories = self._load_categories()
@@ -58,10 +55,7 @@ class MarsBase(DatasetBase):
                 for dir_name in os.listdir(subset_path)
                 if (
                     osp.isdir(osp.join(self._dataset_dir, subset_path, dir_name))
-                    and any(
-                        fnmatch.fnmatch(dir_name, image_dir)
-                        for image_dir in MarsPath.IMAGE_DIR_PATTERNS
-                    )
+                    and any(fnmatch.fnmatch(dir_name, image_dir) for image_dir in MarsPath.IMAGE_DIR_PATTERNS)
                 )
             ]
         )
@@ -130,10 +124,7 @@ class MarsImporter(Importer):
             "/".join((path, subset_dir, image_dir, image_dir + MarsPath.IMAGE_NAME_POSTFIX))
             for image_dir in MarsPath.IMAGE_DIR_PATTERNS
             for subset_dir in os.listdir(path)
-            if (
-                osp.isdir(osp.join(path, subset_dir))
-                and fnmatch.fnmatch(subset_dir, MarsPath.SUBSET_DIR_PATTERN)
-            )
+            if (osp.isdir(osp.join(path, subset_dir)) and fnmatch.fnmatch(subset_dir, MarsPath.SUBSET_DIR_PATTERN))
         ]
 
         for pattern in patterns:

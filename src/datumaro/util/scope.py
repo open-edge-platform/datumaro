@@ -10,6 +10,7 @@ from functools import partial, wraps
 from typing import Any, Callable, ContextManager, Dict, Optional, Tuple, TypeVar
 
 from attrs import frozen
+from typing_extensions import Self
 
 from datumaro.util import optional_arg_decorator
 
@@ -39,9 +40,7 @@ class Scope:
     class _ErrorHandler(_ExitHandler):
         def __exit__(self, exc_type, exc_value, exc_traceback):
             if exc_type:
-                return super().__exit__(
-                    exc_type=exc_type, exc_value=exc_value, exc_traceback=exc_traceback
-                )
+                return super().__exit__(exc_type=exc_type, exc_value=exc_value, exc_traceback=exc_traceback)
 
     def __init__(self):
         self._stack = ExitStack()
@@ -92,8 +91,8 @@ class Scope:
         self,
         handler_type,
         callback: Callable,
-        args: Tuple[Any] = None,
-        kwargs: Dict[str, Any] = None,
+        args: Tuple[Any] | None = None,
+        kwargs: Dict[str, Any] | None = None,
         ignore_errors: bool = False,
     ):
         if args or kwargs:
@@ -119,7 +118,7 @@ class Scope:
     def close(self):
         self.__exit__(None, None, None)
 
-    def __enter__(self) -> Scope:
+    def __enter__(self) -> Self:
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):

@@ -1,7 +1,6 @@
 import pickle  # nosec B403
 from copy import deepcopy
 from pathlib import Path
-from unittest import TestCase
 
 import numpy as np
 import pytest
@@ -18,14 +17,8 @@ from datumaro.plugins.data_formats.imagenet import (
     ImagenetWithSubsetDirsExporter,
     ImagenetWithSubsetDirsImporter,
 )
-
 from tests.utils.assets import get_test_asset_path
-from tests.utils.test_utils import (
-    TestCaseHelper,
-    TestDir,
-    compare_datasets,
-    compare_datasets_strict,
-)
+from tests.utils.test_utils import TestCaseHelper, TestDir, compare_datasets, compare_datasets_strict
 
 
 @pytest.fixture
@@ -44,9 +37,7 @@ def fxt_standard():
             ),
         ],
         categories={
-            AnnotationType.label: LabelCategories.from_iterable(
-                "label_" + str(label) for label in range(2)
-            ),
+            AnnotationType.label: LabelCategories.from_iterable("label_" + str(label) for label in range(2)),
         },
     )
     expected = deepcopy(source)
@@ -65,9 +56,7 @@ def fxt_multiple_labels():
             DatasetItem(id="2", media=Image.from_numpy(data=np.ones((8, 8, 3)))),
         ],
         categories={
-            AnnotationType.label: LabelCategories.from_iterable(
-                "label_" + str(label) for label in range(2)
-            ),
+            AnnotationType.label: LabelCategories.from_iterable("label_" + str(label) for label in range(2)),
         },
     )
 
@@ -151,12 +140,14 @@ class ImagenetWithSubsetDirsFormatTest(ImagenetFormatTest):
         fxt_name = request.param
         source, expected = request.getfixturevalue(fxt_name)
 
-        _to_subsets = lambda dataset: Dataset.from_extractors(
-            *[
-                deepcopy(dataset).transform("map_subsets", mapping={"default": subset})
-                for subset in ["train", "val", "test"]
-            ]
-        )
+        def _to_subsets(dataset):
+            return Dataset.from_extractors(
+                *[
+                    deepcopy(dataset).transform("map_subsets", mapping={"default": subset})
+                    for subset in ["train", "val", "test"]
+                ]
+            )
+
         return _to_subsets(source), _to_subsets(expected)
 
     @pytest.mark.parametrize(
@@ -178,9 +169,7 @@ class ImagenetImporterTest:
     IMPORTER_NAME = ImagenetImporter.NAME
 
     def _create_expected_dataset(self):
-        label_categories = LabelCategories.from_iterable(
-            ("label_0", "label_1", f"{Path('label_1', 'label_1_1')}")
-        )
+        label_categories = LabelCategories.from_iterable(("label_0", "label_1", f"{Path('label_1', 'label_1_1')}"))
         label_categories[-1].parent = "label_1"
         label_categories.add_label_group(name="label_1", labels=["label_1_1"], group_type=0)
 
@@ -212,16 +201,14 @@ class ImagenetImporterTest:
     @pytest.mark.parametrize("dataset_cls, is_stream", [(Dataset, False), (StreamDataset, True)])
     def test_can_import(self, dataset_cls, is_stream, helper_tc):
         expected_dataset = self._create_expected_dataset()
-        dataset = dataset_cls.import_from(
-            self.DUMMY_DATASET_DIR, self.IMPORTER_NAME, error_policy=ImportErrorPolicy()
-        )
+        dataset = dataset_cls.import_from(self.DUMMY_DATASET_DIR, self.IMPORTER_NAME, error_policy=ImportErrorPolicy())
         assert dataset.is_stream == is_stream
 
         compare_datasets(helper_tc, expected_dataset, dataset, require_media=True)
 
     def test_can_detect_imagenet(self):
         detected_formats = Environment().detect_dataset(self.DUMMY_DATASET_DIR)
-        assert [self.IMPORTER_NAME] == detected_formats
+        assert detected_formats == [self.IMPORTER_NAME]
 
     def test_can_pickle(self, helper_tc):
         source = Dataset.import_from(self.DUMMY_DATASET_DIR, format=self.IMPORTER_NAME)
@@ -237,9 +224,7 @@ class ImagenetWithSubsetDirsImporterTest(ImagenetImporterTest):
 
     @pytest.mark.parametrize("dataset_cls, is_stream", [(Dataset, False), (StreamDataset, True)])
     def test_can_import(self, dataset_cls, is_stream, helper_tc):
-        dataset = dataset_cls.import_from(
-            self.DUMMY_DATASET_DIR, self.IMPORTER_NAME, error_policy=ImportErrorPolicy()
-        )
+        dataset = dataset_cls.import_from(self.DUMMY_DATASET_DIR, self.IMPORTER_NAME, error_policy=ImportErrorPolicy())
         assert dataset.is_stream == is_stream
 
         for subset_name, subset in dataset.subsets().items():

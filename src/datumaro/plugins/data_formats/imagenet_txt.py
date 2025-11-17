@@ -31,16 +31,14 @@ class _LabelsSource(Enum):
 
 def _parse_annotation_line(line: str) -> Tuple[str, str, Sequence[int]]:
     item = line.split('"')
-    if 1 < len(item):
+    if len(item) > 1:
         if len(item) == 3:
             item_id = item[1]
             item = item[2].split()
             image = item_id + item[0]
             label_ids = [int(id) for id in item[1:]]
         else:
-            raise InvalidAnnotationError(
-                "Line %s: unexpected number " "of quotes in filename" % line
-            )
+            raise InvalidAnnotationError("Line %s: unexpected number of quotes in filename" % line)
     else:
         item = line.split()
         item_id = osp.splitext(item[0])[0]
@@ -122,9 +120,7 @@ class ImagenetTxtBase(SubsetBase):
                             while len(label_categories) <= label:
                                 label_categories.add(f"class-{len(label_categories)}")
                         else:
-                            raise DatasetImportError(
-                                f"Image '{item_id}': unknown label id '{label}'"
-                            )
+                            raise DatasetImportError(f"Image '{item_id}': unknown label id '{label}'")
 
                     anno.append(Label(label))
                     self._ann_types.add(AnnotationType.label)
@@ -143,9 +139,7 @@ class ImagenetTxtImporter(Importer, CliPlugin):
 
     @classmethod
     def detect(cls, context: FormatDetectionContext) -> None:
-        annot_path = context.require_file(
-            f"*{cls._ANNO_EXT}", exclude_fnames=ImagenetTxtPath.LABELS_FILE
-        )
+        annot_path = context.require_file(f"*{cls._ANNO_EXT}", exclude_fnames=ImagenetTxtPath.LABELS_FILE)
 
         with context.probe_text_file(
             annot_path,
@@ -181,9 +175,7 @@ class ImagenetTxtImporter(Importer, CliPlugin):
     @classmethod
     def find_sources_with_params(cls, path, **extra_params):
         if "labels" not in extra_params or extra_params["labels"] == _LabelsSource.file.name:
-            labels_file_name = osp.basename(
-                extra_params.get("labels_file") or ImagenetTxtPath.LABELS_FILE
-            )
+            labels_file_name = osp.basename(extra_params.get("labels_file") or ImagenetTxtPath.LABELS_FILE)
 
             def file_filter(p):
                 return osp.basename(p) != labels_file_name
@@ -215,12 +207,10 @@ class ImagenetTxtExporter(Exporter):
             labels = {}
             for item in subset:
                 item_id = item.id
-                if 1 < len(item_id.split()):
+                if len(item_id.split()) > 1:
                     item_id = '"' + item_id + '"'
                 item_id += self._find_image_ext(item)
-                labels[item_id] = set(
-                    p.label for p in item.annotations if p.type == AnnotationType.label
-                )
+                labels[item_id] = set(p.label for p in item.annotations if p.type == AnnotationType.label)
 
                 if self._save_media and item.media:
                     self._save_image(item, subdir=ImagenetTxtPath.IMAGE_DIR)
@@ -237,7 +227,4 @@ class ImagenetTxtExporter(Exporter):
         else:
             labels_file = osp.join(subset_dir, ImagenetTxtPath.LABELS_FILE)
             with open(labels_file, "w", encoding="utf-8") as f:
-                f.writelines(
-                    l.name + "\n"
-                    for l in extractor.categories().get(AnnotationType.label, LabelCategories())
-                )
+                f.writelines(l.name + "\n" for l in extractor.categories().get(AnnotationType.label, LabelCategories()))

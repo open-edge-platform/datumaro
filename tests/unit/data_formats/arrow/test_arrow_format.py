@@ -14,7 +14,6 @@ from datumaro.components.environment import Environment
 from datumaro.components.media import FromFileMixin, Image
 from datumaro.plugins.data_formats.arrow import ArrowExporter, ArrowImporter
 from datumaro.plugins.transforms import Sort
-
 from tests.utils.test_utils import check_save_and_load, compare_datasets, compare_datasets_strict
 
 
@@ -241,7 +240,7 @@ class ArrowFormatTest:
         self.exporter.convert(fxt_test_datumaro_format_dataset, save_dir=test_dir)
 
         detected_formats = Environment().detect_dataset(test_dir)
-        assert [self.importer.NAME] == detected_formats
+        assert detected_formats == [self.importer.NAME]
 
     @pytest.mark.parametrize(
         ["fxt_dataset", "save_media"],
@@ -315,9 +314,7 @@ class ArrowFormatTest:
         dataset.remove(3, "c")
         dataset.save(save_media=True)
 
-        compare_datasets_strict(
-            helper_tc, expected, Dataset.import_from(test_dir, format=self.format)
-        )
+        compare_datasets_strict(helper_tc, expected, Dataset.import_from(test_dir, format=self.format))
 
     def test_inplace_save_writes_only_updated_data_with_transforms(self, test_dir, helper_tc):
         expected = Dataset.from_iterable(
@@ -344,6 +341,4 @@ class ArrowFormatTest:
         dataset.transform("random_split", splits=(("train", 0.5), ("test", 0.5)), seed=42)
         dataset.save(save_media=True)
 
-        compare_datasets_strict(
-            helper_tc, expected, Dataset.import_from(test_dir, format=self.format)
-        )
+        compare_datasets_strict(helper_tc, expected, Dataset.import_from(test_dir, format=self.format))

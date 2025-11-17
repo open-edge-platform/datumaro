@@ -8,7 +8,6 @@ import datumaro.plugins.data_formats.voc.format as VOC
 from datumaro.components.annotation import Bbox, Label, Mask
 from datumaro.components.dataset import Dataset, DatasetItem
 from datumaro.components.media import Image
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, compare_datasets
 from tests.utils.test_utils import run_datum as run
@@ -310,9 +309,7 @@ class VocIntegrationScenarios(TestCase):
 
         expected_dataset = Dataset.from_iterable(
             [
-                DatasetItem(
-                    id=":".join([label, "2007_000001"]), subset="default", annotations=[Label(i)]
-                )
+                DatasetItem(id=":".join([label, "2007_000001"]), subset="default", annotations=[Label(i)])
                 for i, label in enumerate(labels)
             ]
             + [
@@ -441,9 +438,7 @@ class VocIntegrationScenarios(TestCase):
 
         dataset_dir = osp.join(DUMMY_DATASETS_DIR, "voc_dataset1")
         with TestDir() as test_dir:
-            self._test_can_save_and_load(
-                test_dir, dataset_dir, expected_dataset, "voc_layout", label_map="voc_layout"
-            )
+            self._test_can_save_and_load(test_dir, dataset_dir, expected_dataset, "voc_layout", label_map="voc_layout")
 
     def test_can_save_and_load_voc_classification_dataset(self):
         expected_dataset = Dataset.from_iterable(

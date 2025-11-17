@@ -30,7 +30,7 @@ def check_import():
     if result.returncode != 0:
         message = result.stderr
         if not message:
-            message = "Can't import tensorflow. " "Test process exit code: %s." % result.returncode
+            message = "Can't import tensorflow. Test process exit code: %s." % result.returncode
             if not check_instruction_set("avx"):
                 # The process has probably crashed for AVX unavalability
                 message += (

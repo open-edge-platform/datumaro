@@ -7,13 +7,7 @@ import os
 import os.path as osp
 from typing import Optional
 
-from datumaro.components.annotation import (
-    AnnotationType,
-    Label,
-    LabelCategories,
-    Points,
-    PointsCategories,
-)
+from datumaro.components.annotation import AnnotationType, Label, LabelCategories, Points, PointsCategories
 from datumaro.components.dataset_base import DatasetItem, SubsetBase
 from datumaro.components.errors import DatasetImportError, InvalidAnnotationError
 from datumaro.components.importer import ImportContext
@@ -28,8 +22,7 @@ class AlignCelebaPath(CelebaPath):
     IMAGES_DIR = osp.join("Img", "img_align_celeba")
     LANDMARKS_FILE = osp.join("Anno", "list_landmarks_align_celeba.txt")
     LANDMARKS_HEADER = (
-        "lefteye_x lefteye_y righteye_x righteye_y "
-        "nose_x nose_y leftmouth_x leftmouth_y rightmouth_x rightmouth_y"
+        "lefteye_x lefteye_y righteye_x righteye_y nose_x nose_y leftmouth_x leftmouth_y rightmouth_x rightmouth_y"
     )
 
 
@@ -49,9 +42,7 @@ class AlignCelebaBase(SubsetBase):
 
         self._categories = {AnnotationType.label: LabelCategories()}
         if has_meta_file(path):
-            self._categories = {
-                AnnotationType.label: LabelCategories.from_iterable(parse_meta_file(path).keys())
-            }
+            self._categories = {AnnotationType.label: LabelCategories.from_iterable(parse_meta_file(path).keys())}
 
         self._items = list(self._load_items(path).values())
 
@@ -108,15 +99,13 @@ class AlignCelebaBase(SubsetBase):
 
                     if len(landmarks) != len(point_cat):
                         raise InvalidAnnotationError(
-                            "File '%s', line %s: "
-                            "points do not match the header of this file" % (landmark_path, line)
+                            "File '%s', line %s: points do not match the header of this file" % (landmark_path, line)
                         )
 
                     if item_id not in items:
                         raise InvalidAnnotationError(
                             "File '%s', line %s: "
-                            "for this item are not label in %s "
-                            % (landmark_path, line, AlignCelebaPath.LABELS_FILE)
+                            "for this item are not label in %s " % (landmark_path, line, AlignCelebaPath.LABELS_FILE)
                         )
 
                     anno = items[item_id].annotations
@@ -148,7 +137,7 @@ class AlignCelebaBase(SubsetBase):
                             "beginning of the file " % (attr_path, line)
                         )
 
-                    attrs = {name: 0 < int(ann) for name, ann in zip(attr_names, item_ann)}
+                    attrs = {name: int(ann) > 0 for name, ann in zip(attr_names, item_ann)}
 
                     if item_id not in items:
                         image = images.get(item_id)
@@ -190,14 +179,12 @@ class AlignCelebaBase(SubsetBase):
 
     def split_annotation(self, line):
         item = line.split('"')
-        if 1 < len(item):
+        if len(item) > 1:
             if len(item) == 3:
                 item_id = osp.splitext(item[1])[0]
                 item = item[2].split()
             else:
-                raise InvalidAnnotationError(
-                    "Line %s: unexpected number " "of quotes in filename" % line
-                )
+                raise InvalidAnnotationError("Line %s: unexpected number of quotes in filename" % line)
         else:
             item = line.split()
             item_id = osp.splitext(item[0])[0]

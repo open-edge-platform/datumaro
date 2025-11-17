@@ -9,14 +9,10 @@ import pytest
 from datumaro.components.annotation import Bbox, RleMask
 from datumaro.components.dataset import Dataset, DatasetItem
 from datumaro.components.media import Image
-from datumaro.plugins.data_formats.segment_anything import (
-    SegmentAnythingExporter,
-    SegmentAnythingImporter,
-)
+from datumaro.plugins.data_formats.segment_anything import SegmentAnythingExporter, SegmentAnythingImporter
+from tests.utils.assets import get_test_asset_path
 
 from .base import TestDataFormatBase
-
-from tests.utils.assets import get_test_asset_path
 
 DATASET_DIR = get_test_asset_path("segment_anything_dataset")
 
@@ -28,7 +24,7 @@ class SegmentAnythingTest(TestDataFormatBase):
 
     @pytest.fixture
     def fxt_expected_dataset(self):
-        expected_dataset = Dataset.from_iterable(
+        return Dataset.from_iterable(
             [
                 DatasetItem(
                     id="a",
@@ -100,8 +96,6 @@ class SegmentAnythingTest(TestDataFormatBase):
                 ),
             ],
         )
-
-        return expected_dataset
 
     @pytest.fixture
     def fxt_dataset_dir(self) -> str:

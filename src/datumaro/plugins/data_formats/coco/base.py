@@ -190,8 +190,7 @@ class _CocoBase(SubsetBase):
                 # because there is a possiblity that an item cannot be parsed properly.
                 return len(self._page_mapper)
             return self._length
-        else:
-            return len(self._items)
+        return len(self._items)
 
     def __iter__(self) -> Iterator[DatasetItem]:
         if self.is_stream:
@@ -226,8 +225,7 @@ class _CocoBase(SubsetBase):
         found = [
             self._categories[AnnotationType.label][label_id].name
             for cat_id, label_id in self._label_map.items()
-            if cat_id == 0
-            and self._categories[AnnotationType.label][label_id].name.lower() != "background"
+            if cat_id == 0 and self._categories[AnnotationType.label][label_id].name.lower() != "background"
         ]
         if found:
             category_name = found[0]
@@ -313,9 +311,7 @@ class _CocoBase(SubsetBase):
             else:
                 self._load_panoptic_ann(ann_info, parsed_annotations=item.annotations)
         except Exception as e:
-            self._ctx.error_policy.report_annotation_error(
-                e, item_id=(ann_info.get("id", None), self._subset)
-            )
+            self._ctx.error_policy.report_annotation_error(e, item_id=(ann_info.get("id", None), self._subset))
 
     def _load_items(self, json_data):
         pbar = self._ctx.progress_reporter
@@ -357,9 +353,7 @@ class _CocoBase(SubsetBase):
                 for ann in item.annotations:
                     self._ann_types.add(ann.type)
             except Exception as e:
-                self._ctx.error_policy.report_annotation_error(
-                    e, item_id=(ann_info.get("id", None), self._subset)
-                )
+                self._ctx.error_policy.report_annotation_error(e, item_id=(ann_info.get("id", None), self._subset))
 
         return items
 
@@ -384,9 +378,7 @@ class _CocoBase(SubsetBase):
                 attributes={"id": img_id},
             )
         except Exception as e:
-            self._ctx.error_policy.report_item_error(
-                e, item_id=(img_info.get("id", None), self._subset)
-            )
+            self._ctx.error_policy.report_item_error(e, item_id=(img_info.get("id"), self._subset))
 
     def _load_panoptic_ann(self, ann, parsed_annotations=None):
         if parsed_annotations is None:
@@ -416,8 +408,7 @@ class _CocoBase(SubsetBase):
     @staticmethod
     def _load_pan_mask(path):
         mask = load_image(path)
-        mask = bgr2index(mask)
-        return mask
+        return bgr2index(mask)
 
     @define
     class _lazy_merged_mask:
@@ -440,24 +431,18 @@ class _CocoBase(SubsetBase):
         return label_id
 
     @overload
-    def _parse_field(self, ann: Dict[str, Any], key: str, cls: Type[T]) -> T:
-        ...
+    def _parse_field(self, ann: Dict[str, Any], key: str, cls: Type[T]) -> T: ...
 
     @overload
-    def _parse_field(self, ann: Dict[str, Any], key: str, cls: Tuple[Type, ...]) -> Any:
-        ...
+    def _parse_field(self, ann: Dict[str, Any], key: str, cls: Tuple[Type, ...]) -> Any: ...
 
-    def _parse_field(
-        self, ann: Dict[str, Any], key: str, cls: Union[Type[T], Tuple[Type, ...]]
-    ) -> Any:
+    def _parse_field(self, ann: Dict[str, Any], key: str, cls: Union[Type[T], Tuple[Type, ...]]) -> Any:
         value = ann.get(key, NOTSET)
         if value is NOTSET:
             raise MissingFieldError(key)
-        elif not isinstance(value, cls):
+        if not isinstance(value, cls):
             cls = (cls,) if isclass(cls) else cls
-            raise InvalidFieldTypeError(
-                key, actual=str(type(value)), expected=tuple(str(t) for t in cls)
-            )
+            raise InvalidFieldTypeError(key, actual=str(type(value)), expected=tuple(str(t) for t in cls))
         return value
 
     def _load_annotations(self, ann, image_info=None, parsed_annotations=None):
@@ -472,11 +457,7 @@ class _CocoBase(SubsetBase):
 
         group = ann_id  # make sure all tasks' annotations are merged
 
-        if (
-            self._task is CocoTask.instances
-            or self._task is CocoTask.person_keypoints
-            or self._task is CocoTask.stuff
-        ):
+        if self._task is CocoTask.instances or self._task is CocoTask.person_keypoints or self._task is CocoTask.stuff:
             label_id = self._get_label_id(ann)
 
             attributes["is_crowd"] = bool(self._parse_field(ann, "iscrowd", int))
@@ -525,7 +506,7 @@ class _CocoBase(SubsetBase):
                                     f"Polygon has invalid value count {len(polygon_points)}, "
                                     "which is not divisible by 2."
                                 )
-                            elif len(polygon_points) < 6:
+                            if len(polygon_points) < 6:
                                 raise InvalidAnnotationError(
                                     f"Polygon has invalid value count {len(polygon_points)}. "
                                     "Expected at least 3 (x, y) pairs."
@@ -559,8 +540,7 @@ class _CocoBase(SubsetBase):
 
                     if not ((img_h == mask_h) and (img_w == mask_w)):
                         raise InvalidAnnotationError(
-                            "Mask #%s does not match image size: %s vs. %s"
-                            % (ann_id, (mask_h, mask_w), (img_h, img_w))
+                            "Mask #%s does not match image size: %s vs. %s" % (ann_id, (mask_h, mask_w), (img_h, img_w))
                         )
                     rle = self._lazy_merged_mask([segmentation], mask_h, mask_w)
                 else:
@@ -569,17 +549,13 @@ class _CocoBase(SubsetBase):
 
                 if rle:
                     parsed_annotations.append(
-                        RleMask(
-                            rle=rle, label=label_id, id=ann_id, attributes=attributes, group=group
-                        )
+                        RleMask(rle=rle, label=label_id, id=ann_id, attributes=attributes, group=group)
                     )
 
             bbox = self._parse_field(ann, "bbox", list)
             if bbox and len(bbox) > 0:
                 if len(bbox) != 4:
-                    raise InvalidAnnotationError(
-                        f"Bbox has wrong value count {len(bbox)}. Expected 4 values."
-                    )
+                    raise InvalidAnnotationError(f"Bbox has wrong value count {len(bbox)}. Expected 4 values.")
                 x, y, w, h = bbox
                 parsed_annotations.append(
                     Bbox(
@@ -596,16 +572,12 @@ class _CocoBase(SubsetBase):
 
         elif self._task is CocoTask.labels:
             label_id = self._get_label_id(ann)
-            parsed_annotations.append(
-                Label(label=label_id, id=ann_id, attributes=attributes, group=group)
-            )
+            parsed_annotations.append(Label(label=label_id, id=ann_id, attributes=attributes, group=group))
         elif self._task is CocoTask.captions:
             caption = self._parse_field(ann, "caption", str)
-            parsed_annotations.append(
-                Caption(caption, id=ann_id, attributes=attributes, group=group)
-            )
+            parsed_annotations.append(Caption(caption, id=ann_id, attributes=attributes, group=group))
         else:
-            raise NotImplementedError()
+            raise NotImplementedError
 
         return parsed_annotations
 
@@ -628,14 +600,12 @@ class _CocoBase(SubsetBase):
                 self._parse_anns(img_info, ann_info, item)
 
             return item
-        else:
-            return self._items[item_key]
+        return self._items[item_key]
 
     def iter_item_ids(self) -> Iterator[int]:
         if self.is_stream:
             return self._page_mapper.iter_item_ids()
-        else:
-            return self._items.keys()
+        return self._items.keys()
 
 
 class CocoImageInfoBase(_CocoBase):

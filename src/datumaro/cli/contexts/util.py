@@ -37,36 +37,24 @@ def build_split_video_parser(parser_ctor=argparse.ArgumentParser):
         formatter_class=MultilineFormatter,
     )
 
-    parser.add_argument(
-        "-i", "--input-path", dest="src_path", required=True, help="Path to the video file"
-    )
+    parser.add_argument("-i", "--input-path", dest="src_path", required=True, help="Path to the video file")
     parser.add_argument(
         "-o",
         "--output-dir",
         dest="dst_dir",
         help="Directory to save output (default: a subdir in the current one)",
     )
-    parser.add_argument(
-        "--overwrite", action="store_true", help="Overwrite existing files in the save directory"
-    )
+    parser.add_argument("--overwrite", action="store_true", help="Overwrite existing files in the save directory")
     parser.add_argument(
         "-n",
         "--name-pattern",
         default="%06d",
         help="Name pattern for the produced images (default: %(default)s)",
     )
-    parser.add_argument(
-        "-s", "--step", type=int, default=1, help="Frame step (default: %(default)s)"
-    )
-    parser.add_argument(
-        "-b", "--start-frame", type=int, default=0, help="Starting frame (default: %(default)s)"
-    )
-    parser.add_argument(
-        "-e", "--end-frame", type=int, default=None, help="Finishing frame (default: %(default)s)"
-    )
-    parser.add_argument(
-        "-x", "--image-ext", default=".jpg", help="Output image extension (default: %(default)s)"
-    )
+    parser.add_argument("-s", "--step", type=int, default=1, help="Frame step (default: %(default)s)")
+    parser.add_argument("-b", "--start-frame", type=int, default=0, help="Starting frame (default: %(default)s)")
+    parser.add_argument("-e", "--end-frame", type=int, default=None, help="Finishing frame (default: %(default)s)")
+    parser.add_argument("-x", "--image-ext", default=".jpg", help="Output image extension (default: %(default)s)")
     parser.set_defaults(command=split_video_command)
 
     return parser
@@ -84,9 +72,7 @@ def split_video_command(args):
     dst_dir = args.dst_dir
     if dst_dir:
         if not args.overwrite and osp.isdir(dst_dir) and os.listdir(dst_dir):
-            raise CliException(
-                "Directory '%s' already exists " "(pass --overwrite to overwrite)" % dst_dir
-            )
+            raise CliException("Directory '%s' already exists (pass --overwrite to overwrite)" % dst_dir)
     else:
         basename = "%s-frames" % osp.basename(src_path)
         dst_dir = generate_next_name(os.listdir("."), basename)

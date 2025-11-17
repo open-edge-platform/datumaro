@@ -77,9 +77,7 @@ def _tile_polygon(
 
     inter = _apply_offset(inter, roi_box)
 
-    return ann.wrap(
-        points=[p for xy in inter.exterior.coords for p in xy], attributes=deepcopy(ann.attributes)
-    )
+    return ann.wrap(points=[p for xy in inter.exterior.coords for p in xy], attributes=deepcopy(ann.attributes))
 
 
 def _tile_polyline(ann: PolyLine, roi_box: sg.Polygon, *args, **kwargs) -> Optional[PolyLine]:
@@ -96,9 +94,7 @@ def _tile_polyline(ann: PolyLine, roi_box: sg.Polygon, *args, **kwargs) -> Optio
     )
 
 
-def _tile_bbox(
-    ann: Bbox, roi_box: sg.Polygon, threshold_drop_ann: float = 0.8, *args, **kwargs
-) -> Optional[Bbox]:
+def _tile_bbox(ann: Bbox, roi_box: sg.Polygon, threshold_drop_ann: float = 0.8, *args, **kwargs) -> Optional[Bbox]:
     bbox: sg.Polygon = sg.box(*xywh_to_x1y1x2y2(*ann.get_bbox()))
 
     if not roi_box.intersects(bbox):
@@ -116,9 +112,7 @@ def _tile_bbox(
     return ann.wrap(x=x, y=y, w=w, h=h, attributes=deepcopy(ann.attributes))
 
 
-def _tile_depth_annotation(
-    ann: DepthAnnotation, roi_int: BboxIntCoords, *args, **kwargs
-) -> DepthAnnotation:
+def _tile_depth_annotation(ann: DepthAnnotation, roi_int: BboxIntCoords, *args, **kwargs) -> DepthAnnotation:
     x, y, w, h = roi_int
     tiled_img = ann.image[y : y + h, x : x + w]
     return ann.wrap(image=tiled_img, attributes=deepcopy(ann.attributes))
@@ -227,9 +221,7 @@ class Tile(Transform, CliPlugin):
 
     def transform_item(self, item: DatasetItem) -> List[DatasetItem]:
         if not isinstance(item.media, Image):
-            assert MediaTypeError(
-                f"item.media should be Image, but type(item.media)={type(item.media)}."
-            )
+            assert MediaTypeError(f"item.media should be Image, but type(item.media)={type(item.media)}.")
 
         items: List[DatasetItem] = []
         rois = self._extract_rois(item.media)

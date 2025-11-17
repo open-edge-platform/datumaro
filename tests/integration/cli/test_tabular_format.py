@@ -8,7 +8,6 @@ import pytest
 
 from datumaro.components.dataset import Dataset
 from datumaro.plugins.data_formats.tabular import *
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestCaseHelper, TestDir, compare_datasets
 from tests.utils.test_utils import run_datum as run

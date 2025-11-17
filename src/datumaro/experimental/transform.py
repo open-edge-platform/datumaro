@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 from abc import abstractmethod
-from typing import Sequence
+from collections.abc import Sequence
 
 import polars as pl
 

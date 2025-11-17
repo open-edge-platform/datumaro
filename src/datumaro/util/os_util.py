@@ -27,9 +27,7 @@ def check_instruction_set(instruction):
         # Let's ignore a warning from bandit about using shell=True.
         # In this case it isn't a security issue and we use some
         # shell features like pipes.
-        subprocess.check_output(
-            'lscpu | grep -o "%s" | head -1' % instruction, shell=True
-        ).decode(  # nosec B602
+        subprocess.check_output('lscpu | grep -o "%s" | head -1' % instruction, shell=True).decode(  # nosec B602
             "utf-8"
         )
     )
@@ -39,9 +37,7 @@ def import_foreign_module(name, path):
     module = None
     default_path = sys.path.copy()
     try:
-        sys.path = [
-            osp.abspath(path),
-        ] + default_path
+        sys.path = [osp.abspath(path), *default_path]
         sys.modules.pop(name, None)  # remove from cache
         module = importlib.import_module(name)
         sys.modules.pop(name)  # remove from cache
@@ -82,7 +78,7 @@ def find_files(
 
     def _check_ext(filename: str):
         dotpos = filename.rfind(".")
-        if 0 < dotpos:  # exclude '.ext' cases too
+        if dotpos > 0:  # exclude '.ext' cases too
             ext = filename[dotpos:].lower()
             if ext in exts:
                 return True
@@ -146,8 +142,7 @@ def copytree(src, dst):
             shutil.copytree(src, dst)
     except subprocess.CalledProcessError as e:
         raise Exception(
-            "Failed to copy data. The command '%s' "
-            "has failed with the following output: '%s'" % (e.cmd, e.stdout)
+            "Failed to copy data. The command '%s' has failed with the following output: '%s'" % (e.cmd, e.stdout)
         ) from e
 
 
@@ -219,8 +214,7 @@ def make_file_name(s: str) -> str:
     s = unicodedata.normalize("NFKD", s).encode("ascii", "ignore")
     s = s.decode()
     s = re.sub(r"[^\w\s-]", "", s).strip().lower()
-    s = re.sub(r"[-\s]+", "-", s)
-    return s
+    return re.sub(r"[-\s]+", "-", s)
 
 
 def generate_next_name(

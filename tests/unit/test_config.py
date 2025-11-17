@@ -7,7 +7,6 @@ import yaml
 
 from datumaro.components.config import Config, DictConfig, SchemaBuilder
 from datumaro.components.errors import ImmutableObjectError
-
 from tests.utils.test_utils import TestDir
 
 
@@ -16,15 +15,11 @@ class ConfigTest(TestCase):
         schema_low = SchemaBuilder().add("options", dict).build()
         schema_mid = SchemaBuilder().add("desc", lambda: Config(schema=schema_low)).build()
         schema_top = (
-            SchemaBuilder()
-            .add("container", lambda: DictConfig(lambda v: Config(v, schema=schema_mid)))
-            .build()
+            SchemaBuilder().add("container", lambda: DictConfig(lambda v: Config(v, schema=schema_mid))).build()
         )
 
         value = 1
-        conf = Config(
-            {"container": {"elem": {"desc": {"options": {"k": value}}}}}, schema=schema_top
-        )
+        conf = Config({"container": {"elem": {"desc": {"options": {"k": value}}}}}, schema=schema_top)
 
         self.assertEqual(value, conf.container["elem"].desc.options["k"])
 
@@ -33,9 +28,7 @@ class ConfigTest(TestCase):
             schema_low = SchemaBuilder().add("options", dict).build()
             schema_mid = SchemaBuilder().add("desc", lambda: Config(schema=schema_low)).build()
             schema_top = (
-                SchemaBuilder()
-                .add("container", lambda: DictConfig(lambda v: Config(v, schema=schema_mid)))
-                .build()
+                SchemaBuilder().add("container", lambda: DictConfig(lambda v: Config(v, schema=schema_mid))).build()
             )
 
             source = Config(
@@ -60,9 +53,7 @@ class ConfigTest(TestCase):
             loaded = Config.parse(p, schema=schema_top)
 
             self.assertTrue(isinstance(loaded.container["elem"].desc.options["k"], list))
-            loaded.container["elem"].desc.options["k"] = tuple(
-                loaded.container["elem"].desc.options["k"]
-            )
+            loaded.container["elem"].desc.options["k"] = tuple(loaded.container["elem"].desc.options["k"])
             self.assertEqual(source, loaded)
 
     def test_cant_set_incorrect_key(self):
@@ -111,9 +102,7 @@ class ConfigTest(TestCase):
 
         # will be copied deeply, because uses DictConfig
         schema_top = (
-            SchemaBuilder()
-            .add("container", lambda: DictConfig(lambda v: Config(v, schema=schema_low)))
-            .build()
+            SchemaBuilder().add("container", lambda: DictConfig(lambda v: Config(v, schema=schema_low))).build()
         )
 
         src_conf = Config({"container": {"x": {"options": {"k": 1}}}}, schema=schema_top)

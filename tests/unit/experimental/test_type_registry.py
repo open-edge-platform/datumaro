@@ -10,11 +10,7 @@ from typing import Optional, Union
 import numpy as np
 import pytest
 
-from datumaro.experimental.type_registry import (
-    from_polars_data,
-    register_from_polars_converter,
-    to_numpy,
-)
+from datumaro.experimental.type_registry import from_polars_data, register_from_polars_converter, to_numpy
 
 
 def test_basic_type_conversion():
@@ -392,9 +388,7 @@ def test_typed_numpy_array_optional():
     import polars as pl
 
     NDArrayFloat32 = npt.NDArray[np.float32]
-    OptionalFloat32 = (
-        NDArrayFloat32 | None if sys.version_info >= (3, 10) else Optional[NDArrayFloat32]
-    )
+    OptionalFloat32 = NDArrayFloat32 | None if sys.version_info >= (3, 10) else Optional[NDArrayFloat32]
 
     # Test with None
     result = from_polars_data(None, OptionalFloat32)

@@ -10,10 +10,8 @@ from unittest.case import TestCase
 from datumaro.plugins.data_formats.ade20k2017 import Ade20k2017Importer
 from datumaro.plugins.data_formats.ade20k2020 import Ade20k2020Importer
 from datumaro.plugins.data_formats.camvid import CamvidImporter
-from datumaro.plugins.data_formats.image_dir import ImageDirImporter
 from datumaro.plugins.data_formats.lfw import LfwImporter
 from datumaro.util.os_util import suppress_output
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir
 from tests.utils.test_utils import run_datum as run
@@ -27,9 +25,7 @@ class DetectFormatTest(TestCase):
     def _extract_detect_format_name(self, output_file: io.StringIO) -> List[str]:
         output = output_file.getvalue()
         if "Ambiguous dataset; detected the following formats:\n\n" in output:
-            tokens = output.replace(
-                "Ambiguous dataset; detected the following formats:\n\n", ""
-            ).split("- ")[1:]
+            tokens = output.replace("Ambiguous dataset; detected the following formats:\n\n", "").split("- ")[1:]
             return [token.replace("\n", "") for token in tokens]
 
         return [output.replace("Detected format: ", "").replace("\n", "")]

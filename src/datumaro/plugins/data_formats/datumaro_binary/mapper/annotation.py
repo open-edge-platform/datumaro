@@ -115,9 +115,7 @@ class MaskMapper(AnnotationMapper):
         offset += len_counts
 
         return (
-            RleMask(
-                rle={"size": [h, w], "counts": counts}, label=label, z_order=z_order, **ann_dict
-            ),
+            RleMask(rle={"size": [h, w], "counts": counts}, label=label, z_order=z_order, **ann_dict),
             offset,
         )
 
@@ -279,12 +277,8 @@ class Cuboid2DMapper(AnnotationMapper):
         _bytearray = bytearray()
         _bytearray.extend(struct.pack("<Bqqi", ann.type, ann.id, ann.group, ann.object_id))
         _bytearray.extend(DictMapper.forward(ann.attributes))
-        _bytearray.extend(
-            struct.pack("<ii", _ShapeMapper.forward_optional_label(ann.label), ann.z_order)
-        )
-        _bytearray.extend(
-            FloatListMapper.forward([coord for point in ann.points for coord in point])
-        )
+        _bytearray.extend(struct.pack("<ii", _ShapeMapper.forward_optional_label(ann.label), ann.z_order))
+        _bytearray.extend(FloatListMapper.forward([coord for point in ann.points for coord in point]))
         return bytes(_bytearray)
 
     @classmethod
@@ -339,7 +333,7 @@ class AnnotationListMapper(Mapper):
             elif isinstance(ann, Cuboid2D):
                 _bytearray.extend(Cuboid2DMapper.forward(ann))
             else:
-                raise NotImplementedError()
+                raise NotImplementedError
 
         return bytes(_bytearray)
 

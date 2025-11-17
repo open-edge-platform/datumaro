@@ -10,12 +10,7 @@ from typing import Optional
 
 import numpy as np
 
-from datumaro.components.annotation import (
-    AnnotationType,
-    ExtractedMask,
-    LabelCategories,
-    MaskCategories,
-)
+from datumaro.components.annotation import AnnotationType, ExtractedMask, LabelCategories, MaskCategories
 from datumaro.components.dataset_base import DatasetItem, SubsetBase
 from datumaro.components.errors import InvalidAnnotationError
 from datumaro.components.importer import ImportContext
@@ -45,10 +40,7 @@ def make_categories(label_map):
     if not has_colors:  # generate new colors
         colormap = generate_colormap(len(label_map))
     else:  # only copy defined colors
-        colormap = {
-            label_id: (desc[0], desc[1], desc[2])
-            for label_id, desc in enumerate(label_map.values())
-        }
+        colormap = {label_id: (desc[0], desc[1], desc[2]) for label_id, desc in enumerate(label_map.values())}
     mask_categories = MaskCategories(colormap)
     mask_categories.inverse_colormap  # pylint: disable=pointless-statement
     categories[AnnotationType.mask] = mask_categories
@@ -67,7 +59,7 @@ def parse_label_map(path):
             # color, name
             label_desc = line.split()
 
-            if 2 < len(label_desc):
+            if len(label_desc) > 2:
                 name = label_desc[3]
                 color = tuple([int(c) for c in label_desc[:3]])
             else:
@@ -103,7 +95,7 @@ class _SynthiaBase(SubsetBase):
         self._img_dir = None
         self._inst_dir = None
         self._seg_dir = None
-        for path_format in vars(path_formats).keys():
+        for path_format in vars(path_formats):
             if path_format == "IMAGES_DIR":
                 self._img_dir = osp.join(path, path_formats.IMAGES_DIR)
             elif path_format == "LABELS_SEGM_DIR":
@@ -145,9 +137,7 @@ class _SynthiaBase(SubsetBase):
                 labels_mask = np.loadtxt(gt_label)
                 classes = np.unique(labels_mask)
                 for label_id in classes:
-                    anno.append(
-                        ExtractedMask(index_mask=labels_mask, index=label_id, label=label_id)
-                    )
+                    anno.append(ExtractedMask(index_mask=labels_mask, index=label_id, label=label_id))
                     self._ann_types.add(AnnotationType.mask)
 
                 image = images.get(item_id)
@@ -157,9 +147,7 @@ class _SynthiaBase(SubsetBase):
                 items[item_id] = DatasetItem(id=item_id, media=image, annotations=anno)
         elif self._seg_dir and osp.isdir(self._seg_dir):
             for seg_img_path in find_images(self._seg_dir, recursive=True):
-                item_id = osp.splitext(osp.relpath(seg_img_path, self._seg_dir))[0].replace(
-                    "\\", "/"
-                )
+                item_id = osp.splitext(osp.relpath(seg_img_path, self._seg_dir))[0].replace("\\", "/")
 
                 inverse_cls_colormap = self._categories[AnnotationType.mask].inverse_colormap
 
@@ -168,9 +156,7 @@ class _SynthiaBase(SubsetBase):
                 anno = []
                 classes = np.unique(color_mask)
                 for label_id in classes:
-                    anno.append(
-                        ExtractedMask(index_mask=color_mask, index=label_id, label=label_id)
-                    )
+                    anno.append(ExtractedMask(index_mask=color_mask, index=label_id, label=label_id))
                     self._ann_types.add(AnnotationType.mask)
 
                 image = images.get(item_id)
@@ -184,20 +170,14 @@ class _SynthiaBase(SubsetBase):
 
 class SynthiaRandBase(_SynthiaBase):
     def __init__(self, path: str, **kwargs):
-        super().__init__(
-            path=path, path_formats=SynthiaRandPath, label_map=SynthiaRandLabelMap, **kwargs
-        )
+        super().__init__(path=path, path_formats=SynthiaRandPath, label_map=SynthiaRandLabelMap, **kwargs)
 
 
 class SynthiaSfBase(_SynthiaBase):
     def __init__(self, path, **kwargs):
-        super().__init__(
-            path=path, path_formats=SynthiaSfPath, label_map=SynthiaSfLabelMap, **kwargs
-        )
+        super().__init__(path=path, path_formats=SynthiaSfPath, label_map=SynthiaSfLabelMap, **kwargs)
 
 
 class SynthiaAlBase(_SynthiaBase):
     def __init__(self, path, **kwargs):
-        super().__init__(
-            path=path, path_formats=SynthiaAlPath, label_map=SynthiaAlLabelMap, **kwargs
-        )
+        super().__init__(path=path, path_formats=SynthiaAlPath, label_map=SynthiaAlLabelMap, **kwargs)

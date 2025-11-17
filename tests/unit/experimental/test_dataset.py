@@ -10,19 +10,14 @@ import polars as pl
 import pytest
 
 from datumaro.experimental.categories import LabelCategories, MaskCategories
-from datumaro.experimental.dataset import (
-    AttributeInfo,
-    Dataset,
-    Sample,
-    Schema,
-    convert_sample_to_schema,
-)
+from datumaro.experimental.dataset import AttributeInfo, Dataset, Sample, Schema, convert_sample_to_schema
 from datumaro.experimental.fields import (
     ImageInfo,
     Subset,
     bbox_field,
     image_field,
     image_info_field,
+    mask_field,
     subset_field,
 )
 from datumaro.experimental.schema import Semantic
@@ -123,9 +118,7 @@ def test_dataset_creation_from_schema():
     """Test Dataset creation from explicit Schema."""
     schema = Schema(
         attributes={
-            "image": AttributeInfo(
-                type=np.ndarray, field=image_field(dtype=pl.UInt8, format="RGB")
-            ),
+            "image": AttributeInfo(type=np.ndarray, field=image_field(dtype=pl.UInt8, format="RGB")),
             "bbox": AttributeInfo(
                 type=np.ndarray,
                 field=bbox_field(dtype=pl.Float32, normalize=False),
@@ -259,12 +252,8 @@ def test_stereo_sample_with_semantics():
     """Test dataset with stereo samples using semantic tags."""
 
     class StereoSample(Sample):
-        left_image: np.ndarray[Any, Any] = image_field(
-            dtype=pl.UInt8, format="RGB", semantic=Semantic.Left
-        )
-        right_image: np.ndarray[Any, Any] = image_field(
-            dtype=pl.UInt8, format="BGR", semantic=Semantic.Right
-        )
+        left_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Left)
+        right_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="BGR", semantic=Semantic.Right)
         bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=True)
         left_image_info: ImageInfo = image_info_field(Semantic.Left)
         right_image_info: ImageInfo = image_info_field(Semantic.Right)
@@ -293,9 +282,7 @@ def test_dynamic_schema_definition():
     """Test dataset creation with dynamic schema without explicit Sample class."""
     schema = Schema(
         attributes={
-            "image": AttributeInfo(
-                type=np.ndarray, field=image_field(dtype=pl.UInt8, format="RGB")
-            ),
+            "image": AttributeInfo(type=np.ndarray, field=image_field(dtype=pl.UInt8, format="RGB")),
             "bbox": AttributeInfo(
                 type=np.ndarray,
                 field=bbox_field(dtype=pl.Float32, normalize=False),
@@ -354,9 +341,7 @@ def test_convert_sample_to_different_schema():
 
     class TargetSample(Sample):
         image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="BGR")  # Different format
-        bbox: np.ndarray[Any, Any] = bbox_field(
-            dtype=pl.Float32, normalize=True
-        )  # Different normalization
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=True)  # Different normalization
         image_info: ImageInfo = image_info_field()
 
     source_sample = SourceSample(
@@ -689,7 +674,6 @@ def test_union_type_handling():
 
 def test_dataset_with_optional_field():
     """Test dataset with np.ndarray | None field using mask_field, mixing None and array values."""
-    from datumaro.experimental.fields import mask_field
 
     class TestSample(Sample):
         mask: np.ndarray | None = mask_field(dtype=pl.UInt8)

@@ -4,19 +4,7 @@
 
 # pylint: disable=redefined-builtin
 
-from . import (
-    compare,
-    convert,
-    detect_format,
-    download,
-    filter,
-    info,
-    merge,
-    patch,
-    stats,
-    transform,
-    validate,
-)
+from . import compare, convert, detect_format, download, filter, info, merge, patch, stats, transform, validate
 
 __all__ = [
     "get_non_project_commands",

@@ -14,7 +14,7 @@ SUBSET_NAME_WHITELIST = {"train", "test", "val"}
 
 
 def get_datumaro_cache_dir(
-    _CACHE_DIR: str = osp.expanduser(os.getenv("XDG_CACHE_HOME", osp.join("~", ".cache")))
+    _CACHE_DIR: str = osp.expanduser(os.getenv("XDG_CACHE_HOME", osp.join("~", ".cache"))),
 ) -> str:
     """Get DATUMARO_CACHE_DIR. If it does not exists, create it."""
     DATUMARO_CACHE_DIR = osp.join(_CACHE_DIR, "datumaro")

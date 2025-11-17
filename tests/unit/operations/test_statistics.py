@@ -10,25 +10,12 @@ import cv2
 import numpy as np
 import pytest
 
-from datumaro.components.annotation import (
-    Bbox,
-    Caption,
-    Cuboid2D,
-    Ellipse,
-    Label,
-    Mask,
-    Points,
-    RotatedBbox,
-)
+from datumaro.components.annotation import Bbox, Caption, Cuboid2D, Ellipse, Label, Mask, Points, RotatedBbox
 from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.errors import DatumaroError
 from datumaro.components.media import Image, PointCloud
-from datumaro.components.operations import (
-    IMAGE_STATS_SCHEMA,
-    compute_ann_statistics,
-    compute_image_statistics,
-)
+from datumaro.components.operations import IMAGE_STATS_SCHEMA, compute_ann_statistics, compute_image_statistics
 
 
 @pytest.fixture
@@ -76,7 +63,7 @@ def fxt_image_dataset(fxt_image_dataset_expected_mean_std: Tuple[List[int], List
 
 @pytest.fixture
 def fxt_point_cloud_dataset():
-    dataset = Dataset.from_iterable(
+    return Dataset.from_iterable(
         [
             DatasetItem(
                 id=i,
@@ -86,7 +73,6 @@ def fxt_point_cloud_dataset():
         ],
         media_type=PointCloud,
     )
-    return dataset
 
 
 class ImageStatisticsTest:

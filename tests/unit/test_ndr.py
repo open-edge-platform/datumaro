@@ -14,17 +14,11 @@ class NDRTest(TestCase):
     def _generate_dataset(self, config, num_duplicate, dataset="classification"):
         subsets = ["train", "val", "test"]
         if dataset == "classification":
-            dummy_images = [
-                np.random.randint(0, 255, size=(224, 224, 3)) for _ in range(num_duplicate)
-            ]
+            dummy_images = [np.random.randint(0, 255, size=(224, 224, 3)) for _ in range(num_duplicate)]
         if dataset == "invalid_channel":
-            dummy_images = [
-                np.random.randint(0, 255, size=(224, 224, 2)) for _ in range(num_duplicate)
-            ]
+            dummy_images = [np.random.randint(0, 255, size=(224, 224, 2)) for _ in range(num_duplicate)]
         if dataset == "invalid_dimension":
-            dummy_images = [
-                np.random.randint(0, 255, size=(224, 224, 3, 3)) for _ in range(num_duplicate)
-            ]
+            dummy_images = [np.random.randint(0, 255, size=(224, 224, 3, 3)) for _ in range(num_duplicate)]
         iterable = []
         label_cat = LabelCategories()
         idx = 0
@@ -43,8 +37,7 @@ class NDRTest(TestCase):
                         )
                     )
         categories = {AnnotationType.label: label_cat}
-        dataset = Dataset.from_iterable(iterable, categories)
-        return dataset
+        return Dataset.from_iterable(iterable, categories)
 
     def test_ndr_with_error(self):
         config = {"label1": 100, "label2": 100, "label3": 100}
@@ -67,9 +60,7 @@ class NDRTest(TestCase):
             result = ndr.NDR(source, working_subset="train", algorithm=algorithm)
             len(result)
 
-        with self.assertRaisesRegex(
-            ValueError, "The number of images is smaller than the cut you want"
-        ):
+        with self.assertRaisesRegex(ValueError, "The number of images is smaller than the cut you want"):
             source = self._generate_dataset(config, 3)
             result = ndr.NDR(source, working_subset="train", num_cut=10000)
             len(result)
@@ -77,17 +68,13 @@ class NDRTest(TestCase):
         with self.assertRaisesRegex(ValueError, "Unknown oversampling method"):
             source = self._generate_dataset(config, 10)
             sampling = "no_such_sampling"
-            result = ndr.NDR(
-                source, working_subset="train", num_cut=100, seed=12145, over_sample=sampling
-            )
+            result = ndr.NDR(source, working_subset="train", num_cut=100, seed=12145, over_sample=sampling)
             len(result)
 
         with self.assertRaisesRegex(ValueError, "Unknown undersampling method"):
             source = self._generate_dataset(config, 10)
             sampling = "no_such_sampling"
-            result = ndr.NDR(
-                source, working_subset="train", num_cut=1, seed=12145, under_sample=sampling
-            )
+            result = ndr.NDR(source, working_subset="train", num_cut=1, seed=12145, under_sample=sampling)
             len(result)
 
         with self.assertRaisesRegex(ValueError, "unexpected number of channels"):
@@ -123,9 +110,7 @@ class NDRTest(TestCase):
         np.random.seed(1234)
         source = self._generate_dataset(config, 10)
 
-        result = ndr.NDR(
-            source, working_subset="train", num_cut=1, under_sample="uniform", seed=12145
-        )
+        result = ndr.NDR(source, working_subset="train", num_cut=1, under_sample="uniform", seed=12145)
 
         self.assertEqual(1, len(result.get_subset("train")))
         self.assertEqual(299, len(result.get_subset("duplicated")))
@@ -142,9 +127,7 @@ class NDRTest(TestCase):
         np.random.seed(1234)
         source = self._generate_dataset(config, 10)
 
-        result = ndr.NDR(
-            source, working_subset="train", num_cut=1, under_sample="inverse", seed=12145
-        )
+        result = ndr.NDR(source, working_subset="train", num_cut=1, under_sample="inverse", seed=12145)
 
         self.assertEqual(1, len(result.get_subset("train")))
         self.assertEqual(299, len(result.get_subset("duplicated")))
@@ -161,9 +144,7 @@ class NDRTest(TestCase):
         np.random.seed(1234)
         source = self._generate_dataset(config, 10)
 
-        result = ndr.NDR(
-            source, working_subset="train", num_cut=10, over_sample="random", seed=12145
-        )
+        result = ndr.NDR(source, working_subset="train", num_cut=10, over_sample="random", seed=12145)
 
         self.assertEqual(10, len(result.get_subset("train")))
         self.assertEqual(290, len(result.get_subset("duplicated")))
@@ -180,9 +161,7 @@ class NDRTest(TestCase):
         np.random.seed(1234)
         source = self._generate_dataset(config, 10)
 
-        result = ndr.NDR(
-            source, working_subset="train", num_cut=10, over_sample="similarity", seed=12145
-        )
+        result = ndr.NDR(source, working_subset="train", num_cut=10, over_sample="similarity", seed=12145)
 
         self.assertEqual(10, len(result.get_subset("train")))
         self.assertEqual(290, len(result.get_subset("duplicated")))
@@ -254,9 +233,7 @@ class NDRTest(TestCase):
         # train : 300, val : 300, test : 300
         np.random.seed(1234)
         source = self._generate_dataset(config, 10)
-        result = ndr.NDR(
-            source, working_subset="train", over_sample="random", block_shape=(8, 8), seed=12145
-        )
+        result = ndr.NDR(source, working_subset="train", over_sample="random", block_shape=(8, 8), seed=12145)
 
         self.assertEqual(1, len(result.get_subset("train")))
         self.assertEqual(299, len(result.get_subset("duplicated")))
@@ -273,9 +250,7 @@ class NDRTest(TestCase):
         np.random.seed(1234)
         source = self._generate_dataset(config, 10)
 
-        result = ndr.NDR(
-            source, working_subset="train", over_sample="random", hash_dim=16, seed=12145
-        )
+        result = ndr.NDR(source, working_subset="train", over_sample="random", hash_dim=16, seed=12145)
 
         self.assertEqual(1, len(result.get_subset("train")))
         self.assertEqual(299, len(result.get_subset("duplicated")))
@@ -292,9 +267,7 @@ class NDRTest(TestCase):
         np.random.seed(1234)
         source = self._generate_dataset(config, 10)
 
-        result = ndr.NDR(
-            source, working_subset="train", over_sample="random", sim_threshold=0.7, seed=12145
-        )
+        result = ndr.NDR(source, working_subset="train", over_sample="random", sim_threshold=0.7, seed=12145)
 
         self.assertEqual(1, len(result.get_subset("train")))
         self.assertEqual(299, len(result.get_subset("duplicated")))

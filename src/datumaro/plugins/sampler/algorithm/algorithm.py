@@ -28,4 +28,4 @@ class InferenceResultAnalyzer:
         self.sampling_method = SamplingMethod
 
     def get_sample(self, method: str, k: int):
-        raise NotImplementedError()
+        raise NotImplementedError

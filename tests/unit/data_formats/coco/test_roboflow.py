@@ -13,9 +13,7 @@ from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.importer import Importer
 from datumaro.components.media import Image
 from datumaro.plugins.data_formats.roboflow.importer import RoboflowCocoImporter
-
-from ..base import TestDataFormatBase
-
+from tests.unit.data_formats.base import TestDataFormatBase
 from tests.utils.assets import get_test_asset_path
 
 STRICT_DIR = get_test_asset_path("coco_dataset", "yolo")
@@ -38,9 +36,7 @@ class CocoRoboflowTest(TestDataFormatBase):
                     subset="train",
                     media=Image.from_numpy(data=np.ones((5, 10, 3))),
                     attributes={"id": 5},
-                    annotations=[
-                        Bbox(2, 2, 3, 1, label=1, group=1, id=1, attributes={"is_crowd": False})
-                    ],
+                    annotations=[Bbox(2, 2, 3, 1, label=1, group=1, id=1, attributes={"is_crowd": False})],
                 ),
                 DatasetItem(
                     id="b",

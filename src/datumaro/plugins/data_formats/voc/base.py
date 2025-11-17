@@ -9,14 +9,7 @@ from typing import Dict, List, Optional, Tuple, Type, TypeVar
 import numpy as np
 from defusedxml import ElementTree
 
-from datumaro.components.annotation import (
-    Annotation,
-    AnnotationType,
-    Bbox,
-    CompiledMask,
-    ExtractedMask,
-    Label,
-)
+from datumaro.components.annotation import Annotation, AnnotationType, Bbox, CompiledMask, ExtractedMask, Label
 from datumaro.components.dataset_base import DatasetItem, SubsetBase
 from datumaro.components.errors import (
     DatasetImportError,
@@ -81,16 +74,16 @@ class VocBase(SubsetBase):
         self._categories = self._load_categories(dataset_dir)
 
         if self._task in [VocTask.voc, VocTask.voc_segmentation, VocTask.voc_instance_segmentation]:
-            label_color = lambda label_idx: self._categories[AnnotationType.mask].colormap.get(
-                label_idx, None
-            )
+
+            def label_color(label_idx):
+                return self._categories[AnnotationType.mask].colormap.get(label_idx, None)
+
             log.debug(
                 "Loaded labels: %s",
                 ", ".join(
                     "'%s' %s" % (l.name, ("(%s, %s, %s)" % c) if c else "")
                     for i, l, c in (
-                        (i, l, label_color(i))
-                        for i, l in enumerate(self._categories[AnnotationType.label].items)
+                        (i, l, label_color(i)) for i, l in enumerate(self._categories[AnnotationType.label].items)
                     )
                 ),
             )
@@ -126,12 +119,12 @@ class VocBase(SubsetBase):
 
                 if self._task == VocTask.voc_layout:
                     objects = line.split('"')
-                    if 1 < len(objects):
+                    if len(objects) > 1:
                         if len(objects) == 3:
                             line = objects[1]
                         else:
                             raise InvalidAnnotationError(
-                                f"{osp.basename(subset_path)}:{i+1}: "
+                                f"{osp.basename(subset_path)}:{i + 1}: "
                                 "unexpected number of quotes in filename, expected 0 or 2"
                             )
                     else:
@@ -150,13 +143,9 @@ class VocBase(SubsetBase):
         else:
             images = {}
 
-        annotations = (
-            self._parse_labels() if self._task in [VocTask.voc, VocTask.voc_classification] else {}
-        )
+        annotations = self._parse_labels() if self._task in [VocTask.voc, VocTask.voc_classification] else {}
 
-        for item_id in self._ctx.progress_reporter.iter(
-            self._items, desc=f"Importing '{self._subset}'"
-        ):
+        for item_id in self._ctx.progress_reporter.iter(self._items, desc=f"Importing '{self._subset}'"):
             log.debug("Reading item '%s'" % item_id)
             size = None
 
@@ -205,9 +194,7 @@ class VocBase(SubsetBase):
             except ElementTree.ParseError as e:
                 readable_wrapper = InvalidAnnotationError("Failed to parse XML file")
                 readable_wrapper.__cause__ = e
-                self._ctx.error_policy.report_item_error(
-                    readable_wrapper, item_id=(item_id, self._subset)
-                )
+                self._ctx.error_policy.report_item_error(readable_wrapper, item_id=(item_id, self._subset))
             except Exception as e:
                 self._ctx.error_policy.report_item_error(e, item_id=(item_id, self._subset))
 
@@ -217,8 +204,7 @@ class VocBase(SubsetBase):
         if elem is None:
             if required:
                 raise MissingFieldError(xpath)
-            else:
-                return None
+            return None
 
         if cls is str:
             return elem.text
@@ -257,9 +243,7 @@ class VocBase(SubsetBase):
         attributes_elem = object_elem.find("attributes")
         if attributes_elem is not None:
             for attr_elem in attributes_elem.iter("attribute"):
-                attributes[self._parse_field(attr_elem, "name")] = self._parse_field(
-                    attr_elem, "value"
-                )
+                attributes[self._parse_field(attr_elem, "name")] = self._parse_field(attr_elem, "value")
 
         return attributes
 
@@ -304,24 +288,15 @@ class VocBase(SubsetBase):
 
                 if self._task in [VocTask.voc, VocTask.voc_action]:
                     actions_elem = object_elem.find("actions")
-                    actions = {
-                        a: False
-                        for a in self._categories[AnnotationType.label]
-                        .items[obj_label_id]
-                        .attributes
-                    }
+                    actions = {a: False for a in self._categories[AnnotationType.label].items[obj_label_id].attributes}
                     if actions_elem is not None:
                         for action_elem in actions_elem:
-                            actions[action_elem.tag] = self._parse_bool_field(
-                                actions_elem, action_elem.tag
-                            )
+                            actions[action_elem.tag] = self._parse_bool_field(actions_elem, action_elem.tag)
                     for action, present in actions.items():
                         attributes[action] = present
 
                 item_annotations.append(
-                    Bbox(
-                        *obj_bbox, label=obj_label_id, attributes=attributes, id=obj_id, group=group
-                    )
+                    Bbox(*obj_bbox, label=obj_label_id, attributes=attributes, id=obj_id, group=group)
                 )
                 obj_id += 1
             except Exception as e:
@@ -382,9 +357,7 @@ class VocBase(SubsetBase):
                         UndeclaredLabelError(str(label_id)), item_id=(item_id, self._subset)
                     )
 
-                item_annotations.append(
-                    ExtractedMask(index_mask=class_mask, index=label_id, label=label_id)
-                )
+                item_annotations.append(ExtractedMask(index_mask=class_mask, index=label_id, label=label_id))
 
         return item_annotations
 
@@ -405,15 +378,14 @@ class VocBase(SubsetBase):
                     parts = line.rsplit(maxsplit=1)
                     if len(parts) != 2:
                         raise InvalidAnnotationError(
-                            f"{osp.basename(ann_file)}:{i+1}: "
-                            "invalid number of fields in line, expected 2"
+                            f"{osp.basename(ann_file)}:{i + 1}: invalid number of fields in line, expected 2"
                         )
 
                     item, present = parts
                     if present not in ["-1", "0", "1"]:
                         # Both -1 and 0 are used in the original VOC, they mean the same
                         raise InvalidAnnotationError(
-                            f"{osp.basename(ann_file)}:{i+1}: "
+                            f"{osp.basename(ann_file)}:{i + 1}: "
                             f"unexpected class existence value '{present}', expected -1, 0 or 1"
                         )
 

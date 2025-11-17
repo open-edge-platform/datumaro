@@ -12,19 +12,10 @@ import yaml
 
 from datumaro.components.annotation import Annotation, AnnotationType, Bbox, LabelCategories
 from datumaro.components.dataset_base import CategoriesInfo, DatasetBase, DatasetItem, SubsetBase
-from datumaro.components.errors import (
-    DatasetImportError,
-    InvalidAnnotationError,
-    UndeclaredLabelError,
-)
+from datumaro.components.errors import DatasetImportError, InvalidAnnotationError, UndeclaredLabelError
 from datumaro.components.importer import ImportContext
 from datumaro.components.media import Image, ImageFromFile
-from datumaro.util.image import (
-    DEFAULT_IMAGE_META_FILE_NAME,
-    IMAGE_EXTENSIONS,
-    ImageMeta,
-    load_image_meta_file,
-)
+from datumaro.util.image import DEFAULT_IMAGE_META_FILE_NAME, IMAGE_EXTENSIONS, ImageMeta, load_image_meta_file
 from datumaro.util.meta_file_util import has_meta_file, parse_meta_file
 from datumaro.util.os_util import extract_subset_name_from_parent, find_files, split_path
 
@@ -32,7 +23,7 @@ from .format import YoloLoosePath, YoloPath, YoloUltralyticsPath
 
 T = TypeVar("T")
 
-__all__ = ["YoloStrictBase", "YoloLooseBase", "YoloUltralyticsBase"]
+__all__ = ["YoloLooseBase", "YoloStrictBase", "YoloUltralyticsBase"]
 
 
 def localize_path(path: str) -> str:
@@ -93,10 +84,7 @@ class _Subset(DatasetBase):
                 label_categories=self._categories[AnnotationType.label],
             )
 
-            item = DatasetItem(
-                id=item_id, subset=self._subset_name, media=image, annotations=annotations
-            )
-            return item
+            return DatasetItem(id=item_id, subset=self._subset_name, media=image, annotations=annotations)
         except (UndeclaredLabelError, InvalidAnnotationError) as e:
             self._ctx.error_policy.report_annotation_error(e, item_id=(item_id, self._subset_name))
         except Exception as e:
@@ -163,9 +151,7 @@ class _Subset(DatasetBase):
         try:
             return desired_type(value)
         except Exception as e:
-            raise InvalidAnnotationError(
-                f"Can't parse {field_name} from '{value}'. Expected {desired_type}"
-            ) from e
+            raise InvalidAnnotationError(f"Can't parse {field_name} from '{value}'. Expected {desired_type}") from e
 
 
 class YoloStrictBase(SubsetBase):
@@ -195,9 +181,7 @@ class YoloStrictBase(SubsetBase):
             raise InvalidAnnotationError("Failed to parse names file path from config")
 
         self._categories = {
-            AnnotationType.label: self._load_categories(
-                osp.join(self._path, localize_path(names_path))
-            )
+            AnnotationType.label: self._load_categories(osp.join(self._path, localize_path(names_path)))
         }
 
         # The original format is like this:
@@ -222,9 +206,7 @@ class YoloStrictBase(SubsetBase):
                 raise InvalidAnnotationError(f"Can't find '{subset_name}' subset list file")
 
             with open(list_path, "r", encoding="utf-8") as f:
-                items = OrderedDict(
-                    (self.name_from_path(p), localize_path(p)) for p in f if p.strip()
-                )
+                items = OrderedDict((self.name_from_path(p), localize_path(p)) for p in f if p.strip())
 
             subset = _Subset(
                 subset_name=subset_name,
@@ -236,9 +218,7 @@ class YoloStrictBase(SubsetBase):
             self._subsets[subset_name] = subset
 
     @staticmethod
-    def parse_image_info(
-        rootpath: str, image_info: Optional[Union[str, ImageMeta]] = None
-    ) -> ImageMeta:
+    def parse_image_info(rootpath: str, image_info: Optional[Union[str, ImageMeta]] = None) -> ImageMeta:
         assert image_info is None or isinstance(image_info, (str, dict))
         if image_info is None:
             image_info = osp.join(rootpath, DEFAULT_IMAGE_META_FILE_NAME)
@@ -261,7 +241,7 @@ class YoloStrictBase(SubsetBase):
         path = localize_path(path)
 
         parts = split_path(path)
-        if 1 < len(parts) and not osp.isabs(path):
+        if len(parts) > 1 and not osp.isabs(path):
             path = osp.join(*parts[1:])  # pylint: disable=no-value-for-parameter
 
         return osp.splitext(path)[0]
@@ -383,9 +363,7 @@ class YoloLooseBase(SubsetBase):
     def _parse_annotations(
         self, anno_path: str, image: ImageFromFile, label_categories: LabelCategories
     ) -> List[Annotation]:
-        return _Subset._parse_annotations(
-            anno_path=anno_path, image=image, label_categories=label_categories
-        )
+        return _Subset._parse_annotations(anno_path=anno_path, image=image, label_categories=label_categories)
 
     def _parse_field(self, value: str, desired_type: Type[T], field_name: str) -> T:
         return _Subset._parse_field(value=value, desired_type=desired_type, field_name=field_name)

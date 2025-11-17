@@ -100,9 +100,7 @@ class ImageMapper(MediaElementMapper):
         return None
 
     @classmethod
-    def decode(
-        cls, path: Optional[str] = None, data: Optional[bytes] = None
-    ) -> Optional[np.ndarray]:
+    def decode(cls, path: Optional[str] = None, data: Optional[bytes] = None) -> Optional[np.ndarray]:
         if path is None and data is None:
             return None
         if data is not None:
@@ -111,9 +109,7 @@ class ImageMapper(MediaElementMapper):
             return load_image(path, np.uint8)
 
     @classmethod
-    def forward(
-        cls, obj: Image, encoder: Union[str, Callable[[Image], bytes]] = "PNG"
-    ) -> Dict[str, Any]:
+    def forward(cls, obj: Image, encoder: Union[str, Callable[[Image], bytes]] = "PNG") -> Dict[str, Any]:
         out = super().forward(obj)
 
         _bytes = encoder(obj) if isinstance(encoder, Callable) else cls.encode(obj, scheme=encoder)
@@ -180,9 +176,7 @@ class PointCloudMapper(MediaElementMapper):
     B64_PREFIX = "//B64_ENCODED//"
 
     @classmethod
-    def forward(
-        cls, obj: PointCloud, encoder: Union[str, Callable[[PointCloud], bytes]] = "PNG"
-    ) -> Dict[str, Any]:
+    def forward(cls, obj: PointCloud, encoder: Union[str, Callable[[PointCloud], bytes]] = "PNG") -> Dict[str, Any]:
         out = super().forward(obj)
 
         if isinstance(encoder, Callable):
@@ -198,9 +192,7 @@ class PointCloudMapper(MediaElementMapper):
             "has_bytes": _bytes is not None,
             "bytes": _bytes,
             "path": path,
-            "extra_images": [
-                ImageMapper.forward(img, encoder=encoder)["image"] for img in obj.extra_images
-            ],
+            "extra_images": [ImageMapper.forward(img, encoder=encoder)["image"] for img in obj.extra_images],
         }
 
         return out

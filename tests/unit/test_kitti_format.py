@@ -25,7 +25,6 @@ from datumaro.plugins.data_formats.kitti.importer import (
     KittiSegmentationImporter,
 )
 from datumaro.util.meta_file_util import parse_meta_file
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, check_save_and_load, compare_datasets
 
@@ -48,9 +47,7 @@ class KittiFormatTest(TestCase):
         src_label_map = KittiLabelMap
 
         with TestDir() as test_dir:
-            source_dataset = Dataset.from_iterable(
-                [], categories=make_kitti_categories(src_label_map)
-            )
+            source_dataset = Dataset.from_iterable([], categories=make_kitti_categories(src_label_map))
 
             KittiExporter.convert(source_dataset, test_dir, save_dataset_meta=True)
             dst_label_map = parse_meta_file(test_dir)
@@ -116,9 +113,7 @@ class KittiImportTest(TestCase):
             categories=make_kitti_categories(),
         )
 
-        parsed_dataset = Dataset.import_from(
-            osp.join(DUMMY_DATASET_DIR, "kitti_segmentation"), "kitti"
-        )
+        parsed_dataset = Dataset.import_from(osp.join(DUMMY_DATASET_DIR, "kitti_segmentation"), "kitti")
 
         compare_datasets(self, source_dataset, parsed_dataset)
 
@@ -188,9 +183,7 @@ class KittiImportTest(TestCase):
             categories=["Truck", "Van"],
         )
 
-        parsed_dataset = Dataset.import_from(
-            osp.join(DUMMY_DATASET_DIR, "kitti_detection"), "kitti"
-        )
+        parsed_dataset = Dataset.import_from(osp.join(DUMMY_DATASET_DIR, "kitti_detection"), "kitti")
 
         compare_datasets(self, source_dataset, parsed_dataset)
 
@@ -219,9 +212,7 @@ class KittiImportTest(TestCase):
                 self.assertIn(subtask.NAME, detected_formats)
                 # Test false positives too
                 for detected_format in detected_formats:
-                    self.assertIn(
-                        detected_format, {"kitti", "kitti_segmentation", "kitti_detection"}
-                    )
+                    self.assertIn(detected_format, {"kitti", "kitti_segmentation", "kitti_detection"})
 
 
 class TestExtractorBase(DatasetBase):
@@ -397,9 +388,7 @@ class KittiExporterTest(TestCase):
         with TestDir() as test_dir:
             self._test_save_and_load(
                 TestExtractor(),
-                partial(
-                    KittiExporter.convert, label_map="kitti", save_media=True, apply_colormap=False
-                ),
+                partial(KittiExporter.convert, label_map="kitti", save_media=True, apply_colormap=False),
                 test_dir,
             )
 
@@ -712,9 +701,7 @@ class KittiExporterTest(TestCase):
             def __iter__(self):
                 return iter(
                     [
-                        DatasetItem(
-                            id="q/1", media=Image.from_numpy(data=np.zeros((4, 3, 3)), ext=".jpeg")
-                        ),
+                        DatasetItem(id="q/1", media=Image.from_numpy(data=np.zeros((4, 3, 3)), ext=".jpeg")),
                         DatasetItem(
                             id="a/b/c/2",
                             media=Image.from_numpy(data=np.ones((1, 5, 3)), ext=".bmp"),
@@ -750,12 +737,8 @@ class KittiExporterTest(TestCase):
                 require_media=True,
             )
 
-            self.assertTrue(
-                osp.isfile(osp.join(test_dir, "default", KittiPath.IMAGES_DIR, "a/b/c/2.bmp"))
-            )
-            self.assertTrue(
-                osp.isfile(osp.join(test_dir, "default", KittiPath.IMAGES_DIR, "q/1.jpeg"))
-            )
+            self.assertTrue(osp.isfile(osp.join(test_dir, "default", KittiPath.IMAGES_DIR, "a/b/c/2.bmp")))
+            self.assertTrue(osp.isfile(osp.join(test_dir, "default", KittiPath.IMAGES_DIR, "q/1.jpeg")))
 
     def test_can_save_and_load_with_no_save_media_segmentation(self):
         class TestExtractor(TestExtractorBase):
@@ -893,9 +876,7 @@ class KittiExporterTest(TestCase):
         with TestDir() as test_dir:
             self._test_save_and_load(
                 source_dataset,
-                partial(
-                    KittiExporter.convert, tasks=KittiTask.segmentation, label_map=source_label_map
-                ),
+                partial(KittiExporter.convert, tasks=KittiTask.segmentation, label_map=source_label_map),
                 test_dir,
                 target_dataset=expected_dataset,
             )

@@ -110,9 +110,7 @@ class ArrowExporter(Exporter):
             with consumer_generator(producer_generator=_producer_gen()) as consumer_gen:
 
                 def _gen_with_pbar():
-                    for item in pbar.iter(
-                        consumer_gen, desc="Exporting", total=len(self._extractor)
-                    ):
+                    for item in pbar.iter(consumer_gen, desc="Exporting", total=len(self._extractor)):
                         yield item.get()
 
                 self._write_file(_gen_with_pbar())
@@ -136,11 +134,8 @@ class ArrowExporter(Exporter):
                 schema=self._schema,
             )
 
-            with pa.OSFile(fpath, "wb") as sink:
-                with pa.ipc.new_file(sink, self._schema) as writer:
-                    writer.write(record_batch)
-
-        pass
+            with pa.OSFile(fpath, "wb") as sink, pa.ipc.new_file(sink, self._schema) as writer:
+                writer.write(record_batch)
 
     @classmethod
     def patch(cls, dataset, patch, save_dir, **kwargs):
@@ -186,46 +181,34 @@ class ArrowExporter(Exporter):
         )
 
         if num_workers < 0:
-            raise DatumaroError(
-                f"num_workers should be non-negative but num_workers={num_workers}."
-            )
+            raise DatumaroError(f"num_workers should be non-negative but num_workers={num_workers}.")
         self._num_workers = num_workers
 
         if num_shards is not None and max_shard_size is not None:
-            raise DatumaroError(
-                "Both 'num_shards' or 'max_shard_size' cannot be provided at the same time."
-            )
-        elif num_shards is not None and num_shards < 0:
+            raise DatumaroError("Both 'num_shards' or 'max_shard_size' cannot be provided at the same time.")
+        if num_shards is not None and num_shards < 0:
             raise DatumaroError(f"num_shards should be non-negative but num_shards={num_shards}.")
-        elif max_shard_size is not None and max_shard_size < 0:
-            raise DatumaroError(
-                f"max_shard_size should be non-negative but max_shard_size={max_shard_size}."
-            )
-        elif num_shards is None and max_shard_size is None:
-            raise DatumaroError(
-                "Either one of 'num_shards' or 'max_shard_size' should be provided."
-            )
+        if max_shard_size is not None and max_shard_size < 0:
+            raise DatumaroError(f"max_shard_size should be non-negative but max_shard_size={max_shard_size}.")
+        if num_shards is None and max_shard_size is None:
+            raise DatumaroError("Either one of 'num_shards' or 'max_shard_size' should be provided.")
 
         self._num_shards = num_shards
         self._max_shard_size = max_shard_size
 
         if self._save_media:
-            self._image_ext = (
-                self._image_ext if self._image_ext is not None else self._default_image_ext
-            )
+            self._image_ext = self._image_ext if self._image_ext is not None else self._default_image_ext
         else:
             self._image_ext = "NONE"
 
-        assert (
-            self._image_ext in self.AVAILABLE_IMAGE_EXTS
-        ), f"{self._image_ext} is unkonwn ext. Available exts are {self.AVAILABLE_IMAGE_EXTS}"
+        assert self._image_ext in self.AVAILABLE_IMAGE_EXTS, (
+            f"{self._image_ext} is unkonwn ext. Available exts are {self.AVAILABLE_IMAGE_EXTS}"
+        )
 
         self._prefix = prefix
 
         self._source_path = (
-            os.path.abspath(self._extractor._source_path)
-            if getattr(self._extractor, "_source_path")
-            else None
+            os.path.abspath(self._extractor._source_path) if getattr(self._extractor, "_source_path") else None
         )
 
         total_len = len(self._extractor)
@@ -236,25 +219,17 @@ class ArrowExporter(Exporter):
         elif self._max_shard_size is not None:
             max_shard_size = self._max_shard_size
         else:
-            raise DatumaroError(
-                "Either one of 'num_shards' or 'max_shard_size' should be provided."
-            )
+            raise DatumaroError("Either one of 'num_shards' or 'max_shard_size' should be provided.")
 
-        self._chunk_sizes = np.diff(
-            np.array([size for size in range(0, total_len, max_shard_size)] + [total_len])
-        )
-        assert (
-            sum(self._chunk_sizes) == total_len
-        ), "Sum of chunk sizes should be the number of total items."
+        self._chunk_sizes = np.diff(np.array([size for size in range(0, total_len, max_shard_size)] + [total_len]))
+        assert sum(self._chunk_sizes) == total_len, "Sum of chunk sizes should be the number of total items."
 
         num_shard_files = len(self._chunk_sizes)
         self._max_digits = len(str(num_shard_files))
 
         self._schema = DatumaroArrow.create_schema_with_metadata(self._extractor)
 
-        self._subsets = {
-            subset_name: idx for idx, subset_name in enumerate(self._extractor.subsets())
-        }
+        self._subsets = {subset_name: idx for idx, subset_name in enumerate(self._extractor.subsets())}
 
     @staticmethod
     def _item_to_dict_record(

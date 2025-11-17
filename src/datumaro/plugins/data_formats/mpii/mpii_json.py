@@ -8,13 +8,7 @@ from typing import List, Optional
 
 import numpy as np
 
-from datumaro.components.annotation import (
-    AnnotationType,
-    Bbox,
-    LabelCategories,
-    Points,
-    PointsCategories,
-)
+from datumaro.components.annotation import AnnotationType, Bbox, LabelCategories, Points, PointsCategories
 from datumaro.components.dataset_base import DatasetItem, SubsetBase
 from datumaro.components.format_detection import FormatDetectionContext
 from datumaro.components.importer import ImportContext, Importer
@@ -46,9 +40,7 @@ class MpiiJsonBase(SubsetBase):
 
         self._categories = {
             AnnotationType.label: LabelCategories.from_iterable(["human"]),
-            AnnotationType.points: PointsCategories.from_iterable(
-                [(0, MPII_POINTS_LABELS, MPII_POINTS_JOINTS)]
-            ),
+            AnnotationType.points: PointsCategories.from_iterable([(0, MPII_POINTS_LABELS, MPII_POINTS_JOINTS)]),
         }
 
         self._items = list(self._load_items(path).values())
@@ -149,9 +141,7 @@ class MpiiJsonBase(SubsetBase):
                     if i < len(scale):
                         attributes["scale"] = scale[i]
 
-                    annotations.append(
-                        Points(points, vis, label=0, group=group_num, attributes=attributes)
-                    )
+                    annotations.append(Points(points, vis, label=0, group=group_num, attributes=attributes))
 
                     group_num += 1
 

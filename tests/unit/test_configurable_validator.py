@@ -2,30 +2,25 @@
 #
 # SPDX-License-Identifier: MIT
 
-from collections import Counter
 from typing import List, Set
-from unittest import TestCase
 
 import numpy as np
 import pytest
 
 from datumaro.components.annotation import AnnotationType, Bbox, Ellipse, Label, Mask, Polygon
 from datumaro.components.dataset import Dataset, DatasetItem
-from datumaro.components.environment import Environment
 from datumaro.components.errors import (
     AttributeDefinedButNotFound,
     BrokenAnnotation,
     DatasetValidationError,
     EmptyCaption,
     EmptyLabel,
-    FarFromAttrMean,
     FarFromCaptionMean,
     FarFromLabelMean,
     FewSamplesInAttribute,
     FewSamplesInLabel,
     ImbalancedAttribute,
     ImbalancedCaptions,
-    ImbalancedDistInAttribute,
     ImbalancedDistInCaption,
     ImbalancedDistInLabel,
     ImbalancedLabels,
@@ -33,7 +28,6 @@ from datumaro.components.errors import (
     LabelDefinedButNotFound,
     MissingAnnotation,
     MissingAttribute,
-    MissingLabelCategories,
     MultiLabelAnnotations,
     NegativeLength,
     OnlyOneAttributeValue,
@@ -470,7 +464,6 @@ def fxt_dataset():
 import os.path as osp
 
 import datumaro.plugins.transforms as transforms
-
 from tests.utils.assets import get_test_asset_path
 
 
@@ -492,15 +485,12 @@ def fxt_tbl_dataset():
             ],
         },
     )
-    tabular_dataset = transforms.AstypeAnnotations(tabular_dataset)
-    return tabular_dataset
+    return transforms.AstypeAnnotations(tabular_dataset)
 
 
 @pytest.fixture
 def fxt_tbl_imbal_dataset():
-    path = osp.join(
-        get_test_asset_path("tabular_dataset"), "women-clothing", "women_clothing_imbalanced.csv"
-    )
+    path = osp.join(get_test_asset_path("tabular_dataset"), "women-clothing", "women_clothing_imbalanced.csv")
     tabular_dataset = Dataset.import_from(
         path,
         "tabular",
@@ -516,8 +506,7 @@ def fxt_tbl_imbal_dataset():
             ],
         },
     )
-    tabular_dataset = transforms.AstypeAnnotations(tabular_dataset)
-    return tabular_dataset
+    return transforms.AstypeAnnotations(tabular_dataset)
 
 
 ANN_TASK_MAPPING = {

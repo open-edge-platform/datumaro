@@ -6,13 +6,7 @@ from typing import Any, Dict
 import numpy as np
 import pytest
 
-from datumaro.components.annotation import (
-    AnnotationType,
-    LabelCategories,
-    Mask,
-    MaskCategories,
-    Polygon,
-)
+from datumaro.components.annotation import AnnotationType, LabelCategories, Mask, MaskCategories, Polygon
 from datumaro.components.dataset import Dataset, DatasetItem
 from datumaro.components.environment import DEFAULT_ENVIRONMENT
 from datumaro.components.media import Image
@@ -21,11 +15,10 @@ from datumaro.plugins.data_formats.mapillary_vistas.format import (
     make_mapillary_instance_categories,
 )
 from datumaro.plugins.data_formats.mapillary_vistas.importer import MapillaryVistasImporter
-
-from .base import TestDataFormatBase
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import compare_datasets
+
+from .base import TestDataFormatBase
 
 DATASET_DIR = get_test_asset_path("mapillary_vistas_dataset")
 VAL_DATASET_DIR = get_test_asset_path("mapillary_vistas_dataset", "val")
@@ -38,7 +31,7 @@ def fxt_dataset_instances_w_polygon():
     )
     mask_cat = MaskCategories({0: (165, 42, 42), 1: (128, 128, 128), 2: (119, 11, 32)})
 
-    expected_dataset = Dataset.from_iterable(
+    return Dataset.from_iterable(
         [
             DatasetItem(
                 id="0",
@@ -85,8 +78,6 @@ def fxt_dataset_instances_w_polygon():
         categories={AnnotationType.label: label_cat, AnnotationType.mask: mask_cat},
     )
 
-    return expected_dataset
-
 
 @pytest.fixture
 def fxt_dataset_instances_wo_polygon():
@@ -95,7 +86,7 @@ def fxt_dataset_instances_wo_polygon():
     )
     mask_cat = MaskCategories({0: (165, 42, 42), 1: (128, 128, 128), 2: (119, 11, 32)})
 
-    expected_dataset = Dataset.from_iterable(
+    return Dataset.from_iterable(
         [
             DatasetItem(
                 id="0",
@@ -131,8 +122,6 @@ def fxt_dataset_instances_wo_polygon():
         ],
         categories={AnnotationType.label: label_cat, AnnotationType.mask: mask_cat},
     )
-
-    return expected_dataset
 
 
 @pytest.fixture
@@ -146,7 +135,7 @@ def fxt_dataset_panoptic_w_polygon():
     )
     mask_cat = MaskCategories({0: (165, 42, 42), 1: (128, 128, 128), 2: (119, 11, 32)})
 
-    expected_dataset = Dataset.from_iterable(
+    return Dataset.from_iterable(
         [
             DatasetItem(
                 id="0",
@@ -253,8 +242,6 @@ def fxt_dataset_panoptic_w_polygon():
         categories={AnnotationType.label: label_cat, AnnotationType.mask: mask_cat},
     )
 
-    return expected_dataset
-
 
 @pytest.fixture
 def fxt_dataset_panoptic_wo_polygon():
@@ -267,7 +254,7 @@ def fxt_dataset_panoptic_wo_polygon():
     )
     mask_cat = MaskCategories({0: (165, 42, 42), 1: (128, 128, 128), 2: (119, 11, 32)})
 
-    expected_dataset = Dataset.from_iterable(
+    return Dataset.from_iterable(
         [
             DatasetItem(
                 id="0",
@@ -363,8 +350,6 @@ def fxt_dataset_panoptic_wo_polygon():
         ],
         categories={AnnotationType.label: label_cat, AnnotationType.mask: mask_cat},
     )
-
-    return expected_dataset
 
 
 @pytest.fixture

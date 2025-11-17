@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
-from typing import List, Optional, Tuple
+from typing import Optional
 
 import pytest
 
@@ -15,9 +15,7 @@ from datumaro.components.transformer import TabularTransform
 class TabularTransformTest:
     @pytest.fixture
     def fxt_dataset(self):
-        return Dataset.from_iterable(
-            [DatasetItem(id=f"item_{i}", annotations=[Annotation(id=0)]) for i in range(10)]
-        )
+        return Dataset.from_iterable([DatasetItem(id=f"item_{i}", annotations=[Annotation(id=0)]) for i in range(10)])
 
     @pytest.mark.parametrize("batch_size", [1, 10])
     @pytest.mark.parametrize("num_workers", [0, 2])

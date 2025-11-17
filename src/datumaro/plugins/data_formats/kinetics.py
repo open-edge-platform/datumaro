@@ -30,9 +30,7 @@ class KineticsBase(DatasetBase):
         self._annotation_files = {}
         for ann_file in find_files(path, ["csv", "json"]):
             filename = osp.splitext(osp.basename(ann_file))[0]
-            if (filename not in self._annotation_files) or (
-                self._annotation_files.get(filename, "").endswith("json")
-            ):
+            if (filename not in self._annotation_files) or (self._annotation_files.get(filename, "").endswith("json")):
                 self._annotation_files[filename] = ann_file
 
         self._subsets = {}
@@ -81,7 +79,7 @@ class KineticsBase(DatasetBase):
             return media_files[item_id]
 
         for media_file, file_path in media_files.items():
-            if -1 < media_file.rfind(item_id):
+            if media_file.rfind(item_id) > -1:
                 return file_path
 
         return None

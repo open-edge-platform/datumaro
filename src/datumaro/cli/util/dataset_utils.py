@@ -53,11 +53,11 @@ class FilterModes(Enum):
     items_annotations = 3
 
     # shortcuts
-    i = 1
-    a = 2
-    i_a = 3
-    a_i = 3
-    annotations_items = 3
+    i = 1  # noqa: PIE796
+    a = 2  # noqa: PIE796
+    i_a = 3  # noqa: PIE796
+    a_i = 3  # noqa: PIE796
+    annotations_items = 3  # noqa: PIE796
 
     @staticmethod
     def parse(s):
@@ -69,15 +69,14 @@ class FilterModes(Enum):
     def make_filter_args(cls, mode):
         if mode == cls.items:
             return {}
-        elif mode == cls.annotations:
+        if mode == cls.annotations:
             return {"filter_annotations": True}
-        elif mode == cls.items_annotations:
+        if mode == cls.items_annotations:
             return {
                 "filter_annotations": True,
                 "remove_empty": True,
             }
-        else:
-            raise NotImplementedError()
+        raise NotImplementedError
 
     @classmethod
     def list_options(cls):

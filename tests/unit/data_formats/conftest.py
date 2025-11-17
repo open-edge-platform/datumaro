@@ -9,7 +9,6 @@ from copy import deepcopy
 import pytest
 
 from datumaro import Dataset
-
 from tests.utils.test_utils import TestDir
 
 

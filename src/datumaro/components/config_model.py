@@ -8,13 +8,7 @@ from datumaro.components.config import SchemaBuilder as _SchemaBuilder
 from datumaro.util import find
 
 SOURCE_SCHEMA = (
-    _SchemaBuilder()
-    .add("url", str)
-    .add("path", str)
-    .add("format", str)
-    .add("options", dict)
-    .add("hash", str)
-    .build()
+    _SchemaBuilder().add("url", str).add("path", str).add("format", str).add("options", dict).add("hash", str).build()
 )
 
 
@@ -36,13 +30,7 @@ class Model(Config):
 
 
 BUILDSTAGE_SCHEMA = (
-    _SchemaBuilder()
-    .add("name", str)
-    .add("type", str)
-    .add("kind", str)
-    .add("hash", str)
-    .add("params", dict)
-    .build()
+    _SchemaBuilder().add("name", str).add("type", str).add("kind", str).add("hash", str).add("params", dict).build()
 )
 
 
@@ -69,12 +57,12 @@ class BuildTarget(Config):
 
     @property
     def has_stages(self) -> bool:
-        return 1 < len(self.stages)
+        return len(self.stages) > 1
 
     def find_stage(self, stage):
         if stage == "root":
             return self.root
-        elif stage == "head":
+        if stage == "head":
             return self.head
         return find(self.stages, lambda x: x.name == stage or x == stage)
 
@@ -107,16 +95,11 @@ TREE_DEFAULT_CONFIG = Config(
 
 class TreeConfig(Config):
     def __init__(self, config=None, mutable=True):
-        super().__init__(
-            config=config, mutable=mutable, fallback=TREE_DEFAULT_CONFIG, schema=TREE_SCHEMA
-        )
+        super().__init__(config=config, mutable=mutable, fallback=TREE_DEFAULT_CONFIG, schema=TREE_SCHEMA)
 
 
 PROJECT_SCHEMA = (
-    _SchemaBuilder()
-    .add("format_version", int)
-    .add("models", lambda: _DictConfig(lambda v=None: Model(v)))
-    .build()
+    _SchemaBuilder().add("format_version", int).add("models", lambda: _DictConfig(lambda v=None: Model(v))).build()
 )
 
 PROJECT_DEFAULT_CONFIG = Config(
@@ -130,9 +113,7 @@ PROJECT_DEFAULT_CONFIG = Config(
 
 class ProjectConfig(Config):
     def __init__(self, config=None, mutable=True):
-        super().__init__(
-            config=config, mutable=mutable, fallback=PROJECT_DEFAULT_CONFIG, schema=PROJECT_SCHEMA
-        )
+        super().__init__(config=config, mutable=mutable, fallback=PROJECT_DEFAULT_CONFIG, schema=PROJECT_SCHEMA)
 
 
 class PipelineConfig(Config):

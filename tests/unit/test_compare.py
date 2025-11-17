@@ -15,7 +15,6 @@ from datumaro.components.comparator import DistanceComparator, EqualityComparato
 from datumaro.components.dataset import Dataset
 from datumaro.components.dataset_base import DEFAULT_SUBSET_NAME, DatasetItem
 from datumaro.components.media import Image
-
 from tests.utils.assets import get_test_asset_path
 
 
@@ -42,14 +41,10 @@ class DistanceComparatorTest(TestCase):
     def test_can_find_bbox_with_wrong_label(self):
         detections = 3
         class_count = 2
-        item1 = DatasetItem(
-            id=1, annotations=[Bbox(i * 10, 10, 10, 10, label=i) for i in range(detections)]
-        )
+        item1 = DatasetItem(id=1, annotations=[Bbox(i * 10, 10, 10, 10, label=i) for i in range(detections)])
         item2 = DatasetItem(
             id=2,
-            annotations=[
-                Bbox(i * 10, 10, 10, 10, label=(i + 1) % class_count) for i in range(detections)
-            ],
+            annotations=[Bbox(i * 10, 10, 10, 10, label=(i + 1) % class_count) for i in range(detections)],
         )
 
         iou_thresh = 0.5
@@ -71,16 +66,12 @@ class DistanceComparatorTest(TestCase):
         class_count = 2
         item1 = DatasetItem(
             id=1,
-            annotations=[
-                Bbox(i * 10, 10, 10, 10, label=i) for i in range(detections) if i % 2 == 0
-            ],
+            annotations=[Bbox(i * 10, 10, 10, 10, label=i) for i in range(detections) if i % 2 == 0],
         )
         item2 = DatasetItem(
             id=2,
             annotations=[
-                Bbox(i * 10, 10, 10, 10, label=(i + 1) % class_count)
-                for i in range(detections)
-                if i % 2 == 1
+                Bbox(i * 10, 10, 10, 10, label=(i + 1) % class_count) for i in range(detections) if i % 2 == 1
             ],
         )
 
@@ -405,9 +396,7 @@ class TableComparatorTest(unittest.TestCase):
     @patch("datumaro.components.comparator.generate_next_file_name")
     @patch("builtins.open", new_callable=mock_open)
     @patch("datumaro.components.comparator.dump_json_file")
-    def test_save_compare_report(
-        self, mock_dump_json_file, mock_file, mock_generate_next_file_name, mock_makedirs
-    ):
+    def test_save_compare_report(self, mock_dump_json_file, mock_file, mock_generate_next_file_name, mock_makedirs):
         # Define mock variables
         mock_high_level_table = "High-level table"
         mock_mid_level_table = "Mid-level table"

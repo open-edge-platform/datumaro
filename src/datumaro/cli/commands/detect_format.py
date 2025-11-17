@@ -36,7 +36,7 @@ def build_parser(parser_ctor=argparse.ArgumentParser):
     parser.add_argument(
         "--show-rejections",
         action="store_true",
-        help="Describe why each supported format that wasn't detected " "was rejected",
+        help="Describe why each supported format that wasn't detected was rejected",
     )
     parser.add_argument(
         "--json-report",
@@ -66,9 +66,7 @@ def detect_format_command(args):
         }
 
     depth = 2 if not args.depth else int(args.depth)
-    detected_formats = env.detect_dataset(
-        args.url, rejection_callback=rejection_callback, depth=depth
-    )
+    detected_formats = env.detect_dataset(args.url, rejection_callback=rejection_callback, depth=depth)
     report["detected_formats"] = detected_formats
 
     if len(detected_formats) == 1:

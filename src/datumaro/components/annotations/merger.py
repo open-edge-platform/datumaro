@@ -27,24 +27,24 @@ from .matcher import (
 
 __all__ = [
     "AnnotationMerger",
-    "LabelMerger",
     "BboxMerger",
-    "RotatedBboxMerger",
-    "PolygonMerger",
-    "MaskMerger",
-    "PointsMerger",
-    "LineMerger",
     "CaptionsMerger",
     "Cuboid3dMerger",
-    "ImageAnnotationMerger",
     "EllipseMerger",
+    "ImageAnnotationMerger",
+    "LabelMerger",
+    "LineMerger",
+    "MaskMerger",
+    "PointsMerger",
+    "PolygonMerger",
+    "RotatedBboxMerger",
 ]
 
 
 @attrs(kw_only=True)
 class AnnotationMerger(AnnotationMatcher):
     def merge_clusters(self, clusters):
-        raise NotImplementedError()
+        raise NotImplementedError
 
 
 @attrs(kw_only=True)
@@ -163,7 +163,7 @@ class CaptionsMerger(AnnotationMerger, CaptionsMatcher):
 class Cuboid3dMerger(_ShapeMerger, Cuboid3dMatcher):
     @staticmethod
     def _merge_cluster_shape_mean_box_nearest(cluster):
-        raise NotImplementedError()
+        raise NotImplementedError
         # mbbox = Bbox(*mean_cuboid(cluster))
         # dist = (segment_iou(mbbox, s) for s in cluster)
         # nearest_pos, _ = max(enumerate(dist), key=lambda e: e[1])

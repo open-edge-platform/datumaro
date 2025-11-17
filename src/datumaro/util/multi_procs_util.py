@@ -54,9 +54,7 @@ def consumer_generator(
             except Full:
                 with lock:
                     if is_terminated:
-                        raise RuntimeError(
-                            "Item to enqueue is left. However, the main process is terminated."
-                        )
+                        raise RuntimeError("Item to enqueue is left. However, the main process is terminated.")
 
     def _target(queue: Queue) -> None:
         try:

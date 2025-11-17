@@ -81,9 +81,7 @@ class AnnotationsTest:
     @pytest.mark.parametrize("dtype", [np.uint8, np.int32])
     def test_get_semantic_seg_mask_extracted_mask(self, fxt_index_mask_file, fxt_index_mask, dtype):
         index_mask = lazy_image(path=str(fxt_index_mask_file), dtype=np.uint8)
-        annotations = Annotations(
-            ExtractedMask(index_mask=index_mask, index=index, label=index) for index in range(10)
-        )
+        annotations = Annotations(ExtractedMask(index_mask=index_mask, index=index, label=index) for index in range(10))
         with patch("datumaro.components.annotation.Mask.as_class_mask") as mock_as_class_mask:
             semantic_seg_mask = annotations.get_semantic_seg_mask(ignore_index=255, dtype=dtype)
 
@@ -92,9 +90,7 @@ class AnnotationsTest:
         mock_as_class_mask.assert_not_called()
 
     @pytest.mark.parametrize("dtype", [np.uint8, np.int32])
-    def test_get_semantic_seg_mask_extracted_mask_remapping_label(
-        self, fxt_index_mask_file, fxt_index_mask, dtype
-    ):
+    def test_get_semantic_seg_mask_extracted_mask_remapping_label(self, fxt_index_mask_file, fxt_index_mask, dtype):
         index_mask = lazy_image(path=str(fxt_index_mask_file), dtype=np.uint8)
         annotations = Annotations(
             ExtractedMask(
@@ -215,9 +211,7 @@ class PointsCategoriesTest:
             """Test that the number of positions must match the number of labels."""
             labels = ["p1", "p2", "p3"]  # 3 labels
             positions = [1.0, 2.0, 3.0, 4.0]  # 2 positions
-            with pytest.raises(
-                ValueError, match="number of positions should be equal to the number of labels"
-            ):
+            with pytest.raises(ValueError, match="number of positions should be equal to the number of labels"):
                 PointsCategories.Category(labels=labels, positions=positions)
 
         @staticmethod

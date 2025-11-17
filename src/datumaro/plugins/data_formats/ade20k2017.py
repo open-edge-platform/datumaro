@@ -48,11 +48,7 @@ class Ade20k2017Base(DatasetBase):
         self._categories = {}
 
         if has_meta_file(self._path):
-            self._categories = {
-                AnnotationType.label: LabelCategories.from_iterable(
-                    parse_meta_file(self._path).keys()
-                )
-            }
+            self._categories = {AnnotationType.label: LabelCategories.from_iterable(parse_meta_file(self._path).keys())}
 
         for subset in self._subsets:
             self._load_items(subset)
@@ -131,9 +127,7 @@ class Ade20k2017Base(DatasetBase):
     def _load_item_info(self, path):
         attr_path = osp.splitext(path)[0] + "_atr.txt"
         if not osp.isfile(attr_path):
-            raise FileNotFoundError(
-                errno.ENOENT, "Can't find annotation file for image %s" % path, attr_path
-            )
+            raise FileNotFoundError(errno.ENOENT, "Can't find annotation file for image %s" % path, attr_path)
 
         item_info = []
         with open(attr_path, "r", encoding="utf-8") as f:
@@ -165,8 +159,7 @@ class Ade20k2017Base(DatasetBase):
     def _load_instance_mask(path):
         mask = load_image(path)
         _, instance_mask = np.unique(mask[:, :, 0], return_inverse=True)
-        instance_mask = instance_mask.reshape(mask[:, :, 0].shape)
-        return instance_mask
+        return instance_mask.reshape(mask[:, :, 0].shape)
 
 
 class Ade20k2017Importer(Importer):

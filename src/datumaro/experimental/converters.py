@@ -9,7 +9,8 @@ data transformations such as format conversions, dtype conversions, and
 multi-field transformations.
 """
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 import cv2
 import numpy as np
@@ -120,9 +121,7 @@ class LabelIndexConverter(Converter):
 
         if field.multi_label or field.is_list:
             mapping_expr = pl.col(input_col).list.eval(
-                pl.element().replace(
-                    list(index_mapping.keys()), list(index_mapping.values()), default=None
-                )
+                pl.element().replace(list(index_mapping.keys()), list(index_mapping.values()), default=None)
             )
         else:
             mapping_expr = pl.col(input_col).replace(
@@ -194,9 +193,7 @@ class RGBToBGRConverter(Converter):
         dtype = df.schema[input_column_name]
         # Apply the conversion using map_elements for efficient processing
         return df.with_columns(
-            pl.col(input_column_name)
-            .map_elements(rgb_to_bgr, return_dtype=dtype)
-            .alias(output_column_name),
+            pl.col(input_column_name).map_elements(rgb_to_bgr, return_dtype=dtype).alias(output_column_name),
             pl.col(input_shape_column_name).alias(output_shape_column_name),
         )
 
@@ -308,11 +305,10 @@ class ImagePathToImageConverter(Converter):
             # Load image using PIL
             with Image.open(path) as img:
                 # Convert to RGB if needed
-                if img.mode != "RGB":
-                    img = img.convert("RGB")
+                rgb_img = img if img.mode == "RGB" else img.convert("RGB")
 
                 # Convert to numpy array
-                img_array = np.array(img, dtype=np.uint8)
+                img_array = np.array(rgb_img, dtype=np.uint8)
                 image_data.append(img_array.flatten())
                 image_shapes.append(list(img_array.shape))
 
@@ -321,14 +317,12 @@ class ImagePathToImageConverter(Converter):
 
         result_df = df.clone()
 
-        result_df = result_df.with_columns(
+        return result_df.with_columns(
             [
                 pl.Series(output_col, image_data, dtype=image_schema["image"]),
                 pl.Series(output_col + "_shape", image_shapes, dtype=image_schema["image_shape"]),
             ]
         )
-
-        return result_df
 
 
 @converter
@@ -369,14 +363,12 @@ class ImageToImageInfo(Converter):
         output_col = self.output_info.name
 
         # Set image info
-        result_df = df.with_columns(
+        return df.with_columns(
             pl.struct(
                 pl.col(input_col).list.get(0).alias("height"),
                 pl.col(input_col).list.get(1).alias("width"),
             ).alias(output_col)
         )
-
-        return result_df
 
 
 @converter(lazy=True)
@@ -429,24 +421,21 @@ class ImageBytesToImageConverter(Converter):
 
             with Image.open(BytesIO(image_bytes)) as img:
                 # Convert to RGB if needed
-                if img.mode != "RGB":
-                    img = img.convert("RGB")
+                rgb_img = img if img.mode == "RGB" else img.convert("RGB")
 
                 # Convert to numpy array
-                img_array = np.array(img, dtype=np.uint8)
+                img_array = np.array(rgb_img, dtype=np.uint8)
                 image_data.append(img_array.reshape(-1))
                 image_shapes.append(list(img_array.shape))
 
         # Create output DataFrame
         result_df = df.clone()
-        result_df = result_df.with_columns(
+        return result_df.with_columns(
             [
                 pl.Series(output_col, image_data),
                 pl.Series(output_col + "_shape", image_shapes),
             ]
         )
-
-        return result_df
 
 
 def list_eval_ref(
@@ -580,9 +569,7 @@ class BBoxCoordinateConverter(Converter):
         )
 
         # Clean up temporary columns
-        result_df = result_df.drop([temp_width_col, temp_height_col])
-
-        return result_df
+        return result_df.drop([temp_width_col, temp_height_col])
 
 
 @converter
@@ -617,11 +604,7 @@ class BBoxDtypeConverter(Converter):
         # Cast bbox values to target dtype by converting each element
         return df.with_columns(
             pl.col(input_col)
-            .list.eval(
-                pl.element()
-                .arr.to_list()
-                .list.eval(pl.element().cast(self.output_bbox.field.dtype))
-            )
+            .list.eval(pl.element().arr.to_list().list.eval(pl.element().cast(self.output_bbox.field.dtype)))
             .alias(output_col)
         )
 
@@ -658,15 +641,10 @@ class LabelDtypeConverter(Converter):
         if self.input_label.field.is_list:
             # Handle list of labels
             return df.with_columns(
-                pl.col(input_col)
-                .list.eval(pl.element().cast(self.output_label.field.dtype))
-                .alias(output_col)
+                pl.col(input_col).list.eval(pl.element().cast(self.output_label.field.dtype)).alias(output_col)
             )
-        else:
-            # Handle single label
-            return df.with_columns(
-                pl.col(input_col).cast(self.output_label.field.dtype).alias(output_col)
-            )
+        # Handle single label
+        return df.with_columns(pl.col(input_col).cast(self.output_label.field.dtype).alias(output_col))
 
 
 @converter(lazy=True)
@@ -696,18 +674,17 @@ class PolygonToMaskConverter(Converter):
 
         # Copy label categories and create mask categories
         mask_categories = None
-        if self.input_labels.categories is not None:
+        if self.input_labels.categories is not None and isinstance(self.input_labels.categories, LabelCategories):
             # Create mask categories based on label categories
-            if isinstance(self.input_labels.categories, LabelCategories):
-                # Create a colormap for mask categories
-                # Generate colors for all labels plus background
-                num_classes = len(self.input_labels.categories) + 1  # +1 for background
-                colormap_dict = generate_colormap(num_classes, include_background=True)
-                colormap_struct_dict = {i: RgbColor(*color) for i, color in colormap_dict.items()}
+            # Create a colormap for mask categories
+            # Generate colors for all labels plus background
+            num_classes = len(self.input_labels.categories) + 1  # +1 for background
+            colormap_dict = generate_colormap(num_classes, include_background=True)
+            colormap_struct_dict = {i: RgbColor(*color) for i, color in colormap_dict.items()}
 
-                # Create mask categories with the generated colormap
-                labels = ("background",) + self.input_labels.categories.labels
-                mask_categories = MaskCategories(colormap=colormap_struct_dict, labels=labels)
+            # Create mask categories with the generated colormap
+            labels = ("background", *self.input_labels.categories.labels)
+            mask_categories = MaskCategories(colormap=colormap_struct_dict, labels=labels)
 
         # Configure output for mask format
         self.output_mask = AttributeSpec(
@@ -739,9 +716,7 @@ class PolygonToMaskConverter(Converter):
         output_column_name = self.output_mask.name
         output_shape_column_name = self.output_mask.name + "_shape"
 
-        def polygons_to_mask(
-            polygons_data: list, labels_data: list, img_info: dict
-        ) -> tuple[list[int], list[int]]:
+        def polygons_to_mask(polygons_data: list, labels_data: list, img_info: dict) -> tuple[list[int], list[int]]:
             """Rasterize polygons into indexed mask using OpenCV contour filling.
 
             The mask uses:
@@ -866,9 +841,7 @@ class PolygonToInstanceMaskConverter(Converter):
         output_column_name = self.output_instance_mask.name
         output_shape_column_name = self.output_instance_mask.name + "_shape"
 
-        def polygons_to_instance_masks(
-            polygons_data: list, img_info: dict
-        ) -> tuple[list[bool], list[int]]:
+        def polygons_to_instance_masks(polygons_data: list, img_info: dict) -> tuple[list[bool], list[int]]:
             """Rasterize polygons into instance masks using OpenCV contour filling."""
             # Extract image dimensions
             image_width = img_info["width"]
@@ -918,7 +891,7 @@ class PolygonToInstanceMaskConverter(Converter):
             return stacked_masks.reshape(-1), list(stacked_masks.shape)
 
         # Apply conversion using map_batches
-        def apply_conversion_batch(batch_df: pl.DataFrame, **kwargs) -> pl.DataFrame:
+        def apply_conversion_batch(batch_df: pl.DataFrame, **kwargs) -> pl.DataFrame:  # noqa: ARG001
             """Apply polygon-to-instance-mask conversion for a batch."""
             batch_polygons = batch_df.struct["polygons"]
             batch_img_infos = batch_df.struct["img_info"]
@@ -1029,8 +1002,7 @@ class PolygonToBBoxConverter(Converter):
             )
         else:
             raise NotImplementedError(
-                f"This conversion is not yet implemented "
-                f"for the format {self.output_bbox.field.format}."
+                f"This conversion is not yet implemented for the format {self.output_bbox.field.format}."
             )
 
         return df
@@ -1096,17 +1068,13 @@ class ImageCallableToImageConverter(Converter):
 
                 # Ensure the array has 3 dimensions for an image (height, width, channels)
                 if len(img_array.shape) != 3:
-                    raise ValueError(
-                        f"Image array must be 3D (height, width, channels), got shape {img_array.shape}"
-                    )
+                    raise ValueError(f"Image array must be 3D (height, width, channels), got shape {img_array.shape}")
 
                 # Check that the array has the expected dtype (no conversion)
                 expected_dtype = self.output_image.field.dtype
                 expected_numpy_dtype = polars_to_numpy_dtype(expected_dtype)
                 if img_array.dtype != expected_numpy_dtype:
-                    raise TypeError(
-                        f"Expected {expected_numpy_dtype} image array, got {img_array.dtype}"
-                    )
+                    raise TypeError(f"Expected {expected_numpy_dtype} image array, got {img_array.dtype}")
                 # If no specific dtype checking needed, accept as-is
 
                 # Store flattened image data and shape
@@ -1118,14 +1086,12 @@ class ImageCallableToImageConverter(Converter):
 
         # Create output DataFrame
         result_df = df.clone()
-        result_df = result_df.with_columns(
+        return result_df.with_columns(
             [
                 pl.Series(output_col, image_data),
                 pl.Series(output_col + "_shape", image_shapes),
             ]
         )
-
-        return result_df
 
 
 @converter(lazy=True)
@@ -1185,17 +1151,13 @@ class InstanceMaskCallableToInstanceMaskConverter(Converter):
 
             # Check array shape - should be 3D for instance masks (N, height, width)
             if len(mask_array.shape) != 3:
-                raise ValueError(
-                    f"Instance mask array must be 3D (N,H,W), got shape {mask_array.shape}"
-                )
+                raise ValueError(f"Instance mask array must be 3D (N,H,W), got shape {mask_array.shape}")
 
             # Check that the array has the expected dtype
             expected_dtype = self.output_mask.field.dtype
             expected_numpy_dtype = polars_to_numpy_dtype(expected_dtype)
             if mask_array.dtype != expected_numpy_dtype:
-                raise TypeError(
-                    f"Expected {expected_numpy_dtype} mask array, got {mask_array.dtype}"
-                )
+                raise TypeError(f"Expected {expected_numpy_dtype} mask array, got {mask_array.dtype}")
 
             # Store flattened mask data and shape
             mask_data.append(mask_array.flatten())
@@ -1276,9 +1238,7 @@ class MaskCallableToMaskConverter(Converter):
             expected_dtype = self.output_mask.field.dtype
             expected_numpy_dtype = polars_to_numpy_dtype(expected_dtype)
             if mask_array.dtype != expected_numpy_dtype:
-                raise TypeError(
-                    f"Expected {expected_numpy_dtype} mask array, got {mask_array.dtype}"
-                )
+                raise TypeError(f"Expected {expected_numpy_dtype} mask array, got {mask_array.dtype}")
 
             # Store flattened mask data and shape
             mask_data.append(mask_array.flatten())
@@ -1343,11 +1303,9 @@ class RotatedBBoxToPolygonConverter(Converter):
             py = expr.arr.get(1)
             cos_theta = r.cos()
             sin_theta = r.sin()
-            return pl.concat_arr(
-                cos_theta * px - sin_theta * py + cx, sin_theta * px + cos_theta * py + cy
-            )
+            return pl.concat_arr(cos_theta * px - sin_theta * py + cx, sin_theta * px + cos_theta * py + cy)
 
-        df = df.with_columns(
+        return df.with_columns(
             pl.col(input_column_name)
             .list.eval(
                 pl.concat_list(
@@ -1359,5 +1317,3 @@ class RotatedBBoxToPolygonConverter(Converter):
             )
             .alias(output_column_name)
         )
-
-        return df

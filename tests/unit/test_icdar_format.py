@@ -19,7 +19,6 @@ from datumaro.plugins.data_formats.icdar.exporter import (
     IcdarTextSegmentationExporter,
     IcdarWordRecognitionExporter,
 )
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import TestDir, check_save_and_load, compare_datasets
 
@@ -28,21 +27,15 @@ DUMMY_DATASET_DIR = get_test_asset_path("icdar_dataset")
 
 class IcdarImporterTest(TestCase):
     def test_can_detect_word_recognition(self):
-        detected_formats = Environment().detect_dataset(
-            osp.join(DUMMY_DATASET_DIR, "word_recognition")
-        )
+        detected_formats = Environment().detect_dataset(osp.join(DUMMY_DATASET_DIR, "word_recognition"))
         self.assertEqual([IcdarWordRecognitionImporter.NAME], detected_formats)
 
     def test_can_detect_text_localization(self):
-        detected_formats = Environment().detect_dataset(
-            osp.join(DUMMY_DATASET_DIR, "text_localization")
-        )
+        detected_formats = Environment().detect_dataset(osp.join(DUMMY_DATASET_DIR, "text_localization"))
         self.assertEqual([IcdarTextLocalizationImporter.NAME], detected_formats)
 
     def test_can_detect_text_segmentation(self):
-        detected_formats = Environment().detect_dataset(
-            osp.join(DUMMY_DATASET_DIR, "text_segmentation")
-        )
+        detected_formats = Environment().detect_dataset(osp.join(DUMMY_DATASET_DIR, "text_segmentation"))
         self.assertEqual([IcdarTextSegmentationImporter.NAME], detected_formats)
 
     def test_can_import_captions(self):
@@ -67,9 +60,7 @@ class IcdarImporterTest(TestCase):
             ],
         )
 
-        dataset = Dataset.import_from(
-            osp.join(DUMMY_DATASET_DIR, "word_recognition"), "icdar_word_recognition"
-        )
+        dataset = Dataset.import_from(osp.join(DUMMY_DATASET_DIR, "word_recognition"), "icdar_word_recognition")
 
         compare_datasets(self, expected_dataset, dataset)
 
@@ -96,9 +87,7 @@ class IcdarImporterTest(TestCase):
             ],
         )
 
-        dataset = Dataset.import_from(
-            osp.join(DUMMY_DATASET_DIR, "text_localization"), "icdar_text_localization"
-        )
+        dataset = Dataset.import_from(osp.join(DUMMY_DATASET_DIR, "text_localization"), "icdar_text_localization")
 
         compare_datasets(self, expected_dataset, dataset)
 
@@ -145,9 +134,7 @@ class IcdarImporterTest(TestCase):
             ],
         )
 
-        dataset = Dataset.import_from(
-            osp.join(DUMMY_DATASET_DIR, "text_segmentation"), "icdar_text_segmentation"
-        )
+        dataset = Dataset.import_from(osp.join(DUMMY_DATASET_DIR, "text_segmentation"), "icdar_text_segmentation")
 
         compare_datasets(self, expected_dataset, dataset)
 
@@ -442,11 +429,7 @@ class IcdarConverterTest(TestCase):
 
     def test_can_save_dataset_with_cyrillic_and_spaces_in_filename(self):
         expected_dataset = Dataset.from_iterable(
-            [
-                DatasetItem(
-                    id="кириллица с пробелом", media=Image.from_numpy(data=np.ones((8, 8, 3)))
-                )
-            ]
+            [DatasetItem(id="кириллица с пробелом", media=Image.from_numpy(data=np.ones((8, 8, 3))))]
         )
 
         for importer, converter in [
@@ -466,12 +449,8 @@ class IcdarConverterTest(TestCase):
     def test_can_save_and_load_image_with_arbitrary_extension(self):
         expected = Dataset.from_iterable(
             [
-                DatasetItem(
-                    id="q/1", media=Image.from_numpy(data=np.zeros((4, 3, 3)), ext=".JPEG")
-                ),
-                DatasetItem(
-                    id="a/b/c/2", media=Image.from_numpy(data=np.zeros((3, 4, 3)), ext=".bmp")
-                ),
+                DatasetItem(id="q/1", media=Image.from_numpy(data=np.zeros((4, 3, 3)), ext=".JPEG")),
+                DatasetItem(id="a/b/c/2", media=Image.from_numpy(data=np.zeros((3, 4, 3)), ext=".bmp")),
             ],
         )
 

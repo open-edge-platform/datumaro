@@ -87,12 +87,8 @@ def test_sample_with_semantic_fields():
     """Test Sample with semantic field tags."""
 
     class StereoSample(Sample):
-        left_image: np.ndarray[Any, Any] = image_field(
-            dtype=pl.UInt8, format="RGB", semantic=Semantic.Left
-        )
-        right_image: np.ndarray[Any, Any] = image_field(
-            dtype=pl.UInt8, format="BGR", semantic=Semantic.Right
-        )
+        left_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Left)
+        right_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="BGR", semantic=Semantic.Right)
         bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=True)
 
     StereoSample(
@@ -136,9 +132,7 @@ def test_sample_with_complex_fields():
     """Test Sample with various complex field types."""
 
     class ComplexSample(Sample):
-        image_path: str = image_field(
-            dtype=pl.UInt8, format="RGB"
-        )  # This should be image_path_field
+        image_path: str = image_field(dtype=pl.UInt8, format="RGB")  # This should be image_path_field
         image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
         multiple_bboxes: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
         image_info: ImageInfo = image_info_field()

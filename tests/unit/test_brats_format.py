@@ -8,7 +8,6 @@ from datumaro.components.dataset_base import DatasetItem
 from datumaro.components.environment import Environment
 from datumaro.components.media import MultiframeImage
 from datumaro.plugins.data_formats.brats import BratsImporter
-
 from tests.utils.assets import get_test_asset_path
 from tests.utils.test_utils import compare_datasets
 
@@ -35,9 +34,7 @@ class BratsImporterTest(TestCase):
                         Mask(np.array([[0, 0, 0, 1, 1]]), label=2, attributes={"image_id": 1}),
                     ],
                 ),
-                DatasetItem(
-                    id="BRATS_002", subset="test", media=MultiframeImage(np.ones((2, 1, 5, 4)))
-                ),
+                DatasetItem(id="BRATS_002", subset="test", media=MultiframeImage(np.ones((2, 1, 5, 4)))),
             ],
             categories=["overall tumor", "edema", "non-enhancing tumor", "enhancing tumor"],
             media_type=MultiframeImage,

@@ -14,12 +14,7 @@ from attrs import define, field
 
 from datumaro.components.cli_plugin import CliPlugin
 from datumaro.components.dataset_base import DatasetItem, IDataset
-from datumaro.components.errors import (
-    AnnotationExportError,
-    DatasetExportError,
-    DatumaroError,
-    ItemExportError,
-)
+from datumaro.components.errors import AnnotationExportError, DatasetExportError, DatumaroError, ItemExportError
 from datumaro.components.media import Image, PointCloud, Video, VideoFrame
 from datumaro.components.progress_reporting import NullProgressReporter, ProgressReporter
 from datumaro.util.meta_file_util import save_meta_file
@@ -43,8 +38,7 @@ class ExportErrorPolicy:
             ie = ItemExportError(item_id)
             ie.__cause__ = error
             return self._handle_item_error(ie)
-        else:
-            raise error
+        raise error
 
     def report_annotation_error(self, error: Exception, *, item_id: Tuple[str, str]) -> None:
         """
@@ -56,8 +50,7 @@ class ExportErrorPolicy:
             ie = AnnotationExportError(item_id)
             ie.__cause__ = error
             return self._handle_annotation_error(ie)
-        else:
-            raise error
+        raise error
 
     def _handle_item_error(self, error: ItemExportError) -> None:
         """This function must either call fail() or return."""
@@ -190,9 +183,7 @@ class Exporter(CliPlugin):
             self._patch = None
 
         if stream and not self.can_stream:
-            raise DatasetExportError(
-                f"{self.__class__.__name__} cannot export a dataset in a stream manner"
-            )
+            raise DatasetExportError(f"{self.__class__.__name__} cannot export a dataset in a stream manner")
         self._stream = stream
 
         self._ctx: ExportContext = ctx or NullExportContext()
@@ -227,9 +218,7 @@ class Exporter(CliPlugin):
         subdir=None,
         basedir=None,
     ):
-        assert not (
-            (subdir or name or basedir) and path
-        ), "Can't use both subdir or name or basedir and path arguments"
+        assert not ((subdir or name or basedir) and path), "Can't use both subdir or name or basedir and path arguments"
 
         if not isinstance(item.media, Image) or not item.media.has_data:
             log.warning("Item '%s' has no image", item.id)
@@ -242,9 +231,7 @@ class Exporter(CliPlugin):
         item.media.save(path)
 
     def _save_point_cloud(self, item=None, path=None, *, name=None, subdir=None, basedir=None):
-        assert not (
-            (subdir or name or basedir) and path
-        ), "Can't use both subdir or name or basedir and path arguments"
+        assert not ((subdir or name or basedir) and path), "Can't use both subdir or name or basedir and path arguments"
 
         if not item.media or not isinstance(item.media, PointCloud):
             log.warning("Item '%s' has no pcd", item.id)

@@ -27,13 +27,13 @@ from datumaro.util.definitions import SUBSET_NAME_WHITELIST
 T = TypeVar("T")
 
 __all__ = [
+    "FailingImportErrorPolicy",
     "ImportContext",
+    "ImportErrorPolicy",
+    "Importer",
     "NullImportContext",
     "_ImportFail",
-    "Importer",
     "with_subset_dirs",
-    "ImportErrorPolicy",
-    "FailingImportErrorPolicy",
 ]
 
 
@@ -52,11 +52,11 @@ class Importer(CliPlugin):
 
     @classmethod
     def get_file_extensions(cls) -> List[str]:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @classmethod
     def find_sources(cls, path: str) -> List[Dict]:
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @classmethod
     def find_sources_with_params(cls, path: str, **extra_params) -> List[Dict]:
@@ -78,9 +78,7 @@ class Importer(CliPlugin):
             if stream and self.can_stream:
                 params.update({"stream": True})
             elif stream and not self.can_stream:
-                raise DatasetImportError(
-                    f"{self.__class__.__name__} cannot stream, but stream=True."
-                )
+                raise DatasetImportError(f"{self.__class__.__name__} cannot stream, but stream=True.")
 
             desc["options"] = params
             sources.append(desc)
@@ -130,8 +128,7 @@ class Importer(CliPlugin):
             not ext
             and dirname
             and osp.isdir(path)
-            and os.sep + osp.normpath(dirname.lower()) + os.sep
-            in osp.abspath(path.lower()) + os.sep
+            and os.sep + osp.normpath(dirname.lower()) + os.sep in osp.abspath(path.lower()) + os.sep
         ):
             sources = [{"url": path, "format": extractor_name}]
         else:
@@ -139,9 +136,7 @@ class Importer(CliPlugin):
             for d in range(max_depth + 1):
                 sources.extend(
                     {"url": p, "format": extractor_name}
-                    for p in iglob(
-                        osp.join(path, *("*" * d), dirname, filename + ext), recursive=recursive
-                    )
+                    for p in iglob(osp.join(path, *("*" * d), dirname, filename + ext), recursive=recursive)
                     if (callable(file_filter) and file_filter(p)) or (not callable(file_filter))
                 )
                 if sources:
@@ -220,9 +215,7 @@ def with_subset_dirs(input_cls: Importer):
                     source = input_cls.__call__(self, sub_path, **extra_params)
 
                     if len(source) != 1:
-                        raise DatasetImportError(
-                            f"@with_subset_dirs only allows one source format from {sub_path}."
-                        )
+                        raise DatasetImportError(f"@with_subset_dirs only allows one source format from {sub_path}.")
 
                     if "subset" in source[0]:
                         raise DatasetImportError(

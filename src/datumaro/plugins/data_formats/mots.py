@@ -58,13 +58,9 @@ class MotsPngExtractor(SubsetBase):
         self._images_dir = osp.join(path, "images")
         self._anno_dir = osp.join(path, MotsPath.MASKS_DIR)
         if has_meta_file(path):
-            self._categories = {
-                AnnotationType.label: LabelCategories.from_iterable(parse_meta_file(path).keys())
-            }
+            self._categories = {AnnotationType.label: LabelCategories.from_iterable(parse_meta_file(path).keys())}
         else:
-            self._categories = self._parse_categories(
-                osp.join(self._anno_dir, MotsPath.LABELS_FILE)
-            )
+            self._categories = self._parse_categories(osp.join(self._anno_dir, MotsPath.LABELS_FILE))
         self._items = self._parse_items()
 
     def _parse_categories(self, path):
@@ -84,10 +80,7 @@ class MotsPngExtractor(SubsetBase):
 
         image_dir = self._images_dir
         if osp.isdir(image_dir):
-            images = {
-                osp.splitext(osp.relpath(p, image_dir))[0]: p
-                for p in find_images(image_dir, recursive=True)
-            }
+            images = {osp.splitext(osp.relpath(p, image_dir))[0]: p for p in find_images(image_dir, recursive=True)}
         else:
             images = {}
 
@@ -197,7 +190,5 @@ class MotsPngExporter(Exporter):
 
         instance_ids = [int(a.attributes["track_id"]) for a in masks]
         masks = sorted(zip(masks, instance_ids), key=lambda e: e[0].z_order)
-        mask = merge_masks(
-            (m.image, MotsPath.MAX_INSTANCES * (1 + m.label) + id) for m, id in masks
-        )
+        mask = merge_masks((m.image, MotsPath.MAX_INSTANCES * (1 + m.label) + id) for m, id in masks)
         save_image(osp.join(anno_dir, item.id + ".png"), mask, create_dir=True, dtype=np.uint16)
