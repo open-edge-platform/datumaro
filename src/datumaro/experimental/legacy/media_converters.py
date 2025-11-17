@@ -49,7 +49,7 @@ class ForwardMediaConverter(ABC):
 
     @abstractmethod
     def convert_item_media(self, item: DatasetItem) -> dict[str, Any]:
-        """Convert media from a DatasetItem to v2 format."""
+        """Convert media from a DatasetItem to new dataset format."""
 
 
 def _image_callable_impl(bytes_source: Any, is_callable: bool = False):
@@ -210,7 +210,7 @@ class BackwardMediaConverter(ABC):
 
     @abstractmethod
     def convert_to_legacy_media(self, sample: Sample) -> MediaElement[Any]:
-        """Convert v2 sample media to legacy MediaElement."""
+        """Convert sample media to legacy MediaElement."""
 
 
 class BackwardImageMediaConverter(BackwardMediaConverter):

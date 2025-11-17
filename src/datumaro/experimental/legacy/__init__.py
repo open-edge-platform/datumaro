@@ -4,7 +4,7 @@
 
 """
 This module provides functionality to convert legacy Datumaro datasets to the new
-v2 dataset format with automatic schema inference and type conversion.
+dataset format with automatic schema inference and type conversion.
 """
 
 from .annotation_converters import (

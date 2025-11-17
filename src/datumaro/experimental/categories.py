@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 """
-Categories definitions for the v2 dataset system.
+Categories definitions for the dataset system.
 
 This module provides category management functionality using standard dataclasses
 instead of attrs, taking inspiration from the original Categories implementation.

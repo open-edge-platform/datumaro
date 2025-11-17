@@ -57,7 +57,7 @@ class ForwardAnnotationConverter(ABC):
 
     @abstractmethod
     def convert_annotations(self, annotations: list[Annotation], item: DatasetItem) -> dict[str, Any]:
-        """Convert annotations of this type to v2 format."""
+        """Convert annotations of this type to new dataset format."""
 
 
 _annotation_converters: dict[AnnotationType, type[ForwardAnnotationConverter]] = {}
@@ -562,11 +562,11 @@ class BackwardAnnotationConverter(ABC):
 
     @abstractmethod
     def infer_categories(self, experimental_dataset: Dataset[Sample]) -> CategoriesInfo:
-        """Infer legacy categories from v2 dataset."""
+        """Infer legacy categories from dataset."""
 
     @abstractmethod
     def convert_to_legacy_annotations(self, sample: Sample, categories: CategoriesInfo) -> list[Annotation]:
-        """Convert v2 sample annotations to legacy format."""
+        """Convert sample annotations to legacy format."""
 
 
 class BackwardBboxAnnotationConverter(BackwardAnnotationConverter):
@@ -672,7 +672,7 @@ class BackwardRotatedBboxAnnotationConverter(BackwardAnnotationConverter):
         return AnnotationType.rotated_bbox
 
     def convert_to_legacy_annotations(self, sample: Sample, categories: CategoriesInfo) -> list[Annotation]:  # noqa: ARG002
-        """Convert v2 rotated bbox data to legacy RotatedBbox annotations."""
+        """Convert rotated bbox data to legacy RotatedBbox annotations."""
         rotated_bboxes = getattr(sample, self.rotated_bboxes_attr, None)
         if rotated_bboxes is None or len(rotated_bboxes) == 0:
             return []
