@@ -260,21 +260,21 @@ def from_polars_data(polars_data: Any, target_type: type) -> Any:
 
 
 def _convert_union_types(union_args: tuple[type], polars_data: Any, target_type: type) -> Any:
-    if types.NoneType in union_args:
-        # Handle optional types in union (e.g. A | None) when Polars data is None
-        if polars_data is None:
-            return None
+    if types.NoneType in union_args and polars_data is None:
+        return None
 
-        union_args = tuple(arg for arg in union_args if arg is not types.NoneType)
+    non_none_args = tuple(arg for arg in union_args if arg is not types.NoneType)
 
-        # For non-optional Union types, try each type in the union until one succeeds
-        for union_type in union_args:
-            # Try to convert using the union type (which might be generic)
-            try:
-                return from_polars_data(polars_data, union_type)
-            except KeyError:
-                # If conversion fails, try the next type in the union
-                continue
+    # Try each type in the union until one succeeds
+    for union_type in non_none_args:
+        # Try to convert using the union type (which might be generic)
+        try:
+            return from_polars_data(polars_data, union_type)
+        except (KeyError, TypeError):
+            # If conversion fails, try the next type in the union
+            continue
+
+    # If all conversions failed, raise TypeError
     raise TypeError(f"No converter registered for type {target_type}")
 
 
