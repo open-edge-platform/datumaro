@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 
-"""Tests for the v2 type registry system."""
+"""Tests for the type registry system."""
 
 import sys
 from typing import Optional, Union
