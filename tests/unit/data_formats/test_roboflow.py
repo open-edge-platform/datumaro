@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 from copy import deepcopy
+from importlib.util import find_spec
 
 import numpy as np
 import pytest
@@ -25,12 +26,11 @@ from tests.utils.test_utils import compare_datasets
 
 from .base import TestDataFormatBase
 
-try:
-    import tensorflow as tf
-except ImportError:
-    TF_AVAILABLE = False
-else:
+# Check for TensorFlow availability
+if find_spec("tensorflow") is not None:
     TF_AVAILABLE = True
+else:
+    TF_AVAILABLE = False
 
 if TF_AVAILABLE:
     from datumaro.plugins.data_formats.roboflow.base_tfrecord import RoboflowTfrecordBase, RoboflowTfrecordImporter

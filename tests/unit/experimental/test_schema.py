@@ -8,7 +8,6 @@ import numpy as np
 import polars as pl
 import pytest
 
-import datumaro.experimental.fields.base
 from datumaro.experimental.dataset import Sample
 from datumaro.experimental.fields import (
     BBoxField,

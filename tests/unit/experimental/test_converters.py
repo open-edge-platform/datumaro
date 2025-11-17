@@ -355,8 +355,8 @@ def test_convert_dataframe():
 
     # Apply batch converters first
     result_df = df
-    for converter in conversion_paths.converters["image"]:
-        result_df = converter.convert(result_df)
+    for conv in conversion_paths.converters["image"]:
+        result_df = conv.convert(result_df)
 
     # For this test with identical schemas, there should be no converters needed
     # or the result should be equivalent to the input
