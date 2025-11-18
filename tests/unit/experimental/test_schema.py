@@ -385,7 +385,14 @@ def test_image_info_field_polars_schema():
     field = image_info_field()
     schema = field.to_polars_schema("image_info")
 
-    expected = {"image_info": pl.Struct([pl.Field("width", pl.Int32()), pl.Field("height", pl.Int32())])}
+    expected = {
+        "image_info": pl.Struct(
+            [
+                pl.Field("width", pl.Int32()),
+                pl.Field("height", pl.Int32()),
+            ]
+        )
+    }
     assert schema == expected
 
 

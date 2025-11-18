@@ -54,7 +54,7 @@ def test_object_detection(
     fxt_dataset: LegacyDataset,
     input_format: str,
 ):
-    """Test converting legacy datasets from various formats to experimental format."""
+    """Test converting legacy datasets from various formats to v2 format."""
 
     with tempfile.TemporaryDirectory() as temp_dir:
         # Step 1: Export the fixture dataset to the specified format
@@ -64,7 +64,7 @@ def test_object_detection(
         # Step 2: Import it back as a legacy dataset
         legacy_dataset = LegacyDataset.import_from(src_dir, format=input_format)  # pyright: ignore[reportUnknownMemberType]
 
-        # Step 3: Convert to experimental format
+        # Step 3: Convert to v2 format
         experimental_dataset = convert_from_legacy(legacy_dataset)
 
         # Step 4: Verify the conversion

@@ -1,8 +1,8 @@
 import polars as pl
 from typing_extensions import Annotated
 
-from datumaro.experimental import score_field
 from datumaro.experimental.dataset import Dataset, Sample
+from datumaro.experimental.fields import score_field
 
 
 def test_score_field_scalar_roundtrip():

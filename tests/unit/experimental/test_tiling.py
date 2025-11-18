@@ -60,7 +60,12 @@ def sample_df():
         schema={
             "image": pl.List(pl.UInt8),
             "image_shape": pl.List(pl.Int32),
-            "image_info": pl.Struct([pl.Field("height", pl.Int32), pl.Field("width", pl.Int32)]),
+            "image_info": pl.Struct(
+                [
+                    pl.Field("height", pl.Int32),
+                    pl.Field("width", pl.Int32),
+                ]
+            ),
         },
     )
 

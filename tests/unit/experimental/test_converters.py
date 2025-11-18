@@ -10,17 +10,12 @@ import polars as pl
 import pytest
 
 from datumaro.experimental.categories import LabelCategories, MaskCategories
-from datumaro.experimental.converter_registry import (
+from datumaro.experimental.converters import (
     AttributeRemapperConverter,
-    AttributeSpec,
+    BBoxCoordinateConverter,
     ConversionError,
     Converter,
     ConverterRegistry,
-    converter,
-    find_conversion_path,
-)
-from datumaro.experimental.converters import (
-    BBoxCoordinateConverter,
     ImageBytesToImageConverter,
     ImageCallableToImageConverter,
     ImagePathToImageConverter,
@@ -33,6 +28,8 @@ from datumaro.experimental.converters import (
     RGBToBGRConverter,
     RotatedBBoxToPolygonConverter,
     UInt8ToFloat32Converter,
+    converter,
+    find_conversion_path,
 )
 from datumaro.experimental.fields import (
     BBoxField,
@@ -53,7 +50,7 @@ from datumaro.experimental.fields import (
     image_field,
     image_info_field,
 )
-from datumaro.experimental.schema import AttributeInfo, Schema, Semantic
+from datumaro.experimental.schema import AttributeInfo, AttributeSpec, Schema, Semantic
 
 
 def test_converter_decorator(request: pytest.FixtureRequest):
@@ -358,8 +355,8 @@ def test_convert_dataframe():
 
     # Apply batch converters first
     result_df = df
-    for converter in conversion_paths.converters["image"]:
-        result_df = converter.convert(result_df)
+    for conv in conversion_paths.converters["image"]:
+        result_df = conv.convert(result_df)
 
     # For this test with identical schemas, there should be no converters needed
     # or the result should be equivalent to the input

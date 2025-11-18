@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MIT
 
 """
-Export and import functionality for experimental datasets.
+Export and import functionality for datasets.
 
 This module provides comprehensive export/import capabilities for Datumaro datasets,
 including support for:
@@ -28,9 +28,10 @@ import numpy as np
 import polars as pl
 from PIL import Image
 
-from .dataset import Dataset, Sample
-from .fields import ImageCallableField, ImagePathField, InstanceMaskCallableField, MaskCallableField
-from .schema import Schema
+from datumaro.experimental.dataset import Dataset, Sample
+from datumaro.experimental.fields.images import ImageCallableField, ImagePathField
+from datumaro.experimental.fields.masks import InstanceMaskCallableField, MaskCallableField
+from datumaro.experimental.schema import Schema
 
 if TYPE_CHECKING:
     from .dataset import DType
