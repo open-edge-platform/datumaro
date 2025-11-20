@@ -346,10 +346,15 @@ class KeypointsField(Field):
         """Convert keypoints tensor to Polars list format."""
         numpy_value = to_numpy(value, self.dtype)
 
+        if numpy_value is not None:
+            data: Any = numpy_value.reshape(1, -1, 3)
+        else:
+            data = [None]
+
         return {
             name: pl.Series(
                 name,
-                numpy_value.reshape(1, -1, 3),
+                data,
                 dtype=pl.List(pl.Array(self.dtype, 3)),
             )
         }
@@ -358,25 +363,6 @@ class KeypointsField(Field):
         """Reconstruct keypoints tensor from Polars data."""
         polars_data = df[name][row_index]
         return from_polars_data(polars_data, target_type)  # type: ignore
-
-
-def keypoints_field(
-    dtype: Any = pl.Float32(),
-    normalize: bool = False,
-    semantic: Semantic = Semantic.Default,
-) -> Any:
-    """
-    Create a KeypointsField instance with the specified parameters.
-
-    Args:
-        dtype: Polars data type for coordinate values (defaults to pl.Float32())
-        normalize: Whether coordinates are normalized (defaults to False)
-        semantic: Semantic tags describing the keypoints purpose (optional)
-
-    Returns:
-        KeypointsField instance configured with the given parameters
-    """
-    return KeypointsField(semantic=semantic, dtype=dtype, normalize=normalize)
 
 
 @dataclass(frozen=True)

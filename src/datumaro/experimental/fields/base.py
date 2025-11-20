@@ -26,13 +26,14 @@ class Semantic(Flag):
     """
     Used for disambiguation when multiple fields of the same type exist.
     Default is used for fields that don't need disambiguation.
-    Left/Right are used for stereo vision scenarios.
     """
 
     Default = auto()
-    Left = auto()
-    Right = auto()
     Anomaly = auto()
+    Bbox = auto()
+    Polygon = auto()
+    Keypoint = auto()
+    Caption = auto()
 
 
 class Field:
