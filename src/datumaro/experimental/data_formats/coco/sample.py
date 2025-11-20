@@ -5,21 +5,23 @@ from functools import cached_property
 import numpy as np
 import polars as pl
 
-from datumaro.experimental import (
-    ImageInfo,
-    Sample,
-    Semantic,
-    bbox_field,
-    caption_field,
-    image_id_field,
-    image_info_field,
-    image_path_field,
-    label_field,
-    polygon_field,
-)
+from datumaro.experimental import Sample, Semantic
 from datumaro.experimental.categories import LabelCategories
 from datumaro.experimental.data_formats.coco.constants import COCO_LABEL_TO_SUPER
-from datumaro.experimental.fields import Subset, bool_field, keypoints_field, numeric_field, subset_field
+from datumaro.experimental.fields import (
+    ImageInfo,
+    Subset,
+    bbox_field,
+    image_info_field,
+    image_path_field,
+    keypoints_field,
+    label_field,
+    polygon_field,
+    subset_field,
+)
+from datumaro.experimental.fields.annotations import caption_field
+from datumaro.experimental.fields.images import image_id_field
+from datumaro.experimental.fields.types import bool_field, numeric_field
 
 
 class CocoSample(Sample):

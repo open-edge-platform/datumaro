@@ -365,6 +365,25 @@ class KeypointsField(Field):
         return from_polars_data(polars_data, target_type)  # type: ignore
 
 
+def keypoints_field(
+    dtype: Any = pl.Float32(),
+    normalize: bool = False,
+    semantic: Semantic = Semantic.Default,
+) -> Any:
+    """
+    Create a KeypointsField instance with the specified parameters.
+
+    Args:
+        dtype: Polars data type for coordinate values (defaults to pl.Float32())
+        normalize: Whether coordinates are normalized (defaults to False)
+        semantic: Semantic tags describing the keypoints purpose (optional)
+
+    Returns:
+        KeypointsField instance configured with the given parameters
+    """
+    return KeypointsField(semantic=semantic, dtype=dtype, normalize=normalize)
+
+
 @dataclass(frozen=True)
 class EllipseField(Field):
     """
@@ -410,3 +429,53 @@ class EllipseField(Field):
         """Reconstruct an ellipse tensor from Polars data."""
         polars_data = df[name][row_index]
         return from_polars_data(polars_data, target_type)  # type: ignore
+
+
+@dataclass(frozen=True)
+class CaptionField(Field):
+    """
+    Represents a text caption field.
+
+    Stores either a single caption string or a list of caption strings when
+    is_list=True. Useful for tasks like image captioning, multi-caption datasets,
+    or storing alternative textual descriptions.
+
+    Attributes:
+        semantic: Semantic tags describing the caption's purpose
+        is_list: Whether this field stores multiple captions (list[str])
+    """
+
+    semantic: Semantic
+    is_list: bool = False
+
+    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+        """Generate schema for caption column (string or list of strings)."""
+        dtype = pl.List(pl.Utf8()) if self.is_list else pl.Utf8()
+        return {name: dtype}
+
+    def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
+        """Convert caption value(s) to Polars series."""
+        dtype = pl.List(pl.Utf8()) if self.is_list else pl.Utf8()
+        return {name: pl.Series(name, [value], dtype=dtype)}
+
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+        """Reconstruct caption value(s) from Polars data."""
+        data = df[name][row_index]
+        if self.is_list and target_type is list:
+            return list(data) if data is not None else None  # type: ignore[return-value]
+        # Single caption
+        return from_polars_data(data, target_type)
+
+
+def caption_field(semantic: Semantic = Semantic.Default, is_list: bool = False) -> Any:
+    """
+    Create a CaptionField instance.
+
+    Args:
+        semantic: Semantic tags describing the caption purpose (optional)
+        is_list: Whether this field stores multiple captions (defaults to False)
+
+    Returns:
+        CaptionField instance configured with the given parameters
+    """
+    return CaptionField(semantic=semantic, is_list=is_list)
