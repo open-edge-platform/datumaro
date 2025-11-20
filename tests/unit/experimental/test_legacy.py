@@ -46,17 +46,16 @@ from datumaro.experimental.legacy import (
     ForwardMaskAnnotationConverter,
     ForwardPolygonAnnotationConverter,
     ForwardRotatedBboxAnnotationConverter,
-    _attributes_to_dict,
-    _has_derived_labels,
     analyze_experimental_dataset,
     analyze_legacy_dataset,
     convert_from_legacy,
     convert_to_legacy,
-    get_forward_annotation_converter,
-    get_forward_media_converter,
     register_forward_annotation_converter,
     register_forward_media_converter,
 )
+from datumaro.experimental.legacy.annotation_converters import get_forward_annotation_converter
+from datumaro.experimental.legacy.dataset_converters import _attributes_to_dict, _has_derived_labels
+from datumaro.experimental.legacy.register_legacy_converters import get_forward_media_converter
 from datumaro.experimental.schema import AttributeInfo, Schema
 from datumaro.util.image import encode_image
 
@@ -348,7 +347,7 @@ def test_convert_from_legacy_with_image_bytes():
     # Create legacy dataset
     legacy_dataset = LegacyDataset.from_iterable(items)
 
-    # Convert to experimental format
+    # Convert to v2 format
     experimental_dataset = convert_from_legacy(legacy_dataset)
 
     # Verify conversion
@@ -377,7 +376,7 @@ def test_convert_from_legacy_with_image_paths():
     # Create legacy dataset
     legacy_dataset = LegacyDataset.from_iterable(items)
 
-    # Convert to experimental format
+    # Convert to v2 format
     experimental_dataset = convert_from_legacy(legacy_dataset)
 
     # Verify conversion
@@ -428,7 +427,7 @@ def test_convert_from_legacy_with_callable_image_data():
     # Create legacy dataset
     legacy_dataset = LegacyDataset.from_iterable(items)
 
-    # Convert to experimental format
+    # Convert to v2 format
     experimental_dataset = convert_from_legacy(legacy_dataset)
 
     # Verify conversion uses callable field instead of bytes field
@@ -866,7 +865,7 @@ def test_convert_mask_dataset():
     item = DatasetItem(id="item1", annotations=annotations)
     dataset = LegacyDataset.from_iterable([item], categories=categories)  # pyright: ignore[reportUnknownMemberType]
 
-    # Convert to experimental dataset
+    # Convert to v2 dataset
     experimental_ds = convert_from_legacy(dataset)
 
     # Check conversion results
@@ -945,7 +944,7 @@ class RotatedDetectionSample(Sample):
 
 def test_convert_to_legacy_simple():
     """Test basic convert_to_legacy functionality."""
-    # Create experimental dataset with sample data
+    # Create v2 dataset with sample data
     experimental_dataset = Dataset(DetectionSample)
 
     # Add sample data
@@ -1017,7 +1016,7 @@ def test_convert_to_legacy_simple():
 
 
 def test_convert_to_legacy_empty_dataset():
-    """Test convert_to_legacy with empty experimental dataset."""
+    """Test convert_to_legacy with empty v2 dataset."""
     experimental_dataset = Dataset(DetectionSample)
 
     legacy_dataset = convert_to_legacy(experimental_dataset)  # type: ignore
@@ -1027,7 +1026,7 @@ def test_convert_to_legacy_empty_dataset():
 
 def test_backward_image_media_converter_create_from_schema():
     """Test BackwardImageMediaConverter.create_from_schema method."""
-    # Create experimental dataset to get schema
+    # Create v2 dataset to get schema
     experimental_dataset = Dataset(DetectionSample)
     schema = experimental_dataset.schema
 
@@ -1052,7 +1051,7 @@ def test_backward_image_media_converter_create_from_schema_no_image_field():
 
 
 def test_backward_image_media_converter_convert_to_legacy_media():
-    """Test media conversion from experimental to legacy."""
+    """Test media conversion from v2 to legacy."""
     experimental_dataset = Dataset(DetectionSample)
     schema = experimental_dataset.schema
 
@@ -1075,7 +1074,7 @@ def test_backward_image_media_converter_convert_to_legacy_media():
 
 def test_backward_bbox_annotation_converter_create_from_schema():
     """Test BackwardBboxAnnotationConverter.create_from_schema method."""
-    # Create experimental dataset to get schema
+    # Create v2 dataset to get schema
     experimental_dataset = Dataset(DetectionSample)
     schema = experimental_dataset.schema
 
@@ -1182,7 +1181,7 @@ def test_forward_mask_annotation_converter_empty():
 
 
 def test_backward_bbox_annotation_converter_convert_to_legacy_annotations():
-    """Test annotation conversion from experimental to legacy."""
+    """Test annotation conversion from v2 to legacy."""
     experimental_dataset = Dataset(DetectionSample)
     schema = experimental_dataset.schema
 
@@ -1244,7 +1243,7 @@ def test_backward_bbox_annotation_converter_convert_empty_annotations():
 
 
 def test_backward_bbox_annotation_converter_infer_categories():
-    """Test category inference from experimental dataset."""
+    """Test category inference from v2 dataset."""
     experimental_dataset = Dataset(DetectionSample)
 
     # Add samples with different labels
@@ -1277,7 +1276,7 @@ def test_backward_bbox_annotation_converter_infer_categories():
 
 
 def test_analyze_experimental_dataset():
-    """Test analysis of experimental dataset for backward conversion."""
+    """Test analysis of v2 dataset for backward conversion."""
     experimental_dataset = Dataset(DetectionSample)
 
     # Add sample data
@@ -1442,7 +1441,7 @@ def test_backward_polygon_annotation_converter_create_from_schema():
 
 
 def test_backward_polygon_annotation_converter_convert_to_legacy():
-    """Test conversion from experimental to legacy polygon annotations."""
+    """Test conversion from v2 to legacy polygon annotations."""
     converter = BackwardPolygonAnnotationConverter("polygons", "polygon_labels")
 
     # Create sample with polygon data
@@ -1488,7 +1487,7 @@ def test_backward_polygon_annotation_converter_convert_to_legacy():
 
 
 def test_polygon_conversion_with_labels():
-    """Test polygon conversion between legacy and experimental formats with label categories."""
+    """Test polygon conversion between legacy and v2 formats with label categories."""
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_path = Path(temp_dir)
 
@@ -1516,10 +1515,10 @@ def test_polygon_conversion_with_labels():
             categories={AnnotationType.label: label_categories},
         )  # pyright: ignore[reportUnknownMemberType]
 
-        # Convert to experimental format
+        # Convert to v2 format
         experimental_dataset = convert_from_legacy(legacy_dataset)
 
-        # Verify experimental dataset structure
+        # Verify v2 dataset structure
         assert len(experimental_dataset) == 1
         exp_sample = experimental_dataset[0]
 
@@ -1578,10 +1577,10 @@ def test_polygon_conversion_without_labels():
         # Create legacy dataset without label categories
         legacy_dataset = LegacyDataset.from_iterable([item], ann_types={AnnotationType.polygon})  # pyright: ignore[reportUnknownMemberType]
 
-        # Convert to experimental format
+        # Convert to v2 format
         experimental_dataset = convert_from_legacy(legacy_dataset)
 
-        # Verify experimental dataset structure
+        # Verify v2 dataset structure
         assert len(experimental_dataset) == 1
         exp_sample = experimental_dataset[0]
 
@@ -1700,9 +1699,9 @@ def test_backward_rotated_bbox_annotation_converter_create_from_schema():
 
 
 def test_backward_rotated_bbox_annotation_converter_convert_to_legacy():
-    """Test backward conversion from experimental to legacy rotated bbox format."""
+    """Test backward conversion from v2 to legacy rotated bbox format."""
 
-    # Create experimental dataset with rotated bbox data
+    # Create v2 dataset with rotated bbox data
     rotated_bbox_data = np.array(
         [
             [50.0, 60.0, 30.0, 20.0, math.radians(45.0)],  # 45 degrees in radians
@@ -1713,7 +1712,7 @@ def test_backward_rotated_bbox_annotation_converter_convert_to_legacy():
 
     label_data = np.array([0, 1], dtype=np.int32)
 
-    # Create experimental dataset and add sample with rotated bbox data
+    # Create v2 dataset and add sample with rotated bbox data
     experimental_dataset = Dataset(RotatedDetectionSample)
 
     sample = RotatedDetectionSample(
@@ -1796,10 +1795,10 @@ def test_rotated_bbox_conversion_with_labels():
         categories={AnnotationType.label: label_categories},
     )
 
-    # Convert to experimental format
+    # Convert to v2 format
     experimental_dataset = convert_from_legacy(legacy_dataset)
 
-    # Check experimental dataset
+    # Check v2 dataset
     assert len(experimental_dataset) == 1
     exp_sample = experimental_dataset[0]
 
@@ -1876,10 +1875,10 @@ def test_rotated_bbox_conversion_without_labels():
 
     legacy_dataset = LegacyDataset.from_iterable(items, ann_types={AnnotationType.rotated_bbox})
 
-    # Convert to experimental format
+    # Convert to v2 format
     experimental_dataset = convert_from_legacy(legacy_dataset)
 
-    # Check experimental dataset
+    # Check v2 dataset
     assert len(experimental_dataset) == 1
     exp_sample = experimental_dataset[0]
 

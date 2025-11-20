@@ -11,8 +11,8 @@ from typing import TYPE_CHECKING, Annotated, Any, Generic, TypeGuard, Union, cas
 import polars as pl
 from typing_extensions import TypeVar, dataclass_transform
 
-from datumaro.experimental.converter_registry import ConverterTransform, find_conversion_path
-from datumaro.experimental.fields import Subset, SubsetField
+from datumaro.experimental.converters.registry import ConverterTransform, find_conversion_path
+from datumaro.experimental.fields.datasets import Subset, SubsetField
 from datumaro.experimental.schema import AttributeInfo, Field, Schema
 from datumaro.experimental.transform import IdentityTransform, Transform
 

@@ -15,5 +15,5 @@ class ApiTest:
         assert hasattr(dm.errors, "DatumaroError")
 
     def test_can_import_from_module_aliases(self):
-        from datumaro.components.dataset import Dataset
-        from datumaro.errors import DatumaroError
+        from datumaro.components.dataset import Dataset  # noqa: F401
+        from datumaro.errors import DatumaroError  # noqa: F401
