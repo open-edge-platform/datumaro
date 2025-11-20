@@ -14,13 +14,51 @@ from datumaro.experimental.dataset import AttributeInfo, Dataset, Sample, Schema
 from datumaro.experimental.fields import (
     ImageInfo,
     Subset,
+    TileInfo,
     bbox_field,
     image_field,
     image_info_field,
     mask_field,
     subset_field,
+    tile_field,
 )
 from datumaro.experimental.schema import Semantic
+
+
+def test_mysample_validation():
+    class MySample(Sample):
+        bbox: np.ndarray = bbox_field(dtype=pl.Float32)
+        image: np.ndarray = image_field(dtype=pl.UInt8, format="RGB")
+        tile: TileInfo = tile_field()
+        mask: np.ndarray = mask_field(dtype=pl.UInt8)
+
+    # Valid sample
+    valid_sample = MySample(
+        bbox=np.array([0.1, 0.2, 0.3, 0.4], dtype=np.float32),
+        image=np.array([[[255, 0, 0]]], dtype=np.uint8),
+        tile=TileInfo(source_sample_idx=0, x=0, y=0, width=1, height=1),
+        mask=np.array([[1, 0], [0, 1]], dtype=np.uint8),
+    )
+    # Should not raise
+    valid_sample.validate()
+
+    # Invalid sample: missing mask
+    with pytest.raises(ValueError):
+        MySample(
+            bbox=np.array([0.1, 0.2, 0.3, 0.4], dtype=np.float32),
+            image=np.array([[[255, 0, 0]]], dtype=np.uint8),
+            tile=TileInfo(source_sample_idx=0, x=0, y=0, width=1, height=1),
+            mask=None,  # mask is required
+        ).validate()
+
+    # Invalid sample: wrong dtype for image
+    with pytest.raises(TypeError):
+        MySample(
+            bbox=np.array([0.1, 0.2, 0.3, 0.4], dtype=np.float32),
+            image="invalid_image_data",
+            tile=TileInfo(source_sample_idx=0, x=0, y=0, width=1, height=1),
+            mask=np.array([[1, 0], [0, 1]], dtype=np.uint8),
+        ).validate()
 
 
 def test_append_dataset():
