@@ -49,6 +49,14 @@ class Field:
 
     semantic: Semantic
 
+    def __post_init__(self):
+        if hasattr(self, "dtype"):
+            dtype = getattr(self, "dtype")
+            if isinstance(dtype, type) and issubclass(dtype, pl.DataType):
+                object.__setattr__(self, "dtype", dtype())
+            if not isinstance(dtype, pl.DataType):
+                raise TypeError(f"dtype must be a Polars DataType, got {type(dtype)}")
+
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """
         Generate Polars schema definition for this field.

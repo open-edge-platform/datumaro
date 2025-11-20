@@ -6,7 +6,8 @@ from __future__ import annotations
 
 import types
 from functools import cache
-from typing import TYPE_CHECKING, Annotated, Any, Generic, TypeGuard, Union, cast, get_args, get_origin, get_type_hints
+from typing import TYPE_CHECKING, Annotated, Any, Generic, TypeGuard, Union, cast, get_args, get_origin, get_type_hints, \
+    ClassVar
 
 import polars as pl
 from typing_extensions import TypeVar, dataclass_transform
@@ -35,8 +36,8 @@ class Sample:
         """Initialize sample with provided attributes."""
         for key, value in kwargs.items():
             setattr(self, key, value)
-
         self.__post_init__()
+        self.validate()
 
     def __post_init__(self) -> None:
         pass
@@ -45,6 +46,30 @@ class Sample:
         """Return a string representation of the sample."""
         fields = ", ".join(f"{key}={getattr(self, key)}" for key in self.__dict__ if not key.startswith("_"))
         return f"{self.__class__.__name__}({fields})"
+
+    def validate(self) -> None:
+        """
+        Validate the sample's attributes against the inferred schema.
+
+        Raises:
+            ValueError: If required attributes are missing
+            TypeError: If attribute types do not match the schema
+        """
+        schema = self.__class__.infer_schema()  # Cached per class
+        for name, attr_info in schema.attributes.items():
+            if not hasattr(self, name):
+                raise ValueError(f"Attribute `{name}` is required and missing.")
+            value = getattr(self, name)
+            expected_type = attr_info.type
+            field = attr_info.field
+
+            # Type check
+            if not isinstance(value, expected_type):
+                raise TypeError(f"Attribute `{name}` must be of type `{expected_type}`.")
+
+            # Custom field validation (if any)
+            if hasattr(field, "validate"):
+                field.validate(value)
 
     @classmethod
     @cache
