@@ -190,7 +190,7 @@ class ImageTest(TestCase):
         with TestDir() as test_dir:
             image_float = np.random.rand(32, 32, 3).astype(np.float32) * 255.0
             image_path = osp.join(test_dir, "floating_image.tiff")
-            tifffile.imwrite(image_path, image_float)
+            tifffile.imwrite(image_path, image_float, photometric="rgb")
 
             media = Image.from_file(image_path)
             data = media.get_data_as_dtype(dtype=np.float32)

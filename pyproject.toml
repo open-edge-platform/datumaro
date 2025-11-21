@@ -26,14 +26,18 @@ binding = "PyO3"
 name = "datumaro"
 dynamic = ["version"]
 description = "Dataset Management Framework (Datumaro)"
-authors = [
-    {name = "Intel", email = "emily.chun@intel.com"}
+maintainers = [
+    { name = "Intel Open Edge Platform" },
 ]
-license = {text = "MIT"}
+license-files = ["LICENSE"]
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11,<=3.14"
 classifiers = [
     "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Operating System :: OS Independent",
 ]
 dependencies = [
@@ -41,17 +45,17 @@ dependencies = [
     "defusedxml>=0.7.0",
     "imagesize>=1.4.1",
     "lxml<7,>=5.2.0",
-    "numpy<2.3",
+    "numpy>=2.3.5",
     "orjson>=3.10.0",
     "Pillow>=10.3.0",
     "ruamel.yaml>=0.17.0",
-    "shapely>=1.7",
+    "shapely>=2.1.2",
     "typing_extensions>=3.7.4.3",
     "tqdm>=4.67.1",
     "pycocotools>=2.0.4",
     "PyYAML==6.0.3",
-    "pandas>=1.4.0",
-    "pyarrow",
+    "pandas>=2.3.3",
+    "pyarrow>=22.0",
     "json-stream",
     "opencv-python-headless>=4.11.0.86",
 ]
@@ -93,7 +97,7 @@ tf = [
 #]
 
 # PyTorch support
-torch = ["torch", "torchvision"]
+torch = ["torch>=2.9", "torchvision>=0.24"]
 
 # Kaggle download support
 kaggle = ["kaggle"]
@@ -115,7 +119,7 @@ cli = ["tensorboardX>=1.8,!=2.3", "tabulate", "scipy", "matplotlib>=3.3.1"]
 visualizer = ["matplotlib>=3.3.1"]
 
 # NYU Depth Dataset v2 file format
-h5py = ["h5py>=2.10.0"]
+h5py = ["h5py>=3.15.0"]
 
 # BraTS file format
 nibabel = ["nibabel>=3.2.1"]
@@ -123,7 +127,7 @@ nibabel = ["nibabel>=3.2.1"]
 # AVA dataset
 protobuf = ["protobuf"]
 
-experimental = ["polars>=1.31.0,<2.0.0"]
+experimental = ["polars~=1.35"]
 
 [tool.coverage.run]
 branch = true
