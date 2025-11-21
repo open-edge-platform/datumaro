@@ -51,11 +51,11 @@ class MpiiBase(SubsetBase):
             group_num = 1
 
             image = getattr(item, "image", "")
-            if isinstance(image, spio.matlab.mio5_params.mat_struct):
+            if isinstance(image, spio.matlab.mat_struct):
                 image = getattr(image, "name", "")
 
             anno_values = getattr(item, "annorect", [])
-            if isinstance(anno_values, spio.matlab.mio5_params.mat_struct):
+            if isinstance(anno_values, spio.matlab.mat_struct):
                 anno_values = [anno_values]
 
             for val in anno_values:
@@ -72,12 +72,12 @@ class MpiiBase(SubsetBase):
                     attributes["scale"] = scale
 
                 objpos = getattr(val, "objpos", None)
-                if isinstance(objpos, spio.matlab.mio5_params.mat_struct):
+                if isinstance(objpos, spio.matlab.mat_struct):
                     attributes["center"] = [getattr(objpos, "x", 0), getattr(objpos, "y", 0)]
 
                 annopoints = getattr(val, "annopoints", None)
-                if isinstance(annopoints, spio.matlab.mio5_params.mat_struct) and not isinstance(
-                    getattr(annopoints, "point"), spio.matlab.mio5_params.mat_struct
+                if isinstance(annopoints, spio.matlab.mat_struct) and not isinstance(
+                    getattr(annopoints, "point"), spio.matlab.mat_struct
                 ):
                     for point in getattr(annopoints, "point"):
                         point_id = getattr(point, "id")
