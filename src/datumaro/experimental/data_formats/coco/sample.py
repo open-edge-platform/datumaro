@@ -1,6 +1,5 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-from functools import cached_property
 
 import numpy as np
 import polars as pl
@@ -46,18 +45,6 @@ class CocoSample(Sample):
     # Dataset organization
     subset: Subset = subset_field()
     image_id: int | None = image_id_field()
-
-    @cached_property
-    def area(self) -> float:
-        """Compute area of the sample based on its polygons."""
-        area = 0.0
-        for polygon in self.polygons or []:
-            if len(polygon) < 6:
-                continue  # Not enough points to form a polygon
-            x = polygon[0::2]
-            y = polygon[1::2]
-            area += 0.5 * np.abs(np.dot(x, np.roll(y, 1)) - np.dot(y, np.roll(x, 1)))
-        return area
 
 
 class CocoCategories(LabelCategories):

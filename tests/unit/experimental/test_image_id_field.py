@@ -1,8 +1,8 @@
 import polars as pl
 from typing_extensions import Annotated
 
-from datumaro.experimental import image_id_field
 from datumaro.experimental.dataset import Dataset, Sample
+from datumaro.experimental.fields.images import image_id_field
 
 
 def test_image_id_field_int32_roundtrip():

@@ -1,12 +1,12 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
-from dataclasses import Field, dataclass, field
+from dataclasses import dataclass, field
 from typing import Any
 
 import polars as pl
 
 from datumaro.experimental import Semantic
-from datumaro.experimental.fields.base import PolarsDataType, T
+from datumaro.experimental.fields.base import Field, PolarsDataType, T
 from datumaro.experimental.type_registry import from_polars_data
 
 

@@ -1,7 +1,7 @@
 from typing_extensions import Annotated
 
-from datumaro.experimental import caption_field
 from datumaro.experimental.dataset import Dataset, Sample
+from datumaro.experimental.fields.annotations import caption_field
 
 
 def test_caption_field_single_roundtrip():

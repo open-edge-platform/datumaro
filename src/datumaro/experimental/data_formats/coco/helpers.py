@@ -1,7 +1,6 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 import json
-import logging
 import shutil
 from collections import defaultdict
 from dataclasses import dataclass
@@ -210,8 +209,8 @@ def _build_and_copy_images_section(
             if not dst_path.exists():
                 try:
                     shutil.copy2(image_path, dst_path)
-                except Exception as e:  # S110 fix: log instead of pass
-                    logger.warning("Failed to copy image '%s' -> '%s': %s", image_path, dst_path, e)
+                except Exception as e:
+                    print(f"Failed to copy image '{image_path}' -> '{dst_path}': {e}")
     return images_section
 
 
@@ -578,6 +577,3 @@ def _serialize_single_instance(
         "segmentation": [flat] if len(flat) >= 6 else [],
     }
     return inst, next_ann_id + 1
-
-
-logger = logging.getLogger(__name__)

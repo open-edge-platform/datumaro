@@ -178,7 +178,7 @@ class LabelField(Field):
 
     def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
         """Convert label(s) to Polars format for single or multi-label cases."""
-        return {name: pl.Series(name, [value], dtype=self._pl_type)}
+        return {name: pl.Series(name, [value], dtype=self._pl_type, strict=False)}
 
     def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
         """Reconstruct label(s) from Polars data."""

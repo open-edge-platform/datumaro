@@ -690,7 +690,7 @@ def test_tensor_field_serialization():
     # Serialize to dict
     field_dict = field.to_dict()
     assert field_dict["type"] == "TensorField"
-    assert field_dict["semantic"] == "Left"
+    assert field_dict["semantic"] == "Bbox"
     assert field_dict["channels_first"] is True
     assert "Float32" in str(field_dict["dtype"])
 
@@ -713,7 +713,7 @@ def test_image_field_serialization():
     # Serialize to dict
     field_dict = field.to_dict()
     assert field_dict["type"] == "ImageField"
-    assert field_dict["semantic"] == "Right"
+    assert field_dict["semantic"] == "Polygon"
     assert field_dict["format"] == "RGB"
     assert "UInt8" in str(field_dict["dtype"])
 
@@ -844,7 +844,7 @@ def test_image_path_field_serialization():
     # Serialize to dict
     field_dict = field.to_dict()
     assert field_dict["type"] == "ImagePathField"
-    assert field_dict["semantic"] == "Left"
+    assert field_dict["semantic"] == "Bbox"
 
     # Deserialize from dict
     from datumaro.experimental.schema import Field
@@ -863,7 +863,7 @@ def test_image_bytes_field_serialization():
     # Serialize to dict
     field_dict = field.to_dict()
     assert field_dict["type"] == "ImageBytesField"
-    assert field_dict["semantic"] == "Right"
+    assert field_dict["semantic"] == "Polygon"
 
     # Deserialize from dict
     from datumaro.experimental.schema import Field

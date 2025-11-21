@@ -55,19 +55,25 @@ def load_coco_dataset(root_dir: str, version: str = "2017") -> Dataset:
 
     subset_config = _build_subset_config(root_path, version)
 
+    print(f"[COCO] Loading {version} dataset from '{root_dir}' with {len(subset_config)} subsets")
+
     categories = {"labels": CocoCategories()}
     dataset = Dataset(CocoSample, categories=categories)
 
     for subset, config in subset_config.items():
         images_dir = config["images_dir"]
         if not images_dir.exists():
+            print(f"[COCO] Skipping subset '{subset}': images directory '{images_dir}' does not exist")
             continue
+
+        print(f"[COCO] Loading subset '{subset}' from '{images_dir}'")
 
         instances_data = _load_json_or_none(config["instances"])  # type: ignore[arg-type]
         keypoints_data = _load_json_or_none(config["keypoints"])  # type: ignore[arg-type]
         captions_data = _load_json_or_none(config["captions"])  # type: ignore[arg-type]
 
         if not instances_data and not keypoints_data:
+            print(f"[COCO] No instances/keypoints annotations found for subset '{subset}', skipping")
             continue
 
         primary_data = instances_data or keypoints_data or {"categories": [], "images": []}
@@ -77,7 +83,13 @@ def load_coco_dataset(root_dir: str, version: str = "2017") -> Dataset:
             instances_data, keypoints_data, captions_data
         )
 
-        for img in primary_data.get("images", []):
+        images = primary_data.get("images", [])
+        num_images = len(images)
+        print(f"[COCO] Building {num_images} samples for subset '{subset}'")
+
+        for idx, img in enumerate(images, start=1):
+            if idx % 1000 == 0:
+                print(f"[COCO] Subset '{subset}': processed {idx}/{num_images} images")
             sample = _assemble_sample_from_image_record(
                 images_dir=images_dir,
                 img=img,
@@ -89,6 +101,9 @@ def load_coco_dataset(root_dir: str, version: str = "2017") -> Dataset:
             )
             dataset.append(sample)
 
+        print(f"[COCO] Finished subset '{subset}' with {num_images} samples")
+
+    print(f"[COCO] Finished loading dataset from '{root_dir}' with {len(dataset)} samples in total")
     return dataset
 
 
@@ -132,18 +147,21 @@ def save_coco_dataset(dataset: Dataset[CocoSample], root_dir: str, version: str 
     annotations_path = root_path / "annotations"
     annotations_path.mkdir(parents=True, exist_ok=True)
 
+    print(f"[COCO] Saving {version} dataset to '{root_dir}' (annotations dir: '{annotations_path}')")
+
     categories_coco, to_category_id = _prepare_categories(dataset)
 
-    # Group samples by subset
     subset_to_samples: dict[Subset, list[CocoSample]] = defaultdict(list)
     for sample in dataset:
-        # type: ignore[attr-defined]
-        subset_to_samples[sample.subset].append(sample)  # type: ignore
+        subset_to_samples[sample.subset].append(sample)  # type: ignore[attr-defined]
 
     written: dict[str, Path] = {}
     for subset, samples in subset_to_samples.items():
         if not samples:
             continue
+
+        print(f"[COCO] Saving subset '{subset}' with {len(samples)} samples")
+
         result_paths = _save_subset(
             root_path=root_path,
             annotations_path=annotations_path,
@@ -153,6 +171,9 @@ def save_coco_dataset(dataset: Dataset[CocoSample], root_dir: str, version: str 
             categories_coco=categories_coco,
             to_category_id=to_category_id,
         )
+        for logical_name, path in result_paths.items():
+            print(f"[COCO] Written {logical_name} -> {path}")
         written.update(result_paths)
 
+    print(f"[COCO] Finished saving dataset to '{root_dir}'")
     return written

@@ -7,7 +7,7 @@ from datumaro.experimental.data_formats.coco.sample import CocoSample
 
 
 class DataFormat(Enum):
-    """Supported data formats for import/export."""
+    """Supported data formats for load/save."""
 
     COCO = "COCO"
 
