@@ -2,9 +2,11 @@
 #
 # SPDX-License-Identifier: MIT
 
-import pytest
 import polars as pl
+import pytest
+
 from datumaro.experimental.fields.annotations import BBoxField, Semantic
+
 
 def test_field_dtype_validation():
     # pl.Float32 (type) should be converted to pl.Float32() (instance)
