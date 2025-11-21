@@ -13,8 +13,8 @@ from typing import Any, Callable, Dict, Iterable, Iterator, List, Optional, Sequ
 import attr
 import cv2
 import numpy as np
-import shapely.geometry as sg
 from attr import asdict, attrs, field
+from shapely import Polygon as ShapelyPolygon
 from typing_extensions import Literal
 
 from datumaro.components.media import Image
@@ -899,8 +899,8 @@ class Polygon(Shape):
 
         self_points = self.get_points()
         other_points = other.get_points()
-        self_polygon = sg.Polygon(self_points)
-        other_polygon = sg.Polygon(other_points)
+        self_polygon = ShapelyPolygon(self_points)
+        other_polygon = ShapelyPolygon(other_points)
         # if polygon is not valid, compare points
         if not (self_polygon.is_valid and other_polygon.is_valid):
             return self_points == other_points

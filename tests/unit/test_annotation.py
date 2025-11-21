@@ -9,7 +9,7 @@ from unittest.mock import patch
 import cv2
 import numpy as np
 import pytest
-import shapely.geometry as sg
+from shapely import Polygon as ShapelyPolygon
 
 from datumaro.components.annotation import (
     Annotations,
@@ -40,7 +40,7 @@ class EllipseTest:
     def test_get_points(self, fxt_ellipses: List[Ellipse]):
         for ellipse in fxt_ellipses:
             analytical_area = ellipse.get_area()
-            numerical_area = sg.Polygon(ellipse.get_points(num_points=360 * 10)).area
+            numerical_area = ShapelyPolygon(ellipse.get_points(num_points=360 * 10)).area
             assert np.abs(analytical_area - numerical_area) < 1e-6
 
 

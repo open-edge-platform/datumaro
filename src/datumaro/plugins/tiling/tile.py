@@ -5,8 +5,9 @@
 from copy import deepcopy
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
-import shapely.geometry as sg
-import shapely.ops as so
+from shapely import LineString, MultiPoint, box, transform
+from shapely import Polygon as ShapelyPolygon
+from shapely.geometry.base import BaseGeometry
 
 from datumaro.components.annotation import (
     Annotation,
@@ -32,9 +33,9 @@ from datumaro.plugins.tiling.util import (
 )
 
 
-def _apply_offset(geom: sg.base.BaseGeometry, roi_box: sg.Polygon) -> sg.base.BaseGeometry:
+def _apply_offset(geom: BaseGeometry, roi_box: ShapelyPolygon) -> BaseGeometry:
     offset_x, offset_y = roi_box.bounds[:2]
-    return so.transform(lambda x, y: (x - offset_x, y - offset_y), geom)
+    return transform(geometry=geom, transformation=lambda x, y: (x - offset_x, y - offset_y))
 
 
 def _tile_mask(ann: Mask, roi_int: BboxIntCoords, *args, **kwargs) -> Mask:
@@ -46,8 +47,8 @@ def _tile_mask(ann: Mask, roi_int: BboxIntCoords, *args, **kwargs) -> Mask:
     )
 
 
-def _tile_points(ann: Points, roi_box: sg.Polygon, *args, **kwargs) -> Optional[Points]:
-    points = sg.MultiPoint(ann.get_points())
+def _tile_points(ann: Points, roi_box: ShapelyPolygon, *args, **kwargs) -> Optional[Points]:
+    points = MultiPoint(ann.get_points())
 
     if not roi_box.covers(points):
         return None
@@ -62,14 +63,14 @@ def _tile_points(ann: Points, roi_box: sg.Polygon, *args, **kwargs) -> Optional[
 
 
 def _tile_polygon(
-    ann: Polygon, roi_box: sg.Polygon, threshold_drop_ann: float = 0.8, *args, **kwargs
+    ann: Polygon, roi_box: ShapelyPolygon, threshold_drop_ann: float = 0.8, *args, **kwargs
 ) -> Optional[Polygon]:
-    polygon = sg.Polygon(ann.get_points())
+    polygon = ShapelyPolygon(ann.get_points())
 
     if not roi_box.intersects(polygon):
         return None
 
-    inter: sg.Polygon = polygon.intersection(roi_box)
+    inter: ShapelyPolygon = polygon.intersection(roi_box)
     prop_area = inter.area / polygon.area
 
     if prop_area < threshold_drop_ann:
@@ -80,8 +81,8 @@ def _tile_polygon(
     return ann.wrap(points=[p for xy in inter.exterior.coords for p in xy], attributes=deepcopy(ann.attributes))
 
 
-def _tile_polyline(ann: PolyLine, roi_box: sg.Polygon, *args, **kwargs) -> Optional[PolyLine]:
-    lines = sg.LineString(ann.get_points())
+def _tile_polyline(ann: PolyLine, roi_box: ShapelyPolygon, *args, **kwargs) -> Optional[PolyLine]:
+    lines = LineString(ann.get_points())
 
     if not roi_box.covers(lines):
         return None
@@ -94,13 +95,13 @@ def _tile_polyline(ann: PolyLine, roi_box: sg.Polygon, *args, **kwargs) -> Optio
     )
 
 
-def _tile_bbox(ann: Bbox, roi_box: sg.Polygon, threshold_drop_ann: float = 0.8, *args, **kwargs) -> Optional[Bbox]:
-    bbox: sg.Polygon = sg.box(*xywh_to_x1y1x2y2(*ann.get_bbox()))
+def _tile_bbox(ann: Bbox, roi_box: ShapelyPolygon, threshold_drop_ann: float = 0.8, *args, **kwargs) -> Optional[Bbox]:
+    bbox: ShapelyPolygon = box(*xywh_to_x1y1x2y2(*ann.get_bbox()))
 
     if not roi_box.intersects(bbox):
         return None
 
-    inter: sg.Polygon = bbox.intersection(roi_box)
+    inter: ShapelyPolygon = bbox.intersection(roi_box)
     prop_area = inter.area / bbox.area
 
     if prop_area < threshold_drop_ann:
@@ -128,7 +129,7 @@ def _tile_not_support(ann: Annotation, *args, **kwargs) -> None:
 
 class Tile(Transform, CliPlugin):
     """
-    Apply tile tranformation to items in the dataset.
+    Apply tile transformation to items in the dataset.
     This transformation is useful for detecting small objects [1]_.
     The high-resolution input images are divided into overlapping small tile images
     so that the relative area of small objects increases with respect to the images.
@@ -269,7 +270,7 @@ class Tile(Transform, CliPlugin):
         return attributes
 
     def _get_tiled_annotations(self, item: DatasetItem, roi: BboxIntCoords) -> List[Annotation]:
-        roi_box: sg.Polygon = sg.box(*xywh_to_x1y1x2y2(*roi))
+        roi_box: ShapelyPolygon = box(*xywh_to_x1y1x2y2(*roi))
 
         tiled_anns = []
         for ann in item.annotations:
