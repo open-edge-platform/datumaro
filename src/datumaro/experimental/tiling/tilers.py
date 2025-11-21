@@ -329,7 +329,7 @@ class ImageTiler(Tiler):
 
 def _apply_offset(geom: BaseGeometry, offset_x: float, offset_y: float) -> BaseGeometry:
     """Apply offset to geometry."""
-    return transform(geometry=geom, transformation=lambda x, y: (x - offset_x, y - offset_y))
+    return transform(geometry=geom, transformation=lambda x, y: (x - offset_x, y - offset_y), interleaved=False)
 
 
 @TilerRegistry.register(PolygonField)

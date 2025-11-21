@@ -35,7 +35,7 @@ from datumaro.plugins.tiling.util import (
 
 def _apply_offset(geom: BaseGeometry, roi_box: ShapelyPolygon) -> BaseGeometry:
     offset_x, offset_y = roi_box.bounds[:2]
-    return transform(geometry=geom, transformation=lambda x, y: (x - offset_x, y - offset_y))
+    return transform(geometry=geom, transformation=lambda x, y: (x - offset_x, y - offset_y), interleaved=False)
 
 
 def _tile_mask(ann: Mask, roi_int: BboxIntCoords, *args, **kwargs) -> Mask:
