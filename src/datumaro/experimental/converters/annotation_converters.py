@@ -93,10 +93,10 @@ class LabelIndexConverter(Converter):
 
         if field.multi_label or field.is_list:
             mapping_expr = pl.col(input_col).list.eval(
-                pl.element().replace(list(index_mapping.keys()), list(index_mapping.values()), default=None)
+                pl.element().replace_strict(list(index_mapping.keys()), list(index_mapping.values()), default=None)
             )
         else:
-            mapping_expr = pl.col(input_col).replace(
+            mapping_expr = pl.col(input_col).replace_strict(
                 list(index_mapping.keys()), list(index_mapping.values()), default=None
             )
 

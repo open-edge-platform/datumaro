@@ -11,8 +11,9 @@ from typing import Any
 
 import numpy as np
 import polars as pl
-import shapely.geometry as sg
-import shapely.ops as so
+from shapely import GeometryCollection, MultiPolygon, box, transform
+from shapely import Polygon as ShapelyPolygon
+from shapely.geometry.base import BaseGeometry
 
 from datumaro.experimental.fields import (
     BBoxField,
@@ -326,9 +327,9 @@ class ImageTiler(Tiler):
         return pl.DataFrame(results)
 
 
-def _apply_offset(geom: sg.base.BaseGeometry, offset_x: float, offset_y: float) -> sg.base.BaseGeometry:
+def _apply_offset(geom: BaseGeometry, offset_x: float, offset_y: float) -> BaseGeometry:
     """Apply offset to geometry."""
-    return so.transform(lambda x, y: (x - offset_x, y - offset_y), geom)
+    return transform(geometry=geom, transformation=lambda x, y: (x - offset_x, y - offset_y), interleaved=False)
 
 
 @TilerRegistry.register(PolygonField)
@@ -366,7 +367,7 @@ class PolygonTiler(Tiler):
             source_polygons = df[source_idx, column_name]
 
             # Create tile polygon
-            tile_poly = sg.box(
+            tile_poly = box(
                 tile_row["x"],
                 tile_row["y"],
                 tile_row["x"] + tile_row["width"],
@@ -378,13 +379,13 @@ class PolygonTiler(Tiler):
             polygon_keeps = []  # Track which polygons to keep
 
             for poly_coords in source_polygons:
-                polygon = sg.Polygon(poly_coords)
+                polygon = ShapelyPolygon(poly_coords)
 
                 # Get intersection and apply offset
                 intersection = polygon.intersection(tile_poly)
 
                 # NOTE: intersection may return a GeometryCollection or MultiPolygon
-                if isinstance(intersection, sg.GeometryCollection | sg.MultiPolygon):
+                if isinstance(intersection, GeometryCollection | MultiPolygon):
                     shapes = [(geom, geom.area) for geom in list(intersection.geoms) if geom.is_valid]
                     if not shapes:
                         tiled_polygons.append(None)  # Placeholder for dropped polygon
@@ -393,7 +394,7 @@ class PolygonTiler(Tiler):
 
                     intersection, _ = max(shapes, key=operator.itemgetter(1))
 
-                if not isinstance(intersection, sg.Polygon) or intersection.is_empty or not intersection.is_valid:
+                if not isinstance(intersection, ShapelyPolygon) or intersection.is_empty or not intersection.is_valid:
                     tiled_polygons.append(None)  # Placeholder for dropped polygon
                     polygon_keeps.append(False)
                     continue

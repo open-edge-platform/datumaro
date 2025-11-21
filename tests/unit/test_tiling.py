@@ -6,7 +6,8 @@ from typing import Dict, List
 from unittest import TestCase
 
 import numpy as np
-import shapely.geometry as sg
+from shapely import Polygon as ShapelyPolygon
+from shapely import box
 
 from datumaro.components.annotation import (
     AnnotationType,
@@ -398,12 +399,12 @@ class TileTest(_TestBase, TestCase):
         self._test_common(transformed, self.default_shape_attrs, AnnotationType.polygon)
 
         expected_points = Polygon(Bbox(0, 0, self.tile_width, self.tile_height).as_polygon()).get_points()
-        expected_polygon = sg.Polygon(expected_points)
+        expected_polygon = ShapelyPolygon(expected_points)
 
         # For each tiled item, we created a Polygon which has the same size as the tiled image.
         for item in transformed:
             for ann in item.annotations:
-                actual_polygon = sg.Polygon(ann.get_points())
+                actual_polygon = ShapelyPolygon(ann.get_points())
 
                 inter_area = actual_polygon.intersection(expected_polygon).area
                 union_area = actual_polygon.area + expected_polygon.area - inter_area
@@ -602,16 +603,18 @@ class TileTest(_TestBase, TestCase):
             threshold_drop_ann=0,
         )
 
-        tile_roi_polygon = sg.Polygon(Polygon(Bbox(0, 0, self.tile_width, self.tile_height).as_polygon()).get_points())
+        tile_roi_polygon = ShapelyPolygon(
+            Polygon(Bbox(0, 0, self.tile_width, self.tile_height).as_polygon()).get_points()
+        )
 
         for item in accepted:
             assert len(item.annotations) >= 2
 
             for ann in item.annotations:
                 if ann.type == AnnotationType.bbox:
-                    actual_polygon = sg.box(*xywh_to_x1y1x2y2(*ann.get_bbox()))
+                    actual_polygon = box(*xywh_to_x1y1x2y2(*ann.get_bbox()))
                 elif ann.type == AnnotationType.polygon:
-                    actual_polygon = sg.Polygon(ann.get_points())
+                    actual_polygon = ShapelyPolygon(ann.get_points())
                 else:
                     raise RuntimeError
 

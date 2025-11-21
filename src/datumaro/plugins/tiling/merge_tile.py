@@ -8,8 +8,9 @@ from copy import deepcopy
 from typing import Any, Callable, Dict, List, Tuple, Union
 
 import numpy as np
-import shapely.geometry as sg
-import shapely.ops as so
+from shapely import LineString, MultiPoint, box, transform
+from shapely import Polygon as ShapelyPolygon
+from shapely.geometry.base import BaseGeometry
 
 from datumaro.components.annotation import (
     Annotation,
@@ -30,12 +31,12 @@ from datumaro.components.media import BboxIntCoords, MosaicImage
 from datumaro.components.transformer import Transform
 from datumaro.plugins.tiling.util import x1y1x2y2_to_xywh, xywh_to_x1y1x2y2
 
-AnnotationsForMerge = List[Tuple[Annotation, BboxIntCoords, sg.Polygon]]
+AnnotationsForMerge = List[Tuple[Annotation, BboxIntCoords, ShapelyPolygon]]
 
 
-def _apply_offset(geom: sg.base.BaseGeometry, roi_box: sg.Polygon) -> sg.base.BaseGeometry:
+def _apply_offset(geom: BaseGeometry, roi_box: ShapelyPolygon) -> BaseGeometry:
     offset_x, offset_y = roi_box.bounds[:2]
-    return so.transform(lambda x, y: (x + offset_x, y + offset_y), geom)
+    return transform(geometry=geom, transformation=lambda x, y: (x + offset_x, y + offset_y), interleaved=False)
 
 
 def _merge_mask(anns: AnnotationsForMerge, img_size: Tuple[int, int], *args, **kwargs) -> List[Mask]:
@@ -66,7 +67,7 @@ def _merge_points(anns: AnnotationsForMerge, *args, **kwargs) -> List[Points]:
     merged_points = []
 
     for ann, _, roi_box in anns:
-        points = sg.MultiPoint(ann.get_points())
+        points = MultiPoint(ann.get_points())
 
         points = _apply_offset(points, roi_box)
 
@@ -90,9 +91,9 @@ def _merge_polygon(anns: AnnotationsForMerge, *args, **kwargs) -> List[Polygon]:
         group_by_id[ann.id] += [(ann, roi_box)]
 
     for grouped_anns in group_by_id.values():
-        polygon = sg.Polygon()
+        polygon = ShapelyPolygon()
         for ann, roi_box in grouped_anns:
-            polygon = polygon.union(_apply_offset(sg.Polygon(ann.get_points()), roi_box))
+            polygon = polygon.union(_apply_offset(ShapelyPolygon(ann.get_points()), roi_box))
 
         merged_polygons += [
             ann.wrap(
@@ -108,7 +109,7 @@ def _merge_polyline(anns: AnnotationsForMerge, *args, **kwargs) -> List[PolyLine
     merged_polylines = []
 
     for ann, _, roi_box in anns:
-        lines = sg.LineString(ann.get_points())
+        lines = LineString(ann.get_points())
 
         lines = _apply_offset(lines, roi_box)
 
@@ -134,7 +135,7 @@ def _merge_bbox(anns: AnnotationsForMerge, *args, **kwargs) -> List[Bbox]:
         minx, miny, maxx, maxy = math.inf, math.inf, -math.inf, -math.inf
 
         for ann, roi_box in grouped_anns:
-            bbox: sg.Polygon = sg.box(*xywh_to_x1y1x2y2(*ann.get_bbox()))
+            bbox: ShapelyPolygon = box(*xywh_to_x1y1x2y2(*ann.get_bbox()))
             bbox = _apply_offset(bbox, roi_box)
             c_minx, c_miny, c_maxx, c_maxy = bbox.bounds
             minx = min(minx, c_minx)
@@ -279,7 +280,7 @@ class MergeTile(Transform, CliPlugin):
 
         for item in items:
             roi = item.attributes.get("roi")
-            roi_box: sg.Polygon = sg.box(*xywh_to_x1y1x2y2(*roi))
+            roi_box: ShapelyPolygon = box(*xywh_to_x1y1x2y2(*roi))
 
             for ann in item.annotations:
                 anns_to_merge[ann.type] += [(ann, roi, roi_box)]
