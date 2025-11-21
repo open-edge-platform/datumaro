@@ -5,12 +5,15 @@
 import pickle  # nosec B403
 
 import numpy.core.multiarray
+import numpy.core.numeric
 
 
 class RestrictedUnpickler(pickle.Unpickler):
     def find_class(self, module, name):
         if module in ["numpy.core.multiarray", "numpy._core.multiarray"] and name in PickleLoader.safe_numpy:
             return getattr(numpy.core.multiarray, name)
+        if module in ["numpy.core.numeric", "numpy._core.numeric"] and name in PickleLoader.safe_numpy:
+            return getattr(numpy.core.numeric, name)
         if module == "numpy" and name in PickleLoader.safe_numpy:
             return getattr(numpy, name)
         # No in unpickling in this particular line
@@ -23,6 +26,7 @@ class PickleLoader:
         "dtype",
         "ndarray",
         "_reconstruct",
+        "_frombuffer",
     }
 
     def restricted_load(s):
