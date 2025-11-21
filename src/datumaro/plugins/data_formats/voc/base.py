@@ -250,7 +250,7 @@ class VocBase(SubsetBase):
     @classmethod
     def _parse_bbox(cls, object_elem):
         bbox_elem = object_elem.find("bndbox")
-        if not bbox_elem:
+        if bbox_elem is None:
             raise MissingFieldError("bndbox")
 
         xmin = cls._parse_field(bbox_elem, "xmin", float)

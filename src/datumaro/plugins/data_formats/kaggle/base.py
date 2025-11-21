@@ -425,7 +425,7 @@ class KaggleVocBase(SubsetBase):
             label_name = self._parse_field(object_elem, "name", str, required=True)
 
             bbox_elem = object_elem.find("bndbox")
-            if not bbox_elem:
+            if bbox_elem is None:
                 raise MissingFieldError("bndbox")
 
             xmin = self._parse_field(bbox_elem, "xmin", float)
