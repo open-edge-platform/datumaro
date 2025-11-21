@@ -6,8 +6,7 @@ from __future__ import annotations
 
 import types
 from functools import cache
-from typing import TYPE_CHECKING, Annotated, Any, Generic, TypeGuard, Union, cast, get_args, get_origin, get_type_hints, \
-    ClassVar
+from typing import TYPE_CHECKING, Annotated, Any, Generic, TypeGuard, Union, cast, get_args, get_origin, get_type_hints
 
 import polars as pl
 from typing_extensions import TypeVar, dataclass_transform
@@ -57,8 +56,8 @@ class Sample:
         """
         schema = self.__class__.infer_schema()  # Cached per class
         for name, attr_info in schema.attributes.items():
-            if not hasattr(self, name):
-                raise ValueError(f"Attribute `{name}` is required and missing.")
+            if name not in self.__dict__:
+                continue
             value = getattr(self, name)
             expected_type = attr_info.type
             field = attr_info.field

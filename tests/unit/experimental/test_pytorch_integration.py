@@ -176,8 +176,8 @@ def test_pytorch_mixed_with_numpy():
     """Test that PyTorch tensors can coexist with other data types."""
 
     class MixedSample(Sample):
-        pytorch_tensor: torch.Tensor = tensor_field(dtype=pl.Float32)
-        numpy_array: np.ndarray = tensor_field(dtype=pl.Int32)
+        pytorch_tensor: torch.Tensor = tensor_field(dtype=pl.Float32, semantic=Semantic.Left)
+        numpy_array: np.ndarray = tensor_field(dtype=pl.Int32, semantic=Semantic.Right)
         image_info: ImageInfo = image_info_field()
 
     sample = MixedSample(

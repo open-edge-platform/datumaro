@@ -132,8 +132,10 @@ def test_sample_with_complex_fields():
     """Test Sample with various complex field types."""
 
     class ComplexSample(Sample):
-        image_path: str = image_field(dtype=pl.UInt8, format="RGB")  # This should be image_path_field
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
+        image_path: str = image_field(
+            dtype=pl.UInt8, format="RGB", semantic=Semantic.Left
+        )  # This should be image_path_field
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Right)
         multiple_bboxes: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
         image_info: ImageInfo = image_info_field()
 
