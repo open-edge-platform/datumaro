@@ -168,7 +168,7 @@ class InstanceMaskCallableField(Field):
     """
 
     semantic: Semantic
-    dtype: pl.DataType = pl.Boolean
+    dtype: PolarsDataType = field(default_factory=pl.Boolean)
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Return schema with Object type to store callable."""
@@ -240,7 +240,7 @@ class MaskCallableField(Field):
     """
 
     semantic: Semantic
-    dtype: pl.DataType = field(default_factory=pl.UInt8)
+    dtype: PolarsDataType = field(default_factory=pl.UInt8)
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Return schema with Object type to store callable."""

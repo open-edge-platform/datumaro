@@ -48,17 +48,17 @@ class Field:
     """
 
     semantic: Semantic
+    dtype: PolarsDataType
 
     def __post_init__(self):
-        if hasattr(self, "dtype"):
-            dtype = getattr(self, "dtype")
-            # Accept both pl.DataTypeClass (type) and pl.DataType (instance)
-            if isinstance(dtype, type) and issubclass(dtype, pl.DataType):
-                object.__setattr__(self, "dtype", dtype())
-            elif isinstance(dtype, pl.DataType):
-                pass  # Already an instance
-            else:
-                raise TypeError(f"dtype must be a Polars DataType or DataTypeClass, got {type(dtype)}")
+        dtype = getattr(self, "dtype")
+        # Accept both pl.DataTypeClass (type) and pl.DataType (instance)
+        if isinstance(dtype, type) and issubclass(dtype, pl.DataType):
+            object.__setattr__(self, "dtype", dtype())
+        elif isinstance(dtype, pl.DataType):
+            pass  # Already an instance
+        else:
+            raise TypeError(f"dtype must be a Polars DataType or DataTypeClass, got {type(dtype)}")
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """
@@ -176,6 +176,9 @@ class Field:
         # Use dataclass introspection to get all expected fields
         if is_dataclass(field_class):
             for dc_field in dataclass_fields(field_class):
+                if not dc_field.init:
+                    continue  # Skip fields that are not in __init__
+
                 field_name = dc_field.name
 
                 # Skip if not in the serialized data

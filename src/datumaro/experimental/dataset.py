@@ -4,7 +4,9 @@
 
 from __future__ import annotations
 
+import collections.abc
 import types
+import typing
 from functools import cache
 from typing import TYPE_CHECKING, Annotated, Any, Generic, TypeGuard, Union, cast, get_args, get_origin, get_type_hints
 
@@ -62,8 +64,10 @@ class Sample:
             expected_type = attr_info.type
             field = attr_info.field
 
-            # Type check
-            if not isinstance(value, expected_type):
+            if get_origin(expected_type) in {typing.Callable, collections.abc.Callable}:
+                if not callable(value):
+                    raise TypeError(f"Attribute `{name}` must be callable.")
+            elif not isinstance(value, expected_type):
                 raise TypeError(f"Attribute `{name}` must be of type `{expected_type}`.")
 
             # Custom field validation (if any)

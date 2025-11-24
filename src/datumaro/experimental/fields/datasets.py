@@ -2,13 +2,13 @@
 #
 # SPDX-License-Identifier: MIT
 import types
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum, auto
 from typing import Any, Union, get_args, get_origin
 
 import polars as pl
 
-from datumaro.experimental.fields.base import Field, Semantic, T
+from datumaro.experimental.fields.base import Field, PolarsDataType, Semantic, T
 
 
 class Subset(Enum):
@@ -44,6 +44,18 @@ class TileField(Field):
     """
 
     semantic: Semantic
+    dtype: PolarsDataType = field(
+        default_factory=lambda: pl.Struct(
+            [
+                pl.Field("source_sample_idx", pl.Int32()),
+                pl.Field("x", pl.Int32()),
+                pl.Field("y", pl.Int32()),
+                pl.Field("width", pl.Int32()),
+                pl.Field("height", pl.Int32()),
+            ]
+        ),
+        init=False,
+    )
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Generate Polars schema for tile information."""
@@ -123,6 +135,7 @@ class SubsetField(Field):
 
     semantic: Semantic
     categories: list[str] | None = None
+    dtype: PolarsDataType = field(default=pl.Categorical, init=False)
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Generate schema with categorical type for subset values."""
