@@ -51,10 +51,10 @@ class BBoxField(Field):
             )
         }
 
-    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T | None:
         """Reconstruct bounding box tensor from Polars data."""
         polars_data = df[name][row_index]
-        return from_polars_data(polars_data, target_type)  # type: ignore
+        return from_polars_data(polars_data, target_type)
 
 
 def bbox_field(
@@ -120,10 +120,10 @@ class RotatedBBoxField(Field):
             )
         }
 
-    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T | None:
         """Reconstruct rotated bounding box tensor from Polars data."""
         polars_data = df[name][row_index]
-        return from_polars_data(polars_data, target_type)  # type: ignore
+        return from_polars_data(polars_data, target_type)
 
 
 def rotated_bbox_field(
@@ -180,7 +180,7 @@ class LabelField(Field):
         """Convert label(s) to Polars format for single or multi-label cases."""
         return {name: pl.Series(name, [value], dtype=self._pl_type)}
 
-    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T | None:
         """Reconstruct label(s) from Polars data."""
         data = df[name][row_index]
         return from_polars_data(data, target_type)
@@ -233,10 +233,10 @@ class ScoreField(Field):
     def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
         return {name: pl.Series(name, [value], dtype=self._pl_type)}
 
-    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T | None:
         data = df[name][row_index]
         if target_type is list:
-            return list(data) if data is not None else None  # type: ignore[return-value]
+            return list(data) if data is not None else None
         return from_polars_data(data, target_type)
 
 
@@ -292,10 +292,10 @@ class PolygonField(Field):
 
         return {name: pl.Series(name, [series], dtype=pl.List(pl.List(pl.Array(self.dtype, 2))))}
 
-    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T | None:
         """Reconstruct polygon tensor from Polars data."""
         polars_data = df[name][row_index]
-        return from_polars_data(polars_data, target_type)  # type: ignore
+        return from_polars_data(polars_data, target_type)
 
 
 def polygon_field(
@@ -359,10 +359,10 @@ class KeypointsField(Field):
             )
         }
 
-    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T | None:
         """Reconstruct keypoints tensor from Polars data."""
         polars_data = df[name][row_index]
-        return from_polars_data(polars_data, target_type)  # type: ignore
+        return from_polars_data(polars_data, target_type)
 
 
 def keypoints_field(
@@ -425,10 +425,10 @@ class EllipseField(Field):
             )
         }
 
-    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T | None:
         """Reconstruct an ellipse tensor from Polars data."""
         polars_data = df[name][row_index]
-        return from_polars_data(polars_data, target_type)  # type: ignore
+        return from_polars_data(polars_data, target_type)
 
 
 @dataclass(frozen=True)
@@ -458,11 +458,11 @@ class CaptionField(Field):
         dtype = pl.List(pl.Utf8()) if self.is_list else pl.Utf8()
         return {name: pl.Series(name, [value], dtype=dtype)}
 
-    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T | None:
         """Reconstruct caption value(s) from Polars data."""
         data = df[name][row_index]
         if self.is_list and target_type is list:
-            return list(data) if data is not None else None  # type: ignore[return-value]
+            return list(data) if data is not None else None
         # Single caption
         return from_polars_data(data, target_type)
 

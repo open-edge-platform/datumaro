@@ -1,6 +1,7 @@
 # Copyright (C) 2022-2025 Intel Corporation
 # LIMITED EDGE SOFTWARE DISTRIBUTION LICENSE
 import json
+import logging
 import shutil
 from collections import defaultdict
 from dataclasses import dataclass
@@ -13,6 +14,8 @@ from datumaro.experimental import Dataset
 from datumaro.experimental.categories import LabelCategories
 from datumaro.experimental.data_formats.coco.sample import CocoCategories, CocoSample
 from datumaro.experimental.fields import ImageInfo, Subset
+
+logger = logging.getLogger(__name__)
 
 
 def _round_floats(x: Any, ndigits: int = 2):
@@ -210,7 +213,7 @@ def _build_and_copy_images_section(
                 try:
                     shutil.copy2(image_path, dst_path)
                 except Exception as e:
-                    print(f"Failed to copy image '{image_path}' -> '{dst_path}': {e}")
+                    logger.warning("Failed to copy image '%s' -> '%s': %s", image_path, dst_path, e)
     return images_section
 
 

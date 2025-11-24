@@ -34,6 +34,8 @@ class Semantic(Flag):
     Polygon = auto()
     Keypoint = auto()
     Caption = auto()
+    Left = auto()
+    Right = auto()
 
 
 class Field:
