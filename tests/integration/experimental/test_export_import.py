@@ -244,7 +244,7 @@ def test_export_with_none_values(tmp_path):
     """Test exporting datasets with None values in image fields."""
 
     class OptionalImageSample(Sample):
-        image: np.ndarray | Callable[[], np.ndarray] = image_callable_field()
+        image: np.ndarray | Callable[[], np.ndarray] | None = image_callable_field()
 
     def make_image():
         return np.zeros((10, 10, 3), dtype=np.uint8)
@@ -661,7 +661,7 @@ def test_import_with_none_image_values(tmp_path):
     """Test importing dataset with None values in image fields."""
 
     class OptionalImageSample(Sample):
-        image: np.ndarray | Callable[[], np.ndarray] = image_callable_field()
+        image: np.ndarray | Callable[[], np.ndarray] | None = image_callable_field()
         label: int = label_field()
 
     def make_image():

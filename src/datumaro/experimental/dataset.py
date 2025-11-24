@@ -64,15 +64,29 @@ class Sample:
             expected_type = attr_info.type
             field = attr_info.field
 
-            if get_origin(expected_type) in {typing.Callable, collections.abc.Callable}:
-                if not callable(value):
-                    raise TypeError(f"Attribute `{name}` must be callable.")
-            elif not isinstance(value, expected_type):
+            if not self._validate_attribute_type(expected_type, value):
                 raise TypeError(f"Attribute `{name}` must be of type `{expected_type}`.")
 
             # Custom field validation (if any)
             if hasattr(field, "validate"):
                 field.validate(value)
+
+    def _validate_attribute_type(self, expected_type: Any, value: Any) -> bool:
+        """
+        Recursively validate attribute type, handling Union and Callable types.
+        """
+        # Union and Callable types have to be handled separately,
+        # because isinstance() does not work with Callable types.
+        origin = get_origin(expected_type)
+        if origin is Union:
+            # Check each type in the Union
+            return any(self._validate_attribute_type(typ, value) for typ in get_args(expected_type))
+        if origin in {typing.Callable, collections.abc.Callable} or expected_type in {
+            typing.Callable,
+            collections.abc.Callable,
+        }:
+            return callable(value)
+        return isinstance(value, expected_type)
 
     @classmethod
     @cache
