@@ -51,7 +51,6 @@ from datumaro.experimental.fields import (
     image_field,
     image_info_field,
 )
-from datumaro.experimental.fields.base import PolarsDataType
 from datumaro.experimental.schema import AttributeInfo, AttributeSpec, Schema, Semantic
 
 
@@ -466,7 +465,7 @@ def test_astar_direct_conversion():
     @dataclass(frozen=True)
     class TestImageField(Field):
         semantic: Semantic = Semantic.Default
-        dtype: PolarsDataType = field(default_factory=pl.Binary, init=False)
+        dtype: pl.DataType = field(default_factory=pl.Binary, init=False)
 
         def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
             return {name: pl.Binary()}
@@ -474,7 +473,7 @@ def test_astar_direct_conversion():
     @dataclass(frozen=True)
     class TestImageSizeField(Field):
         semantic: Semantic = Semantic.Default
-        dtype: PolarsDataType = field(default_factory=pl.Int32, init=False)
+        dtype: pl.DataType = field(default_factory=pl.Int32, init=False)
 
         def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
             return {f"{name}_width": pl.Int32(), f"{name}_height": pl.Int32()}
@@ -524,7 +523,7 @@ def test_astar_chained_conversion():
     @dataclass(frozen=True)
     class TestImageField(Field):
         semantic: Semantic = Semantic.Default
-        dtype: PolarsDataType = field(default_factory=pl.Binary, init=False)
+        dtype: pl.DataType = field(default_factory=pl.Binary, init=False)
 
         def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
             return {name: pl.Binary()}
@@ -532,7 +531,7 @@ def test_astar_chained_conversion():
     @dataclass(frozen=True)
     class TestImageSizeField(Field):
         semantic: Semantic = Semantic.Default
-        dtype: PolarsDataType = field(default_factory=pl.Int32, init=False)
+        dtype: pl.DataType = field(default_factory=pl.Int32, init=False)
 
         def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
             return {f"{name}_width": pl.Int32(), f"{name}_height": pl.Int32()}
@@ -540,7 +539,7 @@ def test_astar_chained_conversion():
     @dataclass(frozen=True)
     class TestNormalizedBboxField(Field):
         semantic: Semantic = Semantic.Default
-        dtype: PolarsDataType = field(default_factory=pl.Float32, init=False)
+        dtype: pl.DataType = field(default_factory=pl.Float32, init=False)
 
         def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
             return {name: pl.List(pl.Float32())}
@@ -548,7 +547,7 @@ def test_astar_chained_conversion():
     @dataclass(frozen=True)
     class TestAbsoluteBboxField(Field):
         semantic: Semantic = Semantic.Default
-        dtype: PolarsDataType = field(default_factory=pl.Int32, init=False)
+        dtype: pl.DataType = field(default_factory=pl.Int32, init=False)
 
         def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
             return {name: pl.List(pl.Int32())}
@@ -625,7 +624,7 @@ def test_astar_no_conversion_needed():
     @dataclass(frozen=True)
     class TestField(Field):
         semantic: Semantic = Semantic.Default
-        dtype: PolarsDataType = field(default_factory=pl.Utf8, init=False)
+        dtype: pl.DataType = field(default_factory=pl.Utf8, init=False)
 
         def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
             return {name: pl.Utf8()}
@@ -648,7 +647,7 @@ def test_astar_impossible_conversion():
     @dataclass(frozen=True)
     class FieldA(Field):
         semantic: Semantic = Semantic.Default
-        dtype: PolarsDataType = field(default_factory=pl.Utf8)
+        dtype: pl.DataType = field(default_factory=pl.Utf8)
 
         def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
             return {name: pl.Utf8()}
@@ -656,7 +655,7 @@ def test_astar_impossible_conversion():
     @dataclass(frozen=True)
     class FieldB(Field):
         semantic: Semantic = Semantic.Default
-        dtype: PolarsDataType = field(default_factory=pl.Utf8)
+        dtype: pl.DataType = field(default_factory=pl.Utf8)
 
         def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
             return {name: pl.Utf8()}
@@ -686,7 +685,7 @@ def test_optimal_path_selection():
     @dataclass(frozen=True)
     class FieldA(Field):
         semantic: Semantic = Semantic.Default
-        dtype: PolarsDataType = field(default_factory=pl.Utf8)
+        dtype: pl.DataType = field(default_factory=pl.Utf8)
 
         def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
             return {name: pl.Utf8()}
@@ -694,7 +693,7 @@ def test_optimal_path_selection():
     @dataclass(frozen=True)
     class FieldB(Field):
         semantic: Semantic = Semantic.Default
-        dtype: PolarsDataType = field(default_factory=pl.Utf8)
+        dtype: pl.DataType = field(default_factory=pl.Utf8)
 
         def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
             return {name: pl.Utf8()}
@@ -702,7 +701,7 @@ def test_optimal_path_selection():
     @dataclass(frozen=True)
     class FieldC(Field):
         semantic: Semantic = Semantic.Default
-        dtype: PolarsDataType = field(default_factory=pl.Utf8, init=False)
+        dtype: pl.DataType = field(default_factory=pl.Utf8, init=False)
 
         def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
             return {name: pl.Utf8()}
@@ -765,7 +764,7 @@ def test_generator_converter():
     @dataclass(frozen=True)
     class FieldB(Field):
         semantic: Semantic = Semantic.Default
-        dtype: PolarsDataType = field(default_factory=pl.Utf8)
+        dtype: pl.DataType = field(default_factory=pl.Utf8)
 
         def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
             return {name: pl.Utf8()}
@@ -800,7 +799,7 @@ def test_multiple_output_converter():
     @dataclass(frozen=True)
     class FieldA(Field):
         semantic: Semantic = Semantic.Default
-        dtype: PolarsDataType = field(default_factory=pl.Utf8)
+        dtype: pl.DataType = field(default_factory=pl.Utf8)
 
         def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
             return {name: pl.Utf8()}
@@ -808,7 +807,7 @@ def test_multiple_output_converter():
     @dataclass(frozen=True)
     class MultiField1(Field):
         semantic: Semantic = Semantic.Default
-        dtype: PolarsDataType = field(default_factory=pl.Utf8, init=False)
+        dtype: pl.DataType = field(default_factory=pl.Utf8, init=False)
 
         def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
             return {name: pl.Utf8()}
@@ -816,7 +815,7 @@ def test_multiple_output_converter():
     @dataclass(frozen=True)
     class MultiField2(Field):
         semantic: Semantic = Semantic.Default
-        dtype: PolarsDataType = field(default_factory=pl.Utf8, init=False)
+        dtype: pl.DataType = field(default_factory=pl.Utf8, init=False)
 
         def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
             return {name: pl.Utf8()}
@@ -862,7 +861,7 @@ def test_partial_schema_matching():
     @dataclass(frozen=True)
     class FieldA(Field):
         semantic: Semantic = Semantic.Default
-        dtype: PolarsDataType = field(default_factory=pl.Utf8)
+        dtype: pl.DataType = field(default_factory=pl.Utf8)
 
         def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
             return {name: pl.Utf8()}
@@ -870,7 +869,7 @@ def test_partial_schema_matching():
     @dataclass(frozen=True)
     class FieldC(Field):
         semantic: Semantic = Semantic.Default
-        dtype: PolarsDataType = field(default_factory=pl.Utf8, init=False)
+        dtype: pl.DataType = field(default_factory=pl.Utf8, init=False)
 
         def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
             return {name: pl.Utf8()}

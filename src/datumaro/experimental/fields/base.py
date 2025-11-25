@@ -12,14 +12,12 @@ learning and computer vision applications.
 from dataclasses import fields as dataclass_fields
 from dataclasses import is_dataclass
 from enum import Flag, auto
-from typing import Any, TypeAlias, TypeVar
+from typing import Any, TypeVar
 
 import numpy as np
 import polars as pl
 
 T = TypeVar("T")
-
-PolarsDataType: TypeAlias = type[pl.DataType] | pl.DataType
 
 
 class Semantic(Flag):
@@ -48,7 +46,7 @@ class Field:
     """
 
     semantic: Semantic
-    dtype: PolarsDataType
+    dtype: pl.DataType
 
     def __post_init__(self):
         dtype = getattr(self, "dtype")

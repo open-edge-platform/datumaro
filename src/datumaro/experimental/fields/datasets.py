@@ -8,7 +8,7 @@ from typing import Any, Union, get_args, get_origin
 
 import polars as pl
 
-from datumaro.experimental.fields.base import Field, PolarsDataType, Semantic, T
+from datumaro.experimental.fields.base import Field, Semantic, T
 
 
 class Subset(Enum):
@@ -44,7 +44,7 @@ class TileField(Field):
     """
 
     semantic: Semantic
-    dtype: PolarsDataType = field(
+    dtype: pl.DataType = field(
         default_factory=lambda: pl.Struct(
             [
                 pl.Field("source_sample_idx", pl.Int32()),
@@ -135,7 +135,7 @@ class SubsetField(Field):
 
     semantic: Semantic
     categories: list[str] | None = None
-    dtype: PolarsDataType = field(default=pl.Categorical, init=False)
+    dtype: pl.DataType = field(default=pl.Categorical, init=False)
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Generate schema with categorical type for subset values."""
