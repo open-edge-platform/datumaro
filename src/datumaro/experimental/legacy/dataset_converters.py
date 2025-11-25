@@ -16,7 +16,7 @@ from datumaro.experimental.categories import (
     LabelSemantic,
 )
 from datumaro.experimental.dataset import Dataset, Sample
-from datumaro.experimental.fields.annotations import Semantic, label_field
+from datumaro.experimental.fields.annotations import label_field
 from datumaro.experimental.fields.datasets import Subset, subset_field
 from datumaro.experimental.legacy.annotation_converters import (
     BackwardAnnotationConverter,
@@ -44,7 +44,7 @@ class AnalysisResult:
     is_hierarchical: bool
 
 
-def analyze_legacy_dataset(legacy_dataset: LegacyDataset, semantic: Semantic = Semantic.Default) -> AnalysisResult:
+def analyze_legacy_dataset(legacy_dataset: LegacyDataset, semantic: str = "default") -> AnalysisResult:
     """Analyze legacy dataset and generate schema using registered converters.
 
     Args:
@@ -92,7 +92,7 @@ def analyze_legacy_dataset(legacy_dataset: LegacyDataset, semantic: Semantic = S
     is_anomaly = AnnotationType.label in ann_types and len(ann_types) > 1
 
     for ann_type in ann_types:
-        ann_semantic = Semantic.Anomaly if is_anomaly and ann_type != AnnotationType.label else semantic
+        ann_semantic = "anomaly" if is_anomaly and ann_type != AnnotationType.label else semantic
         name_prefix = "anomaly_" if is_anomaly and ann_type != AnnotationType.label else ""
         converter = get_forward_annotation_converter(ann_type, legacy_dataset, ann_semantic, name_prefix)
         if converter is not None:
@@ -376,7 +376,7 @@ class SubsetConverter(ForwardAnnotationConverter):
         for variant in {key, key.upper(), key.capitalize()}:
             _SUBSET_MAP[variant] = value
 
-    def __init__(self, semantic: Semantic = Semantic.Default, name_prefix: str = ""):
+    def __init__(self, semantic: str = "default", name_prefix: str = ""):
         """Initialize the converter.
 
         Args:
@@ -395,7 +395,7 @@ class SubsetConverter(ForwardAnnotationConverter):
     def create(
         cls,
         dataset: LegacyDataset,  # noqa: ARG003
-        semantic: Semantic = Semantic.Default,
+        semantic: str = "default",
         name_prefix: str = "",
     ) -> ForwardAnnotationConverter | None:
         """Create converter instance if dataset supports this annotation type.

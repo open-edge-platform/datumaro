@@ -8,7 +8,7 @@ from typing import Any, Union, get_args, get_origin
 
 import polars as pl
 
-from datumaro.experimental.fields.base import Field, Semantic, T
+from datumaro.experimental.fields.base import Field, T
 
 
 class Subset(Enum):
@@ -40,10 +40,10 @@ class TileField(Field):
     the tile's position and dimensions within the source data.
 
     Attributes:
-        semantic: Semantic tags describing the tile's purpose
+        semantic: String tag describing the tile's purpose
     """
 
-    semantic: Semantic
+    semantic: str = "default"
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Generate Polars schema for tile information."""
@@ -92,12 +92,12 @@ class TileField(Field):
         )
 
 
-def tile_field(semantic: Semantic = Semantic.Default) -> Any:
+def tile_field(semantic: str = "default") -> Any:
     """
     Create a TileField instance for storing tile information.
 
     Args:
-        semantic: Optional semantic tags for disambiguation (defaults to Semantic.Default)
+        semantic: Optional string tag for disambiguation (defaults to "default")
 
     Returns:
         TileField instance configured with the given semantic tags
@@ -116,12 +116,12 @@ class SubsetField(Field):
     match the Enum. When using strings, any string value is accepted.
 
     Attributes:
-        semantic: Semantic tags for the field
+        semantic: String tag for the field
         subset_type: Optional type hint for the subset values (Enum or str)
         categories: Optional list of valid category values, required for categorical type
     """
 
-    semantic: Semantic
+    semantic: str = "default"
     categories: list[str] | None = None
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
@@ -170,12 +170,12 @@ class SubsetField(Field):
         return value  # type: ignore
 
 
-def subset_field(semantic: Semantic = Semantic.Default) -> Any:
+def subset_field(semantic: str = "default") -> Any:
     """
     Create a SubsetField instance for storing dataset subset information.
 
     Args:
-        semantic: Semantic tags for the field (defaults to Semantic.Default)
+        semantic: String tag for the field (defaults to "default")
 
     Returns:
         SubsetField instance configured with the given parameters

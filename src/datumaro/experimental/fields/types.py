@@ -5,7 +5,6 @@ from typing import Any
 
 import polars as pl
 
-from datumaro.experimental import Semantic
 from datumaro.experimental.fields.base import Field, PolarsDataType, T
 from datumaro.experimental.type_registry import from_polars_data
 
@@ -20,7 +19,7 @@ class NumericField(Field):
     ``is_list=True``.
     """
 
-    semantic: Semantic
+    semantic: str = "default"
     dtype: PolarsDataType = field(default_factory=pl.Float32)
     is_list: bool = False
 
@@ -47,21 +46,22 @@ class NumericField(Field):
 
 def numeric_field(
     dtype: Any = pl.Float32(),
-    semantic: Semantic = Semantic.Default,
     is_list: bool = False,
+    *,
+    semantic: str = "default",
 ) -> Any:
     """
     Create a NumericField instance.
 
     Args:
         dtype: Polars data type for numeric values (defaults to pl.Float32())
-        semantic: Semantic tags describing the value purpose (optional)
+        semantic: String tag describing the value purpose (optional)
         is_list: Whether this field should be treated as a list type
 
     Returns:
         NumericField configured with the given parameters
     """
-    return NumericField(semantic=semantic, dtype=dtype, is_list=is_list)
+    return NumericField(dtype=dtype, is_list=is_list, semantic=semantic)
 
 
 @dataclass(frozen=True)
@@ -74,7 +74,7 @@ class BoolField(Field):
     by the higher-level Dataset APIs.
     """
 
-    semantic: Semantic
+    semantic: str = "default"
     is_list: bool = False
 
     @property
@@ -96,14 +96,14 @@ class BoolField(Field):
 
 def bool_field(
     *,
-    semantic: Semantic = Semantic.Default,
+    semantic: str = "default",
     is_list: bool = False,
 ) -> Any:
     """
     Create a BoolField instance.
 
     Args:
-        semantic: Semantic tags describing the field purpose (optional)
+        semantic: String tag describing the field purpose (optional)
         is_list: Whether this field should be treated as a list type
 
     Returns:

@@ -14,7 +14,6 @@ from typing import Any, cast
 
 from datumaro import Dataset as LegacyDataset
 from datumaro.components.media import MediaElement
-from datumaro.experimental import Semantic
 from datumaro.experimental.legacy.annotation_converters import (
     BackwardAnnotationConverter,
     BackwardBboxAnnotationConverter,
@@ -106,7 +105,7 @@ register_builtin_backward_converters()
 
 
 def get_forward_media_converter(
-    dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+    dataset: LegacyDataset, semantic: str = "default", name_prefix: str = ""
 ) -> ForwardMediaConverter | None:
     """Get forward converter for a dataset by trying registered converters.
 

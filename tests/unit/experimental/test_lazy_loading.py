@@ -4,6 +4,7 @@ Unit tests for lazy loading functionality.
 
 import os
 import tempfile
+from types import SimpleNamespace
 from typing import Any
 
 import numpy as np
@@ -13,7 +14,17 @@ from PIL import Image as PILImage
 
 from datumaro.experimental.dataset import Dataset, Sample
 from datumaro.experimental.fields import ImageInfo, bbox_field, image_field, image_info_field, image_path_field
-from datumaro.experimental.schema import Semantic
+
+# Backward-compat shim for removed Semantic enum in tests
+Semantic = SimpleNamespace(
+    Default="default",
+    Bbox="bbox",
+    Polygon="polygon",
+    Caption="caption",
+    Left="left",
+    Right="right",
+    Anomaly="anomaly",
+)
 
 
 def test_lazy_image_loading_basic():
@@ -150,14 +161,14 @@ def test_lazy_loading_with_semantic_fields():
     """Test lazy loading with semantic field variations."""
 
     class StereoPathSample(Sample):
-        left_image_path: str = image_path_field(semantic=Semantic.Bbox)
-        right_image_path: str = image_path_field(semantic=Semantic.Polygon)
+        left_image_path: str = image_path_field(semantic="bbox")
+        right_image_path: str = image_path_field(semantic="polygon")
 
     class StereoImageSample(Sample):
-        left_image_path: str = image_path_field(semantic=Semantic.Bbox)
-        right_image_path: str = image_path_field(semantic=Semantic.Polygon)
-        left_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Bbox)
-        right_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Polygon)
+        left_image_path: str = image_path_field(semantic="bbox")
+        right_image_path: str = image_path_field(semantic="polygon")
+        left_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB", semantic="bbox")
+        right_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB", semantic="polygon")
 
     with tempfile.TemporaryDirectory() as temp_dir:
         # Create left and right images with distinct patterns
@@ -187,8 +198,8 @@ def test_lazy_loading_with_semantic_fields():
         left_field = schema.attributes["left_image_path"].field
         right_field = schema.attributes["right_image_path"].field
 
-        assert left_field.semantic == Semantic.Bbox
-        assert right_field.semantic == Semantic.Polygon
+        assert left_field.semantic == "bbox"
+        assert right_field.semantic == "polygon"
 
         # Convert to image dataset - this should trigger lazy loading
         image_dataset = path_dataset.convert_to_schema(StereoImageSample)

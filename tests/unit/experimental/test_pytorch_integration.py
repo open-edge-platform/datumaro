@@ -2,13 +2,26 @@
 Unit tests for PyTorch integration with schema, field system, and Sample class.
 """
 
+from types import SimpleNamespace
+
 import numpy as np
 import polars as pl
 import pytest
 
 from datumaro.experimental.dataset import Dataset, Sample
 from datumaro.experimental.fields import ImageInfo, bbox_field, image_field, image_info_field, tensor_field
-from datumaro.experimental.schema import AttributeInfo, Schema, Semantic
+from datumaro.experimental.schema import AttributeInfo, Schema
+
+# Backward-compat shim for removed Semantic enum in tests
+Semantic = SimpleNamespace(
+    Default="default",
+    Bbox="bbox",
+    Polygon="polygon",
+    Caption="caption",
+    Left="left",
+    Right="right",
+    Anomaly="anomaly",
+)
 
 try:
     import torch
@@ -91,16 +104,16 @@ def test_pytorch_schema_duplicate_field_type_assertion():
     with pytest.raises(ValueError):
 
         class InvalidSample(Sample):
-            image1: torch.Tensor = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Default)
-            image2: torch.Tensor = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Default)
+            image1: torch.Tensor = image_field(dtype=pl.UInt8, format="RGB", semantic="default")
+            image2: torch.Tensor = image_field(dtype=pl.UInt8, format="RGB", semantic="default")
 
         # This should trigger the assertion error when schema is inferred
         InvalidSample.infer_schema()
 
     # This should work because the fields have different semantic contexts
     class ValidSample(Sample):
-        left_image: torch.Tensor = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Bbox)
-        right_image: torch.Tensor = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Polygon)
+        left_image: torch.Tensor = image_field(dtype=pl.UInt8, format="RGB", semantic="bbox")
+        right_image: torch.Tensor = image_field(dtype=pl.UInt8, format="RGB", semantic="polygon")
 
     # This should not raise an assertion error
     schema = ValidSample.infer_schema()

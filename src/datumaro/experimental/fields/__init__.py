@@ -16,20 +16,19 @@ from datumaro.experimental.fields.annotations import (
     LabelField,
     PolygonField,
     RotatedBBoxField,
-    ScoreField,
     bbox_field,
     keypoints_field,
     label_field,
     polygon_field,
     rotated_bbox_field,
-    score_field,
 )
-from datumaro.experimental.fields.base import Field, Semantic, convert_numpy_object_array_to_series
+from datumaro.experimental.fields.base import Field, convert_numpy_object_array_to_series
 from datumaro.experimental.fields.datasets import Subset, SubsetField, TileField, TileInfo, subset_field, tile_field
 from datumaro.experimental.fields.images import (
     ImageBytesField,
     ImageCallableField,
     ImageField,
+    ImageIdField,
     ImageInfo,
     ImageInfoField,
     ImagePathField,
@@ -37,6 +36,7 @@ from datumaro.experimental.fields.images import (
     image_bytes_field,
     image_callable_field,
     image_field,
+    image_id_field,
     image_info_field,
     image_path_field,
     tensor_field,
@@ -51,6 +51,7 @@ from datumaro.experimental.fields.masks import (
     mask_callable_field,
     mask_field,
 )
+from datumaro.experimental.fields.types import NumericField, numeric_field
 
 __all__ = [
     "BBoxField",
@@ -59,6 +60,7 @@ __all__ = [
     "ImageBytesField",
     "ImageCallableField",
     "ImageField",
+    "ImageIdField",
     "ImageInfo",
     "ImageInfoField",
     "ImagePathField",
@@ -68,10 +70,9 @@ __all__ = [
     "LabelField",
     "MaskCallableField",
     "MaskField",
+    "NumericField",
     "PolygonField",
     "RotatedBBoxField",
-    "ScoreField",
-    "Semantic",
     "Subset",
     "SubsetField",
     "TensorField",
@@ -82,6 +83,7 @@ __all__ = [
     "image_bytes_field",
     "image_callable_field",
     "image_field",
+    "image_id_field",
     "image_info_field",
     "image_path_field",
     "instance_mask_callable_field",
@@ -90,9 +92,9 @@ __all__ = [
     "label_field",
     "mask_callable_field",
     "mask_field",
+    "numeric_field",
     "polygon_field",
     "rotated_bbox_field",
-    "score_field",
     "subset_field",
     "tensor_field",
     "tile_field",

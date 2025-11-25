@@ -4,7 +4,7 @@
 import numpy as np
 import polars as pl
 
-from datumaro.experimental import Sample, Semantic
+from datumaro.experimental import Sample
 from datumaro.experimental.categories import LabelCategories
 from datumaro.experimental.data_formats.coco.constants import COCO_LABEL_TO_SUPER
 from datumaro.experimental.fields import (
@@ -19,7 +19,6 @@ from datumaro.experimental.fields import (
     subset_field,
 )
 from datumaro.experimental.fields.annotations import caption_field
-from datumaro.experimental.fields.images import image_id_field
 from datumaro.experimental.fields.types import bool_field, numeric_field
 
 
@@ -39,12 +38,12 @@ class CocoSample(Sample):
     keypoints: np.ndarray | None = keypoints_field(dtype=pl.Float32())
 
     # Caption annotations (from captions_train/val)
-    captions: np.ndarray | None = caption_field(is_list=True, semantic=Semantic.Caption)
-    caption_group_ids: np.ndarray | None = label_field(dtype=pl.Int32(), is_list=True, semantic=Semantic.Caption)
+    captions: np.ndarray | None = caption_field(is_list=True, semantic="caption")
+    caption_group_ids: np.ndarray | None = label_field(dtype=pl.Int32(), is_list=True, semantic="caption")
 
     # Dataset organization
     subset: Subset = subset_field()
-    image_id: int | None = image_id_field()
+    image_id: int | None = numeric_field(dtype=pl.Int32(), semantic="image_id")
 
 
 class CocoCategories(LabelCategories):

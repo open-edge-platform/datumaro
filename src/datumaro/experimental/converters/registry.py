@@ -14,7 +14,7 @@ import polars as pl
 
 from datumaro.experimental.categories import Categories
 from datumaro.experimental.converters.base import AttributeRemapperConverter, ConversionError, Converter
-from datumaro.experimental.fields.base import Field, Semantic
+from datumaro.experimental.fields.base import Field
 from datumaro.experimental.schema import AttributeSpec, Schema
 from datumaro.experimental.transform import Transform
 
@@ -174,7 +174,7 @@ def _heuristic_cost(current_state: _SchemaState, target_state: _SchemaState) -> 
 
 
 def _get_applicable_converters(
-    semantic: Semantic, state: _SchemaState, target_state: _SchemaState, iteration: int = 0
+    semantic: str, state: _SchemaState, target_state: _SchemaState, iteration: int = 0
 ) -> list[tuple[Converter, _SchemaState]]:
     """Get all converters that can be applied to the current state along with their resulting states."""
     applicable: list[tuple[Converter, _SchemaState]] = []
@@ -250,7 +250,7 @@ def _get_applicable_converters(
     return applicable
 
 
-def _group_fields_by_semantic(schema: Schema) -> dict[Semantic, _SchemaState]:
+def _group_fields_by_semantic(schema: Schema) -> dict[str, _SchemaState]:
     """
     Group schema attributes by their semantic tags and return as SchemaState objects.
 
@@ -260,7 +260,7 @@ def _group_fields_by_semantic(schema: Schema) -> dict[Semantic, _SchemaState]:
     Returns:
         Dictionary mapping semantic tags to SchemaState objects
     """
-    groups: dict[Semantic, dict[type[Field], AttributeSpec[Field]]] = defaultdict(dict)
+    groups: dict[str, dict[type[Field], AttributeSpec[Field]]] = defaultdict(dict)
 
     for attr_name, attr_info in schema.attributes.items():
         semantic = attr_info.field.semantic
@@ -422,7 +422,7 @@ def _create_conversion_error_message(
 
 
 def _find_conversion_path_for_semantic(
-    start_state: _SchemaState, target_state: _SchemaState, semantic: Semantic
+    start_state: _SchemaState, target_state: _SchemaState, semantic: str
 ) -> tuple[list[Converter], _SchemaState]:
     """
     Find conversion path for fields with a specific semantic tag.

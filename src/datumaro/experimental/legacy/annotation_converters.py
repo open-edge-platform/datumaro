@@ -11,7 +11,7 @@ from datumaro import Annotation, AnnotationType, Bbox, CategoriesInfo, DatasetIt
 from datumaro import Dataset as LegacyDataset
 from datumaro import LabelCategories as LegacyLabelCategories
 from datumaro.components.annotation import ExtractedMask, RotatedBbox
-from datumaro.experimental import AttributeInfo, Dataset, Sample, Schema, Semantic
+from datumaro.experimental import AttributeInfo, Dataset, Sample, Schema
 from datumaro.experimental.categories import LabelCategories, MaskCategories, RgbColor
 from datumaro.experimental.fields import (
     BBoxField,
@@ -41,7 +41,7 @@ class ForwardAnnotationConverter(ABC):
     @classmethod
     @abstractmethod
     def create(
-        cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+        cls, dataset: LegacyDataset, semantic: str = "default", name_prefix: str = ""
     ) -> ForwardAnnotationConverter | None:
         """Create converter instance if dataset supports this annotation type.
 
@@ -66,7 +66,7 @@ _annotation_converters: dict[AnnotationType, type[ForwardAnnotationConverter]] =
 def get_forward_annotation_converter(
     annotation_type: AnnotationType,
     dataset: LegacyDataset,
-    semantic: Semantic = Semantic.Default,
+    semantic: str = "default",
     name_prefix: str = "",
 ) -> ForwardAnnotationConverter | None:
     """Get forward converter for an annotation type from the dataset.
@@ -108,7 +108,7 @@ class ForwardBboxAnnotationConverter(ForwardAnnotationConverter):
 
     @classmethod
     def create(
-        cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+        cls, dataset: LegacyDataset, semantic: str = "default", name_prefix: str = ""
     ) -> ForwardBboxAnnotationConverter | None:
         """Create converter instance for bbox annotations."""
         categories = dataset.categories()
@@ -187,7 +187,7 @@ class ForwardRotatedBboxAnnotationConverter(ForwardAnnotationConverter):
 
     @classmethod
     def create(
-        cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+        cls, dataset: LegacyDataset, semantic: str = "default", name_prefix: str = ""
     ) -> ForwardRotatedBboxAnnotationConverter | None:
         """Create converter instance from dataset."""
         categories = dataset.categories()
@@ -271,7 +271,7 @@ class ForwardPolygonAnnotationConverter(ForwardAnnotationConverter):
 
     @classmethod
     def create(
-        cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+        cls, dataset: LegacyDataset, semantic: str = "default", name_prefix: str = ""
     ) -> ForwardPolygonAnnotationConverter | None:
         """Create converter instance for polygon annotations."""
         categories = dataset.categories()
@@ -343,7 +343,7 @@ class ForwardLabelAnnotationConverter(ForwardAnnotationConverter):
     def __init__(
         self,
         label_attribute: AttributeInfo,
-        semantic: Semantic = Semantic.Default,
+        semantic: str = "default",
         name_prefix: str = "",
     ):
         """Initialize with label attribute."""
@@ -354,7 +354,7 @@ class ForwardLabelAnnotationConverter(ForwardAnnotationConverter):
 
     @classmethod
     def create(
-        cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+        cls, dataset: LegacyDataset, semantic: str = "default", name_prefix: str = ""
     ) -> ForwardLabelAnnotationConverter | None:
         """Create converter instance for label annotations."""
         categories = dataset.categories()
@@ -413,7 +413,7 @@ class ForwardKeypointAnnotationConverter(ForwardAnnotationConverter):
 
     @classmethod
     def create(
-        cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+        cls, dataset: LegacyDataset, semantic: str = "default", name_prefix: str = ""
     ) -> ForwardKeypointAnnotationConverter | None:
         """Create converter instance for keypoints annotations."""
         categories = dataset.categories()
@@ -491,7 +491,7 @@ class ForwardEllipseAnnotationConverter(ForwardAnnotationConverter):
 
     @classmethod
     def create(
-        cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+        cls, dataset: LegacyDataset, semantic: str = "default", name_prefix: str = ""
     ) -> ForwardEllipseAnnotationConverter | None:
         """Create converter instance for ellipse annotations."""
         categories = dataset.categories()
@@ -824,7 +824,7 @@ class ForwardMaskAnnotationConverter(ForwardAnnotationConverter):
 
     @classmethod
     def create(
-        cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+        cls, dataset: LegacyDataset, semantic: str = "default", name_prefix: str = ""
     ) -> ForwardMaskAnnotationConverter | None:
         """Create converter instance for mask annotations.
 

@@ -12,7 +12,7 @@ from dataclasses import field as dataclass_field
 from typing import Any, Generic, Optional, TypeVar
 
 from datumaro.experimental.categories import Categories
-from datumaro.experimental.fields.base import Field, Semantic
+from datumaro.experimental.fields.base import Field
 
 
 @dataclass
@@ -76,7 +76,7 @@ class Schema:
 
     def __post_init__(self):
         """Validate that only one field of each type exists per semantic context."""
-        seen: dict[tuple[type[Field], Semantic], str] = {}
+        seen: dict[tuple[type[Field], str], str] = {}
         for name, attr in self.attributes.items():
             key = type(attr.field), attr.field.semantic
             if key in seen:

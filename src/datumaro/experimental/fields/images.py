@@ -7,7 +7,7 @@ from typing import Any
 import numpy as np
 import polars as pl
 
-from datumaro.experimental.fields.base import Field, PolarsDataType, Semantic, T
+from datumaro.experimental.fields.base import Field, PolarsDataType, T
 from datumaro.experimental.type_registry import from_polars_data, to_numpy
 
 
@@ -20,12 +20,12 @@ class TensorField(Field):
     and preserving shape information separately for reconstruction.
 
     Attributes:
-        semantic: Semantic tags describing the tensor's purpose
+        semantic: String tag describing the tensor's purpose
         dtype: Polars data type for tensor elements
         channels_first: Whether the tensor uses channels-first format (C, H, W) vs channels-last (H, W, C)
     """
 
-    semantic: Semantic
+    semantic: str = "default"
     dtype: PolarsDataType = field(default_factory=pl.UInt8)
     channels_first: bool = False
 
@@ -64,13 +64,13 @@ class TensorField(Field):
         return from_polars_data(numpy_data, target_type)  # type: ignore
 
 
-def tensor_field(dtype: Any, semantic: Semantic = Semantic.Default) -> Any:
+def tensor_field(dtype: Any, semantic: str = "default") -> Any:
     """
     Create a TensorField instance with the specified semantic tags and data type.
 
     Args:
         dtype: Polars data type for tensor elements
-        semantic: Semantic tags describing the tensor's purpose (optional)
+        semantic: String tag describing the tensor's purpose (optional)
 
     Returns:
         TensorField instance configured with the given parameters
@@ -97,7 +97,7 @@ def image_field(
     dtype: Any,
     format: str = "RGB",
     channels_first: bool = False,
-    semantic: Semantic = Semantic.Default,
+    semantic: str = "default",
 ) -> Any:
     """
     Create an ImageField instance with the specified parameters.
@@ -105,7 +105,7 @@ def image_field(
     Args:
         dtype: Polars data type for pixel values
         format: Image color format (defaults to "RGB")
-        semantic: Semantic tags describing the image's purpose (optional)
+        semantic: String tag describing the image's purpose (optional)
 
     Returns:
         ImageField instance configured with the given parameters
@@ -123,12 +123,12 @@ class ImageBytesField(Field):
     numpy arrays into bytes format.
 
     Attributes:
-        semantic: Semantic tags describing the image's purpose
+        semantic: String tag describing the image's purpose
         format: Image encoding format (e.g., "PNG", "JPEG", "BMP"). If None,
                 auto-detects format when decoding or defaults to PNG when encoding.
     """
 
-    semantic: Semantic
+    semantic: str = "default"
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Generate schema for image bytes as binary data."""
@@ -146,12 +146,12 @@ class ImageBytesField(Field):
         return from_polars_data(bytes_data, target_type)  # type: ignore
 
 
-def image_bytes_field(semantic: Semantic = Semantic.Default) -> Any:
+def image_bytes_field(semantic: str = "default") -> Any:
     """
     Create an ImageBytesField instance with the specified parameters.
 
     Args:
-        semantic: Semantic tags describing the image's purpose (optional)
+        semantic: String tag describing the image's purpose (optional)
 
     Returns:
         ImageBytesField instance configured with the given parameters
@@ -173,7 +173,7 @@ class ImageInfoField(Field):
     Represents image metadata (width, height) as a Polars struct.
     """
 
-    semantic: Semantic
+    semantic: str = "default"
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         return {
@@ -202,12 +202,12 @@ class ImageInfoField(Field):
         return ImageInfo(width=struct_val["width"], height=struct_val["height"])
 
 
-def image_info_field(semantic: Semantic = Semantic.Default) -> Any:
+def image_info_field(semantic: str = "default") -> Any:
     """
     Create an ImageInfoField instance for storing image width and height.
 
     Args:
-        semantic: Optional semantic tags for disambiguation (e.g., Semantic.Left)
+        semantic: Optional string tag for disambiguation
 
     Returns:
         ImageInfoField instance configured with the given semantic tags
@@ -224,10 +224,10 @@ class ImagePathField(Field):
     as input for lazy loading operations where images are loaded on-demand.
 
     Attributes:
-        semantic: Semantic tags describing the image path's purpose
+        semantic: String tag describing the image path's purpose
     """
 
-    semantic: Semantic
+    semantic: str = "default"
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Generate schema for string path column."""
@@ -243,12 +243,12 @@ class ImagePathField(Field):
         return target_type(data) if data is not None else None
 
 
-def image_path_field(semantic: Semantic = Semantic.Default) -> Any:
+def image_path_field(semantic: str = "default") -> Any:
     """
     Create an ImagePathField instance with the specified semantic tags.
 
     Args:
-        semantic: Semantic tags describing the image path's purpose (optional)
+        semantic: String tag describing the image path's purpose (optional)
 
     Returns:
         ImagePathField instance configured with the given semantic tags
@@ -266,11 +266,11 @@ class ImageCallableField(Field):
     the image data when invoked.
 
     Attributes:
-        semantic: Semantic tags describing the callable's purpose
+        semantic: String tag describing the callable's purpose
         format: Expected image color format (e.g., "RGB", "BGR", "RGBA")
     """
 
-    semantic: Semantic
+    semantic: str = "default"
     format: str = "RGB"
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
@@ -291,13 +291,13 @@ class ImageCallableField(Field):
         return value
 
 
-def image_callable_field(format: str = "RGB", semantic: Semantic = Semantic.Default) -> Any:
+def image_callable_field(format: str = "RGB", semantic: str = "default") -> Any:
     """
     Create an ImageCallableField instance for storing image-generating callables.
 
     Args:
         format: Expected image color format (defaults to "RGB")
-        semantic: Semantic tags describing the callable's purpose (optional)
+        semantic: String tag describing the callable's purpose (optional)
 
     Returns:
         ImageCallableField instance configured with the given parameters
@@ -314,11 +314,11 @@ class ImageIdField(Field):
     on the dataset format.
 
     Attributes:
-        semantic: Semantic tags describing the image ID's purpose
+        semantic: String tag describing the image ID's purpose
         dtype: Polars data type for the ID (Int32, Int64, or Utf8/String)
     """
 
-    semantic: Semantic
+    semantic: str = "default"
     dtype: PolarsDataType = field(default_factory=pl.Int32)
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
@@ -343,7 +343,7 @@ class ImageIdField(Field):
         return from_polars_data(data, target_type)
 
 
-def image_id_field(dtype: PolarsDataType = pl.Int32(), semantic: Semantic = Semantic.Default) -> Any:
+def image_id_field(dtype: PolarsDataType = pl.Int32(), semantic: str = "default") -> Any:
     """
     Create an ImageIdField instance.
 

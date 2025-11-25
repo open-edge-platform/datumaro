@@ -2,6 +2,7 @@
 Unit tests for Sample class.
 """
 
+from types import SimpleNamespace
 from typing import Any
 
 import numpy as np
@@ -18,7 +19,18 @@ from datumaro.experimental.fields import (
     image_field,
     image_info_field,
 )
-from datumaro.experimental.schema import Schema, Semantic
+from datumaro.experimental.schema import Schema
+
+# Backward-compat shim for removed Semantic enum in tests
+Semantic = SimpleNamespace(
+    Default="default",
+    Bbox="bbox",
+    Polygon="polygon",
+    Caption="caption",
+    Left="left",
+    Right="right",
+    Anomaly="anomaly",
+)
 
 
 def test_sample_class_definition():
@@ -87,8 +99,8 @@ def test_sample_with_semantic_fields():
     """Test Sample with semantic field tags."""
 
     class StereoSample(Sample):
-        left_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Bbox)
-        right_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="BGR", semantic=Semantic.Polygon)
+        left_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB", semantic="bbox")
+        right_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="BGR", semantic="polygon")
         bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=True)
 
     StereoSample(
@@ -104,9 +116,9 @@ def test_sample_with_semantic_fields():
     right_field = schema.attributes["right_image"].field
     bbox = schema.attributes["bbox"].field
 
-    assert left_field.semantic == Semantic.Bbox
-    assert right_field.semantic == Semantic.Polygon
-    assert bbox.semantic == Semantic.Default
+    assert left_field.semantic == "bbox"
+    assert right_field.semantic == "polygon"
+    assert bbox.semantic == "default"
 
     assert isinstance(left_field, ImageField)
     assert isinstance(right_field, ImageField)

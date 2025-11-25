@@ -6,6 +6,7 @@ These tests verify complete workflows similar to those shown in examples.py
 
 import os
 import tempfile
+from types import SimpleNamespace
 from typing import Any, cast
 
 import numpy as np
@@ -22,7 +23,17 @@ from datumaro.experimental.fields import (
     image_info_field,
     image_path_field,
 )
-from datumaro.experimental.schema import Semantic
+
+# Backward-compat shim for removed Semantic enum in tests
+Semantic = SimpleNamespace(
+    Default="default",
+    Bbox="bbox",
+    Polygon="polygon",
+    Caption="caption",
+    Left="left",
+    Right="right",
+    Anomaly="anomaly",
+)
 
 
 def test_basic_sample_workflow():
@@ -60,10 +71,10 @@ def test_stereo_camera_workflow():
 
     class StereoSample(Sample):
         bboxes: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32)
-        left_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Bbox)
-        right_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="BGR", semantic=Semantic.Polygon)
-        left_image_info: ImageInfo = image_info_field(Semantic.Bbox)
-        right_image_info: ImageInfo = image_info_field(Semantic.Polygon)
+        left_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB", semantic="bbox")
+        right_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="BGR", semantic="polygon")
+        left_image_info: ImageInfo = image_info_field("bbox")
+        right_image_info: ImageInfo = image_info_field("polygon")
 
     dataset = Dataset(StereoSample)
 
@@ -87,8 +98,8 @@ def test_stereo_camera_workflow():
 
     assert isinstance(left_field, ImageField)
     assert isinstance(right_field, ImageField)
-    assert left_field.semantic == Semantic.Bbox
-    assert right_field.semantic == Semantic.Polygon
+    assert left_field.semantic == "bbox"
+    assert right_field.semantic == "polygon"
     assert left_field.format == "RGB"
     assert right_field.format == "BGR"
 
