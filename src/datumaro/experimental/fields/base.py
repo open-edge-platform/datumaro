@@ -50,13 +50,13 @@ class Field:
 
     def __post_init__(self):
         dtype = getattr(self, "dtype")
-        # Accept both pl.DataTypeClass (type) and pl.DataType (instance)
         if isinstance(dtype, type) and issubclass(dtype, pl.DataType):
-            object.__setattr__(self, "dtype", dtype())
-        elif isinstance(dtype, pl.DataType):
-            pass  # Already an instance
-        else:
-            raise TypeError(f"dtype must be a Polars DataType or DataTypeClass, got {type(dtype)}")
+            raise TypeError(
+                f"dtype must be a Polars 'DataType' (instance), not a Polars 'DataTypeClass' (type). "
+                f"Make sure your dtype declaration uses parentheses ({dtype.__name__}() instead of {dtype.__name__})"
+            )
+        if not isinstance(dtype, pl.DataType):
+            raise TypeError(f"dtype must be a Polars 'DataType', got '{dtype.__name__}' instead.")
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """
