@@ -25,7 +25,7 @@ from datumaro.experimental.fields import (
 from datumaro.experimental.schema import Semantic
 
 
-def test_mysample_validation():
+def test_sample_validation_pass():
     class MySample(Sample):
         bbox: np.ndarray = bbox_field(dtype=pl.Float32)
         image: np.ndarray = image_field(dtype=pl.UInt8, format="RGB")
@@ -41,6 +41,14 @@ def test_mysample_validation():
     )
     # Should not raise
     valid_sample.validate()
+
+
+def test_sample_validation_fail():
+    class MySample(Sample):
+        bbox: np.ndarray = bbox_field(dtype=pl.Float32)
+        image: np.ndarray = image_field(dtype=pl.UInt8, format="RGB")
+        tile: TileInfo = tile_field()
+        mask: np.ndarray = mask_field(dtype=pl.UInt8)
 
     # Invalid sample: wrong dtype for image
     with pytest.raises(TypeError):
