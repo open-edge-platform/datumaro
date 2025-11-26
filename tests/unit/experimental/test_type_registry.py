@@ -334,7 +334,7 @@ def test_typed_numpy_array_basic():
 
     # Test Float32 typed array
     NDArrayFloat32 = npt.NDArray[np.float32]
-    df = pl.DataFrame({"data": [[0.8, 0.9]]}, schema={"data": pl.List(pl.Float32)})
+    df = pl.DataFrame({"data": [[0.8, 0.9]]}, schema={"data": pl.List(pl.Float32())})
     result = from_polars_data(df["data"][0], NDArrayFloat32)
 
     assert isinstance(result, np.ndarray)
@@ -343,7 +343,7 @@ def test_typed_numpy_array_basic():
 
     # Test Int32 typed array
     NDArrayInt32 = npt.NDArray[np.int32]
-    df = pl.DataFrame({"data": [[1, 2, 3]]}, schema={"data": pl.List(pl.Int32)})
+    df = pl.DataFrame({"data": [[1, 2, 3]]}, schema={"data": pl.List(pl.Int32())})
     result = from_polars_data(df["data"][0], NDArrayInt32)
 
     assert isinstance(result, np.ndarray)
@@ -352,7 +352,7 @@ def test_typed_numpy_array_basic():
 
     # Test Float64 typed array
     NDArrayFloat64 = npt.NDArray[np.float64]
-    df = pl.DataFrame({"data": [[1.5, 2.5]]}, schema={"data": pl.List(pl.Float64)})
+    df = pl.DataFrame({"data": [[1.5, 2.5]]}, schema={"data": pl.List(pl.Float64())})
     result = from_polars_data(df["data"][0], NDArrayFloat64)
 
     assert isinstance(result, np.ndarray)
@@ -367,7 +367,7 @@ def test_typed_numpy_array_dtype_conversion():
 
     # Test conversion from float64 to float32
     NDArrayFloat32 = npt.NDArray[np.float32]
-    df = pl.DataFrame({"data": [[1.0, 2.0]]}, schema={"data": pl.List(pl.Float64)})
+    df = pl.DataFrame({"data": [[1.0, 2.0]]}, schema={"data": pl.List(pl.Float64())})
     result = from_polars_data(df["data"][0], NDArrayFloat32)
 
     assert result.dtype == np.float32, f"Expected float32 but got {result.dtype}"
@@ -375,7 +375,7 @@ def test_typed_numpy_array_dtype_conversion():
 
     # Test conversion from int64 to int32
     NDArrayInt32 = npt.NDArray[np.int32]
-    df = pl.DataFrame({"data": [[10, 20]]}, schema={"data": pl.List(pl.Int64)})
+    df = pl.DataFrame({"data": [[10, 20]]}, schema={"data": pl.List(pl.Int64())})
     result = from_polars_data(df["data"][0], NDArrayInt32)
 
     assert result.dtype == np.int32, f"Expected int32 but got {result.dtype}"
@@ -395,7 +395,7 @@ def test_typed_numpy_array_optional():
     assert result is None
 
     # Test with actual data
-    df = pl.DataFrame({"data": [[0.8, 0.9]]}, schema={"data": pl.List(pl.Float32)})
+    df = pl.DataFrame({"data": [[0.8, 0.9]]}, schema={"data": pl.List(pl.Float32())})
     result = from_polars_data(df["data"][0], OptionalFloat32)
 
     assert isinstance(result, np.ndarray)
@@ -410,7 +410,7 @@ def test_typed_numpy_array_preserves_dtype():
 
     # When Polars dtype matches the type annotation, no conversion should occur
     NDArrayFloat32 = npt.NDArray[np.float32]
-    df = pl.DataFrame({"data": [[0.5, 0.7]]}, schema={"data": pl.List(pl.Float32)})
+    df = pl.DataFrame({"data": [[0.5, 0.7]]}, schema={"data": pl.List(pl.Float32())})
     result = from_polars_data(df["data"][0], NDArrayFloat32)
 
     assert result.dtype == np.float32
@@ -425,19 +425,19 @@ def test_typed_numpy_array_various_dtypes():
 
     # Test uint8
     NDArrayUInt8 = npt.NDArray[np.uint8]
-    df = pl.DataFrame({"data": [[1, 2, 3]]}, schema={"data": pl.List(pl.UInt8)})
+    df = pl.DataFrame({"data": [[1, 2, 3]]}, schema={"data": pl.List(pl.UInt8())})
     result = from_polars_data(df["data"][0], NDArrayUInt8)
     assert result.dtype == np.uint8
 
     # Test int64
     NDArrayInt64 = npt.NDArray[np.int64]
-    df = pl.DataFrame({"data": [[100, 200]]}, schema={"data": pl.List(pl.Int64)})
+    df = pl.DataFrame({"data": [[100, 200]]}, schema={"data": pl.List(pl.Int64())})
     result = from_polars_data(df["data"][0], NDArrayInt64)
     assert result.dtype == np.int64
 
     # Test uint16
     NDArrayUInt16 = npt.NDArray[np.uint16]
-    df = pl.DataFrame({"data": [[1000, 2000]]}, schema={"data": pl.List(pl.UInt16)})
+    df = pl.DataFrame({"data": [[1000, 2000]]}, schema={"data": pl.List(pl.UInt16())})
     result = from_polars_data(df["data"][0], NDArrayUInt16)
     assert result.dtype == np.uint16
 
@@ -478,10 +478,10 @@ def test_typed_numpy_array_round_trip():
     # Convert to polars-compatible format
     from datumaro.experimental.type_registry import to_numpy
 
-    polars_ready = to_numpy(original, pl.Float32)
+    polars_ready = to_numpy(original, pl.Float32())
 
     # Create polars series
-    series = pl.Series("scores", [polars_ready], dtype=pl.List(pl.Float32))
+    series = pl.Series("scores", [polars_ready], dtype=pl.List(pl.Float32()))
 
     # Extract back from polars
     polars_data = series[0]
@@ -503,7 +503,7 @@ def test_typed_numpy_array_multidimensional():
 
     # Test with nested lists (2D array)
     # Note: Polars List type is for 1D arrays, so we test with flattened data
-    df = pl.DataFrame({"data": [[10, 15, 30, 35]]}, schema={"data": pl.List(pl.Int32)})
+    df = pl.DataFrame({"data": [[10, 15, 30, 35]]}, schema={"data": pl.List(pl.Int32())})
     result = from_polars_data(df["data"][0], NDArrayInt32)
 
     assert result.dtype == np.int32

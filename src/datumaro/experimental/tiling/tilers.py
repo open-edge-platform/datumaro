@@ -419,4 +419,4 @@ class PolygonTiler(Tiler):
             keeps.append(polygon_keeps)
 
         # Create DataFrame with results and keep column as List[Boolean]
-        return pl.DataFrame({column_name: results, "keep": pl.Series(keeps, dtype=pl.List(pl.Boolean))})
+        return pl.DataFrame({column_name: results, "keep": pl.Series(keeps, dtype=pl.List(pl.Boolean()))})

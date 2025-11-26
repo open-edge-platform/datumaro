@@ -27,10 +27,10 @@ from datumaro.experimental.schema import Semantic
 
 def test_sample_validation_pass():
     class MySample(Sample):
-        bbox: np.ndarray = bbox_field(dtype=pl.Float32)
-        image: np.ndarray = image_field(dtype=pl.UInt8, format="RGB")
+        bbox: np.ndarray = bbox_field(dtype=pl.Float32())
+        image: np.ndarray = image_field(dtype=pl.UInt8(), format="RGB")
         tile: TileInfo = tile_field()
-        mask: np.ndarray = mask_field(dtype=pl.UInt8)
+        mask: np.ndarray = mask_field(dtype=pl.UInt8())
 
     # Valid sample
     valid_sample = MySample(
@@ -45,10 +45,10 @@ def test_sample_validation_pass():
 
 def test_sample_validation_fail():
     class MySample(Sample):
-        bbox: np.ndarray = bbox_field(dtype=pl.Float32)
-        image: np.ndarray = image_field(dtype=pl.UInt8, format="RGB")
+        bbox: np.ndarray = bbox_field(dtype=pl.Float32())
+        image: np.ndarray = image_field(dtype=pl.UInt8(), format="RGB")
         tile: TileInfo = tile_field()
-        mask: np.ndarray = mask_field(dtype=pl.UInt8)
+        mask: np.ndarray = mask_field(dtype=pl.UInt8())
 
     # Invalid sample: wrong dtype for image
     with pytest.raises(TypeError):
@@ -62,8 +62,8 @@ def test_sample_validation_fail():
 
 def test_append_dataset():
     class MySample(Sample):
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=False)
 
     # Define sample instances
     sample1 = MySample(
@@ -109,7 +109,7 @@ def test_append_dataset():
 
 def test_filter_by_subset_raises_without_subset_field():
     class NoSubsetSample(Sample):
-        image: np.ndarray = image_field(dtype=pl.UInt8, format="RGB")
+        image: np.ndarray = image_field(dtype=pl.UInt8(), format="RGB")
 
     dataset = Dataset(NoSubsetSample)
     dataset.append(NoSubsetSample(image=np.array([1])))
@@ -119,7 +119,7 @@ def test_filter_by_subset_raises_without_subset_field():
 
 def test_filter_by_subset_filters_correctly():
     class SubsetSample(Sample):
-        image: np.ndarray = image_field(dtype=pl.UInt8, format="RGB")
+        image: np.ndarray = image_field(dtype=pl.UInt8(), format="RGB")
         subset: Subset = subset_field()
 
     dataset = Dataset(SubsetSample)
@@ -137,8 +137,8 @@ def test_dataset_creation_from_sample_class():
     """Test Dataset creation from Sample class."""
 
     class TestSample(Sample):
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=False)
         image_info: ImageInfo = image_info_field()
 
     dataset = Dataset(TestSample)
@@ -155,10 +155,10 @@ def test_dataset_creation_from_schema():
     """Test Dataset creation from explicit Schema."""
     schema = Schema(
         attributes={
-            "image": AttributeInfo(type=np.ndarray, field=image_field(dtype=pl.UInt8, format="RGB")),
+            "image": AttributeInfo(type=np.ndarray, field=image_field(dtype=pl.UInt8(), format="RGB")),
             "bbox": AttributeInfo(
                 type=np.ndarray,
-                field=bbox_field(dtype=pl.Float32, normalize=False),
+                field=bbox_field(dtype=pl.Float32(), normalize=False),
             ),
         }
     )
@@ -173,8 +173,8 @@ def test_dataset_append_sample():
     """Test adding samples to dataset."""
 
     class TestSample(Sample):
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=False)
         image_info: ImageInfo = image_info_field()
 
     dataset = Dataset(TestSample)
@@ -199,8 +199,8 @@ def test_dataset_multiple_samples():
     """Test adding multiple samples to dataset."""
 
     class TestSample(Sample):
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=False)
         image_info: ImageInfo = image_info_field()
 
     dataset = Dataset(TestSample)
@@ -234,8 +234,8 @@ def test_dataset_item_modification():
     """Test modifying dataset items."""
 
     class TestSample(Sample):
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=False)
         image_info: ImageInfo = image_info_field()
 
     dataset = Dataset(TestSample)
@@ -263,8 +263,8 @@ def test_dataset_from_dataframe():
     """Test creating dataset from existing DataFrame."""
 
     class TestSample(Sample):
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=False)
         image_info: ImageInfo = image_info_field()
 
     # Create a dataset and add a sample
@@ -289,9 +289,9 @@ def test_stereo_sample_with_semantics():
     """Test dataset with stereo samples using semantic tags."""
 
     class StereoSample(Sample):
-        left_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Left)
-        right_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="BGR", semantic=Semantic.Right)
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=True)
+        left_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB", semantic=Semantic.Left)
+        right_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="BGR", semantic=Semantic.Right)
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=True)
         left_image_info: ImageInfo = image_info_field(Semantic.Left)
         right_image_info: ImageInfo = image_info_field(Semantic.Right)
 
@@ -319,10 +319,10 @@ def test_dynamic_schema_definition():
     """Test dataset creation with dynamic schema without explicit Sample class."""
     schema = Schema(
         attributes={
-            "image": AttributeInfo(type=np.ndarray, field=image_field(dtype=pl.UInt8, format="RGB")),
+            "image": AttributeInfo(type=np.ndarray, field=image_field(dtype=pl.UInt8(), format="RGB")),
             "bbox": AttributeInfo(
                 type=np.ndarray,
-                field=bbox_field(dtype=pl.Float32, normalize=False),
+                field=bbox_field(dtype=pl.Float32(), normalize=False),
             ),
             "image_info": AttributeInfo(type=ImageInfo, field=image_info_field()),
         }
@@ -349,12 +349,12 @@ def test_convert_sample_to_same_schema():
     """Test individual sample conversion function."""
 
     class SourceSample(Sample):
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=False)
 
     class TargetSample(Sample):
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=False)
 
     source_sample = SourceSample(
         image=np.array([[[255, 0, 0]], [[0, 255, 0]]], dtype=np.uint8),
@@ -372,13 +372,13 @@ def test_convert_sample_to_different_schema():
     """Test individual sample conversion function between different schemas."""
 
     class SourceSample(Sample):
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=False)
         image_info: ImageInfo = image_info_field()
 
     class TargetSample(Sample):
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="BGR")  # Different format
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=True)  # Different normalization
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="BGR")  # Different format
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=True)  # Different normalization
         image_info: ImageInfo = image_info_field()
 
     source_sample = SourceSample(
@@ -397,8 +397,8 @@ def test_dataset_polars_schema_generation():
     """Test Polars schema generation from dataset schema."""
 
     class TestSample(Sample):
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=False)
         image_info: ImageInfo = image_info_field()
 
     dataset = Dataset(TestSample)
@@ -418,8 +418,8 @@ def test_dataset_len():
     """Test __len__ method returns correct dataset size."""
 
     class TestSample(Sample):
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=False)
         image_info: ImageInfo = image_info_field()
 
     dataset = Dataset(TestSample)
@@ -455,8 +455,8 @@ def test_dataset_iter():
     """Test __iter__ method allows iteration over dataset samples."""
 
     class TestSample(Sample):
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=False)
         image_info: ImageInfo = image_info_field()
 
     dataset = Dataset(TestSample)
@@ -518,8 +518,8 @@ def test_dataset_delitem():
     """Test __delitem__ method allows deletion of dataset samples."""
 
     class TestSample(Sample):
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=False)
         image_info: ImageInfo = image_info_field()
 
     dataset = Dataset(TestSample)
@@ -595,8 +595,8 @@ def test_dataset_with_categories():
     """Test Dataset creation and usage with categories."""
 
     class TestSample(Sample):
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=False)
         image_info: ImageInfo = image_info_field()
 
     # Create label categories
@@ -636,8 +636,8 @@ def test_schema_copy_independence():
     """Test that schema modifications don't affect the original cached schema."""
 
     class TestSample(Sample):
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=False)
 
     # Create categories
     label_categories = LabelCategories(labels=("person",))
@@ -713,7 +713,7 @@ def test_dataset_with_optional_field():
     """Test dataset with np.ndarray | None field using mask_field, mixing None and array values."""
 
     class TestSample(Sample):
-        mask: np.ndarray | None = mask_field(dtype=pl.UInt8)
+        mask: np.ndarray | None = mask_field(dtype=pl.UInt8())
 
     dataset = Dataset(TestSample)
 

@@ -137,7 +137,7 @@ class ImageBytesField(Field):
 
     def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
         """Convert image data to bytes and store in Polars series."""
-        numpy_value = to_numpy(value, pl.Binary)
+        numpy_value = to_numpy(value, pl.Binary())
         bytes_value = bytes(numpy_value) if numpy_value is not None else None
         return {name: pl.Series(name, [bytes_value], dtype=pl.Binary())}
 

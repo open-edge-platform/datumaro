@@ -135,7 +135,7 @@ class SubsetField(Field):
 
     semantic: Semantic
     categories: list[str] | None = None
-    dtype: pl.DataType = field(default=pl.Categorical, init=False)
+    dtype: pl.DataType = field(default_factory=pl.Categorical, init=False)
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Generate schema with categorical type for subset values."""
@@ -154,7 +154,7 @@ class SubsetField(Field):
             polars_value = str(value)
 
         # Create categorical series with predefined categories if available
-        return {name: pl.Series(name, [polars_value], dtype=pl.Categorical)}
+        return {name: pl.Series(name, [polars_value], dtype=pl.Categorical())}
 
     def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
         """Reconstruct subset value from Polars data.

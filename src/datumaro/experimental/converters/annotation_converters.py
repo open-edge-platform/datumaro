@@ -75,7 +75,7 @@ class LabelIndexConverter(Converter):
         self._index_mapping = index_mapping
         return True
 
-    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+    def convert(self, df: pl.DataFrame()) -> pl.DataFrame:
         """
         Convert label indices based on category mapping.
 
@@ -143,7 +143,7 @@ class BBoxCoordinateConverter(Converter):
         # Apply converter only if normalization status needs to change
         return input_normalized != target_normalized
 
-    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+    def convert(self, df: pl.DataFrame()) -> pl.DataFrame:
         """
         Convert bbox coordinates between normalized and absolute formats.
 
@@ -173,11 +173,11 @@ class BBoxCoordinateConverter(Converter):
         # Coordinate order for width/height mapping: [height, width, height, width]
         coordinates_order = [1, 0, 1, 0]
 
-        def op(x: pl.Expr, y: pl.Expr) -> pl.Expr:
+        def op(x: pl.Expr, y: pl.Expr()) -> pl.Expr:
             """Choose operation based on conversion direction."""
-            # FIXME: x.cast(pl.Float64) is a workaround for Polars bug
+            # FIXME: x.cast(pl.Float64()) is a workaround for Polars bug
             # https://github.com/pola-rs/polars/issues/23924
-            xy = x * y if input_normalized else x.cast(pl.Float64) / y
+            xy = x * y if input_normalized else x.cast(pl.Float64()) / y
             return xy.cast(self.output_bbox.field.dtype)
 
         # Extract width and height from image shape
@@ -230,7 +230,7 @@ class BBoxDtypeConverter(Converter):
         # Apply converter only if dtypes are different
         return self.input_bbox.field.dtype != self.output_bbox.field.dtype
 
-    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+    def convert(self, df: pl.DataFrame()) -> pl.DataFrame:
         """Convert bbox data to target dtype."""
         input_col = self.input_bbox.name
         output_col = self.output_bbox.name
@@ -267,7 +267,7 @@ class LabelDtypeConverter(Converter):
         # Apply converter only if dtypes are different
         return self.input_label.field.dtype != self.output_label.field.dtype
 
-    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+    def convert(self, df: pl.DataFrame()) -> pl.DataFrame:
         """Convert label data to target dtype."""
         input_col = self.input_label.name
         output_col = self.output_label.name
@@ -306,7 +306,7 @@ class PolygonToBBoxConverter(Converter):
         )
         return True
 
-    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+    def convert(self, df: pl.DataFrame()) -> pl.DataFrame:
         """
         Extract bounding boxes from polygon coordinates.
 
@@ -385,7 +385,7 @@ class RotatedBBoxToPolygonConverter(Converter):
         )
         return True
 
-    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+    def convert(self, df: pl.DataFrame()) -> pl.DataFrame:
         """
         Convert rotated bounding boxes to polygon corner points.
 
@@ -404,7 +404,7 @@ class RotatedBBoxToPolygonConverter(Converter):
         h = pl.element().arr.get(3)
         r = pl.element().arr.get(4)
 
-        def rotate_corner(expr: pl.Expr):
+        def rotate_corner(expr: pl.Expr()):
             px = expr.arr.get(0)
             py = expr.arr.get(1)
             cos_theta = r.cos()

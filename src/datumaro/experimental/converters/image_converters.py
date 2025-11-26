@@ -51,7 +51,7 @@ class RGBToBGRConverter(Converter):
         # Only apply if input is RGB and output should be BGR
         return input_format == "RGB" and output_format == "BGR"
 
-    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+    def convert(self, df: pl.DataFrame()) -> pl.DataFrame:
         """
         Convert RGB image format to BGR using numpy channel swapping.
 
@@ -67,7 +67,7 @@ class RGBToBGRConverter(Converter):
         input_shape_column_name = self.input_image.name + "_shape"
         output_shape_column_name = self.output_image.name + "_shape"
 
-        def rgb_to_bgr(tensor_data: pl.Series) -> Any:
+        def rgb_to_bgr(tensor_data: pl.Series()) -> Any:
             """Convert RGB tensor data to BGR by reversing the channel order."""
             data = tensor_data.to_numpy().copy()
             data = data.reshape(-1, 3)
@@ -106,14 +106,14 @@ class UInt8ToFloat32Converter(Converter):
             name=self.output_image.name,
             field=ImageField(
                 semantic=self.input_image.field.semantic,
-                dtype=pl.Float32,
+                dtype=pl.Float32(),
                 format=self.input_image.field.format,
                 channels_first=self.output_image.field.channels_first,
             ),
         )
         return self.input_image.field.dtype == pl.UInt8
 
-    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+    def convert(self, df: pl.DataFrame()) -> pl.DataFrame:
         """
         Convert image data from UInt8 to normalized Float32.
 
@@ -161,14 +161,14 @@ class ImagePathToImageConverter(Converter):
             name=self.output_image.name,
             field=ImageField(
                 semantic=self.input_path.field.semantic,
-                dtype=pl.UInt8,  # Default to UInt8 for loaded images
+                dtype=pl.UInt8(),  # Default to UInt8 for loaded images
                 format="RGB",  # Default to RGB format
                 channels_first=self.output_image.field.channels_first,
             ),
         )
         return True
 
-    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+    def convert(self, df: pl.DataFrame()) -> pl.DataFrame:
         """
         Convert image paths to loaded image tensors and image info.
 
@@ -233,7 +233,7 @@ class ImageToImageInfo(Converter):
         )
         return True
 
-    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+    def convert(self, df: pl.DataFrame()) -> pl.DataFrame:
         """
         Convert image paths to loaded image tensors and image info.
 
@@ -275,14 +275,14 @@ class ImageBytesToImageConverter(Converter):
             name=self.output_image.name,
             field=ImageField(
                 semantic=self.input_bytes.field.semantic,
-                dtype=pl.UInt8,  # Default to UInt8 for decoded images
+                dtype=pl.UInt8(),  # Default to UInt8 for decoded images
                 format="RGB",  # Default to RGB format
                 channels_first=self.output_image.field.channels_first,
             ),
         )
         return True
 
-    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+    def convert(self, df: pl.DataFrame()) -> pl.DataFrame:
         """
         Convert image bytes to decoded image tensors and image info.
 
@@ -342,14 +342,14 @@ class ImageCallableToImageConverter(Converter):
             name=self.output_image.name,
             field=ImageField(
                 semantic=self.input_callable.field.semantic,
-                dtype=pl.UInt8,  # Default to UInt8 for image data
+                dtype=pl.UInt8(),  # Default to UInt8 for image data
                 format=self.input_callable.field.format,  # Use format from callable field
                 channels_first=self.output_image.field.channels_first,
             ),
         )
         return True
 
-    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+    def convert(self, df: pl.DataFrame()) -> pl.DataFrame:
         """
         Execute callables to generate image data and metadata.
 

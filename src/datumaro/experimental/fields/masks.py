@@ -164,7 +164,7 @@ class InstanceMaskCallableField(Field):
 
     Attributes:
         semantic: Semantic tags describing the callable's purpose
-        dtype: Polars data type for the mask values (e.g., pl.UInt8, pl.Boolean)
+        dtype: Polars data type for the mask values (e.g., pl.UInt8, pl.Boolean())
     """
 
     semantic: Semantic
@@ -236,7 +236,7 @@ class MaskCallableField(Field):
 
     Attributes:
         semantic: Semantic tags describing the callable's purpose
-        dtype: Polars data type for mask values (e.g., pl.UInt8, pl.Boolean)
+        dtype: Polars data type for mask values (e.g., pl.UInt8, pl.Boolean())
     """
 
     semantic: Semantic

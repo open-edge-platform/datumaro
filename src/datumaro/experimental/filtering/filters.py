@@ -18,7 +18,7 @@ class EmptyBBoxFilter(Filter):
 
     field_spec: AttributeSpec[BBoxField]
 
-    def filter(self, df: pl.DataFrame) -> pl.Expr:  # noqa: ARG002
+    def filter(self, df: pl.DataFrame()) -> pl.Expr:  # noqa: ARG002
         """Filter out rows where bounding box list is empty.
 
         Args:
@@ -38,7 +38,7 @@ class EmptyPolygonFilter(Filter):
 
     field_spec: AttributeSpec[PolygonField]
 
-    def filter(self, df: pl.DataFrame) -> pl.Expr:  # noqa: ARG002
+    def filter(self, df: pl.DataFrame()) -> pl.Expr:  # noqa: ARG002
         """Filter out rows where polygon list is empty.
 
         Args:

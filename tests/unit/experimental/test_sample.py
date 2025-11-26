@@ -18,6 +18,7 @@ from datumaro.experimental.fields import (
     image_field,
     image_info_field,
 )
+from datumaro.experimental.fields.images import image_path_field
 from datumaro.experimental.schema import Schema, Semantic
 
 
@@ -25,8 +26,8 @@ def test_sample_class_definition():
     """Test basic Sample class definition."""
 
     class TestSample(Sample):
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=False)
         image_info: ImageInfo = image_info_field()
 
     # Test class attributes exist
@@ -39,8 +40,8 @@ def test_sample_instantiation():
     """Test Sample instance creation."""
 
     class TestSample(Sample):
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=False)
         image_info: ImageInfo = image_info_field()
 
     sample = TestSample(
@@ -61,8 +62,8 @@ def test_sample_schema_inference():
     """Test schema inference from Sample class."""
 
     class TestSample(Sample):
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=False)
         image_info: ImageInfo = image_info_field()
 
     schema = TestSample.infer_schema()
@@ -87,9 +88,9 @@ def test_sample_with_semantic_fields():
     """Test Sample with semantic field tags."""
 
     class StereoSample(Sample):
-        left_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Left)
-        right_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="BGR", semantic=Semantic.Right)
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=True)
+        left_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB", semantic=Semantic.Left)
+        right_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="BGR", semantic=Semantic.Right)
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=True)
 
     StereoSample(
         left_image=np.array([[[255, 0, 0]], [[0, 255, 0]]], dtype=np.uint8),
@@ -132,15 +133,13 @@ def test_sample_with_complex_fields():
     """Test Sample with various complex field types."""
 
     class ComplexSample(Sample):
-        image_path: str = image_field(
-            dtype=pl.UInt8, format="RGB", semantic=Semantic.Left
-        )  # This should be image_path_field
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Right)
-        multiple_bboxes: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image_path: str = image_path_field()
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        multiple_bboxes: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=False)
         image_info: ImageInfo = image_info_field()
 
     sample = ComplexSample(
-        image_path="test_string",  # Will be treated as tensor due to field type mismatch
+        image_path="test_string",
         image=np.array([[[255, 0, 0]], [[0, 255, 0]]], dtype=np.uint8),
         multiple_bboxes=np.array(
             [[0.1, 0.2, 0.3, 0.4], [0.5, 0.6, 0.7, 0.8], [0.9, 0.8, 0.7, 0.6]],
@@ -157,8 +156,8 @@ def test_sample_schema_caching():
     """Test that schema inference is cached."""
 
     class TestSample(Sample):
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=False)
 
     # Call infer_schema multiple times
     schema1 = TestSample.infer_schema()
@@ -173,8 +172,8 @@ def test_sample_inheritance():
     """Test Sample class inheritance."""
 
     class BaseSample(Sample):
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=False)
 
     class ExtendedSample(BaseSample):
         image_info: ImageInfo = image_info_field()

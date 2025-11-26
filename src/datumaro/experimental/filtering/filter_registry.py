@@ -29,7 +29,7 @@ class Filter(ABC):
         self.field_spec = field_spec
 
     @abstractmethod
-    def filter(self, df: pl.DataFrame) -> pl.Expr:
+    def filter(self, df: pl.DataFrame()) -> pl.Expr:
         """Filter the dataframe and return a boolean mask of rows to keep.
 
         Args:

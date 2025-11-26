@@ -40,7 +40,7 @@ def test_confidence_field_list_roundtrip():
 
 def test_confidence_field_custom_dtype():
     class PredSample(Sample):
-        confidence: Annotated[float, score_field(dtype=pl.Float64)]
+        confidence: Annotated[float, score_field(dtype=pl.Float64())]
 
     ds = Dataset(PredSample)
 
