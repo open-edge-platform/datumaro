@@ -13,12 +13,13 @@ from datumaro.experimental.data_formats.coco.helpers import (
     _assemble_sample_from_image_record,
     _build_subset_config,
     _cat_id_to_idx_from_primary,
+    _detect_coco_label_categories,
     _index_annotations_by_image,
     _load_json_or_none,
     _prepare_categories,
     _save_subset,
 )
-from datumaro.experimental.data_formats.coco.sample import CocoCategories, CocoSample
+from datumaro.experimental.data_formats.coco.sample import CocoSample
 from datumaro.experimental.fields import Subset
 
 logger = logging.getLogger(__name__)
@@ -60,7 +61,9 @@ def load_coco_dataset(root_dir: str, version: str = "2017") -> Dataset:
 
     logger.info("[COCO] Loading %s dataset from '%s' with %d subsets", version, root_dir, len(subset_config))
 
-    categories = {"labels": CocoCategories()}
+    # Determine label categories via helper (loads from JSONs or falls back to defaults)
+    loaded_label_categories = _detect_coco_label_categories(subset_config)
+    categories = {"labels": loaded_label_categories}
     dataset = Dataset(CocoSample, categories=categories)
 
     for subset, config in subset_config.items():

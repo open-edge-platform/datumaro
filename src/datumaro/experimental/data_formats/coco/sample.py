@@ -49,14 +49,19 @@ class CocoSample(Sample):
 class CocoCategories(LabelCategories):
     # Unified mapping of label -> super-category (preserves COCO order)
     label_to_super: dict[str, str] = COCO_LABEL_TO_SUPER
-    # Convenience: ordered tuple of super-categories aligned with labels order
-    super_categories: tuple[str, ...] = tuple(label_to_super.values())
 
-    """Initializes CocoCategories object with all the default coco labels"""
+    """
+    Initializes CocoCategories with either default COCO labels or a provided label list.
 
-    def __init__(self):
-        # Initialize using the order defined in the mapping
-        super().__init__(labels=tuple(self.label_to_super.keys()))
+    If a custom list of labels is provided (e.g., loaded from a COCO JSON file),
+    the categories will use that list and preserve its order. Otherwise, it will
+    fall back to the default COCO label order defined in COCO_LABEL_TO_SUPER.
+    """
+
+    def __init__(self, labels: tuple[str, ...] | list[str] | None = None):
+        # Initialize using provided labels or the default mapping order
+        provided = tuple(labels) if labels is not None else tuple(self.label_to_super.keys())
+        super().__init__(labels=provided)
 
     def get_labels_by_super_category(self, super_category: str) -> list[str]:
         """
@@ -66,6 +71,8 @@ class CocoCategories(LabelCategories):
             super_category: The name of the super category
 
         Returns:
-            List of label names that belong to the specified super category
+            List of label names (restricted to this instance's labels) that belong
+            to the specified super category
         """
-        return [label for label, sc in self.label_to_super.items() if sc == super_category]
+        allowed = set(self.labels)
+        return [label for label, sc in self.label_to_super.items() if sc == super_category and label in allowed]

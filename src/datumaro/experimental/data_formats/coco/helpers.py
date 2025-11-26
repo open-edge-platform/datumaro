@@ -83,6 +83,39 @@ def _build_subset_config(root_path: Path, version: str) -> dict[Subset, dict[str
     return subset_config
 
 
+def _detect_coco_label_categories(subset_config: dict[Subset, dict[str, Path]]) -> CocoCategories:
+    """
+    Detect COCO label categories by probing available primary annotation JSONs.
+
+    Args:
+        subset_config: Mapping produced by _build_subset_config with paths for
+            each subset.
+
+    Returns:
+        CocoCategories instance with either discovered labels or defaults.
+    """
+
+    # Try to find categories from any primary annotations file (instances/keypoints)
+    for _subset, cfg in subset_config.items():
+        instances_data_probe = _load_json_or_none(cfg["instances"])  # type: ignore[arg-type]
+        keypoints_data_probe = _load_json_or_none(cfg["keypoints"])  # type: ignore[arg-type]
+
+        primary_probe = instances_data_probe or keypoints_data_probe
+        if primary_probe and isinstance(primary_probe, dict):
+            cats = primary_probe.get("categories") or []
+            if isinstance(cats, list) and len(cats) > 0:
+                # Sort categories by id to preserve canonical order
+                try:
+                    cats_sorted = sorted(cats, key=lambda c: c["id"])  # type: ignore[index]
+                    label_names = tuple(str(c["name"]) for c in cats_sorted)  # type: ignore[index]
+                    return CocoCategories(labels=label_names)
+                except Exception:  # noqa: S110
+                    # If anything goes wrong, continue probing other subsets
+                    pass
+
+    return CocoCategories()
+
+
 def _cat_id_to_idx_from_primary(primary_data: dict) -> dict[int, int]:
     categories_list = sorted(primary_data.get("categories", []), key=lambda c: c["id"])  # type: ignore[index]
     return {c["id"]: i for i, c in enumerate(categories_list)}  # type: ignore[index]
