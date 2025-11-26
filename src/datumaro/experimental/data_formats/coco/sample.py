@@ -11,15 +11,16 @@ from datumaro.experimental.fields import (
     ImageInfo,
     Subset,
     bbox_field,
+    bool_field,
+    caption_field,
     image_info_field,
     image_path_field,
     keypoints_field,
     label_field,
+    numeric_field,
     polygon_field,
     subset_field,
 )
-from datumaro.experimental.fields.annotations import caption_field
-from datumaro.experimental.fields.types import bool_field, numeric_field
 
 
 class CocoSample(Sample):

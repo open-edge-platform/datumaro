@@ -17,6 +17,7 @@ from datumaro.experimental.fields.annotations import (
     PolygonField,
     RotatedBBoxField,
     bbox_field,
+    caption_field,
     keypoints_field,
     label_field,
     polygon_field,
@@ -49,7 +50,7 @@ from datumaro.experimental.fields.masks import (
     mask_callable_field,
     mask_field,
 )
-from datumaro.experimental.fields.types import NumericField, numeric_field
+from datumaro.experimental.fields.types import NumericField, bool_field, numeric_field
 
 __all__ = [
     "BBoxField",
@@ -76,6 +77,8 @@ __all__ = [
     "TileField",
     "TileInfo",
     "bbox_field",
+    "bool_field",
+    "caption_field",
     "convert_numpy_object_array_to_series",
     "image_bytes_field",
     "image_callable_field",
