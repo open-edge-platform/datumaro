@@ -113,6 +113,7 @@ def _detect_coco_label_categories(subset_config: dict[Subset, dict[str, Path]]) 
                     # If anything goes wrong, continue probing other subsets
                     pass
 
+    logger.warning("Unable to extract labels from COCO annotations, falling back to defaults")
     return CocoCategories()
 
 
