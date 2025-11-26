@@ -76,6 +76,7 @@ class BoolField(Field):
 
     semantic: str = "default"
     is_list: bool = False
+    dtype: pl.DataType = field(default_factory=pl.Boolean, init=False)
 
     @property
     def _pl_type(self) -> pl.DataType:

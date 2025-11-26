@@ -395,6 +395,7 @@ class CaptionField(Field):
 
     semantic: str = "default"
     is_list: bool = False
+    dtype: pl.DataType = field(default_factory=pl.Utf8, init=False)
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Generate schema for caption column (string or list of strings)."""
