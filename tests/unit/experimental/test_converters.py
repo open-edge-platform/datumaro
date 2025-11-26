@@ -66,7 +66,7 @@ def test_converter_decorator(request: pytest.FixtureRequest):
         def filter_output_spec(self) -> bool:
             return False
 
-        def convert(self, df: pl.DataFrame()) -> pl.DataFrame:
+        def convert(self, df: pl.DataFrame) -> pl.DataFrame:
             return df
 
     registry = ConverterRegistry()
@@ -487,7 +487,7 @@ def test_astar_direct_conversion():
         def filter_output_spec(self) -> bool:
             return True
 
-        def convert(self, df: pl.DataFrame()) -> pl.DataFrame:
+        def convert(self, df: pl.DataFrame) -> pl.DataFrame:
             """Extract image size from image data."""
             return df.with_columns(
                 [
@@ -561,7 +561,7 @@ def test_astar_chained_conversion():
         def filter_output_spec(self) -> bool:
             return True
 
-        def convert(self, df: pl.DataFrame()) -> pl.DataFrame:
+        def convert(self, df: pl.DataFrame) -> pl.DataFrame:
             return df.with_columns(
                 [
                     pl.lit(640).alias("image_size_width"),
@@ -578,7 +578,7 @@ def test_astar_chained_conversion():
         def filter_output_spec(self) -> bool:
             return True
 
-        def convert(self, df: pl.DataFrame()) -> pl.DataFrame:
+        def convert(self, df: pl.DataFrame) -> pl.DataFrame:
             """Convert normalized bbox to absolute coordinates."""
             width = df.select("image_size_width").item()
             height = df.select("image_size_height").item()
@@ -715,7 +715,7 @@ def test_optimal_path_selection():
         def filter_output_spec(self) -> bool:
             return True
 
-        def convert(self, df: pl.DataFrame()) -> pl.DataFrame:
+        def convert(self, df: pl.DataFrame) -> pl.DataFrame:
             return df.with_columns(pl.col("field_a").alias("field_b")).drop("field_a")
 
     @converter
@@ -726,7 +726,7 @@ def test_optimal_path_selection():
         def filter_output_spec(self) -> bool:
             return True
 
-        def convert(self, df: pl.DataFrame()) -> pl.DataFrame:
+        def convert(self, df: pl.DataFrame) -> pl.DataFrame:
             return df.with_columns(pl.col("field_b").alias("field_c")).drop("field_b")
 
     @converter  # Direct path (should be preferred)
@@ -737,7 +737,7 @@ def test_optimal_path_selection():
         def filter_output_spec(self) -> bool:
             return True
 
-        def convert(self, df: pl.DataFrame()) -> pl.DataFrame:
+        def convert(self, df: pl.DataFrame) -> pl.DataFrame:
             return df.with_columns(pl.col("field_a").alias("field_c")).drop("field_a")
 
     from_schema = Schema(
@@ -776,7 +776,7 @@ def test_generator_converter():
         def filter_output_spec(self) -> bool:
             return True
 
-        def convert(self, df: pl.DataFrame()) -> pl.DataFrame:
+        def convert(self, df: pl.DataFrame) -> pl.DataFrame:
             return df.with_columns(pl.lit("generated_b").alias("field_b"))
 
     from_schema = Schema({})  # Empty schema
@@ -829,7 +829,7 @@ def test_multiple_output_converter():
         def filter_output_spec(self) -> bool:
             return True
 
-        def convert(self, df: pl.DataFrame()) -> pl.DataFrame:
+        def convert(self, df: pl.DataFrame) -> pl.DataFrame:
             return df.with_columns([pl.col("field_a").alias("multi1"), pl.col("field_a").alias("multi2")]).drop(
                 "field_a"
             )
@@ -882,7 +882,7 @@ def test_partial_schema_matching():
         def filter_output_spec(self) -> bool:
             return True
 
-        def convert(self, df: pl.DataFrame()) -> pl.DataFrame:
+        def convert(self, df: pl.DataFrame) -> pl.DataFrame:
             return df.with_columns(pl.col("field_a").alias("field_c")).drop("field_a")
 
     from_schema = Schema(

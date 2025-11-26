@@ -145,7 +145,7 @@ class Converter(ABC):
         return to_types
 
     @abstractmethod
-    def convert(self, df: pl.DataFrame()) -> pl.DataFrame:
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
         """
         Convert a DataFrame using the stored AttributeSpec instances.
 
@@ -279,7 +279,7 @@ class AttributeRemapperConverter(Converter):
 
         return to_types
 
-    def convert(self, df: pl.DataFrame()) -> pl.DataFrame:
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
         """
         Rename columns according to column_map and keep all other columns.
 

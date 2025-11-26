@@ -76,7 +76,7 @@ class PolygonToMaskConverter(Converter):
 
         return True
 
-    def convert(self, df: pl.DataFrame()) -> pl.DataFrame:
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
         """
         Rasterize polygon coordinates into indexed masks.
 
@@ -138,7 +138,7 @@ class PolygonToMaskConverter(Converter):
             return mask.reshape(-1), [image_height, image_width]
 
         # Apply conversion using map_batches
-        def apply_conversion_batch(batch_df: pl.DataFrame()) -> pl.DataFrame:
+        def apply_conversion_batch(batch_df: pl.DataFrame) -> pl.DataFrame:
             """Apply polygon-to-mask conversion for a batch."""
             batch_polygons = batch_df.struct["polygons"]
             batch_labels = batch_df.struct["labels"]
@@ -202,7 +202,7 @@ class PolygonToInstanceMaskConverter(Converter):
         )
         return True
 
-    def convert(self, df: pl.DataFrame()) -> pl.DataFrame:
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
         """
         Rasterize polygon coordinates into instance masks.
 
@@ -331,7 +331,7 @@ class InstanceMaskCallableToInstanceMaskConverter(Converter):
         )
         return True
 
-    def convert(self, df: pl.DataFrame()) -> pl.DataFrame:
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
         """
         Execute callables to generate instance mask data.
 
@@ -412,7 +412,7 @@ class MaskCallableToMaskConverter(Converter):
         )
         return True
 
-    def convert(self, df: pl.DataFrame()) -> pl.DataFrame:
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
         """
         Execute callables to generate mask data.
 

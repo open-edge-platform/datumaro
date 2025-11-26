@@ -281,7 +281,7 @@ class ImageCallableField(Field):
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Return schema with Object type to store callable."""
-        return {name: pl.Object}
+        return {name: pl.Object()}
 
     def to_polars(self, name: str, value: callable) -> dict[str, pl.Series]:
         """Store callable as Object in Polars series."""

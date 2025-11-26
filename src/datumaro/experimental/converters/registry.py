@@ -616,7 +616,7 @@ def converter(
             input_image: AttributeSpec
             output_tensor: AttributeSpec
 
-            def convert(self, df: pl.DataFrame()) -> pl.DataFrame:
+            def convert(self, df: pl.DataFrame) -> pl.DataFrame:
                 # conversion logic
                 return df
 
@@ -625,7 +625,7 @@ def converter(
             input_path: AttributeSpec
             output_image: AttributeSpec
 
-            def convert(self, df: pl.DataFrame()) -> pl.DataFrame:
+            def convert(self, df: pl.DataFrame) -> pl.DataFrame:
                 # lazy conversion logic
                 return df
     """
