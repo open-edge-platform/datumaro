@@ -437,14 +437,15 @@ def _collect_captions_for_image(image_id: int, captions_by_image: dict[int, list
 
 
 def _prepare_categories(dataset: Dataset[CocoSample]):
-    label_categories: LabelCategories | None = None
+    label_categories: CocoCategories | None = None
     try:
         schema = dataset.schema
         if "labels" in schema.attributes and getattr(schema.attributes["labels"], "categories", None):
             cats = schema.attributes["labels"].categories
-            if isinstance(cats, LabelCategories) and len(cats) > 0:
+            if isinstance(cats, (LabelCategories, CocoCategories)) and len(cats) > 0:
                 label_categories = cats
     except Exception:
+        logger.warning("CocoCategories not available for dataset. Exporting with default COCO labels.")
         label_categories = CocoCategories()
 
     categories_coco = [{"id": idx + 1, "name": name, "supercategory": ""} for idx, name in enumerate(label_categories)]
