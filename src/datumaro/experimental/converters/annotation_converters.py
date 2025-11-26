@@ -175,9 +175,9 @@ class BBoxCoordinateConverter(Converter):
 
         def op(x: pl.Expr, y: pl.Expr) -> pl.Expr:
             """Choose operation based on conversion direction."""
-            # FIXME: x.cast(pl.Float64()) is a workaround for Polars bug
+            # FIXME: x.cast(pl.Float64) is a workaround for Polars bug
             # https://github.com/pola-rs/polars/issues/23924
-            xy = x * y if input_normalized else x.cast(pl.Float64()) / y
+            xy = x * y if input_normalized else x.cast(pl.Float64) / y
             return xy.cast(self.output_bbox.field.dtype)
 
         # Extract width and height from image shape

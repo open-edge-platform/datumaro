@@ -51,7 +51,7 @@ def polars_to_numpy_dtype(polars_dtype: pl.DataType) -> np.dtype[Any]:
         TypeError: If no mapping exists for the given Polars dtype
 
     Example:
-        >>> numpy_dtype = polars_to_numpy_dtype(pl.Float32())
+        >>> numpy_dtype = polars_to_numpy_dtype(pl.Float32)
         >>> numpy_dtype == np.float32
         True
     """
