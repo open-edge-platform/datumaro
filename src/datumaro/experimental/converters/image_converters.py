@@ -106,7 +106,7 @@ class UInt8ToFloat32Converter(Converter):
             name=self.output_image.name,
             field=ImageField(
                 semantic=self.input_image.field.semantic,
-                dtype=pl.Float32,
+                dtype=pl.Float32(),
                 format=self.input_image.field.format,
                 channels_first=self.output_image.field.channels_first,
             ),
@@ -161,7 +161,7 @@ class ImagePathToImageConverter(Converter):
             name=self.output_image.name,
             field=ImageField(
                 semantic=self.input_path.field.semantic,
-                dtype=pl.UInt8,  # Default to UInt8 for loaded images
+                dtype=pl.UInt8(),  # Default to UInt8 for loaded images
                 format="RGB",  # Default to RGB format
                 channels_first=self.output_image.field.channels_first,
             ),
@@ -275,7 +275,7 @@ class ImageBytesToImageConverter(Converter):
             name=self.output_image.name,
             field=ImageField(
                 semantic=self.input_bytes.field.semantic,
-                dtype=pl.UInt8,  # Default to UInt8 for decoded images
+                dtype=pl.UInt8(),  # Default to UInt8 for decoded images
                 format="RGB",  # Default to RGB format
                 channels_first=self.output_image.field.channels_first,
             ),
@@ -342,7 +342,7 @@ class ImageCallableToImageConverter(Converter):
             name=self.output_image.name,
             field=ImageField(
                 semantic=self.input_callable.field.semantic,
-                dtype=pl.UInt8,  # Default to UInt8 for image data
+                dtype=pl.UInt8(),  # Default to UInt8 for image data
                 format=self.input_callable.field.format,  # Use format from callable field
                 channels_first=self.output_image.field.channels_first,
             ),

@@ -7,7 +7,7 @@ from typing import Any
 import numpy as np
 import polars as pl
 
-from datumaro.experimental.fields.base import Field, PolarsDataType, Semantic, T
+from datumaro.experimental.fields.base import Field, Semantic, T
 from datumaro.experimental.type_registry import from_polars_data, to_numpy
 
 
@@ -26,7 +26,7 @@ class TensorField(Field):
     """
 
     semantic: Semantic
-    dtype: PolarsDataType = field(default_factory=pl.UInt8)
+    dtype: pl.DataType = field(default_factory=pl.UInt8)
     channels_first: bool = False
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
@@ -129,6 +129,7 @@ class ImageBytesField(Field):
     """
 
     semantic: Semantic
+    dtype: pl.DataType = field(default_factory=pl.Binary, init=False)
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Generate schema for image bytes as binary data."""
@@ -174,6 +175,9 @@ class ImageInfoField(Field):
     """
 
     semantic: Semantic
+    dtype: pl.DataType = field(
+        default_factory=lambda: pl.Struct([pl.Field("width", pl.Int32()), pl.Field("height", pl.Int32())]), init=False
+    )
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         return {
@@ -228,6 +232,7 @@ class ImagePathField(Field):
     """
 
     semantic: Semantic
+    dtype: pl.DataType = field(default_factory=pl.String, init=False)
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Generate schema for string path column."""
@@ -272,10 +277,11 @@ class ImageCallableField(Field):
 
     semantic: Semantic
     format: str = "RGB"
+    dtype: pl.DataType = field(default_factory=pl.Object, init=False)
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Return schema with Object type to store callable."""
-        return {name: pl.Object}
+        return {name: pl.Object()}
 
     def to_polars(self, name: str, value: callable) -> dict[str, pl.Series]:
         """Store callable as Object in Polars series."""

@@ -12,14 +12,12 @@ learning and computer vision applications.
 from dataclasses import fields as dataclass_fields
 from dataclasses import is_dataclass
 from enum import Flag, auto
-from typing import Any, TypeAlias, TypeVar
+from typing import Any, TypeVar
 
 import numpy as np
 import polars as pl
 
 T = TypeVar("T")
-
-PolarsDataType: TypeAlias = type[pl.DataType] | pl.DataType
 
 
 class Semantic(Flag):
@@ -48,6 +46,17 @@ class Field:
     """
 
     semantic: Semantic
+    dtype: pl.DataType
+
+    def __post_init__(self):
+        dtype = getattr(self, "dtype")
+        if isinstance(dtype, type) and issubclass(dtype, pl.DataType):
+            raise TypeError(
+                f"dtype must be a Polars 'DataType' (instance), not a Polars 'DataTypeClass' (type). "
+                f"Make sure your dtype declaration uses parentheses ({dtype.__name__}() instead of {dtype.__name__})"
+            )
+        if not isinstance(dtype, pl.DataType):
+            raise TypeError(f"dtype must be a Polars 'DataType', got '{dtype.__name__}' instead.")
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """
@@ -165,6 +174,9 @@ class Field:
         # Use dataclass introspection to get all expected fields
         if is_dataclass(field_class):
             for dc_field in dataclass_fields(field_class):
+                if not dc_field.init:
+                    continue  # Skip fields that are not in __init__
+
                 field_name = dc_field.name
 
                 # Skip if not in the serialized data

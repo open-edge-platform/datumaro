@@ -49,7 +49,7 @@ def test_empty_bbox_filter(empty_annotations_df):
     """Test filtering empty bboxes."""
     schema = Schema(
         {
-            "bboxes": AttributeInfo(type=np.ndarray, field=bbox_field(dtype=pl.Float64)),
+            "bboxes": AttributeInfo(type=np.ndarray, field=bbox_field(dtype=pl.Float64())),
         }
     )
 
@@ -64,7 +64,7 @@ def test_empty_polygon_filter(empty_annotations_df):
     """Test filtering empty polygons."""
     schema = Schema(
         {
-            "polygons": AttributeInfo(type=np.ndarray, field=polygon_field(dtype=pl.Float64)),
+            "polygons": AttributeInfo(type=np.ndarray, field=polygon_field(dtype=pl.Float64())),
         }
     )
 
@@ -79,8 +79,8 @@ def test_combined_filters(empty_annotations_df):
     """Test filtering both empty bboxes and polygons."""
     schema = Schema(
         {
-            "bboxes": AttributeInfo(type=np.ndarray, field=bbox_field(dtype=pl.Float64)),
-            "polygons": AttributeInfo(type=np.ndarray, field=polygon_field(dtype=pl.Float64)),
+            "bboxes": AttributeInfo(type=np.ndarray, field=bbox_field(dtype=pl.Float64())),
+            "polygons": AttributeInfo(type=np.ndarray, field=polygon_field(dtype=pl.Float64())),
         }
     )
 
@@ -97,7 +97,7 @@ def test_transform_application():
     df = pl.DataFrame({"bboxes": [[], [[0, 0, 10, 10]], [[20, 20, 30, 30]]]})
     schema = Schema(
         {
-            "bboxes": AttributeInfo(type=list, field=bbox_field(dtype=pl.Float64)),
+            "bboxes": AttributeInfo(type=list, field=bbox_field(dtype=pl.Float64())),
         }
     )
 

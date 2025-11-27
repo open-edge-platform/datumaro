@@ -13,7 +13,7 @@ This test suite covers:
 import json
 import zipfile
 from pathlib import Path
-from typing import Any
+from typing import Callable
 
 import numpy as np
 import polars as pl
@@ -70,7 +70,7 @@ def test_export_image_callable_field(tmp_path):
     """Test exporting datasets with ImageCallableField."""
 
     class CallableSample(Sample):
-        image: Any = image_callable_field(format="RGB")
+        image: Callable[[], np.ndarray] = image_callable_field(format="RGB")
 
     # Create sample images as callables
     def make_image_callable(idx):
@@ -161,7 +161,7 @@ def test_export_instance_mask_callable_field(tmp_path):
     """Test exporting datasets with InstanceMaskCallableField."""
 
     class MaskSample(Sample):
-        mask: Any = instance_mask_callable_field()
+        mask: Callable[[], np.ndarray] = instance_mask_callable_field()
 
     def make_mask_callable(idx):
         def load_mask():
@@ -203,9 +203,9 @@ def test_export_mixed_fields(tmp_path):
     """Test exporting datasets with multiple image field types."""
 
     class MixedSample(Sample):
-        image: Any = image_callable_field()
+        image: Callable[[], np.ndarray] = image_callable_field()
         image_path: str = image_path_field()
-        mask: Any = instance_mask_callable_field()
+        mask: Callable[[], np.ndarray] = instance_mask_callable_field()
 
     # Create source image
     source_dir = tmp_path / "source"
@@ -244,7 +244,7 @@ def test_export_with_none_values(tmp_path):
     """Test exporting datasets with None values in image fields."""
 
     class OptionalImageSample(Sample):
-        image: Any = image_callable_field()
+        image: Callable[[], np.ndarray] | None = image_callable_field()
 
     def make_image():
         return np.zeros((10, 10, 3), dtype=np.uint8)
@@ -301,7 +301,7 @@ def test_export_dataset_with_images_to_directory(tmp_path):
     """Test export with images to directory."""
 
     class ImageSample(Sample):
-        image: Any = image_callable_field()
+        image: Callable[[], np.ndarray] = image_callable_field()
         label: int = label_field()
 
     def make_image(idx):
@@ -358,7 +358,7 @@ def test_export_with_object_columns(tmp_path):
     """Test that object columns are tracked in metadata."""
 
     class CallableSample(Sample):
-        image: Any = image_callable_field()
+        image: Callable[[], np.ndarray] = image_callable_field()
         label: int = label_field()
 
     def make_image():
@@ -405,7 +405,7 @@ def test_export_images_false_skips_image_export(tmp_path):
     """Test that export_images=False skips image export."""
 
     class ImageSample(Sample):
-        image: Any = image_callable_field()
+        image: Callable[[], np.ndarray] = image_callable_field()
 
     def make_image():
         return np.zeros((10, 10, 3), dtype=np.uint8)
@@ -473,7 +473,7 @@ def test_import_dataset_with_image_callables(tmp_path):
     """Test importing dataset with ImageCallableField reconstructs callables."""
 
     class ImageSample(Sample):
-        image: Any = image_callable_field()
+        image: Callable[[], np.ndarray] = image_callable_field()
         label: int = label_field()
 
     def make_image(idx):
@@ -551,7 +551,7 @@ def test_import_dataset_with_instance_masks(tmp_path):
     """Test importing dataset with InstanceMaskCallableField."""
 
     class MaskSample(Sample):
-        mask: Any = instance_mask_callable_field()
+        mask: Callable[[], np.ndarray] = instance_mask_callable_field()
         label: int = label_field()
 
     def make_mask(idx):
@@ -661,7 +661,7 @@ def test_import_with_none_image_values(tmp_path):
     """Test importing dataset with None values in image fields."""
 
     class OptionalImageSample(Sample):
-        image: Any = image_callable_field()
+        image: Callable[[], np.ndarray] | None = image_callable_field()
         label: int = label_field()
 
     def make_image():
@@ -692,7 +692,7 @@ def test_roundtrip_preserves_data_integrity(tmp_path):
     class ComplexSample(Sample):
         label: int = label_field()
         score: float = score_field(dtype=pl.Float32())
-        image: Any = image_callable_field()
+        image: Callable[[], np.ndarray] = image_callable_field()
 
     def make_image(value):
         def load_image():
@@ -825,12 +825,12 @@ def test_export_import_different_field_types(tmp_path):
         rotated_bbox: np.ndarray = rotated_bbox_field(dtype=pl.Float32())
         keypoints: np.ndarray = keypoints_field(dtype=pl.Float32())
 
-        image_callable: Any = image_callable_field()
+        image_callable: Callable[[], np.ndarray] = image_callable_field()
         image_path: str = image_path_field()
         image_info: ImageInfo = image_info_field()
 
-        mask_callable: Any = mask_callable_field()
-        instance_mask_callable: Any = instance_mask_callable_field()
+        mask_callable: Callable[[], np.ndarray] = mask_callable_field()
+        instance_mask_callable: np.ndarray | Callable[[], np.ndarray] = instance_mask_callable_field()
 
         tile: TileInfo = tile_field()
 
