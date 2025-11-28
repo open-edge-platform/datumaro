@@ -3,7 +3,6 @@ Unit tests for Dataset class.
 """
 
 import sys
-from types import SimpleNamespace
 from typing import Any
 
 import numpy as np
@@ -22,17 +21,6 @@ from datumaro.experimental.fields import (
     mask_field,
     subset_field,
     tile_field,
-)
-
-# Backward-compat shim for removed Semantic enum in tests
-Semantic = SimpleNamespace(
-    Default="default",
-    Bbox="bbox",
-    Polygon="polygon",
-    Caption="caption",
-    Left="left",
-    Right="right",
-    Anomaly="anomaly",
 )
 
 

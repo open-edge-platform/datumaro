@@ -4,7 +4,6 @@ Unit tests for lazy loading functionality.
 
 import os
 import tempfile
-from types import SimpleNamespace
 from typing import Any
 
 import numpy as np
@@ -14,17 +13,6 @@ from PIL import Image as PILImage
 
 from datumaro.experimental.dataset import Dataset, Sample
 from datumaro.experimental.fields import ImageInfo, bbox_field, image_field, image_info_field, image_path_field
-
-# Backward-compat shim for removed Semantic enum in tests
-Semantic = SimpleNamespace(
-    Default="default",
-    Bbox="bbox",
-    Polygon="polygon",
-    Caption="caption",
-    Left="left",
-    Right="right",
-    Anomaly="anomaly",
-)
 
 
 def test_lazy_image_loading_basic():
