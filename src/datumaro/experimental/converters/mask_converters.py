@@ -153,7 +153,7 @@ class PolygonToMaskConverter(Converter):
 
             return pl.struct(
                 pl.Series(results_batch_polygons).alias("mask"),
-                pl.Series(results_batch_shape, dtype=pl.List(pl.Int32)).alias("shape"),
+                pl.Series(results_batch_shape, dtype=pl.List(pl.Int32())).alias("shape"),
                 eager=True,
             )
 
@@ -165,7 +165,7 @@ class PolygonToMaskConverter(Converter):
             ]
         ).map_batches(
             apply_conversion_batch,
-            return_dtype=pl.Struct({"mask": pl.List(pl.UInt8), "shape": pl.List(pl.Int32)}),
+            return_dtype=pl.Struct({"mask": pl.List(pl.UInt8()), "shape": pl.List(pl.Int32())}),
         )
 
         return df.with_columns(
@@ -282,7 +282,7 @@ class PolygonToInstanceMaskConverter(Converter):
 
             return pl.struct(
                 pl.Series(results_batch_mask).alias("mask"),
-                pl.Series(results_batch_shape, dtype=pl.List(pl.Int32)).alias("shape"),
+                pl.Series(results_batch_shape, dtype=pl.List(pl.Int32())).alias("shape"),
                 eager=True,
             )
 
@@ -294,7 +294,7 @@ class PolygonToInstanceMaskConverter(Converter):
         ).map_batches(
             apply_conversion_batch,
             return_dtype=pl.Struct(
-                {"mask": pl.List(self.output_instance_mask.field.dtype), "shape": pl.List(pl.Int32)}
+                {"mask": pl.List(self.output_instance_mask.field.dtype), "shape": pl.List(pl.Int32())}
             ),
         )
 

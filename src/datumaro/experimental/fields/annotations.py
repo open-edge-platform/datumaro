@@ -6,7 +6,7 @@ from typing import Any
 
 import polars as pl
 
-from datumaro.experimental.fields.base import Field, PolarsDataType, Semantic, T, convert_numpy_object_array_to_series
+from datumaro.experimental.fields.base import Field, Semantic, T, convert_numpy_object_array_to_series
 from datumaro.experimental.type_registry import from_polars_data, to_numpy
 
 
@@ -26,7 +26,7 @@ class BBoxField(Field):
     """
 
     semantic: Semantic
-    dtype: PolarsDataType = field(default_factory=pl.Float32)
+    dtype: pl.DataType = field(default_factory=pl.Float32)
     format: str = "x1y1x2y2"
     normalize: bool = False
 
@@ -95,7 +95,7 @@ class RotatedBBoxField(Field):
     """
 
     semantic: Semantic
-    dtype: PolarsDataType = field(default_factory=pl.Float32)
+    dtype: pl.DataType = field(default_factory=pl.Float32)
     format: str = "cxcywhr"
     normalize: bool = False
 
@@ -159,7 +159,7 @@ class LabelField(Field):
     """
 
     semantic: Semantic
-    dtype: PolarsDataType = field(default_factory=pl.UInt8)
+    dtype: pl.DataType = field(default_factory=pl.UInt8)
     multi_label: bool = False  # Flag to indicate if this field should handle multi-labels
     is_list: bool = False
 
@@ -217,7 +217,7 @@ class ScoreField(Field):
     """
 
     semantic: Semantic
-    dtype: PolarsDataType = field(default_factory=pl.Float32)
+    dtype: pl.DataType = field(default_factory=pl.Float32)
     is_list: bool = False
 
     @property
@@ -276,7 +276,7 @@ class PolygonField(Field):
     """
 
     semantic: Semantic
-    dtype: PolarsDataType = field(default_factory=pl.Float32)
+    dtype: pl.DataType = field(default_factory=pl.Float32)
     format: str = "xy"
     normalize: bool = False
 
@@ -335,7 +335,7 @@ class KeypointsField(Field):
     """
 
     semantic: Semantic
-    dtype: PolarsDataType = field(default_factory=pl.Float32)
+    dtype: pl.DataType = field(default_factory=pl.Float32)
     normalize: bool = False
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
@@ -395,7 +395,7 @@ class EllipseField(Field):
     """
 
     semantic: Semantic
-    dtype: PolarsDataType = field(default_factory=pl.Float32)
+    dtype: pl.DataType = field(default_factory=pl.Float32)
     format: str = "x1y1x2y2"
     normalize: bool = False
 
