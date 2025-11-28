@@ -161,8 +161,8 @@ def test_lazy_loading_with_semantic_fields():
     """Test lazy loading with semantic field variations."""
 
     class StereoPathSample(Sample):
-        left_image_path: str = image_path_field(semantic="bbox")
-        right_image_path: str = image_path_field(semantic="polygon")
+        left_image_path: str = image_path_field(semantic="left")
+        right_image_path: str = image_path_field(semantic="right")
 
     class StereoImageSample(Sample):
         left_image_path: str = image_path_field(semantic="left")
@@ -198,8 +198,8 @@ def test_lazy_loading_with_semantic_fields():
         left_field = schema.attributes["left_image_path"].field
         right_field = schema.attributes["right_image_path"].field
 
-        assert left_field.semantic == "bbox"
-        assert right_field.semantic == "polygon"
+        assert left_field.semantic == "left"
+        assert right_field.semantic == "right"
 
         # Convert to image dataset - this should trigger lazy loading
         image_dataset = path_dataset.convert_to_schema(StereoImageSample)

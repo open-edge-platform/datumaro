@@ -90,7 +90,7 @@ def test_image_field_creation():
     assert isinstance(field, ImageField)
     assert field.dtype == pl.UInt8
     assert field.format == "RGB"
-    assert field.semantic == "bbox"
+    assert field.semantic == "left"
 
 
 def test_image_field_polars_schema():

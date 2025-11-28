@@ -5,7 +5,7 @@ from typing import Any
 
 import polars as pl
 
-from datumaro.experimental.fields.base import Field, PolarsDataType, T
+from datumaro.experimental.fields.base import Field, T
 from datumaro.experimental.type_registry import from_polars_data
 
 
@@ -20,7 +20,7 @@ class NumericField(Field):
     """
 
     semantic: str = "default"
-    dtype: PolarsDataType = field(default_factory=pl.Float32)
+    dtype: pl.DataType = field(default_factory=pl.Float32)
     is_list: bool = False
 
     @property
@@ -47,7 +47,6 @@ class NumericField(Field):
 def numeric_field(
     dtype: Any = pl.Float32(),
     is_list: bool = False,
-    *,
     semantic: str = "default",
 ) -> Any:
     """
@@ -96,7 +95,6 @@ class BoolField(Field):
 
 
 def bool_field(
-    *,
     semantic: str = "default",
     is_list: bool = False,
 ) -> Any:
