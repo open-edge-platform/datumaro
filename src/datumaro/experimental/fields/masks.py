@@ -7,7 +7,7 @@ from typing import Any
 import numpy as np
 import polars as pl
 
-from datumaro.experimental.fields.base import Field, PolarsDataType, T
+from datumaro.experimental.fields.base import Field, T
 from datumaro.experimental.type_registry import from_polars_data, to_numpy
 
 
@@ -28,7 +28,7 @@ class MaskField(Field):
     """
 
     semantic: str = "default"
-    dtype: PolarsDataType = field(default_factory=pl.UInt8)
+    dtype: pl.DataType = field(default_factory=pl.UInt8)
     channels_first: bool = False
     has_channels_dim: bool = False
 
@@ -110,7 +110,7 @@ class InstanceMaskField(Field):
     """
 
     semantic: str = "default"
-    dtype: PolarsDataType = field(default_factory=pl.Boolean)
+    dtype: pl.DataType = field(default_factory=pl.Boolean)
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Generate Polars schema with separate columns for data and shape."""
@@ -164,15 +164,15 @@ class InstanceMaskCallableField(Field):
 
     Attributes:
         semantic: String tag describing the callable's purpose
-        dtype: Polars data type for the mask values (e.g., pl.UInt8, pl.Boolean)
+        dtype: Polars data type for the mask values (e.g., pl.UInt8(), pl.Boolean())
     """
 
     semantic: str = "default"
-    dtype: pl.DataType = pl.Boolean
+    dtype: pl.DataType = field(default_factory=pl.Boolean)
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Return schema with Object type to store callable."""
-        return {name: pl.Object}
+        return {name: pl.Object()}
 
     def to_polars(self, name: str, value: callable) -> dict[str, pl.Series]:
         """
@@ -236,7 +236,7 @@ class MaskCallableField(Field):
 
     Attributes:
         semantic: String tag describing the callable's purpose
-        dtype: Polars data type for mask values (e.g., pl.UInt8, pl.Boolean)
+        dtype: Polars data type for mask values (e.g., pl.UInt8(), pl.Boolean())
     """
 
     semantic: str = "default"
@@ -244,7 +244,7 @@ class MaskCallableField(Field):
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Return schema with Object type to store callable."""
-        return {name: pl.Object}
+        return {name: pl.Object()}
 
     def to_polars(self, name: str, value: callable) -> dict[str, pl.Series]:
         """

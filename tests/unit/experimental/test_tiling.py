@@ -58,12 +58,12 @@ def sample_df():
             "image_info": [info1, info2],
         },
         schema={
-            "image": pl.List(pl.UInt8),
-            "image_shape": pl.List(pl.Int32),
+            "image": pl.List(pl.UInt8()),
+            "image_shape": pl.List(pl.Int32()),
             "image_info": pl.Struct(
                 [
-                    pl.Field("height", pl.Int32),
-                    pl.Field("width", pl.Int32),
+                    pl.Field("height", pl.Int32()),
+                    pl.Field("width", pl.Int32()),
                 ]
             ),
         },
@@ -256,7 +256,7 @@ def test_bbox_tiling():
     schema = Schema(
         attributes={
             "image_info": AttributeInfo(type=dict, field=image_info_field()),
-            "bboxes": AttributeInfo(type=list, field=bbox_field(dtype=pl.Float64)),
+            "bboxes": AttributeInfo(type=list, field=bbox_field(dtype=pl.Float64())),
         }
     )
 
@@ -310,7 +310,7 @@ def test_polygon_and_label_tiling():
     schema = Schema(
         attributes={
             "image_info": AttributeInfo(type=dict, field=image_info_field()),
-            "polygons": AttributeInfo(type=list, field=polygon_field(dtype=pl.Float64)),
+            "polygons": AttributeInfo(type=list, field=polygon_field(dtype=pl.Float64())),
             "labels": AttributeInfo(type=list, field=label_field(is_list=True)),
         }
     )

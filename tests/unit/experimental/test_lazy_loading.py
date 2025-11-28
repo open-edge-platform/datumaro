@@ -32,12 +32,12 @@ def test_lazy_image_loading_basic():
 
     class PathSample(Sample):
         image_path: str = image_path_field()
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=False)
 
     class ImageSample(Sample):
         image_path: str = image_path_field()
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=True)
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=True)
 
     with tempfile.TemporaryDirectory() as temp_dir:
         # Create a test image
@@ -86,7 +86,7 @@ def test_lazy_loading_with_multiple_images():
 
     class ImageSample(Sample):
         image_path: str = image_path_field()
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
         image_info: ImageInfo = image_info_field()
 
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -142,7 +142,7 @@ def test_lazy_loading_nonexistent_file():
 
     class ImageSample(Sample):
         image_path: str = image_path_field()
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
 
     # Create dataset with nonexistent path
     path_dataset = Dataset(PathSample)
@@ -165,10 +165,10 @@ def test_lazy_loading_with_semantic_fields():
         right_image_path: str = image_path_field(semantic="polygon")
 
     class StereoImageSample(Sample):
-        left_image_path: str = image_path_field(semantic="bbox")
-        right_image_path: str = image_path_field(semantic="polygon")
-        left_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB", semantic="bbox")
-        right_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB", semantic="polygon")
+        left_image_path: str = image_path_field(semantic="left")
+        right_image_path: str = image_path_field(semantic="right")
+        left_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB", semantic="left")
+        right_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB", semantic="right")
 
     with tempfile.TemporaryDirectory() as temp_dir:
         # Create left and right images with distinct patterns
@@ -239,7 +239,7 @@ def test_lazy_loading_data_consistency():
 
     class ImageSample(Sample):
         image_path: str = image_path_field()
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
 
     with tempfile.TemporaryDirectory() as temp_dir:
         # Create a test image with known content

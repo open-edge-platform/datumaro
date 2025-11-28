@@ -115,7 +115,7 @@ class ForwardBboxAnnotationConverter(ForwardAnnotationConverter):
         # Extract label categories if available
         legacy_label_categories = categories.get(AnnotationType.label, None)
 
-        bbox_attribute = AttributeInfo(type=np.ndarray, field=bbox_field(dtype=pl.Float32, semantic=semantic))
+        bbox_attribute = AttributeInfo(type=np.ndarray, field=bbox_field(dtype=pl.Float32(), semantic=semantic))
 
         bbox_labels_attribute = None
         # Only add bbox_labels if we have label categories
@@ -194,7 +194,7 @@ class ForwardRotatedBboxAnnotationConverter(ForwardAnnotationConverter):
         # Create attribute for rotated bboxes (cx, cy, w, h, r)
         rotated_bbox_attribute = AttributeInfo(
             type=np.ndarray,
-            field=rotated_bbox_field(dtype=pl.Float32, semantic=semantic),
+            field=rotated_bbox_field(dtype=pl.Float32(), semantic=semantic),
         )
 
         # Create attribute for labels if we have label categories
@@ -280,7 +280,7 @@ class ForwardPolygonAnnotationConverter(ForwardAnnotationConverter):
 
         polygon_attribute = AttributeInfo(
             type=np.ndarray,
-            field=polygon_field(dtype=pl.Float32, format="xy", semantic=semantic),
+            field=polygon_field(dtype=pl.Float32(), format="xy", semantic=semantic),
         )
 
         polygon_labels_attribute = None
@@ -420,7 +420,9 @@ class ForwardKeypointAnnotationConverter(ForwardAnnotationConverter):
         # Extract label categories if available
         legacy_label_categories = categories.get(AnnotationType.label, None)
 
-        keypoints_attribute = AttributeInfo(type=np.ndarray, field=keypoints_field(dtype=pl.Float32, semantic=semantic))
+        keypoints_attribute = AttributeInfo(
+            type=np.ndarray, field=keypoints_field(dtype=pl.Float32(), semantic=semantic)
+        )
 
         keypoints_labels_attribute = None
         # Only add keypoints_labels if we have label categories
@@ -498,7 +500,7 @@ class ForwardEllipseAnnotationConverter(ForwardAnnotationConverter):
         # Extract label categories if available
         legacy_label_categories = categories.get(AnnotationType.label, None)
 
-        ellipse_attribute = AttributeInfo(type=np.ndarray, field=EllipseField(dtype=pl.Float32, semantic=semantic))
+        ellipse_attribute = AttributeInfo(type=np.ndarray, field=EllipseField(dtype=pl.Float32(), semantic=semantic))
 
         ellipse_labels_attribute = None
         # Only add ellipse_labels if we have label categories
@@ -873,7 +875,7 @@ class ForwardMaskAnnotationConverter(ForwardAnnotationConverter):
             mask_categories = MaskCategories(labels=labels, colormap=colormap)
             mask_attribute = AttributeInfo(
                 type=callable,
-                field=mask_callable_field(dtype=pl.UInt8, semantic=semantic),
+                field=mask_callable_field(dtype=pl.UInt8(), semantic=semantic),
                 categories=mask_categories,
             )
             instance_mask_attribute = None
@@ -884,7 +886,7 @@ class ForwardMaskAnnotationConverter(ForwardAnnotationConverter):
             # Configure instance mask attribute with Boolean dtype for binary instance masks
             instance_mask_attribute = AttributeInfo(
                 type=callable,
-                field=instance_mask_callable_field(dtype=pl.Boolean, semantic=semantic),
+                field=instance_mask_callable_field(dtype=pl.Boolean(), semantic=semantic),
             )
 
             # Only add mask_labels if we have label categories

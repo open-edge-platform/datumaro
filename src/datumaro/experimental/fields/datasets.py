@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 import types
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum, auto
 from typing import Any, Union, get_args, get_origin
 
@@ -44,6 +44,18 @@ class TileField(Field):
     """
 
     semantic: str = "default"
+    dtype: pl.DataType = field(
+        default_factory=lambda: pl.Struct(
+            [
+                pl.Field("source_sample_idx", pl.Int32()),
+                pl.Field("x", pl.Int32()),
+                pl.Field("y", pl.Int32()),
+                pl.Field("width", pl.Int32()),
+                pl.Field("height", pl.Int32()),
+            ]
+        ),
+        init=False,
+    )
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Generate Polars schema for tile information."""
@@ -123,6 +135,7 @@ class SubsetField(Field):
 
     semantic: str = "default"
     categories: list[str] | None = None
+    dtype: pl.DataType = field(default_factory=pl.Categorical, init=False)
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Generate schema with categorical type for subset values."""
@@ -141,7 +154,7 @@ class SubsetField(Field):
             polars_value = str(value)
 
         # Create categorical series with predefined categories if available
-        return {name: pl.Series(name, [polars_value], dtype=pl.Categorical)}
+        return {name: pl.Series(name, [polars_value], dtype=pl.Categorical())}
 
     def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
         """Reconstruct subset value from Polars data.

@@ -393,10 +393,10 @@ def _update_dataframe_with_field(
     if is_path_field:
         if field_name in df.columns:
             df = df.drop(field_name)
-        return df.with_columns(pl.Series(field_name, values, dtype=pl.String))
+        return df.with_columns(pl.Series(field_name, values, dtype=pl.String()))
     if field_name in df.columns:
         return df.with_columns(pl.Series(field_name, values))
-    return df.with_columns(pl.Series(field_name, values, dtype=pl.Object))
+    return df.with_columns(pl.Series(field_name, values, dtype=pl.Object()))
 
 
 def _reconstruct_image_fields(
@@ -430,7 +430,7 @@ def _add_missing_object_columns(
     """Add back any object columns that weren't reconstructed from images."""
     for col_name in object_columns:
         if col_name not in df.columns:
-            df = df.with_columns(pl.Series(col_name, [None] * len(df), dtype=pl.Object))
+            df = df.with_columns(pl.Series(col_name, [None] * len(df), dtype=pl.Object()))
     return df
 
 

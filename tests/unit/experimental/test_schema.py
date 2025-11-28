@@ -46,7 +46,7 @@ from datumaro.experimental.schema import AttributeInfo, Schema
 
 def test_tensor_field_creation():
     """Test TensorField creation and properties."""
-    field = tensor_field(dtype=pl.Float32, semantic="default")
+    field = tensor_field(dtype=pl.Float32())
 
     assert isinstance(field, TensorField)
     assert field.dtype == pl.Float32
@@ -55,7 +55,7 @@ def test_tensor_field_creation():
 
 def test_tensor_field_polars_schema():
     """Test TensorField Polars schema generation."""
-    field = tensor_field(dtype=pl.Float32)
+    field = tensor_field(dtype=pl.Float32())
     schema = field.to_polars_schema("test_tensor")
 
     expected = {
@@ -67,7 +67,7 @@ def test_tensor_field_polars_schema():
 
 def test_tensor_field_polars_conversion():
     """Test TensorField to/from Polars conversion."""
-    field = cast("TensorField", tensor_field(dtype=pl.Float32))
+    field = cast("TensorField", tensor_field(dtype=pl.Float32()))
     test_tensor = np.array([[1.0, 2.0], [3.0, 4.0]], dtype=np.float32)
 
     # Test to_polars
@@ -85,7 +85,7 @@ def test_tensor_field_polars_conversion():
 
 def test_image_field_creation():
     """Test ImageField creation and properties."""
-    field = image_field(dtype=pl.UInt8, format="RGB", semantic="bbox")
+    field = image_field(dtype=pl.UInt8(), format="RGB", semantic="left")
 
     assert isinstance(field, ImageField)
     assert field.dtype == pl.UInt8
@@ -95,7 +95,7 @@ def test_image_field_creation():
 
 def test_image_field_polars_schema():
     """Test ImageField Polars schema generation."""
-    field = image_field(dtype=pl.UInt8, format="RGB")
+    field = image_field(dtype=pl.UInt8(), format="RGB")
     schema = field.to_polars_schema("image")
 
     expected = {"image": pl.List(pl.UInt8()), "image_shape": pl.List(pl.Int32())}
@@ -158,7 +158,7 @@ def test_image_bytes_field_polars_conversion_with_bytes():
 
 def test_bbox_field_creation():
     """Test BBoxField creation and properties."""
-    field = bbox_field(dtype=pl.Float32, format="x1y1x2y2", normalize=True, semantic="default")
+    field = bbox_field(dtype=pl.Float32(), format="x1y1x2y2", normalize=True)
 
     assert isinstance(field, BBoxField)
     assert field.dtype == pl.Float32
@@ -169,7 +169,7 @@ def test_bbox_field_creation():
 
 def test_bbox_field_polars_schema():
     """Test BBoxField Polars schema generation."""
-    field = bbox_field(dtype=pl.Float32)
+    field = bbox_field(dtype=pl.Float32())
     schema = field.to_polars_schema("bbox")
 
     expected = {"bbox": pl.List(pl.Array(pl.Float32, 4))}
@@ -178,7 +178,7 @@ def test_bbox_field_polars_schema():
 
 def test_instance_mask_field_creation():
     """Test InstanceMaskField creation and properties."""
-    field = instance_mask_field(dtype=pl.Boolean)
+    field = instance_mask_field(dtype=pl.Boolean())
 
     assert isinstance(field, InstanceMaskField)
     assert field.dtype == pl.Boolean
@@ -187,7 +187,7 @@ def test_instance_mask_field_creation():
 
 def test_instance_mask_field_polars_schema():
     """Test InstanceMaskField Polars schema generation."""
-    field = instance_mask_field(dtype=pl.Boolean)
+    field = instance_mask_field(dtype=pl.Boolean())
     schema = field.to_polars_schema("instance_mask")
 
     expected = {
@@ -199,7 +199,7 @@ def test_instance_mask_field_polars_schema():
 
 def test_instance_mask_field_polars_conversion():
     """Test InstanceMaskField to/from Polars conversion."""
-    field = cast("InstanceMaskField", instance_mask_field(dtype=pl.Boolean))
+    field = cast("InstanceMaskField", instance_mask_field(dtype=pl.Boolean()))
     test_mask = np.array([[[True, False], [False, True]], [[False, True], [True, False]]], dtype=bool)  # (2,2,2)
 
     # Test to_polars
@@ -217,7 +217,7 @@ def test_instance_mask_field_polars_conversion():
 
 def test_instance_mask_callable_field_creation():
     """Test InstanceMaskCallableField creation and properties."""
-    field = instance_mask_callable_field(dtype=pl.Boolean, semantic="default")
+    field = instance_mask_callable_field(dtype=pl.Boolean())
 
     assert isinstance(field, InstanceMaskCallableField)
     assert field.dtype == pl.Boolean
@@ -226,7 +226,7 @@ def test_instance_mask_callable_field_creation():
 
 def test_instance_mask_callable_field_polars_schema():
     """Test InstanceMaskCallableField Polars schema generation."""
-    field = instance_mask_callable_field(dtype=pl.Boolean, semantic="default")
+    field = instance_mask_callable_field(dtype=pl.Boolean())
     schema = field.to_polars_schema("instance_mask_callable")
 
     expected = {
@@ -239,7 +239,7 @@ def test_instance_mask_callable_field_polars_conversion():
     """Test InstanceMaskCallableField to/from Polars conversion."""
     field = cast(
         "InstanceMaskCallableField",
-        instance_mask_callable_field(dtype=pl.Boolean, semantic="default"),
+        instance_mask_callable_field(dtype=pl.Boolean()),
     )
 
     def get_instance_masks():
@@ -261,7 +261,7 @@ def test_instance_mask_callable_field_polars_conversion():
 
 def test_mask_callable_field_creation():
     """Test MaskCallableField creation and properties."""
-    field = mask_callable_field(dtype=pl.UInt8, semantic="default")
+    field = mask_callable_field(dtype=pl.UInt8())
 
     assert isinstance(field, MaskCallableField)
     assert field.dtype == pl.UInt8
@@ -270,7 +270,7 @@ def test_mask_callable_field_creation():
 
 def test_mask_callable_field_polars_schema():
     """Test MaskCallableField Polars schema generation."""
-    field = mask_callable_field(dtype=pl.UInt8, semantic="default")
+    field = mask_callable_field(dtype=pl.UInt8())
     schema = field.to_polars_schema("mask_callable")
 
     expected = {
@@ -283,7 +283,7 @@ def test_mask_callable_field_polars_conversion():
     """Test MaskCallableField to/from Polars conversion."""
     field = cast(
         "MaskCallableField",
-        mask_callable_field(dtype=pl.UInt8, semantic="default"),
+        mask_callable_field(dtype=pl.UInt8()),
     )
 
     def get_mask():
@@ -298,7 +298,7 @@ def test_mask_callable_field_polars_conversion():
 
 def test_bbox_field_polars_conversion():
     """Test BBoxField to/from Polars conversion."""
-    field = cast("BBoxField", bbox_field(dtype=pl.Float32, normalize=False))
+    field = cast("BBoxField", bbox_field(dtype=pl.Float32(), normalize=False))
     test_bbox = np.array([[0.1, 0.2, 0.3, 0.4], [0.5, 0.6, 0.7, 0.8]], dtype=np.float32)
 
     # Test to_polars
@@ -316,7 +316,7 @@ def test_bbox_field_polars_conversion():
 
 def test_rotated_bbox_field_creation():
     """Test RotatedBBoxField creation and properties."""
-    field = rotated_bbox_field(dtype=pl.Float32, format="cxcywhr", normalize=True, semantic="default")
+    field = rotated_bbox_field(dtype=pl.Float32(), format="cxcywhr", normalize=True)
 
     assert isinstance(field, RotatedBBoxField)
     assert field.dtype == pl.Float32
@@ -327,7 +327,7 @@ def test_rotated_bbox_field_creation():
 
 def test_rotated_bbox_field_creation_defaults():
     """Test RotatedBBoxField creation with default values."""
-    field = rotated_bbox_field(dtype=pl.Float32)
+    field = rotated_bbox_field(dtype=pl.Float32())
 
     assert isinstance(field, RotatedBBoxField)
     assert field.dtype == pl.Float32
@@ -338,7 +338,7 @@ def test_rotated_bbox_field_creation_defaults():
 
 def test_rotated_bbox_field_polars_schema():
     """Test RotatedBBoxField Polars schema generation."""
-    field = rotated_bbox_field(dtype=pl.Float32)
+    field = rotated_bbox_field(dtype=pl.Float32())
     schema = field.to_polars_schema("rotated_bbox")
 
     expected = {"rotated_bbox": pl.List(pl.Array(pl.Float32, 5))}
@@ -347,7 +347,7 @@ def test_rotated_bbox_field_polars_schema():
 
 def test_rotated_bbox_field_polars_conversion():
     """Test RotatedBBoxField to/from Polars conversion."""
-    field = cast("RotatedBBoxField", rotated_bbox_field(dtype=pl.Float32, normalize=False))
+    field = cast("RotatedBBoxField", rotated_bbox_field(dtype=pl.Float32(), normalize=False))
     # Test with rotated bboxes: [cx, cy, w, h, r]
     test_rotated_bbox = np.array([[50.0, 60.0, 30.0, 20.0, 0.785], [100.0, 120.0, 40.0, 25.0, 1.57]], dtype=np.float32)
 
@@ -551,7 +551,7 @@ def test_image_callable_field_complex_callable():
 
 def test_attribute_info_creation():
     """Test AttributeInfo creation."""
-    field = tensor_field(dtype=pl.Float32)
+    field = tensor_field(dtype=pl.Float32())
     attr_info = AttributeInfo(type=np.ndarray, field=field)
 
     assert attr_info.type == np.ndarray
@@ -561,8 +561,8 @@ def test_attribute_info_creation():
 def test_schema_creation():
     """Test Schema creation."""
     attributes = {
-        "image": AttributeInfo(type=np.ndarray, field=image_field(dtype=pl.UInt8, format="RGB")),
-        "bbox": AttributeInfo(type=np.ndarray, field=bbox_field(dtype=pl.Float32, normalize=False)),
+        "image": AttributeInfo(type=np.ndarray, field=image_field(dtype=pl.UInt8(), format="RGB")),
+        "bbox": AttributeInfo(type=np.ndarray, field=bbox_field(dtype=pl.Float32(), normalize=False)),
     }
 
     schema = Schema(attributes=attributes)
@@ -576,9 +576,9 @@ def test_schema_creation():
 
 def test_field_equality():
     """Test field equality comparison."""
-    field1 = tensor_field(dtype=pl.Float32, semantic="default")
-    field2 = tensor_field(dtype=pl.Float32, semantic="default")
-    field3 = tensor_field(dtype=pl.Int32, semantic="default")
+    field1 = tensor_field(dtype=pl.Float32())
+    field2 = tensor_field(dtype=pl.Float32())
+    field3 = tensor_field(dtype=pl.Int32())
 
     # Same configuration should be equal
     assert field1 == field2
@@ -589,16 +589,16 @@ def test_field_equality():
 
 def test_field_semantic_variations():
     """Test fields with different semantic values."""
-    left_field = image_field(dtype=pl.UInt8, format="RGB", semantic="bbox")
-    right_field = image_field(dtype=pl.UInt8, format="RGB", semantic="polygon")
-    default_field = image_field(dtype=pl.UInt8, format="RGB", semantic="default")
+    left_field = image_field(dtype=pl.UInt8(), format="RGB", semantic="left")
+    right_field = image_field(dtype=pl.UInt8(), format="RGB", semantic="right")
+    default_field = image_field(dtype=pl.UInt8(), format="RGB")
 
     assert left_field != right_field
     assert left_field != default_field
     assert right_field != default_field
 
-    assert left_field.semantic == "bbox"
-    assert right_field.semantic == "polygon"
+    assert left_field.semantic == "left"
+    assert right_field.semantic == "right"
     assert default_field.semantic == "default"
 
 
@@ -609,16 +609,16 @@ def test_schema_duplicate_field_type_assertion():
     with pytest.raises(ValueError):
 
         class InvalidSample(Sample):
-            image1: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB", semantic="default")
-            image2: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB", semantic="default")
+            image1: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+            image2: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
 
         # This should trigger the assertion error when schema is inferred
         InvalidSample.infer_schema()
 
     # This should work because the fields have different semantic contexts
     class ValidSample(Sample):
-        left_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB", semantic="bbox")
-        right_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB", semantic="polygon")
+        left_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB", semantic="left")
+        right_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB", semantic="right")
 
     # This should not raise an assertion error
     schema = ValidSample.infer_schema()
@@ -629,7 +629,7 @@ def test_schema_duplicate_field_type_assertion():
 
 def test_polygon_field_creation():
     """Test PolygonField creation and properties."""
-    field = polygon_field(dtype=pl.Float32, format="xy", normalize=True, semantic="default")
+    field = polygon_field(dtype=pl.Float32(), format="xy", normalize=True)
 
     assert isinstance(field, PolygonField)
     assert field.dtype == pl.Float32
@@ -640,7 +640,7 @@ def test_polygon_field_creation():
 
 def test_polygon_field_creation_defaults():
     """Test PolygonField creation with default values."""
-    field = polygon_field(dtype=pl.Float32)
+    field = polygon_field(dtype=pl.Float32())
 
     assert isinstance(field, PolygonField)
     assert field.dtype == pl.Float32
@@ -651,7 +651,7 @@ def test_polygon_field_creation_defaults():
 
 def test_polygon_field_polars_schema():
     """Test PolygonField Polars schema generation."""
-    field = polygon_field(dtype=pl.Float32)
+    field = polygon_field(dtype=pl.Float32())
     schema = field.to_polars_schema("polygon")
 
     expected = {"polygon": pl.List(pl.List(pl.Array(pl.Float32, 2)))}
@@ -660,7 +660,7 @@ def test_polygon_field_polars_schema():
 
 def test_polygon_field_polars_conversion():
     """Test PolygonField to/from Polars conversion with simple polygon."""
-    field = cast("PolygonField", polygon_field(dtype=pl.Float32, normalize=False))
+    field = cast("PolygonField", polygon_field(dtype=pl.Float32(), normalize=False))
     # Triangle: (0,0) -> (10,0) -> (5,10) -> (0,0)
     test_polygon_1 = np.array([[0.0, 0.0], [10.0, 0.0], [5.0, 10.0]], dtype=np.float32)
     test_polygon_2 = np.array([[2.0, 2.0], [10.0, 2.0], [5.0, 10.0], [6.0, 11.0]], dtype=np.float32)
@@ -708,12 +708,12 @@ def test_tensor_field_serialization():
 
 def test_image_field_serialization():
     """Test ImageField to_dict/from_dict serialization."""
-    field = image_field(dtype=pl.UInt8, format="RGB", semantic="polygon")
+    field = image_field(dtype=pl.UInt8(), format="RGB", semantic="right")
 
     # Serialize to dict
     field_dict = field.to_dict()
     assert field_dict["type"] == "ImageField"
-    assert field_dict["semantic"] == "polygon"
+    assert field_dict["semantic"] == "right"
     assert field_dict["format"] == "RGB"
     assert "UInt8" in str(field_dict["dtype"])
 
@@ -731,7 +731,7 @@ def test_image_field_serialization():
 
 def test_bbox_field_serialization():
     """Test BBoxField to_dict/from_dict serialization."""
-    field = bbox_field(dtype=pl.Float32, format="xywh", normalize=True, semantic="default")
+    field = bbox_field(dtype=pl.Float32(), format="xywh", normalize=True)
 
     # Serialize to dict
     field_dict = field.to_dict()
@@ -755,7 +755,7 @@ def test_bbox_field_serialization():
 
 def test_rotated_bbox_field_serialization():
     """Test RotatedBBoxField to_dict/from_dict serialization."""
-    field = rotated_bbox_field(dtype=pl.Float32, format="xywha")
+    field = rotated_bbox_field(dtype=pl.Float32(), format="xywha")
 
     # Serialize to dict
     field_dict = field.to_dict()
@@ -776,7 +776,7 @@ def test_rotated_bbox_field_serialization():
 
 def test_polygon_field_serialization():
     """Test PolygonField to_dict/from_dict serialization."""
-    field = polygon_field(dtype=pl.Float64, format="xy", normalize=True)
+    field = polygon_field(dtype=pl.Float64(), format="xy", normalize=True)
 
     # Serialize to dict
     field_dict = field.to_dict()
@@ -799,7 +799,7 @@ def test_polygon_field_serialization():
 
 def test_mask_field_serialization():
     """Test MaskField to_dict/from_dict serialization."""
-    field = mask_field(dtype=pl.UInt8)
+    field = mask_field(dtype=pl.UInt8())
 
     # Serialize to dict
     field_dict = field.to_dict()
@@ -819,7 +819,7 @@ def test_mask_field_serialization():
 
 def test_instance_mask_field_serialization():
     """Test InstanceMaskField to_dict/from_dict serialization."""
-    field = instance_mask_field(dtype=pl.Boolean, semantic="anomaly")
+    field = instance_mask_field(dtype=pl.Boolean(), semantic="anomaly")
 
     # Serialize to dict
     field_dict = field.to_dict()
@@ -901,8 +901,8 @@ def test_schema_serialization_simple():
     # Create a simple schema
     schema = Schema(
         attributes={
-            "image": AttributeInfo(type=np.ndarray, field=image_field(dtype=pl.UInt8)),
-            "bbox": AttributeInfo(type=np.ndarray, field=bbox_field(dtype=pl.Float32)),
+            "image": AttributeInfo(type=np.ndarray, field=image_field(dtype=pl.UInt8())),
+            "bbox": AttributeInfo(type=np.ndarray, field=bbox_field(dtype=pl.Float32())),
         }
     )
 
@@ -935,7 +935,7 @@ def test_schema_serialization_with_categories():
     # Create schema with categories
     label_cats = LabelCategories(labels=("cat", "dog", "bird"))
     schema = Schema(
-        attributes={"label": AttributeInfo(type=str, field=tensor_field(dtype=pl.Int32), categories=label_cats)}
+        attributes={"label": AttributeInfo(type=str, field=tensor_field(dtype=pl.Int32()), categories=label_cats)}
     )
 
     # Serialize to dict
@@ -963,9 +963,9 @@ def test_schema_serialization_builtin_types():
     # Create schema with built-in Python types and different semantics to avoid conflicts
     schema = Schema(
         attributes={
-            "score": AttributeInfo(type=float, field=tensor_field(dtype=pl.Float32, semantic="default")),
-            "count": AttributeInfo(type=int, field=tensor_field(dtype=pl.Int32, semantic="bbox")),
-            "name": AttributeInfo(type=str, field=tensor_field(dtype=pl.Utf8, semantic="polygon")),
+            "score": AttributeInfo(type=float, field=tensor_field(dtype=pl.Float32())),
+            "count": AttributeInfo(type=int, field=tensor_field(dtype=pl.Int32(), semantic="left")),
+            "name": AttributeInfo(type=str, field=tensor_field(dtype=pl.Utf8(), semantic="right")),
         }
     )
 
@@ -992,8 +992,8 @@ def test_schema_with_categories_method():
     # Create base schema without categories (use different semantics to avoid conflicts)
     schema = Schema(
         attributes={
-            "label": AttributeInfo(type=str, field=tensor_field(dtype=pl.Int32, semantic="default")),
-            "mask": AttributeInfo(type=np.ndarray, field=mask_field(dtype=pl.UInt8, semantic="bbox")),
+            "label": AttributeInfo(type=str, field=tensor_field(dtype=pl.Int32())),
+            "mask": AttributeInfo(type=np.ndarray, field=mask_field(dtype=pl.UInt8(), semantic="left")),
         }
     )
 
@@ -1027,7 +1027,7 @@ def test_subset_field_from_polars_with_direct_enum_type():
     field = subset_field()
 
     # Create a DataFrame with subset values
-    df = pl.DataFrame({"subset": pl.Series(["TRAINING", "TESTING", "VALIDATION"], dtype=pl.Categorical)})
+    df = pl.DataFrame({"subset": pl.Series(["TRAINING", "TESTING", "VALIDATION"], dtype=pl.Categorical())})
 
     # Test reconstruction with direct Subset type
     value1 = field.from_polars("subset", 0, df, Subset)
@@ -1070,7 +1070,7 @@ def test_subset_field_in_sample_with_union_type():
     """Test SubsetField usage in a Sample class with union type annotation."""
 
     class TestSample(Sample):
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
         subset: Subset | None = subset_field()
 
     # Test with TRAINING subset
