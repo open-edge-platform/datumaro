@@ -26,7 +26,7 @@ from datumaro.experimental.converters import (
     PolygonToBBoxConverter,
     PolygonToInstanceMaskConverter,
     PolygonToMaskConverter,
-    RGBToBGRConverter,
+    RedBlueColorConverter,
     RotatedBBoxToPolygonConverter,
     UInt8ToFloat32Converter,
     converter,
@@ -82,12 +82,12 @@ def test_converter_decorator(request: pytest.FixtureRequest):
 
 def test_rgb_to_bgr_converter():
     """Test RGB to BGR format conversion."""
-    converter_instance = RGBToBGRConverter()  # type: ignore[call-arg]
+    converter_instance = RedBlueColorConverter()  # type: ignore[call-arg]
 
     # Create test data
-    rgb_data = np.array([[[255, 0, 0], [0, 255, 0]], [[0, 0, 255], [128, 128, 128]]])
+    rgb_data = np.array([255, 0, 0, 0, 255, 0, 0, 0, 255, 128, 128, 128])
     df = pl.DataFrame(
-        {"image": [rgb_data.reshape(-1)], "image_shape": [[2, 2, 3]]},
+        {"image": [rgb_data], "image_shape": [[2, 2, 3]]},
         schema=pl.Schema({"image": pl.List(pl.UInt8()), "image_shape": pl.List(pl.Int64)}),
     )
 
@@ -443,7 +443,7 @@ def test_multiple_converter_chaining():
     # If successful, should have multiple steps
     assert len(path.converters["image"]) == 2
     assert type(path.converters["image"][0]) is UInt8ToFloat32Converter
-    assert type(path.converters["image"][1]) is RGBToBGRConverter
+    assert type(path.converters["image"][1]) is RedBlueColorConverter
 
     # FIXME(gdlg): the BBoxCoordinateConverter needs an image
     # and it does not matter if the image is 8 bits or 32 bits,

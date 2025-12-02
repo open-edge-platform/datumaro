@@ -16,12 +16,9 @@ from datumaro.experimental.type_registry import polars_to_numpy_dtype
 
 
 @converter
-class RGBToBGRConverter(Converter):
+class RedBlueColorConverter(Converter):
     """
-    Converter that transforms RGB image format to BGR format.
-
-    This converter swaps the red and blue channels of RGB images to produce
-    BGR format images, commonly used for OpenCV compatibility.
+    Converter that transforms RGB image format to BGR format and vice-versa.
     """
 
     input_image: AttributeSpec[ImageField]
@@ -29,55 +26,48 @@ class RGBToBGRConverter(Converter):
 
     def filter_output_spec(self) -> bool:
         """
-        Check if input is RGB and configure output for BGR conversion.
+        Check if input is RGB/BGR and configure output for BGR/RGB conversion.
 
         Returns:
-            True if the converter should be applied (RGB to BGR), False otherwise
+            True if the converter should be applied (RGB to BGR/BGR to RGB), False otherwise
         """
         input_format = self.input_image.field.format
         output_format = self.output_image.field.format
 
-        # Configure output specification for BGR format
         self.output_image = AttributeSpec(
             name=self.output_image.name,
             field=ImageField(
                 semantic=self.input_image.field.semantic,
                 dtype=self.input_image.field.dtype,
                 channels_first=self.output_image.field.channels_first,
-                format="BGR",  # Set output format to BGR
+                format=self.output_image.field.format,
             ),
         )
 
-        # Only apply if input is RGB and output should be BGR
-        return input_format == "RGB" and output_format == "BGR"
+        return (input_format == "RGB" and output_format == "BGR") or (input_format == "BGR" and output_format == "RGB")
 
     def convert(self, df: pl.DataFrame) -> pl.DataFrame:
-        """
-        Convert RGB image format to BGR using numpy channel swapping.
-
-        Args:
-            df: Input DataFrame containing RGB image data
-
-        Returns:
-            DataFrame with BGR image data in the output column
-        """
         input_column_name = self.input_image.name
         output_column_name = self.output_image.name
 
         input_shape_column_name = self.input_image.name + "_shape"
         output_shape_column_name = self.output_image.name + "_shape"
 
-        def rgb_to_bgr(tensor_data: pl.Series) -> Any:
-            """Convert RGB tensor data to BGR by reversing the channel order."""
-            data = tensor_data.to_numpy().copy()
-            data = data.reshape(-1, 3)
-            data = np.flip(data, 1)  # Flip along channel axis
-            return data.reshape(-1)
+        expected_dtype = polars_to_numpy_dtype(self.input_image.field.dtype)
 
-        dtype = df.schema[input_column_name]
+        def red_blue_swap(row: dict[str, Any]) -> Any:
+            """Swaps the first and third channels in the image. Images are stored as a flattened list in polars"""
+            flat_data = np.array(row[input_column_name], dtype=expected_dtype, copy=True)
+            shape = tuple(row[input_shape_column_name])
+            reshaped = flat_data.reshape(shape)
+            swapped = reshaped[..., ::-1]
+            return np.asarray(swapped.reshape(-1), dtype=expected_dtype)
+
         # Apply the conversion using map_elements for efficient processing
         return df.with_columns(
-            pl.col(input_column_name).map_elements(rgb_to_bgr, return_dtype=dtype).alias(output_column_name),
+            pl.struct([pl.col(input_column_name), pl.col(input_shape_column_name)])
+            .map_elements(red_blue_swap, return_dtype=pl.List(self.input_image.field.dtype))
+            .alias(output_column_name),
             pl.col(input_shape_column_name).alias(output_shape_column_name),
         )
 
