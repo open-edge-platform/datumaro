@@ -10,7 +10,7 @@ from PIL import Image as PILImage
 
 from datumaro import Dataset as LegacyDataset
 from datumaro import DatasetItem, Image, MediaElement
-from datumaro.components.media import FromDataMixin, FromFileMixin
+from datumaro.components.media import FromDataMixin, FromFileMixin, ImageFromBytes
 from datumaro.experimental import AttributeInfo, Sample, Schema
 from datumaro.experimental.fields import (
     ImageInfo,
@@ -172,7 +172,7 @@ class ForwardImageMediaConverter(ForwardMediaConverter):
     def convert_item_media(self, item: DatasetItem) -> dict[str, Any]:
         result: dict[str, Any] = {}
 
-        if isinstance(item.media, Image):  # pyright: ignore[reportUnknownMemberType]
+        if isinstance(item.media, (Image, ImageFromBytes)):
             if self.media_mixin == FromDataMixin:
                 if self.has_callable_data:
                     # Use a top-level callable to ensure picklability across workers

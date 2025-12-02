@@ -44,12 +44,21 @@ class AnalysisResult:
     is_hierarchical: bool
 
 
-def analyze_legacy_dataset(legacy_dataset: LegacyDataset, semantic: str = "default") -> AnalysisResult:
+def analyze_legacy_dataset(
+    legacy_dataset: LegacyDataset,
+    semantic: str = "default",
+    hierarchical: bool = False,
+    multi_label: bool = False,
+    anomaly: bool = False,
+) -> AnalysisResult:
     """Analyze legacy dataset and generate schema using registered converters.
 
     Args:
         legacy_dataset: The legacy Datumaro dataset to analyze
         semantic: The semantic type for the converted fields
+        hierarchical: Boolean indicating if the dataset should be treated as hierarchical
+        multi_label: Boolean indicating if the dataset should be treated as multi-label
+        anomaly: Boolean indicating if the dataset should be treated as anomaly
 
     Returns:
         AnalysisResult containing the inferred schema and converters
@@ -70,11 +79,11 @@ def analyze_legacy_dataset(legacy_dataset: LegacyDataset, semantic: str = "defau
 
         # Check if project has a hierarchical structure
         label_names = [item.name for item in legacy_dataset.categories()[AnnotationType.label].items]
-        is_hierarchical = _has_derived_labels(label_group_names) or _has_derived_labels(label_names)
+        is_hierarchical = (_has_derived_labels(label_group_names) or _has_derived_labels(label_names)) or hierarchical
 
         # Look for multi label classification groups
         multi_label_group_names = [name for name in label_group_names if name.startswith("Classification labels__")]
-        is_multi_label = len(multi_label_group_names) > 1 and not is_hierarchical
+        is_multi_label = (len(multi_label_group_names) > 1 and not is_hierarchical) or multi_label
     else:
         is_hierarchical = False
         is_multi_label = False
@@ -89,7 +98,7 @@ def analyze_legacy_dataset(legacy_dataset: LegacyDataset, semantic: str = "defau
 
     # If we have a label converter plus other converters, assume that this is an anomaly task.
     # To avoid conflicts between the label attribute and the other ones, use semantic to distinguish them.
-    is_anomaly = AnnotationType.label in ann_types and len(ann_types) > 1
+    is_anomaly = (AnnotationType.label in ann_types and len(ann_types) > 1) or anomaly
 
     for ann_type in ann_types:
         ann_semantic = "anomaly" if is_anomaly and ann_type != AnnotationType.label else semantic
@@ -177,11 +186,16 @@ def _convert_legacy_item(item: DatasetItem, analysis_result: AnalysisResult) -> 
     return attributes
 
 
-def convert_from_legacy(legacy_dataset: LegacyDataset) -> Dataset[Sample]:
+def convert_from_legacy(
+    legacy_dataset: LegacyDataset, hierarchical: bool = False, multi_label: bool = False, anomaly: bool = False
+) -> Dataset[Sample]:
     """Convert legacy dataset to new dataset format with automatic schema inference.
 
     Args:
         legacy_dataset: The legacy Datumaro dataset to convert
+        hierarchical: If True, forces hierarchical classification; otherwise, uses automatic detection.
+        multi_label: If True, forces multi-label classification; otherwise, uses automatic detection.
+        anomaly: If True, forces anomaly detection; otherwise, uses automatic detection.
     Returns:
         A new Dataset with inferred schema and converted data
 
@@ -194,7 +208,9 @@ def convert_from_legacy(legacy_dataset: LegacyDataset) -> Dataset[Sample]:
     """
 
     # Step 1: Analyze dataset to infer schema
-    analysis_result = analyze_legacy_dataset(legacy_dataset)
+    analysis_result = analyze_legacy_dataset(
+        legacy_dataset, hierarchical=hierarchical, multi_label=multi_label, anomaly=anomaly
+    )
 
     # Step 2: Create new dataset with inferred schema
     experimental_dataset = Dataset(analysis_result.schema)

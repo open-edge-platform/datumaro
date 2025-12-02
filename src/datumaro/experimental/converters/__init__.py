@@ -16,7 +16,7 @@ from datumaro.experimental.converters.image_converters import (
     ImageCallableToImageConverter,
     ImagePathToImageConverter,
     ImageToImageInfo,
-    RGBToBGRConverter,
+    RedBlueColorConverter,
     UInt8ToFloat32Converter,
 )
 from datumaro.experimental.converters.mask_converters import (
@@ -67,7 +67,7 @@ __all__ = [
     # Mask converters
     "PolygonToMaskConverter",
     # Image converters
-    "RGBToBGRConverter",
+    "RedBlueColorConverter",
     "RotatedBBoxToPolygonConverter",
     "UInt8ToFloat32Converter",
     "_can_lazy_converter_handle_conversion",
