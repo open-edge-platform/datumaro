@@ -85,7 +85,7 @@ def test_rgb_to_bgr_converter():
     converter_instance = RedBlueColorConverter()  # type: ignore[call-arg]
 
     # Create test data
-    rgb_data = np.array([[255, 0, 0, 0, 255, 0], [0, 0, 255, 128, 128, 128]])
+    rgb_data = np.array([255, 0, 0, 0, 255, 0, 0, 0, 255, 128, 128, 128])
     df = pl.DataFrame(
         {"image": [rgb_data.reshape(-1)], "image_shape": [[2, 2, 3]]},
         schema=pl.Schema({"image": pl.List(pl.UInt8()), "image_shape": pl.List(pl.Int64)}),
