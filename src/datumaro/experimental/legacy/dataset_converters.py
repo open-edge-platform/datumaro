@@ -193,10 +193,9 @@ def convert_from_legacy(
 
     Args:
         legacy_dataset: The legacy Datumaro dataset to convert
-        hierarchical: If dataset should be treated as hierarchical classification. If false, will determine
-        automatically.
-        multi_label: If dataset should be treated as multi-label classification. If false, will determine automatically.
-        anomaly: If dataset should be treated as anomaly. If false, will determine automatically.
+        hierarchical: If True, forces hierarchical classification; otherwise, uses automatic detection.
+        multi_label: If True, forces multi-label classification; otherwise, uses automatic detection.
+        anomaly: If True, forces anomaly detection; otherwise, uses automatic detection.
     Returns:
         A new Dataset with inferred schema and converted data
 
