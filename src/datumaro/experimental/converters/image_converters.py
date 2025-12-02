@@ -60,8 +60,8 @@ class RedBlueColorConverter(Converter):
             flat_data = np.array(row[input_column_name], dtype=expected_dtype, copy=True)
             shape = tuple(row[input_shape_column_name])
             reshaped = flat_data.reshape(shape)
-            bgr = reshaped[..., ::-1]
-            return np.asarray(bgr.reshape(-1), dtype=expected_dtype)
+            swapped = reshaped[..., ::-1]
+            return np.asarray(swapped.reshape(-1), dtype=expected_dtype)
 
         # Apply the conversion using map_elements for efficient processing
         return df.with_columns(
