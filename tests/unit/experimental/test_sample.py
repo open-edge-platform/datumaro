@@ -5,6 +5,7 @@ Unit tests for Sample class.
 from typing import Any
 
 import numpy as np
+import numpy.typing as npt
 import polars as pl
 import pytest
 
@@ -17,6 +18,7 @@ from datumaro.experimental.fields import (
     bbox_field,
     image_field,
     image_info_field,
+    score_field,
 )
 from datumaro.experimental.fields.images import image_path_field
 from datumaro.experimental.schema import Schema
@@ -185,3 +187,11 @@ def test_sample_inheritance():
     assert len(extended_schema.attributes) == 3
     assert "image_info" in extended_schema.attributes
     assert "image_info" not in base_schema.attributes
+
+
+def test_sample_with_is_list():
+    class MySample(Sample):
+        confidence: npt.NDArray[np.float32] | None = score_field(dtype=pl.Float32(), is_list=True)
+
+    # Assert that sample can be created without validation errors
+    MySample(confidence=np.array([0.8]))

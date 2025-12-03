@@ -86,7 +86,7 @@ class Sample:
             collections.abc.Callable,
         }:
             return callable(value)
-        return isinstance(value, expected_type)
+        return isinstance(value, origin or expected_type)
 
     @classmethod
     @cache
