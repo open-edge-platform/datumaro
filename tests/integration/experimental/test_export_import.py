@@ -43,8 +43,8 @@ from datumaro.experimental.fields import (
     keypoints_field,
     label_field,
     mask_callable_field,
+    numeric_field,
     rotated_bbox_field,
-    score_field,
     subset_field,
     tensor_field,
     tile_field,
@@ -270,7 +270,7 @@ def test_export_basic_dataset_to_directory(tmp_path):
 
     class SimpleSample(Sample):
         label: int = label_field()
-        score: float = score_field(dtype=pl.Float32())
+        score: float = numeric_field(dtype=pl.Float32())
 
     dataset = Dataset(SimpleSample)
     dataset.append(SimpleSample(label=1, score=0.9))
@@ -425,7 +425,7 @@ def test_import_basic_dataset_from_directory(tmp_path):
 
     class SimpleSample(Sample):
         label: int = label_field()
-        score: float = score_field(dtype=pl.Float32())
+        score: float = numeric_field(dtype=pl.Float32())
 
     # Export first
     original_dataset = Dataset(SimpleSample)
@@ -691,7 +691,7 @@ def test_roundtrip_preserves_data_integrity(tmp_path):
 
     class ComplexSample(Sample):
         label: int = label_field()
-        score: float = score_field(dtype=pl.Float32())
+        score: float = numeric_field(dtype=pl.Float32())
         image: Callable[[], np.ndarray] = image_callable_field()
 
     def make_image(value):
@@ -817,7 +817,7 @@ def test_export_import_different_field_types(tmp_path):
 
     class ComprehensiveSample(Sample):
         label: int = label_field()
-        score: float = score_field()
+        score: float = numeric_field()
         subset: Subset = subset_field()
 
         tensor: np.ndarray = tensor_field(dtype=pl.Float32())

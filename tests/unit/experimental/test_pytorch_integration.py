@@ -8,7 +8,7 @@ import pytest
 
 from datumaro.experimental.dataset import Dataset, Sample
 from datumaro.experimental.fields import ImageInfo, bbox_field, image_field, image_info_field, tensor_field
-from datumaro.experimental.schema import AttributeInfo, Schema, Semantic
+from datumaro.experimental.schema import AttributeInfo, Schema
 
 try:
     import torch
@@ -91,16 +91,16 @@ def test_pytorch_schema_duplicate_field_type_assertion():
     with pytest.raises(ValueError):
 
         class InvalidSample(Sample):
-            image1: torch.Tensor = image_field(dtype=pl.UInt8(), format="RGB", semantic=Semantic.Default)
-            image2: torch.Tensor = image_field(dtype=pl.UInt8(), format="RGB", semantic=Semantic.Default)
+            image1: torch.Tensor = image_field(dtype=pl.UInt8(), format="RGB")
+            image2: torch.Tensor = image_field(dtype=pl.UInt8(), format="RGB")
 
         # This should trigger the assertion error when schema is inferred
         InvalidSample.infer_schema()
 
     # This should work because the fields have different semantic contexts
     class ValidSample(Sample):
-        left_image: torch.Tensor = image_field(dtype=pl.UInt8(), format="RGB", semantic=Semantic.Left)
-        right_image: torch.Tensor = image_field(dtype=pl.UInt8(), format="RGB", semantic=Semantic.Right)
+        left_image: torch.Tensor = image_field(dtype=pl.UInt8(), format="RGB", semantic="left")
+        right_image: torch.Tensor = image_field(dtype=pl.UInt8(), format="RGB", semantic="right")
 
     # This should not raise an assertion error
     schema = ValidSample.infer_schema()
@@ -176,8 +176,8 @@ def test_pytorch_mixed_with_numpy():
     """Test that PyTorch tensors can coexist with other data types."""
 
     class MixedSample(Sample):
-        pytorch_tensor: torch.Tensor = tensor_field(dtype=pl.Float32(), semantic=Semantic.Left)
-        numpy_array: np.ndarray = tensor_field(dtype=pl.Int32(), semantic=Semantic.Right)
+        pytorch_tensor: torch.Tensor = tensor_field(dtype=pl.Float32(), semantic="left")
+        numpy_array: np.ndarray = tensor_field(dtype=pl.Int32(), semantic="right")
         image_info: ImageInfo = image_info_field()
 
     sample = MixedSample(

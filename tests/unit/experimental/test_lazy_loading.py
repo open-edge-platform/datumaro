@@ -13,7 +13,6 @@ from PIL import Image as PILImage
 
 from datumaro.experimental.dataset import Dataset, Sample
 from datumaro.experimental.fields import ImageInfo, bbox_field, image_field, image_info_field, image_path_field
-from datumaro.experimental.schema import Semantic
 
 
 def test_lazy_image_loading_basic():
@@ -150,14 +149,14 @@ def test_lazy_loading_with_semantic_fields():
     """Test lazy loading with semantic field variations."""
 
     class StereoPathSample(Sample):
-        left_image_path: str = image_path_field(semantic=Semantic.Left)
-        right_image_path: str = image_path_field(semantic=Semantic.Right)
+        left_image_path: str = image_path_field(semantic="left")
+        right_image_path: str = image_path_field(semantic="right")
 
     class StereoImageSample(Sample):
-        left_image_path: str = image_path_field(semantic=Semantic.Left)
-        right_image_path: str = image_path_field(semantic=Semantic.Right)
-        left_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB", semantic=Semantic.Left)
-        right_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB", semantic=Semantic.Right)
+        left_image_path: str = image_path_field(semantic="left")
+        right_image_path: str = image_path_field(semantic="right")
+        left_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB", semantic="left")
+        right_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB", semantic="right")
 
     with tempfile.TemporaryDirectory() as temp_dir:
         # Create left and right images with distinct patterns
@@ -187,8 +186,8 @@ def test_lazy_loading_with_semantic_fields():
         left_field = schema.attributes["left_image_path"].field
         right_field = schema.attributes["right_image_path"].field
 
-        assert left_field.semantic == Semantic.Left
-        assert right_field.semantic == Semantic.Right
+        assert left_field.semantic == "left"
+        assert right_field.semantic == "right"
 
         # Convert to image dataset - this should trigger lazy loading
         image_dataset = path_dataset.convert_to_schema(StereoImageSample)

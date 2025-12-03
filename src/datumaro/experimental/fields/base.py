@@ -11,26 +11,12 @@ learning and computer vision applications.
 
 from dataclasses import fields as dataclass_fields
 from dataclasses import is_dataclass
-from enum import Flag, auto
 from typing import Any, TypeVar
 
 import numpy as np
 import polars as pl
 
 T = TypeVar("T")
-
-
-class Semantic(Flag):
-    """
-    Used for disambiguation when multiple fields of the same type exist.
-    Default is used for fields that don't need disambiguation.
-    Left/Right are used for stereo vision scenarios.
-    """
-
-    Default = auto()
-    Left = auto()
-    Right = auto()
-    Anomaly = auto()
 
 
 class Field:
@@ -42,10 +28,11 @@ class Field:
     DataFrame representations.
 
     Attributes:
-        semantic: Semantic tags for disambiguation (Default, Left, Right)
+        semantic: A string tag used for disambiguation when multiple fields
+            of the same type exist (e.g., "default", "left", "right").
     """
 
-    semantic: Semantic
+    semantic: str
     dtype: pl.DataType
 
     def __post_init__(self):
@@ -136,11 +123,8 @@ class Field:
                 field_name = dc_field.name
                 field_value = getattr(self, field_name)
 
-                # Handle semantic as special case (convert to string)
-                if field_name == "semantic" and isinstance(field_value, Semantic):
-                    field_dict[field_name] = field_value.name
                 # Handle Polars data types
-                elif field_name == "dtype" and isinstance(field_value, pl.DataType):
+                if field_name == "dtype" and isinstance(field_value, pl.DataType):
                     field_dict[field_name] = str(field_value)
                 # Handle regular serializable values
                 else:
@@ -185,11 +169,8 @@ class Field:
 
                 field_value = field_dict[field_name]
 
-                # Handle semantic reconstruction
-                if field_name == "semantic" and isinstance(field_value, str):
-                    kwargs[field_name] = Semantic[field_value]
                 # Handle dtype reconstruction (Polars types)
-                elif field_name == "dtype" and isinstance(field_value, str):
+                if field_name == "dtype" and isinstance(field_value, str):
                     # Try to resolve Polars data types
                     dtype_str = field_value.replace("()", "")
                     if hasattr(pl, dtype_str):

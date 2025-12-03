@@ -22,7 +22,6 @@ from datumaro.experimental.fields import (
     image_info_field,
     image_path_field,
 )
-from datumaro.experimental.schema import Semantic
 
 
 def test_basic_sample_workflow():
@@ -60,10 +59,10 @@ def test_stereo_camera_workflow():
 
     class StereoSample(Sample):
         bboxes: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32())
-        left_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB", semantic=Semantic.Left)
-        right_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="BGR", semantic=Semantic.Right)
-        left_image_info: ImageInfo = image_info_field(Semantic.Left)
-        right_image_info: ImageInfo = image_info_field(Semantic.Right)
+        left_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB", semantic="left")
+        right_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="BGR", semantic="right")
+        left_image_info: ImageInfo = image_info_field("left")
+        right_image_info: ImageInfo = image_info_field("right")
 
     dataset = Dataset(StereoSample)
 
@@ -87,8 +86,8 @@ def test_stereo_camera_workflow():
 
     assert isinstance(left_field, ImageField)
     assert isinstance(right_field, ImageField)
-    assert left_field.semantic == Semantic.Left
-    assert right_field.semantic == Semantic.Right
+    assert left_field.semantic == "left"
+    assert right_field.semantic == "right"
     assert left_field.format == "RGB"
     assert right_field.format == "BGR"
 

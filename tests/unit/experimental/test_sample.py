@@ -19,7 +19,7 @@ from datumaro.experimental.fields import (
     image_info_field,
 )
 from datumaro.experimental.fields.images import image_path_field
-from datumaro.experimental.schema import Schema, Semantic
+from datumaro.experimental.schema import Schema
 
 
 def test_sample_class_definition():
@@ -88,8 +88,8 @@ def test_sample_with_semantic_fields():
     """Test Sample with semantic field tags."""
 
     class StereoSample(Sample):
-        left_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB", semantic=Semantic.Left)
-        right_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="BGR", semantic=Semantic.Right)
+        left_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB", semantic="left")
+        right_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="BGR", semantic="right")
         bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=True)
 
     StereoSample(
@@ -105,9 +105,9 @@ def test_sample_with_semantic_fields():
     right_field = schema.attributes["right_image"].field
     bbox = schema.attributes["bbox"].field
 
-    assert left_field.semantic == Semantic.Left
-    assert right_field.semantic == Semantic.Right
-    assert bbox.semantic == Semantic.Default
+    assert left_field.semantic == "left"
+    assert right_field.semantic == "right"
+    assert bbox.semantic == "default"
 
     assert isinstance(left_field, ImageField)
     assert isinstance(right_field, ImageField)

@@ -22,7 +22,6 @@ from datumaro.experimental.fields import (
     subset_field,
     tile_field,
 )
-from datumaro.experimental.schema import Semantic
 
 
 def test_sample_validation_pass():
@@ -289,11 +288,11 @@ def test_stereo_sample_with_semantics():
     """Test dataset with stereo samples using semantic tags."""
 
     class StereoSample(Sample):
-        left_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB", semantic=Semantic.Left)
-        right_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="BGR", semantic=Semantic.Right)
+        left_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB", semantic="left")
+        right_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="BGR", semantic="right")
         bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=True)
-        left_image_info: ImageInfo = image_info_field(Semantic.Left)
-        right_image_info: ImageInfo = image_info_field(Semantic.Right)
+        left_image_info: ImageInfo = image_info_field("left")
+        right_image_info: ImageInfo = image_info_field("right")
 
     dataset = Dataset(StereoSample)
 
