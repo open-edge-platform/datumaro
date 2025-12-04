@@ -90,6 +90,8 @@ class Sample:
             try:
                 result = isinstance(value, expected_type)
             except TypeError:
+                # Some complex types cannot be validated, for example, sometimes when a numpy dtype is turned
+                # into a list using Polars List, the resulting complex dtype will contain a generic Any.
                 result = isinstance(value, origin)
         return result
 
