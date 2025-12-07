@@ -78,15 +78,22 @@ class Sample:
         # Union and Callable types have to be handled separately,
         # because isinstance() does not work with Callable types.
         origin = get_origin(expected_type)
-        if origin is Union:
+        if origin in {Union, types.UnionType}:
             # Check each type in the Union
-            return any(self._validate_attribute_type(typ, value) for typ in get_args(expected_type))
-        if origin in {typing.Callable, collections.abc.Callable} or expected_type in {
+            result = any(self._validate_attribute_type(typ, value) for typ in get_args(expected_type))
+        elif origin in {typing.Callable, collections.abc.Callable} or expected_type in {
             typing.Callable,
             collections.abc.Callable,
         }:
-            return callable(value)
-        return isinstance(value, expected_type)
+            result = callable(value)
+        else:
+            try:
+                result = isinstance(value, expected_type)
+            except TypeError:
+                # Some complex types cannot be validated, for example, sometimes when a numpy dtype is turned
+                # into a list using Polars List, the resulting complex dtype will contain a generic Any.
+                result = isinstance(value, origin)
+        return result
 
     @classmethod
     @cache
