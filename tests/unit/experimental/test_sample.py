@@ -5,6 +5,7 @@ Unit tests for Sample class.
 from typing import Any
 
 import numpy as np
+import numpy.typing as npt
 import polars as pl
 import pytest
 
@@ -17,16 +18,18 @@ from datumaro.experimental.fields import (
     bbox_field,
     image_field,
     image_info_field,
+    numeric_field,
 )
-from datumaro.experimental.schema import Schema, Semantic
+from datumaro.experimental.fields.images import image_path_field
+from datumaro.experimental.schema import Schema
 
 
 def test_sample_class_definition():
     """Test basic Sample class definition."""
 
     class TestSample(Sample):
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=False)
         image_info: ImageInfo = image_info_field()
 
     # Test class attributes exist
@@ -39,8 +42,8 @@ def test_sample_instantiation():
     """Test Sample instance creation."""
 
     class TestSample(Sample):
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=False)
         image_info: ImageInfo = image_info_field()
 
     sample = TestSample(
@@ -61,8 +64,8 @@ def test_sample_schema_inference():
     """Test schema inference from Sample class."""
 
     class TestSample(Sample):
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=False)
         image_info: ImageInfo = image_info_field()
 
     schema = TestSample.infer_schema()
@@ -87,9 +90,9 @@ def test_sample_with_semantic_fields():
     """Test Sample with semantic field tags."""
 
     class StereoSample(Sample):
-        left_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Left)
-        right_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="BGR", semantic=Semantic.Right)
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=True)
+        left_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB", semantic="left")
+        right_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="BGR", semantic="right")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=True)
 
     StereoSample(
         left_image=np.array([[[255, 0, 0]], [[0, 255, 0]]], dtype=np.uint8),
@@ -104,9 +107,9 @@ def test_sample_with_semantic_fields():
     right_field = schema.attributes["right_image"].field
     bbox = schema.attributes["bbox"].field
 
-    assert left_field.semantic == Semantic.Left
-    assert right_field.semantic == Semantic.Right
-    assert bbox.semantic == Semantic.Default
+    assert left_field.semantic == "left"
+    assert right_field.semantic == "right"
+    assert bbox.semantic == "default"
 
     assert isinstance(left_field, ImageField)
     assert isinstance(right_field, ImageField)
@@ -132,13 +135,13 @@ def test_sample_with_complex_fields():
     """Test Sample with various complex field types."""
 
     class ComplexSample(Sample):
-        image_path: str = image_field(dtype=pl.UInt8, format="RGB")  # This should be image_path_field
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
-        multiple_bboxes: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image_path: str = image_path_field()
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        multiple_bboxes: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=False)
         image_info: ImageInfo = image_info_field()
 
     sample = ComplexSample(
-        image_path="test_string",  # Will be treated as tensor due to field type mismatch
+        image_path="test_string",
         image=np.array([[[255, 0, 0]], [[0, 255, 0]]], dtype=np.uint8),
         multiple_bboxes=np.array(
             [[0.1, 0.2, 0.3, 0.4], [0.5, 0.6, 0.7, 0.8], [0.9, 0.8, 0.7, 0.6]],
@@ -155,8 +158,8 @@ def test_sample_schema_caching():
     """Test that schema inference is cached."""
 
     class TestSample(Sample):
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=False)
 
     # Call infer_schema multiple times
     schema1 = TestSample.infer_schema()
@@ -171,8 +174,8 @@ def test_sample_inheritance():
     """Test Sample class inheritance."""
 
     class BaseSample(Sample):
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=False)
 
     class ExtendedSample(BaseSample):
         image_info: ImageInfo = image_info_field()
@@ -184,3 +187,11 @@ def test_sample_inheritance():
     assert len(extended_schema.attributes) == 3
     assert "image_info" in extended_schema.attributes
     assert "image_info" not in base_schema.attributes
+
+
+def test_sample_with_is_list():
+    class MySample(Sample):
+        confidence: npt.NDArray[np.float32] | None = numeric_field(dtype=pl.Float32(), is_list=True)
+
+    # Assert that sample can be created without validation errors
+    MySample(confidence=np.array([0.8]))

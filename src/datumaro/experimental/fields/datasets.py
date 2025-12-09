@@ -2,13 +2,13 @@
 #
 # SPDX-License-Identifier: MIT
 import types
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum, auto
 from typing import Any, Union, get_args, get_origin
 
 import polars as pl
 
-from datumaro.experimental.fields.base import Field, Semantic, T
+from datumaro.experimental.fields.base import Field, T
 
 
 class Subset(Enum):
@@ -40,10 +40,22 @@ class TileField(Field):
     the tile's position and dimensions within the source data.
 
     Attributes:
-        semantic: Semantic tags describing the tile's purpose
+        semantic: String tag describing the tile's purpose
     """
 
-    semantic: Semantic
+    semantic: str = "default"
+    dtype: pl.DataType = field(
+        default_factory=lambda: pl.Struct(
+            [
+                pl.Field("source_sample_idx", pl.Int32()),
+                pl.Field("x", pl.Int32()),
+                pl.Field("y", pl.Int32()),
+                pl.Field("width", pl.Int32()),
+                pl.Field("height", pl.Int32()),
+            ]
+        ),
+        init=False,
+    )
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Generate Polars schema for tile information."""
@@ -92,12 +104,12 @@ class TileField(Field):
         )
 
 
-def tile_field(semantic: Semantic = Semantic.Default) -> Any:
+def tile_field(semantic: str = "default") -> Any:
     """
     Create a TileField instance for storing tile information.
 
     Args:
-        semantic: Optional semantic tags for disambiguation (defaults to Semantic.Default)
+        semantic: Optional string tag for disambiguation (defaults to "default")
 
     Returns:
         TileField instance configured with the given semantic tags
@@ -116,13 +128,14 @@ class SubsetField(Field):
     match the Enum. When using strings, any string value is accepted.
 
     Attributes:
-        semantic: Semantic tags for the field
+        semantic: String tag for the field
         subset_type: Optional type hint for the subset values (Enum or str)
         categories: Optional list of valid category values, required for categorical type
     """
 
-    semantic: Semantic
+    semantic: str = "default"
     categories: list[str] | None = None
+    dtype: pl.DataType = field(default_factory=pl.Categorical, init=False)
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Generate schema with categorical type for subset values."""
@@ -141,7 +154,7 @@ class SubsetField(Field):
             polars_value = str(value)
 
         # Create categorical series with predefined categories if available
-        return {name: pl.Series(name, [polars_value], dtype=pl.Categorical)}
+        return {name: pl.Series(name, [polars_value], dtype=pl.Categorical())}
 
     def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
         """Reconstruct subset value from Polars data.
@@ -170,12 +183,12 @@ class SubsetField(Field):
         return value  # type: ignore
 
 
-def subset_field(semantic: Semantic = Semantic.Default) -> Any:
+def subset_field(semantic: str = "default") -> Any:
     """
     Create a SubsetField instance for storing dataset subset information.
 
     Args:
-        semantic: Semantic tags for the field (defaults to Semantic.Default)
+        semantic: String tag for the field (defaults to "default")
 
     Returns:
         SubsetField instance configured with the given parameters

@@ -12,7 +12,7 @@ from datumaro.experimental.tiling.tiler_registry import TilingConfig, create_til
 class TiledSample(Sample):
     """Sample class for tiling tests."""
 
-    image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8)
+    image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8())
     image_info: ImageInfo = image_info_field()
 
 

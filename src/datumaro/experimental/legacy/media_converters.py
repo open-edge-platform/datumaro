@@ -10,8 +10,8 @@ from PIL import Image as PILImage
 
 from datumaro import Dataset as LegacyDataset
 from datumaro import DatasetItem, Image, MediaElement
-from datumaro.components.media import FromDataMixin, FromFileMixin
-from datumaro.experimental import AttributeInfo, Sample, Schema, Semantic
+from datumaro.components.media import FromDataMixin, FromFileMixin, ImageFromBytes
+from datumaro.experimental import AttributeInfo, Sample, Schema
 from datumaro.experimental.fields import (
     ImageInfo,
     ImagePathField,
@@ -33,7 +33,7 @@ class ForwardMediaConverter(ABC):
     @classmethod
     @abstractmethod
     def create(
-        cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+        cls, dataset: LegacyDataset, semantic: str = "default", name_prefix: str = ""
     ) -> ForwardMediaConverter | None:
         """Create converter instance if dataset is supported, None otherwise.
 
@@ -75,7 +75,7 @@ class ForwardImageMediaConverter(ForwardMediaConverter):
         self,
         media_mixin: type,
         has_image_info: bool,
-        semantic: Semantic = Semantic.Default,
+        semantic: str = "default",
         name_prefix: str = "",
         has_callable_data: bool = False,
     ):
@@ -93,7 +93,7 @@ class ForwardImageMediaConverter(ForwardMediaConverter):
 
     @classmethod
     def create(
-        cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+        cls, dataset: LegacyDataset, semantic: str = "default", name_prefix: str = ""
     ) -> ForwardImageMediaConverter | None:
         """Create converter instance, detecting whether to use paths or bytes.
 
@@ -172,7 +172,7 @@ class ForwardImageMediaConverter(ForwardMediaConverter):
     def convert_item_media(self, item: DatasetItem) -> dict[str, Any]:
         result: dict[str, Any] = {}
 
-        if isinstance(item.media, Image):  # pyright: ignore[reportUnknownMemberType]
+        if isinstance(item.media, (Image, ImageFromBytes)):
             if self.media_mixin == FromDataMixin:
                 if self.has_callable_data:
                     # Use a top-level callable to ensure picklability across workers

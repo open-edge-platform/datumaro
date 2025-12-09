@@ -6,7 +6,7 @@ from typing import Any
 
 import polars as pl
 
-from datumaro.experimental.fields.base import Field, PolarsDataType, Semantic, T, convert_numpy_object_array_to_series
+from datumaro.experimental.fields.base import Field, T, convert_numpy_object_array_to_series
 from datumaro.experimental.type_registry import from_polars_data, to_numpy
 
 
@@ -19,14 +19,14 @@ class BBoxField(Field):
     and optional normalization to [0,1] range.
 
     Attributes:
-        semantic: Semantic tags describing the bounding box purpose
+        semantic: String tag describing the bounding box purpose
         dtype: Polars data type for coordinate values
         format: Coordinate format (e.g., "x1y1x2y2", "xywh")
         normalize: Whether coordinates are normalized to [0,1] range
     """
 
-    semantic: Semantic
-    dtype: PolarsDataType = field(default_factory=pl.Float32)
+    semantic: str = "default"
+    dtype: pl.DataType = field(default_factory=pl.Float32)
     format: str = "x1y1x2y2"
     normalize: bool = False
 
@@ -51,17 +51,17 @@ class BBoxField(Field):
             )
         }
 
-    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T | None:
         """Reconstruct bounding box tensor from Polars data."""
         polars_data = df[name][row_index]
-        return from_polars_data(polars_data, target_type)  # type: ignore
+        return from_polars_data(polars_data, target_type)
 
 
 def bbox_field(
     dtype: Any,
     format: str = "x1y1x2y2",
     normalize: bool = False,
-    semantic: Semantic = Semantic.Default,
+    semantic: str = "default",
 ) -> Any:
     """
     Create a BBoxField instance with the specified parameters.
@@ -70,7 +70,7 @@ def bbox_field(
         dtype: Polars data type for coordinate values
         format: Coordinate format (defaults to "x1y1x2y2")
         normalize: Whether coordinates are normalized (defaults to False)
-        semantic: Semantic tags describing the bounding box purpose (optional)
+        semantic: String tag describing the bounding box purpose (optional)
 
     Returns:
         BBoxField instance configured with the given parameters
@@ -88,14 +88,14 @@ class RotatedBBoxField(Field):
     in one tensor similar to BBoxField.
 
     Attributes:
-        semantic: Semantic tags describing the rotated bounding box purpose
+        semantic: String tag describing the rotated bounding box purpose
         dtype: Polars data type for coordinate values
         format: Coordinate format (e.g., "cxcywhr", "cxcywha" for angle in degrees)
         normalize: Whether coordinates are normalized to [0,1] range
     """
 
-    semantic: Semantic
-    dtype: PolarsDataType = field(default_factory=pl.Float32)
+    semantic: str = "default"
+    dtype: pl.DataType = field(default_factory=pl.Float32)
     format: str = "cxcywhr"
     normalize: bool = False
 
@@ -120,17 +120,17 @@ class RotatedBBoxField(Field):
             )
         }
 
-    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T | None:
         """Reconstruct rotated bounding box tensor from Polars data."""
         polars_data = df[name][row_index]
-        return from_polars_data(polars_data, target_type)  # type: ignore
+        return from_polars_data(polars_data, target_type)
 
 
 def rotated_bbox_field(
     dtype: Any,
     format: str = "cxcywhr",
     normalize: bool = False,
-    semantic: Semantic = Semantic.Default,
+    semantic: str = "default",
 ) -> Any:
     """
     Create a RotatedBBoxField instance with the specified parameters.
@@ -139,7 +139,7 @@ def rotated_bbox_field(
         dtype: Polars data type for coordinate values
         format: Coordinate format (defaults to "cxcywhr" for cx,cy,w,h,rotation_radians)
         normalize: Whether coordinates are normalized (defaults to False)
-        semantic: Semantic tags describing the rotated bounding box purpose (optional)
+        semantic: String tag describing the rotated bounding box purpose (optional)
 
     Returns:
         RotatedBBoxField instance configured with the given parameters
@@ -158,8 +158,8 @@ class LabelField(Field):
     - Multi-labels: stored as List(Int32)
     """
 
-    semantic: Semantic
-    dtype: PolarsDataType = field(default_factory=pl.UInt8)
+    semantic: str = "default"
+    dtype: pl.DataType = field(default_factory=pl.UInt8)
     multi_label: bool = False  # Flag to indicate if this field should handle multi-labels
     is_list: bool = False
 
@@ -180,7 +180,7 @@ class LabelField(Field):
         """Convert label(s) to Polars format for single or multi-label cases."""
         return {name: pl.Series(name, [value], dtype=self._pl_type)}
 
-    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T | None:
         """Reconstruct label(s) from Polars data."""
         data = df[name][row_index]
         return from_polars_data(data, target_type)
@@ -188,7 +188,7 @@ class LabelField(Field):
 
 def label_field(
     dtype: Any = pl.Int32(),
-    semantic: Semantic = Semantic.Default,
+    semantic: str = "default",
     multi_label: bool = False,
     is_list: bool = False,
 ) -> Any:
@@ -197,7 +197,7 @@ def label_field(
 
     Args:
         dtype: Polars data type for label values (defaults to pl.Int32())
-        semantic: Semantic tags describing the label purpose (optional)
+        semantic: String tag describing the label purpose (optional)
         multi_label: Whether this field should handle multiple labels (defaults to False)
         is_list: Whether this field should be treated as a list type (defaults to False)
 
@@ -205,58 +205,6 @@ def label_field(
         LabelField instance configured with the given parameters
     """
     return LabelField(semantic=semantic, dtype=dtype, multi_label=multi_label, is_list=is_list)
-
-
-@dataclass(frozen=True)
-class ScoreField(Field):
-    """
-    Represents a prediction score.
-
-    By default stores a single float value in a Float32 column. If is_list=True,
-    stores a list of float values, matching multi-prediction scenarios.
-    """
-
-    semantic: Semantic
-    dtype: PolarsDataType = field(default_factory=pl.Float32)
-    is_list: bool = False
-
-    @property
-    def _pl_type(self) -> pl.DataType:
-        pl_type = self.dtype
-        if self.is_list:
-            pl_type = pl.List(pl_type)
-        return pl_type
-
-    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
-        return {name: self._pl_type}
-
-    def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
-        return {name: pl.Series(name, [value], dtype=self._pl_type)}
-
-    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
-        data = df[name][row_index]
-        if target_type is list:
-            return list(data) if data is not None else None  # type: ignore[return-value]
-        return from_polars_data(data, target_type)
-
-
-def score_field(
-    dtype: Any = pl.Float32(),
-    semantic: Semantic = Semantic.Default,
-    is_list: bool = False,
-) -> Any:
-    """
-    Create a ScoreField instance.
-
-    Args:
-        dtype: Polars data type for score values (defaults to pl.Float32())
-        semantic: Semantic tags describing the score purpose (optional)
-        is_list: Whether this field should be treated as a list type (defaults to False)
-
-    Returns:
-        ScoreField instance configured with the given parameters
-    """
-    return ScoreField(semantic=semantic, dtype=dtype, is_list=is_list)
 
 
 @dataclass(frozen=True)
@@ -269,14 +217,14 @@ class PolygonField(Field):
     variable-length lists of coordinate pairs.
 
     Attributes:
-        semantic: Semantic tags describing the polygon purpose
+        semantic: String tag describing the polygon purpose
         dtype: Polars data type for coordinate values
         format: Coordinate format (e.g., "xy", "yx")
         normalize: Whether coordinates are normalized to [0,1] range
     """
 
-    semantic: Semantic
-    dtype: PolarsDataType = field(default_factory=pl.Float32)
+    semantic: str = "default"
+    dtype: pl.DataType = field(default_factory=pl.Float32)
     format: str = "xy"
     normalize: bool = False
 
@@ -292,17 +240,17 @@ class PolygonField(Field):
 
         return {name: pl.Series(name, [series], dtype=pl.List(pl.List(pl.Array(self.dtype, 2))))}
 
-    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T | None:
         """Reconstruct polygon tensor from Polars data."""
         polars_data = df[name][row_index]
-        return from_polars_data(polars_data, target_type)  # type: ignore
+        return from_polars_data(polars_data, target_type)
 
 
 def polygon_field(
     dtype: Any,
     format: str = "xy",
     normalize: bool = False,
-    semantic: Semantic = Semantic.Default,
+    semantic: str = "default",
 ) -> Any:
     """
     Create a PolygonField instance with the specified parameters.
@@ -311,7 +259,7 @@ def polygon_field(
         dtype: Polars data type for coordinate values
         format: Coordinate format (defaults to "xy")
         normalize: Whether coordinates are normalized (defaults to False)
-        semantic: Semantic tags describing the polygon purpose (optional)
+        semantic: String tag describing the polygon purpose (optional)
 
     Returns:
         PolygonField instance configured with the given parameters
@@ -329,13 +277,13 @@ class KeypointsField(Field):
     contains x coordinate, y coordinate, and visibility (0=absent, 1=hidden, 2=visible).
 
     Attributes:
-        semantic: Semantic tags describing the keypoints purpose
+        semantic: String tag describing the keypoints purpose
         dtype: Polars data type for coordinate values
         normalize: Whether coordinates are normalized to [0,1] range
     """
 
-    semantic: Semantic
-    dtype: PolarsDataType = field(default_factory=pl.Float32)
+    semantic: str = "default"
+    dtype: pl.DataType = field(default_factory=pl.Float32)
     normalize: bool = False
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
@@ -346,24 +294,29 @@ class KeypointsField(Field):
         """Convert keypoints tensor to Polars list format."""
         numpy_value = to_numpy(value, self.dtype)
 
+        if numpy_value is not None:
+            data: Any = numpy_value.reshape(1, -1, 3)
+        else:
+            data = [None]
+
         return {
             name: pl.Series(
                 name,
-                numpy_value.reshape(1, -1, 3),
+                data,
                 dtype=pl.List(pl.Array(self.dtype, 3)),
             )
         }
 
-    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T | None:
         """Reconstruct keypoints tensor from Polars data."""
         polars_data = df[name][row_index]
-        return from_polars_data(polars_data, target_type)  # type: ignore
+        return from_polars_data(polars_data, target_type)
 
 
 def keypoints_field(
     dtype: Any = pl.Float32(),
     normalize: bool = False,
-    semantic: Semantic = Semantic.Default,
+    semantic: str = "default",
 ) -> Any:
     """
     Create a KeypointsField instance with the specified parameters.
@@ -371,7 +324,7 @@ def keypoints_field(
     Args:
         dtype: Polars data type for coordinate values (defaults to pl.Float32())
         normalize: Whether coordinates are normalized (defaults to False)
-        semantic: Semantic tags describing the keypoints purpose (optional)
+        semantic: String tag describing the keypoints purpose (optional)
 
     Returns:
         KeypointsField instance configured with the given parameters
@@ -388,14 +341,14 @@ class EllipseField(Field):
     and optional normalization to [0,1] range.
 
     Attributes:
-        semantic: Semantic tags describing the ellipses purpose
+        semantic: String tag describing the ellipses purpose
         dtype: Polars data type for coordinate values
         format: Coordinate format (e.g., "x1y1x2y2", "xywh")
         normalize: Whether coordinates are normalized to [0,1] range
     """
 
-    semantic: Semantic
-    dtype: PolarsDataType = field(default_factory=pl.Float32)
+    semantic: str = "default"
+    dtype: pl.DataType = field(default_factory=pl.Float32)
     format: str = "x1y1x2y2"
     normalize: bool = False
 
@@ -420,7 +373,58 @@ class EllipseField(Field):
             )
         }
 
-    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T:
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T | None:
         """Reconstruct an ellipse tensor from Polars data."""
         polars_data = df[name][row_index]
-        return from_polars_data(polars_data, target_type)  # type: ignore
+        return from_polars_data(polars_data, target_type)
+
+
+@dataclass(frozen=True)
+class CaptionField(Field):
+    """
+    Represents a text caption field.
+
+    Stores either a single caption string or a list of caption strings when
+    is_list=True. Useful for tasks like image captioning, multi-caption datasets,
+    or storing alternative textual descriptions.
+
+    Attributes:
+        semantic: String tag describing the caption's purpose
+        is_list: Whether this field stores multiple captions (list[str])
+    """
+
+    semantic: str = "default"
+    is_list: bool = False
+    dtype: pl.DataType = field(default_factory=pl.Utf8, init=False)
+
+    def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
+        """Generate schema for caption column (string or list of strings)."""
+        dtype = pl.List(pl.Utf8()) if self.is_list else pl.Utf8()
+        return {name: dtype}
+
+    def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
+        """Convert caption value(s) to Polars series."""
+        dtype = pl.List(pl.Utf8()) if self.is_list else pl.Utf8()
+        return {name: pl.Series(name, [value], dtype=dtype)}
+
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type[T]) -> T | None:
+        """Reconstruct caption value(s) from Polars data."""
+        data = df[name][row_index]
+        if self.is_list and target_type is list:
+            return list(data) if data is not None else None
+        # Single caption
+        return from_polars_data(data, target_type)
+
+
+def caption_field(semantic: str = "default", is_list: bool = False) -> Any:
+    """
+    Create a CaptionField instance.
+
+    Args:
+        semantic: String tag describing the caption purpose (optional)
+        is_list: Whether this field stores multiple captions (defaults to False)
+
+    Returns:
+        CaptionField instance configured with the given parameters
+    """
+    return CaptionField(semantic=semantic, is_list=is_list)

@@ -4,7 +4,9 @@
 
 from __future__ import annotations
 
+import collections.abc
 import types
+import typing
 from functools import cache
 from typing import TYPE_CHECKING, Annotated, Any, Generic, TypeGuard, Union, cast, get_args, get_origin, get_type_hints
 
@@ -35,8 +37,8 @@ class Sample:
         """Initialize sample with provided attributes."""
         for key, value in kwargs.items():
             setattr(self, key, value)
-
         self.__post_init__()
+        self.validate()
 
     def __post_init__(self) -> None:
         pass
@@ -45,6 +47,53 @@ class Sample:
         """Return a string representation of the sample."""
         fields = ", ".join(f"{key}={getattr(self, key)}" for key in self.__dict__ if not key.startswith("_"))
         return f"{self.__class__.__name__}({fields})"
+
+    def validate(self) -> None:
+        """
+        Validate the sample's attributes against the inferred schema.
+
+        Raises:
+            ValueError: If required attributes are missing
+            TypeError: If attribute types do not match the schema
+        """
+        schema = self.__class__.infer_schema()  # Cached per class
+        for name, attr_info in schema.attributes.items():
+            if name not in self.__dict__:
+                continue
+            value = getattr(self, name)
+            expected_type = attr_info.type
+            field = attr_info.field
+
+            if not self._validate_attribute_type(expected_type, value):
+                raise TypeError(f"Attribute `{name}` must be of type `{expected_type}`.")
+
+            # Custom field validation (if any)
+            if hasattr(field, "validate"):
+                field.validate(value)
+
+    def _validate_attribute_type(self, expected_type: Any, value: Any) -> bool:
+        """
+        Recursively validate attribute type, handling Union and Callable types.
+        """
+        # Union and Callable types have to be handled separately,
+        # because isinstance() does not work with Callable types.
+        origin = get_origin(expected_type)
+        if origin in {Union, types.UnionType}:
+            # Check each type in the Union
+            result = any(self._validate_attribute_type(typ, value) for typ in get_args(expected_type))
+        elif origin in {typing.Callable, collections.abc.Callable} or expected_type in {
+            typing.Callable,
+            collections.abc.Callable,
+        }:
+            result = callable(value)
+        else:
+            try:
+                result = isinstance(value, expected_type)
+            except TypeError:
+                # Some complex types cannot be validated, for example, sometimes when a numpy dtype is turned
+                # into a list using Polars List, the resulting complex dtype will contain a generic Any.
+                result = isinstance(value, origin)
+        return result
 
     @classmethod
     @cache

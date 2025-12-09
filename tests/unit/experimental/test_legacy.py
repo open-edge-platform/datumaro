@@ -932,14 +932,14 @@ def test_builtin_converters_registration():
 # Define a sample schema for testing convert_to_legacy
 class DetectionSample(Sample):
     image_path: Annotated[str, image_path_field()]
-    bboxes: Annotated[np.ndarray[Any, np.dtype[np.float32]], bbox_field(dtype=pl.Float32, format="x1y1x2y2")]
-    bbox_labels: Annotated[np.ndarray[Any, np.dtype[np.int32]], label_field(dtype=pl.Int32, is_list=True)]
+    bboxes: Annotated[np.ndarray[Any, np.dtype[np.float32]], bbox_field(dtype=pl.Float32(), format="x1y1x2y2")]
+    bbox_labels: Annotated[np.ndarray[Any, np.dtype[np.int32]], label_field(dtype=pl.Int32(), is_list=True)]
 
 
 class RotatedDetectionSample(Sample):
     image_path: Annotated[str, image_path_field()]
-    rotated_bboxes: Annotated[np.ndarray[Any, np.dtype[np.float32]], rotated_bbox_field(dtype=pl.Float32)]
-    rotated_bbox_labels: Annotated[np.ndarray[Any, np.dtype[np.int32]], label_field(dtype=pl.Int32, is_list=True)]
+    rotated_bboxes: Annotated[np.ndarray[Any, np.dtype[np.float32]], rotated_bbox_field(dtype=pl.Float32())]
+    rotated_bbox_labels: Annotated[np.ndarray[Any, np.dtype[np.int32]], label_field(dtype=pl.Int32(), is_list=True)]
 
 
 def test_convert_to_legacy_simple():
@@ -1044,7 +1044,7 @@ def test_backward_image_media_converter_create_from_schema_no_image_field():
     """Test BackwardImageMediaConverter with schema that has no image field."""
 
     # Create schema without image_path field
-    schema = Schema(attributes={"some_tensor": AttributeInfo(type=np.ndarray, field=tensor_field(dtype=pl.Float32))})
+    schema = Schema(attributes={"some_tensor": AttributeInfo(type=np.ndarray, field=tensor_field(dtype=pl.Float32()))})
 
     converter = BackwardImageMediaConverter.create_from_schema(schema)
     assert converter is None
@@ -1309,7 +1309,7 @@ def test_analyze_experimental_dataset_no_compatible_converters():
 
     # Create a custom sample type without image_path or bbox fields
     class CustomSample(Sample):
-        some_data: Annotated[np.ndarray[Any, np.dtype[np.float32]], tensor_field(dtype=pl.Float32)]
+        some_data: Annotated[np.ndarray[Any, np.dtype[np.float32]], tensor_field(dtype=pl.Float32())]
 
     experimental_dataset = Dataset(CustomSample)
 
@@ -1429,8 +1429,8 @@ def test_backward_polygon_annotation_converter_create_from_schema():
     # Create schema with polygon fields
     schema = Schema(
         attributes={
-            "polygons": AttributeInfo(type=list, field=polygon_field(dtype=pl.Float32)),
-            "polygon_labels": AttributeInfo(type=np.ndarray, field=label_field(dtype=pl.Int32, multi_label=True)),
+            "polygons": AttributeInfo(type=list, field=polygon_field(dtype=pl.Float32())),
+            "polygon_labels": AttributeInfo(type=np.ndarray, field=label_field(dtype=pl.Int32(), multi_label=True)),
         }
     )
 
@@ -1683,7 +1683,7 @@ def test_backward_rotated_bbox_annotation_converter_create_from_schema():
     attributes = {
         "rotated_bboxes": AttributeInfo(
             type=np.ndarray,
-            field=rotated_bbox_field(dtype=pl.Float32),
+            field=rotated_bbox_field(dtype=pl.Float32()),
         ),
         "rotated_bbox_labels": AttributeInfo(
             type=np.ndarray,
@@ -1731,7 +1731,7 @@ def test_backward_rotated_bbox_annotation_converter_convert_to_legacy():
     attributes = {
         "rotated_bboxes": AttributeInfo(
             type=np.ndarray,
-            field=rotated_bbox_field(dtype=pl.Float32),
+            field=rotated_bbox_field(dtype=pl.Float32()),
         ),
         "rotated_bbox_labels": AttributeInfo(
             type=np.ndarray,

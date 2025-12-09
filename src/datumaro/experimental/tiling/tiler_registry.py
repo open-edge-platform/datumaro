@@ -19,7 +19,7 @@ from typing import NamedTuple
 import polars as pl
 
 from datumaro.experimental.fields import ImageInfoField, TileField, TileInfo
-from datumaro.experimental.schema import AttributeInfo, AttributeSpec, Field, Schema, Semantic
+from datumaro.experimental.schema import AttributeInfo, AttributeSpec, Field, Schema
 from datumaro.experimental.transform import Transform
 
 
@@ -241,7 +241,7 @@ class TilerEntry(NamedTuple):
     tiler: Tiler
 
 
-def create_tilers(schema: Schema, threshold_drop_ann: float) -> dict[Semantic, list[TilerEntry]]:
+def create_tilers(schema: Schema, threshold_drop_ann: float) -> dict[str, list[TilerEntry]]:
     """Create tiler instances based on schema fields.
 
     This function instantiates appropriate tilers for each field in the schema,
@@ -257,7 +257,7 @@ def create_tilers(schema: Schema, threshold_drop_ann: float) -> dict[Semantic, l
                           dropped.
 
     Returns:
-        Dictionary mapping semantic types to lists of TilerEntry objects.
+        Dictionary mapping semantic tags (strings) to lists of TilerEntry objects.
         Each TilerEntry contains:
         - field_name: Name of the field this tiler handles
         - tiler: The configured tiler instance
@@ -268,7 +268,7 @@ def create_tilers(schema: Schema, threshold_drop_ann: float) -> dict[Semantic, l
         schema = Schema(...)
         tilers = create_tilers(schema, threshold_drop_ann=0.5)
         # Access annotation tilers
-        for entry in tilers[Semantic.Annotation]:
+        for entry in tilers["annotation"]:
             print(f"Field: {entry.field_name}")
             print(f"Tiler: {entry.tiler.__class__.__name__}")
         ```
@@ -384,7 +384,7 @@ def _create_tiling_plan(schema: Schema, config: TilingConfig, threshold_drop_ann
         raise ValueError("Schema must contain an ImageInfoField")
 
     # Create tile info field spec
-    tile_info_spec = AttributeSpec(name="tile", field=TileField(semantic=Semantic.Default))
+    tile_info_spec = AttributeSpec(name="tile", field=TileField(semantic="default"))
 
     # Create tilers for each field type
     tilers = create_tilers(schema, threshold_drop_ann)

@@ -22,15 +22,14 @@ from datumaro.experimental.fields import (
     image_info_field,
     image_path_field,
 )
-from datumaro.experimental.schema import Semantic
 
 
 def test_basic_sample_workflow():
     """Test the basic sample workflow from Example 1."""
 
     class BasicSample(Sample):
-        bboxes: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32)
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
+        bboxes: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32())
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
         image_info: ImageInfo = image_info_field()
 
     dataset = Dataset(BasicSample)
@@ -59,11 +58,11 @@ def test_stereo_camera_workflow():
     """Test the stereo camera workflow from Example 2."""
 
     class StereoSample(Sample):
-        bboxes: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32)
-        left_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB", semantic=Semantic.Left)
-        right_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="BGR", semantic=Semantic.Right)
-        left_image_info: ImageInfo = image_info_field(Semantic.Left)
-        right_image_info: ImageInfo = image_info_field(Semantic.Right)
+        bboxes: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32())
+        left_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB", semantic="left")
+        right_image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="BGR", semantic="right")
+        left_image_info: ImageInfo = image_info_field("left")
+        right_image_info: ImageInfo = image_info_field("right")
 
     dataset = Dataset(StereoSample)
 
@@ -87,8 +86,8 @@ def test_stereo_camera_workflow():
 
     assert isinstance(left_field, ImageField)
     assert isinstance(right_field, ImageField)
-    assert left_field.semantic == Semantic.Left
-    assert right_field.semantic == Semantic.Right
+    assert left_field.semantic == "left"
+    assert right_field.semantic == "right"
     assert left_field.format == "RGB"
     assert right_field.format == "BGR"
 
@@ -100,11 +99,11 @@ def test_dynamic_schema_workflow():
         attributes={
             "bboxes": AttributeInfo(
                 type=np.ndarray,
-                field=bbox_field(dtype=pl.Float32),
+                field=bbox_field(dtype=pl.Float32()),
             ),
             "image": AttributeInfo(
                 type=np.ndarray,
-                field=image_field(dtype=pl.UInt8, format="RGB"),
+                field=image_field(dtype=pl.UInt8(), format="RGB"),
             ),
             "image_info": AttributeInfo(type=ImageInfo, field=image_info_field()),
         }
@@ -133,8 +132,8 @@ def test_dataset_modification_workflow():
     """Test dataset modification from Example 5."""
 
     class ModifiableSample(Sample):
-        bboxes: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32)
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
+        bboxes: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32())
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
         image_info: ImageInfo = image_info_field()
 
     dataset = Dataset(ModifiableSample)
@@ -179,12 +178,12 @@ def test_schema_conversion_workflow():
     """Test schema conversion workflow from Example 6."""
 
     class SourceSample(Sample):
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=False)
 
     class TargetSample(Sample):
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.Float32, format="BGR")
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=True)
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.Float32(), format="BGR")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=True)
 
     # Create source dataset
     source_dataset = Dataset(SourceSample)
@@ -216,12 +215,12 @@ def test_lazy_loading_integration():
 
     class PathSample(Sample):
         image_path: str = image_path_field()
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=False)
 
     class ImageSample(Sample):
         image_path: str = image_path_field()
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=True)
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=True)
 
     with tempfile.TemporaryDirectory() as temp_dir:
         # Create test image
@@ -270,8 +269,8 @@ def test_performance_with_large_dataset():
     """Test performance with a larger dataset."""
 
     class PerfSample(Sample):
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=False)
         image_info: ImageInfo = image_info_field()
 
     dataset = Dataset(PerfSample)
@@ -300,8 +299,8 @@ def test_error_handling_workflow():
     """Test error handling in various workflows."""
 
     class TestSample(Sample):
-        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8, format="RGB")
-        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32, normalize=False)
+        image: np.ndarray[Any, Any] = image_field(dtype=pl.UInt8(), format="RGB")
+        bbox: np.ndarray[Any, Any] = bbox_field(dtype=pl.Float32(), normalize=False)
 
     dataset = Dataset(TestSample)
 
@@ -311,7 +310,7 @@ def test_error_handling_workflow():
 
     # Test schema mismatch
     class OtherSample(Sample):
-        data: np.ndarray[Any, Any] = image_field(dtype=pl.Float32, format="RGB")
+        data: np.ndarray[Any, Any] = image_field(dtype=pl.Float32(), format="RGB")
 
     other_dataset = Dataset(OtherSample)
 

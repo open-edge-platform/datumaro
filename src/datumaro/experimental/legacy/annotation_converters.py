@@ -11,7 +11,7 @@ from datumaro import Annotation, AnnotationType, Bbox, CategoriesInfo, DatasetIt
 from datumaro import Dataset as LegacyDataset
 from datumaro import LabelCategories as LegacyLabelCategories
 from datumaro.components.annotation import ExtractedMask, RotatedBbox
-from datumaro.experimental import AttributeInfo, Dataset, Sample, Schema, Semantic
+from datumaro.experimental import AttributeInfo, Dataset, Sample, Schema
 from datumaro.experimental.categories import LabelCategories, MaskCategories, RgbColor
 from datumaro.experimental.fields import (
     BBoxField,
@@ -41,7 +41,7 @@ class ForwardAnnotationConverter(ABC):
     @classmethod
     @abstractmethod
     def create(
-        cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+        cls, dataset: LegacyDataset, semantic: str = "default", name_prefix: str = ""
     ) -> ForwardAnnotationConverter | None:
         """Create converter instance if dataset supports this annotation type.
 
@@ -66,7 +66,7 @@ _annotation_converters: dict[AnnotationType, type[ForwardAnnotationConverter]] =
 def get_forward_annotation_converter(
     annotation_type: AnnotationType,
     dataset: LegacyDataset,
-    semantic: Semantic = Semantic.Default,
+    semantic: str = "default",
     name_prefix: str = "",
 ) -> ForwardAnnotationConverter | None:
     """Get forward converter for an annotation type from the dataset.
@@ -108,14 +108,14 @@ class ForwardBboxAnnotationConverter(ForwardAnnotationConverter):
 
     @classmethod
     def create(
-        cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+        cls, dataset: LegacyDataset, semantic: str = "default", name_prefix: str = ""
     ) -> ForwardBboxAnnotationConverter | None:
         """Create converter instance for bbox annotations."""
         categories = dataset.categories()
         # Extract label categories if available
         legacy_label_categories = categories.get(AnnotationType.label, None)
 
-        bbox_attribute = AttributeInfo(type=np.ndarray, field=bbox_field(dtype=pl.Float32, semantic=semantic))
+        bbox_attribute = AttributeInfo(type=np.ndarray, field=bbox_field(dtype=pl.Float32(), semantic=semantic))
 
         bbox_labels_attribute = None
         # Only add bbox_labels if we have label categories
@@ -187,14 +187,14 @@ class ForwardRotatedBboxAnnotationConverter(ForwardAnnotationConverter):
 
     @classmethod
     def create(
-        cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+        cls, dataset: LegacyDataset, semantic: str = "default", name_prefix: str = ""
     ) -> ForwardRotatedBboxAnnotationConverter | None:
         """Create converter instance from dataset."""
         categories = dataset.categories()
         # Create attribute for rotated bboxes (cx, cy, w, h, r)
         rotated_bbox_attribute = AttributeInfo(
             type=np.ndarray,
-            field=rotated_bbox_field(dtype=pl.Float32, semantic=semantic),
+            field=rotated_bbox_field(dtype=pl.Float32(), semantic=semantic),
         )
 
         # Create attribute for labels if we have label categories
@@ -271,7 +271,7 @@ class ForwardPolygonAnnotationConverter(ForwardAnnotationConverter):
 
     @classmethod
     def create(
-        cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+        cls, dataset: LegacyDataset, semantic: str = "default", name_prefix: str = ""
     ) -> ForwardPolygonAnnotationConverter | None:
         """Create converter instance for polygon annotations."""
         categories = dataset.categories()
@@ -280,7 +280,7 @@ class ForwardPolygonAnnotationConverter(ForwardAnnotationConverter):
 
         polygon_attribute = AttributeInfo(
             type=np.ndarray,
-            field=polygon_field(dtype=pl.Float32, format="xy", semantic=semantic),
+            field=polygon_field(dtype=pl.Float32(), format="xy", semantic=semantic),
         )
 
         polygon_labels_attribute = None
@@ -343,7 +343,7 @@ class ForwardLabelAnnotationConverter(ForwardAnnotationConverter):
     def __init__(
         self,
         label_attribute: AttributeInfo,
-        semantic: Semantic = Semantic.Default,
+        semantic: str = "default",
         name_prefix: str = "",
     ):
         """Initialize with label attribute."""
@@ -354,7 +354,7 @@ class ForwardLabelAnnotationConverter(ForwardAnnotationConverter):
 
     @classmethod
     def create(
-        cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+        cls, dataset: LegacyDataset, semantic: str = "default", name_prefix: str = ""
     ) -> ForwardLabelAnnotationConverter | None:
         """Create converter instance for label annotations."""
         categories = dataset.categories()
@@ -413,14 +413,16 @@ class ForwardKeypointAnnotationConverter(ForwardAnnotationConverter):
 
     @classmethod
     def create(
-        cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+        cls, dataset: LegacyDataset, semantic: str = "default", name_prefix: str = ""
     ) -> ForwardKeypointAnnotationConverter | None:
         """Create converter instance for keypoints annotations."""
         categories = dataset.categories()
         # Extract label categories if available
         legacy_label_categories = categories.get(AnnotationType.label, None)
 
-        keypoints_attribute = AttributeInfo(type=np.ndarray, field=keypoints_field(dtype=pl.Float32, semantic=semantic))
+        keypoints_attribute = AttributeInfo(
+            type=np.ndarray, field=keypoints_field(dtype=pl.Float32(), semantic=semantic)
+        )
 
         keypoints_labels_attribute = None
         # Only add keypoints_labels if we have label categories
@@ -491,14 +493,14 @@ class ForwardEllipseAnnotationConverter(ForwardAnnotationConverter):
 
     @classmethod
     def create(
-        cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+        cls, dataset: LegacyDataset, semantic: str = "default", name_prefix: str = ""
     ) -> ForwardEllipseAnnotationConverter | None:
         """Create converter instance for ellipse annotations."""
         categories = dataset.categories()
         # Extract label categories if available
         legacy_label_categories = categories.get(AnnotationType.label, None)
 
-        ellipse_attribute = AttributeInfo(type=np.ndarray, field=EllipseField(dtype=pl.Float32, semantic=semantic))
+        ellipse_attribute = AttributeInfo(type=np.ndarray, field=EllipseField(dtype=pl.Float32(), semantic=semantic))
 
         ellipse_labels_attribute = None
         # Only add ellipse_labels if we have label categories
@@ -824,7 +826,7 @@ class ForwardMaskAnnotationConverter(ForwardAnnotationConverter):
 
     @classmethod
     def create(
-        cls, dataset: LegacyDataset, semantic: Semantic = Semantic.Default, name_prefix: str = ""
+        cls, dataset: LegacyDataset, semantic: str = "default", name_prefix: str = ""
     ) -> ForwardMaskAnnotationConverter | None:
         """Create converter instance for mask annotations.
 
@@ -873,7 +875,7 @@ class ForwardMaskAnnotationConverter(ForwardAnnotationConverter):
             mask_categories = MaskCategories(labels=labels, colormap=colormap)
             mask_attribute = AttributeInfo(
                 type=callable,
-                field=mask_callable_field(dtype=pl.UInt8, semantic=semantic),
+                field=mask_callable_field(dtype=pl.UInt8(), semantic=semantic),
                 categories=mask_categories,
             )
             instance_mask_attribute = None
@@ -884,7 +886,7 @@ class ForwardMaskAnnotationConverter(ForwardAnnotationConverter):
             # Configure instance mask attribute with Boolean dtype for binary instance masks
             instance_mask_attribute = AttributeInfo(
                 type=callable,
-                field=instance_mask_callable_field(dtype=pl.Boolean, semantic=semantic),
+                field=instance_mask_callable_field(dtype=pl.Boolean(), semantic=semantic),
             )
 
             # Only add mask_labels if we have label categories

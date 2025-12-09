@@ -7,7 +7,7 @@ from typing import Any
 import numpy as np
 import polars as pl
 
-from datumaro.experimental.fields.base import Field, PolarsDataType, Semantic, T
+from datumaro.experimental.fields.base import Field, T
 from datumaro.experimental.type_registry import from_polars_data, to_numpy
 
 
@@ -21,14 +21,14 @@ class MaskField(Field):
     data type suitable for binary masks, class masks, or instance masks.
 
     Attributes:
-        semantic: Semantic tags describing the mask purpose
+        semantic: String tag describing the mask purpose
         dtype: Polars data type for mask values (defaults to uint8)
         channels_first: Whether the mask uses channels-first format (C, H, W) vs channels-last (H, W, C)
         has_channels_dim: Whether the mask includes a channels dimension (e.g., (H, W, C) vs (H, W))
     """
 
-    semantic: Semantic
-    dtype: PolarsDataType = field(default_factory=pl.UInt8)
+    semantic: str = "default"
+    dtype: pl.DataType = field(default_factory=pl.UInt8)
     channels_first: bool = False
     has_channels_dim: bool = False
 
@@ -75,14 +75,14 @@ def mask_field(
     dtype: Any = pl.UInt8(),
     channels_first: bool = False,
     has_channels_dim: bool = False,
-    semantic: Semantic = Semantic.Default,
+    semantic: str = "default",
 ) -> Any:
     """
     Create a MaskField instance with the specified parameters.
 
     Args:
         dtype: Polars data type for mask values (defaults to pl.UInt8())
-        semantic: Semantic tags describing the mask purpose (optional)
+        semantic: String tag describing the mask purpose (optional)
 
     Returns:
         MaskField instance configured with the given parameters
@@ -105,12 +105,12 @@ class InstanceMaskField(Field):
     a single instance. Unlike MaskField, this does not contain category information.
 
     Attributes:
-        semantic: Semantic tags describing the instance mask purpose
+        semantic: String tag describing the instance mask purpose
         dtype: Polars data type for mask values (defaults to bool for binary masks)
     """
 
-    semantic: Semantic
-    dtype: PolarsDataType = field(default_factory=pl.Boolean)
+    semantic: str = "default"
+    dtype: pl.DataType = field(default_factory=pl.Boolean)
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Generate Polars schema with separate columns for data and shape."""
@@ -139,13 +139,13 @@ class InstanceMaskField(Field):
         return from_polars_data(numpy_data, target_type)  # type: ignore
 
 
-def instance_mask_field(dtype: Any = pl.Boolean(), semantic: Semantic = Semantic.Default) -> Any:
+def instance_mask_field(dtype: Any = pl.Boolean(), semantic: str = "default") -> Any:
     """
     Create an InstanceMaskField instance with the specified parameters.
 
     Args:
         dtype: Polars data type for mask values (defaults to pl.Boolean())
-        semantic: Semantic tags describing the instance mask purpose (optional)
+        semantic: String tag describing the instance mask purpose (optional)
 
     Returns:
         InstanceMaskField instance configured with the given parameters
@@ -163,16 +163,16 @@ class InstanceMaskCallableField(Field):
     the instance mask data when invoked.
 
     Attributes:
-        semantic: Semantic tags describing the callable's purpose
-        dtype: Polars data type for the mask values (e.g., pl.UInt8, pl.Boolean)
+        semantic: String tag describing the callable's purpose
+        dtype: Polars data type for the mask values (e.g., pl.UInt8(), pl.Boolean())
     """
 
-    semantic: Semantic
-    dtype: pl.DataType = pl.Boolean
+    semantic: str = "default"
+    dtype: pl.DataType = field(default_factory=pl.Boolean)
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Return schema with Object type to store callable."""
-        return {name: pl.Object}
+        return {name: pl.Object()}
 
     def to_polars(self, name: str, value: callable) -> dict[str, pl.Series]:
         """
@@ -201,13 +201,13 @@ class InstanceMaskCallableField(Field):
         return value
 
 
-def instance_mask_callable_field(dtype: Any = pl.Boolean(), semantic: Semantic = Semantic.Default) -> Any:
+def instance_mask_callable_field(dtype: Any = pl.Boolean(), semantic: str = "default") -> Any:
     """
     Create an InstanceMaskCallableField for storing instance mask-generating callables.
 
     Args:
         dtype: Polars data type for mask values (defaults to pl.Boolean())
-        semantic: Semantic tags describing the instance mask purpose (optional)
+        semantic: String tag describing the instance mask purpose (optional)
 
     Returns:
         InstanceMaskCallableField instance configured with the given parameters
@@ -235,16 +235,16 @@ class MaskCallableField(Field):
     a single mask when invoked.
 
     Attributes:
-        semantic: Semantic tags describing the callable's purpose
-        dtype: Polars data type for mask values (e.g., pl.UInt8, pl.Boolean)
+        semantic: String tag describing the callable's purpose
+        dtype: Polars data type for mask values (e.g., pl.UInt8(), pl.Boolean())
     """
 
-    semantic: Semantic
+    semantic: str = "default"
     dtype: pl.DataType = field(default_factory=pl.UInt8)
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Return schema with Object type to store callable."""
-        return {name: pl.Object}
+        return {name: pl.Object()}
 
     def to_polars(self, name: str, value: callable) -> dict[str, pl.Series]:
         """
@@ -272,13 +272,13 @@ class MaskCallableField(Field):
         return value
 
 
-def mask_callable_field(dtype: Any = pl.Boolean(), semantic: Semantic = Semantic.Default) -> Any:
+def mask_callable_field(dtype: Any = pl.Boolean(), semantic: str = "default") -> Any:
     """
     Create a MaskCallableField for storing mask-generating callables.
 
     Args:
         dtype: Polars data type for mask values (defaults to pl.Boolean())
-        semantic: Semantic tags describing the mask purpose (optional)
+        semantic: String tag describing the mask purpose (optional)
 
     Returns:
         MaskCallableField instance configured with the given parameters
