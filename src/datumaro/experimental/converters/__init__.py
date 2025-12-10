@@ -7,7 +7,9 @@ from datumaro.experimental.converters.annotation_converters import (
     BBoxDtypeConverter,
     LabelDtypeConverter,
     LabelIndexConverter,
+    PolygonDtypeConverter,
     PolygonToBBoxConverter,
+    RotatedBBoxDtypeConverter,
     RotatedBBoxToPolygonConverter,
 )
 from datumaro.experimental.converters.base import AttributeRemapperConverter, ConversionError, Converter, list_eval_ref
@@ -62,12 +64,14 @@ __all__ = [
     # Annotation converters
     "LabelIndexConverter",
     "MaskCallableToMaskConverter",
+    "PolygonDtypeConverter",
     "PolygonToBBoxConverter",
     "PolygonToInstanceMaskConverter",
     # Mask converters
     "PolygonToMaskConverter",
     # Image converters
     "RedBlueColorConverter",
+    "RotatedBBoxDtypeConverter",
     "RotatedBBoxToPolygonConverter",
     "UInt8ToFloat32Converter",
     "_can_lazy_converter_handle_conversion",
