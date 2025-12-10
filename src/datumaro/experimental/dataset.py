@@ -65,7 +65,7 @@ class Sample:
             field = attr_info.field
 
             if not self._validate_attribute_type(expected_type, value):
-                raise TypeError(f"Attribute `{name}` must be of type `{expected_type}` but is type {type(value)}.")
+                raise TypeError(f"Attribute `{name}` must be of type `{expected_type}` but is type `{type(value)}`.")
 
             # Custom field validation (if any)
             if hasattr(field, "validate"):
