@@ -206,11 +206,44 @@ class BBoxCoordinateConverter(Converter):
         return result_df.drop([temp_width_col, temp_height_col])
 
 
+def _create_fixed_array_cast_expr(target_dtype: pl.DataType, array_size: int) -> pl.Expr:
+    """
+    Create a Polars expression to cast a fixed-size array to a target dtype.
+
+    Args:
+        target_dtype: The target Polars data type
+        array_size: The size of the fixed array (e.g., 4 for BBox, 5 for RotatedBBox)
+
+    Returns:
+        Polars expression that casts each element and reconstructs the array
+    """
+    return pl.concat_arr(*[pl.element().arr.get(i).cast(target_dtype) for i in range(array_size)])
+
+
+def _convert_fixed_array_dtype(
+    df: pl.DataFrame, input_col: str, output_col: str, target_dtype: pl.DataType, array_size: int
+) -> pl.DataFrame:
+    """
+    Convert a column containing List[Array[dtype, N]] to a new dtype.
+
+    Args:
+        df: Input DataFrame
+        input_col: Name of the input column
+        output_col: Name of the output column
+        target_dtype: Target Polars dtype
+        array_size: Size of the fixed arrays
+
+    Returns:
+        DataFrame with converted column
+    """
+    return df.with_columns(
+        pl.col(input_col).list.eval(_create_fixed_array_cast_expr(target_dtype, array_size)).alias(output_col)
+    )
+
+
 @converter
 class BBoxDtypeConverter(Converter):
-    """
-    Convert BBox field between different data types.
-    """
+    """Convert BBox field between different data types."""
 
     input_bbox: AttributeSpec[BBoxField]
     output_bbox: AttributeSpec[BBoxField]
@@ -221,33 +254,54 @@ class BBoxDtypeConverter(Converter):
             name=self.output_bbox.name,
             field=BBoxField(
                 semantic=self.input_bbox.field.semantic,
-                dtype=self.output_bbox.field.dtype,  # Use target dtype
+                dtype=self.output_bbox.field.dtype,
                 format=self.input_bbox.field.format,
                 normalize=self.input_bbox.field.normalize,
             ),
         )
-
-        # Apply converter only if dtypes are different
         return self.input_bbox.field.dtype != self.output_bbox.field.dtype
 
     def convert(self, df: pl.DataFrame) -> pl.DataFrame:
         """Convert bbox data to target dtype."""
-        input_col = self.input_bbox.name
-        output_col = self.output_bbox.name
+        return _convert_fixed_array_dtype(
+            df, self.input_bbox.name, self.output_bbox.name, self.output_bbox.field.dtype, array_size=4
+        )
 
-        # Cast bbox values to target dtype by converting each element
-        return df.with_columns(
-            pl.col(input_col)
-            .list.eval(pl.element().arr.to_list().list.eval(pl.element().cast(self.output_bbox.field.dtype)))
-            .alias(output_col)
+
+@converter
+class RotatedBBoxDtypeConverter(Converter):
+    """Convert RotatedBBox field between different data types."""
+
+    input_rotated_bbox: AttributeSpec[RotatedBBoxField]
+    output_rotated_bbox: AttributeSpec[RotatedBBoxField]
+
+    def filter_output_spec(self) -> bool:
+        """Configure output rotated bbox specification with target dtype."""
+        self.output_rotated_bbox = AttributeSpec(
+            name=self.output_rotated_bbox.name,
+            field=RotatedBBoxField(
+                semantic=self.input_rotated_bbox.field.semantic,
+                dtype=self.output_rotated_bbox.field.dtype,
+                format=self.input_rotated_bbox.field.format,
+                normalize=self.input_rotated_bbox.field.normalize,
+            ),
+        )
+        return self.input_rotated_bbox.field.dtype != self.output_rotated_bbox.field.dtype
+
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+        """Convert rotated bbox data to target dtype."""
+        return _convert_fixed_array_dtype(
+            df,
+            self.input_rotated_bbox.name,
+            self.output_rotated_bbox.name,
+            self.output_rotated_bbox.field.dtype,
+            array_size=5,
         )
 
 
 @converter
 class LabelDtypeConverter(Converter):
-    """
-    Convert Label field between different data types.
-    """
+    """Convert Label field between different data types."""
 
     input_label: AttributeSpec[LabelField]
     output_label: AttributeSpec[LabelField]
@@ -258,27 +312,56 @@ class LabelDtypeConverter(Converter):
             name=self.output_label.name,
             field=LabelField(
                 semantic=self.input_label.field.semantic,
-                dtype=self.output_label.field.dtype,  # Use target dtype
+                dtype=self.output_label.field.dtype,
                 multi_label=self.input_label.field.multi_label,
                 is_list=self.input_label.field.is_list,
             ),
         )
-
-        # Apply converter only if dtypes are different
         return self.input_label.field.dtype != self.output_label.field.dtype
 
     def convert(self, df: pl.DataFrame) -> pl.DataFrame:
         """Convert label data to target dtype."""
         input_col = self.input_label.name
         output_col = self.output_label.name
+        target_dtype = self.output_label.field.dtype
 
         if self.input_label.field.is_list:
-            # Handle list of labels
-            return df.with_columns(
-                pl.col(input_col).list.eval(pl.element().cast(self.output_label.field.dtype)).alias(output_col)
-            )
-        # Handle single label
-        return df.with_columns(pl.col(input_col).cast(self.output_label.field.dtype).alias(output_col))
+            return df.with_columns(pl.col(input_col).list.eval(pl.element().cast(target_dtype)).alias(output_col))
+        return df.with_columns(pl.col(input_col).cast(target_dtype).alias(output_col))
+
+
+@converter
+class PolygonDtypeConverter(Converter):
+    """Convert Polygon field between different data types."""
+
+    input_polygon: AttributeSpec[PolygonField]
+    output_polygon: AttributeSpec[PolygonField]
+
+    def filter_output_spec(self) -> bool:
+        """Configure output polygon specification with target dtype."""
+        self.output_polygon = AttributeSpec(
+            name=self.output_polygon.name,
+            field=PolygonField(
+                semantic=self.input_polygon.field.semantic,
+                dtype=self.output_polygon.field.dtype,
+                format=self.input_polygon.field.format,
+                normalize=self.input_polygon.field.normalize,
+            ),
+        )
+        return self.input_polygon.field.dtype != self.output_polygon.field.dtype
+
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+        """Convert polygon data to target dtype."""
+        input_col = self.input_polygon.name
+        output_col = self.output_polygon.name
+        target_dtype = self.output_polygon.field.dtype
+
+        # Polygon structure: List[List[Array[dtype, 2]]]
+        return df.with_columns(
+            pl.col(input_col)
+            .list.eval(pl.element().list.eval(_create_fixed_array_cast_expr(target_dtype, 2)))
+            .alias(output_col)
+        )
 
 
 @converter
