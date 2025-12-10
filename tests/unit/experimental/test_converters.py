@@ -5,8 +5,10 @@ Unit tests for converter registry and converter implementations.
 import os
 import tempfile
 from dataclasses import field
+from typing import Any
 
 import numpy as np
+import numpy.typing as npt
 import polars as pl
 import pytest
 
@@ -32,6 +34,7 @@ from datumaro.experimental.converters import (
     converter,
     find_conversion_path,
 )
+from datumaro.experimental.dataset import Dataset, Sample
 from datumaro.experimental.fields import (
     BBoxField,
     Field,
@@ -1209,7 +1212,7 @@ def test_find_conversion_path_inferred_categories():
     )
 
     # Create source schema with label categories
-    label_categories = LabelCategories(labels=["cat", "dog", "bird"])
+    label_categories = LabelCategories(labels=("cat", "dog", "bird"))
     source_schema = Schema(
         attributes={
             "polygons": AttributeInfo(
@@ -2144,3 +2147,381 @@ def test_rotated_bbox_to_polygon_converter():
     # Check second polygon (45-degree rotation)
     polygon2 = polygons[1]
     assert len(polygon2) == 4  # Four corners
+
+
+def test_bbox_dtype_converter_int_to_float():
+    """Test BBoxDtypeConverter converting Int32 to Float32."""
+    from datumaro.experimental.converters import BBoxDtypeConverter
+
+    converter_instance = BBoxDtypeConverter()
+
+    # Create test data with Int32 bboxes
+    df = pl.DataFrame(
+        {"bbox": [[[5, 5, 20, 20], [25, 30, 50, 60]]]},
+        schema=pl.Schema({"bbox": pl.List(pl.Array(pl.Int32, 4))}),
+    )
+
+    # Set up converter attributes
+    input_bbox_field = BBoxField(dtype=pl.Int32(), format="x1y1x2y2", normalize=False)
+    output_bbox_field = BBoxField(dtype=pl.Float32(), format="x1y1x2y2", normalize=False)
+
+    setattr(converter_instance, "input_bbox", AttributeSpec(name="bbox", field=input_bbox_field))
+    setattr(converter_instance, "output_bbox", AttributeSpec(name="bbox", field=output_bbox_field))
+
+    # Test filter - should return True for dtype change
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    assert "bbox" in result_df.columns
+    # Check dtype conversion
+    result_bbox = result_df["bbox"][0]
+    assert result_bbox[0].to_numpy().dtype == np.float32
+    assert result_bbox[1].to_numpy().dtype == np.float32
+
+    # Check values preserved
+    np.testing.assert_array_almost_equal(result_bbox[0].to_numpy(), [5.0, 5.0, 20.0, 20.0])
+    np.testing.assert_array_almost_equal(result_bbox[1].to_numpy(), [25.0, 30.0, 50.0, 60.0])
+
+
+def test_bbox_dtype_converter_float_to_int():
+    """Test BBoxDtypeConverter converting Float64 to Int32."""
+    from datumaro.experimental.converters import BBoxDtypeConverter
+
+    converter_instance = BBoxDtypeConverter()
+
+    # Create test data with Float64 bboxes
+    df = pl.DataFrame(
+        {"bbox": [[[10.5, 20.7, 30.2, 40.9]]]},
+        schema=pl.Schema({"bbox": pl.List(pl.Array(pl.Float64, 4))}),
+    )
+
+    # Set up converter attributes
+    input_bbox_field = BBoxField(dtype=pl.Float64(), format="x1y1x2y2", normalize=False)
+    output_bbox_field = BBoxField(dtype=pl.Int32(), format="x1y1x2y2", normalize=False)
+
+    setattr(converter_instance, "input_bbox", AttributeSpec(name="bbox", field=input_bbox_field))
+    setattr(converter_instance, "output_bbox", AttributeSpec(name="bbox", field=output_bbox_field))
+
+    # Test filter - should return True for dtype change
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    assert "bbox" in result_df.columns
+    # Check dtype conversion
+    result_bbox = result_df["bbox"][0]
+    assert result_bbox[0].to_numpy().dtype == np.int32
+    # Values should be truncated
+    np.testing.assert_array_equal(result_bbox[0].to_numpy(), [10, 20, 30, 40])
+
+
+def test_bbox_dtype_converter_same_dtype():
+    """Test BBoxDtypeConverter returns False when dtypes are the same."""
+    from datumaro.experimental.converters import BBoxDtypeConverter
+
+    converter_instance = BBoxDtypeConverter()
+
+    # Set up converter attributes with same dtype
+    input_bbox_field = BBoxField(dtype=pl.Float32(), format="x1y1x2y2", normalize=False)
+    output_bbox_field = BBoxField(dtype=pl.Float32(), format="x1y1x2y2", normalize=False)
+
+    setattr(converter_instance, "input_bbox", AttributeSpec(name="bbox", field=input_bbox_field))
+    setattr(converter_instance, "output_bbox", AttributeSpec(name="bbox", field=output_bbox_field))
+
+    # Test filter - should return False when dtypes are the same
+    assert converter_instance.filter_output_spec() is False
+
+
+def test_rotated_bbox_dtype_converter_int_to_float():
+    """Test RotatedBBoxDtypeConverter converting Int32 to Float32."""
+    from datumaro.experimental.converters import RotatedBBoxDtypeConverter
+
+    converter_instance = RotatedBBoxDtypeConverter()
+
+    # Create test data with Int32 rotated bboxes (cx, cy, w, h, r)
+    df = pl.DataFrame(
+        {"rotated_bbox": [[[50, 60, 30, 20, 0], [100, 120, 40, 25, 1]]]},
+        schema=pl.Schema({"rotated_bbox": pl.List(pl.Array(pl.Int32, 5))}),
+    )
+
+    # Set up converter attributes
+    input_field = RotatedBBoxField(dtype=pl.Int32(), format="cxcywhr", normalize=False)
+    output_field = RotatedBBoxField(dtype=pl.Float32(), format="cxcywhr", normalize=False)
+
+    setattr(converter_instance, "input_rotated_bbox", AttributeSpec(name="rotated_bbox", field=input_field))
+    setattr(converter_instance, "output_rotated_bbox", AttributeSpec(name="rotated_bbox", field=output_field))
+
+    # Test filter - should return True for dtype change
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    assert "rotated_bbox" in result_df.columns
+    # Check dtype conversion
+    result_rotated_bbox = result_df["rotated_bbox"][0]
+    assert result_rotated_bbox[0].to_numpy().dtype == np.float32
+
+    # Check values preserved
+    np.testing.assert_array_almost_equal(result_rotated_bbox[0].to_numpy(), [50.0, 60.0, 30.0, 20.0, 0.0])
+    np.testing.assert_array_almost_equal(result_rotated_bbox[1].to_numpy(), [100.0, 120.0, 40.0, 25.0, 1.0])
+
+
+def test_rotated_bbox_dtype_converter_same_dtype():
+    """Test RotatedBBoxDtypeConverter returns False when dtypes are the same."""
+    from datumaro.experimental.converters import RotatedBBoxDtypeConverter
+
+    converter_instance = RotatedBBoxDtypeConverter()
+
+    # Set up converter attributes with same dtype
+    input_field = RotatedBBoxField(dtype=pl.Float32(), format="cxcywhr", normalize=False)
+    output_field = RotatedBBoxField(dtype=pl.Float32(), format="cxcywhr", normalize=False)
+
+    setattr(converter_instance, "input_rotated_bbox", AttributeSpec(name="rotated_bbox", field=input_field))
+    setattr(converter_instance, "output_rotated_bbox", AttributeSpec(name="rotated_bbox", field=output_field))
+
+    # Test filter - should return False when dtypes are the same
+    assert converter_instance.filter_output_spec() is False
+
+
+def test_label_dtype_converter_int32_to_uint8():
+    """Test LabelDtypeConverter converting Int32 to UInt8."""
+    from datumaro.experimental.converters import LabelDtypeConverter
+
+    converter_instance = LabelDtypeConverter()
+
+    # Create test data with Int32 label
+    df = pl.DataFrame(
+        {"label": [5]},
+        schema=pl.Schema({"label": pl.Int32()}),
+    )
+
+    # Set up converter attributes
+    input_field = LabelField(dtype=pl.Int32(), multi_label=False, is_list=False)
+    output_field = LabelField(dtype=pl.UInt8(), multi_label=False, is_list=False)
+
+    setattr(converter_instance, "input_label", AttributeSpec(name="label", field=input_field))
+    setattr(converter_instance, "output_label", AttributeSpec(name="label", field=output_field))
+
+    # Test filter - should return True for dtype change
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    assert "label" in result_df.columns
+    assert result_df["label"].dtype == pl.UInt8
+    assert result_df["label"][0] == 5
+
+
+def test_label_dtype_converter_list_labels():
+    """Test LabelDtypeConverter with is_list=True."""
+    from datumaro.experimental.converters import LabelDtypeConverter
+
+    converter_instance = LabelDtypeConverter()
+
+    # Create test data with list of Int32 labels
+    df = pl.DataFrame(
+        {"labels": [[1, 2, 3, 255]]},
+        schema=pl.Schema({"labels": pl.List(pl.Int32())}),
+    )
+
+    # Set up converter attributes
+    input_field = LabelField(dtype=pl.Int32(), multi_label=False, is_list=True)
+    output_field = LabelField(dtype=pl.UInt8(), multi_label=False, is_list=True)
+
+    setattr(converter_instance, "input_label", AttributeSpec(name="labels", field=input_field))
+    setattr(converter_instance, "output_label", AttributeSpec(name="labels", field=output_field))
+
+    # Test filter - should return True for dtype change
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    assert "labels" in result_df.columns
+    assert result_df["labels"].dtype == pl.List(pl.UInt8)
+    assert result_df["labels"][0].to_list() == [1, 2, 3, 255]
+
+
+def test_label_dtype_converter_same_dtype():
+    """Test LabelDtypeConverter returns False when dtypes are the same."""
+    from datumaro.experimental.converters import LabelDtypeConverter
+
+    converter_instance = LabelDtypeConverter()
+
+    # Set up converter attributes with same dtype
+    input_field = LabelField(dtype=pl.Int32(), multi_label=False, is_list=False)
+    output_field = LabelField(dtype=pl.Int32(), multi_label=False, is_list=False)
+
+    setattr(converter_instance, "input_label", AttributeSpec(name="label", field=input_field))
+    setattr(converter_instance, "output_label", AttributeSpec(name="label", field=output_field))
+
+    # Test filter - should return False when dtypes are the same
+    assert converter_instance.filter_output_spec() is False
+
+
+def test_polygon_dtype_converter_int_to_float():
+    """Test PolygonDtypeConverter converting Int32 to Float32."""
+    from datumaro.experimental.converters import PolygonDtypeConverter
+
+    converter_instance = PolygonDtypeConverter()
+
+    # Create test data with Int32 polygons: List[List[Array[2]]]
+    # Each polygon is a list of (x, y) points
+    polygon1 = [[10, 10], [30, 10], [20, 30]]  # Triangle
+    polygon2 = [[40, 40], [60, 40], [60, 60], [40, 60]]  # Rectangle
+
+    df = pl.DataFrame(
+        {"polygon": [[polygon1, polygon2]]},
+        schema=pl.Schema({"polygon": pl.List(pl.List(pl.Array(pl.Int32, 2)))}),
+    )
+
+    # Set up converter attributes
+    input_field = PolygonField(dtype=pl.Int32(), format="xy", normalize=False)
+    output_field = PolygonField(dtype=pl.Float32(), format="xy", normalize=False)
+
+    setattr(converter_instance, "input_polygon", AttributeSpec(name="polygon", field=input_field))
+    setattr(converter_instance, "output_polygon", AttributeSpec(name="polygon", field=output_field))
+
+    # Test filter - should return True for dtype change
+    assert converter_instance.filter_output_spec() is True
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    assert "polygon" in result_df.columns
+    # Check dtype conversion - get the inner arrays and check their dtype
+    result_polygons = result_df["polygon"][0]
+    assert len(result_polygons) == 2
+
+    # Check first polygon (triangle)
+    result_polygon1 = result_polygons[0]
+    assert len(result_polygon1) == 3
+    np.testing.assert_array_almost_equal(result_polygon1[0].to_numpy(), [10.0, 10.0])
+    np.testing.assert_array_almost_equal(result_polygon1[1].to_numpy(), [30.0, 10.0])
+    np.testing.assert_array_almost_equal(result_polygon1[2].to_numpy(), [20.0, 30.0])
+
+    # Check second polygon (rectangle)
+    result_polygon2 = result_polygons[1]
+    assert len(result_polygon2) == 4
+
+
+def test_polygon_dtype_converter_same_dtype():
+    """Test PolygonDtypeConverter returns False when dtypes are the same."""
+    from datumaro.experimental.converters import PolygonDtypeConverter
+
+    converter_instance = PolygonDtypeConverter()
+
+    # Set up converter attributes with same dtype
+    input_field = PolygonField(dtype=pl.Float32(), format="xy", normalize=False)
+    output_field = PolygonField(dtype=pl.Float32(), format="xy", normalize=False)
+
+    setattr(converter_instance, "input_polygon", AttributeSpec(name="polygon", field=input_field))
+    setattr(converter_instance, "output_polygon", AttributeSpec(name="polygon", field=output_field))
+
+    # Test filter - should return False when dtypes are the same
+    assert converter_instance.filter_output_spec() is False
+
+
+def test_bbox_dtype_converter_preserves_array_structure():
+    """Test that BBoxDtypeConverter preserves the fixed-size array structure."""
+    from datumaro.experimental.converters import BBoxDtypeConverter
+
+    converter_instance = BBoxDtypeConverter()
+
+    # Create test data with multiple bboxes
+    df = pl.DataFrame(
+        {"bbox": [[[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]]},
+        schema=pl.Schema({"bbox": pl.List(pl.Array(pl.Int32, 4))}),
+    )
+
+    # Set up converter attributes
+    input_bbox_field = BBoxField(dtype=pl.Int32(), format="x1y1x2y2", normalize=False)
+    output_bbox_field = BBoxField(dtype=pl.Float32(), format="x1y1x2y2", normalize=False)
+
+    setattr(converter_instance, "input_bbox", AttributeSpec(name="bbox", field=input_bbox_field))
+    setattr(converter_instance, "output_bbox", AttributeSpec(name="bbox", field=output_bbox_field))
+
+    converter_instance.filter_output_spec()
+
+    # Test conversion
+    result_df = converter_instance.convert(df)
+
+    # Check that the result maintains the List[Array[4]] structure
+    assert result_df.schema["bbox"] == pl.List(pl.Array(pl.Float32, 4))
+
+    # Check that all bboxes are correctly converted
+    result_bboxes = result_df["bbox"][0]
+    assert len(result_bboxes) == 3
+    np.testing.assert_array_almost_equal(result_bboxes[0].to_numpy(), [1.0, 2.0, 3.0, 4.0])
+    np.testing.assert_array_almost_equal(result_bboxes[1].to_numpy(), [5.0, 6.0, 7.0, 8.0])
+    np.testing.assert_array_almost_equal(result_bboxes[2].to_numpy(), [9.0, 10.0, 11.0, 12.0])
+
+
+def test_create_fixed_array_cast_expr():
+    """Test the _create_fixed_array_cast_expr helper function."""
+    from datumaro.experimental.converters.annotation_converters import _create_fixed_array_cast_expr
+
+    # Test with 4-element array (bbox)
+    arr_data = np.array([1, 2, 3, 4], dtype=np.int32)
+    df = pl.DataFrame(
+        {"arr": [[arr_data]]},
+        schema=pl.Schema({"arr": pl.List(pl.Array(pl.Int32(), 4))}),
+    )
+
+    # Apply the expression
+    result = df.select(pl.col("arr").list.eval(_create_fixed_array_cast_expr(pl.Float64(), 4)))
+
+    # Check result
+    assert result["arr"].dtype == pl.List(pl.Array(pl.Float64(), 4))
+    np.testing.assert_array_almost_equal(result["arr"][0][0].to_numpy(), [1.0, 2.0, 3.0, 4.0])
+
+
+def test_convert_fixed_array_dtype():
+    """Test the _convert_fixed_array_dtype helper function."""
+    from datumaro.experimental.converters.annotation_converters import _convert_fixed_array_dtype
+
+    # Test with 5-element array (rotated bbox)
+    df = pl.DataFrame(
+        {"input": [[[10, 20, 30, 40, 50]]]},
+        schema=pl.Schema({"input": pl.List(pl.Array(pl.Int32(), 5))}),
+    )
+
+    # Apply the conversion
+    result_df = _convert_fixed_array_dtype(df, "input", "output", pl.Float32(), array_size=5)
+
+    # Check result
+    assert "output" in result_df.columns
+    assert result_df["output"].dtype == pl.List(pl.Array(pl.Float32(), 5))
+    np.testing.assert_array_almost_equal(result_df["output"][0][0].to_numpy(), [10.0, 20.0, 30.0, 40.0, 50.0])
+
+
+def test_bbox_dtype_conversion_numpy_dtype():
+    class DetectionSampleFloat(Sample):
+        bboxes: npt.NDArray[np.floating[Any]] = bbox_field(dtype=pl.Float32())
+
+    class DetectionSampleInt(Sample):
+        bboxes: npt.NDArray[np.integer[Any]] = bbox_field(dtype=pl.Int32())
+
+    # Create source dataset with int32 bboxes
+    dataset_int = Dataset(DetectionSampleInt)
+    di_int = DetectionSampleInt(bboxes=np.array([[5, 5, 20, 20], [25, 30, 50, 60]], dtype=np.int32))
+    dataset_int.append(di_int)
+
+    # Convert to float32 schema
+    dataset_float = dataset_int.convert_to_schema(DetectionSampleFloat)
+
+    # Verify original dataset is unchanged
+    assert dataset_int[0].bboxes.dtype == np.int32
+    np.testing.assert_array_equal(dataset_int[0].bboxes, [[5, 5, 20, 20], [25, 30, 50, 60]])
+
+    # The dtype should be float32, not object
+    assert dataset_float[0].bboxes.dtype == np.float32
+
+    # Verify the values are correct
+    expected_values = np.array([[5.0, 5.0, 20.0, 20.0], [25.0, 30.0, 50.0, 60.0]], dtype=np.float32)
+    np.testing.assert_array_almost_equal(dataset_float[0].bboxes, expected_values)
