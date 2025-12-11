@@ -796,7 +796,7 @@ target_dataset = source_dataset.convert_to_schema(TargetSample)
 
 ### 4. Use Categories for Label Management
 
-Always define categories for classification/detection datasets:
+Always define categories for datasets with labels, these will be used for validation when adding samples to the dataset.
 
 ```python
 categories = {"labels": LabelCategories(labels=get_class_names())}
