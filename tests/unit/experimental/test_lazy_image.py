@@ -10,8 +10,16 @@ import numpy as np
 import pytest
 from PIL import Image as PILImage
 
-from datumaro.experimental.dataset import Dataset, Sample
-from datumaro.experimental.fields import ImagePathLike, LazyImage, image_path_field
+from datumaro.experimental import (
+    Dataset,
+    ImagePathLike,
+    LazyImage,
+    Sample,
+    clear_image_cache,
+    get_image_cache_size,
+    set_image_cache_size,
+)
+from datumaro.experimental.fields import image_path_field
 
 
 class LazyImageClassTest:
@@ -49,10 +57,11 @@ class LazyImageClassTest:
 
     def test_lazy_image_path_access_no_load(self, temp_image_path):
         """Test that accessing path doesn't load the image."""
+        clear_image_cache()
         lazy_img = LazyImage(path=temp_image_path)
         _ = lazy_img.path
-        # Internal cache should still be None
-        assert lazy_img._cached_data is None
+        # Cache should still be empty - image not loaded
+        assert get_image_cache_size() == 0
 
     def test_lazy_image_data_loads_image(self, temp_image_path):
         """Test that accessing data loads the image."""
@@ -108,31 +117,35 @@ class LazyImageClassTest:
 
     def test_lazy_image_width_property(self, temp_image_path):
         """Test width property without loading full image."""
+        clear_image_cache()
         lazy_img = LazyImage(path=temp_image_path)
         assert lazy_img.width == 150
-        # Should not have cached the full data
-        assert lazy_img._cached_data is None
+        # Should not have cached the full data (width uses PIL directly)
+        assert get_image_cache_size() == 0
 
     def test_lazy_image_height_property(self, temp_image_path):
         """Test height property without loading full image."""
+        clear_image_cache()
         lazy_img = LazyImage(path=temp_image_path)
         assert lazy_img.height == 100
-        # Should not have cached the full data
-        assert lazy_img._cached_data is None
+        # Should not have cached the full data (height uses PIL directly)
+        assert get_image_cache_size() == 0
 
     def test_lazy_image_size_property(self, temp_image_path):
         """Test size property returns (width, height)."""
+        clear_image_cache()
         lazy_img = LazyImage(path=temp_image_path)
         assert lazy_img.size == (150, 100)
-        # Should not have cached the full data
-        assert lazy_img._cached_data is None
+        # Should not have cached the full data (size uses PIL directly)
+        assert get_image_cache_size() == 0
 
     def test_lazy_image_shape_property(self, temp_image_path):
         """Test shape property (triggers data load)."""
+        clear_image_cache()
         lazy_img = LazyImage(path=temp_image_path)
         assert lazy_img.shape == (100, 150, 3)
-        # Should have loaded the data
-        assert lazy_img._cached_data is not None
+        # Should have loaded and cached the data
+        assert get_image_cache_size() == 1
 
     def test_lazy_image_str(self, temp_image_path):
         """Test string representation returns path."""
@@ -497,3 +510,233 @@ class ImagePathLikeTypeAliasTest:
         sample = TestSample(image=temp_image_path)
         assert sample.image.channels_first is True
         assert sample.image.data.shape == (3, 100, 150)
+
+
+class ImageCacheLRUTest:
+    """Tests for the LRU cache functionality of LazyImage."""
+
+    @pytest.fixture(autouse=True)
+    def reset_cache(self):
+        """Reset cache before and after each test."""
+        clear_image_cache()
+        set_image_cache_size(100)  # Reset to default
+        yield
+        clear_image_cache()
+        set_image_cache_size(100)
+
+    def test_image_is_cached_after_access(self):
+        """Test that accessing image data caches it."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            path = os.path.join(temp_dir, "test.png")
+            PILImage.fromarray(np.zeros((50, 50, 3), dtype=np.uint8)).save(path)
+
+            lazy_img = LazyImage(path=path)
+            assert get_image_cache_size() == 0
+
+            _ = lazy_img.data
+            assert get_image_cache_size() == 1
+
+    def test_same_image_uses_cache(self):
+        """Test that accessing the same image twice uses the cache."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            path = os.path.join(temp_dir, "test.png")
+            PILImage.fromarray(np.zeros((50, 50, 3), dtype=np.uint8)).save(path)
+
+            lazy_img1 = LazyImage(path=path)
+            lazy_img2 = LazyImage(path=path)
+
+            data1 = lazy_img1.data
+            assert get_image_cache_size() == 1
+
+            data2 = lazy_img2.data
+            assert get_image_cache_size() == 1  # Still 1, using cache
+
+            # Should be the same array object (from cache)
+            assert data1 is data2
+
+    def test_different_formats_cached_separately(self):
+        """Test that same image with different formats are cached separately."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            path = os.path.join(temp_dir, "test.png")
+            PILImage.fromarray(np.zeros((50, 50, 3), dtype=np.uint8)).save(path)
+
+            lazy_rgb = LazyImage(path=path, format="RGB")
+            lazy_bgr = LazyImage(path=path, format="BGR")
+
+            _ = lazy_rgb.data
+            assert get_image_cache_size() == 1
+
+            _ = lazy_bgr.data
+            assert get_image_cache_size() == 2  # Different format = different cache entry
+
+    def test_lru_eviction(self):
+        """Test that LRU eviction works when cache is full."""
+        set_image_cache_size(3)
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            paths = []
+            for i in range(5):
+                path = os.path.join(temp_dir, f"image_{i}.png")
+                PILImage.fromarray(np.full((10, 10, 3), i, dtype=np.uint8)).save(path)
+                paths.append(path)
+
+            # Load first 3 images
+            for i in range(3):
+                _ = LazyImage(path=paths[i]).data
+
+            assert get_image_cache_size() == 3
+
+            # Load 4th image - should evict the first one
+            _ = LazyImage(path=paths[3]).data
+            assert get_image_cache_size() == 3  # Still 3
+
+            # Load 5th image - should evict the second one
+            _ = LazyImage(path=paths[4]).data
+            assert get_image_cache_size() == 3  # Still 3
+
+    def test_clear_image_cache(self):
+        """Test clearing the entire cache."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            for i in range(5):
+                path = os.path.join(temp_dir, f"image_{i}.png")
+                PILImage.fromarray(np.zeros((10, 10, 3), dtype=np.uint8)).save(path)
+                _ = LazyImage(path=path).data
+
+            assert get_image_cache_size() == 5
+
+            clear_image_cache()
+            assert get_image_cache_size() == 0
+
+    def test_set_image_cache_size(self):
+        """Test setting cache size."""
+        set_image_cache_size(5)
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            paths = []
+            for i in range(10):
+                path = os.path.join(temp_dir, f"image_{i}.png")
+                PILImage.fromarray(np.zeros((10, 10, 3), dtype=np.uint8)).save(path)
+                paths.append(path)
+                _ = LazyImage(path=path).data
+
+            # Should only have 5 images cached
+            assert get_image_cache_size() == 5
+
+    def test_set_cache_size_evicts_existing(self):
+        """Test that reducing cache size evicts existing items."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            paths = []
+            for i in range(10):
+                path = os.path.join(temp_dir, f"image_{i}.png")
+                PILImage.fromarray(np.zeros((10, 10, 3), dtype=np.uint8)).save(path)
+                paths.append(path)
+                _ = LazyImage(path=path).data
+
+            assert get_image_cache_size() == 10
+
+            # Reduce cache size - should evict oldest items
+            set_image_cache_size(3)
+            assert get_image_cache_size() == 3
+
+    def test_clear_cache_on_single_image(self):
+        """Test clearing cache for a single image."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            path1 = os.path.join(temp_dir, "image1.png")
+            path2 = os.path.join(temp_dir, "image2.png")
+            PILImage.fromarray(np.zeros((10, 10, 3), dtype=np.uint8)).save(path1)
+            PILImage.fromarray(np.zeros((10, 10, 3), dtype=np.uint8)).save(path2)
+
+            lazy1 = LazyImage(path=path1)
+            lazy2 = LazyImage(path=path2)
+
+            _ = lazy1.data
+            _ = lazy2.data
+            assert get_image_cache_size() == 2
+
+            lazy1.clear_cache()
+            assert get_image_cache_size() == 1
+
+    def test_cache_zero_size_disables_caching(self):
+        """Test that setting cache size to 0 effectively disables caching."""
+        set_image_cache_size(0)
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            path = os.path.join(temp_dir, "test.png")
+            PILImage.fromarray(np.zeros((10, 10, 3), dtype=np.uint8)).save(path)
+
+            lazy_img = LazyImage(path=path)
+            _ = lazy_img.data
+            assert get_image_cache_size() == 0  # Nothing cached
+
+    def test_cache_with_channels_first(self):
+        """Test that channels_first affects cache key."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            path = os.path.join(temp_dir, "test.png")
+            PILImage.fromarray(np.zeros((50, 50, 3), dtype=np.uint8)).save(path)
+
+            lazy_chw = LazyImage(path=path, channels_first=True)
+            lazy_hwc = LazyImage(path=path, channels_first=False)
+
+            _ = lazy_chw.data
+            assert get_image_cache_size() == 1
+
+            _ = lazy_hwc.data
+            assert get_image_cache_size() == 2  # Different cache entries
+
+    def test_lru_access_order(self):
+        """Test that accessing an image moves it to the end of LRU."""
+        set_image_cache_size(3)
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            paths = []
+            for i in range(3):
+                path = os.path.join(temp_dir, f"image_{i}.png")
+                PILImage.fromarray(np.full((10, 10, 3), i, dtype=np.uint8)).save(path)
+                paths.append(path)
+
+            lazy_images = [LazyImage(path=p) for p in paths]
+
+            # Load all 3 images (order: 0, 1, 2)
+            for lazy in lazy_images:
+                _ = lazy.data
+
+            # Access image 0 again (moves it to end, order now: 1, 2, 0)
+            _ = lazy_images[0].data
+
+            # Add a new image - should evict image 1 (the LRU)
+            path_new = os.path.join(temp_dir, "image_new.png")
+            PILImage.fromarray(np.zeros((10, 10, 3), dtype=np.uint8)).save(path_new)
+            _ = LazyImage(path=path_new).data
+
+            assert get_image_cache_size() == 3
+
+            # Image 0 should still be in cache (we accessed it recently)
+            data0 = lazy_images[0].data
+            assert data0 is not None
+
+    def test_cache_works_with_dataset(self):
+        """Test that cache works correctly when using Dataset."""
+
+        class TestSample(Sample):
+            image: LazyImage = image_path_field()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            paths = []
+            for i in range(5):
+                path = os.path.join(temp_dir, f"image_{i}.png")
+                PILImage.fromarray(np.full((20, 20, 3), i * 50, dtype=np.uint8)).save(path)
+                paths.append(path)
+
+            dataset = Dataset(TestSample)
+            for path in paths:
+                dataset.append(TestSample(image=path))
+
+            # Access all images
+            for sample in dataset:
+                _ = sample.image.data
+
+            assert get_image_cache_size() == 5
+
+            # Clear cache and verify
+            clear_image_cache()
+            assert get_image_cache_size() == 0

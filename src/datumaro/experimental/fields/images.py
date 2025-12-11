@@ -3,140 +3,14 @@
 # SPDX-License-Identifier: MIT
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, TypeAlias
+from typing import Any
 
 import numpy as np
 import polars as pl
-from PIL import Image
 
 from datumaro.experimental.fields.base import Field, T
+from datumaro.experimental.media import LazyImage
 from datumaro.experimental.type_registry import from_polars_data, to_numpy
-
-
-@dataclass
-class LazyImage:
-    """
-    A wrapper class that holds an image path and provides lazy loading of image data.
-
-    This class enables lazy loading patterns where the image is only loaded from
-    disk when the `data` property is accessed. The loaded data is cached for
-    subsequent accesses.
-
-    Attributes:
-        path: The file path to the image (can be a string or Path object)
-        format: The color format to use when loading ("RGB", "BGR", etc.)
-        channels_first: Whether to return data in channels-first format (C, H, W)
-
-    Examples:
-        >>> lazy_img = LazyImage("/path/to/image.jpg")
-        >>> print(lazy_img.path)  # Access path without loading
-        /path/to/image.jpg
-        >>> img_array = lazy_img.data  # Image loaded here on first access
-        >>> print(img_array.shape)
-        (480, 640, 3)
-
-    Using with Sample:
-        >>> class MySample(Sample):
-        ...     image: LazyImage = image_path_field()
-        ...
-        >>> sample = MySample(image="/path/to/image.jpg")
-        >>> sample.image.path  # Returns the path string
-        >>> sample.image.data  # Returns the numpy array
-    """
-
-    path: str | Path
-    format: str = "RGB"
-    channels_first: bool = False
-    _cached_data: np.ndarray | None = field(default=None, repr=False, compare=False)
-
-    def __post_init__(self) -> None:
-        # Ensure path is stored as a string for consistency
-        if isinstance(self.path, Path):
-            object.__setattr__(self, "path", str(self.path))
-
-    @property
-    def data(self) -> np.ndarray:
-        """
-        Load and return the image data as a numpy array.
-
-        The image is loaded from disk on first access and cached for subsequent
-        accesses. The data is converted to the specified format and channel order.
-
-        Returns:
-            numpy.ndarray: The image data as a numpy array with shape:
-                - (H, W, C) if channels_first is False
-                - (C, H, W) if channels_first is True
-
-        Raises:
-            FileNotFoundError: If the image file does not exist
-            PIL.UnidentifiedImageError: If the file cannot be read as an image
-        """
-        if self._cached_data is None:
-            with Image.open(self.path) as img:
-                # Convert to target format
-                if self.format.upper() in ("RGB", "BGR"):
-                    converted = img.convert("RGB")
-                elif self.format.upper() == "RGBA":
-                    converted = img.convert("RGBA")
-                elif self.format.upper() == "L":
-                    converted = img.convert("L")
-                else:
-                    converted = img
-
-                img_array = np.array(converted, dtype=np.uint8)
-
-                # Handle BGR format by swapping R and B channels
-                if self.format.upper() == "BGR" and img_array.ndim == 3:
-                    img_array = img_array[..., ::-1].copy()
-
-                # Handle channels-first format
-                if self.channels_first and img_array.ndim == 3:
-                    img_array = img_array.transpose(2, 0, 1)
-
-            object.__setattr__(self, "_cached_data", img_array)
-
-        return self._cached_data  # type: ignore
-
-    @property
-    def width(self) -> int:
-        """Get the image width without fully loading the image data."""
-        with Image.open(self.path) as img:
-            return img.width
-
-    @property
-    def height(self) -> int:
-        """Get the image height without fully loading the image data."""
-        with Image.open(self.path) as img:
-            return img.height
-
-    @property
-    def size(self) -> tuple[int, int]:
-        """Get the image size (width, height) without fully loading the image data."""
-        with Image.open(self.path) as img:
-            return img.size
-
-    @property
-    def shape(self) -> tuple[int, ...]:
-        """
-        Get the shape of the image data.
-
-        Returns:
-            tuple: Shape of the image array. If channels_first is False: (H, W, C).
-                   If channels_first is True: (C, H, W). For grayscale: (H, W).
-        """
-        return self.data.shape
-
-    def __str__(self) -> str:
-        return str(self.path)
-
-    def __fspath__(self) -> str:
-        """Allow LazyImage to be used in os.path operations."""
-        return str(self.path)
-
-
-# Type alias for image path fields that accept strings, Paths, or LazyImage objects.
-# Use this type annotation to avoid type checker warnings when passing strings for LazyImage.
-ImagePathLike: TypeAlias = str | Path | LazyImage
 
 
 @dataclass(frozen=True)
