@@ -6,6 +6,7 @@ from typing import Any
 
 import polars as pl
 
+from datumaro.experimental.categories import BaseLabelCategories, Categories
 from datumaro.experimental.fields.base import Field, T, convert_numpy_object_array_to_series
 from datumaro.experimental.type_registry import from_polars_data, to_numpy
 
@@ -184,6 +185,9 @@ class LabelField(Field):
         """Reconstruct label(s) from Polars data."""
         data = df[name][row_index]
         return from_polars_data(data, target_type)
+
+    def get_expected_categories_type(self) -> type[Categories] | None:
+        return BaseLabelCategories
 
 
 def label_field(

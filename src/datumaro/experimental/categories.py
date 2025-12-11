@@ -104,7 +104,16 @@ class Categories:
 
 
 @dataclass(frozen=True)
-class LabelCategories(Categories):
+class BaseLabelCategories(Categories):
+    """
+    Base label categories class.
+
+    This class ensures fields related to labels will have a label categories attached to the attributes spec.
+    """
+
+
+@dataclass(frozen=True)
+class LabelCategories(BaseLabelCategories):
     """
     Represents a group of labels with a specific group type and semantics.
     Use this for simple, non-hierarchical tasks.
@@ -254,7 +263,7 @@ class LabelGroup:
 
 
 @dataclass(frozen=True)
-class HierarchicalLabelCategories(Categories):
+class HierarchicalLabelCategories(BaseLabelCategories):
     """
     Represents hierarchical label categories with groups and parent-child relationships.
     Use this for complex hierarchical classification tasks.
