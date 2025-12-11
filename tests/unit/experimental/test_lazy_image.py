@@ -515,14 +515,19 @@ class ImagePathLikeTypeAliasTest:
 class ImageCacheLRUTest:
     """Tests for the LRU cache functionality of LazyImage."""
 
+    # Size constants for test images
+    # 50x50x3 = 7500 bytes, 10x10x3 = 300 bytes
+    DEFAULT_CACHE_SIZE = 1024 * 1024  # 1 MB - plenty for test images
+    SMALL_CACHE_SIZE = 3 * 300  # Just enough for 3 small (10x10x3) images
+
     @pytest.fixture(autouse=True)
     def reset_cache(self):
         """Reset cache before and after each test."""
         clear_image_cache()
-        set_image_cache_size(100)  # Reset to default
+        set_image_cache_size(self.DEFAULT_CACHE_SIZE)
         yield
         clear_image_cache()
-        set_image_cache_size(100)
+        set_image_cache_size(self.DEFAULT_CACHE_SIZE)
 
     def test_image_is_cached_after_access(self):
         """Test that accessing image data caches it."""
@@ -571,7 +576,8 @@ class ImageCacheLRUTest:
 
     def test_lru_eviction(self):
         """Test that LRU eviction works when cache is full."""
-        set_image_cache_size(3)
+        # Set cache size to fit exactly 3 images (10x10x3 = 300 bytes each)
+        set_image_cache_size(self.SMALL_CACHE_SIZE)
 
         with tempfile.TemporaryDirectory() as temp_dir:
             paths = []
@@ -609,7 +615,8 @@ class ImageCacheLRUTest:
 
     def test_set_image_cache_size(self):
         """Test setting cache size."""
-        set_image_cache_size(5)
+        # Set cache size to fit exactly 5 images (10x10x3 = 300 bytes each)
+        set_image_cache_size(5 * 300)
 
         with tempfile.TemporaryDirectory() as temp_dir:
             paths = []
@@ -634,8 +641,8 @@ class ImageCacheLRUTest:
 
             assert get_image_cache_size() == 10
 
-            # Reduce cache size - should evict oldest items
-            set_image_cache_size(3)
+            # Reduce cache size to fit 3 images - should evict oldest items
+            set_image_cache_size(self.SMALL_CACHE_SIZE)
             assert get_image_cache_size() == 3
 
     def test_clear_cache_on_single_image(self):
@@ -685,7 +692,8 @@ class ImageCacheLRUTest:
 
     def test_lru_access_order(self):
         """Test that accessing an image moves it to the end of LRU."""
-        set_image_cache_size(3)
+        # Set cache size to fit exactly 3 images (10x10x3 = 300 bytes each)
+        set_image_cache_size(self.SMALL_CACHE_SIZE)
 
         with tempfile.TemporaryDirectory() as temp_dir:
             paths = []

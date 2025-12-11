@@ -716,20 +716,25 @@ image_array = sample.image.data  # Loads from disk here
 
 ### Image Caching
 
-The module includes a global LRU cache for loaded images:
+The module includes a global LRU cache for loaded images with byte-size limiting (default 256 MB):
 
 ```python
 from datumaro.experimental import (
     set_image_cache_size,
     get_image_cache_size,
+    get_image_cache_info,
     clear_image_cache,
 )
 
-# Set cache to hold 50 images
-set_image_cache_size(50)
+# Set cache to 512 MB
+set_image_cache_size(512 * 1024 * 1024)
 
 # Check current cache usage
 print(f"Cached images: {get_image_cache_size()}")
+
+# Get detailed cache info (count, current bytes, max bytes)
+info = get_image_cache_info()
+print(f"Cache: {info['count']} images, {info['current_size'] / 1024 / 1024:.1f} MB used of {info['max_size'] / 1024 / 1024:.1f} MB")
 
 # Clear all cached images
 clear_image_cache()

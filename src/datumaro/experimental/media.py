@@ -1,4 +1,5 @@
 # Copyright (C) 2025 Intel Corporation
+
 #
 # SPDX-License-Identifier: MIT
 """
@@ -8,102 +9,61 @@ This module provides the LazyImage class for lazy loading images from disk,
 along with a global LRU cache to manage memory usage when working with many images.
 """
 
-from collections import OrderedDict
+from __future__ import annotations
+
 from dataclasses import dataclass
+from functools import cached_property
 from pathlib import Path
-from threading import Lock
+from threading import RLock
 from typing import TypeAlias
 
 import numpy as np
+from cachetools import LRUCache, cachedmethod
 from PIL import Image
 
+# Default cache size: 256 MB
+_DEFAULT_CACHE_SIZE_BYTES = 256 * 1024 * 1024
 
-class _ImageCache:
+
+def _get_image_size(img: np.ndarray) -> int:
+    """Get the size of an image in bytes."""
+    return img.nbytes
+
+
+# Global image cache with byte-size limiting (default 256 MB)
+_image_cache: LRUCache[tuple[str, str, bool], np.ndarray] = LRUCache(
+    maxsize=_DEFAULT_CACHE_SIZE_BYTES, getsizeof=_get_image_size
+)
+_cache_lock = RLock()
+
+
+def set_image_cache_size(maxsize_bytes: int) -> None:
     """
-    Thread-safe LRU cache for image data.
+    Set the maximum size in bytes for the global LRU image cache.
 
-    This cache limits the total number of images kept in memory.
-    When the cache is full, the least recently used image is evicted.
-    """
-
-    def __init__(self, maxsize: int = 100):
-        self._cache: OrderedDict[tuple[str, str, bool], np.ndarray] = OrderedDict()
-        self._maxsize = maxsize
-        self._lock = Lock()
-
-    @property
-    def maxsize(self) -> int:
-        """Get the maximum cache size."""
-        return self._maxsize
-
-    @maxsize.setter
-    def maxsize(self, value: int) -> None:
-        """Set the maximum cache size and evict if necessary."""
-        with self._lock:
-            self._maxsize = value
-            self._evict_if_needed()
-
-    def get(self, key: tuple[str, str, bool]) -> np.ndarray | None:
-        """Get an item from the cache, moving it to the end (most recently used)."""
-        with self._lock:
-            if key in self._cache:
-                self._cache.move_to_end(key)
-                return self._cache[key]
-            return None
-
-    def put(self, key: tuple[str, str, bool], value: np.ndarray) -> None:
-        """Add an item to the cache, evicting LRU items if necessary."""
-        with self._lock:
-            if self._maxsize <= 0:
-                return
-            if key in self._cache:
-                self._cache.move_to_end(key)
-            else:
-                self._cache[key] = value
-                self._evict_if_needed()
-
-    def _evict_if_needed(self) -> None:
-        """Evict least recently used items if cache exceeds maxsize."""
-        while len(self._cache) > self._maxsize:
-            self._cache.popitem(last=False)
-
-    def clear(self) -> None:
-        """Clear all cached images."""
-        with self._lock:
-            self._cache.clear()
-
-    def remove(self, key: tuple[str, str, bool]) -> None:
-        """Remove a specific item from the cache."""
-        with self._lock:
-            self._cache.pop(key, None)
-
-    def __len__(self) -> int:
-        """Return the number of cached images."""
-        with self._lock:
-            return len(self._cache)
-
-    def __contains__(self, key: tuple[str, str, bool]) -> bool:
-        """Check if an item is in the cache."""
-        with self._lock:
-            return key in self._cache
-
-
-# Global image cache instance
-_image_cache = _ImageCache(maxsize=100)
-
-
-def set_image_cache_size(maxsize: int) -> None:
-    """
-    Set the maximum number of images to keep in the global LRU cache.
+    When the cache exceeds this size, the least recently used images are evicted.
 
     Args:
-        maxsize: Maximum number of images to cache. Set to 0 to disable caching.
+        maxsize_bytes: Maximum cache size in bytes. Set to 0 to disable caching.
 
     Example:
         >>> from datumaro.experimental import set_image_cache_size
-        >>> set_image_cache_size(50)  # Keep at most 50 images in memory
+        >>> set_image_cache_size(512 * 1024 * 1024)  # Set cache to 512 MB
     """
-    _image_cache.maxsize = maxsize
+    global _image_cache  # noqa: PLW0603
+    with _cache_lock:
+        # Create a new cache with the new size, preserving existing items if they fit
+        new_cache: LRUCache[tuple[str, str, bool], np.ndarray] = LRUCache(
+            maxsize=maxsize_bytes, getsizeof=_get_image_size
+        )
+        if maxsize_bytes > 0:
+            for key, value in _image_cache.items():
+                try:
+                    new_cache[key] = value
+                except ValueError:
+                    # Cache is full, stop adding items
+                    break
+        _image_cache = new_cache
 
 
 def clear_image_cache() -> None:
@@ -114,7 +74,26 @@ def clear_image_cache() -> None:
         >>> from datumaro.experimental import clear_image_cache
         >>> clear_image_cache()  # Free all cached image memory
     """
-    _image_cache.clear()
+    with _cache_lock:
+        _image_cache.clear()
+
+
+def get_image_cache_info() -> dict[str, int]:
+    """
+    Get information about the current cache state.
+
+    Returns:
+        A dictionary with:
+        - 'count': Number of images currently cached
+        - 'current_size': Current cache size in bytes
+        - 'max_size': Maximum cache size in bytes
+    """
+    with _cache_lock:
+        return {
+            "count": len(_image_cache),
+            "current_size": _image_cache.currsize,
+            "max_size": _image_cache.maxsize,
+        }
 
 
 def get_image_cache_size() -> int:
@@ -123,8 +102,13 @@ def get_image_cache_size() -> int:
 
     Returns:
         Number of images currently cached.
+
+    Note:
+        For more detailed cache information including byte sizes,
+        use `get_image_cache_info()` instead.
     """
-    return len(_image_cache)
+    with _cache_lock:
+        return len(_image_cache)
 
 
 @dataclass
@@ -138,11 +122,11 @@ class LazyImage:
 
     The cache keeps the most recently accessed images in memory and automatically
     evicts the least recently used images when the cache is full. By default,
-    up to 100 images are cached. Use `set_image_cache_size()` to adjust this limit.
+    the cache is limited to 256 MB. Use `set_image_cache_size()` to adjust this limit.
 
     Attributes:
+        path: The file path to the image (can be a string, Path object, or another LazyImage)
         path: The file path to the image (can be a string or Path object)
-        format: The color format to use when loading ("RGB", "BGR", etc.)
         channels_first: Whether to return data in channels-first format (C, H, W)
 
     Examples:
@@ -155,7 +139,7 @@ class LazyImage:
 
     Cache management:
         >>> from datumaro.experimental import set_image_cache_size, clear_image_cache
-        >>> set_image_cache_size(50)  # Limit to 50 images
+        >>> set_image_cache_size(512 * 1024 * 1024)  # Limit to 512 MB
         >>> clear_image_cache()  # Clear all cached images
 
     Using with Sample:
@@ -180,10 +164,11 @@ class LazyImage:
 
     def _cache_key(self) -> tuple[str, str, bool]:
         """Generate a cache key for this image configuration."""
-        return (str(self.path), self.format.upper(), self.channels_first)
+        return str(self.path), self.format.upper(), self.channels_first
 
-    def _load_image(self) -> np.ndarray:
-        """Load the image from disk."""
+    @cachedmethod(cache=lambda _: _image_cache, key=lambda self: self._cache_key(), lock=lambda _: _cache_lock)
+    def _load_data(self) -> np.ndarray:
+        """Load the image from disk (cached via @cachedmethod)."""
         with Image.open(self.path) as img:
             # Convert to target format
             if self.format.upper() in ("RGB", "BGR"):
@@ -215,7 +200,7 @@ class LazyImage:
         The image is loaded from disk on first access and cached in a global
         LRU cache. Subsequent accesses return the cached data if available.
         When the cache is full, least recently used images are automatically
-        evicted.
+        evicted based on total memory usage.
 
         Returns:
             numpy.ndarray: The image data as a numpy array with shape:
@@ -226,36 +211,26 @@ class LazyImage:
             FileNotFoundError: If the image file does not exist
             PIL.UnidentifiedImageError: If the file cannot be read as an image
         """
-        key = self._cache_key()
-
-        # Try to get from cache
-        cached = _image_cache.get(key)
-        if cached is not None:
-            return cached
-
-        # Load and cache
-        img_array = self._load_image()
-        _image_cache.put(key, img_array)
-
-        return img_array
+        return self._load_data()
 
     def clear_cache(self) -> None:
         """Remove this image from the cache to free memory."""
-        _image_cache.remove(self._cache_key())
+        with _cache_lock:
+            _image_cache.pop(self._cache_key(), None)
 
-    @property
+    @cached_property
     def width(self) -> int:
         """Get the image width without fully loading the image data."""
         with Image.open(self.path) as img:
             return img.width
 
-    @property
+    @cached_property
     def height(self) -> int:
         """Get the image height without fully loading the image data."""
         with Image.open(self.path) as img:
             return img.height
 
-    @property
+    @cached_property
     def size(self) -> tuple[int, int]:
         """Get the image size (width, height) without fully loading the image data."""
         with Image.open(self.path) as img:
