@@ -1,9 +1,10 @@
 # Copyright (C) 2025 Intel Corporation
 #
 # SPDX-License-Identifier: MIT
+import types
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, Union, get_args, get_origin
 
 import numpy as np
 import polars as pl
@@ -274,8 +275,6 @@ class ImagePathField(Field):
         Returns:
             The coerced value, or the original value if no coercion is needed
         """
-        import types
-        from typing import Union, get_args, get_origin
 
         if value is None:
             return None
@@ -318,8 +317,6 @@ class ImagePathField(Field):
 
     def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> Any:
         """Extract path string or LazyImage from Polars data."""
-        import types
-        from typing import Union, get_args, get_origin
 
         data = df[name][row_index]
         if data is None:
