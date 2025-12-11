@@ -10,7 +10,8 @@ The `datumaro.experimental` module provides a modern, type-safe framework for wo
   - [Available Field Types](#available-field-types)
   - [Semantic Tags](#semantic-tags)
   - [Schema Inference](#schema-inference)
-- [Working with Datasets](#working-with-datasets)
+- [Working with Datasets](#working-with-datasets)        import types
+        from typing import Union, get_args, get_origin
   - [Creating Datasets](#creating-datasets)
   - [Adding Samples](#adding-samples)
   - [Accessing Samples](#accessing-samples)
@@ -709,8 +710,8 @@ class LazySample(Sample):
     image: LazyImage = image_callable_field()
 
 # The image is loaded only when accessed
-sample = dataset[0]
-image_array = sample.image()  # Loads from disk here
+sample = LazySample(image="path/to/image.jpg")
+image_array = sample.image.data  # Loads from disk here
 ```
 
 ### Image Caching
