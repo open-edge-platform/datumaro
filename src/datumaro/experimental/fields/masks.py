@@ -7,6 +7,7 @@ from typing import Any
 import numpy as np
 import polars as pl
 
+from datumaro.experimental.categories import Categories, MaskCategories
 from datumaro.experimental.fields.base import Field, T
 from datumaro.experimental.type_registry import from_polars_data, to_numpy
 
@@ -69,6 +70,9 @@ class MaskField(Field):
                 numpy_data = numpy_data[..., np.newaxis]
 
         return from_polars_data(numpy_data, target_type)  # type: ignore
+
+    def get_expected_categories_type(self) -> type[Categories] | None:
+        return MaskCategories
 
 
 def mask_field(
@@ -138,6 +142,9 @@ class InstanceMaskField(Field):
         numpy_data = np.array(flat_data).reshape(shape) if flat_data is not None and shape is not None else None
         return from_polars_data(numpy_data, target_type)  # type: ignore
 
+    def get_expected_categories_type(self) -> type[Categories] | None:
+        return MaskCategories
+
 
 def instance_mask_field(dtype: Any = pl.Boolean(), semantic: str = "default") -> Any:
     """
@@ -199,6 +206,9 @@ class InstanceMaskCallableField(Field):
         if not callable(value):
             raise TypeError(f"Expected callable in column {name}, got {type(value)}")
         return value
+
+    def get_expected_categories_type(self) -> type[Categories] | None:
+        return MaskCategories
 
 
 def instance_mask_callable_field(dtype: Any = pl.Boolean(), semantic: str = "default") -> Any:
@@ -270,6 +280,9 @@ class MaskCallableField(Field):
         if not callable(value):
             raise TypeError(f"Expected callable in column {name}, got {type(value)}")
         return value
+
+    def get_expected_categories_type(self) -> type[Categories] | None:
+        return MaskCategories
 
 
 def mask_callable_field(dtype: Any = pl.Boolean(), semantic: str = "default") -> Any:
