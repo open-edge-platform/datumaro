@@ -38,7 +38,7 @@ class TensorField(Field):
         numpy_value = to_numpy(value, self.dtype)
 
         if self.channels_first and numpy_value is not None:
-            numpy_value = numpy_value.swapaxes(0, -1)
+            numpy_value = np.transpose(numpy_value, (2, 0, 1))
 
         schema = self.to_polars_schema("tensor")
 
@@ -59,7 +59,7 @@ class TensorField(Field):
         numpy_data = np.array(flat_data).reshape(shape) if flat_data is not None else None
 
         if self.channels_first and numpy_data is not None:
-            numpy_data = numpy_data.swapaxes(0, -1)
+            numpy_data = np.transpose(numpy_data, (2, 0, 1))
 
         return from_polars_data(numpy_data, target_type)  # type: ignore
 
