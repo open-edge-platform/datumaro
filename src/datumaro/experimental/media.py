@@ -54,6 +54,8 @@ class _ImageCache:
     def put(self, key: tuple[str, str, bool], value: np.ndarray) -> None:
         """Add an item to the cache, evicting LRU items if necessary."""
         with self._lock:
+            if self._maxsize <= 0:
+                return
             if key in self._cache:
                 self._cache.move_to_end(key)
             else:
