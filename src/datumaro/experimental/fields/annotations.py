@@ -1,13 +1,18 @@
 # Copyright (C) 2025 Intel Corporation
 #
 # SPDX-License-Identifier: MIT
+from __future__ import annotations
+
 from dataclasses import dataclass, field
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import polars as pl
 
 from datumaro.experimental.fields.base import Field, T, convert_numpy_object_array_to_series
 from datumaro.experimental.type_registry import from_polars_data, to_numpy
+
+if TYPE_CHECKING:
+    from datumaro.experimental.categories import Categories
 
 
 @dataclass(frozen=True)
@@ -171,6 +176,55 @@ class LabelField(Field):
         if self.is_list:
             pl_type = pl.List(pl_type)
         return pl_type
+
+    def get_required_category_type(self) -> type[Categories] | None:
+        """Returns LabelCategories as the required category type for label fields."""
+        from datumaro.experimental.categories import LabelCategories
+
+        return LabelCategories
+
+    def validate_value_against_categories(self, value: Any, categories: Categories) -> None:
+        """
+        Validate label value(s) against the provided LabelCategories.
+
+        Args:
+            value: The label value (single int or list of ints) to validate
+            categories: The LabelCategories to validate against
+
+        Raises:
+            ValueError: If any label index is out of range
+        """
+        from datumaro.experimental.categories import LabelCategories
+
+        if not isinstance(categories, LabelCategories):
+            raise TypeError(f"Expected LabelCategories, got {type(categories).__name__}")
+
+        if value is None:
+            return
+
+        # Handle list of labels (multi-label or is_list cases)
+        if self.multi_label or self.is_list:
+            labels_to_check = value if isinstance(value, (list, tuple)) else [value]
+            # For nested lists (is_list with multi_label), flatten one level
+            if self.is_list and self.multi_label:
+                flattened = []
+                for item in labels_to_check:
+                    if isinstance(item, (list, tuple)):
+                        flattened.extend(item)
+                    else:
+                        flattened.append(item)
+                labels_to_check = flattened
+        else:
+            labels_to_check = [value]
+
+        for label in labels_to_check:
+            if label is None:
+                continue
+            if label not in categories:
+                raise ValueError(
+                    f"Label index {label} is out of range. "
+                    f"Valid range is 0 to {len(categories) - 1} (labels: {list(categories.labels)})"
+                )
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Generate schema based on whether this is single or multi-label."""

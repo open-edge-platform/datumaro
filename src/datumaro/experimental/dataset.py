@@ -273,9 +273,17 @@ class Dataset(Generic[DType]):
 
         Args:
             sample: The sample instance to add to the dataset
+
+        Raises:
+            RuntimeError: If the dataset has been transformed and is immutable
+            TypeError: If categories are of the wrong type for a field
+            ValueError: If sample values don't match the expected categories
         """
         if self._transforms is not None:
             raise RuntimeError("Transformed dataset are immutable.")
+
+        # Validate sample values against categories
+        self._validate_sample_categories(sample)
 
         series_data: dict[str, pl.Series] = {}
         for key, attr_info in self._schema.attributes.items():
@@ -288,6 +296,107 @@ class Dataset(Generic[DType]):
             self.df = self.df.vstack(new_row)
         else:
             self.df.extend(new_row)
+
+    def _validate_sample_categories(self, sample: DType) -> None:
+        """
+        Validate sample values against categories defined in the schema.
+
+        This method checks that:
+        1. Fields requiring categories have them defined in the schema
+        2. Sample values are valid according to their categories
+
+        Args:
+            sample: The sample to validate
+
+        Raises:
+            TypeError: If categories are of the wrong type for a field
+            ValueError: If sample values don't match the expected categories
+        """
+        for attr_name, attr_info in self._schema.attributes.items():
+            field = attr_info.field
+            required_category_type = field.get_required_category_type()
+
+            # Skip fields that don't require categories
+            if required_category_type is None:
+                continue
+
+            categories = attr_info.categories
+
+            # Skip validation if no categories are defined (allows deferred category setting)
+            if categories is None:
+                continue
+
+            # Check that the categories are of the correct type
+            if not isinstance(categories, required_category_type):
+                raise TypeError(
+                    f"Field '{attr_name}' requires {required_category_type.__name__}, "
+                    f"but got {type(categories).__name__}"
+                )
+
+            # Validate the sample value against the categories
+            value = getattr(sample, attr_name)
+            field.validate_value_against_categories(value, categories)
+
+    def get_missing_categories(self) -> list[str]:
+        """
+        Get a list of field names that require categories but don't have them defined.
+
+        Returns:
+            List of field names missing required categories
+        """
+        missing = []
+        for attr_name, attr_info in self._schema.attributes.items():
+            field = attr_info.field
+            required_category_type = field.get_required_category_type()
+
+            if required_category_type is not None and attr_info.categories is None:
+                missing.append(attr_name)
+
+        return missing
+
+    def validate_categories(self) -> list[str]:
+        """
+        Validate all samples in the dataset against their categories.
+
+        This method checks that all values in the dataset are valid according
+        to their defined categories. Call this after setting categories to
+        validate existing data.
+
+        Returns:
+            List of error messages. Empty list if all validations pass.
+
+        Raises:
+            ValueError: If any field requiring categories doesn't have them defined
+        """
+        missing = self.get_missing_categories()
+        if missing:
+            raise ValueError(
+                f"Cannot validate categories: the following fields require categories but have none defined: {missing}"
+            )
+
+        errors: list[str] = []
+
+        for attr_name, attr_info in self._schema.attributes.items():
+            field = attr_info.field
+            required_category_type = field.get_required_category_type()
+
+            # Skip fields that don't require categories
+            if required_category_type is None:
+                continue
+
+            categories = attr_info.categories
+            if categories is None:
+                continue
+
+            # Validate each row
+            for row_idx in range(len(self)):
+                try:
+                    value = attr_info.field.from_polars(attr_name, row_idx, self.df, attr_info.type)
+                    field.validate_value_against_categories(value, categories)
+                except (ValueError, TypeError) as e:
+                    errors.append(f"Row {row_idx}, field '{attr_name}': {e}")
+
+        return errors
 
     def slice(self, offset: int, length: int | None = None) -> Dataset[DType]:
         """

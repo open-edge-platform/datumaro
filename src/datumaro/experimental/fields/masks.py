@@ -1,14 +1,19 @@
 # Copyright (C) 2025 Intel Corporation
 #
 # SPDX-License-Identifier: MIT
+from __future__ import annotations
+
 from dataclasses import dataclass, field
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import polars as pl
 
 from datumaro.experimental.fields.base import Field, T
 from datumaro.experimental.type_registry import from_polars_data, to_numpy
+
+if TYPE_CHECKING:
+    from datumaro.experimental.categories import Categories
 
 
 @dataclass(frozen=True)
@@ -31,6 +36,47 @@ class MaskField(Field):
     dtype: pl.DataType = field(default_factory=pl.UInt8)
     channels_first: bool = False
     has_channels_dim: bool = False
+
+    def get_required_category_type(self) -> type[Categories] | None:
+        """Returns MaskCategories as the required category type for mask fields."""
+        from datumaro.experimental.categories import MaskCategories
+
+        return MaskCategories
+
+    def validate_value_against_categories(self, value: Any, categories: Categories) -> None:
+        """
+        Validate mask values against the provided MaskCategories.
+
+        Args:
+            value: The mask tensor to validate
+            categories: The MaskCategories to validate against
+
+        Raises:
+            ValueError: If any mask value is not in the colormap
+        """
+        from datumaro.experimental.categories import MaskCategories
+
+        if not isinstance(categories, MaskCategories):
+            raise TypeError(f"Expected MaskCategories, got {type(categories).__name__}")
+
+        if value is None:
+            return
+
+        numpy_value = to_numpy(value, self.dtype)
+        if numpy_value is None:
+            return
+
+        # Get unique values in the mask
+        unique_values = np.unique(numpy_value)
+
+        # Check if all unique values are in the colormap
+        for val in unique_values:
+            val_int = int(val)
+            if val_int not in categories.colormap:
+                raise ValueError(
+                    f"Mask contains value {val_int} which is not in the colormap. "
+                    f"Valid indices in colormap: {list(categories.colormap.data.keys())}"
+                )
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Generate Polars schema with separate columns for data and shape."""

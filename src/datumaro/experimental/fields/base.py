@@ -9,12 +9,17 @@ to/from Polars DataFrames for different data types commonly used in machine
 learning and computer vision applications.
 """
 
+from __future__ import annotations
+
 from dataclasses import fields as dataclass_fields
 from dataclasses import is_dataclass
-from typing import Any, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 
 import numpy as np
 import polars as pl
+
+if TYPE_CHECKING:
+    from datumaro.experimental.categories import Categories
 
 T = TypeVar("T")
 
@@ -44,6 +49,32 @@ class Field:
             )
         if not isinstance(dtype, pl.DataType):
             raise TypeError(f"dtype must be a Polars 'DataType', got '{dtype.__name__}' instead.")
+
+    def get_required_category_type(self) -> type[Categories] | None:
+        """
+        Returns the Categories subclass required by this field, or None if no categories needed.
+
+        Override in subclasses that require specific category types (e.g., LabelField, MaskField).
+
+        Returns:
+            The required Categories subclass type, or None if no categories are required.
+        """
+        return None
+
+    def validate_value_against_categories(self, value: Any, categories: Categories) -> None:
+        """
+        Validate a value against the provided categories.
+
+        Override in subclasses that require category validation (e.g., LabelField, MaskField).
+
+        Args:
+            value: The value to validate
+            categories: The categories to validate against
+
+        Raises:
+            ValueError: If the value is not valid according to the categories
+        """
+        pass
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """
