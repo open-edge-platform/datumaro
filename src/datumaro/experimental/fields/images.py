@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: MIT
 import types
+import typing
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Union, get_args, get_origin
@@ -266,7 +267,7 @@ class ImagePathField(Field):
 
         This method is called during Sample initialization to convert
         input values to the expected type. For ImagePathField, this allows
-        passing a string path when the target type is LazyImage or ImagePathLike.
+        passing a string path when the target type is LazyImage.
 
         Args:
             value: The input value to coerce
@@ -285,7 +286,7 @@ class ImagePathField(Field):
         if target_type is LazyImage or (isinstance(target_type, type) and issubclass(target_type, LazyImage)):
             should_convert_to_lazy = True
         else:
-            # Check for Union types (e.g., ImagePathLike = str | Path | LazyImage)
+            # Check for Union types (e.g., str | Path | LazyImage)
             origin = get_origin(target_type)
             if origin in (Union, types.UnionType):
                 type_args = get_args(target_type)
@@ -328,7 +329,7 @@ class ImagePathField(Field):
         if target_type is LazyImage or (isinstance(target_type, type) and issubclass(target_type, LazyImage)):
             should_return_lazy = True
         else:
-            # Check for Union types (e.g., ImagePathLike = str | Path | LazyImage)
+            # Check for Union types (e.g., str | Path | LazyImage)
             origin = get_origin(target_type)
             if origin in (Union, types.UnionType):
                 type_args = get_args(target_type)
@@ -353,6 +354,11 @@ def image_path_field(
     When used with a `LazyImage` type annotation, this field will return a LazyImage
     instance that provides lazy loading of the actual image data.
 
+    Since LazyImage accepts str, Path, or LazyImage as input, you can wrap your
+    string path in LazyImage() when constructing the sample for full type safety:
+
+        >>> sample = MySample(image=LazyImage("/path/to/image.jpg"))
+
     Args:
         semantic: String tag describing the image path's purpose (optional)
         format: Image color format for LazyImage loading (e.g., "RGB", "BGR")
@@ -362,17 +368,17 @@ def image_path_field(
         ImagePathField instance configured with the given parameters
 
     Examples:
-        Using with a string type (just stores the path):
-            >>> class MySample(Sample):
-            ...     image: str = image_path_field()
-
-        Using with LazyImage type (enables lazy loading):
+        Using with LazyImage type (recommended, type-safe):
             >>> class MySample(Sample):
             ...     image: LazyImage = image_path_field()
             ...
-            >>> sample = MySample(image="/path/to/image.jpg")
+            >>> sample = MySample(image=LazyImage("/path/to/image.jpg"))
             >>> sample.image.path  # Returns the path string
             >>> sample.image.data  # Loads and returns numpy array
+
+        Using with a string type (just stores the path as string):
+            >>> class MySample(Sample):
+            ...     image: str = image_path_field()
 
         With BGR format and channels-first:
             >>> class MySample(Sample):
@@ -403,13 +409,13 @@ class ImageCallableField(Field):
         """Return schema with Object type to store callable."""
         return {name: pl.Object()}
 
-    def to_polars(self, name: str, value: callable) -> dict[str, pl.Series]:
+    def to_polars(self, name: str, value: typing.Callable) -> dict[str, pl.Series]:
         """Store callable as Object in Polars series."""
         if not callable(value) and value is not None:
             raise TypeError(f"Expected callable, got {type(value)}")
         return {name: pl.Series(name, [value])}
 
-    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> callable:  # noqa: ARG002
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> typing.Callable:  # noqa: ARG002
         """Extract callable from Polars dataframe."""
         value = df[name][row_index]
         if not callable(value) and value is not None:

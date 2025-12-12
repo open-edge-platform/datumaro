@@ -15,7 +15,6 @@ from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
 from threading import RLock
-from typing import TypeAlias
 
 import numpy as np
 from cachetools import LRUCache, cachedmethod
@@ -126,7 +125,7 @@ class LazyImage:
 
     Attributes:
         path: The file path to the image (can be a string, Path object, or another LazyImage)
-        path: The file path to the image (can be a string or Path object)
+        format: The color format to use when loading ("RGB", "BGR", etc.)
         channels_first: Whether to return data in channels-first format (C, H, W)
 
     Examples:
@@ -153,13 +152,16 @@ class LazyImage:
         >>> sample.image.data  # Returns the numpy array
     """
 
-    path: str | Path
+    path: str | Path | LazyImage
     format: str = "RGB"
     channels_first: bool = False
 
     def __post_init__(self) -> None:
         # Ensure path is stored as a string for consistency
-        if isinstance(self.path, Path):
+        # Handle LazyImage input by extracting its path
+        if isinstance(self.path, LazyImage):
+            object.__setattr__(self, "path", self.path.path)
+        elif isinstance(self.path, Path):
             object.__setattr__(self, "path", str(self.path))
 
     def _cache_key(self) -> tuple[str, str, bool]:
@@ -253,8 +255,3 @@ class LazyImage:
     def __fspath__(self) -> str:
         """Allow LazyImage to be used in os.path operations."""
         return str(self.path)
-
-
-# Type alias for image path fields that accept strings, Paths, or LazyImage objects.
-# Use this type annotation to avoid type checker warnings when passing strings for LazyImage.
-ImagePathLike: TypeAlias = str | Path | LazyImage

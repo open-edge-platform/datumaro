@@ -12,7 +12,6 @@ from PIL import Image as PILImage
 
 from datumaro.experimental import (
     Dataset,
-    ImagePathLike,
     LazyImage,
     Sample,
     clear_image_cache,
@@ -202,7 +201,7 @@ class ImagePathFieldWithLazyImageTest:
         """Test creating a Sample with LazyImage type annotation."""
 
         class TestSample(Sample):
-            image: ImagePathLike = image_path_field()
+            image: LazyImage = image_path_field()
 
         sample = TestSample(image=temp_image_path)
         assert isinstance(sample.image, LazyImage)
@@ -212,7 +211,7 @@ class ImagePathFieldWithLazyImageTest:
         """Test that string path is automatically coerced to LazyImage."""
 
         class TestSample(Sample):
-            image: ImagePathLike = image_path_field()
+            image: LazyImage = image_path_field()
 
         # Pass a string, should be converted to LazyImage
         sample = TestSample(image=temp_image_path)
@@ -233,7 +232,7 @@ class ImagePathFieldWithLazyImageTest:
         """Test creating Sample with Path object."""
 
         class TestSample(Sample):
-            image: ImagePathLike = image_path_field()
+            image: LazyImage = image_path_field()
 
         sample = TestSample(image=Path(temp_image_path))
         assert isinstance(sample.image, LazyImage)
@@ -243,7 +242,7 @@ class ImagePathFieldWithLazyImageTest:
         """Test Dataset operations with LazyImage samples."""
 
         class TestSample(Sample):
-            image: ImagePathLike = image_path_field()
+            image: LazyImage = image_path_field()
 
         dataset = Dataset(TestSample)
         dataset.append(TestSample(image=temp_image_path))
@@ -257,7 +256,7 @@ class ImagePathFieldWithLazyImageTest:
         """Test iterating over Dataset with LazyImage samples."""
 
         class TestSample(Sample):
-            image: ImagePathLike = image_path_field()
+            image: LazyImage = image_path_field()
 
         dataset = Dataset(TestSample)
         dataset.append(TestSample(image=temp_image_path))
@@ -270,7 +269,7 @@ class ImagePathFieldWithLazyImageTest:
         """Test that format parameter is passed to LazyImage."""
 
         class TestSample(Sample):
-            image: ImagePathLike = image_path_field(format="BGR")
+            image: LazyImage = image_path_field(format="BGR")
 
         sample = TestSample(image=temp_image_path)
         assert sample.image.format == "BGR"
@@ -279,7 +278,7 @@ class ImagePathFieldWithLazyImageTest:
         """Test that channels_first parameter is passed to LazyImage."""
 
         class TestSample(Sample):
-            image: ImagePathLike = image_path_field(channels_first=True)
+            image: LazyImage = image_path_field(channels_first=True)
 
         sample = TestSample(image=temp_image_path)
         assert sample.image.channels_first is True
@@ -289,7 +288,7 @@ class ImagePathFieldWithLazyImageTest:
         """Test that LazyImage is properly reconstructed from Polars data."""
 
         class TestSample(Sample):
-            image: ImagePathLike = image_path_field()
+            image: LazyImage = image_path_field()
 
         dataset = Dataset(TestSample)
         dataset.append(TestSample(image=temp_image_path))
@@ -434,8 +433,8 @@ class LazyImageEdgeCasesTest:
                 assert sample.image.path == expected_path
 
 
-class ImagePathLikeTypeAliasTest:
-    """Tests for the ImagePathLike type alias to avoid type checker warnings."""
+class LazyImageTypeAliasTest:
+    """Tests for the LazyImage type alias to avoid type checker warnings."""
 
     @pytest.fixture
     def temp_image_path(self):
@@ -447,10 +446,10 @@ class ImagePathLikeTypeAliasTest:
             yield test_image_path
 
     def test_sample_with_image_path_like_type(self, temp_image_path):
-        """Test creating a Sample with ImagePathLike type annotation."""
+        """Test creating a Sample with LazyImage type annotation."""
 
         class TestSample(Sample):
-            image: ImagePathLike = image_path_field()
+            image: LazyImage = image_path_field()
 
         # Should not raise type checker warnings when passing a string
         sample = TestSample(image=temp_image_path)
@@ -458,20 +457,20 @@ class ImagePathLikeTypeAliasTest:
         assert sample.image.path == temp_image_path
 
     def test_sample_with_image_path_like_accepts_path(self, temp_image_path):
-        """Test that ImagePathLike accepts Path objects."""
+        """Test that LazyImage accepts Path objects."""
 
         class TestSample(Sample):
-            image: ImagePathLike = image_path_field()
+            image: LazyImage = image_path_field()
 
         sample = TestSample(image=Path(temp_image_path))
         assert isinstance(sample.image, LazyImage)
         assert sample.image.path == temp_image_path
 
     def test_sample_with_image_path_like_accepts_lazy_image(self, temp_image_path):
-        """Test that ImagePathLike accepts LazyImage directly."""
+        """Test that LazyImage accepts LazyImage directly."""
 
         class TestSample(Sample):
-            image: ImagePathLike = image_path_field()
+            image: LazyImage = image_path_field()
 
         lazy_img = LazyImage(path=temp_image_path)
         sample = TestSample(image=lazy_img)
@@ -479,10 +478,10 @@ class ImagePathLikeTypeAliasTest:
         assert sample.image.path == temp_image_path
 
     def test_dataset_with_image_path_like(self, temp_image_path):
-        """Test Dataset operations with ImagePathLike type."""
+        """Test Dataset operations with LazyImage type."""
 
         class TestSample(Sample):
-            image: ImagePathLike = image_path_field()
+            image: LazyImage = image_path_field()
 
         dataset = Dataset(TestSample)
         dataset.append(TestSample(image=temp_image_path))
@@ -493,19 +492,19 @@ class ImagePathLikeTypeAliasTest:
         assert retrieved.image.data.shape == (100, 150, 3)
 
     def test_image_path_like_with_format_option(self, temp_image_path):
-        """Test ImagePathLike with format option."""
+        """Test LazyImage with format option."""
 
         class TestSample(Sample):
-            image: ImagePathLike = image_path_field(format="BGR")
+            image: LazyImage = image_path_field(format="BGR")
 
         sample = TestSample(image=temp_image_path)
         assert sample.image.format == "BGR"
 
     def test_image_path_like_with_channels_first_option(self, temp_image_path):
-        """Test ImagePathLike with channels_first option."""
+        """Test LazyImage with channels_first option."""
 
         class TestSample(Sample):
-            image: ImagePathLike = image_path_field(channels_first=True)
+            image: LazyImage = image_path_field(channels_first=True)
 
         sample = TestSample(image=temp_image_path)
         assert sample.image.channels_first is True
