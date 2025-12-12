@@ -250,7 +250,7 @@ class LazyImage:
         return self.data.shape
 
     def __str__(self) -> str:
-        return str(self.path)
+        return f"LazyImage({self.path})"
 
     def __fspath__(self) -> str:
         """Allow LazyImage to be used in os.path operations."""
