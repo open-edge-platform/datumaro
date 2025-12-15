@@ -1,5 +1,3 @@
-from datumaro.experimental import LazyImage
-
 # Datumaro Experimental Module
 
 The `datumaro.experimental` module provides a modern, type-safe framework for working with machine learning datasets. It offers a declarative approach to defining data schemas, automatic type conversion between different representations, and efficient storage using Polars DataFrames.
