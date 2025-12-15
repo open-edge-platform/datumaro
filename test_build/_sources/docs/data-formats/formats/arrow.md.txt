@@ -85,17 +85,14 @@ The attributes of the entity. The byte order is little-endian.
 
 ![attributes](./images/arrow/attributes.png)
 
-## Import Arrow dataset
+## Convert Arrow dataset
 
-A Datumaro project with a Arrow source can be created in the following way:
+An Arrow dataset can be converted in the following way:
 
 ```console
-datum project create
-datum project import --format arrow <path/to/dataset>
+datum convert --input-format arrow --input-path <path/to/dataset> \
+    --output-format <desired_format> --output-dir <output/dir>
 ```
-
-It is possible to specify project name and project directory. Run
-`datum project create --help` for more information.
 
 An Arrow dataset directory should have the following structure:
 
@@ -110,10 +107,7 @@ An Arrow dataset directory should have the following structure:
 ```
 
 If your dataset is not following the above directory structure,
-it cannot detect and import your dataset as the Arrow format properly.
-
-To make sure that the selected dataset has been added to the project, you can
-run `datum project pinfo`, which will display the project information.
+it cannot be detected and converted properly.
 
 ## Export to other formats
 
@@ -121,21 +115,14 @@ It can convert Datumaro dataset into any other format [Datumaro supports](/docs/
 To get the expected result, convert the dataset to formats
 that support the specified task (e.g. for panoptic segmentation - VOC, CamVID)
 
-There are several ways to convert a Datumaro dataset to other dataset formats
+There are several ways to convert an Arrow dataset to other dataset formats
 using CLI:
 
-- Export a dataset from Datumaro format to VOC format:
+- Convert a dataset from Arrow to VOC format:
 
 ```console
-datum project create
-datum project import -f arrow <path/to/dataset>
-datum project export -f voc -o <output/dir>
-```
-
-or
-
-```console
-datum convert -if arrow -i <path/to/dataset> -f voc -o <output/dir>
+datum convert --input-format arrow --input-path <path/to/dataset> \
+    --output-format voc --output-dir <output/dir>
 ```
 
 Or, using Python API:
@@ -151,18 +138,12 @@ dataset.export('save_dir', 'voc', save_media=True, image_ext="AS-IS", num_worker
 
 There are several ways to convert a dataset to Arrow format:
 
-- Export a dataset from an existing project to Arrow format:
-```console
-# export dataset into Arrow format from existing project
-datum project export -p <path/to/project> -f arrow -o <output/dir> \
-    -- --save-media
-```
-
 - Convert a dataset from VOC format to Arrow format:
+
 ```console
 # converting to arrow format from other format
-datum convert -if voc -i <path/to/dataset> \
-    -f arrow -o <output/dir> -- --save-media
+datum convert --input-format voc --input-path <path/to/dataset> \
+    --output-format arrow --output-dir <output/dir> -- --save-media
 ```
 
 Extra options for exporting to Arrow format:
@@ -188,4 +169,4 @@ Extra options for exporting to Arrow format:
 ## Examples
 
 Examples of using this format from the code can be found in
-[the format tests](https://github.com/openvinotoolkit/datumaro/blob/develop/tests/unit/data_formats/arrow/test_arrow_format.py)
+[the format tests](https://github.com/open-edge-platform/datumaro/blob/develop/tests/unit/data_formats/arrow/test_arrow_format.py)

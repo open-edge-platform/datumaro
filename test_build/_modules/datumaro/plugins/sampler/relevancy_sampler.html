@@ -27,10 +27,10 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=8b7c274f" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -43,7 +43,7 @@
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../../../_static/design-tabs.js?v=36754332"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/plugins/sampler/relevancy_sampler';</script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
@@ -192,7 +192,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
       
@@ -279,7 +279,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
         
@@ -344,27 +344,27 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.cli_plugin</span> <span class="kn">import</span> <span class="n">CliPlugin</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">IDataset</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.transformer</span> <span class="kn">import</span> <span class="n">Transform</span>
-<span class="kn">from</span> <span class="nn">datumaro.util</span> <span class="kn">import</span> <span class="n">parse_str_enum_value</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.cli_plugin</span><span class="w"> </span><span class="kn">import</span> <span class="n">CliPlugin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">IDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_str_enum_value</span>
 
-<span class="kn">from</span> <span class="nn">.algorithm.algorithm</span> <span class="kn">import</span> <span class="n">Algorithm</span><span class="p">,</span> <span class="n">SamplingMethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.algorithm.algorithm</span><span class="w"> </span><span class="kn">import</span> <span class="n">Algorithm</span><span class="p">,</span> <span class="n">SamplingMethod</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="k">else</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">datumaro.util.import_util</span> <span class="kn">import</span> <span class="n">lazy_import</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.import_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">lazy_import</span>
 
     <span class="n">pd</span> <span class="o">=</span> <span class="n">lazy_import</span><span class="p">(</span><span class="s2">&quot;pandas&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="RelevancySampler">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.sampler.relevancy_sampler.html#datumaro.plugins.sampler.relevancy_sampler.RelevancySampler">[docs]</a>
-<span class="k">class</span> <span class="nc">RelevancySampler</span><span class="p">(</span><span class="n">Transform</span><span class="p">,</span> <span class="n">CliPlugin</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RelevancySampler</span><span class="p">(</span><span class="n">Transform</span><span class="p">,</span> <span class="n">CliPlugin</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sampler that analyzes model inference results on the dataset |n</span>
 <span class="sd">    and picks the best sample for training.|n</span>
@@ -406,19 +406,15 @@ document.write(`
 <div class="viewcode-block" id="RelevancySampler.build_cmdline_parser">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.sampler.relevancy_sampler.html#datumaro.plugins.sampler.relevancy_sampler.RelevancySampler.build_cmdline_parser">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;-k&quot;</span><span class="p">,</span> <span class="s2">&quot;--count&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of items to sample&quot;</span>
-        <span class="p">)</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-k&quot;</span><span class="p">,</span> <span class="s2">&quot;--count&quot;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Number of items to sample&quot;</span><span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
             <span class="s2">&quot;-a&quot;</span><span class="p">,</span>
             <span class="s2">&quot;--algorithm&quot;</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="n">Algorithm</span><span class="o">.</span><span class="n">entropy</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
             <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">Algorithm</span><span class="p">],</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Sampling algorithm (one of </span><span class="si">{}</span><span class="s2">; default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">Algorithm</span><span class="p">)</span>
-            <span class="p">),</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Sampling algorithm (one of </span><span class="si">{}</span><span class="s2">; default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">Algorithm</span><span class="p">)),</span>
         <span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
             <span class="s2">&quot;-i&quot;</span><span class="p">,</span>
@@ -443,15 +439,13 @@ document.write(`
             <span class="s2">&quot;--sampling_method&quot;</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="n">SamplingMethod</span><span class="o">.</span><span class="n">topk</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
             <span class="n">choices</span><span class="o">=</span><span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">SamplingMethod</span><span class="p">],</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Sampling method (one of </span><span class="si">{}</span><span class="s2">; default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">SamplingMethod</span><span class="p">)</span>
-            <span class="p">),</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Sampling method (one of </span><span class="si">{}</span><span class="s2">; default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">SamplingMethod</span><span class="p">)),</span>
         <span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-d&quot;</span><span class="p">,</span> <span class="s2">&quot;--output_file&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;A .csv file path to dump sampling results&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">parser</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">extractor</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">,</span>
         <span class="n">count</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -496,7 +490,7 @@ document.write(`
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The output file must have the &#39;.csv&#39; extension&quot;</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_load_inference_from_subset</span><span class="p">(</span><span class="n">extractor</span><span class="p">,</span> <span class="n">subset_name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_inference_from_subset</span><span class="p">(</span><span class="n">extractor</span><span class="p">,</span> <span class="n">subset_name</span><span class="p">):</span>
         <span class="c1"># 1. Get Dataset from subset name</span>
         <span class="k">if</span> <span class="n">subset_name</span> <span class="ow">in</span> <span class="n">extractor</span><span class="o">.</span><span class="n">subsets</span><span class="p">():</span>
             <span class="n">subset</span> <span class="o">=</span> <span class="n">extractor</span><span class="o">.</span><span class="n">get_subset</span><span class="p">(</span><span class="n">subset_name</span><span class="p">)</span>
@@ -524,15 +518,13 @@ document.write(`
 
             <span class="k">for</span> <span class="n">annotation</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
                 <span class="k">if</span> <span class="s2">&quot;scores&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">annotation</span><span class="o">.</span><span class="n">attributes</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Item </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> - an annotation &quot;</span> <span class="s2">&quot;does not have &#39;scores&#39; attribute&quot;</span>
-                    <span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Item </span><span class="si">{</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> - an annotation does not have &#39;scores&#39; attribute&quot;</span><span class="p">)</span>
                 <span class="n">probs</span> <span class="o">=</span> <span class="n">annotation</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;scores&quot;</span><span class="p">]</span>
 
                 <span class="n">infer_df</span><span class="p">[</span><span class="s2">&quot;ImageID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
 
                 <span class="k">for</span> <span class="n">prob_idx</span><span class="p">,</span> <span class="n">prob</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">probs</span><span class="p">):</span>
-                    <span class="n">infer_df</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;ClassProbability</span><span class="si">{</span><span class="n">prob_idx</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prob</span><span class="p">)</span>
+                    <span class="n">infer_df</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;ClassProbability</span><span class="si">{</span><span class="n">prob_idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prob</span><span class="p">)</span>
 
         <span class="n">data_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data_df</span><span class="p">)</span>
         <span class="n">infer_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">infer_df</span><span class="p">)</span>
@@ -540,32 +532,27 @@ document.write(`
         <span class="k">return</span> <span class="n">data_df</span><span class="p">,</span> <span class="n">infer_df</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_calculate_uncertainty</span><span class="p">(</span><span class="n">algorithm</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">inference</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_uncertainty</span><span class="p">(</span><span class="n">algorithm</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">inference</span><span class="p">):</span>
         <span class="c1"># Checking and creating algorithms</span>
         <span class="k">if</span> <span class="n">algorithm</span> <span class="o">==</span> <span class="n">Algorithm</span><span class="o">.</span><span class="n">entropy</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">.algorithm.entropy</span> <span class="kn">import</span> <span class="n">SampleEntropy</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">.algorithm.entropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">SampleEntropy</span>
 
             <span class="c1"># Data delivery, uncertainty score calculations also proceed.</span>
             <span class="n">sampler</span> <span class="o">=</span> <span class="n">SampleEntropy</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">inference</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Unknown algorithm &#39;</span><span class="si">{</span><span class="n">algorithm</span><span class="si">}</span><span class="s2">&#39;, available &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;algorithms: </span><span class="si">{</span><span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">Algorithm</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown algorithm &#39;</span><span class="si">{</span><span class="n">algorithm</span><span class="si">}</span><span class="s2">&#39;, available algorithms: </span><span class="si">{</span><span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">Algorithm</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">sampler</span>
 
-    <span class="k">def</span> <span class="nf">_get_sample_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_sample_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">subset</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_subset</span><span class="p">:</span>
             <span class="c1"># 1. Returns the sample subset if the id belongs to samples.</span>
             <span class="k">if</span> <span class="n">image</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sample_id</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampled_subset</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unsampled_subset</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># 2. Returns the existing subset name if it is not a sample</span>
-            <span class="k">return</span> <span class="n">image</span><span class="o">.</span><span class="n">subset</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">unsampled_subset</span>
+        <span class="c1"># 2. Returns the existing subset name if it is not a sample</span>
+        <span class="k">return</span> <span class="n">image</span><span class="o">.</span><span class="n">subset</span>
 
-    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># Import data into a subset name and convert it</span>
         <span class="c1"># to a format that will be used in the sampler algorithm with</span>
         <span class="c1"># the inference result.</span>

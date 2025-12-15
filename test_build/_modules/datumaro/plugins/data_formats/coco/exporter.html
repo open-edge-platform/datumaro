@@ -27,10 +27,10 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=eafc0fe6" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css?v=8b7c274f" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -43,7 +43,7 @@
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../../../../_static/design-tabs.js?v=36754332"></script>
+    <script src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/plugins/data_formats/coco/exporter';</script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
@@ -192,7 +192,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
       
@@ -279,7 +279,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
         
@@ -344,42 +344,39 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">auto</span>
-<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BufferedWriter</span>
-<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span><span class="p">,</span> <span class="n">groupby</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">operator</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">auto</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">BufferedWriter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">chain</span><span class="p">,</span> <span class="n">groupby</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">pycocotools.mask</span> <span class="k">as</span> <span class="nn">mask_utils</span>
-<span class="kn">from</span> <span class="nn">json_stream.writer</span> <span class="kn">import</span> <span class="n">streamable_dict</span><span class="p">,</span> <span class="n">streamable_list</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pycocotools.mask</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mask_utils</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">json_stream.writer</span><span class="w"> </span><span class="kn">import</span> <span class="n">streamable_dict</span><span class="p">,</span> <span class="n">streamable_list</span>
 
-<span class="kn">import</span> <span class="nn">datumaro.util.annotation_util</span> <span class="k">as</span> <span class="nn">anno_tools</span>
-<span class="kn">import</span> <span class="nn">datumaro.util.mask_tools</span> <span class="k">as</span> <span class="nn">mask_tools</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">COORDINATE_ROUNDING_DIGITS</span><span class="p">,</span>
-    <span class="n">AnnotationType</span><span class="p">,</span>
-    <span class="n">Ellipse</span><span class="p">,</span>
-    <span class="n">Points</span><span class="p">,</span>
-    <span class="n">Polygon</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetItem</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_item_storage</span> <span class="kn">import</span> <span class="n">ItemStatus</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.errors</span> <span class="kn">import</span> <span class="n">MediaTypeError</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.exporter</span> <span class="kn">import</span> <span class="n">Exporter</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.media</span> <span class="kn">import</span> <span class="n">Image</span>
-<span class="kn">from</span> <span class="nn">datumaro.util</span> <span class="kn">import</span> <span class="n">cast</span><span class="p">,</span> <span class="n">dump_json</span><span class="p">,</span> <span class="n">dump_json_file</span><span class="p">,</span> <span class="n">find</span><span class="p">,</span> <span class="n">parse_json</span><span class="p">,</span> <span class="n">str_to_bool</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.image</span> <span class="kn">import</span> <span class="n">save_image</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datumaro.util.annotation_util</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">anno_tools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">datumaro.util.mask_tools</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mask_tools</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">COORDINATE_ROUNDING_DIGITS</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Ellipse</span><span class="p">,</span> <span class="n">Points</span><span class="p">,</span> <span class="n">Polygon</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_item_storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">ItemStatus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">MediaTypeError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.exporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Exporter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">cast</span><span class="p">,</span> <span class="n">dump_json</span><span class="p">,</span> <span class="n">dump_json_file</span><span class="p">,</span> <span class="n">find</span><span class="p">,</span> <span class="n">parse_json</span><span class="p">,</span> <span class="n">str_to_bool</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.image</span><span class="w"> </span><span class="kn">import</span> <span class="n">save_image</span>
 
-<span class="kn">from</span> <span class="nn">.format</span> <span class="kn">import</span> <span class="n">CocoPath</span><span class="p">,</span> <span class="n">CocoTask</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.format</span><span class="w"> </span><span class="kn">import</span> <span class="n">CocoPath</span><span class="p">,</span> <span class="n">CocoTask</span>
 
 
 <div class="viewcode-block" id="SegmentationMode">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.coco.exporter.html#datumaro.plugins.data_formats.coco.exporter.SegmentationMode">[docs]</a>
-<span class="k">class</span> <span class="nc">SegmentationMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SegmentationMode</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="n">guess</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
     <span class="n">polygons</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
     <span class="n">mask</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span></div>
@@ -387,15 +384,15 @@ document.write(`
 
 
 <span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">_Writer</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_Writer</span><span class="p">:</span>
     <span class="n">fp</span><span class="p">:</span> <span class="n">BufferedWriter</span>
     <span class="n">is_empty</span><span class="p">:</span> <span class="nb">bool</span>
 
 
 <div class="viewcode-block" id="TemporaryWriters">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.coco.exporter.html#datumaro.plugins.data_formats.coco.exporter.TemporaryWriters">[docs]</a>
-<span class="k">class</span> <span class="nc">TemporaryWriters</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">CocoTask</span><span class="p">,</span> <span class="n">ann_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TemporaryWriters</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">CocoTask</span><span class="p">,</span> <span class="n">ann_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span> <span class="o">=</span> <span class="n">subset</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_task</span> <span class="o">=</span> <span class="n">task</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ann_dir</span> <span class="o">=</span> <span class="n">ann_dir</span>
@@ -404,7 +401,7 @@ document.write(`
 
 <div class="viewcode-block" id="TemporaryWriters.close">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.coco.exporter.html#datumaro.plugins.data_formats.coco.exporter.TemporaryWriters.close">[docs]</a>
-    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">writer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_writers</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">writer</span><span class="o">.</span><span class="n">fp</span><span class="o">.</span><span class="n">closed</span><span class="p">:</span>
                 <span class="n">writer</span><span class="o">.</span><span class="n">fp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
@@ -412,7 +409,7 @@ document.write(`
 
 <div class="viewcode-block" id="TemporaryWriters.remove">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.coco.exporter.html#datumaro.plugins.data_formats.coco.exporter.TemporaryWriters.remove">[docs]</a>
-    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
         <span class="k">for</span> <span class="n">writer</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_writers</span><span class="p">:</span>
@@ -423,34 +420,32 @@ document.write(`
 
 <div class="viewcode-block" id="TemporaryWriters.reset">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.coco.exporter.html#datumaro.plugins.data_formats.coco.exporter.TemporaryWriters.reset">[docs]</a>
-    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_writers</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
             <span class="n">_Writer</span><span class="p">(</span>
-                <span class="n">fp</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span>
-                    <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ann_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;__</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_task</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">.tmp&quot;</span><span class="p">),</span> <span class="s2">&quot;wb&quot;</span>
-                <span class="p">),</span>
+                <span class="n">fp</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ann_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;__</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_task</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">.tmp&quot;</span><span class="p">),</span> <span class="s2">&quot;wb&quot;</span><span class="p">),</span>  <span class="c1"># noqa: SIM115</span>
                 <span class="n">is_empty</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;imgs&quot;</span><span class="p">,</span> <span class="s2">&quot;anns&quot;</span><span class="p">]</span>
         <span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">imgs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Writer</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">imgs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Writer</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_writers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">anns</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Writer</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">anns</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_Writer</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_writers</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
 <div class="viewcode-block" id="TemporaryWriters.add_item">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.coco.exporter.html#datumaro.plugins.data_formats.coco.exporter.TemporaryWriters.add_item">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">imgs</span><span class="o">.</span><span class="n">is_empty</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">writer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">imgs</span><span class="o">.</span><span class="n">fp</span>
         <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">dump_json</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">append_newline</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span></div>
@@ -458,7 +453,7 @@ document.write(`
 
 <div class="viewcode-block" id="TemporaryWriters.add_anns">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.coco.exporter.html#datumaro.plugins.data_formats.coco.exporter.TemporaryWriters.add_anns">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_anns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_anns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">anns</span><span class="o">.</span><span class="n">is_empty</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">writer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">anns</span><span class="o">.</span><span class="n">fp</span>
         <span class="n">writer</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">dump_json</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">append_newline</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span></div>
@@ -466,17 +461,17 @@ document.write(`
 
 <div class="viewcode-block" id="TemporaryWriters.merge">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.coco.exporter.html#datumaro.plugins.data_formats.coco.exporter.TemporaryWriters.merge">[docs]</a>
-    <span class="k">def</span> <span class="nf">merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">min_ann_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">min_ann_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
         <span class="nd">@streamable_list</span>
-        <span class="k">def</span> <span class="nf">_gen_images</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_gen_images</span><span class="p">():</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imgs</span><span class="o">.</span><span class="n">fp</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fp</span><span class="p">:</span>
                     <span class="k">yield</span> <span class="n">parse_json</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
 
         <span class="nd">@streamable_list</span>
-        <span class="k">def</span> <span class="nf">_gen_anns</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_gen_anns</span><span class="p">():</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">anns</span><span class="o">.</span><span class="n">fp</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
                 <span class="n">next_id</span> <span class="o">=</span> <span class="n">min_ann_id</span>
                 <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fp</span><span class="p">:</span>
@@ -487,7 +482,7 @@ document.write(`
                     <span class="k">yield</span> <span class="n">ann</span>
 
         <span class="nd">@streamable_dict</span>
-        <span class="k">def</span> <span class="nf">_gen</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_gen</span><span class="p">():</span>
             <span class="k">yield</span> <span class="s2">&quot;licenses&quot;</span><span class="p">,</span> <span class="n">header</span><span class="p">[</span><span class="s2">&quot;licenses&quot;</span><span class="p">]</span>
             <span class="k">yield</span> <span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="n">header</span><span class="p">[</span><span class="s2">&quot;info&quot;</span><span class="p">]</span>
             <span class="k">yield</span> <span class="s2">&quot;categories&quot;</span><span class="p">,</span> <span class="n">header</span><span class="p">[</span><span class="s2">&quot;categories&quot;</span><span class="p">]</span>
@@ -510,10 +505,8 @@ document.write(`
 
 
 
-<span class="k">class</span> <span class="nc">_TaskExporter</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="s2">&quot;CocoExporter&quot;</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">CocoTask</span><span class="p">,</span> <span class="n">ann_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="nb">bool</span>
-    <span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_TaskExporter</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="s2">&quot;CocoExporter&quot;</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">CocoTask</span><span class="p">,</span> <span class="n">ann_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">stream</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_min_ann_id</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_context</span> <span class="o">=</span> <span class="n">context</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span> <span class="o">=</span> <span class="n">subset</span>
@@ -540,17 +533,13 @@ document.write(`
             <span class="n">ann_dir</span><span class="o">=</span><span class="n">ann_dir</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="s2">&quot;annotations&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stream</span>
-            <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_temporary_writers</span><span class="o">.</span><span class="n">anns</span><span class="o">.</span><span class="n">is_empty</span>
-        <span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="s2">&quot;annotations&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stream</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_temporary_writers</span><span class="o">.</span><span class="n">anns</span><span class="o">.</span><span class="n">is_empty</span>
 
-    <span class="k">def</span> <span class="nf">_get_image_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_image_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">_get_image_id</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">save_image_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_image_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
         <span class="n">h</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">w</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span> <span class="ow">and</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
@@ -572,13 +561,13 @@ document.write(`
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_temporary_writers</span><span class="o">.</span><span class="n">add_item</span><span class="p">(</span><span class="n">item_desc</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">save_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-    <span class="k">def</span> <span class="nf">save_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="n">next_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_ann_id</span>
         <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">ann</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]:</span>
@@ -591,48 +580,44 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">_temporary_writers</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_ann_id</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="s2">&quot;annotations&quot;</span><span class="p">]</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">infos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">infos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="s2">&quot;info&quot;</span><span class="p">]</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="s2">&quot;categories&quot;</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_get_ann_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotation</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_ann_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotation</span><span class="p">):</span>
         <span class="n">ann_id</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">_reindex</span> <span class="k">else</span> <span class="n">annotation</span><span class="o">.</span><span class="n">id</span>
         <span class="k">if</span> <span class="n">ann_id</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_min_ann_id</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">ann_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_ann_id</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ann_id</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_convert_attributes</span><span class="p">(</span><span class="n">ann</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_attributes</span><span class="p">(</span><span class="n">ann</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;is_crowd&quot;</span><span class="p">,</span> <span class="s2">&quot;score&quot;</span><span class="p">}}</span>
 
 
-<span class="k">class</span> <span class="nc">_ImageInfoExporter</span><span class="p">(</span><span class="n">_TaskExporter</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="s2">&quot;images&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stream</span>
-            <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_temporary_writers</span><span class="o">.</span><span class="n">imgs</span><span class="o">.</span><span class="n">is_empty</span>
-        <span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_ImageInfoExporter</span><span class="p">(</span><span class="n">_TaskExporter</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="s2">&quot;images&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stream</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_temporary_writers</span><span class="o">.</span><span class="n">imgs</span><span class="o">.</span><span class="n">is_empty</span>
 
-    <span class="k">def</span> <span class="nf">save_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
         <span class="k">pass</span>
 
-    <span class="k">def</span> <span class="nf">save_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="k">pass</span>
 
 
-<span class="k">class</span> <span class="nc">_CaptionsExporter</span><span class="p">(</span><span class="n">_TaskExporter</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">save_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_CaptionsExporter</span><span class="p">(</span><span class="n">_TaskExporter</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
         <span class="k">pass</span>
 
-    <span class="k">def</span> <span class="nf">save_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">ann_idx</span><span class="p">,</span> <span class="n">ann</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">ann</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">caption</span><span class="p">:</span>
                 <span class="k">continue</span>
@@ -647,10 +632,7 @@ document.write(`
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">elem</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">])</span>
                 <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                        <span class="s2">&quot;Item &#39;</span><span class="si">%s</span><span class="s2">&#39;, ann #</span><span class="si">%s</span><span class="s2">: failed to convert &quot;</span>
-                        <span class="s2">&quot;attribute &#39;score&#39;: </span><span class="si">%e</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">ann_idx</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
-                    <span class="p">)</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Item &#39;</span><span class="si">%s</span><span class="s2">&#39;, ann #</span><span class="si">%s</span><span class="s2">: failed to convert attribute &#39;score&#39;: </span><span class="si">%e</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">ann_idx</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">_allow_attributes</span><span class="p">:</span>
                 <span class="n">attrs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_attributes</span><span class="p">(</span><span class="n">ann</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">attrs</span><span class="p">:</span>
@@ -662,7 +644,7 @@ document.write(`
                 <span class="bp">self</span><span class="o">.</span><span class="n">_temporary_writers</span><span class="o">.</span><span class="n">add_anns</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">_InstancesExporter</span><span class="p">(</span><span class="n">_TaskExporter</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_InstancesExporter</span><span class="p">(</span><span class="n">_TaskExporter</span><span class="p">):</span>
     <span class="n">_polygon_types</span> <span class="o">=</span> <span class="p">{</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">polygon</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">ellipse</span><span class="p">}</span>
     <span class="n">_allowed_types</span> <span class="o">=</span> <span class="p">{</span>
         <span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span><span class="p">,</span>
@@ -671,7 +653,7 @@ document.write(`
         <span class="n">AnnotationType</span><span class="o">.</span><span class="n">ellipse</span><span class="p">,</span>
     <span class="p">}</span>
 
-    <span class="k">def</span> <span class="nf">save_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
         <span class="n">label_categories</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">label_categories</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
@@ -686,7 +668,7 @@ document.write(`
             <span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">crop_segments</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">instances</span><span class="p">,</span> <span class="n">img_width</span><span class="p">,</span> <span class="n">img_height</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">crop_segments</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">instances</span><span class="p">,</span> <span class="n">img_width</span><span class="p">,</span> <span class="n">img_height</span><span class="p">):</span>
         <span class="n">instances</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">instances</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">z_order</span><span class="p">)</span>
 
         <span class="n">segment_map</span> <span class="o">=</span> <span class="p">[]</span>
@@ -710,18 +692,16 @@ document.write(`
                 <span class="k">continue</span>
 
             <span class="k">if</span> <span class="n">inst</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
-                <span class="n">inst</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">new_segments</span><span class="p">,</span> <span class="p">[])</span>
+                <span class="n">inst</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">iadd</span><span class="p">,</span> <span class="n">new_segments</span><span class="p">,</span> <span class="p">[])</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">mask</span> <span class="o">=</span> <span class="n">mask_tools</span><span class="o">.</span><span class="n">merge_masks</span><span class="p">(</span><span class="n">new_segments</span><span class="p">)</span>
                 <span class="n">inst</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">mask_tools</span><span class="o">.</span><span class="n">mask_to_rle</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">instances</span>
 
-    <span class="k">def</span> <span class="nf">find_instance_parts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">img_width</span><span class="p">,</span> <span class="n">img_height</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_instance_parts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">img_width</span><span class="p">,</span> <span class="n">img_height</span><span class="p">):</span>
         <span class="n">boxes</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">group</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span><span class="p">]</span>
-        <span class="n">polygons</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Polygon</span><span class="p">,</span> <span class="n">Ellipse</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">group</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_polygon_types</span>
-        <span class="p">]</span>
+        <span class="n">polygons</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">Polygon</span><span class="p">,</span> <span class="n">Ellipse</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">group</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_polygon_types</span><span class="p">]</span>
         <span class="n">masks</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">group</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span>
 
         <span class="n">anns</span> <span class="o">=</span> <span class="n">boxes</span> <span class="o">+</span> <span class="n">polygons</span> <span class="o">+</span> <span class="n">masks</span>
@@ -742,9 +722,7 @@ document.write(`
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">_segmentation_mode</span> <span class="o">==</span> <span class="n">SegmentationMode</span><span class="o">.</span><span class="n">mask</span><span class="p">:</span>
             <span class="n">use_masks</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
-                <span class="s2">&quot;Unexpected segmentation mode &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">_segmentation_mode</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Unexpected segmentation mode &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">_segmentation_mode</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">use_masks</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">polygons</span> <span class="ow">and</span> <span class="n">img_width</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">img_height</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -768,23 +746,21 @@ document.write(`
         <span class="k">return</span> <span class="p">[</span><span class="n">leader</span><span class="p">,</span> <span class="n">polygons</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">bbox</span><span class="p">]</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">find_instance_anns</span><span class="p">(</span><span class="n">annotations</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_instance_anns</span><span class="p">(</span><span class="n">annotations</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">annotations</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="n">_InstancesExporter</span><span class="o">.</span><span class="n">_allowed_types</span><span class="p">]</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">find_instances</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">annotations</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_instances</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">annotations</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">anno_tools</span><span class="o">.</span><span class="n">find_instances</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">find_instance_anns</span><span class="p">(</span><span class="n">annotations</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">save_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="n">instances</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_instances</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">instances</span><span class="p">:</span>
             <span class="k">return</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
             <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;Item &#39;</span><span class="si">%s</span><span class="s2">&#39;: Mask annotations can be skipped since no image info available&quot;</span> <span class="o">%</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span>
-            <span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Item &#39;</span><span class="si">%s</span><span class="s2">&#39;: Mask annotations can be skipped since no image info available&quot;</span> <span class="o">%</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">h</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">size</span>
 
@@ -804,7 +780,7 @@ document.write(`
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_temporary_writers</span><span class="o">.</span><span class="n">add_anns</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">convert_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
         <span class="n">ann</span><span class="p">,</span> <span class="n">polygons</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">bbox</span> <span class="o">=</span> <span class="n">instance</span>
 
         <span class="n">is_crowd</span> <span class="o">=</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -832,6 +808,8 @@ document.write(`
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">rles</span> <span class="o">=</span> <span class="n">mask_utils</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">rles</span><span class="p">)</span>
             <span class="n">area</span> <span class="o">=</span> <span class="n">mask_utils</span><span class="o">.</span><span class="n">area</span><span class="p">(</span><span class="n">rles</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">area</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                <span class="n">area</span> <span class="o">=</span> <span class="n">area</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">bbox</span>
             <span class="n">segmentation</span> <span class="o">=</span> <span class="p">[]</span>
@@ -850,7 +828,7 @@ document.write(`
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">elem</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">])</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Item &#39;</span><span class="si">%s</span><span class="s2">&#39;: failed to convert attribute &quot;</span> <span class="s2">&quot;&#39;score&#39;: </span><span class="si">%e</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Item &#39;</span><span class="si">%s</span><span class="s2">&#39;: failed to convert attribute &#39;score&#39;: </span><span class="si">%e</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">_allow_attributes</span><span class="p">:</span>
             <span class="n">attrs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_attributes</span><span class="p">(</span><span class="n">ann</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">attrs</span><span class="p">:</span>
@@ -859,8 +837,8 @@ document.write(`
         <span class="k">return</span> <span class="n">elem</span>
 
 
-<span class="k">class</span> <span class="nc">_KeypointsExporter</span><span class="p">(</span><span class="n">_InstancesExporter</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">save_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_KeypointsExporter</span><span class="p">(</span><span class="n">_InstancesExporter</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
         <span class="n">label_categories</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">label_categories</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
@@ -886,7 +864,7 @@ document.write(`
                     <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">categories</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cat</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">save_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="n">point_annotations</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">points</span><span class="p">]</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">point_annotations</span><span class="p">:</span>
             <span class="k">return</span>
@@ -905,19 +883,19 @@ document.write(`
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">save_annotations</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">find_solitary_points</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">annotations</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_solitary_points</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">annotations</span><span class="p">):</span>
         <span class="n">annotations</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">annotations</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">a</span><span class="p">:</span> <span class="n">a</span><span class="o">.</span><span class="n">group</span><span class="p">)</span>
         <span class="n">solitary_points</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">g_id</span><span class="p">,</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">groupby</span><span class="p">(</span><span class="n">annotations</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">:</span> <span class="n">a</span><span class="o">.</span><span class="n">group</span><span class="p">):</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">g_id</span> <span class="ow">or</span> <span class="n">g_id</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">find_instance_anns</span><span class="p">(</span><span class="n">group</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">g_id</span> <span class="ow">or</span> <span class="p">(</span><span class="n">g_id</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">find_instance_anns</span><span class="p">(</span><span class="n">group</span><span class="p">)):</span>
                 <span class="n">group</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">group</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">points</span><span class="p">]</span>
                 <span class="n">solitary_points</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">solitary_points</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">convert_points_object</span><span class="p">(</span><span class="n">ann</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert_points_object</span><span class="p">(</span><span class="n">ann</span><span class="p">):</span>
         <span class="n">keypoints</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">points</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">points</span>
         <span class="n">visibility</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">visibility</span>
@@ -933,12 +911,10 @@ document.write(`
             <span class="s2">&quot;num_keypoints&quot;</span><span class="p">:</span> <span class="n">num_annotated</span><span class="p">,</span>
         <span class="p">}</span>
 
-    <span class="k">def</span> <span class="nf">convert_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">convert_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
         <span class="n">points_ann</span> <span class="o">=</span> <span class="n">find</span><span class="p">(</span>
             <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">,</span>
-            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">points</span>
-            <span class="ow">and</span> <span class="n">instance</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">group</span>
-            <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">group</span> <span class="o">==</span> <span class="n">instance</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">group</span><span class="p">,</span>
+            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">points</span> <span class="ow">and</span> <span class="n">instance</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">group</span> <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">group</span> <span class="o">==</span> <span class="n">instance</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">group</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">points_ann</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -949,8 +925,8 @@ document.write(`
         <span class="k">return</span> <span class="n">elem</span>
 
 
-<span class="k">class</span> <span class="nc">_LabelsExporter</span><span class="p">(</span><span class="n">_TaskExporter</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">save_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_LabelsExporter</span><span class="p">(</span><span class="n">_TaskExporter</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
         <span class="n">label_categories</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">label_categories</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
@@ -964,7 +940,7 @@ document.write(`
                 <span class="p">}</span>
             <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">save_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">ann</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">:</span>
                 <span class="k">continue</span>
@@ -978,9 +954,7 @@ document.write(`
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">elem</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;score&quot;</span><span class="p">])</span>
                 <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                        <span class="s2">&quot;Item &#39;</span><span class="si">%s</span><span class="s2">&#39;: failed to convert attribute &quot;</span> <span class="s2">&quot;&#39;score&#39;: </span><span class="si">%e</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
-                    <span class="p">)</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Item &#39;</span><span class="si">%s</span><span class="s2">&#39;: failed to convert attribute &#39;score&#39;: </span><span class="si">%e</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">_allow_attributes</span><span class="p">:</span>
                 <span class="n">attrs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_attributes</span><span class="p">(</span><span class="n">ann</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">attrs</span><span class="p">:</span>
@@ -992,18 +966,18 @@ document.write(`
                 <span class="bp">self</span><span class="o">.</span><span class="n">_temporary_writers</span><span class="o">.</span><span class="n">add_anns</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">_StuffExporter</span><span class="p">(</span><span class="n">_InstancesExporter</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_StuffExporter</span><span class="p">(</span><span class="n">_InstancesExporter</span><span class="p">):</span>
     <span class="k">pass</span>
 
 
-<span class="k">class</span> <span class="nc">_PanopticExporter</span><span class="p">(</span><span class="n">_TaskExporter</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_PanopticExporter</span><span class="p">(</span><span class="n">_TaskExporter</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="n">dump_json_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stream</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_temporary_writers</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">save_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
         <span class="n">label_categories</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">label_categories</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
@@ -1018,7 +992,7 @@ document.write(`
                 <span class="p">}</span>
             <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">save_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">:</span>
             <span class="k">return</span>
 
@@ -1068,18 +1042,16 @@ document.write(`
 
 <div class="viewcode-block" id="CocoExporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.coco.exporter.html#datumaro.plugins.data_formats.coco.exporter.CocoExporter">[docs]</a>
-<span class="k">class</span> <span class="nc">CocoExporter</span><span class="p">(</span><span class="n">Exporter</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CocoExporter</span><span class="p">(</span><span class="n">Exporter</span><span class="p">):</span>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_split_tasks_string</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_split_tasks_string</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">CocoTask</span><span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">strip</span><span class="p">()]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)]</span>
 
 <div class="viewcode-block" id="CocoExporter.build_cmdline_parser">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.coco.exporter.html#datumaro.plugins.data_formats.coco.exporter.CocoExporter.build_cmdline_parser">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">kwargs</span><span class="p">[</span>
-            <span class="s2">&quot;description&quot;</span>
-        <span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">            Segmentation mask modes (&#39;--segmentation-mode&#39;):|n</span>
 <span class="s2">            - &#39;</span><span class="si">{sm.guess.name}</span><span class="s2">&#39;: guess the mode for each instance,|n</span>
 <span class="s2">            |s|suse &#39;is_crowd&#39; attribute as hint|n</span>
@@ -1102,9 +1074,7 @@ document.write(`
 <span class="s2">            images. When enabled, the dataset images are saved into a single</span>
 <span class="s2">            directory, otherwise they are saved in separate directories</span>
 <span class="s2">            by subsets.</span>
-<span class="s2">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">sm</span><span class="o">=</span><span class="n">SegmentationMode</span>
-        <span class="p">)</span>
+<span class="s2">            &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sm</span><span class="o">=</span><span class="n">SegmentationMode</span><span class="p">)</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
             <span class="s2">&quot;--segmentation-mode&quot;</span><span class="p">,</span>
@@ -1128,20 +1098,18 @@ document.write(`
             <span class="s2">&quot;--reindex&quot;</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="n">str_to_bool</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Assign new indices to images and annotations, &quot;</span>
-            <span class="s2">&quot;useful to avoid merge conflicts (default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Assign new indices to images and annotations, useful to avoid merge conflicts (default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
             <span class="s2">&quot;--merge-images&quot;</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="n">str_to_bool</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Save all images into a single &quot;</span> <span class="s2">&quot;directory (default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Save all images into a single directory (default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
             <span class="s2">&quot;--tasks&quot;</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_split_tasks_string</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;COCO task filter, comma-separated list of {</span><span class="si">%s</span><span class="s2">} &quot;</span>
-            <span class="s2">&quot;(default: all)&quot;</span> <span class="o">%</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">CocoTask</span><span class="p">),</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;COCO task filter, comma-separated list of {</span><span class="si">%s</span><span class="s2">} (default: all)&quot;</span> <span class="o">%</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">CocoTask</span><span class="p">),</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">parser</span></div>
 
@@ -1158,7 +1126,7 @@ document.write(`
         <span class="n">CocoTask</span><span class="o">.</span><span class="n">stuff</span><span class="p">:</span> <span class="n">_StuffExporter</span><span class="p">,</span>
     <span class="p">}</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">extractor</span><span class="p">,</span>
         <span class="n">save_dir</span><span class="p">,</span>
@@ -1188,11 +1156,7 @@ document.write(`
             <span class="n">tasks</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span> <span class="o">=</span> <span class="n">tasks</span>
 
-        <span class="k">assert</span> <span class="p">(</span>
-            <span class="n">segmentation_mode</span> <span class="ow">is</span> <span class="kc">None</span>
-            <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">segmentation_mode</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
-            <span class="ow">or</span> <span class="n">segmentation_mode</span> <span class="ow">in</span> <span class="n">SegmentationMode</span>
-        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">segmentation_mode</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">segmentation_mode</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="n">segmentation_mode</span> <span class="ow">in</span> <span class="n">SegmentationMode</span>
         <span class="k">if</span> <span class="n">segmentation_mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">segmentation_mode</span> <span class="o">=</span> <span class="n">SegmentationMode</span><span class="o">.</span><span class="n">guess</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">segmentation_mode</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
@@ -1208,22 +1172,20 @@ document.write(`
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_patch</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">_make_dirs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_make_dirs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_images_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">CocoPath</span><span class="o">.</span><span class="n">IMAGES_DIR</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_images_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_ann_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">CocoPath</span><span class="o">.</span><span class="n">ANNOTATIONS_DIR</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ann_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_make_segmentation_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_name</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_segmentation_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">CocoPath</span><span class="o">.</span><span class="n">ANNOTATIONS_DIR</span><span class="p">,</span> <span class="s2">&quot;panoptic_&quot;</span> <span class="o">+</span> <span class="n">subset_name</span>
-        <span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_make_segmentation_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset_name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_segmentation_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">CocoPath</span><span class="o">.</span><span class="n">ANNOTATIONS_DIR</span><span class="p">,</span> <span class="s2">&quot;panoptic_&quot;</span> <span class="o">+</span> <span class="n">subset_name</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_segmentation_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_make_task_converter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">CocoTask</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_TaskExporter</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_make_task_converter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">:</span> <span class="n">CocoTask</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_TaskExporter</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">task</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_TASK_CONVERTER</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_TASK_CONVERTER</span><span class="p">[</span><span class="n">task</span><span class="p">](</span>
             <span class="n">context</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
             <span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span>
@@ -1232,13 +1194,10 @@ document.write(`
             <span class="n">stream</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_stream</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_make_task_converters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="n">task</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_task_converter</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">subset</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_TASK_CONVERTER</span><span class="p">)</span>
-        <span class="p">}</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_make_task_converters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">task</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_task_converter</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">subset</span><span class="p">)</span> <span class="k">for</span> <span class="n">task</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_TASK_CONVERTER</span><span class="p">)}</span>
 
-    <span class="k">def</span> <span class="nf">_get_image_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_image_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="n">image_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_image_ids</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">image_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reindex</span><span class="p">:</span>
@@ -1248,7 +1207,7 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">_image_ids</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">image_id</span>
         <span class="k">return</span> <span class="n">image_id</span>
 
-    <span class="k">def</span> <span class="nf">_apply_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">(),</span> <span class="n">Image</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">MediaTypeError</span><span class="p">(</span><span class="s2">&quot;Media type is not an image&quot;</span><span class="p">)</span>
 
@@ -1272,9 +1231,7 @@ document.write(`
                         <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">:</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">_save_image</span><span class="p">(</span>
                                 <span class="n">item</span><span class="p">,</span>
-                                <span class="n">subdir</span><span class="o">=</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                                    <span class="bp">self</span><span class="o">.</span><span class="n">_images_dir</span><span class="p">,</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_images</span> <span class="k">else</span> <span class="n">subset_name</span>
-                                <span class="p">),</span>
+                                <span class="n">subdir</span><span class="o">=</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_images_dir</span><span class="p">,</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_images</span> <span class="k">else</span> <span class="n">subset_name</span><span class="p">),</span>
                             <span class="p">)</span>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Item &#39;</span><span class="si">%s</span><span class="s2">&#39; has no image info&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
@@ -1294,10 +1251,9 @@ document.write(`
                 <span class="k">if</span> <span class="n">task_conv</span><span class="o">.</span><span class="n">is_empty</span><span class="p">()</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_patch</span><span class="p">):</span>
                     <span class="k">if</span> <span class="n">task</span> <span class="o">==</span> <span class="n">CocoTask</span><span class="o">.</span><span class="n">panoptic</span><span class="p">:</span>
                         <span class="n">os</span><span class="o">.</span><span class="n">rmdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_segmentation_dir</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_patch</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">ann_file</span><span class="p">):</span>
-                            <span class="c1"># Remove subsets that became empty</span>
-                            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">ann_file</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_patch</span> <span class="ow">and</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">ann_file</span><span class="p">):</span>
+                        <span class="c1"># Remove subsets that became empty</span>
+                        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">ann_file</span><span class="p">)</span>
                     <span class="k">continue</span>
 
                 <span class="n">task_conv</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">ann_file</span><span class="p">)</span>
@@ -1305,7 +1261,7 @@ document.write(`
 <div class="viewcode-block" id="CocoExporter.patch">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.coco.exporter.html#datumaro.plugins.data_formats.coco.exporter.CocoExporter.patch">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">patch</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">patch</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">patch</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">patch</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">subset</span> <span class="ow">in</span> <span class="n">patch</span><span class="o">.</span><span class="n">updated_subsets</span><span class="p">:</span>
             <span class="n">conv</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">get_subset</span><span class="p">(</span><span class="n">subset</span><span class="p">),</span> <span class="n">save_dir</span><span class="o">=</span><span class="n">save_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="n">conv</span><span class="o">.</span><span class="n">_patch</span> <span class="o">=</span> <span class="n">patch</span>
@@ -1334,15 +1290,15 @@ document.write(`
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">can_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">can_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
 
 
 <div class="viewcode-block" id="CocoInstancesExporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.coco.exporter.html#datumaro.plugins.data_formats.coco.exporter.CocoInstancesExporter">[docs]</a>
-<span class="k">class</span> <span class="nc">CocoInstancesExporter</span><span class="p">(</span><span class="n">CocoExporter</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CocoInstancesExporter</span><span class="p">(</span><span class="n">CocoExporter</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;tasks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CocoTask</span><span class="o">.</span><span class="n">instances</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
@@ -1350,8 +1306,8 @@ document.write(`
 
 <div class="viewcode-block" id="CocoImageInfoExporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.coco.exporter.html#datumaro.plugins.data_formats.coco.exporter.CocoImageInfoExporter">[docs]</a>
-<span class="k">class</span> <span class="nc">CocoImageInfoExporter</span><span class="p">(</span><span class="n">CocoExporter</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CocoImageInfoExporter</span><span class="p">(</span><span class="n">CocoExporter</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;tasks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CocoTask</span><span class="o">.</span><span class="n">image_info</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
@@ -1359,8 +1315,8 @@ document.write(`
 
 <div class="viewcode-block" id="CocoPersonKeypointsExporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.coco.exporter.html#datumaro.plugins.data_formats.coco.exporter.CocoPersonKeypointsExporter">[docs]</a>
-<span class="k">class</span> <span class="nc">CocoPersonKeypointsExporter</span><span class="p">(</span><span class="n">CocoExporter</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CocoPersonKeypointsExporter</span><span class="p">(</span><span class="n">CocoExporter</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;tasks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CocoTask</span><span class="o">.</span><span class="n">person_keypoints</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
@@ -1368,8 +1324,8 @@ document.write(`
 
 <div class="viewcode-block" id="CocoCaptionsExporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.coco.exporter.html#datumaro.plugins.data_formats.coco.exporter.CocoCaptionsExporter">[docs]</a>
-<span class="k">class</span> <span class="nc">CocoCaptionsExporter</span><span class="p">(</span><span class="n">CocoExporter</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CocoCaptionsExporter</span><span class="p">(</span><span class="n">CocoExporter</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;tasks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CocoTask</span><span class="o">.</span><span class="n">captions</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
@@ -1377,8 +1333,8 @@ document.write(`
 
 <div class="viewcode-block" id="CocoLabelsExporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.coco.exporter.html#datumaro.plugins.data_formats.coco.exporter.CocoLabelsExporter">[docs]</a>
-<span class="k">class</span> <span class="nc">CocoLabelsExporter</span><span class="p">(</span><span class="n">CocoExporter</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CocoLabelsExporter</span><span class="p">(</span><span class="n">CocoExporter</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;tasks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CocoTask</span><span class="o">.</span><span class="n">labels</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
@@ -1386,8 +1342,8 @@ document.write(`
 
 <div class="viewcode-block" id="CocoPanopticExporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.coco.exporter.html#datumaro.plugins.data_formats.coco.exporter.CocoPanopticExporter">[docs]</a>
-<span class="k">class</span> <span class="nc">CocoPanopticExporter</span><span class="p">(</span><span class="n">CocoExporter</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CocoPanopticExporter</span><span class="p">(</span><span class="n">CocoExporter</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;tasks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CocoTask</span><span class="o">.</span><span class="n">panoptic</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
@@ -1395,8 +1351,8 @@ document.write(`
 
 <div class="viewcode-block" id="CocoStuffExporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.coco.exporter.html#datumaro.plugins.data_formats.coco.exporter.CocoStuffExporter">[docs]</a>
-<span class="k">class</span> <span class="nc">CocoStuffExporter</span><span class="p">(</span><span class="n">CocoExporter</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CocoStuffExporter</span><span class="p">(</span><span class="n">CocoExporter</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;tasks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CocoTask</span><span class="o">.</span><span class="n">stuff</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;segmentation_mode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SegmentationMode</span><span class="o">.</span><span class="n">mask</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>

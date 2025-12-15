@@ -27,10 +27,10 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=eafc0fe6" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css?v=8b7c274f" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -43,7 +43,7 @@
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../../../../_static/design-tabs.js?v=36754332"></script>
+    <script src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/plugins/data_formats/cvat/exporter';</script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
@@ -192,7 +192,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
       
@@ -279,7 +279,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
         
@@ -344,41 +344,41 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">defaultdict</span>
-<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">chain</span>
 
 <span class="c1"># Disable B406: import_xml_sax - the library is used for writing</span>
-<span class="kn">from</span> <span class="nn">xml.sax.saxutils</span> <span class="kn">import</span> <span class="n">XMLGenerator</span>  <span class="c1"># nosec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">xml.sax.saxutils</span><span class="w"> </span><span class="kn">import</span> <span class="n">XMLGenerator</span>  <span class="c1"># nosec</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">LabelCategories</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetItem</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_item_storage</span> <span class="kn">import</span> <span class="n">ItemStatus</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.errors</span> <span class="kn">import</span> <span class="n">MediaTypeError</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.exporter</span> <span class="kn">import</span> <span class="n">Exporter</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.media</span> <span class="kn">import</span> <span class="n">Image</span>
-<span class="kn">from</span> <span class="nn">datumaro.util</span> <span class="kn">import</span> <span class="n">cast</span><span class="p">,</span> <span class="n">mask_tools</span><span class="p">,</span> <span class="n">pairs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">LabelCategories</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_item_storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">ItemStatus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">MediaTypeError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.exporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Exporter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">cast</span><span class="p">,</span> <span class="n">mask_tools</span><span class="p">,</span> <span class="n">pairs</span>
 
-<span class="kn">from</span> <span class="nn">.format</span> <span class="kn">import</span> <span class="n">CvatPath</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.format</span><span class="w"> </span><span class="kn">import</span> <span class="n">CvatPath</span>
 
 
 <div class="viewcode-block" id="XmlAnnotationWriter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.cvat.exporter.html#datumaro.plugins.data_formats.cvat.exporter.XmlAnnotationWriter">[docs]</a>
-<span class="k">class</span> <span class="nc">XmlAnnotationWriter</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">XmlAnnotationWriter</span><span class="p">:</span>
     <span class="n">VERSION</span> <span class="o">=</span> <span class="s2">&quot;1.1&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">xmlgen</span> <span class="o">=</span> <span class="n">XMLGenerator</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_level</span> <span class="o">=</span> <span class="mi">0</span>
 
-    <span class="k">def</span> <span class="nf">_indent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_indent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">newline</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">xmlgen</span><span class="o">.</span><span class="n">ignorableWhitespace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">xmlgen</span><span class="o">.</span><span class="n">ignorableWhitespace</span><span class="p">(</span><span class="s2">&quot;  &quot;</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_level</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_add_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">&quot;version&quot;</span><span class="p">,</span> <span class="p">{})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">xmlgen</span><span class="o">.</span><span class="n">characters</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">VERSION</span><span class="p">)</span>
@@ -386,14 +386,14 @@ document.write(`
 
 <div class="viewcode-block" id="XmlAnnotationWriter.open_root">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.cvat.exporter.html#datumaro.plugins.data_formats.cvat.exporter.XmlAnnotationWriter.open_root">[docs]</a>
-    <span class="k">def</span> <span class="nf">open_root</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">open_root</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">xmlgen</span><span class="o">.</span><span class="n">startDocument</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">&quot;annotations&quot;</span><span class="p">,</span> <span class="p">{})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_level</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_version</span><span class="p">()</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_add_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_level</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">meta</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">):</span>
@@ -418,7 +418,7 @@ document.write(`
 
 <div class="viewcode-block" id="XmlAnnotationWriter.write_meta">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.cvat.exporter.html#datumaro.plugins.data_formats.cvat.exporter.XmlAnnotationWriter.write_meta">[docs]</a>
-    <span class="k">def</span> <span class="nf">write_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">&quot;meta&quot;</span><span class="p">,</span> <span class="p">{})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_meta</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span>
@@ -428,7 +428,7 @@ document.write(`
 
 <div class="viewcode-block" id="XmlAnnotationWriter.open_track">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.cvat.exporter.html#datumaro.plugins.data_formats.cvat.exporter.XmlAnnotationWriter.open_track">[docs]</a>
-    <span class="k">def</span> <span class="nf">open_track</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">track</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">open_track</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">track</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">&quot;track&quot;</span><span class="p">,</span> <span class="n">track</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_level</span> <span class="o">+=</span> <span class="mi">1</span></div>
@@ -436,7 +436,7 @@ document.write(`
 
 <div class="viewcode-block" id="XmlAnnotationWriter.open_image">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.cvat.exporter.html#datumaro.plugins.data_formats.cvat.exporter.XmlAnnotationWriter.open_image">[docs]</a>
-    <span class="k">def</span> <span class="nf">open_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">open_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="n">image</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_level</span> <span class="o">+=</span> <span class="mi">1</span></div>
@@ -444,7 +444,7 @@ document.write(`
 
 <div class="viewcode-block" id="XmlAnnotationWriter.open_box">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.cvat.exporter.html#datumaro.plugins.data_formats.cvat.exporter.XmlAnnotationWriter.open_box">[docs]</a>
-    <span class="k">def</span> <span class="nf">open_box</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">box</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">open_box</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">box</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">&quot;box&quot;</span><span class="p">,</span> <span class="n">box</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_level</span> <span class="o">+=</span> <span class="mi">1</span></div>
@@ -452,7 +452,7 @@ document.write(`
 
 <div class="viewcode-block" id="XmlAnnotationWriter.open_polygon">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.cvat.exporter.html#datumaro.plugins.data_formats.cvat.exporter.XmlAnnotationWriter.open_polygon">[docs]</a>
-    <span class="k">def</span> <span class="nf">open_polygon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">polygon</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">open_polygon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">polygon</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">&quot;polygon&quot;</span><span class="p">,</span> <span class="n">polygon</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_level</span> <span class="o">+=</span> <span class="mi">1</span></div>
@@ -460,7 +460,7 @@ document.write(`
 
 <div class="viewcode-block" id="XmlAnnotationWriter.open_polyline">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.cvat.exporter.html#datumaro.plugins.data_formats.cvat.exporter.XmlAnnotationWriter.open_polyline">[docs]</a>
-    <span class="k">def</span> <span class="nf">open_polyline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">polyline</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">open_polyline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">polyline</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">&quot;polyline&quot;</span><span class="p">,</span> <span class="n">polyline</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_level</span> <span class="o">+=</span> <span class="mi">1</span></div>
@@ -468,7 +468,7 @@ document.write(`
 
 <div class="viewcode-block" id="XmlAnnotationWriter.open_points">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.cvat.exporter.html#datumaro.plugins.data_formats.cvat.exporter.XmlAnnotationWriter.open_points">[docs]</a>
-    <span class="k">def</span> <span class="nf">open_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">open_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">&quot;points&quot;</span><span class="p">,</span> <span class="n">points</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_level</span> <span class="o">+=</span> <span class="mi">1</span></div>
@@ -476,7 +476,7 @@ document.write(`
 
 <div class="viewcode-block" id="XmlAnnotationWriter.open_mask">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.cvat.exporter.html#datumaro.plugins.data_formats.cvat.exporter.XmlAnnotationWriter.open_mask">[docs]</a>
-    <span class="k">def</span> <span class="nf">open_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">open_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">&quot;mask&quot;</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_level</span> <span class="o">+=</span> <span class="mi">1</span></div>
@@ -484,7 +484,7 @@ document.write(`
 
 <div class="viewcode-block" id="XmlAnnotationWriter.open_tag">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.cvat.exporter.html#datumaro.plugins.data_formats.cvat.exporter.XmlAnnotationWriter.open_tag">[docs]</a>
-    <span class="k">def</span> <span class="nf">open_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">open_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">&quot;tag&quot;</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_level</span> <span class="o">+=</span> <span class="mi">1</span></div>
@@ -492,87 +492,87 @@ document.write(`
 
 <div class="viewcode-block" id="XmlAnnotationWriter.add_attribute">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.cvat.exporter.html#datumaro.plugins.data_formats.cvat.exporter.XmlAnnotationWriter.add_attribute">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">xmlgen</span><span class="o">.</span><span class="n">startElement</span><span class="p">(</span><span class="s2">&quot;attribute&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">attribute</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">xmlgen</span><span class="o">.</span><span class="n">characters</span><span class="p">(</span><span class="n">attribute</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">xmlgen</span><span class="o">.</span><span class="n">endElement</span><span class="p">(</span><span class="s2">&quot;attribute&quot;</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_close_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_close_element</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_level</span> <span class="o">-=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_indent</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">xmlgen</span><span class="o">.</span><span class="n">endElement</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
 
 <div class="viewcode-block" id="XmlAnnotationWriter.close_box">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.cvat.exporter.html#datumaro.plugins.data_formats.cvat.exporter.XmlAnnotationWriter.close_box">[docs]</a>
-    <span class="k">def</span> <span class="nf">close_box</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close_box</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_close_element</span><span class="p">(</span><span class="s2">&quot;box&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="XmlAnnotationWriter.close_polygon">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.cvat.exporter.html#datumaro.plugins.data_formats.cvat.exporter.XmlAnnotationWriter.close_polygon">[docs]</a>
-    <span class="k">def</span> <span class="nf">close_polygon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close_polygon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_close_element</span><span class="p">(</span><span class="s2">&quot;polygon&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="XmlAnnotationWriter.close_polyline">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.cvat.exporter.html#datumaro.plugins.data_formats.cvat.exporter.XmlAnnotationWriter.close_polyline">[docs]</a>
-    <span class="k">def</span> <span class="nf">close_polyline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close_polyline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_close_element</span><span class="p">(</span><span class="s2">&quot;polyline&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="XmlAnnotationWriter.close_points">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.cvat.exporter.html#datumaro.plugins.data_formats.cvat.exporter.XmlAnnotationWriter.close_points">[docs]</a>
-    <span class="k">def</span> <span class="nf">close_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close_points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_close_element</span><span class="p">(</span><span class="s2">&quot;points&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="XmlAnnotationWriter.close_mask">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.cvat.exporter.html#datumaro.plugins.data_formats.cvat.exporter.XmlAnnotationWriter.close_mask">[docs]</a>
-    <span class="k">def</span> <span class="nf">close_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_close_element</span><span class="p">(</span><span class="s2">&quot;mask&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="XmlAnnotationWriter.close_tag">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.cvat.exporter.html#datumaro.plugins.data_formats.cvat.exporter.XmlAnnotationWriter.close_tag">[docs]</a>
-    <span class="k">def</span> <span class="nf">close_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_close_element</span><span class="p">(</span><span class="s2">&quot;tag&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="XmlAnnotationWriter.close_image">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.cvat.exporter.html#datumaro.plugins.data_formats.cvat.exporter.XmlAnnotationWriter.close_image">[docs]</a>
-    <span class="k">def</span> <span class="nf">close_image</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close_image</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_close_element</span><span class="p">(</span><span class="s2">&quot;image&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="XmlAnnotationWriter.close_track">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.cvat.exporter.html#datumaro.plugins.data_formats.cvat.exporter.XmlAnnotationWriter.close_track">[docs]</a>
-    <span class="k">def</span> <span class="nf">close_track</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close_track</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_close_element</span><span class="p">(</span><span class="s2">&quot;track&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="XmlAnnotationWriter.close_root">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.cvat.exporter.html#datumaro.plugins.data_formats.cvat.exporter.XmlAnnotationWriter.close_root">[docs]</a>
-    <span class="k">def</span> <span class="nf">close_root</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close_root</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_close_element</span><span class="p">(</span><span class="s2">&quot;annotations&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">xmlgen</span><span class="o">.</span><span class="n">endDocument</span><span class="p">()</span></div>
 </div>
 
 
 
-<span class="k">class</span> <span class="nc">_SubsetWriter</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">extractor</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_SubsetWriter</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">extractor</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span> <span class="o">=</span> <span class="n">XmlAnnotationWriter</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span> <span class="o">=</span> <span class="n">extractor</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_context</span> <span class="o">=</span> <span class="n">context</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_item_count</span> <span class="o">=</span> <span class="mi">0</span>
 
-    <span class="k">def</span> <span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item_count</span> <span class="o">==</span> <span class="mi">0</span>
 
-    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">open_root</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_write_meta</span><span class="p">()</span>
 
@@ -586,7 +586,7 @@ document.write(`
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">close_root</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_write_track</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">track</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_write_track</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">track</span><span class="p">):</span>
         <span class="n">track_id</span> <span class="o">=</span> <span class="n">track</span><span class="p">[</span><span class="s2">&quot;track_id&quot;</span><span class="p">]</span>
         <span class="n">label_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_label</span><span class="p">(</span><span class="n">track</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">name</span>
         <span class="n">annotations</span> <span class="o">=</span> <span class="n">track</span><span class="p">[</span><span class="s2">&quot;annotations&quot;</span><span class="p">]</span>
@@ -599,7 +599,7 @@ document.write(`
                 <span class="bp">self</span><span class="o">.</span><span class="n">_write_shape</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="n">write_label_info</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">write_frame</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">close_track</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_get_tracks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_tracks</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">track_infos</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="p">:</span>
             <span class="k">if</span> <span class="s2">&quot;frame&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="p">:</span>
@@ -632,13 +632,11 @@ document.write(`
             <span class="k">if</span> <span class="ow">not</span> <span class="n">valid_label</span><span class="p">:</span>
                 <span class="k">continue</span>
 
-            <span class="n">tracks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="p">{</span><span class="s2">&quot;track_id&quot;</span><span class="p">:</span> <span class="n">tid</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="s2">&quot;annotations&quot;</span><span class="p">:</span> <span class="n">annotations</span><span class="p">}</span>
-            <span class="p">)</span>
+            <span class="n">tracks</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;track_id&quot;</span><span class="p">:</span> <span class="n">tid</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">annotations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="s2">&quot;annotations&quot;</span><span class="p">:</span> <span class="n">annotations</span><span class="p">})</span>
 
         <span class="k">return</span> <span class="n">tracks</span>
 
-    <span class="k">def</span> <span class="nf">_write_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_write_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">_reindex</span><span class="p">:</span>
             <span class="n">index</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;frame&quot;</span><span class="p">),</span> <span class="nb">int</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
         <span class="n">image_info</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
@@ -673,7 +671,7 @@ document.write(`
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_item_count</span> <span class="o">+=</span> <span class="mi">1</span>
 
-    <span class="k">def</span> <span class="nf">_write_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_write_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">label_cat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">())</span>
 
         <span class="n">task_items</span> <span class="o">=</span> <span class="p">[</span>
@@ -740,19 +738,19 @@ document.write(`
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">write_meta</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_get_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_id</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_id</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">label_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="s2">&quot;&quot;</span>
         <span class="n">label_cat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">())</span>
         <span class="k">return</span> <span class="n">label_cat</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="n">label_id</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_get_label_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_label_attrs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
         <span class="n">label_cat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">())</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="n">label</span> <span class="o">=</span> <span class="n">label_cat</span><span class="p">[</span><span class="n">label</span><span class="p">]</span>
         <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="n">chain</span><span class="p">(</span><span class="n">label</span><span class="o">.</span><span class="n">attributes</span><span class="p">,</span> <span class="n">label_cat</span><span class="o">.</span><span class="n">attributes</span><span class="p">))</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">_builtin_attrs</span>
 
-    <span class="k">def</span> <span class="nf">_write_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">item</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">write_label_info</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">write_frame</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_write_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">item</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">write_label_info</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">write_frame</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="n">item_id</span> <span class="o">=</span> <span class="s2">&quot;None&quot;</span> <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span>
 
         <span class="k">if</span> <span class="n">write_label_info</span> <span class="ow">and</span> <span class="n">shape</span><span class="o">.</span><span class="n">label</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -771,15 +769,9 @@ document.write(`
 
         <span class="k">if</span> <span class="n">write_frame</span><span class="p">:</span>
             <span class="n">shape_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">([(</span><span class="s2">&quot;frame&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">shape</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;frame&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))))]))</span>
-        <span class="n">shape_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-            <span class="n">OrderedDict</span><span class="p">([(</span><span class="s2">&quot;occluded&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">shape</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;occluded&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))))])</span>
-        <span class="p">)</span>
-        <span class="n">shape_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-            <span class="n">OrderedDict</span><span class="p">([(</span><span class="s2">&quot;outside&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">shape</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;outside&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))))])</span>
-        <span class="p">)</span>
-        <span class="n">shape_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-            <span class="n">OrderedDict</span><span class="p">([(</span><span class="s2">&quot;keyframe&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">shape</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;keyframe&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))))])</span>
-        <span class="p">)</span>
+        <span class="n">shape_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">([(</span><span class="s2">&quot;occluded&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">shape</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;occluded&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))))]))</span>
+        <span class="n">shape_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">([(</span><span class="s2">&quot;outside&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">shape</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;outside&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))))]))</span>
+        <span class="n">shape_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">([(</span><span class="s2">&quot;keyframe&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">shape</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;keyframe&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))))]))</span>
 
         <span class="k">if</span> <span class="n">shape</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span><span class="p">:</span>
             <span class="n">shape_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
@@ -789,6 +781,30 @@ document.write(`
                         <span class="p">(</span><span class="s2">&quot;ytl&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">shape</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">])),</span>
                         <span class="p">(</span><span class="s2">&quot;xbr&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">shape</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">2</span><span class="p">])),</span>
                         <span class="p">(</span><span class="s2">&quot;ybr&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">shape</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">3</span><span class="p">])),</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">shape</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">rotated_bbox</span><span class="p">:</span>
+            <span class="c1"># Convert from Datumaro format (cx,cy,w,h,r)</span>
+            <span class="c1"># to CVAT format (xtl,ytl,xbr,ybr + rotation)</span>
+            <span class="n">cx</span><span class="p">,</span> <span class="n">cy</span> <span class="o">=</span> <span class="n">shape</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">shape</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">shape</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">shape</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+            <span class="n">rotation</span> <span class="o">=</span> <span class="n">shape</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+
+            <span class="c1"># Calculate corners from center coordinates</span>
+            <span class="n">xtl</span> <span class="o">=</span> <span class="n">cx</span> <span class="o">-</span> <span class="n">w</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="n">ytl</span> <span class="o">=</span> <span class="n">cy</span> <span class="o">-</span> <span class="n">h</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="n">xbr</span> <span class="o">=</span> <span class="n">cx</span> <span class="o">+</span> <span class="n">w</span> <span class="o">/</span> <span class="mi">2</span>
+            <span class="n">ybr</span> <span class="o">=</span> <span class="n">cy</span> <span class="o">+</span> <span class="n">h</span> <span class="o">/</span> <span class="mi">2</span>
+
+            <span class="n">shape_data</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="n">OrderedDict</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="p">(</span><span class="s2">&quot;xtl&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">xtl</span><span class="p">)),</span>
+                        <span class="p">(</span><span class="s2">&quot;ytl&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ytl</span><span class="p">)),</span>
+                        <span class="p">(</span><span class="s2">&quot;xbr&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">xbr</span><span class="p">)),</span>
+                        <span class="p">(</span><span class="s2">&quot;ybr&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ybr</span><span class="p">)),</span>
+                        <span class="p">(</span><span class="s2">&quot;rotation&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rotation</span><span class="p">)),</span>
                     <span class="p">]</span>
                 <span class="p">)</span>
             <span class="p">)</span>
@@ -815,10 +831,7 @@ document.write(`
                         <span class="p">(</span>
                             <span class="s2">&quot;points&quot;</span><span class="p">,</span>
                             <span class="s2">&quot;;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                                <span class="p">(</span>
-                                    <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="s2">&quot;</span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="s2">&quot;</span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y</span><span class="p">)))</span>
-                                    <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">(</span><span class="n">shape</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
-                                <span class="p">)</span>
+                                <span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="s2">&quot;</span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="s2">&quot;</span><span class="si">{:.2f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y</span><span class="p">)))</span> <span class="k">for</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">(</span><span class="n">shape</span><span class="o">.</span><span class="n">points</span><span class="p">))</span>
                             <span class="p">),</span>
                         <span class="p">),</span>
                     <span class="p">]</span>
@@ -829,7 +842,7 @@ document.write(`
         <span class="k">if</span> <span class="n">shape</span><span class="o">.</span><span class="n">group</span><span class="p">:</span>
             <span class="n">shape_data</span><span class="p">[</span><span class="s2">&quot;group_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">shape</span><span class="o">.</span><span class="n">group</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">shape</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">shape</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">rotated_bbox</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">open_box</span><span class="p">(</span><span class="n">shape_data</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">shape</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">polygon</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">open_polygon</span><span class="p">(</span><span class="n">shape_data</span><span class="p">)</span>
@@ -848,9 +861,7 @@ document.write(`
                     <span class="k">continue</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr_value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
                     <span class="n">attr_value</span> <span class="o">=</span> <span class="s2">&quot;true&quot;</span> <span class="k">if</span> <span class="n">attr_value</span> <span class="k">else</span> <span class="s2">&quot;false&quot;</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">_allow_undeclared_attrs</span> <span class="ow">or</span> <span class="n">attr_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_label_attrs</span><span class="p">(</span>
-                    <span class="n">shape</span><span class="o">.</span><span class="n">label</span>
-                <span class="p">):</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">_allow_undeclared_attrs</span> <span class="ow">or</span> <span class="n">attr_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_label_attrs</span><span class="p">(</span><span class="n">shape</span><span class="o">.</span><span class="n">label</span><span class="p">):</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span>
                         <span class="n">OrderedDict</span><span class="p">(</span>
                             <span class="p">[</span>
@@ -869,7 +880,7 @@ document.write(`
                         <span class="n">label_name</span><span class="p">,</span>
                     <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">shape</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">shape</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">rotated_bbox</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">close_box</span><span class="p">()</span>
         <span class="k">elif</span> <span class="n">shape</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">polygon</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">close_polygon</span><span class="p">()</span>
@@ -882,7 +893,7 @@ document.write(`
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;unknown shape type&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_write_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_write_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">label</span><span class="o">.</span><span class="n">label</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: skipping a </span><span class="si">%s</span><span class="s2"> with no label&quot;</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">label</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
             <span class="k">return</span>
@@ -902,9 +913,7 @@ document.write(`
                 <span class="k">continue</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr_value</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
                 <span class="n">attr_value</span> <span class="o">=</span> <span class="s2">&quot;true&quot;</span> <span class="k">if</span> <span class="n">attr_value</span> <span class="k">else</span> <span class="s2">&quot;false&quot;</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">_allow_undeclared_attrs</span> <span class="ow">or</span> <span class="n">attr_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_label_attrs</span><span class="p">(</span>
-                <span class="n">label</span><span class="o">.</span><span class="n">label</span>
-            <span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">_allow_undeclared_attrs</span> <span class="ow">or</span> <span class="n">attr_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_label_attrs</span><span class="p">(</span><span class="n">label</span><span class="o">.</span><span class="n">label</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">add_attribute</span><span class="p">(</span>
                     <span class="n">OrderedDict</span><span class="p">(</span>
                         <span class="p">[</span>
@@ -928,13 +937,13 @@ document.write(`
 
 <div class="viewcode-block" id="CvatExporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.cvat.exporter.html#datumaro.plugins.data_formats.cvat.exporter.CvatExporter">[docs]</a>
-<span class="k">class</span> <span class="nc">CvatExporter</span><span class="p">(</span><span class="n">Exporter</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CvatExporter</span><span class="p">(</span><span class="n">Exporter</span><span class="p">):</span>
     <span class="n">DEFAULT_IMAGE_EXT</span> <span class="o">=</span> <span class="n">CvatPath</span><span class="o">.</span><span class="n">IMAGE_EXT</span>
 
 <div class="viewcode-block" id="CvatExporter.build_cmdline_parser">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.cvat.exporter.html#datumaro.plugins.data_formats.cvat.exporter.CvatExporter.build_cmdline_parser">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
             <span class="s2">&quot;--reindex&quot;</span><span class="p">,</span>
@@ -950,7 +959,7 @@ document.write(`
         <span class="k">return</span> <span class="n">parser</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">extractor</span><span class="p">,</span>
         <span class="n">save_dir</span><span class="p">,</span>
@@ -970,7 +979,7 @@ document.write(`
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_original_size</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">_get_original_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extractor</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_original_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extractor</span><span class="p">):</span>
         <span class="n">item_hw</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">extractor</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">item_hw</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -979,7 +988,7 @@ document.write(`
                 <span class="k">return</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">item_hw</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">item_hw</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
-    <span class="k">def</span> <span class="nf">_apply_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">(),</span> <span class="n">Image</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">MediaTypeError</span><span class="p">(</span><span class="s2">&quot;Media type is not an image&quot;</span><span class="p">)</span>
 
@@ -998,7 +1007,7 @@ document.write(`
 <div class="viewcode-block" id="CvatExporter.patch">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.cvat.exporter.html#datumaro.plugins.data_formats.cvat.exporter.CvatExporter.patch">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">patch</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">patch</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">patch</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">patch</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">subset</span> <span class="ow">in</span> <span class="n">patch</span><span class="o">.</span><span class="n">updated_subsets</span><span class="p">:</span>
             <span class="n">conv</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">get_subset</span><span class="p">(</span><span class="n">subset</span><span class="p">),</span> <span class="n">save_dir</span><span class="o">=</span><span class="n">save_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
             <span class="n">conv</span><span class="o">.</span><span class="n">_patch</span> <span class="o">=</span> <span class="n">patch</span>

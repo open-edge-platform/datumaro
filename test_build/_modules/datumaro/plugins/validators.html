@@ -27,10 +27,10 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=8b7c274f" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -43,7 +43,7 @@
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../../_static/design-tabs.js?v=36754332"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/plugins/validators';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -192,7 +192,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
       
@@ -279,7 +279,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
         
@@ -340,24 +340,31 @@ document.write(`
                 <article class="bd-article">
                   
   <h1>Source code for datumaro.plugins.validators</h1><div class="highlight"><pre>
-<span></span><span class="c1"># Copyright (C) 2021 Intel Corporation</span>
+<span></span><span class="c1"># Copyright (C) 2021-2024 Intel Corporation</span>
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">copy</span><span class="w"> </span><span class="kn">import</span> <span class="n">deepcopy</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">GroupType</span><span class="p">,</span> <span class="n">LabelCategories</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.cli_plugin</span> <span class="kn">import</span> <span class="n">CliPlugin</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.errors</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">GroupType</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">,</span> <span class="n">TabularCategories</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.cli_plugin</span><span class="w"> </span><span class="kn">import</span> <span class="n">CliPlugin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">AttributeDefinedButNotFound</span><span class="p">,</span>
+    <span class="n">BrokenAnnotation</span><span class="p">,</span>
+    <span class="n">EmptyCaption</span><span class="p">,</span>
+    <span class="n">EmptyLabel</span><span class="p">,</span>
     <span class="n">FarFromAttrMean</span><span class="p">,</span>
+    <span class="n">FarFromCaptionMean</span><span class="p">,</span>
     <span class="n">FarFromLabelMean</span><span class="p">,</span>
     <span class="n">FewSamplesInAttribute</span><span class="p">,</span>
+    <span class="n">FewSamplesInCaption</span><span class="p">,</span>
     <span class="n">FewSamplesInLabel</span><span class="p">,</span>
     <span class="n">ImbalancedAttribute</span><span class="p">,</span>
+    <span class="n">ImbalancedCaptions</span><span class="p">,</span>
     <span class="n">ImbalancedDistInAttribute</span><span class="p">,</span>
+    <span class="n">ImbalancedDistInCaption</span><span class="p">,</span>
     <span class="n">ImbalancedDistInLabel</span><span class="p">,</span>
     <span class="n">ImbalancedLabels</span><span class="p">,</span>
     <span class="n">InvalidValue</span><span class="p">,</span>
@@ -369,16 +376,19 @@ document.write(`
     <span class="n">NegativeLength</span><span class="p">,</span>
     <span class="n">OnlyOneAttributeValue</span><span class="p">,</span>
     <span class="n">OnlyOneLabel</span><span class="p">,</span>
+    <span class="n">OutlierInCaption</span><span class="p">,</span>
+    <span class="n">RedundanciesInCaption</span><span class="p">,</span>
     <span class="n">UndefinedAttribute</span><span class="p">,</span>
     <span class="n">UndefinedLabel</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.validator</span> <span class="kn">import</span> <span class="n">Severity</span><span class="p">,</span> <span class="n">TaskType</span><span class="p">,</span> <span class="n">Validator</span>
-<span class="kn">from</span> <span class="nn">datumaro.util</span> <span class="kn">import</span> <span class="n">parse_str_enum_value</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.validator</span><span class="w"> </span><span class="kn">import</span> <span class="n">Severity</span><span class="p">,</span> <span class="n">TaskType</span><span class="p">,</span> <span class="n">Validator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_str_enum_value</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.tabular_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">emoji_pattern</span>
 
 <span class="n">DEFAULT_LABEL_GROUP</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
 
 
-<span class="k">class</span> <span class="nc">_TaskValidator</span><span class="p">(</span><span class="n">Validator</span><span class="p">,</span> <span class="n">CliPlugin</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_TaskValidator</span><span class="p">(</span><span class="n">Validator</span><span class="p">,</span> <span class="n">CliPlugin</span><span class="p">):</span>
     <span class="n">DEFAULT_FEW_SAMPLES_THR</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">DEFAULT_IMBALANCE_RATIO_THR</span> <span class="o">=</span> <span class="mi">50</span>
     <span class="n">DEFAULT_FAR_FROM_MEAN_THR</span> <span class="o">=</span> <span class="mi">5</span>
@@ -406,19 +416,18 @@ document.write(`
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    task_type : str or TaskType</span>
-<span class="sd">        task type (ie. classification, detection, segmentation)</span>
+<span class="sd">        task type (ie. classification, detection, segmentation, tabular)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
             <span class="s2">&quot;-fs&quot;</span><span class="p">,</span>
             <span class="s2">&quot;--few-samples-thr&quot;</span><span class="p">,</span>
             <span class="n">default</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">DEFAULT_FEW_SAMPLES_THR</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Threshold for giving a warning for minimum number of &quot;</span>
-            <span class="s2">&quot;samples per class (default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Threshold for giving a warning for minimum number of samples per class (default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
             <span class="s2">&quot;-ir&quot;</span><span class="p">,</span>
@@ -458,7 +467,7 @@ document.write(`
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">parser</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">task_type</span><span class="p">,</span>
         <span class="n">few_samples_thr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -499,6 +508,9 @@ document.write(`
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_type</span> <span class="o">==</span> <span class="n">TaskType</span><span class="o">.</span><span class="n">segmentation</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ann_types</span> <span class="o">=</span> <span class="p">{</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">polygon</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">ellipse</span><span class="p">}</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">str_ann_type</span> <span class="o">=</span> <span class="s2">&quot;mask or polygon or ellipse&quot;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">task_type</span> <span class="o">==</span> <span class="n">TaskType</span><span class="o">.</span><span class="n">tabular</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ann_types</span> <span class="o">=</span> <span class="p">{</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">caption</span><span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">str_ann_type</span> <span class="o">=</span> <span class="s2">&quot;label or caption&quot;</span>
 
         <span class="k">if</span> <span class="n">few_samples_thr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">few_samples_thr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DEFAULT_FEW_SAMPLES_THR</span>
@@ -521,7 +533,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">dominance_thr</span> <span class="o">=</span> <span class="n">dominance_ratio_thr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">topk_bins_ratio</span> <span class="o">=</span> <span class="n">topk_bins</span>
 
-    <span class="k">def</span> <span class="nf">_compute_common_statistics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_common_statistics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
         <span class="n">defined_attr_template</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;items_missing_attribute&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;distribution&quot;</span><span class="p">:</span> <span class="p">{}}</span>
         <span class="n">undefined_attr_template</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;items_with_undefined_attr&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;distribution&quot;</span><span class="p">:</span> <span class="p">{}}</span>
         <span class="n">undefined_label_template</span> <span class="o">=</span> <span class="p">{</span>
@@ -571,9 +583,7 @@ document.write(`
                 <span class="k">if</span> <span class="ow">not</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">ann</span><span class="o">.</span><span class="n">label</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">label_categories</span><span class="p">):</span>
                     <span class="n">label_name</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">label</span>
 
-                    <span class="n">label_stats</span> <span class="o">=</span> <span class="n">undefined_label_dist</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span>
-                        <span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">undefined_label_template</span><span class="p">)</span>
-                    <span class="p">)</span>
+                    <span class="n">label_stats</span> <span class="o">=</span> <span class="n">undefined_label_dist</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">undefined_label_template</span><span class="p">))</span>
                     <span class="n">label_stats</span><span class="p">[</span><span class="s2">&quot;items_with_undefined_label&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item_key</span><span class="p">)</span>
 
                     <span class="n">label_stats</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -599,9 +609,7 @@ document.write(`
                 <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                     <span class="k">if</span> <span class="n">attr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_attrs</span><span class="p">:</span>
                         <span class="n">undefined_attr_stats</span> <span class="o">=</span> <span class="n">undefined_attr_dist</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">label_name</span><span class="p">,</span> <span class="p">{})</span>
-                        <span class="n">attr_dets</span> <span class="o">=</span> <span class="n">undefined_attr_stats</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span>
-                            <span class="n">attr</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">undefined_attr_template</span><span class="p">)</span>
-                        <span class="p">)</span>
+                        <span class="n">attr_dets</span> <span class="o">=</span> <span class="n">undefined_attr_stats</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">undefined_attr_template</span><span class="p">))</span>
                         <span class="n">attr_dets</span><span class="p">[</span><span class="s2">&quot;items_with_undefined_attr&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item_key</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">attr_dets</span> <span class="o">=</span> <span class="n">defined_attr_stats</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span>
@@ -611,7 +619,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">stats</span><span class="p">,</span> <span class="n">filtered_anns</span>
 
-    <span class="k">def</span> <span class="nf">_generate_common_reports</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_common_reports</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Validates the dataset for classification tasks based on its statistics.</span>
 
@@ -663,20 +671,18 @@ document.write(`
 
         <span class="k">return</span> <span class="n">reports</span>
 
-    <span class="k">def</span> <span class="nf">_generate_validation_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_validation_report</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">error</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)]</span>
 
-    <span class="k">def</span> <span class="nf">_check_missing_label_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_missing_label_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
         <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">stats</span><span class="p">[</span><span class="s2">&quot;label_distribution&quot;</span><span class="p">][</span><span class="s2">&quot;defined_labels&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span>
-                <span class="n">MissingLabelCategories</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">error</span>
-            <span class="p">)</span>
+            <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span><span class="n">MissingLabelCategories</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">error</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">validation_reports</span>
 
-    <span class="k">def</span> <span class="nf">_check_missing_annotation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_missing_annotation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
         <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="n">items_missing</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;items_missing_annotation&quot;</span><span class="p">]</span>
@@ -687,7 +693,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">validation_reports</span>
 
-    <span class="k">def</span> <span class="nf">_check_missing_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_dets</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_missing_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_dets</span><span class="p">):</span>
         <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="n">items_missing_attr</span> <span class="o">=</span> <span class="n">attr_dets</span><span class="p">[</span><span class="s2">&quot;items_missing_attribute&quot;</span><span class="p">]</span>
@@ -699,7 +705,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">validation_reports</span>
 
-    <span class="k">def</span> <span class="nf">_check_undefined_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_undefined_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
         <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="n">undefined_label_dist</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;label_distribution&quot;</span><span class="p">][</span><span class="s2">&quot;undefined_labels&quot;</span><span class="p">]</span>
@@ -712,7 +718,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">validation_reports</span>
 
-    <span class="k">def</span> <span class="nf">_check_undefined_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_dets</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_undefined_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_dets</span><span class="p">):</span>
         <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="n">items_with_undefined_attr</span> <span class="o">=</span> <span class="n">attr_dets</span><span class="p">[</span><span class="s2">&quot;items_with_undefined_attr&quot;</span><span class="p">]</span>
@@ -724,12 +730,10 @@ document.write(`
 
         <span class="k">return</span> <span class="n">validation_reports</span>
 
-    <span class="k">def</span> <span class="nf">_check_label_defined_but_not_found</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_label_defined_but_not_found</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
         <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">count_by_defined_labels</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;label_distribution&quot;</span><span class="p">][</span><span class="s2">&quot;defined_labels&quot;</span><span class="p">]</span>
-        <span class="n">labels_not_found</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">label_name</span> <span class="k">for</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">count_by_defined_labels</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">0</span>
-        <span class="p">]</span>
+        <span class="n">labels_not_found</span> <span class="o">=</span> <span class="p">[</span><span class="n">label_name</span> <span class="k">for</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">count_by_defined_labels</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span>
 
         <span class="k">for</span> <span class="n">label_name</span> <span class="ow">in</span> <span class="n">labels_not_found</span><span class="p">:</span>
             <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span>
@@ -738,12 +742,10 @@ document.write(`
 
         <span class="k">return</span> <span class="n">validation_reports</span>
 
-    <span class="k">def</span> <span class="nf">_check_attribute_defined_but_not_found</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">attr_stats</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_attribute_defined_but_not_found</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">attr_stats</span><span class="p">):</span>
         <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">attrs_not_found</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">attr_name</span>
-            <span class="k">for</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_dets</span> <span class="ow">in</span> <span class="n">attr_stats</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">attr_dets</span><span class="p">[</span><span class="s2">&quot;distribution&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span>
+            <span class="n">attr_name</span> <span class="k">for</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_dets</span> <span class="ow">in</span> <span class="n">attr_stats</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">attr_dets</span><span class="p">[</span><span class="s2">&quot;distribution&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span>
         <span class="p">]</span>
 
         <span class="k">for</span> <span class="n">attr_name</span> <span class="ow">in</span> <span class="n">attrs_not_found</span><span class="p">:</span>
@@ -754,69 +756,55 @@ document.write(`
 
         <span class="k">return</span> <span class="n">validation_reports</span>
 
-    <span class="k">def</span> <span class="nf">_check_only_one_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_only_one_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
         <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">count_by_defined_labels</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;label_distribution&quot;</span><span class="p">][</span><span class="s2">&quot;defined_labels&quot;</span><span class="p">]</span>
-        <span class="n">labels_found</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">label_name</span> <span class="k">for</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">count_by_defined_labels</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">0</span>
-        <span class="p">]</span>
+        <span class="n">labels_found</span> <span class="o">=</span> <span class="p">[</span><span class="n">label_name</span> <span class="k">for</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">count_by_defined_labels</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels_found</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span>
-                <span class="n">OnlyOneLabel</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="n">labels_found</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="p">)</span>
+            <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span><span class="n">OnlyOneLabel</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="n">labels_found</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
         <span class="k">return</span> <span class="n">validation_reports</span>
 
-    <span class="k">def</span> <span class="nf">_check_only_one_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_dets</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_only_one_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_dets</span><span class="p">):</span>
         <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">values</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">attr_dets</span><span class="p">[</span><span class="s2">&quot;distribution&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">details</span> <span class="o">=</span> <span class="p">(</span><span class="n">label_name</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-            <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span>
-                <span class="n">OnlyOneAttributeValue</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="o">*</span><span class="n">details</span>
-            <span class="p">)</span>
+            <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span><span class="n">OnlyOneAttributeValue</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="o">*</span><span class="n">details</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">validation_reports</span>
 
-    <span class="k">def</span> <span class="nf">_check_few_samples_in_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_few_samples_in_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
         <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">thr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">few_samples_thr</span>
 
         <span class="n">defined_label_dist</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;label_distribution&quot;</span><span class="p">][</span><span class="s2">&quot;defined_labels&quot;</span><span class="p">]</span>
         <span class="n">labels_with_few_samples</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="n">label_name</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">defined_label_dist</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-            <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="n">thr</span>
+            <span class="p">(</span><span class="n">label_name</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span> <span class="k">for</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">defined_label_dist</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="n">thr</span>
         <span class="p">]</span>
 
         <span class="k">for</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">labels_with_few_samples</span><span class="p">:</span>
-            <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span>
-                <span class="n">FewSamplesInLabel</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">count</span>
-            <span class="p">)</span>
+            <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span><span class="n">FewSamplesInLabel</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">validation_reports</span>
 
-    <span class="k">def</span> <span class="nf">_check_few_samples_in_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_dets</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_few_samples_in_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_dets</span><span class="p">):</span>
         <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">thr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">few_samples_thr</span>
 
         <span class="n">attr_values_with_few_samples</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">(</span><span class="n">attr_value</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">attr_value</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">attr_dets</span><span class="p">[</span><span class="s2">&quot;distribution&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="n">thr</span>
+            <span class="p">(</span><span class="n">attr_value</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span> <span class="k">for</span> <span class="n">attr_value</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">attr_dets</span><span class="p">[</span><span class="s2">&quot;distribution&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="n">thr</span>
         <span class="p">]</span>
 
         <span class="k">for</span> <span class="n">attr_value</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">attr_values_with_few_samples</span><span class="p">:</span>
             <span class="n">details</span> <span class="o">=</span> <span class="p">(</span><span class="n">label_name</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_value</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
-            <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span>
-                <span class="n">FewSamplesInAttribute</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="o">*</span><span class="n">details</span>
-            <span class="p">)</span>
+            <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span><span class="n">FewSamplesInAttribute</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="o">*</span><span class="n">details</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">validation_reports</span>
 
-    <span class="k">def</span> <span class="nf">_check_imbalanced_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_imbalanced_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
         <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">thr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">imbalance_ratio_thr</span>
 
@@ -834,7 +822,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">validation_reports</span>
 
-    <span class="k">def</span> <span class="nf">_check_imbalanced_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_dets</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_imbalanced_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_dets</span><span class="p">):</span>
         <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">thr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">imbalance_ratio_thr</span>
 
@@ -855,12 +843,12 @@ document.write(`
 
 <div class="viewcode-block" id="ClassificationValidator">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.validators.html#datumaro.plugins.validators.ClassificationValidator">[docs]</a>
-<span class="k">class</span> <span class="nc">ClassificationValidator</span><span class="p">(</span><span class="n">_TaskValidator</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ClassificationValidator</span><span class="p">(</span><span class="n">_TaskValidator</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A specific validator class for classification task.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">task_type</span><span class="o">=</span><span class="n">TaskType</span><span class="o">.</span><span class="n">classification</span><span class="p">,</span>
         <span class="n">few_samples_thr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -880,7 +868,7 @@ document.write(`
 
 <div class="viewcode-block" id="ClassificationValidator.compute_statistics">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.validators.html#datumaro.plugins.validators.ClassificationValidator.compute_statistics">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_statistics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_statistics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes statistics of the dataset for the classification task.</span>
 
@@ -926,7 +914,7 @@ document.write(`
 
 <div class="viewcode-block" id="ClassificationValidator.generate_reports">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.validators.html#datumaro.plugins.validators.ClassificationValidator.generate_reports">[docs]</a>
-    <span class="k">def</span> <span class="nf">generate_reports</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_reports</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Validates the dataset for classification tasks based on its statistics.</span>
 
@@ -946,7 +934,7 @@ document.write(`
         <span class="k">return</span> <span class="n">reports</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_check_multi_label_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_multi_label_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
         <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="n">items_with_multiple_labels</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;items_with_multiple_labels&quot;</span><span class="p">]</span>
@@ -961,12 +949,12 @@ document.write(`
 
 <div class="viewcode-block" id="DetectionValidator">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.validators.html#datumaro.plugins.validators.DetectionValidator">[docs]</a>
-<span class="k">class</span> <span class="nc">DetectionValidator</span><span class="p">(</span><span class="n">_TaskValidator</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DetectionValidator</span><span class="p">(</span><span class="n">_TaskValidator</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A specific validator class for detection task.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">task_type</span><span class="o">=</span><span class="n">TaskType</span><span class="o">.</span><span class="n">detection</span><span class="p">,</span>
         <span class="n">few_samples_thr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -995,7 +983,7 @@ document.write(`
 
 <div class="viewcode-block" id="DetectionValidator.compute_statistics">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.validators.html#datumaro.plugins.validators.DetectionValidator.compute_statistics">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_statistics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_statistics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes statistics of the dataset for the detection task.</span>
 
@@ -1018,7 +1006,7 @@ document.write(`
 
         <span class="bp">self</span><span class="o">.</span><span class="n">items</span> <span class="o">=</span> <span class="n">filtered_items</span>
 
-        <span class="k">def</span> <span class="nf">_generate_ann_bbox_info</span><span class="p">(</span><span class="n">_x</span><span class="p">,</span> <span class="n">_y</span><span class="p">,</span> <span class="n">_w</span><span class="p">,</span> <span class="n">_h</span><span class="p">,</span> <span class="n">area</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">_short</span><span class="p">,</span> <span class="n">_long</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_generate_ann_bbox_info</span><span class="p">(</span><span class="n">_x</span><span class="p">,</span> <span class="n">_y</span><span class="p">,</span> <span class="n">_w</span><span class="p">,</span> <span class="n">_h</span><span class="p">,</span> <span class="n">area</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">_short</span><span class="p">,</span> <span class="n">_long</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">{</span>
                 <span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">_x</span><span class="p">,</span>
                 <span class="s2">&quot;y&quot;</span><span class="p">:</span> <span class="n">_y</span><span class="p">,</span>
@@ -1030,7 +1018,7 @@ document.write(`
                 <span class="s2">&quot;long&quot;</span><span class="p">:</span> <span class="n">_long</span><span class="p">,</span>
             <span class="p">}</span>
 
-        <span class="k">def</span> <span class="nf">_update_bbox_stats_by_label</span><span class="p">(</span><span class="n">item_key</span><span class="p">,</span> <span class="n">ann</span><span class="p">,</span> <span class="n">bbox_label_stats</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_update_bbox_stats_by_label</span><span class="p">(</span><span class="n">item_key</span><span class="p">,</span> <span class="n">ann</span><span class="p">,</span> <span class="n">bbox_label_stats</span><span class="p">):</span>
             <span class="n">bbox_has_error</span> <span class="o">=</span> <span class="kc">False</span>
 
             <span class="n">_x</span><span class="p">,</span> <span class="n">_y</span><span class="p">,</span> <span class="n">_w</span><span class="p">,</span> <span class="n">_h</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">get_bbox</span><span class="p">()</span>
@@ -1079,7 +1067,7 @@ document.write(`
         <span class="n">dist_by_attr</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;point_distribution_in_attribute&quot;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_compute_prop_stats_from_dist</span><span class="p">(</span><span class="n">dist_by_label</span><span class="p">,</span> <span class="n">dist_by_attr</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">_is_valid_bbox</span><span class="p">(</span><span class="n">item_key</span><span class="p">,</span> <span class="n">ann</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_is_valid_bbox</span><span class="p">(</span><span class="n">item_key</span><span class="p">,</span> <span class="n">ann</span><span class="p">):</span>
             <span class="n">has_defined_label</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">ann</span><span class="o">.</span><span class="n">label</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">label_categories</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">has_defined_label</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">False</span>
@@ -1088,7 +1076,7 @@ document.write(`
             <span class="n">bbox_has_invalid_val</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;items_with_invalid_value&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item_key</span><span class="p">,</span> <span class="p">{})</span>
             <span class="k">return</span> <span class="ow">not</span> <span class="p">(</span><span class="n">bbox_has_neg_len</span> <span class="ow">or</span> <span class="n">bbox_has_invalid_val</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">_update_bbox_props_far_from_mean</span><span class="p">(</span><span class="n">item_key</span><span class="p">,</span> <span class="n">ann</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_update_bbox_props_far_from_mean</span><span class="p">(</span><span class="n">item_key</span><span class="p">,</span> <span class="n">ann</span><span class="p">):</span>
             <span class="n">base_valid_attrs</span> <span class="o">=</span> <span class="n">label_categories</span><span class="o">.</span><span class="n">attributes</span>
             <span class="n">valid_attrs</span> <span class="o">=</span> <span class="n">base_valid_attrs</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">label_categories</span><span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span>
             <span class="n">label_name</span> <span class="o">=</span> <span class="n">label_categories</span><span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
@@ -1128,7 +1116,7 @@ document.write(`
 
 <div class="viewcode-block" id="DetectionValidator.generate_reports">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.validators.html#datumaro.plugins.validators.DetectionValidator.generate_reports">[docs]</a>
-    <span class="k">def</span> <span class="nf">generate_reports</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_reports</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Validates the dataset for detection tasks based on its statistics.</span>
 
@@ -1161,19 +1149,17 @@ document.write(`
 
             <span class="k">for</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">bbox_attr_stats</span> <span class="ow">in</span> <span class="n">bbox_attr_label</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_far_from_attr_mean</span><span class="p">(</span><span class="n">label_name</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">bbox_attr_stats</span><span class="p">)</span>
-                <span class="n">reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_imbalanced_dist_in_attr</span><span class="p">(</span>
-                    <span class="n">label_name</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">bbox_attr_stats</span>
-                <span class="p">)</span>
+                <span class="n">reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_imbalanced_dist_in_attr</span><span class="p">(</span><span class="n">label_name</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">bbox_attr_stats</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">reports</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_update_prop_distributions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curr_stats</span><span class="p">,</span> <span class="n">target_stats</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_prop_distributions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curr_stats</span><span class="p">,</span> <span class="n">target_stats</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">prop</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">curr_stats</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">prop_stats</span> <span class="o">=</span> <span class="n">target_stats</span><span class="p">[</span><span class="n">prop</span><span class="p">]</span>
             <span class="n">prop_stats</span><span class="p">[</span><span class="s2">&quot;distribution&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_compute_prop_dist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_categories</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">update_stats_by_label</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_prop_dist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_categories</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">update_stats_by_label</span><span class="p">):</span>
         <span class="n">dist_by_label</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;point_distribution_in_label&quot;</span><span class="p">]</span>
         <span class="n">dist_by_attr</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;point_distribution_in_attribute&quot;</span><span class="p">]</span>
         <span class="n">point_dist_in_item</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;point_distribution_in_dataset_item&quot;</span><span class="p">]</span>
@@ -1192,25 +1178,19 @@ document.write(`
                     <span class="n">label_name</span> <span class="o">=</span> <span class="n">label_categories</span><span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
                     <span class="n">valid_attrs</span> <span class="o">=</span> <span class="n">base_valid_attrs</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">label_categories</span><span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span>
 
-                    <span class="n">point_label_stats</span> <span class="o">=</span> <span class="n">dist_by_label</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span>
-                        <span class="n">label_name</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">point_template</span><span class="p">)</span>
-                    <span class="p">)</span>
-                    <span class="n">ann_point_info</span><span class="p">,</span> <span class="n">_has_error</span> <span class="o">=</span> <span class="n">update_stats_by_label</span><span class="p">(</span>
-                        <span class="n">item_key</span><span class="p">,</span> <span class="n">ann</span><span class="p">,</span> <span class="n">point_label_stats</span>
-                    <span class="p">)</span>
+                    <span class="n">point_label_stats</span> <span class="o">=</span> <span class="n">dist_by_label</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">label_name</span><span class="p">,</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">point_template</span><span class="p">))</span>
+                    <span class="n">ann_point_info</span><span class="p">,</span> <span class="n">_has_error</span> <span class="o">=</span> <span class="n">update_stats_by_label</span><span class="p">(</span><span class="n">item_key</span><span class="p">,</span> <span class="n">ann</span><span class="p">,</span> <span class="n">point_label_stats</span><span class="p">)</span>
 
                 <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                     <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">valid_attrs</span><span class="p">:</span>
                         <span class="n">point_attr_label</span> <span class="o">=</span> <span class="n">dist_by_attr</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">label_name</span><span class="p">,</span> <span class="p">{})</span>
                         <span class="n">point_attr_stats</span> <span class="o">=</span> <span class="n">point_attr_label</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="p">{})</span>
-                        <span class="n">point_val_stats</span> <span class="o">=</span> <span class="n">point_attr_stats</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span>
-                            <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">point_template</span><span class="p">)</span>
-                        <span class="p">)</span>
+                        <span class="n">point_val_stats</span> <span class="o">=</span> <span class="n">point_attr_stats</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">point_template</span><span class="p">))</span>
 
                         <span class="k">if</span> <span class="ow">not</span> <span class="n">_has_error</span><span class="p">:</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">_update_prop_distributions</span><span class="p">(</span><span class="n">ann_point_info</span><span class="p">,</span> <span class="n">point_val_stats</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_compute_prop_stats_from_dist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dist_by_label</span><span class="p">,</span> <span class="n">dist_by_attr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_prop_stats_from_dist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dist_by_label</span><span class="p">,</span> <span class="n">dist_by_attr</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">stats</span> <span class="ow">in</span> <span class="n">dist_by_label</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">prop_stats_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
             <span class="n">attr_label</span> <span class="o">=</span> <span class="n">dist_by_attr</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">label_name</span><span class="p">,</span> <span class="p">{})</span>
@@ -1231,8 +1211,8 @@ document.write(`
                     <span class="n">prop_stats</span><span class="p">[</span><span class="s2">&quot;histogram&quot;</span><span class="p">][</span><span class="s2">&quot;bins&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bins</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
                     <span class="n">prop_stats</span><span class="p">[</span><span class="s2">&quot;histogram&quot;</span><span class="p">][</span><span class="s2">&quot;counts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">counts</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_compute_far_from_mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop_stats</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">item_key</span><span class="p">,</span> <span class="n">ann</span><span class="p">):</span>
-        <span class="k">def</span> <span class="nf">_far_from_mean</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">stdev</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_far_from_mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop_stats</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">item_key</span><span class="p">,</span> <span class="n">ann</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_far_from_mean</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">stdev</span><span class="p">):</span>
             <span class="n">thr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">far_from_mean_thr</span>
             <span class="k">return</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="n">mean</span> <span class="o">+</span> <span class="p">(</span><span class="n">thr</span> <span class="o">*</span> <span class="n">stdev</span><span class="p">)</span> <span class="ow">or</span> <span class="n">val</span> <span class="o">&lt;</span> <span class="n">mean</span> <span class="o">-</span> <span class="p">(</span><span class="n">thr</span> <span class="o">*</span> <span class="n">stdev</span><span class="p">)</span>
 
@@ -1244,7 +1224,7 @@ document.write(`
             <span class="n">far_from_mean</span> <span class="o">=</span> <span class="n">items_far_from_mean</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">item_key</span><span class="p">,</span> <span class="p">{})</span>
             <span class="n">far_from_mean</span><span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
 
-    <span class="k">def</span> <span class="nf">_check_negative_length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_negative_length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
         <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="n">items_w_neg_len</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;items_with_negative_length&quot;</span><span class="p">]</span>
@@ -1260,7 +1240,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">validation_reports</span>
 
-    <span class="k">def</span> <span class="nf">_check_invalid_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_invalid_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
         <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="n">items_w_invalid_val</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;items_with_invalid_value&quot;</span><span class="p">]</span>
@@ -1275,7 +1255,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">validation_reports</span>
 
-    <span class="k">def</span> <span class="nf">_check_imbalanced_dist_in_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">label_stats</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_imbalanced_dist_in_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">label_stats</span><span class="p">):</span>
         <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">thr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dominance_thr</span>
         <span class="n">topk_ratio</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">topk_bins_ratio</span>
@@ -1298,7 +1278,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">validation_reports</span>
 
-    <span class="k">def</span> <span class="nf">_check_imbalanced_dist_in_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_stats</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_imbalanced_dist_in_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_stats</span><span class="p">):</span>
         <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">thr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dominance_thr</span>
         <span class="n">topk_ratio</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">topk_bins_ratio</span>
@@ -1322,7 +1302,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">validation_reports</span>
 
-    <span class="k">def</span> <span class="nf">_check_far_from_label_mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">label_stats</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_far_from_label_mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">label_stats</span><span class="p">):</span>
         <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">prop</span><span class="p">,</span> <span class="n">prop_stats</span> <span class="ow">in</span> <span class="n">label_stats</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -1348,7 +1328,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">validation_reports</span>
 
-    <span class="k">def</span> <span class="nf">_check_far_from_attr_mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_stats</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_far_from_attr_mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_stats</span><span class="p">):</span>
         <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">attr_value</span><span class="p">,</span> <span class="n">value_stats</span> <span class="ow">in</span> <span class="n">attr_stats</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -1381,12 +1361,12 @@ document.write(`
 
 <div class="viewcode-block" id="SegmentationValidator">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.validators.html#datumaro.plugins.validators.SegmentationValidator">[docs]</a>
-<span class="k">class</span> <span class="nc">SegmentationValidator</span><span class="p">(</span><span class="n">DetectionValidator</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SegmentationValidator</span><span class="p">(</span><span class="n">DetectionValidator</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A specific validator class for (instance) segmentation task.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">task_type</span><span class="o">=</span><span class="n">TaskType</span><span class="o">.</span><span class="n">segmentation</span><span class="p">,</span>
         <span class="n">few_samples_thr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -1412,7 +1392,7 @@ document.write(`
 
 <div class="viewcode-block" id="SegmentationValidator.compute_statistics">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.validators.html#datumaro.plugins.validators.SegmentationValidator.compute_statistics">[docs]</a>
-    <span class="k">def</span> <span class="nf">compute_statistics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_statistics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes statistics of the dataset for the segmentation task.</span>
 
@@ -1434,20 +1414,20 @@ document.write(`
 
         <span class="bp">self</span><span class="o">.</span><span class="n">items</span> <span class="o">=</span> <span class="n">filtered_items</span>
 
-        <span class="k">def</span> <span class="nf">_generate_ann_mask_info</span><span class="p">(</span><span class="n">area</span><span class="p">,</span> <span class="n">_w</span><span class="p">,</span> <span class="n">_h</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_generate_ann_mask_info</span><span class="p">(</span><span class="n">area</span><span class="p">,</span> <span class="n">_w</span><span class="p">,</span> <span class="n">_h</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">{</span>
                 <span class="s2">&quot;area&quot;</span><span class="p">:</span> <span class="n">area</span><span class="p">,</span>
                 <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="n">_w</span><span class="p">,</span>
                 <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="n">_h</span><span class="p">,</span>
             <span class="p">}</span>
 
-        <span class="k">def</span> <span class="nf">_update_mask_stats_by_label</span><span class="p">(</span><span class="n">item_key</span><span class="p">,</span> <span class="n">ann</span><span class="p">,</span> <span class="n">mask_label_stats</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_update_mask_stats_by_label</span><span class="p">(</span><span class="n">item_key</span><span class="p">,</span> <span class="n">ann</span><span class="p">,</span> <span class="n">mask_label_stats</span><span class="p">):</span>
             <span class="n">mask_has_error</span> <span class="o">=</span> <span class="kc">False</span>
 
             <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_w</span><span class="p">,</span> <span class="n">_h</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">get_bbox</span><span class="p">()</span>
 
             <span class="c1"># Detete the following block when #226 is resolved</span>
-            <span class="c1"># https://github.com/openvinotoolkit/datumaro/issues/226</span>
+            <span class="c1"># https://github.com/open-edge-platform/datumaro/issues/226</span>
             <span class="k">if</span> <span class="n">ann</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span><span class="p">:</span>
                 <span class="n">_w</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="n">_h</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -1478,7 +1458,7 @@ document.write(`
         <span class="n">dist_by_attr</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;point_distribution_in_attribute&quot;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_compute_prop_stats_from_dist</span><span class="p">(</span><span class="n">dist_by_label</span><span class="p">,</span> <span class="n">dist_by_attr</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">_is_valid_mask</span><span class="p">(</span><span class="n">item_key</span><span class="p">,</span> <span class="n">ann</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_is_valid_mask</span><span class="p">(</span><span class="n">item_key</span><span class="p">,</span> <span class="n">ann</span><span class="p">):</span>
             <span class="n">has_defined_label</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">ann</span><span class="o">.</span><span class="n">label</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">label_categories</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">has_defined_label</span><span class="p">:</span>
                 <span class="k">return</span> <span class="kc">False</span>
@@ -1486,7 +1466,7 @@ document.write(`
             <span class="n">mask_has_invalid_val</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;items_with_invalid_value&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item_key</span><span class="p">,</span> <span class="p">{})</span>
             <span class="k">return</span> <span class="ow">not</span> <span class="n">mask_has_invalid_val</span>
 
-        <span class="k">def</span> <span class="nf">_update_mask_props_far_from_mean</span><span class="p">(</span><span class="n">item_key</span><span class="p">,</span> <span class="n">ann</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_update_mask_props_far_from_mean</span><span class="p">(</span><span class="n">item_key</span><span class="p">,</span> <span class="n">ann</span><span class="p">):</span>
             <span class="n">base_valid_attrs</span> <span class="o">=</span> <span class="n">label_categories</span><span class="o">.</span><span class="n">attributes</span>
             <span class="n">valid_attrs</span> <span class="o">=</span> <span class="n">base_valid_attrs</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">label_categories</span><span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">attributes</span><span class="p">)</span>
             <span class="n">label_name</span> <span class="o">=</span> <span class="n">label_categories</span><span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
@@ -1495,7 +1475,7 @@ document.write(`
             <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_w</span><span class="p">,</span> <span class="n">_h</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">get_bbox</span><span class="p">()</span>
 
             <span class="c1"># Detete the following block when #226 is resolved</span>
-            <span class="c1"># https://github.com/openvinotoolkit/datumaro/issues/226</span>
+            <span class="c1"># https://github.com/open-edge-platform/datumaro/issues/226</span>
             <span class="k">if</span> <span class="n">ann</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span><span class="p">:</span>
                 <span class="n">_w</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="n">_h</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -1526,7 +1506,7 @@ document.write(`
 
 <div class="viewcode-block" id="SegmentationValidator.generate_reports">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.validators.html#datumaro.plugins.validators.SegmentationValidator.generate_reports">[docs]</a>
-    <span class="k">def</span> <span class="nf">generate_reports</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_reports</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Validates the dataset for segmentation tasks based on its statistics.</span>
 
@@ -1558,12 +1538,529 @@ document.write(`
 
             <span class="k">for</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">mask_attr_stats</span> <span class="ow">in</span> <span class="n">mask_attr_label</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_far_from_attr_mean</span><span class="p">(</span><span class="n">label_name</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">mask_attr_stats</span><span class="p">)</span>
-                <span class="n">reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_imbalanced_dist_in_attr</span><span class="p">(</span>
-                    <span class="n">label_name</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">mask_attr_stats</span>
-                <span class="p">)</span>
+                <span class="n">reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_imbalanced_dist_in_attr</span><span class="p">(</span><span class="n">label_name</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">mask_attr_stats</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">reports</span></div>
 </div>
+
+
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">InitVar</span><span class="p">,</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+
+
+<div class="viewcode-block" id="TabularValidationStats">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.validators.html#datumaro.plugins.validators.TabularValidationStats">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TabularValidationStats</span><span class="p">:</span>
+    <span class="n">total_ann_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">items_missing_annotation</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TabularValidationStats.create_with_dataset">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.validators.html#datumaro.plugins.validators.TabularValidationStats.create_with_dataset">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_with_dataset</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+        <span class="n">instance</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">()</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">instance</span></div>
+
+
+    <span class="n">dataset</span><span class="p">:</span> <span class="n">InitVar</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="n">dataset</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">label_categories</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tabular_categories</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">caption</span><span class="p">,</span> <span class="n">TabularCategories</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">label_columns</span> <span class="o">=</span> <span class="nb">list</span><span class="p">({</span><span class="n">item</span><span class="o">.</span><span class="n">parent</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_categories</span><span class="o">.</span><span class="n">items</span><span class="p">})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">caption_columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">cat</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabular_categories</span><span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">defined_labels</span> <span class="o">=</span> <span class="p">{</span><span class="n">cat</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_categories</span><span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">empty_labels</span> <span class="o">=</span> <span class="p">{</span><span class="n">cat</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">label_columns</span><span class="p">}</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">defined_captions</span> <span class="o">=</span> <span class="p">{</span><span class="n">cat</span><span class="p">:</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">caption_columns</span><span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">empty_captions</span> <span class="o">=</span> <span class="p">{</span><span class="n">cat</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">caption_columns</span><span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">redundancies</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">cat</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;stopword&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;url&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;html&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;emoji&quot;</span><span class="p">:</span> <span class="p">[]}</span> <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">caption_columns</span>
+            <span class="p">}</span>
+
+<div class="viewcode-block" id="TabularValidationStats.to_dict">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.validators.html#datumaro.plugins.validators.TabularValidationStats.to_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">empty_labels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_empty_labels_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">empty_labels</span><span class="p">,</span> <span class="s2">&quot;items_with_empty_label&quot;</span><span class="p">)</span>
+        <span class="n">empty_captions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_empty_labels_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">empty_captions</span><span class="p">,</span> <span class="s2">&quot;items_with_empty_caption&quot;</span><span class="p">)</span>
+        <span class="n">redundancies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_redundancies_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">redundancies</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;total_ann_count&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_ann_count</span><span class="p">,</span>
+            <span class="s2">&quot;items_missing_annotation&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">items_missing_annotation</span><span class="p">,</span>
+            <span class="s2">&quot;items_broken_annotation&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_collect_broken_annotations</span><span class="p">(),</span>
+            <span class="s2">&quot;label_distribution&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;defined_labels&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">defined_labels</span><span class="p">,</span>
+                <span class="s2">&quot;empty_labels&quot;</span><span class="p">:</span> <span class="n">empty_labels</span><span class="p">,</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;caption_distribution&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;defined_captions&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">defined_captions</span><span class="p">,</span>
+                <span class="s2">&quot;empty_captions&quot;</span><span class="p">:</span> <span class="n">empty_captions</span><span class="p">,</span>
+                <span class="s2">&quot;redundancies&quot;</span><span class="p">:</span> <span class="n">redundancies</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">}</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_empty_labels_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">empty_dict</span><span class="p">,</span> <span class="n">key_name</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">items</span> <span class="ow">in</span> <span class="n">empty_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">label</span><span class="p">][</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">label</span><span class="p">][</span><span class="n">key_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_redundancies_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">redundancies</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">dict</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">caption</span><span class="p">,</span> <span class="n">items</span> <span class="ow">in</span> <span class="n">redundancies</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;stopword&quot;</span><span class="p">,</span> <span class="s2">&quot;url&quot;</span><span class="p">,</span> <span class="s2">&quot;html&quot;</span><span class="p">,</span> <span class="s2">&quot;emoji&quot;</span><span class="p">]:</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">caption</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">caption</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;items_with_redundancies&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">items</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_collect_broken_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">broken_annotations</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">items</span> <span class="ow">in</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">empty_labels</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_captions</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">items</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">broken_annotations</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">broken_annotations</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="TabularValidator">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.validators.html#datumaro.plugins.validators.TabularValidator">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TabularValidator</span><span class="p">(</span><span class="n">_TaskValidator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A specific validator class for tabular dataset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">task_type</span><span class="o">=</span><span class="n">TaskType</span><span class="o">.</span><span class="n">tabular</span><span class="p">,</span>
+        <span class="n">few_samples_thr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">imbalance_ratio_thr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">far_from_mean_thr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">dominance_ratio_thr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">topk_bins</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">task_type</span><span class="o">=</span><span class="n">task_type</span><span class="p">,</span>
+            <span class="n">few_samples_thr</span><span class="o">=</span><span class="n">few_samples_thr</span><span class="p">,</span>
+            <span class="n">imbalance_ratio_thr</span><span class="o">=</span><span class="n">imbalance_ratio_thr</span><span class="p">,</span>
+            <span class="n">far_from_mean_thr</span><span class="o">=</span><span class="n">far_from_mean_thr</span><span class="p">,</span>
+            <span class="n">dominance_ratio_thr</span><span class="o">=</span><span class="n">dominance_ratio_thr</span><span class="p">,</span>
+            <span class="n">topk_bins</span><span class="o">=</span><span class="n">topk_bins</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">numerical_stat_template</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;items_far_from_mean&quot;</span><span class="p">:</span> <span class="p">{},</span>
+            <span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;stdev&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;median&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;histogram&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;bins&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                <span class="s2">&quot;counts&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="p">},</span>
+            <span class="s2">&quot;distribution&quot;</span><span class="p">:</span> <span class="p">[],</span>
+            <span class="s2">&quot;items_outlier&quot;</span><span class="p">:</span> <span class="p">{},</span>
+            <span class="s2">&quot;outlier&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value_template</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numerical_stat_template</span><span class="p">)}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_common_statistics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+        <span class="n">stats</span> <span class="o">=</span> <span class="n">TabularValidationStats</span><span class="o">.</span><span class="n">create_with_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">)</span>
+
+        <span class="n">filtered_items</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">:</span>
+            <span class="n">item_key</span> <span class="o">=</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="p">)</span>
+            <span class="n">label_check</span> <span class="o">=</span> <span class="p">{</span><span class="n">cat</span><span class="p">:</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="n">stats</span><span class="o">.</span><span class="n">label_columns</span><span class="p">}</span>
+            <span class="n">annotations</span> <span class="o">=</span> <span class="p">[</span><span class="n">ann</span> <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span> <span class="k">if</span> <span class="n">ann</span><span class="o">.</span><span class="n">type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ann_types</span><span class="p">]</span>
+            <span class="n">ann_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">annotations</span><span class="p">)</span>
+            <span class="n">filtered_items</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">item_key</span><span class="p">,</span> <span class="n">annotations</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">ann_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">stats</span><span class="o">.</span><span class="n">items_missing_annotation</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item_key</span><span class="p">)</span>
+            <span class="n">stats</span><span class="o">.</span><span class="n">total_ann_count</span> <span class="o">+=</span> <span class="n">ann_count</span>
+
+            <span class="n">caption_check</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">caption_columns</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">annotations</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">ann</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">caption</span><span class="p">:</span>
+                    <span class="n">caption_</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">caption</span>
+                    <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="n">stats</span><span class="o">.</span><span class="n">caption_columns</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">caption_</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">cat</span><span class="p">):</span>
+                            <span class="n">stats</span><span class="o">.</span><span class="n">defined_captions</span><span class="p">[</span><span class="n">cat</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                            <span class="n">caption_</span> <span class="o">=</span> <span class="n">caption_</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">cat</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                            <span class="n">caption_check</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">cat</span><span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_check_contain_redundancies</span><span class="p">(</span><span class="n">caption_</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">cat</span><span class="p">,</span> <span class="n">item_key</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">label_name</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">label_categories</span><span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
+                    <span class="n">stats</span><span class="o">.</span><span class="n">defined_labels</span><span class="p">[</span><span class="n">label_name</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">label_name</span> <span class="o">=</span> <span class="n">label_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">label_check</span><span class="p">[</span><span class="n">label_name</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="k">for</span> <span class="n">cap</span> <span class="ow">in</span> <span class="n">caption_check</span><span class="p">:</span>
+                <span class="n">stats</span><span class="o">.</span><span class="n">empty_captions</span><span class="p">[</span><span class="n">cap</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item_key</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">label_col</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">label_check</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">stats</span><span class="o">.</span><span class="n">empty_labels</span><span class="p">[</span><span class="n">label_col</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item_key</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">stats</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">filtered_items</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_contain_redundancies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">item_key</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">column</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">stats</span><span class="o">.</span><span class="n">redundancies</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+
+        <span class="kn">from</span><span class="w"> </span><span class="nn">nltk.corpus</span><span class="w"> </span><span class="kn">import</span> <span class="n">stopwords</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">stop_words</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="s2">&quot;english&quot;</span><span class="p">))</span>  <span class="c1"># TODO</span>
+        <span class="k">except</span> <span class="ne">LookupError</span><span class="p">:</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">nltk</span>
+
+            <span class="n">nltk</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="s2">&quot;stopwords&quot;</span><span class="p">)</span>
+            <span class="n">stop_words</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="s2">&quot;english&quot;</span><span class="p">))</span>  <span class="c1"># TODO</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">contains_emoji</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">emoji_pattern</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">contains_html_tags</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+            <span class="n">html_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;&lt;.*?&gt;&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">html_pattern</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">contains_url</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+            <span class="n">url_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;http\S+|www\S+|https\S+&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">url_pattern</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">text</span><span class="p">))</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">contains_stopword</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">c</span> <span class="ow">in</span> <span class="n">stop_words</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+
+        <span class="n">redun_stats</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">redundancies</span><span class="p">[</span><span class="n">column</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">contains_emoji</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+            <span class="n">redun_stats</span><span class="p">[</span><span class="s2">&quot;emoji&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item_key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">contains_html_tags</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+            <span class="n">redun_stats</span><span class="p">[</span><span class="s2">&quot;html&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item_key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">contains_url</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+            <span class="n">redun_stats</span><span class="p">[</span><span class="s2">&quot;url&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item_key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">contains_stopword</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+            <span class="n">redun_stats</span><span class="p">[</span><span class="s2">&quot;stopword&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item_key</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_prop_dist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">caption_columns</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
+        <span class="n">dist_by_caption</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;distribution_in_caption&quot;</span><span class="p">]</span>
+        <span class="n">dist_in_item</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;distribution_in_dataset_item&quot;</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">item_key</span><span class="p">,</span> <span class="n">annotations</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
+            <span class="n">ann_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">annotations</span><span class="p">)</span>
+            <span class="n">dist_in_item</span><span class="p">[</span><span class="n">item_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">ann_count</span>
+
+            <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">annotations</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">ann</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">caption</span><span class="p">:</span>
+                    <span class="n">caption_</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">caption</span>
+                    <span class="k">for</span> <span class="n">cat_name</span><span class="p">,</span> <span class="n">type_</span> <span class="ow">in</span> <span class="n">caption_columns</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">caption_</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">cat_name</span><span class="p">):</span>
+                            <span class="n">caption_value</span> <span class="o">=</span> <span class="n">type_</span><span class="p">(</span><span class="n">caption_</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cat_name</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                            <span class="n">dist_by_caption</span><span class="p">[</span><span class="n">cat_name</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">][</span><span class="s2">&quot;distribution&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">caption_value</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_prop_stats_from_dist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dist_by_caption</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">stats</span> <span class="ow">in</span> <span class="n">dist_by_caption</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">prop_stats</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+
+            <span class="n">prop_dist</span> <span class="o">=</span> <span class="n">prop_stats</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;distribution&quot;</span><span class="p">,</span> <span class="p">[])</span>
+            <span class="k">if</span> <span class="n">prop_dist</span><span class="p">:</span>
+                <span class="n">prop_stats</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">prop_dist</span><span class="p">)</span>
+                <span class="n">prop_stats</span><span class="p">[</span><span class="s2">&quot;stdev&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">prop_dist</span><span class="p">)</span>
+                <span class="n">prop_stats</span><span class="p">[</span><span class="s2">&quot;min&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">prop_dist</span><span class="p">)</span>
+                <span class="n">prop_stats</span><span class="p">[</span><span class="s2">&quot;max&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">prop_dist</span><span class="p">)</span>
+                <span class="n">prop_stats</span><span class="p">[</span><span class="s2">&quot;median&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">prop_dist</span><span class="p">)</span>
+
+                <span class="n">counts</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">prop_dist</span><span class="p">)</span>
+                <span class="n">prop_stats</span><span class="p">[</span><span class="s2">&quot;histogram&quot;</span><span class="p">][</span><span class="s2">&quot;bins&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bins</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+                <span class="n">prop_stats</span><span class="p">[</span><span class="s2">&quot;histogram&quot;</span><span class="p">][</span><span class="s2">&quot;counts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">counts</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+                <span class="c1"># Calculate Q1 (25th percentile) and Q3 (75th percentile)</span>
+                <span class="n">Q1</span><span class="p">,</span> <span class="n">Q3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">prop_dist</span><span class="p">,</span> <span class="p">[</span><span class="mi">25</span><span class="p">,</span> <span class="mi">75</span><span class="p">])</span>
+                <span class="n">IQR</span> <span class="o">=</span> <span class="n">Q3</span> <span class="o">-</span> <span class="n">Q1</span>
+
+                <span class="c1"># Calculate the acceptable range</span>
+                <span class="n">lower_bound</span> <span class="o">=</span> <span class="n">Q1</span> <span class="o">-</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">IQR</span>
+                <span class="n">upper_bound</span> <span class="o">=</span> <span class="n">Q3</span> <span class="o">+</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">IQR</span>
+                <span class="n">prop_stats</span><span class="p">[</span><span class="s2">&quot;outlier&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">lower_bound</span><span class="p">,</span> <span class="n">upper_bound</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_far_from_mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop_stats</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">item_key</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_far_from_mean</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">stdev</span><span class="p">):</span>
+            <span class="n">thr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">far_from_mean_thr</span>
+            <span class="k">return</span> <span class="n">val</span> <span class="o">&gt;</span> <span class="n">mean</span> <span class="o">+</span> <span class="p">(</span><span class="n">thr</span> <span class="o">*</span> <span class="n">stdev</span><span class="p">)</span> <span class="ow">or</span> <span class="n">val</span> <span class="o">&lt;</span> <span class="n">mean</span> <span class="o">-</span> <span class="p">(</span><span class="n">thr</span> <span class="o">*</span> <span class="n">stdev</span><span class="p">)</span>
+
+        <span class="n">mean</span> <span class="o">=</span> <span class="n">prop_stats</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">]</span>
+        <span class="n">stdev</span> <span class="o">=</span> <span class="n">prop_stats</span><span class="p">[</span><span class="s2">&quot;stdev&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">_far_from_mean</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">stdev</span><span class="p">):</span>
+            <span class="n">prop_stats</span><span class="p">[</span><span class="s2">&quot;items_far_from_mean&quot;</span><span class="p">][</span><span class="n">item_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_outlier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop_stats</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">item_key</span><span class="p">):</span>
+        <span class="n">lower_bound</span><span class="p">,</span> <span class="n">upper_bound</span> <span class="o">=</span> <span class="n">prop_stats</span><span class="p">[</span><span class="s2">&quot;outlier&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">val</span> <span class="o">&lt;</span> <span class="n">lower_bound</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">val</span> <span class="o">&gt;</span> <span class="n">upper_bound</span><span class="p">):</span>
+            <span class="n">prop_stats</span><span class="p">[</span><span class="s2">&quot;items_outlier&quot;</span><span class="p">][</span><span class="n">item_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+
+<div class="viewcode-block" id="TabularValidator.compute_statistics">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.validators.html#datumaro.plugins.validators.TabularValidator.compute_statistics">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_statistics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes statistics of the tabular dataset.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dataset : IDataset object</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        stats (dict): A dict object containing statistics of the dataset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">stats</span><span class="p">,</span> <span class="n">filtered_items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_common_statistics</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">items</span> <span class="o">=</span> <span class="n">filtered_items</span>
+
+        <span class="n">num_caption_columns</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">cat</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">cat</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="n">dataset</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">caption</span><span class="p">,</span> <span class="n">TabularCategories</span><span class="p">())</span>
+            <span class="k">if</span> <span class="n">cat</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
+        <span class="p">]</span>
+
+        <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;distribution_in_caption&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">cap</span><span class="p">:</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value_template</span><span class="p">)</span> <span class="k">for</span> <span class="n">cap</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">num_caption_columns</span><span class="p">}</span>
+        <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;distribution_in_dataset_item&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># Collect property distribution</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_compute_prop_dist</span><span class="p">(</span><span class="n">num_caption_columns</span><span class="p">,</span> <span class="n">stats</span><span class="p">)</span>
+
+        <span class="c1"># Compute property statistics from distribution</span>
+        <span class="n">dist_by_caption</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;distribution_in_caption&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_compute_prop_stats_from_dist</span><span class="p">(</span><span class="n">dist_by_caption</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">_update_captions_far_from_mean_outlier</span><span class="p">(</span><span class="n">caption_columns</span><span class="p">,</span> <span class="n">item_key</span><span class="p">,</span> <span class="n">ann</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">type_</span> <span class="ow">in</span> <span class="n">caption_columns</span><span class="p">:</span>
+                <span class="n">prop_stats</span> <span class="o">=</span> <span class="n">dist_by_caption</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">ann</span><span class="o">.</span><span class="n">caption</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">col</span><span class="p">):</span>
+                    <span class="n">val</span> <span class="o">=</span> <span class="n">type_</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">caption</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_compute_far_from_mean</span><span class="p">(</span><span class="n">prop_stats</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">item_key</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_compute_outlier</span><span class="p">(</span><span class="n">prop_stats</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">item_key</span><span class="p">)</span>
+
+        <span class="c1"># Compute far_from_mean and outlier from property</span>
+        <span class="k">for</span> <span class="n">item_key</span><span class="p">,</span> <span class="n">annotations</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">annotations</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">ann</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">caption</span><span class="p">:</span>
+                    <span class="n">_update_captions_far_from_mean_outlier</span><span class="p">(</span><span class="n">num_caption_columns</span><span class="p">,</span> <span class="n">item_key</span><span class="p">,</span> <span class="n">ann</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">stats</span></div>
+
+
+<div class="viewcode-block" id="TabularValidator.generate_reports">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.validators.html#datumaro.plugins.validators.TabularValidator.generate_reports">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_reports</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validates the dataset for classification tasks based on its statistics.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dataset : IDataset object</span>
+<span class="sd">        stats: Dict object</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        reports (list): List of validation reports (DatasetValidationError).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">reports</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># report for dataset</span>
+        <span class="n">reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_missing_label_categories</span><span class="p">(</span><span class="n">stats</span><span class="p">)</span>
+
+        <span class="c1"># report for item</span>
+        <span class="n">reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_missing_annotation</span><span class="p">(</span><span class="n">stats</span><span class="p">)</span>
+
+        <span class="c1"># report for label</span>
+        <span class="n">reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_few_samples_in_label</span><span class="p">(</span><span class="n">stats</span><span class="p">)</span>
+        <span class="n">reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_imbalanced_labels</span><span class="p">(</span><span class="n">stats</span><span class="p">)</span>
+
+        <span class="c1"># report for caption</span>
+        <span class="n">reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_few_samples_in_caption</span><span class="p">(</span><span class="n">stats</span><span class="p">)</span>
+        <span class="n">reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_redundancies_in_caption</span><span class="p">(</span><span class="n">stats</span><span class="p">)</span>
+        <span class="n">reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_imbalanced_captions</span><span class="p">(</span><span class="n">stats</span><span class="p">)</span>
+
+        <span class="c1"># report for missing value</span>
+        <span class="n">reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_broken_annotation</span><span class="p">(</span><span class="n">stats</span><span class="p">)</span>
+        <span class="n">reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_empty_label</span><span class="p">(</span><span class="n">stats</span><span class="p">)</span>
+        <span class="n">reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_empty_caption</span><span class="p">(</span><span class="n">stats</span><span class="p">)</span>
+
+        <span class="n">dist_by_caption</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;distribution_in_caption&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">caption</span><span class="p">,</span> <span class="n">caption_stats</span> <span class="ow">in</span> <span class="n">dist_by_caption</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_far_from_caption_mean</span><span class="p">(</span><span class="n">caption</span><span class="p">,</span> <span class="n">caption_stats</span><span class="p">)</span>
+            <span class="n">reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_caption_outliers</span><span class="p">(</span><span class="n">caption</span><span class="p">,</span> <span class="n">caption_stats</span><span class="p">)</span>
+            <span class="n">reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_imbalanced_dist_in_caption</span><span class="p">(</span><span class="n">caption</span><span class="p">,</span> <span class="n">caption_stats</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">reports</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_broken_annotation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
+        <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">items_broken</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;items_broken_annotation&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">item_id</span><span class="p">,</span> <span class="n">item_subset</span> <span class="ow">in</span> <span class="n">items_broken</span><span class="p">:</span>
+            <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span>
+                <span class="n">BrokenAnnotation</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">warning</span><span class="p">,</span> <span class="n">item_id</span><span class="p">,</span> <span class="n">item_subset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">str_ann_type</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">validation_reports</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_empty_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
+        <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">empty_label_dist</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;label_distribution&quot;</span><span class="p">][</span><span class="s2">&quot;empty_labels&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">label_name</span><span class="p">,</span> <span class="n">label_stats</span> <span class="ow">in</span> <span class="n">empty_label_dist</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">item_id</span><span class="p">,</span> <span class="n">item_subset</span> <span class="ow">in</span> <span class="n">label_stats</span><span class="p">[</span><span class="s2">&quot;items_with_empty_label&quot;</span><span class="p">]:</span>
+                <span class="n">details</span> <span class="o">=</span> <span class="p">(</span><span class="n">item_subset</span><span class="p">,</span> <span class="n">label_name</span><span class="p">)</span>
+                <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span><span class="n">EmptyLabel</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">warning</span><span class="p">,</span> <span class="n">item_id</span><span class="p">,</span> <span class="o">*</span><span class="n">details</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">validation_reports</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_empty_caption</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
+        <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">empty_caption_dist</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;caption_distribution&quot;</span><span class="p">][</span><span class="s2">&quot;empty_captions&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">caption_name</span><span class="p">,</span> <span class="n">caption_stats</span> <span class="ow">in</span> <span class="n">empty_caption_dist</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">item_id</span><span class="p">,</span> <span class="n">item_subset</span> <span class="ow">in</span> <span class="n">caption_stats</span><span class="p">[</span><span class="s2">&quot;items_with_empty_caption&quot;</span><span class="p">]:</span>
+                <span class="n">details</span> <span class="o">=</span> <span class="p">(</span><span class="n">item_subset</span><span class="p">,</span> <span class="n">caption_name</span><span class="p">)</span>
+                <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span>
+                    <span class="n">EmptyCaption</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">warning</span><span class="p">,</span> <span class="n">item_id</span><span class="p">,</span> <span class="o">*</span><span class="n">details</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">validation_reports</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_few_samples_in_caption</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
+        <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">thr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">few_samples_thr</span>
+
+        <span class="n">defined_caption_dist</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;caption_distribution&quot;</span><span class="p">][</span><span class="s2">&quot;defined_captions&quot;</span><span class="p">]</span>
+        <span class="n">captions_with_few_samples</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">caption_name</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span> <span class="k">for</span> <span class="n">caption_name</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">defined_caption_dist</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="n">thr</span>
+        <span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">caption_name</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">captions_with_few_samples</span><span class="p">:</span>
+            <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span>
+                <span class="n">FewSamplesInCaption</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="n">caption_name</span><span class="p">,</span> <span class="n">count</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">validation_reports</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_far_from_caption_mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">caption_name</span><span class="p">,</span> <span class="n">caption_stats</span><span class="p">):</span>
+        <span class="n">prop_stats</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">caption_stats</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+
+        <span class="k">if</span> <span class="n">prop_stats</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mean</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">prop_stats</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">],</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">stdev</span> <span class="o">=</span> <span class="n">prop_stats</span><span class="p">[</span><span class="s2">&quot;stdev&quot;</span><span class="p">]</span>
+        <span class="n">upper_bound</span> <span class="o">=</span> <span class="n">mean</span> <span class="o">+</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">far_from_mean_thr</span> <span class="o">*</span> <span class="n">stdev</span><span class="p">)</span>
+        <span class="n">lower_bound</span> <span class="o">=</span> <span class="n">mean</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">far_from_mean_thr</span> <span class="o">*</span> <span class="n">stdev</span><span class="p">)</span>
+
+        <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">items_far_from_mean</span> <span class="o">=</span> <span class="n">prop_stats</span><span class="p">[</span><span class="s2">&quot;items_far_from_mean&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">item_dets</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">items_far_from_mean</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">item_id</span><span class="p">,</span> <span class="n">item_subset</span> <span class="o">=</span> <span class="n">item_dets</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">item_subset</span><span class="p">,</span>
+                <span class="n">caption_name</span><span class="p">,</span>
+                <span class="n">mean</span><span class="p">,</span>
+                <span class="n">upper_bound</span><span class="p">,</span>
+                <span class="n">lower_bound</span><span class="p">,</span>
+                <span class="n">val</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span><span class="n">FarFromCaptionMean</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="n">item_id</span><span class="p">,</span> <span class="o">*</span><span class="n">details</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">validation_reports</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_caption_outliers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">caption_name</span><span class="p">,</span> <span class="n">caption_stats</span><span class="p">):</span>
+        <span class="n">prop_stats</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">caption_stats</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+        <span class="n">lower_bound</span><span class="p">,</span> <span class="n">upper_bound</span> <span class="o">=</span> <span class="n">prop_stats</span><span class="p">[</span><span class="s2">&quot;outlier&quot;</span><span class="p">]</span>
+        <span class="n">items_outlier</span> <span class="o">=</span> <span class="n">prop_stats</span><span class="p">[</span><span class="s2">&quot;items_outlier&quot;</span><span class="p">]</span>
+
+        <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">item_dets</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">items_outlier</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">item_id</span><span class="p">,</span> <span class="n">item_subset</span> <span class="o">=</span> <span class="n">item_dets</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">details</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">item_subset</span><span class="p">,</span>
+                <span class="n">caption_name</span><span class="p">,</span>
+                <span class="n">lower_bound</span><span class="p">,</span>
+                <span class="n">upper_bound</span><span class="p">,</span>
+                <span class="n">val</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span><span class="n">OutlierInCaption</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="n">item_id</span><span class="p">,</span> <span class="o">*</span><span class="n">details</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">validation_reports</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_redundancies_in_caption</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
+        <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">redundancies_in_caption_dist</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;caption_distribution&quot;</span><span class="p">][</span><span class="s2">&quot;redundancies&quot;</span><span class="p">]</span>
+        <span class="n">captions_with_redundancies</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">cap_column</span><span class="p">,</span> <span class="n">cap_stats</span> <span class="ow">in</span> <span class="n">redundancies_in_caption_dist</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">redundancy_type</span><span class="p">,</span> <span class="n">items</span> <span class="ow">in</span> <span class="n">cap_stats</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">items</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">captions_with_redundancies</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">cap_column</span><span class="p">,</span> <span class="n">redundancy_type</span><span class="p">,</span> <span class="n">items</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]))</span>
+
+        <span class="k">for</span> <span class="n">cap_column</span><span class="p">,</span> <span class="n">redundancy_type</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">captions_with_redundancies</span><span class="p">:</span>
+            <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span>
+                <span class="n">RedundanciesInCaption</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="n">cap_column</span><span class="p">,</span> <span class="n">redundancy_type</span><span class="p">,</span> <span class="n">count</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">validation_reports</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_imbalanced_captions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stats</span><span class="p">):</span>
+        <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">thr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">imbalance_ratio_thr</span>
+
+        <span class="n">defined_caption_dist</span> <span class="o">=</span> <span class="n">stats</span><span class="p">[</span><span class="s2">&quot;caption_distribution&quot;</span><span class="p">][</span><span class="s2">&quot;defined_captions&quot;</span><span class="p">]</span>
+        <span class="n">count_by_caption_labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">count</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">defined_caption_dist</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">defined_caption_dist</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">validation_reports</span>
+
+        <span class="n">count_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">count_by_caption_labels</span><span class="p">)</span>
+        <span class="n">count_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">count_by_caption_labels</span><span class="p">)</span>
+        <span class="n">balance</span> <span class="o">=</span> <span class="n">count_max</span> <span class="o">/</span> <span class="n">count_min</span> <span class="k">if</span> <span class="n">count_min</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">balance</span> <span class="o">&gt;=</span> <span class="n">thr</span><span class="p">:</span>
+            <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span><span class="n">ImbalancedCaptions</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">info</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">validation_reports</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_imbalanced_dist_in_caption</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">caption_name</span><span class="p">,</span> <span class="n">caption_stats</span><span class="p">):</span>
+        <span class="n">validation_reports</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">thr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dominance_thr</span>
+        <span class="n">topk_ratio</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">topk_bins_ratio</span>
+
+        <span class="k">for</span> <span class="n">prop</span><span class="p">,</span> <span class="n">prop_stats</span> <span class="ow">in</span> <span class="n">caption_stats</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">value_counts</span> <span class="o">=</span> <span class="n">prop_stats</span><span class="p">[</span><span class="s2">&quot;histogram&quot;</span><span class="p">][</span><span class="s2">&quot;counts&quot;</span><span class="p">]</span>
+            <span class="n">n_bucket</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">value_counts</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">n_bucket</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">topk</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">n_bucket</span> <span class="o">*</span> <span class="n">topk_ratio</span><span class="p">)))</span>
+
+            <span class="k">if</span> <span class="n">topk</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">topk_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">value_counts</span><span class="p">)[</span><span class="o">-</span><span class="n">topk</span><span class="p">:]</span>
+                <span class="n">ratio</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">topk_values</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">value_counts</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">ratio</span> <span class="o">&gt;=</span> <span class="n">thr</span><span class="p">:</span>
+                    <span class="n">validation_reports</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_validation_report</span><span class="p">(</span>
+                        <span class="n">ImbalancedDistInCaption</span><span class="p">,</span> <span class="n">Severity</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="n">caption_name</span>
+                    <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">validation_reports</span></div>
 
 </pre></div>
 

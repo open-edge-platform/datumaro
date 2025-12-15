@@ -14,19 +14,15 @@ Supported annotation attributes:
 - `ignored` (boolean) - `True` if the confidence score of bounding box is zero, otherwise `False`
 - `score` (float) - Confidence score of bounding box
 
-## Import MOT dataset
+## Convert MOT dataset
 
 You can download the MOT challenge dataset [here](https://motchallenge.net).
 
-A Datumaro project with the MOT challange source can be created in the following way:
+A Datumaro dataset can be converted in the following way:
 
 ``` bash
-datum project create
-datum project import --format mot <path/to/dataset>
+datum convert -if mot -i <path/to/dataset> -o <output/dir>
 ```
-
-It is possible to specify project name and project directory. Run
-`datum project create --help` for more information.
 
 The MOT challenge dataset directory should have the following structure:
 
@@ -43,30 +39,21 @@ The MOT challenge dataset directory should have the following structure:
   └── seqinfo.ini (optional)
 ```
 
-`seqinfo.ini` is provided by the MOT challange dataset but it is optional in Datumaro.
+`seqinfo.ini` is provided by the MOT challenge dataset but it is optional in Datumaro.
 It includes `imdir` field which is the name of directory having image files.
 If this file is given, Datumaro will find the image files from the directory written in the `imdir` field.
 
-To make sure that the selected dataset has been added to the project, you can
-run `datum project info`, which will display the project information.
-
 ## Export to other formats
 
-Datumaro can convert the MOT challange dataset into any other format [Datumaro supports](/docs/data-formats/formats/index.rst).
+Datumaro can convert the MOT challenge dataset into any other format [Datumaro supports](/docs/data-formats/formats/index.rst).
 
 Such conversion will only be successful if the output
 format can represent the type of dataset you want to convert,
 e.g. object detection annotations can be
 saved in `COCO instances` format, but not as `COCO keypoints`.
 
-There are several ways to convert the MOT dataset to other dataset formats:
+You can convert the MOT dataset to other dataset formats using CLI:
 
-``` bash
-datum project create
-datum project import -f mot <path/to/mot>
-datum project export -f coco_instances -o <output/dir>
-```
-or
 ``` bash
 datum convert -if mot -i <path/to/mot> -f coco_instances -o <output/dir>
 ```
@@ -87,13 +74,8 @@ The default value is  `occlusion_threshold=0.0`.
 
 ## Export to MOT
 
-There are several ways to convert a dataset to the MOT format:
+You can convert a dataset to the MOT format using CLI:
 
-``` bash
-# export dataset into MOT format from existing project
-datum project export -p <path/to/project> -f mot -o <output/dir> \
-    -- --save-media
-```
 ``` bash
 # converting to MOT format from other format
 datum convert -if coco_instances -i <path/to/dataset> \
@@ -111,4 +93,4 @@ Extra options for exporting to the MOT format:
 ## Examples
 
 Examples of using this format from the code can be found in
-[the format tests](https://github.com/openvinotoolkit/datumaro/blob/develop/tests/unit/test_mot_format.py)
+[the format tests](https://github.com/open-edge-platform/datumaro/blob/develop/tests/unit/test_mot_format.py)

@@ -17,21 +17,15 @@ information about the class of the image in `*.txt` files. And `imagenet` format
 assumes storing information about the class of the image in the name of
 directory where is this image stored.
 
-## Import ImageNet dataset
+## Convert ImageNet dataset
 
-A Datumaro project with a ImageNet dataset can be created
-in the following way:
+A Datumaro dataset can be converted in the following way:
 
 ```
-datum project create
-datum project import -f imagenet <path_to_dataset>
+datum convert -if imagenet -i <path_to_dataset> -o <output/dir>
 # or
-datum project import -f imagenet_txt <path_to_dataset>
+datum convert -if imagenet_txt -i <path_to_dataset> -o <output/dir>
 ```
-
-> Note: if you use `datum project import` then <path_to_dataset> should not be a
-> subdirectory of directory with Datumaro project, see more information about
-> it in the [docs](../../command-reference/context/sources.md#add-dataset).
 
 Load ImageNet dataset through the Python API:
 
@@ -100,10 +94,9 @@ that supports `Label` annotation objects.
 datum convert -if imagenet -i <path_to_imagenet> \
     -f voc -o <output_dir> -- --save-media
 
-# Using Datumaro project
-datum project create
-datum project import -f imagenet_txt <path_to_imagenet> -- --labels generate
-datum project export -f open_images -o <output_dir>
+# Using Datumaro convert command
+datum convert -if imagenet_txt -i <path_to_imagenet> \
+    -f open_images -o <output_dir> -- --labels generate
 ```
 
 And also you can convert your ImageNet dataset using Python API
@@ -129,10 +122,9 @@ dataset into the ImagetNet format, you can use Datumaro for it:
 datum convert -if open_images -i <path_to_oid> \
     -f imagenet_txt -o <output_dir> -- --save-media --save-dataset-meta
 
-# Using Datumaro project
-datum project create
-datum project import -f open_images <path_to_oid>
-datum project export -f imagenet -o <output_dir>
+# Using Datumaro convert command
+datum convert -if open_images -i <path_to_oid> \
+    -f imagenet -o <output_dir>
 ```
 
 Extra options for exporting to ImageNet formats:

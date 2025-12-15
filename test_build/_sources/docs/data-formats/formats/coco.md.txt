@@ -55,17 +55,13 @@ Annotations:
 - [person_keypoints](http://images.cocodataset.org/annotations/annotations_trainval2017.zip)
 - [stuff](http://images.cocodataset.org/annotations/stuff_annotations_trainval2017.zip)
 
-A Datumaro project with a COCO source can be created in the following way:
+A Datumaro dataset can be converted in the following way:
 
 ``` bash
-datum project create
-datum project import --format coco <path/to/dataset>
+datum convert -if coco -i <path/to/dataset> -o <output/dir>
 ```
 
-It is possible to specify project name and project directory. Run
-`datum project create --help` for more information.
-
-Extra options for adding a source in the COCO format:
+Extra options for converting from the COCO format:
 
 - `--keep-original-category-ids`: Add dummy label categories so that
  category indexes in the imported data source correspond to the category IDs
@@ -122,7 +118,7 @@ For the panoptic task, a dataset directory should have the following structure:
 
 Annotation files must have the names like `<task_name>_<subset_name>.json`.
 The year is treated as a part of the subset name.
-If the annotation file name does't match this pattern, use one of the
+If the annotation file name doesn't match this pattern, use one of the
 task-specific formats instead of plain `coco`: `coco_captions`,
 `coco_image_info`, `coco_instances`, `coco_labels`, `coco_panoptic`,
 `coco_person_keypoints`, `coco_stuff`. In this case all items of the
@@ -135,12 +131,8 @@ instead of the whole dataset. This option also allows to import annotation
 files with non-default names. For example:
 
 ``` bash
-datum project create
-datum project import --format coco_stuff -r <relpath/to/stuff.json> <path/to/dataset>
+datum convert -if coco_stuff -i <path/to/dataset> -o <output/dir> -- -r <relpath/to/stuff.json>
 ```
-
-To make sure that the selected dataset has been added to the project, you can
-run `datum project info`, which will display the project information.
 
 Notes:
 - COCO categories can have any integer ids, however, Datumaro will count
@@ -153,15 +145,8 @@ Datumaro can convert COCO dataset into any other format [Datumaro supports](/doc
 To get the expected result, convert the dataset to formats
 that support the specified task (e.g. for panoptic segmentation - VOC, CamVID)
 
-There are several ways to convert a COCO dataset to other dataset formats
-using CLI:
+You can convert a COCO dataset to other dataset formats using CLI:
 
-``` bash
-datum project create
-datum project import -f coco <path/to/coco>
-datum project export -f voc -o <output/dir>
-```
-or
 ``` bash
 datum convert -if coco -i <path/to/coco> -f voc -o <output/dir>
 ```
@@ -177,13 +162,8 @@ dataset.export('save_dir', 'voc', save_media=True)
 
 ## Export to COCO
 
-There are several ways to convert a dataset to COCO format:
+You can convert a dataset to COCO format using CLI:
 
-``` bash
-# export dataset into COCO format from existing project
-datum project export -p <path/to/project> -f coco -o <output/dir> \
-    -- --save-media
-```
 ``` bash
 # converting to COCO format from other format
 datum convert -if voc -i <path/to/dataset> \
@@ -225,9 +205,7 @@ Extra options for exporting to COCO format:
   by default Datumaro uses all tasks. Example:
 
 ```bash
-datum project create
-datum project import -f coco <path/to/dataset>
-datum project export -f coco -- --tasks instances,stuff
+datum convert -if coco -i <path/to/dataset> -f coco -o <output/dir> -- --tasks instances,stuff
 ```
 
 ## Examples
@@ -243,10 +221,9 @@ particular problems with a COCO dataset:
 ### Example 1. How to load an original panoptic COCO dataset and convert to Pascal VOC
 
 ```bash
-datum project create -o project
-datum project import -p project -f coco_panoptic ./COCO/annotations/panoptic_val2017.json
-datum stats -p project
-datum project export -p project -f voc -- --save-media
+datum convert -if coco_panoptic -i ./COCO/annotations/panoptic_val2017.json \
+    -f voc -o output_dir -- --save-media
+datum stats ./COCO/annotations/panoptic_val2017.json
 ```
 
 ### Example 2. How to create custom COCO-like dataset
@@ -273,7 +250,7 @@ dataset.export('./dataset', format='coco_panoptic')
 ```
 
 Examples of using this format from the code can be found in
-[the format tests](https://github.com/openvinotoolkit/datumaro/tree/develop/tests/test_coco_format.py)
+[the format tests](https://github.com/open-edge-platform/datumaro/tree/develop/tests/test_coco_format.py)
 
 ## COCO from Roboflow
 
@@ -297,14 +274,14 @@ However, it has a different directory structure than [MS COCO](#dir-structure):
 As you can see, in the root directory there are subdirectories representing a subset (e.g. `train`), which contain the JSON annotations file `_annotations.coco.json`.
 Datumaro supports importing this COCO format dataset available from Roboflow by using `coco_roboflow` data format directive.
 
-### Import using CLI
+### Convert using CLI
 
 ``` bash
-datum project create
-datum project import --format roboflow_coco <path/to/dataset>
+datum convert --input-format roboflow_coco --input-path <path/to/dataset> \
+    --output-format <desired_format> --output-dir <output/dir>
 ```
 
-### Import using Python API
+### Convert using Python API
 
 ```python
 import datumaro as dm

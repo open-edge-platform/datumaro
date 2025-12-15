@@ -27,10 +27,10 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=eafc0fe6" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css?v=8b7c274f" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -43,7 +43,7 @@
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../../../../_static/design-tabs.js?v=36754332"></script>
+    <script src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/plugins/data_formats/arrow/base';</script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
@@ -192,7 +192,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
       
@@ -279,7 +279,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
         
@@ -344,61 +344,55 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">struct</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">struct</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span>
 
-<span class="kn">import</span> <span class="nn">pyarrow</span> <span class="k">as</span> <span class="nn">pa</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pyarrow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pa</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Categories</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">CategoriesInfo</span><span class="p">,</span>
-    <span class="n">DatasetBase</span><span class="p">,</span>
-    <span class="n">DatasetInfo</span><span class="p">,</span>
-    <span class="n">DatasetItem</span><span class="p">,</span>
-    <span class="n">IDataset</span><span class="p">,</span>
-    <span class="n">SubsetBase</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.importer</span> <span class="kn">import</span> <span class="n">ImportContext</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.media</span> <span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">MediaElement</span><span class="p">,</span> <span class="n">MediaType</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.merge.extractor_merger</span> <span class="kn">import</span> <span class="n">check_identicalness</span>
-<span class="kn">from</span> <span class="nn">datumaro.plugins.data_formats.arrow.format</span> <span class="kn">import</span> <span class="n">DatumaroArrow</span>
-<span class="kn">from</span> <span class="nn">datumaro.plugins.data_formats.datumaro.base</span> <span class="kn">import</span> <span class="n">JsonReader</span>
-<span class="kn">from</span> <span class="nn">datumaro.plugins.data_formats.datumaro_binary.mapper.common</span> <span class="kn">import</span> <span class="n">DictMapper</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.definitions</span> <span class="kn">import</span> <span class="n">DEFAULT_SUBSET_NAME</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Categories</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">CategoriesInfo</span><span class="p">,</span> <span class="n">DatasetBase</span><span class="p">,</span> <span class="n">DatasetInfo</span><span class="p">,</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">IDataset</span><span class="p">,</span> <span class="n">SubsetBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.importer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImportContext</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span><span class="p">,</span> <span class="n">MediaElement</span><span class="p">,</span> <span class="n">MediaType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.merge.extractor_merger</span><span class="w"> </span><span class="kn">import</span> <span class="n">check_identicalness</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.data_formats.arrow.format</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatumaroArrow</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.data_formats.datumaro.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">JsonReader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.data_formats.datumaro_binary.mapper.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">DictMapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.definitions</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_SUBSET_NAME</span>
 
-<span class="kn">from</span> <span class="nn">.mapper.dataset_item</span> <span class="kn">import</span> <span class="n">DatasetItemMapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.mapper.dataset_item</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItemMapper</span>
 
 
 <div class="viewcode-block" id="ArrowSubsetBase">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.base.html#datumaro.plugins.data_formats.arrow.ArrowSubsetBase">[docs]</a>
-<span class="k">class</span> <span class="nc">ArrowSubsetBase</span><span class="p">(</span><span class="n">SubsetBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ArrowSubsetBase</span><span class="p">(</span><span class="n">SubsetBase</span><span class="p">):</span>
     <span class="n">__not_plugin__</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">lookup</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">DatasetItem</span><span class="p">],</span>
         <span class="n">infos</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
         <span class="n">categories</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Categories</span><span class="p">],</span>
         <span class="n">subset</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">media_type</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">MediaElement</span><span class="p">]</span> <span class="o">=</span> <span class="n">Image</span><span class="p">,</span>
+        <span class="n">ann_types</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="n">AnnotationType</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">lookup</span><span class="p">),</span> <span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span> <span class="n">media_type</span><span class="o">=</span><span class="n">media_type</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">lookup</span><span class="p">),</span> <span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span> <span class="n">media_type</span><span class="o">=</span><span class="n">media_type</span><span class="p">,</span> <span class="n">ann_types</span><span class="o">=</span><span class="n">ann_types</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_lookup</span> <span class="o">=</span> <span class="n">lookup</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span> <span class="o">=</span> <span class="n">infos</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span> <span class="o">=</span> <span class="n">categories</span>
 
-    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lookup</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="k">yield</span> <span class="n">item</span>
 
-    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lookup</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ArrowSubsetBase.get">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.base.html#datumaro.plugins.data_formats.arrow.ArrowSubsetBase.get">[docs]</a>
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
         <span class="k">if</span> <span class="n">subset</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
@@ -413,7 +407,7 @@ document.write(`
 <div class="viewcode-block" id="Metadata">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.base.html#datumaro.plugins.data_formats.arrow.Metadata">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">Metadata</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Metadata</span><span class="p">:</span>
     <span class="n">infos</span><span class="p">:</span> <span class="n">Dict</span>
     <span class="n">categories</span><span class="p">:</span> <span class="n">Dict</span>
     <span class="n">media_type</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">MediaElement</span><span class="p">]</span></div>
@@ -422,8 +416,8 @@ document.write(`
 
 <div class="viewcode-block" id="ArrowBase">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.base.html#datumaro.plugins.data_formats.arrow.ArrowBase">[docs]</a>
-<span class="k">class</span> <span class="nc">ArrowBase</span><span class="p">(</span><span class="n">DatasetBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ArrowBase</span><span class="p">(</span><span class="n">DatasetBase</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">root_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -446,15 +440,13 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_cache</span><span class="p">(</span><span class="n">file_paths</span><span class="p">,</span> <span class="n">subsets</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_load_schema_metadata</span><span class="p">(</span><span class="n">table</span><span class="p">:</span> <span class="n">pa</span><span class="o">.</span><span class="n">Table</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Metadata</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_schema_metadata</span><span class="p">(</span><span class="n">table</span><span class="p">:</span> <span class="n">pa</span><span class="o">.</span><span class="n">Table</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Metadata</span><span class="p">:</span>
         <span class="n">schema</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">schema</span>
 
         <span class="n">_infos</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">DictMapper</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">schema</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;infos&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\x00\x00\x00\x00</span><span class="s2">&quot;</span><span class="p">))</span>
         <span class="n">infos</span> <span class="o">=</span> <span class="n">JsonReader</span><span class="o">.</span><span class="n">_load_infos</span><span class="p">({</span><span class="s2">&quot;infos&quot;</span><span class="p">:</span> <span class="n">_infos</span><span class="p">})</span>
 
-        <span class="n">_categories</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">DictMapper</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span>
-            <span class="n">schema</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;categories&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\x00\x00\x00\x00</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="n">_categories</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">DictMapper</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">schema</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;categories&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\x00\x00\x00\x00</span><span class="s2">&quot;</span><span class="p">))</span>
         <span class="n">categories</span> <span class="o">=</span> <span class="n">JsonReader</span><span class="o">.</span><span class="n">_load_categories</span><span class="p">({</span><span class="s2">&quot;categories&quot;</span><span class="p">:</span> <span class="n">_categories</span><span class="p">})</span>
 
         <span class="p">(</span><span class="n">media_type</span><span class="p">,)</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s2">&quot;&lt;I&quot;</span><span class="p">,</span> <span class="n">schema</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;media_type&quot;</span><span class="p">,</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\x00\x00\x00\x00</span><span class="s2">&quot;</span><span class="p">))</span>
@@ -464,22 +456,22 @@ document.write(`
 
 <div class="viewcode-block" id="ArrowBase.infos">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.base.html#datumaro.plugins.data_formats.arrow.ArrowBase.infos">[docs]</a>
-    <span class="k">def</span> <span class="nf">infos</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DatasetInfo</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">infos</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DatasetInfo</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span></div>
 
 
 <div class="viewcode-block" id="ArrowBase.categories">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.base.html#datumaro.plugins.data_formats.arrow.ArrowBase.categories">[docs]</a>
-    <span class="k">def</span> <span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CategoriesInfo</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CategoriesInfo</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
         <span class="k">for</span> <span class="n">lookup</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lookup</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">lookup</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
                 <span class="k">yield</span> <span class="n">item</span>
 
-    <span class="k">def</span> <span class="nf">_init_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_paths</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">subsets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_paths</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">subsets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lookup</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">DatasetItem</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span><span class="n">subset</span><span class="p">:</span> <span class="p">{}</span> <span class="k">for</span> <span class="n">subset</span> <span class="ow">in</span> <span class="n">subsets</span><span class="p">}</span>
 
         <span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
@@ -487,15 +479,18 @@ document.write(`
         <span class="n">pbar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span><span class="o">.</span><span class="n">progress_reporter</span>
         <span class="n">pbar</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">total</span><span class="o">=</span><span class="n">total</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">&quot;Importing&quot;</span><span class="p">)</span>
 
+        <span class="n">ann_types</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">table_path</span> <span class="ow">in</span> <span class="n">file_paths</span><span class="p">:</span>
-            <span class="k">with</span> <span class="n">pa</span><span class="o">.</span><span class="n">OSFile</span><span class="p">(</span><span class="n">table_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">source</span><span class="p">:</span>
-                <span class="k">with</span> <span class="n">pa</span><span class="o">.</span><span class="n">ipc</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">source</span><span class="p">)</span> <span class="k">as</span> <span class="n">reader</span><span class="p">:</span>
-                    <span class="n">table</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">read_all</span><span class="p">()</span>
-                    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">table</span><span class="p">)):</span>
-                        <span class="n">item</span> <span class="o">=</span> <span class="n">DatasetItemMapper</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">table_path</span><span class="p">)</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_lookup</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="p">][</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span>
-                        <span class="n">pbar</span><span class="o">.</span><span class="n">report_status</span><span class="p">(</span><span class="n">cnt</span><span class="p">)</span>
-                        <span class="n">cnt</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">with</span> <span class="n">pa</span><span class="o">.</span><span class="n">OSFile</span><span class="p">(</span><span class="n">table_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">source</span><span class="p">,</span> <span class="n">pa</span><span class="o">.</span><span class="n">ipc</span><span class="o">.</span><span class="n">open_file</span><span class="p">(</span><span class="n">source</span><span class="p">)</span> <span class="k">as</span> <span class="n">reader</span><span class="p">:</span>
+                <span class="n">table</span> <span class="o">=</span> <span class="n">reader</span><span class="o">.</span><span class="n">read_all</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">table</span><span class="p">)):</span>
+                    <span class="n">item</span> <span class="o">=</span> <span class="n">DatasetItemMapper</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">table</span><span class="p">,</span> <span class="n">table_path</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_lookup</span><span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">subset</span><span class="p">][</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">item</span>
+                    <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
+                        <span class="n">ann_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+                    <span class="n">pbar</span><span class="o">.</span><span class="n">report_status</span><span class="p">(</span><span class="n">cnt</span><span class="p">)</span>
+                    <span class="n">cnt</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ann_types</span> <span class="o">=</span> <span class="n">ann_types</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_subsets</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">subset</span><span class="p">:</span> <span class="n">ArrowSubsetBase</span><span class="p">(</span>
@@ -504,6 +499,7 @@ document.write(`
                 <span class="n">categories</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_categories</span><span class="p">,</span>
                 <span class="n">subset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_subsets</span><span class="p">,</span>
                 <span class="n">media_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_media_type</span><span class="p">,</span>
+                <span class="n">ann_types</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ann_types</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="k">for</span> <span class="n">subset</span><span class="p">,</span> <span class="n">lookup</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lookup</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
         <span class="p">}</span>
@@ -512,7 +508,7 @@ document.write(`
 
 <div class="viewcode-block" id="ArrowBase.get">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.base.html#datumaro.plugins.data_formats.arrow.ArrowBase.get">[docs]</a>
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
         <span class="n">subset</span> <span class="o">=</span> <span class="n">subset</span> <span class="ow">or</span> <span class="n">DEFAULT_SUBSET_NAME</span>
 
         <span class="k">try</span><span class="p">:</span>
@@ -522,18 +518,18 @@ document.write(`
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">lookup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">lookup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lookup</span>
 
 <div class="viewcode-block" id="ArrowBase.subsets">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.base.html#datumaro.plugins.data_formats.arrow.ArrowBase.subsets">[docs]</a>
-    <span class="k">def</span> <span class="nf">subsets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">IDataset</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">subsets</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">IDataset</span><span class="p">]:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subsets</span></div>
 
 
 <div class="viewcode-block" id="ArrowBase.get_subset">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.arrow.base.html#datumaro.plugins.data_formats.arrow.ArrowBase.get_subset">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IDataset</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IDataset</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subsets</span><span class="p">[</span><span class="n">name</span><span class="p">]</span></div>
 </div>
 

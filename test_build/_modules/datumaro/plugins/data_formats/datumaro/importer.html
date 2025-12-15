@@ -27,10 +27,10 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=eafc0fe6" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css?v=8b7c274f" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -43,7 +43,7 @@
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../../../../_static/design-tabs.js?v=36754332"></script>
+    <script src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/plugins/data_formats/datumaro/importer';</script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
@@ -192,7 +192,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
       
@@ -279,7 +279,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
         
@@ -344,36 +344,34 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.format_detection</span> <span class="kn">import</span> <span class="n">FormatDetectionConfidence</span><span class="p">,</span> <span class="n">FormatDetectionContext</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.importer</span> <span class="kn">import</span> <span class="n">Importer</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.merge.extractor_merger</span> <span class="kn">import</span> <span class="n">ExtractorMerger</span>
-<span class="kn">from</span> <span class="nn">datumaro.rust_api</span> <span class="kn">import</span> <span class="n">JsonSectionPageMapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.format_detection</span><span class="w"> </span><span class="kn">import</span> <span class="n">FormatDetectionConfidence</span><span class="p">,</span> <span class="n">FormatDetectionContext</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.importer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Importer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.merge.extractor_merger</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExtractorMerger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.rust_api</span><span class="w"> </span><span class="kn">import</span> <span class="n">JsonSectionPageMapper</span>
 
-<span class="kn">from</span> <span class="nn">.format</span> <span class="kn">import</span> <span class="n">DatumaroPath</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.format</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatumaroPath</span>
 
 
 <div class="viewcode-block" id="DatumaroImporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro.importer.html#datumaro.plugins.data_formats.datumaro.importer.DatumaroImporter">[docs]</a>
-<span class="k">class</span> <span class="nc">DatumaroImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DatumaroImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
     <span class="n">PATH_CLS</span> <span class="o">=</span> <span class="n">DatumaroPath</span>
 
 <div class="viewcode-block" id="DatumaroImporter.detect">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro.importer.html#datumaro.plugins.data_formats.datumaro.importer.DatumaroImporter.detect">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">detect</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">detect</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">FormatDetectionConfidence</span><span class="p">]:</span>
-        <span class="n">annot_file</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span>
-            <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">PATH_CLS</span><span class="o">.</span><span class="n">ANNOTATIONS_DIR</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="n">PATH_CLS</span><span class="o">.</span><span class="n">ANNOTATION_EXT</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="n">annot_file</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">PATH_CLS</span><span class="o">.</span><span class="n">ANNOTATIONS_DIR</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span> <span class="o">+</span> <span class="bp">cls</span><span class="o">.</span><span class="n">PATH_CLS</span><span class="o">.</span><span class="n">ANNOTATION_EXT</span><span class="p">))</span>
 
         <span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">probe_text_file</span><span class="p">(</span>
             <span class="n">annot_file</span><span class="p">,</span>
-            <span class="s1">&#39;must be a JSON object with &quot;categories&quot; &#39;</span> <span class="s1">&#39;and &quot;items&quot; keys&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;must be a JSON object with &quot;categories&quot; and &quot;items&quot; keys&#39;</span><span class="p">,</span>
         <span class="p">):</span>
             <span class="n">fpath</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">root_path</span><span class="p">,</span> <span class="n">annot_file</span><span class="p">)</span>
             <span class="n">page_mapper</span> <span class="o">=</span> <span class="n">JsonSectionPageMapper</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span>
@@ -385,7 +383,7 @@ document.write(`
 <div class="viewcode-block" id="DatumaroImporter.find_sources">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro.importer.html#datumaro.plugins.data_formats.datumaro.importer.DatumaroImporter.find_sources">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_sources_recursive</span><span class="p">(</span>
             <span class="n">path</span><span class="p">,</span>
             <span class="bp">cls</span><span class="o">.</span><span class="n">PATH_CLS</span><span class="o">.</span><span class="n">ANNOTATION_EXT</span><span class="p">,</span>
@@ -397,17 +395,17 @@ document.write(`
 <div class="viewcode-block" id="DatumaroImporter.get_file_extensions">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro.importer.html#datumaro.plugins.data_formats.datumaro.importer.DatumaroImporter.get_file_extensions">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_file_extensions</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_file_extensions</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="k">return</span> <span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">PATH_CLS</span><span class="o">.</span><span class="n">ANNOTATION_EXT</span><span class="p">]</span></div>
 
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">can_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">can_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">True</span>
 
 <div class="viewcode-block" id="DatumaroImporter.get_extractor_merger">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro.importer.html#datumaro.plugins.data_formats.datumaro.importer.DatumaroImporter.get_extractor_merger">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_extractor_merger</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">ExtractorMerger</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_extractor_merger</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">ExtractorMerger</span><span class="p">]:</span>
         <span class="k">return</span> <span class="n">ExtractorMerger</span></div>
 </div>
 

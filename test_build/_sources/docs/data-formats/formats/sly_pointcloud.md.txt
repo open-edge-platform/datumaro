@@ -28,7 +28,7 @@ Supported image attributes:
 - `frame` (read/write, integer). Indicates frame number of the image.
 - arbitrary attributes
 
-## Import Supervisely Point Cloud dataset
+## Convert Supervisely Point Cloud dataset
 
 An example dataset in Supervisely Point Cloud format is available for download:
 
@@ -57,16 +57,12 @@ Point Cloud dataset directory should have the following structure:
     └── meta.json
 ```
 
-Use the command below to import a Supervisely Point Cloud dataset:
+Use the command below to convert a Supervisely Point Cloud dataset:
 
 ``` bash
-datum project create
-datum project import -f sly_pointcloud <path/to/dataset>
+datum convert --input-format sly_pointcloud --input-path <path/to/dataset> \
+    --output-format <desired_format> --output-dir <output/dir>
 ```
-
-To make sure that the selected dataset has been added to the project,
-you can run `datum project info`, which will display the project and dataset
-information.
 
 ## Export to other formats
 
@@ -81,12 +77,6 @@ but not in `COCO keypoints`.
 There are several ways to convert a Supervisely Point Cloud dataset
 to other dataset formats:
 
-``` bash
-datum project create
-datum project import -f sly_pointcloud <path/to/sly_pcd/>
-datum project export -f kitti_raw -o <output/dir>
-```
-or
 ``` bash
 datum convert -if sly_pointcloud -i <path/to/sly_pcd/> -f kitti_raw
 ```
@@ -105,11 +95,6 @@ dataset.export('save_dir', 'kitti_raw', save_media=True)
 There are several ways to convert a dataset to Supervisely Point Cloud format:
 
 ``` bash
-# export dataset into Supervisely Point Cloud format from existing project
-datum project export -p <path/to/project> -f sly_pointcloud -o <output/dir> \
-    -- --save-media
-```
-``` bash
 # converting to Supervisely Point Cloud format from other format
 datum convert -if kitti_raw -i <path/to/dataset> \
     -f sly_pointcloud -o <output/dir> -- --save-media
@@ -127,12 +112,11 @@ Extra options for exporting in Supervisely Point Cloud format:
 
 ## Examples
 
-### Example 1. Import dataset, compute statistics
+### Example 1. Convert dataset, compute statistics
 
 ```bash
-datum project create -o project
-datum project import -p project -f sly_pointcloud ../sly_dataset/
-datum stats -p project
+datum convert -if sly_pointcloud -i ../sly_dataset/ -f datumaro -o ./output_project
+datum stats -i ./output_project
 ```
 
 ### Example 2. Convert Supervisely Point Clouds to KITTI Raw
@@ -178,4 +162,4 @@ dataset.export('my_dataset/', format='sly_pointcloud', save_media=True,
 ```
 
 Examples of using this format from the code can be found in
-[the format tests](https://github.com/openvinotoolkit/datumaro/tree/develop/tests/test_sly_pointcloud_format.py)
+[the format tests](https://github.com/open-edge-platform/datumaro/tree/develop/tests/test_sly_pointcloud_format.py)

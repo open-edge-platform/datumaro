@@ -41,7 +41,7 @@ Supported annotation attributes:
   - `predicted_iou` (read/write, float).
     Predicted IoU value with respect to the ground truth.
 
-## Import Open Images dataset
+## Convert Open Images dataset
 
 The Open Images dataset is available for free download.
 
@@ -132,15 +132,12 @@ All annotation files are optional,
 except that if the mask metadata files for a given subset are downloaded,
 all corresponding images must be downloaded as well, and vice versa.
 
-A Datumaro project with an OID source can be created in the following way:
+An Open Images dataset can be converted in the following way:
 
 ``` bash
-datum project create
-datum project import --format open_images <path/to/dataset>
+datum convert --input-format open_images --input-path <path/to/dataset> \
+    --output-format <desired_format> --output-dir <output/dir>
 ```
-
-It is possible to specify project name and project directory. Run
-`datum project create --help` for more information.
 
 Open Images dataset directory should have the following structure:
 
@@ -235,12 +232,6 @@ that supports image-level labels.
 There are several ways to convert OID to other dataset formats:
 
 ``` bash
-datum project create
-datum project import -f open_images <path/to/open_images>
-datum project export -f cvat -o <output/dir>
-```
-or
-``` bash
 datum convert -if open_images -i <path/to/open_images> -f cvat -o <output/dir>
 ```
 
@@ -255,13 +246,8 @@ dataset.export('save_dir', 'cvat', save_media=True)
 
 ## Export to Open Images
 
-There are several ways to convert an existing dataset to the Open Images format:
+There are several ways to convert a dataset to the Open Images format:
 
-``` bash
-# export dataset into Open Images format from existing project
-datum project export -p <path/to/project> -f open_images -o <output/dir> \
-  -- --save_media
-```
 ``` bash
 # convert a dataset in another format to the Open Images format
 datum convert -if imagenet -i <path/to/dataset> \
@@ -291,10 +277,7 @@ particular problems with the Open Images dataset:
 ### Example 1. Load the Open Images dataset and convert to the CVAT format
 
 ```bash
-datum project create -o project
-datum project import -p project -f open_images ./open-images-dataset/
-datum stats -p project
-datum project export -p project -f cvat -- --save-media
+datum convert -if open_images -i ./open-images-dataset/ -f cvat -o <output/dir> -- --save-media
 ```
 
 ### Example 2. Create a custom OID-like dataset
@@ -319,4 +302,4 @@ dataset.export('./dataset', format='open_images')
 ```
 
 Examples of using this format from the code can be found in
-[the format tests](https://github.com/openvinotoolkit/datumaro/tree/develop/tests/test_open_images_format.py).
+[the format tests](https://github.com/open-edge-platform/datumaro/tree/develop/tests/test_open_images_format.py).

@@ -27,10 +27,10 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=8b7c274f" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -43,7 +43,7 @@
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../../_static/design-tabs.js?v=36754332"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/components/visualizer';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -192,7 +192,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
       
@@ -279,7 +279,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
         
@@ -343,24 +343,25 @@ document.write(`
 <span></span><span class="c1"># Copyright (C) 2024 Intel Corporation</span>
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
-<span class="kn">import</span> <span class="nn">math</span>
-<span class="kn">import</span> <span class="nn">random</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">overload</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">overload</span>
 
-<span class="kn">import</span> <span class="nn">cv2</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">ImageColor</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImageColor</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">Annotation</span><span class="p">,</span>
     <span class="n">AnnotationType</span><span class="p">,</span>
     <span class="n">Bbox</span><span class="p">,</span>
     <span class="n">Caption</span><span class="p">,</span>
+    <span class="n">Cuboid2D</span><span class="p">,</span>
     <span class="n">Cuboid3d</span><span class="p">,</span>
     <span class="n">DepthAnnotation</span><span class="p">,</span>
     <span class="n">Ellipse</span><span class="p">,</span>
@@ -372,13 +373,13 @@ document.write(`
     <span class="n">PolyLine</span><span class="p">,</span>
     <span class="n">SuperResolutionAnnotation</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">IDataset</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.media</span> <span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">IDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">matplotlib.axes</span> <span class="kn">import</span> <span class="n">Axes</span>
-    <span class="kn">from</span> <span class="nn">matplotlib.figure</span> <span class="kn">import</span> <span class="n">Figure</span>
-    <span class="kn">from</span> <span class="nn">matplotlib.text</span> <span class="kn">import</span> <span class="n">Text</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.axes</span><span class="w"> </span><span class="kn">import</span> <span class="n">Axes</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.figure</span><span class="w"> </span><span class="kn">import</span> <span class="n">Figure</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.text</span><span class="w"> </span><span class="kn">import</span> <span class="n">Text</span>
 
 <span class="n">CAPTION_BBOX_PAD</span> <span class="o">=</span> <span class="mf">0.2</span>
 <span class="n">DEFAULT_COLOR_CYCLES</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
@@ -395,7 +396,7 @@ document.write(`
 <span class="p">]</span>
 
 
-<span class="k">def</span> <span class="nf">_infer_grid_size</span><span class="p">(</span><span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">grid_size</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_infer_grid_size</span><span class="p">(</span><span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">grid_size</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]]):</span>
     <span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span> <span class="o">=</span> <span class="n">grid_size</span>
 
     <span class="k">if</span> <span class="n">nrows</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">ncols</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -423,8 +424,8 @@ document.write(`
 
 <div class="viewcode-block" id="Visualizer">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.visualizer.html#datumaro.components.visualizer.Visualizer">[docs]</a>
-<span class="k">class</span> <span class="nc">Visualizer</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Visualizer</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">dataset</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">,</span>
         <span class="n">ignored_types</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="n">AnnotationType</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -477,13 +478,13 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_items</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">]</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">draw_only_image</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">draw_only_image</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        If self.alpha = 0, we do not overdraw any annotation over the image.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">==</span> <span class="mf">0.0</span>
 
-    <span class="k">def</span> <span class="nf">_draw</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_draw</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ann</span><span class="p">:</span> <span class="n">Annotation</span><span class="p">,</span>
         <span class="n">label_categories</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LabelCategories</span><span class="p">],</span>
@@ -532,38 +533,32 @@ document.write(`
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_draw_depth_annotation</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="n">label_categories</span><span class="p">,</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">ann</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">ellipse</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_draw_ellipse</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="n">label_categories</span><span class="p">,</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">ann</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">hash_key</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span>
 
         <span class="c1"># warning instead of raising an error for unsupported annotation types.</span>
         <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ignore unknown ann.type=</span><span class="si">{</span><span class="n">ann</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_get_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ann</span><span class="p">:</span> <span class="n">Annotation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">color_cycles</span><span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">color_cycles</span><span class="p">)]</span>
-        <span class="k">return</span> <span class="n">color</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_color</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ann</span><span class="p">:</span> <span class="n">Annotation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">color_cycles</span><span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">color_cycles</span><span class="p">)]</span>
 
-    <span class="k">def</span> <span class="nf">_sort_by_z_order</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]:</span>
-        <span class="k">def</span> <span class="nf">_sort_key</span><span class="p">(</span><span class="n">ann</span><span class="p">:</span> <span class="n">Annotation</span><span class="p">):</span>
-            <span class="n">z_order</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">&quot;z_order&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-            <span class="k">return</span> <span class="n">z_order</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_sort_by_z_order</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">annotations</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Annotation</span><span class="p">]:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_sort_key</span><span class="p">(</span><span class="n">ann</span><span class="p">:</span> <span class="n">Annotation</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">ann</span><span class="p">,</span> <span class="s2">&quot;z_order&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">annotations</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">_sort_key</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Visualizer.get_random_items">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.visualizer.html#datumaro.components.visualizer.Visualizer.get_random_items">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_random_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_random_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get random samples from the dataset&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">n_samples</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;n_samples=</span><span class="si">{</span><span class="n">n_samples</span><span class="si">}</span><span class="s2"> should be less than the dataset size (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span><span class="si">}</span><span class="s2">).&quot;</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;n_samples=</span><span class="si">{</span><span class="n">n_samples</span><span class="si">}</span><span class="s2"> should be less than the dataset size (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span><span class="si">}</span><span class="s2">).&quot;</span><span class="p">)</span>
 
         <span class="c1"># Disable B311: random - used for general random sampling not for security/crypto</span>
         <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">choices</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="n">n_samples</span><span class="p">)</span>  <span class="c1"># nosec B311</span></div>
 
 
     <span class="nd">@overload</span>
-    <span class="k">def</span> <span class="nf">vis_gallery</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">vis_gallery</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">ann_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
@@ -594,10 +589,9 @@ document.write(`
 <span class="sd">        ------</span>
 <span class="sd">            :class:`Figure` include visualization plots.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="o">...</span>
 
     <span class="nd">@overload</span>
-    <span class="k">def</span> <span class="nf">vis_gallery</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">vis_gallery</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">subsets</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
@@ -621,10 +615,9 @@ document.write(`
 <span class="sd">        ------</span>
 <span class="sd">            :class:`Figure` include visualization plots.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="o">...</span>
 
     <span class="nd">@overload</span>
-    <span class="k">def</span> <span class="nf">vis_gallery</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">vis_gallery</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">],</span>
         <span class="o">*</span><span class="p">,</span>
@@ -641,17 +634,16 @@ document.write(`
 <span class="sd">        ------</span>
 <span class="sd">            :class:`Figure` include visualization plots.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="o">...</span>
 
 <div class="viewcode-block" id="Visualizer.vis_gallery">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.visualizer.html#datumaro.components.visualizer.Visualizer.vis_gallery">[docs]</a>
-    <span class="k">def</span> <span class="nf">vis_gallery</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">vis_gallery</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">inputs</span><span class="p">,</span>
         <span class="n">grid_size</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Figure</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Visualize several :class:`DatasetItem` as a gallery&quot;&quot;&quot;</span>
-        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="p">(</span><span class="n">items</span><span class="p">,)</span> <span class="o">=</span> <span class="n">inputs</span>
@@ -668,16 +660,12 @@ document.write(`
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subsets</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">subsets</span> <span class="o">=</span> <span class="p">[</span><span class="n">subsets</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span>  <span class="c1"># expand it to have len(ids)</span>
 
-        <span class="k">assert</span> <span class="p">(</span>
-            <span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ann_ids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">subsets</span><span class="p">)</span>
-        <span class="p">),</span> <span class="s2">&quot;ids, ann_ids, subset should have the same length&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">ann_ids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">subsets</span><span class="p">),</span> <span class="s2">&quot;ids, ann_ids, subset should have the same length&quot;</span>
 
         <span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span> <span class="o">=</span> <span class="n">_infer_grid_size</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">),</span> <span class="n">grid_size</span><span class="p">)</span>
         <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">figsize</span><span class="p">)</span>
 
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
-            <span class="n">subsets</span>
-        <span class="p">),</span> <span class="s2">&quot;If subset is a list, it should have the same length as ids.&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">subsets</span><span class="p">),</span> <span class="s2">&quot;If subset is a list, it should have the same length as ids.&quot;</span>
 
         <span class="k">for</span> <span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span><span class="p">,</span> <span class="n">ann_id</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ids</span><span class="p">,</span> <span class="n">subsets</span><span class="p">,</span> <span class="n">ann_ids</span><span class="p">,</span> <span class="n">axs</span><span class="o">.</span><span class="n">flatten</span><span class="p">()):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">vis_one_sample</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span><span class="p">,</span> <span class="n">ann_id</span><span class="o">=</span><span class="n">ann_id</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
@@ -686,7 +674,7 @@ document.write(`
 
 
     <span class="nd">@overload</span>
-    <span class="k">def</span> <span class="nf">vis_one_sample</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">vis_one_sample</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">item_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">subset</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -711,10 +699,9 @@ document.write(`
 <span class="sd">        ------</span>
 <span class="sd">            :class:`Figure` include visualization plot of the :class:`DatasetItem`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="o">...</span>
 
     <span class="nd">@overload</span>
-    <span class="k">def</span> <span class="nf">vis_one_sample</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">vis_one_sample</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -736,18 +723,17 @@ document.write(`
 <span class="sd">        ------</span>
 <span class="sd">            :class:`Figure` include visualization plot of the :class:`DatasetItem`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="o">...</span>
 
 <div class="viewcode-block" id="Visualizer.vis_one_sample">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.visualizer.html#datumaro.components.visualizer.Visualizer.vis_one_sample">[docs]</a>
-    <span class="k">def</span> <span class="nf">vis_one_sample</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">vis_one_sample</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">inputs</span><span class="p">,</span>
         <span class="n">ann_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">ax</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Axes</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Figure</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Visualize one dataset item&quot;&quot;&quot;</span>
-        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
@@ -764,26 +750,22 @@ document.write(`
             <span class="n">fig</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_figure</span><span class="p">()</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
 
-        <span class="k">def</span> <span class="nf">_parse_inputs</span><span class="p">(</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_parse_inputs</span><span class="p">(</span>
             <span class="n">item_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">subset</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">item</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]</span>
         <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
             <span class="k">if</span> <span class="n">item_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">subset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span>
-            <span class="k">elif</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">item_id</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span>
                 <span class="n">subset</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">subset</span>
                 <span class="k">return</span> <span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;item_id=</span><span class="si">{</span><span class="n">item_id</span><span class="si">}</span><span class="s2">, subset=</span><span class="si">{</span><span class="n">subset</span><span class="si">}</span><span class="s2">, and item=</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2"> is an invalid input.&quot;</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;item_id=</span><span class="si">{</span><span class="n">item_id</span><span class="si">}</span><span class="s2">, subset=</span><span class="si">{</span><span class="n">subset</span><span class="si">}</span><span class="s2">, and item=</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2"> is an invalid input.&quot;</span><span class="p">)</span>
 
         <span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span> <span class="o">=</span> <span class="n">_parse_inputs</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
         <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span><span class="p">)</span>
 
         <span class="k">assert</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Cannot find id=</span><span class="si">{</span><span class="n">item_id</span><span class="si">}</span><span class="s2">, subset=</span><span class="si">{</span><span class="n">subset</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">assert</span> <span class="p">(</span>
-            <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Image</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Media type should be Image, Current media type=</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">assert</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Image</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Media type should be Image, Current media type=</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
 
         <span class="n">img</span> <span class="o">=</span> <span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
         <span class="n">img</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span><span class="p">)</span>
@@ -800,9 +782,7 @@ document.write(`
         <span class="n">annotations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sort_by_z_order</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">)</span>
         <span class="n">categories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span>
         <span class="n">label_categories</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">categories</span><span class="p">()[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span> <span class="ow">in</span> <span class="n">categories</span>
-            <span class="k">else</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="o">.</span><span class="n">categories</span><span class="p">()[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span> <span class="k">if</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span> <span class="ow">in</span> <span class="n">categories</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="p">)</span>
 
         <span class="n">context</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
@@ -819,12 +799,12 @@ document.write(`
         <span class="k">return</span> <span class="n">fig</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_plot_title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">:</span> <span class="n">Axes</span><span class="p">,</span> <span class="n">item_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_plot_title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">:</span> <span class="n">Axes</span><span class="p">,</span> <span class="n">item_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">width</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="o">.</span><span class="n">transform_point</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="o">.</span><span class="n">transform_point</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">text</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ID: </span><span class="si">{</span><span class="n">item_id</span><span class="si">}</span><span class="s2">, Subset: </span><span class="si">{</span><span class="n">subset</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">text</span><span class="o">.</span><span class="n">__get_wrapped_text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">_get_wrapped_text</span>
 
-        <span class="k">def</span> <span class="nf">_get_wrapped_text</span><span class="p">():</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_get_wrapped_text</span><span class="p">():</span>
             <span class="n">wrapped_text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">__get_wrapped_text</span><span class="p">()</span>
             <span class="n">text</span><span class="o">.</span><span class="n">_text</span> <span class="o">=</span> <span class="n">wrapped_text</span>
             <span class="k">return</span> <span class="n">wrapped_text</span>
@@ -832,7 +812,7 @@ document.write(`
         <span class="n">text</span><span class="o">.</span><span class="n">_get_wrapped_text</span> <span class="o">=</span> <span class="n">_get_wrapped_text</span>
         <span class="n">text</span><span class="o">.</span><span class="n">_get_wrap_line_width</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">width</span>
 
-    <span class="k">def</span> <span class="nf">_draw_label</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_draw_label</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ann</span><span class="p">:</span> <span class="n">Label</span><span class="p">,</span>
         <span class="n">label_categories</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LabelCategories</span><span class="p">],</span>
@@ -858,7 +838,7 @@ document.write(`
         <span class="n">text</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">label_text</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="p">)</span>
         <span class="n">context</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_draw_mask</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_draw_mask</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ann</span><span class="p">:</span> <span class="n">Mask</span><span class="p">,</span>
         <span class="n">label_categories</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LabelCategories</span><span class="p">],</span>
@@ -870,8 +850,7 @@ document.write(`
         <span class="n">source</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">image</span>
         <span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="nb">bool</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Mask should has dtype == bool, but its dtype == </span><span class="si">{</span><span class="n">source</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">. &quot;</span>
-                <span class="s2">&quot;Try to change it to bool dtype.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Mask should has dtype == bool, but its dtype == </span><span class="si">{</span><span class="n">source</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">. Try to change it to bool dtype.&quot;</span>
             <span class="p">)</span>
             <span class="n">source</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
 
@@ -883,7 +862,7 @@ document.write(`
 
         <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">mask_map</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_draw_points</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_draw_points</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ann</span><span class="p">:</span> <span class="n">Points</span><span class="p">,</span>
         <span class="n">label_categories</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LabelCategories</span><span class="p">],</span>
@@ -905,7 +884,7 @@ document.write(`
             <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">get_bbox</span><span class="p">()</span>
             <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">text_y_offset</span><span class="p">,</span> <span class="n">label_text</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_draw_polygon</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_draw_polygon</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ann</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Polygon</span><span class="p">,</span> <span class="n">PolyLine</span><span class="p">],</span>
         <span class="n">label_categories</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LabelCategories</span><span class="p">],</span>
@@ -913,7 +892,7 @@ document.write(`
         <span class="n">ax</span><span class="p">:</span> <span class="n">Axes</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">matplotlib.patches</span> <span class="k">as</span> <span class="nn">patches</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">patches</span>
 
         <span class="n">label_text</span> <span class="o">=</span> <span class="n">label_categories</span><span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">label_categories</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">ann</span><span class="o">.</span><span class="n">label</span>
         <span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_color</span><span class="p">(</span><span class="n">ann</span><span class="p">)</span>
@@ -941,7 +920,7 @@ document.write(`
         <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">get_bbox</span><span class="p">()</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">text_y_offset</span><span class="p">,</span> <span class="n">label_text</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_draw_bbox</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_draw_bbox</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ann</span><span class="p">:</span> <span class="n">Bbox</span><span class="p">,</span>
         <span class="n">label_categories</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LabelCategories</span><span class="p">],</span>
@@ -949,7 +928,7 @@ document.write(`
         <span class="n">ax</span><span class="p">:</span> <span class="n">Axes</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">matplotlib.patches</span> <span class="k">as</span> <span class="nn">patches</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">patches</span>
 
         <span class="n">label_text</span> <span class="o">=</span> <span class="n">label_categories</span><span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">label_categories</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">ann</span><span class="o">.</span><span class="n">label</span>
         <span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_color</span><span class="p">(</span><span class="n">ann</span><span class="p">)</span>
@@ -964,7 +943,7 @@ document.write(`
         <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">ann</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">text_y_offset</span><span class="p">,</span> <span class="n">label_text</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">rect</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_draw_caption</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_draw_caption</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ann</span><span class="p">:</span> <span class="n">Caption</span><span class="p">,</span>
         <span class="n">label_categories</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LabelCategories</span><span class="p">],</span>
@@ -982,9 +961,7 @@ document.write(`
             <span class="c1"># https://stackoverflow.com/a/41271773/16880031</span>
             <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
             <span class="n">drawed_bbox</span> <span class="o">=</span> <span class="n">bbox</span><span class="o">.</span><span class="n">get_bbox</span><span class="p">()</span>
-            <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">bbox</span><span class="o">.</span><span class="n">get_transform</span><span class="p">()</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span>
-                <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">CAPTION_BBOX_PAD</span><span class="p">)</span> <span class="o">*</span> <span class="n">drawed_bbox</span><span class="o">.</span><span class="n">height</span><span class="p">]</span>
-            <span class="p">)</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">bbox</span><span class="o">.</span><span class="n">get_transform</span><span class="p">()</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">CAPTION_BBOX_PAD</span><span class="p">)</span> <span class="o">*</span> <span class="n">drawed_bbox</span><span class="o">.</span><span class="n">height</span><span class="p">])</span>
             <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="o">.</span><span class="n">inverted</span><span class="p">()</span><span class="o">.</span><span class="n">transform</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">])</span>
             <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">y</span>
 
@@ -1004,7 +981,7 @@ document.write(`
         <span class="n">text</span><span class="o">.</span><span class="n">_get_wrap_line_width</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">width</span>
         <span class="n">context</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_draw_cuboid_3d</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_draw_cuboid_3d</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ann</span><span class="p">:</span> <span class="n">Cuboid3d</span><span class="p">,</span>
         <span class="n">label_categories</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LabelCategories</span><span class="p">],</span>
@@ -1014,7 +991,38 @@ document.write(`
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ann</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2"> is not implemented yet.&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_draw_super_resolution_annotation</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_draw_cuboid_2d</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">ann</span><span class="p">:</span> <span class="n">Cuboid2D</span><span class="p">,</span>
+        <span class="n">label_categories</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LabelCategories</span><span class="p">],</span>
+        <span class="n">fig</span><span class="p">:</span> <span class="n">Figure</span><span class="p">,</span>
+        <span class="n">ax</span><span class="p">:</span> <span class="n">Axes</span><span class="p">,</span>
+        <span class="n">context</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">patches</span>
+
+        <span class="n">points</span> <span class="o">=</span> <span class="n">ann</span><span class="o">.</span><span class="n">points</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_color</span><span class="p">(</span><span class="n">ann</span><span class="p">)</span>
+        <span class="n">label_text</span> <span class="o">=</span> <span class="n">label_categories</span><span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">label_categories</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">ann</span><span class="o">.</span><span class="n">label</span>
+
+        <span class="c1"># Define the faces based on vertex indices</span>
+
+        <span class="n">faces</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">[</span><span class="n">points</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]],</span>  <span class="c1"># Top face</span>
+            <span class="p">[</span><span class="n">points</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">]],</span>  <span class="c1"># Bottom face</span>
+            <span class="p">[</span><span class="n">points</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">]],</span>  <span class="c1"># Front face</span>
+            <span class="p">[</span><span class="n">points</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">]],</span>  <span class="c1"># Right face</span>
+            <span class="p">[</span><span class="n">points</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">]],</span>  <span class="c1"># Back face</span>
+            <span class="p">[</span><span class="n">points</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">]],</span>  <span class="c1"># Left face</span>
+        <span class="p">]</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">points</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">text_y_offset</span><span class="p">,</span> <span class="n">label_text</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
+
+        <span class="c1"># Draw each face</span>
+        <span class="k">for</span> <span class="n">face</span> <span class="ow">in</span> <span class="n">faces</span><span class="p">:</span>
+            <span class="n">polygon</span> <span class="o">=</span> <span class="n">patches</span><span class="o">.</span><span class="n">Polygon</span><span class="p">(</span><span class="n">face</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bbox_linewidth</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">polygon</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_draw_super_resolution_annotation</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ann</span><span class="p">:</span> <span class="n">SuperResolutionAnnotation</span><span class="p">,</span>
         <span class="n">label_categories</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LabelCategories</span><span class="p">],</span>
@@ -1022,9 +1030,7 @@ document.write(`
         <span class="n">ax</span><span class="p">:</span> <span class="n">Axes</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="p">(</span>
-            <span class="nb">len</span><span class="p">(</span><span class="n">context</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
-        <span class="p">),</span> <span class="s2">&quot;It cannot visualize more than one SuperResolutionAnnotation per item.&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">context</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;It cannot visualize more than one SuperResolutionAnnotation per item.&quot;</span>
 
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
             <span class="s2">&quot;SuperResolutionAnnotation overdraws the high-resolution image over the original image. &quot;</span>
@@ -1035,7 +1041,7 @@ document.write(`
         <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">hi_res_img</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
         <span class="n">context</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">im</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_draw_depth_annotation</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_draw_depth_annotation</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ann</span><span class="p">:</span> <span class="n">DepthAnnotation</span><span class="p">,</span>
         <span class="n">label_categories</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LabelCategories</span><span class="p">],</span>
@@ -1043,7 +1049,7 @@ document.write(`
         <span class="n">ax</span><span class="p">:</span> <span class="n">Axes</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">mpl_toolkits.axes_grid1</span> <span class="kn">import</span> <span class="n">make_axes_locatable</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">mpl_toolkits.axes_grid1</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_axes_locatable</span>
 
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">context</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;It cannot visualize more than one DepthAnnotation per item.&quot;</span>
 
@@ -1056,7 +1062,7 @@ document.write(`
         <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">cax</span><span class="p">)</span>
         <span class="n">context</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">im</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_draw_ellipse</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_draw_ellipse</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ann</span><span class="p">:</span> <span class="n">Ellipse</span><span class="p">,</span>
         <span class="n">label_categories</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LabelCategories</span><span class="p">],</span>
@@ -1064,7 +1070,7 @@ document.write(`
         <span class="n">ax</span><span class="p">:</span> <span class="n">Axes</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">matplotlib.patches</span> <span class="k">as</span> <span class="nn">patches</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">patches</span>
 
         <span class="n">label_text</span> <span class="o">=</span> <span class="n">label_categories</span><span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">label_categories</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">ann</span><span class="o">.</span><span class="n">label</span>
         <span class="n">color</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_color</span><span class="p">(</span><span class="n">ann</span><span class="p">)</span>

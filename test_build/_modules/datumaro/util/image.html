@@ -27,10 +27,10 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=8b7c274f" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -43,7 +43,7 @@
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../../_static/design-tabs.js?v=36754332"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/util/image';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -192,7 +192,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
       
@@ -279,7 +279,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
         
@@ -346,33 +346,32 @@ document.write(`
 <span></span><span class="c1"># Copyright (C) 2019-2024 Intel Corporation</span>
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">import</span> <span class="nn">shlex</span>
-<span class="kn">import</span> <span class="nn">weakref</span>
-<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
-<span class="kn">from</span> <span class="nn">contextvars</span> <span class="kn">import</span> <span class="n">ContextVar</span>
-<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">auto</span>
-<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span><span class="p">,</span> <span class="n">IOBase</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shlex</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">weakref</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">contextmanager</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">contextvars</span><span class="w"> </span><span class="kn">import</span> <span class="n">ContextVar</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">auto</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">BytesIO</span><span class="p">,</span> <span class="n">IOBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.crypter</span> <span class="kn">import</span> <span class="n">NULL_CRYPTER</span><span class="p">,</span> <span class="n">Crypter</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.errors</span> <span class="kn">import</span> <span class="n">DatumaroError</span>
-
-<span class="k">try</span><span class="p">:</span>
-    <span class="c1"># Introduced in 1.20</span>
-    <span class="kn">from</span> <span class="nn">numpy.typing</span> <span class="kn">import</span> <span class="n">DTypeLike</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">DTypeLike</span> <span class="o">=</span> <span class="n">Any</span>
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Introduced in 1.20</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">numpy.typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">DTypeLike</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="n">DTypeLike</span> <span class="o">=</span> <span class="n">Any</span>
 
 
 <div class="viewcode-block" id="ImageBackend">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.image.html#datumaro.plugins.data_formats.arrow.mapper.ImageBackend">[docs]</a>
-<span class="k">class</span> <span class="nc">ImageBackend</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImageBackend</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="n">cv2</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
     <span class="n">PIL</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span></div>
 
@@ -381,25 +380,22 @@ document.write(`
 <span class="n">IMAGE_BACKEND</span><span class="p">:</span> <span class="n">ContextVar</span><span class="p">[</span><span class="n">ImageBackend</span><span class="p">]</span> <span class="o">=</span> <span class="n">ContextVar</span><span class="p">(</span><span class="s2">&quot;IMAGE_BACKEND&quot;</span><span class="p">)</span>
 <span class="n">_image_loading_errors</span> <span class="o">=</span> <span class="p">(</span><span class="ne">FileNotFoundError</span><span class="p">,)</span>
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">cv2</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
 
     <span class="n">IMAGE_BACKEND</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ImageBackend</span><span class="o">.</span><span class="n">cv2</span><span class="p">)</span>
 <span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">PIL</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">PIL</span>
 
     <span class="n">IMAGE_BACKEND</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ImageBackend</span><span class="o">.</span><span class="n">PIL</span><span class="p">)</span>
     <span class="n">_image_loading_errors</span> <span class="o">=</span> <span class="p">(</span><span class="o">*</span><span class="n">_image_loading_errors</span><span class="p">,</span> <span class="n">PIL</span><span class="o">.</span><span class="n">UnidentifiedImageError</span><span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.util.image_cache</span> <span class="kn">import</span> <span class="n">ImageCache</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.os_util</span> <span class="kn">import</span> <span class="n">find_files</span>
-
-<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">PIL.Image</span> <span class="kn">import</span> <span class="n">Image</span> <span class="k">as</span> <span class="n">PILImage</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.image_cache</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImageCache</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.os_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_files</span>
 
 
 <div class="viewcode-block" id="ImageColorChannel">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.image.html#datumaro.plugins.data_formats.arrow.mapper.ImageColorChannel">[docs]</a>
-<span class="k">class</span> <span class="nc">ImageColorChannel</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImageColorChannel</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Image color channel</span>
 
 <span class="sd">    - UNCHANGED: Use the original image&#39;s channel (default)</span>
@@ -413,9 +409,9 @@ document.write(`
 
 <div class="viewcode-block" id="ImageColorChannel.decode_by_cv2">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.image.html#datumaro.plugins.data_formats.arrow.mapper.ImageColorChannel.decode_by_cv2">[docs]</a>
-    <span class="k">def</span> <span class="nf">decode_by_cv2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decode_by_cv2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">DTypeLike</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert image color channel for OpenCV image (np.ndarray).&quot;&quot;&quot;</span>
-        <span class="n">image_buffer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+        <span class="n">image_buffer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">ImageColorChannel</span><span class="o">.</span><span class="n">UNCHANGED</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imdecode</span><span class="p">(</span><span class="n">image_buffer</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">IMREAD_UNCHANGED</span><span class="p">)</span>
@@ -433,20 +429,21 @@ document.write(`
 
 <div class="viewcode-block" id="ImageColorChannel.decode_by_pil">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.image.html#datumaro.plugins.data_formats.arrow.mapper.ImageColorChannel.decode_by_pil">[docs]</a>
-    <span class="k">def</span> <span class="nf">decode_by_pil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PILImage</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">decode_by_pil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert image color channel for PIL Image.&quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
 
         <span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">ImageColorChannel</span><span class="o">.</span><span class="n">UNCHANGED</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">img</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">ImageColorChannel</span><span class="o">.</span><span class="n">COLOR_BGR</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;RGB&quot;</span><span class="p">)),</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+            <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;RGB&quot;</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_RGB2BGR</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span> <span class="o">==</span> <span class="n">ImageColorChannel</span><span class="o">.</span><span class="n">COLOR_RGB</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">img</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;RGB&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;RGB&quot;</span><span class="p">))</span>
 
         <span class="k">raise</span> <span class="ne">ValueError</span></div>
 </div>
@@ -461,7 +458,7 @@ document.write(`
 <div class="viewcode-block" id="decode_image_context">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.image.html#datumaro.plugins.data_formats.arrow.mapper.decode_image_context">[docs]</a>
 <span class="nd">@contextmanager</span>
-<span class="k">def</span> <span class="nf">decode_image_context</span><span class="p">(</span><span class="n">image_backend</span><span class="p">:</span> <span class="n">ImageBackend</span><span class="p">,</span> <span class="n">image_color_channel</span><span class="p">:</span> <span class="n">ImageColorChannel</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">decode_image_context</span><span class="p">(</span><span class="n">image_backend</span><span class="p">:</span> <span class="n">ImageBackend</span><span class="p">,</span> <span class="n">image_color_channel</span><span class="p">:</span> <span class="n">ImageColorChannel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Change Datumaro image color channel while decoding.</span>
 
 <span class="sd">    For model training, it is recommended to use this context manager</span>
@@ -490,7 +487,7 @@ document.write(`
 
 <div class="viewcode-block" id="load_image">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.image.html#datumaro.plugins.data_formats.arrow.mapper.load_image">[docs]</a>
-<span class="k">def</span> <span class="nf">load_image</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">DTypeLike</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">,</span> <span class="n">crypter</span><span class="p">:</span> <span class="n">Crypter</span> <span class="o">=</span> <span class="n">NULL_CRYPTER</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_image</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">DTypeLike</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Reads an image in the HWC Grayscale/BGR(A) [0; 255] format (default dtype is uint8).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -501,12 +498,12 @@ document.write(`
         <span class="c1"># ourselves.</span>
 
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">image_bytes</span> <span class="o">=</span> <span class="n">crypter</span><span class="o">.</span><span class="n">decrypt</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+            <span class="n">image_bytes</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="n">decode_image</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">IMAGE_BACKEND</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="o">==</span> <span class="n">ImageBackend</span><span class="o">.</span><span class="n">PIL</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">IMAGE_BACKEND</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="o">==</span> <span class="n">ImageBackend</span><span class="o">.</span><span class="n">PIL</span><span class="p">:</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">image_bytes</span> <span class="o">=</span> <span class="n">crypter</span><span class="o">.</span><span class="n">decrypt</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+            <span class="n">image_bytes</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="n">decode_image</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
 
@@ -516,39 +513,34 @@ document.write(`
 
 <div class="viewcode-block" id="copyto_image">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.image.html#datumaro.plugins.data_formats.arrow.mapper.copyto_image">[docs]</a>
-<span class="k">def</span> <span class="nf">copyto_image</span><span class="p">(</span>
-    <span class="n">src</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">IOBase</span><span class="p">],</span> <span class="n">dst</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">IOBase</span><span class="p">],</span> <span class="n">src_crypter</span><span class="p">:</span> <span class="n">Crypter</span><span class="p">,</span> <span class="n">dst_crypter</span><span class="p">:</span> <span class="n">Crypter</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">src_crypter</span> <span class="o">==</span> <span class="n">dst_crypter</span> <span class="ow">and</span> <span class="n">src</span> <span class="o">==</span> <span class="n">dst</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">copyto_image</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">IOBase</span><span class="p">],</span> <span class="n">dst</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">IOBase</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">src</span> <span class="o">==</span> <span class="n">dst</span><span class="p">:</span>
         <span class="k">return</span>
 
     <span class="nd">@contextmanager</span>
-    <span class="k">def</span> <span class="nf">_open</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
-        <span class="n">was_file</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_open</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="n">IOBase</span><span class="p">):</span>
-            <span class="n">was_file</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="n">fp</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
-        <span class="k">yield</span> <span class="n">fp</span>
-        <span class="k">if</span> <span class="n">was_file</span><span class="p">:</span>
-            <span class="n">fp</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fp</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="n">fp</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">fp</span>
 
     <span class="k">with</span> <span class="n">_open</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">src_fp</span><span class="p">:</span>
-        <span class="n">_bytes</span> <span class="o">=</span> <span class="n">src_crypter</span><span class="o">.</span><span class="n">decrypt</span><span class="p">(</span><span class="n">src_fp</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="n">_bytes</span> <span class="o">=</span> <span class="n">src_fp</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
 
     <span class="k">with</span> <span class="n">_open</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">dst_fp</span><span class="p">:</span>
-        <span class="n">dst_fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">dst_crypter</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="n">_bytes</span><span class="p">))</span></div>
+        <span class="n">dst_fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">_bytes</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="save_image">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.image.html#datumaro.plugins.data_formats.arrow.mapper.save_image">[docs]</a>
-<span class="k">def</span> <span class="nf">save_image</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_image</span><span class="p">(</span>
     <span class="n">dst</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">IOBase</span><span class="p">],</span>
     <span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">ext</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">create_dir</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">dtype</span><span class="p">:</span> <span class="n">DTypeLike</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">,</span>
-    <span class="n">crypter</span><span class="p">:</span> <span class="n">Crypter</span> <span class="o">=</span> <span class="n">NULL_CRYPTER</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="c1"># NOTE: Check destination path for existence</span>
@@ -583,17 +575,14 @@ document.write(`
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">crypter</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">))</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">crypter</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">))</span>
+            <span class="n">dst</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">backend</span> <span class="o">==</span> <span class="n">ImageBackend</span><span class="o">.</span><span class="n">PIL</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
 
         <span class="k">if</span> <span class="n">ext</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
             <span class="n">ext</span> <span class="o">=</span> <span class="n">ext</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">crypter</span><span class="o">.</span><span class="n">is_null_crypter</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="s2">&quot;PIL backend should have crypter=NullCrypter.&quot;</span><span class="p">)</span>
 
         <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">params</span><span class="p">[</span><span class="s2">&quot;quality&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;jpeg_quality&quot;</span><span class="p">)</span>
@@ -606,18 +595,18 @@ document.write(`
         <span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
         <span class="n">image</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="n">ext</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
 
 <div class="viewcode-block" id="encode_image">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.image.html#datumaro.plugins.data_formats.arrow.mapper.encode_image">[docs]</a>
-<span class="k">def</span> <span class="nf">encode_image</span><span class="p">(</span><span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">ext</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">DTypeLike</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">encode_image</span><span class="p">(</span><span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">ext</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">DTypeLike</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">kwargs</span><span class="p">:</span>
         <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{}</span>
 
     <span class="k">if</span> <span class="n">IMAGE_BACKEND</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="o">==</span> <span class="n">ImageBackend</span><span class="o">.</span><span class="n">cv2</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">cv2</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
 
         <span class="n">params</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -632,8 +621,8 @@ document.write(`
         <span class="k">if</span> <span class="ow">not</span> <span class="n">success</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Failed to encode image to &#39;</span><span class="si">%s</span><span class="s2">&#39; format&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ext</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
-    <span class="k">elif</span> <span class="n">IMAGE_BACKEND</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="o">==</span> <span class="n">ImageBackend</span><span class="o">.</span><span class="n">PIL</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+    <span class="k">if</span> <span class="n">IMAGE_BACKEND</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="o">==</span> <span class="n">ImageBackend</span><span class="o">.</span><span class="n">PIL</span><span class="p">:</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">PIL</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
 
         <span class="k">if</span> <span class="n">ext</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">):</span>
             <span class="n">ext</span> <span class="o">=</span> <span class="n">ext</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
@@ -651,23 +640,32 @@ document.write(`
             <span class="n">image</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="n">ext</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
 
 <div class="viewcode-block" id="decode_image">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.image.html#datumaro.plugins.data_formats.arrow.mapper.decode_image">[docs]</a>
-<span class="k">def</span> <span class="nf">decode_image</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">DTypeLike</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">decode_image</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="n">ctx_color_scale</span> <span class="o">=</span> <span class="n">IMAGE_COLOR_CHANNEL</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
 
-    <span class="k">if</span> <span class="n">IMAGE_BACKEND</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="o">==</span> <span class="n">ImageBackend</span><span class="o">.</span><span class="n">cv2</span><span class="p">:</span>
-        <span class="n">image</span> <span class="o">=</span> <span class="n">ctx_color_scale</span><span class="o">.</span><span class="n">decode_by_cv2</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">)</span>
-        <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">IMAGE_BACKEND</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="o">==</span> <span class="n">ImageBackend</span><span class="o">.</span><span class="n">PIL</span><span class="p">:</span>
-        <span class="n">image</span> <span class="o">=</span> <span class="n">ctx_color_scale</span><span class="o">.</span><span class="n">decode_by_pil</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">)</span>
-        <span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">floating</span><span class="p">):</span>
+        <span class="c1"># PIL doesn&#39;t support floating point image loading</span>
+        <span class="c1"># CV doesn&#39;t support floating point image with color channel setting (IMREAD_COLOR)</span>
+        <span class="k">with</span> <span class="n">decode_image_context</span><span class="p">(</span><span class="n">image_backend</span><span class="o">=</span><span class="n">ImageBackend</span><span class="o">.</span><span class="n">cv2</span><span class="p">,</span> <span class="n">image_color_channel</span><span class="o">=</span><span class="n">ImageColorChannel</span><span class="o">.</span><span class="n">UNCHANGED</span><span class="p">):</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="n">ctx_color_scale</span><span class="o">.</span><span class="n">decode_by_cv2</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">ctx_color_scale</span> <span class="o">==</span> <span class="n">ImageColorChannel</span><span class="o">.</span><span class="n">COLOR_BGR</span><span class="p">:</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">IMAGE_BACKEND</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="o">==</span> <span class="n">ImageBackend</span><span class="o">.</span><span class="n">cv2</span><span class="p">:</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="n">ctx_color_scale</span><span class="o">.</span><span class="n">decode_by_cv2</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">IMAGE_BACKEND</span><span class="o">.</span><span class="n">get</span><span class="p">()</span> <span class="o">==</span> <span class="n">ImageBackend</span><span class="o">.</span><span class="n">PIL</span><span class="p">:</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="n">ctx_color_scale</span><span class="o">.</span><span class="n">decode_by_pil</span><span class="p">(</span><span class="n">image_bytes</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
 
     <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="ow">in</span> <span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">}</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
@@ -704,9 +702,9 @@ document.write(`
 
 <div class="viewcode-block" id="find_images">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.image.html#datumaro.plugins.data_formats.arrow.mapper.find_images">[docs]</a>
-<span class="k">def</span> <span class="nf">find_images</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_images</span><span class="p">(</span>
     <span class="n">dirpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">exts</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">exts</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">recursive</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">max_depth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">min_depth</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -723,7 +721,7 @@ document.write(`
 
 <div class="viewcode-block" id="is_image">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.image.html#datumaro.plugins.data_formats.arrow.mapper.is_image">[docs]</a>
-<span class="k">def</span> <span class="nf">is_image</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_image</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="n">trunk</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">trunk</span> <span class="ow">and</span> <span class="n">ext</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">IMAGE_EXTENSIONS</span> <span class="ow">and</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
 
@@ -731,13 +729,13 @@ document.write(`
 
 <div class="viewcode-block" id="lazy_image">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.image.html#datumaro.plugins.data_formats.arrow.mapper.lazy_image">[docs]</a>
-<span class="k">class</span> <span class="nc">lazy_image</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">lazy_image</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">loader</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">loader</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">cache</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">ImageCache</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">crypter</span><span class="p">:</span> <span class="n">Crypter</span> <span class="o">=</span> <span class="n">NULL_CRYPTER</span><span class="p">,</span>
+        <span class="n">dtype</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DTypeLike</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Cache:</span>
@@ -749,7 +747,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_custom_loader</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="k">if</span> <span class="n">loader</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">loader</span> <span class="o">=</span> <span class="n">load_image</span>
+            <span class="n">loader</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">load_image</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span> <span class="k">if</span> <span class="n">dtype</span> <span class="k">else</span> <span class="n">load_image</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_custom_loader</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_path</span> <span class="o">=</span> <span class="n">path</span>
@@ -757,9 +755,9 @@ document.write(`
 
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="p">(</span><span class="n">ImageCache</span><span class="p">,</span> <span class="nb">bool</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span> <span class="o">=</span> <span class="n">cache</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_crypter</span> <span class="o">=</span> <span class="n">crypter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dtype</span> <span class="o">=</span> <span class="n">dtype</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="n">image</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">cache_key</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
@@ -768,16 +766,12 @@ document.write(`
             <span class="n">image</span> <span class="o">=</span> <span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">cache_key</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">image</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">image</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_loader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span>
-                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_custom_loader</span>
-                <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="n">crypter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_crypter</span><span class="p">)</span>
-            <span class="p">)</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">cache</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">cache</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="n">cache_key</span><span class="p">,</span> <span class="n">image</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">image</span>
 
-    <span class="k">def</span> <span class="nf">_get_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ImageCache</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ImageCache</span><span class="p">]:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">cache</span> <span class="o">=</span> <span class="n">ImageCache</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
@@ -796,7 +790,7 @@ document.write(`
 
 <div class="viewcode-block" id="load_image_meta_file">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.image.html#datumaro.plugins.data_formats.arrow.mapper.load_image_meta_file">[docs]</a>
-<span class="k">def</span> <span class="nf">load_image_meta_file</span><span class="p">(</span><span class="n">image_meta_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ImageMeta</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_image_meta_file</span><span class="p">(</span><span class="n">image_meta_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ImageMeta</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Loads image metadata from a file with the following format:</span>
 
@@ -834,7 +828,7 @@ document.write(`
 
 <div class="viewcode-block" id="save_image_meta_file">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.util.image.html#datumaro.plugins.data_formats.arrow.mapper.save_image_meta_file">[docs]</a>
-<span class="k">def</span> <span class="nf">save_image_meta_file</span><span class="p">(</span><span class="n">image_meta</span><span class="p">:</span> <span class="n">ImageMeta</span><span class="p">,</span> <span class="n">image_meta_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_image_meta_file</span><span class="p">(</span><span class="n">image_meta</span><span class="p">:</span> <span class="n">ImageMeta</span><span class="p">,</span> <span class="n">image_meta_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Saves image_meta to the path specified by image_meta_path in the format</span>
 <span class="sd">    defined in load_image_meta_file&#39;s documentation.</span>

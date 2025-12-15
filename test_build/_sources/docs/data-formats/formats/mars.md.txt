@@ -19,17 +19,14 @@ Required attributes:
   frame within this track. For the tracks, their names are accumulated
   for each ID, but for frames, they start from "0001" in each track.
 
-## Import MARS dataset
+## Convert MARS dataset
 
-Use these instructions to import MARS dataset into Datumaro project:
+Use these instructions to convert MARS dataset with Datumaro:
 
 ```bash
-datum project create
-datum project add -f mars ./dataset
+datum convert --input-format mars --input-path ./dataset \
+    --output-format <desired_format> --output-dir <output/dir>
 ```
-
-> Note: the directory with dataset should be subdirectory of the
-> project directory.
 
 ```
 mars_dataset

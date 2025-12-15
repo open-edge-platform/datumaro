@@ -27,10 +27,10 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=8b7c274f" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -43,7 +43,7 @@
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../../_static/design-tabs.js?v=36754332"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/components/errors';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -192,7 +192,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
       
@@ -279,7 +279,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
         
@@ -340,194 +340,194 @@ document.write(`
                 <article class="bd-article">
                   
   <h1>Source code for datumaro.components.errors</h1><div class="highlight"><pre>
-<span></span><span class="c1"># Copyright (C) 2020-2022 Intel Corporation</span>
+<span></span><span class="c1"># Copyright (C) 2020-2024 Intel Corporation</span>
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 
-<span class="kn">from</span> <span class="nn">attrs</span> <span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">validators</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">attrs</span><span class="w"> </span><span class="kn">import</span> <span class="n">define</span><span class="p">,</span> <span class="n">field</span><span class="p">,</span> <span class="n">validators</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.util.attrs_util</span> <span class="kn">import</span> <span class="n">has_length</span><span class="p">,</span> <span class="n">not_empty</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.attrs_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">has_length</span><span class="p">,</span> <span class="n">not_empty</span>
 
 
 <div class="viewcode-block" id="ImmutableObjectError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.ImmutableObjectError">[docs]</a>
-<span class="k">class</span> <span class="nc">ImmutableObjectError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.ImmutableObjectError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImmutableObjectError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;Cannot set value of immutable object&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="DatumaroError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.inference_server_plugin.triton.html#datumaro.cli.commands.require_project.modification.add.DatumaroError">[docs]</a>
-<span class="k">class</span> <span class="nc">DatumaroError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.mapper.html#datumaro.components.annotations.merger.DatumaroError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DatumaroError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="VcsError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.VcsError">[docs]</a>
-<span class="k">class</span> <span class="nc">VcsError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.VcsError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">VcsError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="ReadonlyDatasetError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.ReadonlyDatasetError">[docs]</a>
-<span class="k">class</span> <span class="nc">ReadonlyDatasetError</span><span class="p">(</span><span class="n">VcsError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.ReadonlyDatasetError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ReadonlyDatasetError</span><span class="p">(</span><span class="n">VcsError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;Can&#39;t update a read-only dataset&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="ReadonlyProjectError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.ReadonlyProjectError">[docs]</a>
-<span class="k">class</span> <span class="nc">ReadonlyProjectError</span><span class="p">(</span><span class="n">VcsError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.ReadonlyProjectError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ReadonlyProjectError</span><span class="p">(</span><span class="n">VcsError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;Can&#39;t change a read-only project&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="UnknownRefError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.UnknownRefError">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.UnknownRefError">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">UnknownRefError</span><span class="p">(</span><span class="n">VcsError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnknownRefError</span><span class="p">(</span><span class="n">VcsError</span><span class="p">):</span>
     <span class="n">ref</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Can&#39;t parse ref &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ref</span><span class="si">}</span><span class="s2">&#39;&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="MissingObjectError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.MissingObjectError">[docs]</a>
-<span class="k">class</span> <span class="nc">MissingObjectError</span><span class="p">(</span><span class="n">VcsError</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.MissingObjectError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MissingObjectError</span><span class="p">(</span><span class="n">VcsError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="MismatchingObjectError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.MismatchingObjectError">[docs]</a>
-<span class="k">class</span> <span class="nc">MismatchingObjectError</span><span class="p">(</span><span class="n">VcsError</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.MismatchingObjectError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MismatchingObjectError</span><span class="p">(</span><span class="n">VcsError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="UnsavedChangesError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.UnsavedChangesError">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.UnsavedChangesError">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">UnsavedChangesError</span><span class="p">(</span><span class="n">VcsError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnsavedChangesError</span><span class="p">(</span><span class="n">VcsError</span><span class="p">):</span>
     <span class="n">paths</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;There are some uncommitted changes: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">paths</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="ForeignChangesError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.ForeignChangesError">[docs]</a>
-<span class="k">class</span> <span class="nc">ForeignChangesError</span><span class="p">(</span><span class="n">VcsError</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.ForeignChangesError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ForeignChangesError</span><span class="p">(</span><span class="n">VcsError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="EmptyCommitError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.EmptyCommitError">[docs]</a>
-<span class="k">class</span> <span class="nc">EmptyCommitError</span><span class="p">(</span><span class="n">VcsError</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.EmptyCommitError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EmptyCommitError</span><span class="p">(</span><span class="n">VcsError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="PathOutsideSourceError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.PathOutsideSourceError">[docs]</a>
-<span class="k">class</span> <span class="nc">PathOutsideSourceError</span><span class="p">(</span><span class="n">VcsError</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.PathOutsideSourceError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PathOutsideSourceError</span><span class="p">(</span><span class="n">VcsError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="SourceUrlInsideProjectError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.SourceUrlInsideProjectError">[docs]</a>
-<span class="k">class</span> <span class="nc">SourceUrlInsideProjectError</span><span class="p">(</span><span class="n">VcsError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.SourceUrlInsideProjectError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SourceUrlInsideProjectError</span><span class="p">(</span><span class="n">VcsError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;Source URL cannot point inside the project&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="UnexpectedUrlError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.UnexpectedUrlError">[docs]</a>
-<span class="k">class</span> <span class="nc">UnexpectedUrlError</span><span class="p">(</span><span class="n">VcsError</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.UnexpectedUrlError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnexpectedUrlError</span><span class="p">(</span><span class="n">VcsError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="MissingSourceHashError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.MissingSourceHashError">[docs]</a>
-<span class="k">class</span> <span class="nc">MissingSourceHashError</span><span class="p">(</span><span class="n">VcsError</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.MissingSourceHashError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MissingSourceHashError</span><span class="p">(</span><span class="n">VcsError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="PipelineError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.PipelineError">[docs]</a>
-<span class="k">class</span> <span class="nc">PipelineError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.PipelineError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PipelineError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="InvalidPipelineError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.InvalidPipelineError">[docs]</a>
-<span class="k">class</span> <span class="nc">InvalidPipelineError</span><span class="p">(</span><span class="n">PipelineError</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.InvalidPipelineError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">InvalidPipelineError</span><span class="p">(</span><span class="n">PipelineError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="EmptyPipelineError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.EmptyPipelineError">[docs]</a>
-<span class="k">class</span> <span class="nc">EmptyPipelineError</span><span class="p">(</span><span class="n">InvalidPipelineError</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.EmptyPipelineError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EmptyPipelineError</span><span class="p">(</span><span class="n">InvalidPipelineError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="MultiplePipelineHeadsError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.MultiplePipelineHeadsError">[docs]</a>
-<span class="k">class</span> <span class="nc">MultiplePipelineHeadsError</span><span class="p">(</span><span class="n">InvalidPipelineError</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.MultiplePipelineHeadsError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MultiplePipelineHeadsError</span><span class="p">(</span><span class="n">InvalidPipelineError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="MissingPipelineHeadError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.MissingPipelineHeadError">[docs]</a>
-<span class="k">class</span> <span class="nc">MissingPipelineHeadError</span><span class="p">(</span><span class="n">InvalidPipelineError</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.MissingPipelineHeadError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MissingPipelineHeadError</span><span class="p">(</span><span class="n">InvalidPipelineError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="InvalidStageError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.InvalidStageError">[docs]</a>
-<span class="k">class</span> <span class="nc">InvalidStageError</span><span class="p">(</span><span class="n">InvalidPipelineError</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.InvalidStageError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">InvalidStageError</span><span class="p">(</span><span class="n">InvalidPipelineError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="UnknownStageError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.UnknownStageError">[docs]</a>
-<span class="k">class</span> <span class="nc">UnknownStageError</span><span class="p">(</span><span class="n">InvalidStageError</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.UnknownStageError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnknownStageError</span><span class="p">(</span><span class="n">InvalidStageError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="MigrationError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.MigrationError">[docs]</a>
-<span class="k">class</span> <span class="nc">MigrationError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.MigrationError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MigrationError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="OldProjectError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.OldProjectError">[docs]</a>
-<span class="k">class</span> <span class="nc">OldProjectError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.OldProjectError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">OldProjectError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">            The project you&#39;re trying to load was</span>
 <span class="s2">            created by the old Datumaro version. Try to migrate the</span>
@@ -537,74 +537,74 @@ document.write(`
 
 
 <div class="viewcode-block" id="NotAvailableError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.NotAvailableError">[docs]</a>
-<span class="k">class</span> <span class="nc">NotAvailableError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.NotAvailableError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NotAvailableError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="ProjectNotFoundError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.ProjectNotFoundError">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.ProjectNotFoundError">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">ProjectNotFoundError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ProjectNotFoundError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Can&#39;t find project at &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">&#39;&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="ProjectAlreadyExists">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.ProjectAlreadyExists">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.ProjectAlreadyExists">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">ProjectAlreadyExists</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ProjectAlreadyExists</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Can&#39;t create project: a project already exists &quot;</span> <span class="sa">f</span><span class="s2">&quot;at &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">&#39;&quot;</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Can&#39;t create project: a project already exists at &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">&#39;&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="VcsAlreadyExists">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.VcsAlreadyExists">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.VcsAlreadyExists">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">VcsAlreadyExists</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VcsAlreadyExists</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Can&#39;t create project: a version control system already exists &quot;</span> <span class="sa">f</span><span class="s2">&quot;at &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">&#39;&quot;</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Can&#39;t create project: a version control system already exists at &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">&#39;&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="UnknownSourceError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.UnknownSourceError">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.UnknownSourceError">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">UnknownSourceError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnknownSourceError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Unknown source &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="UnknownTargetError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.UnknownTargetError">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.UnknownTargetError">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">UnknownTargetError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnknownTargetError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Unknown target &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="UnknownFormatError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.UnknownFormatError">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.UnknownFormatError">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">UnknownFormatError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UnknownFormatError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
     <span class="nb">format</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Unknown source format &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">format</span><span class="si">}</span><span class="s2">&#39;. To make it &quot;</span>
             <span class="s2">&quot;available, add the corresponding Extractor implementation &quot;</span>
@@ -614,27 +614,27 @@ document.write(`
 
 
 <div class="viewcode-block" id="SourceExistsError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.SourceExistsError">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.SourceExistsError">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">SourceExistsError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SourceExistsError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Source &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; already exists&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="DatasetExportError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.DatasetExportError">[docs]</a>
-<span class="k">class</span> <span class="nc">DatasetExportError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.DatasetExportError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DatasetExportError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="ItemExportError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.ItemExportError">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.ItemExportError">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">ItemExportError</span><span class="p">(</span><span class="n">DatasetExportError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ItemExportError</span><span class="p">(</span><span class="n">DatasetExportError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Represents additional item error info. The error itself is supposed to be</span>
 <span class="sd">    in the `__cause__` member.</span>
@@ -642,28 +642,28 @@ document.write(`
 
     <span class="n">item_id</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;Failed to export item </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item_id</span><span class="p">,)</span></div>
 
 
 
 <div class="viewcode-block" id="AnnotationExportError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.AnnotationExportError">[docs]</a>
-<span class="k">class</span> <span class="nc">AnnotationExportError</span><span class="p">(</span><span class="n">ItemExportError</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.AnnotationExportError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AnnotationExportError</span><span class="p">(</span><span class="n">ItemExportError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="DatasetImportError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.cli.commands.require_project.modification.add.DatasetImportError">[docs]</a>
-<span class="k">class</span> <span class="nc">DatasetImportError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.components.annotations.merger.DatasetImportError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DatasetImportError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="InvalidAnnotationError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.cli.commands.require_project.modification.add.InvalidAnnotationError">[docs]</a>
-<span class="k">class</span> <span class="nc">InvalidAnnotationError</span><span class="p">(</span><span class="n">DatasetImportError</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.components.annotations.merger.InvalidAnnotationError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">InvalidAnnotationError</span><span class="p">(</span><span class="n">DatasetImportError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A basic dataset parsing error. Should include the problem description in</span>
 <span class="sd">    the message.</span>
@@ -672,28 +672,28 @@ document.write(`
 
 
 <div class="viewcode-block" id="InvalidFieldError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.InvalidFieldError">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.InvalidFieldError">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">InvalidFieldError</span><span class="p">(</span><span class="n">InvalidAnnotationError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">InvalidFieldError</span><span class="p">(</span><span class="n">InvalidAnnotationError</span><span class="p">):</span>
     <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">validator</span><span class="o">=</span><span class="p">[</span><span class="n">validators</span><span class="o">.</span><span class="n">instance_of</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span> <span class="n">not_empty</span><span class="p">])</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Field name&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Invalid annotation field &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; value&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="InvalidFieldTypeError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.InvalidFieldTypeError">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.InvalidFieldTypeError">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">InvalidFieldTypeError</span><span class="p">(</span><span class="n">InvalidFieldError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">InvalidFieldTypeError</span><span class="p">(</span><span class="n">InvalidFieldError</span><span class="p">):</span>
     <span class="n">actual</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">validator</span><span class="o">=</span><span class="p">[</span><span class="n">validators</span><span class="o">.</span><span class="n">instance_of</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span> <span class="n">not_empty</span><span class="p">])</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Actual type of the field&quot;&quot;&quot;</span>
 
     <span class="n">expected</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">validator</span><span class="o">=</span><span class="p">[</span><span class="n">validators</span><span class="o">.</span><span class="n">instance_of</span><span class="p">(</span><span class="nb">tuple</span><span class="p">),</span> <span class="n">not_empty</span><span class="p">])</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The list of expected types of the field&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expected</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">expected</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expected</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
@@ -703,156 +703,171 @@ document.write(`
 
 
 <div class="viewcode-block" id="MissingFieldError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.MissingFieldError">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.MissingFieldError">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">MissingFieldError</span><span class="p">(</span><span class="n">InvalidFieldError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MissingFieldError</span><span class="p">(</span><span class="n">InvalidFieldError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Missing annotation field &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="UndeclaredLabelError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.cli.commands.require_project.modification.add.UndeclaredLabelError">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.yolo.base.html#datumaro.components.annotations.merger.UndeclaredLabelError">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">UndeclaredLabelError</span><span class="p">(</span><span class="n">InvalidAnnotationError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UndeclaredLabelError</span><span class="p">(</span><span class="n">InvalidAnnotationError</span><span class="p">):</span>
     <span class="nb">id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">validator</span><span class="o">=</span><span class="n">validators</span><span class="o">.</span><span class="n">instance_of</span><span class="p">(</span><span class="nb">str</span><span class="p">))</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Index or name&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Undeclared label &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&#39;&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="ItemImportError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.ItemImportError">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.ItemImportError">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">ItemImportError</span><span class="p">(</span><span class="n">DatasetImportError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ItemImportError</span><span class="p">(</span><span class="n">DatasetImportError</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wraps a dataset parsing error and provides additional error context info.</span>
 <span class="sd">    The error itself is supposed to be in the `__cause__` member.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">item_id</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span>
-        <span class="n">validator</span><span class="o">=</span><span class="p">[</span><span class="n">validators</span><span class="o">.</span><span class="n">instance_of</span><span class="p">(</span><span class="nb">tuple</span><span class="p">),</span> <span class="n">has_length</span><span class="p">(</span><span class="mi">2</span><span class="p">)]</span>
-    <span class="p">)</span>
+    <span class="n">item_id</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">validator</span><span class="o">=</span><span class="p">[</span><span class="n">validators</span><span class="o">.</span><span class="n">instance_of</span><span class="p">(</span><span class="nb">tuple</span><span class="p">),</span> <span class="n">has_length</span><span class="p">(</span><span class="mi">2</span><span class="p">)])</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    (id, subset) of the item with problem.</span>
 <span class="sd">    If id or subset cannot be reported, such field is set to None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Failed to import item </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">item_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__cause__</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="AnnotationImportError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.AnnotationImportError">[docs]</a>
-<span class="k">class</span> <span class="nc">AnnotationImportError</span><span class="p">(</span><span class="n">ItemImportError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.AnnotationImportError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AnnotationImportError</span><span class="p">(</span><span class="n">ItemImportError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Failed to import item </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">item_id</span><span class="si">}</span><span class="s2"> annotation: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__cause__</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="DatasetNotFoundError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.importer.html#datumaro.cli.commands.require_project.modification.add.DatasetNotFoundError">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.importer.html#datumaro.components.annotations.merger.DatasetNotFoundError">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">DatasetNotFoundError</span><span class="p">(</span><span class="n">DatasetImportError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DatasetNotFoundError</span><span class="p">(</span><span class="n">DatasetImportError</span><span class="p">):</span>
     <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="nb">format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">template</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="s2">&quot;Failed to find dataset &#39;</span><span class="si">{format}</span><span class="s2">&#39; at &#39;</span><span class="si">{path}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">format</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="MultipleFormatsMatchError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.MultipleFormatsMatchError">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.MultipleFormatsMatchError">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">MultipleFormatsMatchError</span><span class="p">(</span><span class="n">DatasetImportError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MultipleFormatsMatchError</span><span class="p">(</span><span class="n">DatasetImportError</span><span class="p">):</span>
     <span class="n">formats</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="s2">&quot;Failed to detect dataset format automatically:&quot;</span>
-            <span class="s2">&quot; data matches more than one format: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">formats</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;Failed to detect dataset format automatically: data matches more than one format: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">formats</span>
         <span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="NoMatchingFormatsError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.NoMatchingFormatsError">[docs]</a>
-<span class="k">class</span> <span class="nc">NoMatchingFormatsError</span><span class="p">(</span><span class="n">DatasetImportError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s2">&quot;Failed to detect dataset format automatically: &quot;</span> <span class="s2">&quot;no matching formats found&quot;</span></div>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.NoMatchingFormatsError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NoMatchingFormatsError</span><span class="p">(</span><span class="n">DatasetImportError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;Failed to detect dataset format automatically: no matching formats found&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="DatasetError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.cli.commands.require_project.modification.add.DatasetError">[docs]</a>
-<span class="k">class</span> <span class="nc">DatasetError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.components.annotations.merger.DatasetError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DatasetError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="AnnotationTypeError">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.AnnotationTypeError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AnnotationTypeError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="MediaTypeError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro.base.html#datumaro.cli.commands.require_project.modification.add.MediaTypeError">[docs]</a>
-<span class="k">class</span> <span class="nc">MediaTypeError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro.base.html#datumaro.components.annotations.merger.MediaTypeError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MediaTypeError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="MediaShapeError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.MediaShapeError">[docs]</a>
-<span class="k">class</span> <span class="nc">MediaShapeError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.MediaShapeError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MediaShapeError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="DatasetInfosRedefinedError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.DatasetInfosRedefinedError">[docs]</a>
-<span class="k">class</span> <span class="nc">DatasetInfosRedefinedError</span><span class="p">(</span><span class="n">DatasetError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.DatasetInfosRedefinedError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DatasetInfosRedefinedError</span><span class="p">(</span><span class="n">DatasetError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;Infos can only be set once for a dataset&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="CategoriesRedefinedError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.CategoriesRedefinedError">[docs]</a>
-<span class="k">class</span> <span class="nc">CategoriesRedefinedError</span><span class="p">(</span><span class="n">DatasetError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.CategoriesRedefinedError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CategoriesRedefinedError</span><span class="p">(</span><span class="n">DatasetError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;Categories can only be set once for a dataset&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="RepeatedItemError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.RepeatedItemError">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.RepeatedItemError">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">RepeatedItemError</span><span class="p">(</span><span class="n">DatasetError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RepeatedItemError</span><span class="p">(</span><span class="n">DatasetError</span><span class="p">):</span>
     <span class="n">item_id</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Item </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">item_id</span><span class="si">}</span><span class="s2"> is repeated in the source sequence.&quot;</span></div>
 
 
 
+<div class="viewcode-block" id="PathSeparatorInSubsetNameError">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.PathSeparatorInSubsetNameError">[docs]</a>
+<span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PathSeparatorInSubsetNameError</span><span class="p">(</span><span class="n">DatasetError</span><span class="p">):</span>
+    <span class="n">subset</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Failed to export the subset &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">subset</span><span class="si">}</span><span class="s2">&#39;: subset name contains path separator(s).&quot;</span></div>
+
+
+
 <div class="viewcode-block" id="DatasetQualityError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.DatasetQualityError">[docs]</a>
-<span class="k">class</span> <span class="nc">DatasetQualityError</span><span class="p">(</span><span class="n">DatasetError</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.DatasetQualityError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DatasetQualityError</span><span class="p">(</span><span class="n">DatasetError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="AnnotationsTooCloseError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.cli.commands.require_project.modification.add.AnnotationsTooCloseError">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.annotations.merger.AnnotationsTooCloseError">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">AnnotationsTooCloseError</span><span class="p">(</span><span class="n">DatasetQualityError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AnnotationsTooCloseError</span><span class="p">(</span><span class="n">DatasetQualityError</span><span class="p">):</span>
     <span class="n">item_id</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">b</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">distance</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: annotations are too close: </span><span class="si">%s</span><span class="s2">, </span><span class="si">%s</span><span class="s2">, distance = </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">item_id</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span>
@@ -863,16 +878,16 @@ document.write(`
 
 
 <div class="viewcode-block" id="WrongGroupError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.cli.commands.require_project.modification.add.WrongGroupError">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.annotations.merger.WrongGroupError">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">WrongGroupError</span><span class="p">(</span><span class="n">DatasetQualityError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">WrongGroupError</span><span class="p">(</span><span class="n">DatasetQualityError</span><span class="p">):</span>
     <span class="n">item_id</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">found</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">set</span><span class="p">)</span>
     <span class="n">expected</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">set</span><span class="p">)</span>
     <span class="n">group</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: annotation group has wrong labels: &quot;</span> <span class="s2">&quot;found </span><span class="si">%s</span><span class="s2">, expected </span><span class="si">%s</span><span class="s2">, group </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: annotation group has wrong labels: found </span><span class="si">%s</span><span class="s2">, expected </span><span class="si">%s</span><span class="s2">, group </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">item_id</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">found</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">expected</span><span class="p">,</span>
@@ -882,12 +897,12 @@ document.write(`
 
 
 <div class="viewcode-block" id="DatasetMergeError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.exact_merge.html#datumaro.cli.commands.require_project.modification.add.DatasetMergeError">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.exact_merge.html#datumaro.components.annotations.merger.DatasetMergeError">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">DatasetMergeError</span><span class="p">(</span><span class="n">DatasetError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DatasetMergeError</span><span class="p">(</span><span class="n">DatasetError</span><span class="p">):</span>
     <span class="n">sources</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">set</span><span class="p">,</span> <span class="n">factory</span><span class="o">=</span><span class="nb">set</span><span class="p">,</span> <span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_my__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">sources</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_my__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">sources</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__attrs_init__</span><span class="p">(</span><span class="n">sources</span><span class="o">=</span><span class="n">sources</span> <span class="ow">or</span> <span class="nb">set</span><span class="p">())</span></div>
 
@@ -899,54 +914,54 @@ document.write(`
 
 
 <div class="viewcode-block" id="MismatchingImageInfoError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.exact_merge.html#datumaro.cli.commands.require_project.modification.add.MismatchingImageInfoError">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.exact_merge.html#datumaro.components.annotations.merger.MismatchingImageInfoError">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">MismatchingImageInfoError</span><span class="p">(</span><span class="n">DatasetMergeError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MismatchingImageInfoError</span><span class="p">(</span><span class="n">DatasetMergeError</span><span class="p">):</span>
     <span class="n">item_id</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
     <span class="n">a</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
     <span class="n">b</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: mismatching image size info: </span><span class="si">%s</span><span class="s2"> vs </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="MismatchingMediaPathError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.exact_merge.html#datumaro.cli.commands.require_project.modification.add.MismatchingMediaPathError">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.exact_merge.html#datumaro.components.annotations.merger.MismatchingMediaPathError">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">MismatchingMediaPathError</span><span class="p">(</span><span class="n">DatasetMergeError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MismatchingMediaPathError</span><span class="p">(</span><span class="n">DatasetMergeError</span><span class="p">):</span>
     <span class="n">item_id</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
     <span class="n">a</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">b</span><span class="p">:</span> <span class="nb">str</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: mismatching media path info: </span><span class="si">%s</span><span class="s2"> vs </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="MismatchingMediaError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.exact_merge.html#datumaro.cli.commands.require_project.modification.add.MismatchingMediaError">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.exact_merge.html#datumaro.components.annotations.merger.MismatchingMediaError">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">MismatchingMediaError</span><span class="p">(</span><span class="n">DatasetMergeError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MismatchingMediaError</span><span class="p">(</span><span class="n">DatasetMergeError</span><span class="p">):</span>
     <span class="n">item_id</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
     <span class="n">a</span><span class="p">:</span> <span class="n">Any</span>
     <span class="n">b</span><span class="p">:</span> <span class="n">Any</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: mismatching media info: </span><span class="si">%s</span><span class="s2"> vs </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="MismatchingAttributesError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.exact_merge.html#datumaro.cli.commands.require_project.modification.add.MismatchingAttributesError">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.exact_merge.html#datumaro.components.annotations.merger.MismatchingAttributesError">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">MismatchingAttributesError</span><span class="p">(</span><span class="n">DatasetMergeError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MismatchingAttributesError</span><span class="p">(</span><span class="n">DatasetMergeError</span><span class="p">):</span>
     <span class="n">item_id</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
     <span class="n">key</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">a</span><span class="p">:</span> <span class="n">Any</span>
     <span class="n">b</span><span class="p">:</span> <span class="n">Any</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: mismatching image attribute </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2"> vs </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">item_id</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">,</span>
@@ -957,21 +972,21 @@ document.write(`
 
 
 <div class="viewcode-block" id="ConflictingCategoriesError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.cli.commands.require_project.modification.add.ConflictingCategoriesError">[docs]</a>
-<span class="k">class</span> <span class="nc">ConflictingCategoriesError</span><span class="p">(</span><span class="n">DatasetMergeError</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.annotations.merger.ConflictingCategoriesError">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConflictingCategoriesError</span><span class="p">(</span><span class="n">DatasetMergeError</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
 
 <div class="viewcode-block" id="NoMatchingAnnError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.cli.commands.require_project.modification.add.NoMatchingAnnError">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.annotations.merger.NoMatchingAnnError">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">NoMatchingAnnError</span><span class="p">(</span><span class="n">DatasetMergeError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NoMatchingAnnError</span><span class="p">(</span><span class="n">DatasetMergeError</span><span class="p">):</span>
     <span class="n">item_id</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">ann</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: can&#39;t find matching annotation &quot;</span> <span class="s2">&quot;in sources </span><span class="si">%s</span><span class="s2">, annotation is </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: can&#39;t find matching annotation in sources </span><span class="si">%s</span><span class="s2">, annotation is </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">item_id</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ann</span><span class="p">,</span>
@@ -980,25 +995,25 @@ document.write(`
 
 
 <div class="viewcode-block" id="NoMatchingItemError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.cli.commands.require_project.modification.add.NoMatchingItemError">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.annotations.merger.NoMatchingItemError">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">NoMatchingItemError</span><span class="p">(</span><span class="n">DatasetMergeError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NoMatchingItemError</span><span class="p">(</span><span class="n">DatasetMergeError</span><span class="p">):</span>
     <span class="n">item_id</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: can&#39;t find matching item in sources </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="FailedLabelVotingError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.FailedLabelVotingError">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.FailedLabelVotingError">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">FailedLabelVotingError</span><span class="p">(</span><span class="n">DatasetMergeError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FailedLabelVotingError</span><span class="p">(</span><span class="n">DatasetMergeError</span><span class="p">):</span>
     <span class="n">item_id</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">votes</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">ann</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: label voting failed</span><span class="si">%s</span><span class="s2">, votes </span><span class="si">%s</span><span class="s2">, sources </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">item_id</span><span class="p">,</span>
             <span class="s2">&quot;for ann </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">ann</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ann</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
@@ -1009,16 +1024,16 @@ document.write(`
 
 
 <div class="viewcode-block" id="FailedAttrVotingError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.cli.commands.require_project.modification.add.FailedAttrVotingError">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.annotations.merger.FailedAttrVotingError">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">FailedAttrVotingError</span><span class="p">(</span><span class="n">DatasetMergeError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FailedAttrVotingError</span><span class="p">(</span><span class="n">DatasetMergeError</span><span class="p">):</span>
     <span class="n">item_id</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">attr</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">votes</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">ann</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: attribute voting failed &quot;</span> <span class="s2">&quot;for ann </span><span class="si">%s</span><span class="s2">, votes </span><span class="si">%s</span><span class="s2">, sources </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: attribute voting failed for ann </span><span class="si">%s</span><span class="s2">, votes </span><span class="si">%s</span><span class="s2">, sources </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">item_id</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">ann</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">votes</span><span class="p">,</span>
@@ -1028,25 +1043,25 @@ document.write(`
 
 
 <div class="viewcode-block" id="VideoMergeError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.exact_merge.html#datumaro.cli.commands.require_project.modification.add.VideoMergeError">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.merge.exact_merge.html#datumaro.components.annotations.merger.VideoMergeError">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">VideoMergeError</span><span class="p">(</span><span class="n">DatasetMergeError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">VideoMergeError</span><span class="p">(</span><span class="n">DatasetMergeError</span><span class="p">):</span>
     <span class="n">item_id</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: video merging is not possible&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item_id</span><span class="p">,)</span></div>
 
 
 
 <div class="viewcode-block" id="DatasetValidationError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.DatasetValidationError">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.DatasetValidationError">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">DatasetValidationError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DatasetValidationError</span><span class="p">(</span><span class="n">DatumaroError</span><span class="p">):</span>
     <span class="n">severity</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
 <div class="viewcode-block" id="DatasetValidationError.to_dict">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.DatasetValidationError.to_dict">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.DatasetValidationError.to_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;anomaly_type&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
             <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span>
@@ -1057,15 +1072,15 @@ document.write(`
 
 
 <div class="viewcode-block" id="DatasetItemValidationError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.DatasetItemValidationError">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.DatasetItemValidationError">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">DatasetItemValidationError</span><span class="p">(</span><span class="n">DatasetValidationError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DatasetItemValidationError</span><span class="p">(</span><span class="n">DatasetValidationError</span><span class="p">):</span>
     <span class="n">item_id</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">subset</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
 <div class="viewcode-block" id="DatasetItemValidationError.to_dict">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.DatasetItemValidationError.to_dict">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.DatasetItemValidationError.to_dict">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">dict_repr</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
         <span class="n">dict_repr</span><span class="p">[</span><span class="s2">&quot;item_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_id</span>
         <span class="n">dict_repr</span><span class="p">[</span><span class="s2">&quot;subset&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subset</span>
@@ -1075,65 +1090,98 @@ document.write(`
 
 
 <div class="viewcode-block" id="MissingLabelCategories">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.MissingLabelCategories">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.MissingLabelCategories">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">MissingLabelCategories</span><span class="p">(</span><span class="n">DatasetValidationError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s2">&quot;Metadata (ex. LabelCategories) should be defined&quot;</span> <span class="s2">&quot; to validate a dataset.&quot;</span></div>
+<span class="k">class</span><span class="w"> </span><span class="nc">MissingLabelCategories</span><span class="p">(</span><span class="n">DatasetValidationError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;Metadata (ex. LabelCategories) should be defined to validate a dataset.&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="MissingAnnotation">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.MissingAnnotation">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.MissingAnnotation">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">MissingAnnotation</span><span class="p">(</span><span class="n">DatasetItemValidationError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MissingAnnotation</span><span class="p">(</span><span class="n">DatasetItemValidationError</span><span class="p">):</span>
     <span class="n">ann_type</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Item needs &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ann_type</span><span class="si">}</span><span class="s2">&#39; annotation(s), &quot;</span> <span class="s2">&quot;but not found.&quot;</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Item needs &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ann_type</span><span class="si">}</span><span class="s2">&#39; annotation(s), but not found.&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="BrokenAnnotation">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.BrokenAnnotation">[docs]</a>
+<span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BrokenAnnotation</span><span class="p">(</span><span class="n">DatasetItemValidationError</span><span class="p">):</span>
+    <span class="n">ann_type</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Item needs whole &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ann_type</span><span class="si">}</span><span class="s2">&#39; annotation(s), but missed some.&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="EmptyLabel">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.EmptyLabel">[docs]</a>
+<span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EmptyLabel</span><span class="p">(</span><span class="n">DatasetItemValidationError</span><span class="p">):</span>
+    <span class="n">label_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Item should have the label &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&#39; annotation(s), but not found.&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="EmptyCaption">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.EmptyCaption">[docs]</a>
+<span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EmptyCaption</span><span class="p">(</span><span class="n">DatasetItemValidationError</span><span class="p">):</span>
+    <span class="n">caption_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Item should have the caption &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">caption_name</span><span class="si">}</span><span class="s2">&#39; annotation(s), but not found.&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="MultiLabelAnnotations">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.MultiLabelAnnotations">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.MultiLabelAnnotations">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">MultiLabelAnnotations</span><span class="p">(</span><span class="n">DatasetItemValidationError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MultiLabelAnnotations</span><span class="p">(</span><span class="n">DatasetItemValidationError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;Item needs a single label but multiple labels are found.&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="MissingAttribute">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.MissingAttribute">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.MissingAttribute">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">MissingAttribute</span><span class="p">(</span><span class="n">DatasetItemValidationError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MissingAttribute</span><span class="p">(</span><span class="n">DatasetItemValidationError</span><span class="p">):</span>
     <span class="n">label_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">attr_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Item needs the attribute &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">attr_name</span><span class="si">}</span><span class="s2">&#39; &quot;</span> <span class="sa">f</span><span class="s2">&quot;for the label &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Item needs the attribute &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">attr_name</span><span class="si">}</span><span class="s2">&#39; for the label &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="UndefinedLabel">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.UndefinedLabel">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.UndefinedLabel">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">UndefinedLabel</span><span class="p">(</span><span class="n">DatasetItemValidationError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UndefinedLabel</span><span class="p">(</span><span class="n">DatasetItemValidationError</span><span class="p">):</span>
     <span class="n">label_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Item has the label &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&#39; which &quot;</span> <span class="s2">&quot;is not defined in metadata.&quot;</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Item has the label &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&#39; which is not defined in metadata.&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="UndefinedAttribute">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.UndefinedAttribute">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.UndefinedAttribute">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">UndefinedAttribute</span><span class="p">(</span><span class="n">DatasetItemValidationError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UndefinedAttribute</span><span class="p">(</span><span class="n">DatasetItemValidationError</span><span class="p">):</span>
     <span class="n">label_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">attr_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Item has the attribute &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">attr_name</span><span class="si">}</span><span class="s2">&#39; for the &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;label &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&#39; which is not defined in metadata.&quot;</span>
@@ -1142,27 +1190,24 @@ document.write(`
 
 
 <div class="viewcode-block" id="LabelDefinedButNotFound">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.LabelDefinedButNotFound">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.LabelDefinedButNotFound">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">LabelDefinedButNotFound</span><span class="p">(</span><span class="n">DatasetValidationError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LabelDefinedButNotFound</span><span class="p">(</span><span class="n">DatasetValidationError</span><span class="p">):</span>
     <span class="n">label_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;The label &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&#39; is defined in &quot;</span>
-            <span class="s2">&quot;metadata, but not found in the dataset.&quot;</span>
-        <span class="p">)</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;The label &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&#39; is defined in metadata, but not found in the dataset.&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="AttributeDefinedButNotFound">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.AttributeDefinedButNotFound">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.AttributeDefinedButNotFound">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">AttributeDefinedButNotFound</span><span class="p">(</span><span class="n">DatasetValidationError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AttributeDefinedButNotFound</span><span class="p">(</span><span class="n">DatasetValidationError</span><span class="p">):</span>
     <span class="n">label_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">attr_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;The attribute &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">attr_name</span><span class="si">}</span><span class="s2">&#39; for the label &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&#39; is defined in metadata, but not &quot;</span>
@@ -1172,25 +1217,25 @@ document.write(`
 
 
 <div class="viewcode-block" id="OnlyOneLabel">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.OnlyOneLabel">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.OnlyOneLabel">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">OnlyOneLabel</span><span class="p">(</span><span class="n">DatasetValidationError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OnlyOneLabel</span><span class="p">(</span><span class="n">DatasetValidationError</span><span class="p">):</span>
     <span class="n">label_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;The dataset has only one label &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="OnlyOneAttributeValue">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.OnlyOneAttributeValue">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.OnlyOneAttributeValue">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">OnlyOneAttributeValue</span><span class="p">(</span><span class="n">DatasetValidationError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OnlyOneAttributeValue</span><span class="p">(</span><span class="n">DatasetValidationError</span><span class="p">):</span>
     <span class="n">label_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">attr_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">value</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="s2">&quot;The dataset has the only attribute value &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&#39; for the attribute &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">attr_name</span><span class="si">}</span><span class="s2">&#39; for the &quot;</span>
@@ -1200,30 +1245,58 @@ document.write(`
 
 
 <div class="viewcode-block" id="FewSamplesInLabel">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.FewSamplesInLabel">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.FewSamplesInLabel">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">FewSamplesInLabel</span><span class="p">(</span><span class="n">DatasetValidationError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FewSamplesInLabel</span><span class="p">(</span><span class="n">DatasetValidationError</span><span class="p">):</span>
     <span class="n">label_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">count</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;The number of samples in the label &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&#39; might be too low. Found &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="si">}</span><span class="s2">&#39; samples.&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="FewSamplesInCaption">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.FewSamplesInCaption">[docs]</a>
+<span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FewSamplesInCaption</span><span class="p">(</span><span class="n">DatasetValidationError</span><span class="p">):</span>
+    <span class="n">caption_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;The number of samples in the label &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;The number of samples in the caption &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">caption_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
             <span class="sa">f</span><span class="s2">&quot; might be too low. Found &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="si">}</span><span class="s2">&#39; samples.&quot;</span>
         <span class="p">)</span></div>
 
 
 
-<div class="viewcode-block" id="FewSamplesInAttribute">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.FewSamplesInAttribute">[docs]</a>
+<div class="viewcode-block" id="RedundanciesInCaption">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.RedundanciesInCaption">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">FewSamplesInAttribute</span><span class="p">(</span><span class="n">DatasetValidationError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RedundanciesInCaption</span><span class="p">(</span><span class="n">DatasetValidationError</span><span class="p">):</span>
+    <span class="n">caption_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
+    <span class="n">redundancy_type</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;The number of &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">redundancy_type</span><span class="si">}</span><span class="s2">&#39; redundancy in the caption &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">caption_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; have found &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">count</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="FewSamplesInAttribute">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.FewSamplesInAttribute">[docs]</a>
+<span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FewSamplesInAttribute</span><span class="p">(</span><span class="n">DatasetValidationError</span><span class="p">):</span>
     <span class="n">label_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">attr_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">attr_value</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">count</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="s2">&quot;The number of samples for attribute = value &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">attr_name</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">attr_value</span><span class="si">}</span><span class="s2">&#39; for the label &quot;</span>
@@ -1234,53 +1307,71 @@ document.write(`
 
 
 <div class="viewcode-block" id="ImbalancedLabels">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.ImbalancedLabels">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.ImbalancedLabels">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">ImbalancedLabels</span><span class="p">(</span><span class="n">DatasetValidationError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImbalancedLabels</span><span class="p">(</span><span class="n">DatasetValidationError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;There is an imbalance in the label distribution.&quot;</span></div>
 
 
 
-<div class="viewcode-block" id="ImbalancedAttribute">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.ImbalancedAttribute">[docs]</a>
+<div class="viewcode-block" id="ImbalancedCaptions">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.ImbalancedCaptions">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">ImbalancedAttribute</span><span class="p">(</span><span class="n">DatasetValidationError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImbalancedCaptions</span><span class="p">(</span><span class="n">DatasetValidationError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;There is an imbalance in the caption distribution.&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="ImbalancedAttribute">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.ImbalancedAttribute">[docs]</a>
+<span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImbalancedAttribute</span><span class="p">(</span><span class="n">DatasetValidationError</span><span class="p">):</span>
     <span class="n">label_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">attr_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="s2">&quot;There is an imbalance in the distribution of attribute&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot; &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="w"> </span><span class="n">attr_name</span><span class="si">}</span><span class="s2">&#39; for the label &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot; &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">attr_name</span><span class="si">}</span><span class="s2">&#39; for the label &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
         <span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="ImbalancedDistInLabel">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.ImbalancedDistInLabel">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.ImbalancedDistInLabel">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">ImbalancedDistInLabel</span><span class="p">(</span><span class="n">DatasetValidationError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImbalancedDistInLabel</span><span class="p">(</span><span class="n">DatasetValidationError</span><span class="p">):</span>
     <span class="n">label_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">prop</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Values of &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prop</span><span class="si">}</span><span class="s2">&#39; are not evenly &quot;</span> <span class="sa">f</span><span class="s2">&quot;distributed for &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&#39; label.&quot;</span>
-        <span class="p">)</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Values of &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prop</span><span class="si">}</span><span class="s2">&#39; are not evenly distributed for &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">label_name</span><span class="si">}</span><span class="s2">&#39; label.&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="ImbalancedDistInCaption">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.ImbalancedDistInCaption">[docs]</a>
+<span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImbalancedDistInCaption</span><span class="p">(</span><span class="n">DatasetValidationError</span><span class="p">):</span>
+    <span class="n">caption_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Values are not evenly distributed for &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">caption_name</span><span class="si">}</span><span class="s2">&#39; caption.&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="ImbalancedDistInAttribute">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.ImbalancedDistInAttribute">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.ImbalancedDistInAttribute">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">ImbalancedDistInAttribute</span><span class="p">(</span><span class="n">DatasetValidationError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImbalancedDistInAttribute</span><span class="p">(</span><span class="n">DatasetValidationError</span><span class="p">):</span>
     <span class="n">label_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">attr_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">attr_value</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">prop</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Values of &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prop</span><span class="si">}</span><span class="s2">&#39; are not evenly &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;distributed for &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">attr_name</span><span class="si">}</span><span class="s2">&#39; = &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">attr_value</span><span class="si">}</span><span class="s2">&#39; for &quot;</span>
@@ -1290,14 +1381,14 @@ document.write(`
 
 
 <div class="viewcode-block" id="NegativeLength">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.NegativeLength">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.NegativeLength">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">NegativeLength</span><span class="p">(</span><span class="n">DatasetItemValidationError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NegativeLength</span><span class="p">(</span><span class="n">DatasetItemValidationError</span><span class="p">):</span>
     <span class="n">ann_id</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">prop</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">val</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Annotation &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ann_id</span><span class="si">}</span><span class="s2">&#39; in &quot;</span>
             <span class="s2">&quot;the item should have a positive value of &quot;</span>
@@ -1307,32 +1398,28 @@ document.write(`
 
 
 <div class="viewcode-block" id="InvalidValue">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.InvalidValue">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.InvalidValue">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">InvalidValue</span><span class="p">(</span><span class="n">DatasetItemValidationError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">InvalidValue</span><span class="p">(</span><span class="n">DatasetItemValidationError</span><span class="p">):</span>
     <span class="n">ann_id</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">prop</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Annotation &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ann_id</span><span class="si">}</span><span class="s2">&#39; in &quot;</span>
-            <span class="s2">&quot;the item has an inf or a NaN value of &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prop</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
-        <span class="p">)</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Annotation &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ann_id</span><span class="si">}</span><span class="s2">&#39; in the item has an inf or a NaN value of &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prop</span><span class="si">}</span><span class="s2">&#39;.&quot;</span></div>
 
 
 
 <div class="viewcode-block" id="FarFromLabelMean">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.FarFromLabelMean">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.FarFromLabelMean">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">FarFromLabelMean</span><span class="p">(</span><span class="n">DatasetItemValidationError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FarFromLabelMean</span><span class="p">(</span><span class="n">DatasetItemValidationError</span><span class="p">):</span>
     <span class="n">label_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">ann_id</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">prop</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">mean</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">val</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Annotation &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ann_id</span><span class="si">}</span><span class="s2">&#39; in &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;the item has a value of &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prop</span><span class="si">}</span><span class="s2">&#39; that &quot;</span>
@@ -1342,10 +1429,48 @@ document.write(`
 
 
 
-<div class="viewcode-block" id="FarFromAttrMean">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.FarFromAttrMean">[docs]</a>
+<div class="viewcode-block" id="FarFromCaptionMean">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.FarFromCaptionMean">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">FarFromAttrMean</span><span class="p">(</span><span class="n">DatasetItemValidationError</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FarFromCaptionMean</span><span class="p">(</span><span class="n">DatasetItemValidationError</span><span class="p">):</span>
+    <span class="n">caption_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
+    <span class="n">mean</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
+    <span class="n">upper_bound</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
+    <span class="n">lower_bound</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
+    <span class="n">val</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Annotation &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">caption_name</span><span class="si">}</span><span class="s2">&#39; in &quot;</span>
+            <span class="s2">&quot;the item is too far from the caption average. (mean of &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">caption_name</span><span class="si">}</span><span class="s2">&#39; caption: &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="si">}</span><span class="s2">&#39;, got &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">val</span><span class="si">}</span><span class="s2">&#39;).&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;It should be between &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">lower_bound</span><span class="si">}</span><span class="s2">&#39; and &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">upper_bound</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="OutlierInCaption">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.OutlierInCaption">[docs]</a>
+<span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OutlierInCaption</span><span class="p">(</span><span class="n">DatasetItemValidationError</span><span class="p">):</span>
+    <span class="n">caption_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
+    <span class="n">lower_bound</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
+    <span class="n">upper_bound</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
+    <span class="n">val</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Annotation &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">caption_name</span><span class="si">}</span><span class="s2">&#39; in &quot;</span>
+            <span class="s2">&quot;the item is estimated as outlier based on IQR. (lower and upper bound of &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">caption_name</span><span class="si">}</span><span class="s2">&#39; caption: &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">lower_bound</span><span class="si">}</span><span class="s2">&#39; and &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">upper_bound</span><span class="si">}</span><span class="s2">&#39;, got &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">val</span><span class="si">}</span><span class="s2">&#39;).&quot;</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="FarFromAttrMean">
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.FarFromAttrMean">[docs]</a>
+<span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FarFromAttrMean</span><span class="p">(</span><span class="n">DatasetItemValidationError</span><span class="p">):</span>
     <span class="n">label_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">ann_id</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">attr_name</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
@@ -1354,7 +1479,7 @@ document.write(`
     <span class="n">mean</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
     <span class="n">val</span> <span class="o">=</span> <span class="n">field</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;Annotation &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ann_id</span><span class="si">}</span><span class="s2">&#39; in the &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;item has a value of &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prop</span><span class="si">}</span><span class="s2">&#39; that &quot;</span>
@@ -1366,10 +1491,10 @@ document.write(`
 
 
 <div class="viewcode-block" id="StreamedItemError">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.cli.commands.require_project.modification.add.StreamedItemError">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.errors.html#datumaro.components.annotations.merger.StreamedItemError">[docs]</a>
 <span class="nd">@define</span><span class="p">(</span><span class="n">auto_exc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">StreamedItemError</span><span class="p">(</span><span class="n">DatasetError</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">StreamedItemError</span><span class="p">(</span><span class="n">DatasetError</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;__getitem__ is disabled for StreamDataset. Use Dataset instead.&quot;</span></div>
 
 </pre></div>

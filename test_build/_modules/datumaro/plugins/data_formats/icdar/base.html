@@ -27,10 +27,10 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=eafc0fe6" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css?v=8b7c274f" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -43,7 +43,7 @@
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../../../../_static/design-tabs.js?v=36754332"></script>
+    <script src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/plugins/data_formats/icdar/base';</script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
@@ -192,7 +192,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
       
@@ -279,7 +279,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
         
@@ -344,29 +344,29 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">csv</span>
-<span class="kn">import</span> <span class="nn">errno</span>
-<span class="kn">import</span> <span class="nn">glob</span>
-<span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">errno</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">glob</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">Caption</span><span class="p">,</span> <span class="n">Mask</span><span class="p">,</span> <span class="n">MaskCategories</span><span class="p">,</span> <span class="n">Polygon</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">SubsetBase</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.errors</span> <span class="kn">import</span> <span class="n">InvalidAnnotationError</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.format_detection</span> <span class="kn">import</span> <span class="n">FormatDetectionContext</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.importer</span> <span class="kn">import</span> <span class="n">ImportContext</span><span class="p">,</span> <span class="n">Importer</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.media</span> <span class="kn">import</span> <span class="n">Image</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.image</span> <span class="kn">import</span> <span class="n">IMAGE_EXTENSIONS</span><span class="p">,</span> <span class="n">find_images</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.mask_tools</span> <span class="kn">import</span> <span class="n">lazy_mask</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">Caption</span><span class="p">,</span> <span class="n">ExtractedMask</span><span class="p">,</span> <span class="n">MaskCategories</span><span class="p">,</span> <span class="n">Polygon</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">SubsetBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">InvalidAnnotationError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.format_detection</span><span class="w"> </span><span class="kn">import</span> <span class="n">FormatDetectionContext</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.importer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImportContext</span><span class="p">,</span> <span class="n">Importer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.image</span><span class="w"> </span><span class="kn">import</span> <span class="n">IMAGE_EXTENSIONS</span><span class="p">,</span> <span class="n">find_images</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.mask_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">lazy_mask</span>
 
-<span class="kn">from</span> <span class="nn">.format</span> <span class="kn">import</span> <span class="n">IcdarPath</span><span class="p">,</span> <span class="n">IcdarTask</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.format</span><span class="w"> </span><span class="kn">import</span> <span class="n">IcdarPath</span><span class="p">,</span> <span class="n">IcdarTask</span>
 
 
-<span class="k">class</span> <span class="nc">_IcdarBase</span><span class="p">(</span><span class="n">SubsetBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_IcdarBase</span><span class="p">(</span><span class="n">SubsetBase</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">task</span><span class="p">:</span> <span class="n">IcdarTask</span><span class="p">,</span>
@@ -390,9 +390,7 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">_items</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_load_recognition_items</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
         <span class="k">elif</span> <span class="n">task</span> <span class="ow">in</span> <span class="p">{</span><span class="n">IcdarTask</span><span class="o">.</span><span class="n">text_localization</span><span class="p">,</span> <span class="n">IcdarTask</span><span class="o">.</span><span class="n">text_segmentation</span><span class="p">}:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">NotADirectoryError</span><span class="p">(</span>
-                    <span class="n">errno</span><span class="o">.</span><span class="n">ENOTDIR</span><span class="p">,</span> <span class="s2">&quot;Can&#39;t read dataset directory with annotation files&quot;</span><span class="p">,</span> <span class="n">path</span>
-                <span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">NotADirectoryError</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOTDIR</span><span class="p">,</span> <span class="s2">&quot;Can&#39;t read dataset directory with annotation files&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">subset</span><span class="p">:</span>
                 <span class="n">subset</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
@@ -405,7 +403,7 @@ document.write(`
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_items</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_load_segmentation_items</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 
-    <span class="k">def</span> <span class="nf">_load_recognition_items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_recognition_items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">items</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -417,7 +415,7 @@ document.write(`
                     <span class="n">captions</span> <span class="o">=</span> <span class="p">[]</span>
                     <span class="k">for</span> <span class="n">caption</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
                         <span class="k">if</span> <span class="n">caption</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;&quot;&#39;</span> <span class="ow">or</span> <span class="n">caption</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">:</span>
-                            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Line </span><span class="si">%s</span><span class="s2">: unexpected number &quot;</span> <span class="s2">&quot;of quotes&quot;</span> <span class="o">%</span> <span class="n">line</span><span class="p">)</span>
+                            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Line </span><span class="si">%s</span><span class="s2">: unexpected number of quotes&quot;</span> <span class="o">%</span> <span class="n">line</span><span class="p">)</span>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="n">captions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">caption</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -427,17 +425,18 @@ document.write(`
                 <span class="n">item_id</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">image</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="n">image_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">),</span> <span class="n">IcdarPath</span><span class="o">.</span><span class="n">IMAGES_DIR</span><span class="p">,</span> <span class="n">image</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">item_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">items</span><span class="p">:</span>
-                    <span class="n">items</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">DatasetItem</span><span class="p">(</span>
-                        <span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">,</span> <span class="n">media</span><span class="o">=</span><span class="n">Image</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">image_path</span><span class="p">)</span>
-                    <span class="p">)</span>
+                    <span class="n">items</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">DatasetItem</span><span class="p">(</span><span class="n">item_id</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_subset</span><span class="p">,</span> <span class="n">media</span><span class="o">=</span><span class="n">Image</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">image_path</span><span class="p">))</span>
 
                 <span class="n">annotations</span> <span class="o">=</span> <span class="n">items</span><span class="p">[</span><span class="n">item_id</span><span class="p">]</span><span class="o">.</span><span class="n">annotations</span>
                 <span class="k">for</span> <span class="n">caption</span> <span class="ow">in</span> <span class="n">captions</span><span class="p">:</span>
                     <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Caption</span><span class="p">(</span><span class="n">caption</span><span class="p">))</span>
 
+                <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">annotations</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_ann_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="n">items</span>
 
-    <span class="k">def</span> <span class="nf">_load_localization_items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_localization_items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">items</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="n">image_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="n">IcdarPath</span><span class="o">.</span><span class="n">IMAGES_DIR</span><span class="p">)</span>
@@ -468,47 +467,49 @@ document.write(`
                 <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
                     <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
                     <span class="n">objects</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">objects</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
                             <span class="n">text</span> <span class="o">=</span> <span class="n">objects</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
                         <span class="k">else</span><span class="p">:</span>
-                            <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span>
-                                <span class="s2">&quot;Line </span><span class="si">%s</span><span class="s2">: unexpected number &quot;</span> <span class="s2">&quot;of quotes in filename&quot;</span> <span class="o">%</span> <span class="n">line</span>
-                            <span class="p">)</span>
+                            <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span><span class="s2">&quot;Line </span><span class="si">%s</span><span class="s2">: unexpected number of quotes in filename&quot;</span> <span class="o">%</span> <span class="n">line</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
                     <span class="n">objects</span> <span class="o">=</span> <span class="n">objects</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
                     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                         <span class="n">objects</span> <span class="o">=</span> <span class="n">objects</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
 
-                    <span class="k">if</span> <span class="mi">8</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">objects</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">8</span><span class="p">:</span>
                         <span class="n">points</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">objects</span><span class="p">[:</span><span class="mi">8</span><span class="p">]]</span>
 
                         <span class="n">attributes</span> <span class="o">=</span> <span class="p">{}</span>
-                        <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                             <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">text</span>
                         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span> <span class="o">==</span> <span class="mi">9</span><span class="p">:</span>
                             <span class="n">text</span> <span class="o">=</span> <span class="n">objects</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span>
                             <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">text</span>
 
                         <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Polygon</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="n">attributes</span><span class="p">))</span>
-                    <span class="k">elif</span> <span class="mi">4</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">objects</span><span class="p">):</span>
+                    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">:</span>
                         <span class="n">x</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">objects</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
                         <span class="n">y</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">objects</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
                         <span class="n">w</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">objects</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">-</span> <span class="n">x</span>
                         <span class="n">h</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">objects</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="o">-</span> <span class="n">y</span>
 
                         <span class="n">attributes</span> <span class="o">=</span> <span class="p">{}</span>
-                        <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                             <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">text</span>
                         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
                             <span class="n">text</span> <span class="o">=</span> <span class="n">objects</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
                             <span class="n">attributes</span><span class="p">[</span><span class="s2">&quot;text&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">text</span>
 
                         <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Bbox</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">attributes</span><span class="o">=</span><span class="n">attributes</span><span class="p">))</span>
+
+            <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">annotations</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_ann_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="n">items</span>
 
-    <span class="k">def</span> <span class="nf">_load_segmentation_items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_segmentation_items</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">items</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="n">image_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="n">IcdarPath</span><span class="o">.</span><span class="n">IMAGES_DIR</span><span class="p">)</span>
@@ -559,8 +560,7 @@ document.write(`
                         <span class="n">objects</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
                     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">objects</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">10</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="n">InvalidAnnotationError</span><span class="p">(</span>
-                            <span class="s2">&quot;Line </span><span class="si">%s</span><span class="s2"> contains the wrong number &quot;</span>
-                            <span class="s1">&#39;of arguments, e.g. </span><span class="se">\&#39;</span><span class="s1">241 73 144 1 4 0 3 1 4 &quot;h&quot;&#39;</span> <span class="o">%</span> <span class="n">line</span>
+                            <span class="s1">&#39;Line </span><span class="si">%s</span><span class="s1"> contains the wrong number of arguments, e.g. </span><span class="se">\&#39;</span><span class="s1">241 73 144 1 4 0 3 1 4 &quot;h&quot;&#39;</span> <span class="o">%</span> <span class="n">line</span>
                         <span class="p">)</span>
 
                     <span class="n">centers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">objects</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">objects</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
@@ -580,18 +580,19 @@ document.write(`
             <span class="n">gt_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_path</span><span class="p">,</span> <span class="n">item_id</span> <span class="o">+</span> <span class="s2">&quot;_GT&quot;</span> <span class="o">+</span> <span class="n">IcdarPath</span><span class="o">.</span><span class="n">GT_EXT</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">gt_path</span><span class="p">):</span>
                 <span class="c1"># load mask through cache</span>
-                <span class="n">mask</span> <span class="o">=</span> <span class="n">lazy_mask</span><span class="p">(</span><span class="n">gt_path</span><span class="p">,</span> <span class="n">inverse_cls_colormap</span><span class="p">)</span>
-                <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span><span class="p">()</span>
+                <span class="n">index_mask</span> <span class="o">=</span> <span class="n">lazy_mask</span><span class="p">(</span><span class="n">gt_path</span><span class="p">,</span> <span class="n">inverse_cls_colormap</span><span class="p">)</span>
+                <span class="n">np_index_mask</span> <span class="o">=</span> <span class="n">index_mask</span><span class="p">()</span>
 
-                <span class="n">classes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+                <span class="n">classes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np_index_mask</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">label_id</span> <span class="ow">in</span> <span class="n">classes</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">label_id</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                         <span class="k">continue</span>
                     <span class="n">i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">label_id</span><span class="p">)</span>
                     <span class="n">annotations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                        <span class="n">Mask</span><span class="p">(</span>
+                        <span class="n">ExtractedMask</span><span class="p">(</span>
+                            <span class="n">index_mask</span><span class="o">=</span><span class="n">index_mask</span><span class="p">,</span>
+                            <span class="n">index</span><span class="o">=</span><span class="n">label_id</span><span class="p">,</span>
                             <span class="n">group</span><span class="o">=</span><span class="n">groups</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
-                            <span class="n">image</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_lazy_extract_mask</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">label_id</span><span class="p">),</span>
                             <span class="n">attributes</span><span class="o">=</span><span class="p">{</span>
                                 <span class="s2">&quot;index&quot;</span><span class="p">:</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span>
                                 <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span>
@@ -600,17 +601,21 @@ document.write(`
                             <span class="p">},</span>
                         <span class="p">)</span>
                     <span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">annotations</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_ann_types</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="n">items</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_lazy_extract_mask</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_lazy_extract_mask</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
         <span class="k">return</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">mask</span> <span class="o">==</span> <span class="n">c</span>
 
 
 <div class="viewcode-block" id="IcdarWordRecognitionBase">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.icdar.base.html#datumaro.plugins.data_formats.icdar.base.IcdarWordRecognitionBase">[docs]</a>
-<span class="k">class</span> <span class="nc">IcdarWordRecognitionBase</span><span class="p">(</span><span class="n">_IcdarBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">IcdarWordRecognitionBase</span><span class="p">(</span><span class="n">_IcdarBase</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;task&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">IcdarTask</span><span class="o">.</span><span class="n">word_recognition</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
@@ -618,8 +623,8 @@ document.write(`
 
 <div class="viewcode-block" id="IcdarTextLocalizationBase">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.icdar.base.html#datumaro.plugins.data_formats.icdar.base.IcdarTextLocalizationBase">[docs]</a>
-<span class="k">class</span> <span class="nc">IcdarTextLocalizationBase</span><span class="p">(</span><span class="n">_IcdarBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">IcdarTextLocalizationBase</span><span class="p">(</span><span class="n">_IcdarBase</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;task&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">IcdarTask</span><span class="o">.</span><span class="n">text_localization</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
@@ -627,8 +632,8 @@ document.write(`
 
 <div class="viewcode-block" id="IcdarTextSegmentationBase">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.icdar.base.html#datumaro.plugins.data_formats.icdar.base.IcdarTextSegmentationBase">[docs]</a>
-<span class="k">class</span> <span class="nc">IcdarTextSegmentationBase</span><span class="p">(</span><span class="n">_IcdarBase</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">IcdarTextSegmentationBase</span><span class="p">(</span><span class="n">_IcdarBase</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;task&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">IcdarTask</span><span class="o">.</span><span class="n">text_segmentation</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
@@ -636,13 +641,13 @@ document.write(`
 
 <div class="viewcode-block" id="IcdarWordRecognitionImporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.icdar.base.html#datumaro.plugins.data_formats.icdar.base.IcdarWordRecognitionImporter">[docs]</a>
-<span class="k">class</span> <span class="nc">IcdarWordRecognitionImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">IcdarWordRecognitionImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
     <span class="n">_ANNO_EXT</span> <span class="o">=</span> <span class="s2">&quot;.txt&quot;</span>
 
 <div class="viewcode-block" id="IcdarWordRecognitionImporter.detect">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.icdar.base.html#datumaro.plugins.data_formats.icdar.base.IcdarWordRecognitionImporter.detect">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">detect</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">detect</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">annot_path</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;*/gt</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_ANNO_EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="k">with</span> <span class="n">context</span><span class="o">.</span><span class="n">probe_text_file</span><span class="p">(</span>
@@ -660,14 +665,14 @@ document.write(`
 <div class="viewcode-block" id="IcdarWordRecognitionImporter.find_sources">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.icdar.base.html#datumaro.plugins.data_formats.icdar.base.IcdarWordRecognitionImporter.find_sources">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_sources_recursive</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;icdar_word_recognition&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="IcdarWordRecognitionImporter.get_file_extensions">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.icdar.base.html#datumaro.plugins.data_formats.icdar.base.IcdarWordRecognitionImporter.get_file_extensions">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_file_extensions</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_file_extensions</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="k">return</span> <span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">_ANNO_EXT</span><span class="p">]</span></div>
 </div>
 
@@ -675,27 +680,27 @@ document.write(`
 
 <div class="viewcode-block" id="IcdarTextLocalizationImporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.icdar.base.html#datumaro.plugins.data_formats.icdar.base.IcdarTextLocalizationImporter">[docs]</a>
-<span class="k">class</span> <span class="nc">IcdarTextLocalizationImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">IcdarTextLocalizationImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
     <span class="n">_ANNO_EXT</span> <span class="o">=</span> <span class="s2">&quot;.txt&quot;</span>
 
 <div class="viewcode-block" id="IcdarTextLocalizationImporter.detect">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.icdar.base.html#datumaro.plugins.data_formats.icdar.base.IcdarTextLocalizationImporter.detect">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">detect</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">detect</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;**/gt_*</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_ANNO_EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="IcdarTextLocalizationImporter.find_sources">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.icdar.base.html#datumaro.plugins.data_formats.icdar.base.IcdarTextLocalizationImporter.find_sources">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_sources_recursive</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;icdar_text_localization&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="IcdarTextLocalizationImporter.get_file_extensions">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.icdar.base.html#datumaro.plugins.data_formats.icdar.base.IcdarTextLocalizationImporter.get_file_extensions">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_file_extensions</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_file_extensions</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="k">return</span> <span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">_ANNO_EXT</span><span class="p">]</span></div>
 </div>
 
@@ -703,13 +708,13 @@ document.write(`
 
 <div class="viewcode-block" id="IcdarTextSegmentationImporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.icdar.base.html#datumaro.plugins.data_formats.icdar.base.IcdarTextSegmentationImporter">[docs]</a>
-<span class="k">class</span> <span class="nc">IcdarTextSegmentationImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">IcdarTextSegmentationImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
     <span class="n">_ANNO_EXT</span> <span class="o">=</span> <span class="s2">&quot;.txt&quot;</span>
 
 <div class="viewcode-block" id="IcdarTextSegmentationImporter.detect">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.icdar.base.html#datumaro.plugins.data_formats.icdar.base.IcdarTextSegmentationImporter.detect">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">detect</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">detect</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">FormatDetectionContext</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">gt_txt_path</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;**/*_GT</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">_ANNO_EXT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">gt_bmp_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">gt_txt_path</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;.bmp&quot;</span>
         <span class="n">context</span><span class="o">.</span><span class="n">require_file</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">gt_bmp_path</span><span class="p">))</span></div>
@@ -718,14 +723,14 @@ document.write(`
 <div class="viewcode-block" id="IcdarTextSegmentationImporter.find_sources">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.icdar.base.html#datumaro.plugins.data_formats.icdar.base.IcdarTextSegmentationImporter.find_sources">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_find_sources_recursive</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;icdar_text_segmentation&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="IcdarTextSegmentationImporter.get_file_extensions">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.icdar.base.html#datumaro.plugins.data_formats.icdar.base.IcdarTextSegmentationImporter.get_file_extensions">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_file_extensions</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_file_extensions</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="k">return</span> <span class="p">[</span><span class="bp">cls</span><span class="o">.</span><span class="n">_ANNO_EXT</span><span class="p">]</span></div>
 </div>
 

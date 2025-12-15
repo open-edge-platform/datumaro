@@ -7,7 +7,7 @@
    "source": [
     "# Tile your Dataset to Cope with High-Resolution Images\n",
     "\n",
-    "[![Jupyter Notebook](https://img.shields.io/badge/jupyter-%23FA0F00.svg?style=for-the-badge&logo=jupyter&logoColor=white)](https://github.com/openvinotoolkit/datumaro/blob/develop/notebooks/06_tiling.ipynb)\n",
+    "[![Jupyter Notebook](https://img.shields.io/badge/jupyter-%23FA0F00.svg?style=for-the-badge&logo=jupyter&logoColor=white)](https://github.com/open-edge-platform/datumaro/blob/develop/notebooks/06_tiling.ipynb)\n",
     "\n",
     "In this notebook example, we'll take a look at Datumaro `TileTransform` which is a useful dataset transformation for enhancing [small object detection tasks](https://openaccess.thecvf.com/content_CVPRW_2019/papers/UAVision/Unel_The_Power_of_Tiling_for_Small_Object_Detection_CVPRW_2019_paper.pdf). We are going to look at the example codes for object detection task with [Six-sided Dice Dataset](https://github.com/nell-byler/dice_detection)."
    ]
@@ -34,7 +34,7 @@
     "    ├── ...\n",
     "```\n",
     "\n",
-    "However, for import compatibility, `obj.names` file must be added to `d6-dice/obj.names` filepath for import compatibility. This `obj.names` file includes the label names of the dataset, e.g., `[dice1, ..., dice6]`. Therefore, you can write it with the following simple code. Please see [Yolo Loose format](https://openvinotoolkit.github.io/datumaro/latest/docs/explanation/formats/yolo) for more details."
+    "However, for import compatibility, `obj.names` file must be added to `d6-dice/obj.names` filepath for import compatibility. This `obj.names` file includes the label names of the dataset, e.g., `[dice1, ..., dice6]`. Therefore, you can write it with the following simple code. Please see [Yolo Loose format](https://open-edge-platform.github.io/datumaro/latest/docs/explanation/formats/yolo) for more details."
    ]
   },
   {
@@ -178,9 +178,7 @@
    "source": [
     "from datumaro.plugins.tiling import Tile\n",
     "\n",
-    "tiled_dataset = dataset.transform(\n",
-    "    Tile, grid_size=(2, 2), overlap=(0.1, 0.1), threshold_drop_ann=0.5\n",
-    ")\n",
+    "tiled_dataset = dataset.transform(Tile, grid_size=(2, 2), overlap=(0.1, 0.1), threshold_drop_ann=0.5)\n",
     "target_ids = [tiled_id for tiled_id in get_ids(tiled_dataset, subset) if target_id in tiled_id]\n",
     "print(target_ids)"
    ]

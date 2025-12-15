@@ -27,10 +27,10 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=8b7c274f" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -43,7 +43,7 @@
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../../../_static/design-tabs.js?v=36754332"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/cli/commands/download';</script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
@@ -192,7 +192,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
       
@@ -279,7 +279,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
         
@@ -347,97 +347,59 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">argparse</span>
-<span class="kn">import</span> <span class="nn">contextlib</span>
-<span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.environment</span> <span class="kn">import</span> <span class="n">DEFAULT_ENVIRONMENT</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.extractor_tfds</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">AVAILABLE_TFDS_DATASETS</span><span class="p">,</span>
-    <span class="n">TFDS_EXTRACTOR_AVAILABLE</span><span class="p">,</span>
-    <span class="n">TfdsDatasetRemoteMetadata</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span> <span class="nn">datumaro.util</span> <span class="kn">import</span> <span class="n">dump_json</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.os_util</span> <span class="kn">import</span> <span class="n">make_file_name</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.cli.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultilineFormatter</span>
 
-<span class="kn">from</span> <span class="nn">..util</span> <span class="kn">import</span> <span class="n">MultilineFormatter</span>
-<span class="kn">from</span> <span class="nn">..util.errors</span> <span class="kn">import</span> <span class="n">CliException</span>
-<span class="kn">from</span> <span class="nn">..util.project</span> <span class="kn">import</span> <span class="n">generate_next_file_name</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.downloaders</span><span class="w"> </span><span class="kn">import</span> <span class="n">IDatasetDownloader</span><span class="p">,</span> <span class="n">KaggleDatasetDownloader</span><span class="p">,</span> <span class="n">TfdsDatasetDownloader</span>
 
 
 <div class="viewcode-block" id="build_parser">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.commands.download.html#datumaro.cli.commands.download.build_parser">[docs]</a>
-<span class="k">def</span> <span class="nf">build_parser</span><span class="p">(</span><span class="n">parser_ctor</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_parser</span><span class="p">(</span><span class="n">parser_ctor</span><span class="o">=</span><span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">):</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">parser_ctor</span><span class="p">(</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Download a publicly available dataset&quot;</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
+        <span class="n">description</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">        Downloads a publicly available dataset and saves it in a given format.|n</span>
 <span class="s2">        |n</span>
-<span class="s2">        Currently, the only source of datasets is the TensorFlow Datasets</span>
-<span class="s2">        library. Therefore, to use this command you must install TensorFlow &amp;</span>
-<span class="s2">        TFDS, which you can do as follows:|n</span>
-<span class="s2">        |n</span>
-<span class="s2">        |s|spip install datumaro[tf,tfds]|n</span>
-<span class="s2">        |n</span>
-<span class="s2">        To download the dataset, run &quot;datum download run&quot;. On the other hand,</span>
-<span class="s2">        for information about the datasets, run &quot;datum download describe&quot;.</span>
+<span class="s2">        To download the dataset, run &quot;datum download &lt;dataset_type&gt; get&quot;. On the other hand,</span>
+<span class="s2">        for information about the datasets, run &quot;datum download &lt;dataset_type&gt; describe&quot;.</span>
+<span class="s2">        Supported dataset types are: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">DOWNLOADERS</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span>
 <span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span>
         <span class="n">formatter_class</span><span class="o">=</span><span class="n">MultilineFormatter</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">subparsers</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Commands&quot;</span><span class="p">)</span>
-
-    <span class="n">build_get_subparser</span><span class="p">(</span><span class="n">subparsers</span><span class="p">)</span>
-    <span class="n">build_describe_subparser</span><span class="p">(</span><span class="n">subparsers</span><span class="p">)</span></div>
+    <span class="n">subparsers</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Dataset types&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">downloader</span> <span class="ow">in</span> <span class="n">DOWNLOADERS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">dataset_type_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">help</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Download </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> dataset&quot;</span><span class="p">,</span>
+            <span class="n">formatter_class</span><span class="o">=</span><span class="n">MultilineFormatter</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">_subparsers</span> <span class="o">=</span> <span class="n">dataset_type_parser</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;Commands&quot;</span><span class="p">)</span>
+        <span class="n">build_get_subparser</span><span class="p">(</span><span class="n">_subparsers</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">downloader</span><span class="p">)</span>
+        <span class="n">build_describe_subparser</span><span class="p">(</span><span class="n">_subparsers</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">downloader</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="build_get_subparser">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.commands.download.html#datumaro.cli.commands.download.build_get_subparser">[docs]</a>
-<span class="k">def</span> <span class="nf">build_get_subparser</span><span class="p">(</span><span class="n">subparsers</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">_SubParsersAction</span><span class="p">):</span>
-    <span class="n">builtin_writers</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">DEFAULT_ENVIRONMENT</span><span class="o">.</span><span class="n">exporters</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">TFDS_EXTRACTOR_AVAILABLE</span><span class="p">:</span>
-        <span class="n">available_datasets</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;tfds:</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">AVAILABLE_TFDS_DATASETS</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">available_datasets</span> <span class="o">=</span> <span class="s2">&quot;N/A (TensorFlow and/or TensorFlow Datasets &quot;</span> <span class="s2">&quot;are not installed)&quot;</span>
-
+<span class="k">def</span><span class="w"> </span><span class="nf">build_get_subparser</span><span class="p">(</span><span class="n">subparsers</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">_SubParsersAction</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">downloader</span><span class="p">:</span> <span class="n">IDatasetDownloader</span><span class="p">):</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
         <span class="n">name</span><span class="o">=</span><span class="s2">&quot;get&quot;</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Download a publicly available dataset&quot;</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">        Supported datasets: </span><span class="si">{}</span><span class="s2">|n</span>
-<span class="s2">        |n</span>
-<span class="s2">        Supported output formats: </span><span class="si">{}</span><span class="s2">|n</span>
-<span class="s2">        |n</span>
-<span class="s2">        Examples:|n</span>
-<span class="s2">        - Download the MNIST dataset:|n</span>
-<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> -i tfds:mnist -- --save-media|n</span>
-<span class="s2">        |n</span>
-<span class="s2">        - Download the VOC 2012 dataset, saving only the annotations in the COCO</span>
-<span class="s2">          format into a specific directory:|n</span>
-<span class="s2">        |s|s</span><span class="si">%(prog)s</span><span class="s2"> -i tfds:voc/2012 -f coco -o path/I/like/</span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">available_datasets</span><span class="p">,</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">builtin_writers</span><span class="p">)</span>
-        <span class="p">),</span>
+        <span class="n">description</span><span class="o">=</span><span class="n">downloader</span><span class="o">.</span><span class="n">get_command_description</span><span class="p">(),</span>
         <span class="n">formatter_class</span><span class="o">=</span><span class="n">MultilineFormatter</span><span class="p">,</span>
     <span class="p">)</span>
-
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-i&quot;</span><span class="p">,</span> <span class="s2">&quot;--dataset-id&quot;</span><span class="p">,</span> <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Which dataset to download&quot;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;-f&quot;</span><span class="p">,</span> <span class="s2">&quot;--output-format&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Output format (default: original format of the dataset)&quot;</span>
-    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-f&quot;</span><span class="p">,</span> <span class="s2">&quot;--output-format&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Output format (default: original format of the dataset)&quot;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;-o&quot;</span><span class="p">,</span>
         <span class="s2">&quot;--output-dir&quot;</span><span class="p">,</span>
         <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;dst_dir&quot;</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Directory to save output (default: a subdir in the current one)&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--overwrite&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Overwrite existing files in the save directory&quot;</span>
-    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--overwrite&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Overwrite existing files in the save directory&quot;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;-s&quot;</span><span class="p">,</span> <span class="s2">&quot;--subset&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Save only the specified subset&quot;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;extra_args&quot;</span><span class="p">,</span>
@@ -446,7 +408,7 @@ document.write(`
         <span class="s2">&quot;Must be specified after the main command arguments&quot;</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="n">parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="n">download_command</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="n">download_command</span><span class="p">,</span> <span class="n">downloader</span><span class="o">=</span><span class="n">downloader</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">parser</span></div>
 
@@ -454,17 +416,15 @@ document.write(`
 
 <div class="viewcode-block" id="build_describe_subparser">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.commands.download.html#datumaro.cli.commands.download.build_describe_subparser">[docs]</a>
-<span class="k">def</span> <span class="nf">build_describe_subparser</span><span class="p">(</span><span class="n">subparsers</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">_SubParsersAction</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">build_describe_subparser</span><span class="p">(</span><span class="n">subparsers</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">_SubParsersAction</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">downloader</span><span class="p">:</span> <span class="n">IDatasetDownloader</span><span class="p">):</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
         <span class="n">name</span><span class="o">=</span><span class="s2">&quot;describe&quot;</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Print information about downloadable datasets&quot;</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
+        <span class="n">description</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
 <span class="s2">        Reports information about datasets that can be downloaded with the</span>
-<span class="s2">        &quot;datum download&quot; command. The information is reported either as</span>
-<span class="s2">        human-readable text (the default) or as a JSON object. More detailed</span>
-<span class="s2">        information can be found in the TFDS Catalog:</span>
-<span class="s2">        &lt;https://www.tensorflow.org/datasets/catalog/overview&gt;.</span>
-<span class="s2">        &quot;&quot;&quot;</span><span class="p">,</span>
+<span class="s2">        &quot;datum download </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot; command. The information is reported either as</span>
+<span class="s2">        human-readable text (the default) or as a JSON object.&quot;&quot;&quot;</span>
+        <span class="o">+</span> <span class="n">downloader</span><span class="o">.</span><span class="n">describe_command_description</span><span class="p">(),</span>
         <span class="n">formatter_class</span><span class="o">=</span><span class="n">MultilineFormatter</span><span class="p">,</span>
     <span class="p">)</span>
 
@@ -474,171 +434,37 @@ document.write(`
         <span class="n">default</span><span class="o">=</span><span class="s2">&quot;text&quot;</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Format in which to report the information (default: </span><span class="si">%(default)s</span><span class="s2">)&quot;</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--report-file&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;File to which to write the report (default: standard output)&quot;</span>
-    <span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="n">describe_downloads_command</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--report-file&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;File to which to write the report (default: standard output)&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="n">describe_downloads_command</span><span class="p">,</span> <span class="n">downloader</span><span class="o">=</span><span class="n">downloader</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">parser</span></div>
 
 
 
-<div class="viewcode-block" id="get_sensitive_args">
-<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.commands.download.html#datumaro.cli.commands.download.get_sensitive_args">[docs]</a>
-<span class="k">def</span> <span class="nf">get_sensitive_args</span><span class="p">():</span>
-    <span class="k">return</span> <span class="p">{</span>
-        <span class="n">download_command</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;dst_dir&quot;</span><span class="p">,</span> <span class="s2">&quot;extra_args&quot;</span><span class="p">],</span>
-        <span class="n">describe_downloads_command</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;report-file&quot;</span><span class="p">],</span>
-    <span class="p">}</span></div>
-
+<span class="n">DOWNLOADERS</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">IDatasetDownloader</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;tfds&quot;</span><span class="p">:</span> <span class="n">TfdsDatasetDownloader</span><span class="p">,</span>
+    <span class="s2">&quot;kaggle&quot;</span><span class="p">:</span> <span class="n">KaggleDatasetDownloader</span><span class="p">,</span>
+<span class="p">}</span>
 
 
 <div class="viewcode-block" id="download_command">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.commands.download.html#datumaro.cli.commands.download.download_command">[docs]</a>
-<span class="k">def</span> <span class="nf">download_command</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
-    <span class="n">env</span> <span class="o">=</span> <span class="n">DEFAULT_ENVIRONMENT</span>
-
-    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">dataset_id</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;tfds:&quot;</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">TFDS_EXTRACTOR_AVAILABLE</span><span class="p">:</span>
-            <span class="n">tfds_ds_name</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">dataset_id</span><span class="p">[</span><span class="mi">5</span><span class="p">:]</span>
-            <span class="n">tfds_ds</span> <span class="o">=</span> <span class="n">AVAILABLE_TFDS_DATASETS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tfds_ds_name</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">tfds_ds</span><span class="p">:</span>
-                <span class="n">default_output_format</span> <span class="o">=</span> <span class="n">tfds_ds</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">default_output_format</span>
-                <span class="n">extractor_factory</span> <span class="o">=</span> <span class="n">tfds_ds</span><span class="o">.</span><span class="n">make_extractor</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="n">CliException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported TFDS dataset &#39;</span><span class="si">{</span><span class="n">tfds_ds_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">CliException</span><span class="p">(</span>
-                <span class="s2">&quot;TFDS datasets are not available, because TFDS and/or &quot;</span>
-                <span class="s2">&quot;TensorFlow are not installed.</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="s2">&quot;You can install them with: pip install datumaro[tf,tfds]&quot;</span>
-            <span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">CliException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown dataset ID &#39;</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
-
-    <span class="n">output_format</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">output_format</span> <span class="ow">or</span> <span class="n">default_output_format</span>
-
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">exporter</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">exporters</span><span class="p">[</span><span class="n">output_format</span><span class="p">]</span>
-    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="n">CliException</span><span class="p">(</span><span class="s2">&quot;Exporter for format &#39;</span><span class="si">%s</span><span class="s2">&#39; is not found&quot;</span> <span class="o">%</span> <span class="n">output_format</span><span class="p">)</span>
-    <span class="n">extra_args</span> <span class="o">=</span> <span class="n">exporter</span><span class="o">.</span><span class="n">parse_cmdline</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">extra_args</span><span class="p">)</span>
-
-    <span class="n">dst_dir</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">dst_dir</span>
-    <span class="k">if</span> <span class="n">dst_dir</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">args</span><span class="o">.</span><span class="n">overwrite</span> <span class="ow">and</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">dst_dir</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">dst_dir</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="n">CliException</span><span class="p">(</span>
-                <span class="s2">&quot;Directory &#39;</span><span class="si">%s</span><span class="s2">&#39; already exists &quot;</span> <span class="s2">&quot;(pass --overwrite to overwrite)&quot;</span> <span class="o">%</span> <span class="n">dst_dir</span>
-            <span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">dst_dir</span> <span class="o">=</span> <span class="n">generate_next_file_name</span><span class="p">(</span>
-            <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">-</span><span class="si">%s</span><span class="s2">&quot;</span>
-            <span class="o">%</span> <span class="p">(</span>
-                <span class="n">make_file_name</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">dataset_id</span><span class="p">),</span>
-                <span class="n">make_file_name</span><span class="p">(</span><span class="n">output_format</span><span class="p">),</span>
-            <span class="p">)</span>
-        <span class="p">)</span>
-    <span class="n">dst_dir</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">dst_dir</span><span class="p">)</span>
-
-    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Downloading the dataset&quot;</span><span class="p">)</span>
-    <span class="n">extractor</span> <span class="o">=</span> <span class="n">extractor_factory</span><span class="p">()</span>
-
-    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">subset</span><span class="p">:</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">extractor</span> <span class="o">=</span> <span class="n">extractor</span><span class="o">.</span><span class="n">subsets</span><span class="p">()[</span><span class="n">args</span><span class="o">.</span><span class="n">subset</span><span class="p">]</span>
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">CliException</span><span class="p">(</span><span class="s2">&quot;Subset &#39;</span><span class="si">%s</span><span class="s2">&#39; is not present in the dataset&quot;</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">subset</span><span class="p">)</span>
-
-    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Exporting the dataset&quot;</span><span class="p">)</span>
-    <span class="n">exporter</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">extractor</span><span class="p">,</span> <span class="n">dst_dir</span><span class="p">,</span> <span class="n">default_image_ext</span><span class="o">=</span><span class="s2">&quot;.png&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_args</span><span class="p">)</span>
-
-    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Dataset exported to &#39;</span><span class="si">%s</span><span class="s2">&#39; as &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dst_dir</span><span class="p">,</span> <span class="n">output_format</span><span class="p">))</span></div>
+<span class="k">def</span><span class="w"> </span><span class="nf">download_command</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="n">args</span><span class="o">.</span><span class="n">downloader</span><span class="o">.</span><span class="n">download</span><span class="p">(</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">dataset_id</span><span class="p">,</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">dst_dir</span><span class="p">,</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">overwrite</span><span class="p">,</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">output_format</span><span class="p">,</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">subset</span><span class="p">,</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">extra_args</span><span class="p">,</span>
+    <span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="describe_downloads_command">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.commands.download.html#datumaro.cli.commands.download.describe_downloads_command">[docs]</a>
-<span class="k">def</span> <span class="nf">describe_downloads_command</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
-    <span class="n">dataset_metas</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">TfdsDatasetRemoteMetadata</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-
-    <span class="k">if</span> <span class="n">TFDS_EXTRACTOR_AVAILABLE</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">AVAILABLE_TFDS_DATASETS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">dataset_metas</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;tfds:</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">query_remote_metadata</span><span class="p">()</span>
-
-    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">report_format</span> <span class="o">==</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span>
-            <span class="n">args</span><span class="o">.</span><span class="n">report_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span>
-        <span class="p">)</span> <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">report_file</span> <span class="k">else</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">nullcontext</span><span class="p">()</span> <span class="k">as</span> <span class="n">report_file</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">dataset_metas</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Available datasets:&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">report_file</span><span class="p">)</span>
-
-                <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">meta</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">dataset_metas</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">report_file</span><span class="p">)</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">meta</span><span class="o">.</span><span class="n">human_name</span><span class="si">}</span><span class="s2">):&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">report_file</span><span class="p">)</span>
-                    <span class="nb">print</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;  default output format: </span><span class="si">{</span><span class="n">meta</span><span class="o">.</span><span class="n">default_output_format</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                        <span class="n">file</span><span class="o">=</span><span class="n">report_file</span><span class="p">,</span>
-                    <span class="p">)</span>
-
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  description:&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">report_file</span><span class="p">)</span>
-                    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">meta</span><span class="o">.</span><span class="n">description</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">report_file</span><span class="p">)</span>
-
-                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  download size: </span><span class="si">{</span><span class="n">meta</span><span class="o">.</span><span class="n">download_size</span><span class="si">}</span><span class="s2"> bytes&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">report_file</span><span class="p">)</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  home URL: </span><span class="si">{</span><span class="n">meta</span><span class="o">.</span><span class="n">home_url</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="s1">&#39;N/A&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">report_file</span><span class="p">)</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  number of classes: </span><span class="si">{</span><span class="n">meta</span><span class="o">.</span><span class="n">num_classes</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">report_file</span><span class="p">)</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  subsets:&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">report_file</span><span class="p">)</span>
-                    <span class="k">for</span> <span class="n">subset_name</span><span class="p">,</span> <span class="n">subset_meta</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">subsets</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">subset_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">subset_meta</span><span class="o">.</span><span class="n">num_items</span><span class="si">}</span><span class="s2"> items&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">report_file</span><span class="p">)</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  version: </span><span class="si">{</span><span class="n">meta</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">report_file</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No datasets available.&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">report_file</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="n">file</span><span class="o">=</span><span class="n">report_file</span><span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span>
-                    <span class="s2">&quot;You can enable TFDS datasets by installing &quot;</span>
-                    <span class="s2">&quot;TensorFlow and TensorFlow Datasets:&quot;</span><span class="p">,</span>
-                    <span class="n">file</span><span class="o">=</span><span class="n">report_file</span><span class="p">,</span>
-                <span class="p">)</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    pip install datumaro[tf,tfds]&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">report_file</span><span class="p">)</span>
-
-    <span class="k">elif</span> <span class="n">args</span><span class="o">.</span><span class="n">report_format</span> <span class="o">==</span> <span class="s2">&quot;json&quot;</span><span class="p">:</span>
-
-        <span class="k">def</span> <span class="nf">meta_to_raw</span><span class="p">(</span><span class="n">meta</span><span class="p">:</span> <span class="n">TfdsDatasetRemoteMetadata</span><span class="p">):</span>
-            <span class="n">raw</span> <span class="o">=</span> <span class="p">{}</span>
-
-            <span class="c1"># We omit the media type from the output, because there is currently no mechanism</span>
-            <span class="c1"># for mapping media types to strings. The media type could be useful information</span>
-            <span class="c1"># for users, though, so we might want to implement such a mechanism eventually.</span>
-
-            <span class="k">for</span> <span class="n">attribute</span> <span class="ow">in</span> <span class="p">(</span>
-                <span class="s2">&quot;default_output_format&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;description&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;download_size&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;home_url&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;human_name&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;num_classes&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;version&quot;</span><span class="p">,</span>
-            <span class="p">):</span>
-                <span class="n">raw</span><span class="p">[</span><span class="n">attribute</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">attribute</span><span class="p">)</span>
-
-            <span class="n">raw</span><span class="p">[</span><span class="s2">&quot;subsets&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="n">name</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;num_items&quot;</span><span class="p">:</span> <span class="n">subset</span><span class="o">.</span><span class="n">num_items</span><span class="p">}</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">subset</span> <span class="ow">in</span> <span class="n">meta</span><span class="o">.</span><span class="n">subsets</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-            <span class="p">}</span>
-
-            <span class="k">return</span> <span class="n">raw</span>
-
-        <span class="k">with</span> <span class="p">(</span>
-            <span class="nb">open</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">report_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">report_file</span> <span class="k">else</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">nullcontext</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
-        <span class="p">)</span> <span class="k">as</span> <span class="n">report_file</span><span class="p">:</span>
-            <span class="n">report_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span>
-                <span class="n">dump_json</span><span class="p">(</span>
-                    <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">meta_to_raw</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">meta</span> <span class="ow">in</span> <span class="n">dataset_metas</span><span class="o">.</span><span class="n">items</span><span class="p">()},</span>
-                    <span class="n">indent</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                    <span class="n">append_newline</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
-            <span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;unreachable code&quot;</span></div>
+<span class="k">def</span><span class="w"> </span><span class="nf">describe_downloads_command</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">args</span><span class="o">.</span><span class="n">downloader</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">report_format</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">report_file</span><span class="p">)</span></div>
 
 </pre></div>
 

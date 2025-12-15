@@ -27,10 +27,10 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
-    <link rel="stylesheet" type="text/css" href="../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=8b7c274f" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -43,7 +43,7 @@
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
-    <script src="../_static/design-tabs.js?v=36754332"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/enum';</script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -192,7 +192,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
       
@@ -279,7 +279,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
         
@@ -340,8 +340,8 @@ document.write(`
                 <article class="bd-article">
                   
   <h1>Source code for enum</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">MappingProxyType</span><span class="p">,</span> <span class="n">DynamicClassAttribute</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">MappingProxyType</span><span class="p">,</span> <span class="n">DynamicClassAttribute</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
@@ -351,7 +351,7 @@ document.write(`
         <span class="p">]</span>
 
 
-<span class="k">def</span> <span class="nf">_is_descriptor</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_descriptor</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns True if obj is a descriptor, False otherwise.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -361,7 +361,7 @@ document.write(`
             <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s1">&#39;__delete__&#39;</span><span class="p">)</span>
             <span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">_is_dunder</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_dunder</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns True if a __dunder__ name, False otherwise.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -372,7 +372,7 @@ document.write(`
             <span class="n">name</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;_&#39;</span>
             <span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">_is_sunder</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_sunder</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns True if a _sunder_ name, False otherwise.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -383,7 +383,7 @@ document.write(`
             <span class="n">name</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;_&#39;</span>
             <span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">_is_private</span><span class="p">(</span><span class="n">cls_name</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_private</span><span class="p">(</span><span class="n">cls_name</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
     <span class="c1"># do not use `re` as `re` imports `enum`</span>
     <span class="n">pattern</span> <span class="o">=</span> <span class="s1">&#39;_</span><span class="si">%s</span><span class="s1">__&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cls_name</span><span class="p">,</span> <span class="p">)</span>
     <span class="n">pat_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span>
@@ -397,11 +397,11 @@ document.write(`
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span>
 
-<span class="k">def</span> <span class="nf">_make_class_unpicklable</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_make_class_unpicklable</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make the given class un-picklable.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">_break_on_call_reduce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proto</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_break_on_call_reduce</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proto</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%r</span><span class="s1"> cannot be pickled&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="p">)</span>
     <span class="bp">cls</span><span class="o">.</span><span class="n">__reduce_ex__</span> <span class="o">=</span> <span class="n">_break_on_call_reduce</span>
     <span class="bp">cls</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">=</span> <span class="s1">&#39;&lt;unknown&gt;&#39;</span>
@@ -409,7 +409,7 @@ document.write(`
 <span class="n">_auto_null</span> <span class="o">=</span> <span class="nb">object</span><span class="p">()</span>
 <div class="viewcode-block" id="auto">
 <a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.components.dataset_item_storage.html#datumaro.components.dataset_item_storage.auto">[docs]</a>
-<span class="k">class</span> <span class="nc">auto</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">auto</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Instances are replaced with an appropriate value in Enum class suites.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -417,21 +417,21 @@ document.write(`
 
 
 
-<span class="k">class</span> <span class="nc">_EnumDict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_EnumDict</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Track enum member order and ensure member names are not reused.</span>
 
 <span class="sd">    EnumMeta will use the names found in self._member_names as the</span>
 <span class="sd">    enumeration member names.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_member_names</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_last_values</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ignore</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_auto_called</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Changes anything not dundered or not a descriptor.</span>
 
@@ -441,7 +441,7 @@ document.write(`
 <span class="sd">        Single underscore (sunder) names are reserved.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">_is_private</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cls_name</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-            <span class="kn">import</span> <span class="nn">warnings</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
                     <span class="s2">&quot;private variables, such as </span><span class="si">%r</span><span class="s2">, will be normal attributes in 3.11&quot;</span>
                         <span class="o">%</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">),</span>
@@ -503,12 +503,12 @@ document.write(`
 <span class="c1"># This is also why there are checks in EnumMeta like `if Enum is not None`</span>
 <span class="n">Enum</span> <span class="o">=</span> <span class="kc">None</span>
 
-<span class="k">class</span> <span class="nc">EnumMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EnumMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Metaclass for Enum</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="fm">__prepare__</span><span class="p">(</span><span class="n">metacls</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__prepare__</span><span class="p">(</span><span class="n">metacls</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
         <span class="c1"># check that previous enum members do not exist</span>
         <span class="n">metacls</span><span class="o">.</span><span class="n">_check_for_existing_members</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">bases</span><span class="p">)</span>
         <span class="c1"># create the namespace dict</span>
@@ -522,7 +522,7 @@ document.write(`
                     <span class="p">)</span>
         <span class="k">return</span> <span class="n">enum_dict</span>
 
-    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="n">metacls</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">classdict</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="n">metacls</span><span class="p">,</span> <span class="bp">cls</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">classdict</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
         <span class="c1"># an Enum class is final once enumeration items have been defined; it</span>
         <span class="c1"># cannot be mixed with other types (int, float, etc.) if it has an</span>
         <span class="c1"># inherited __new__ unless a new __new__ is defined (or the resulting</span>
@@ -695,13 +695,13 @@ document.write(`
 
         <span class="k">return</span> <span class="n">enum_class</span>
 
-    <span class="k">def</span> <span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        classes/types should always be True.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">qualname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">qualname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Either returns an existing member, or creates a new enum class.</span>
 
@@ -738,9 +738,9 @@ document.write(`
                 <span class="n">start</span><span class="o">=</span><span class="n">start</span><span class="p">,</span>
                 <span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
-            <span class="kn">import</span> <span class="nn">warnings</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
                     <span class="s2">&quot;in 3.12 __contains__ will no longer raise TypeError, but will return True if</span><span class="se">\n</span><span class="s2">&quot;</span>
                     <span class="s2">&quot;obj is a member or a member&#39;s value&quot;</span><span class="p">,</span>
@@ -752,20 +752,20 @@ document.write(`
                     <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="vm">__qualname__</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__qualname__</span><span class="p">))</span>
         <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span> <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="n">_name_</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_member_map_</span>
 
-    <span class="k">def</span> <span class="fm">__delattr__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__delattr__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
         <span class="c1"># nicer error message when someone tries to delete an attribute</span>
         <span class="c1"># (see issue19025).</span>
         <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_member_map_</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: cannot delete Enum member.&quot;</span> <span class="o">%</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__delattr__</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__dir__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__dir__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span>
                 <span class="p">[</span><span class="s1">&#39;__class__&#39;</span><span class="p">,</span> <span class="s1">&#39;__doc__&#39;</span><span class="p">,</span> <span class="s1">&#39;__members__&#39;</span><span class="p">,</span> <span class="s1">&#39;__module__&#39;</span><span class="p">]</span>
                 <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_member_names_</span>
                 <span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getattr__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return the enum member matching `name`</span>
 
@@ -779,22 +779,22 @@ document.write(`
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_member_map_</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="kn">from</span> <span class="kc">None</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
 
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_member_map_</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns members in definition order.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_member_map_</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_member_names_</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_member_names_</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">__members__</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__members__</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a mapping of member name-&gt;value.</span>
 
@@ -803,16 +803,16 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">MappingProxyType</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_member_map_</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;&lt;enum </span><span class="si">%r</span><span class="s2">&gt;&quot;</span> <span class="o">%</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span>
 
-    <span class="k">def</span> <span class="fm">__reversed__</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__reversed__</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns members in reverse definition order.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_member_map_</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_member_names_</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Block attempts to reassign Enum members.</span>
 
@@ -825,7 +825,7 @@ document.write(`
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s1">&#39;Cannot reassign members.&#39;</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_create_</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">qualname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">qualname</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convenience method to create a new Enum class.</span>
 
@@ -878,7 +878,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">enum_class</span>
 
-    <span class="k">def</span> <span class="nf">_convert_</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="nb">filter</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="nb">filter</span><span class="p">,</span> <span class="n">source</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a new Enum subclass that replaces a collection of global constants</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -912,7 +912,7 @@ document.write(`
         <span class="k">return</span> <span class="bp">cls</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_check_for_existing_members</span><span class="p">(</span><span class="n">class_name</span><span class="p">,</span> <span class="n">bases</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_for_existing_members</span><span class="p">(</span><span class="n">class_name</span><span class="p">,</span> <span class="n">bases</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">chain</span> <span class="ow">in</span> <span class="n">bases</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">base</span> <span class="ow">in</span> <span class="n">chain</span><span class="o">.</span><span class="vm">__mro__</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">Enum</span><span class="p">)</span> <span class="ow">and</span> <span class="n">base</span><span class="o">.</span><span class="n">_member_names_</span><span class="p">:</span>
@@ -922,7 +922,7 @@ document.write(`
                             <span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_get_mixins_</span><span class="p">(</span><span class="n">class_name</span><span class="p">,</span> <span class="n">bases</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_mixins_</span><span class="p">(</span><span class="n">class_name</span><span class="p">,</span> <span class="n">bases</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the type for creating enum members, and the first inherited</span>
 <span class="sd">        enum class.</span>
@@ -932,7 +932,7 @@ document.write(`
         <span class="k">if</span> <span class="ow">not</span> <span class="n">bases</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">object</span><span class="p">,</span> <span class="n">Enum</span>
 
-        <span class="k">def</span> <span class="nf">_find_data_type</span><span class="p">(</span><span class="n">bases</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_find_data_type</span><span class="p">(</span><span class="n">bases</span><span class="p">):</span>
             <span class="n">data_types</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">chain</span> <span class="ow">in</span> <span class="n">bases</span><span class="p">:</span>
                 <span class="n">candidate</span> <span class="o">=</span> <span class="kc">None</span>
@@ -969,7 +969,7 @@ document.write(`
         <span class="k">return</span> <span class="n">member_type</span><span class="p">,</span> <span class="n">first_enum</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_find_new_</span><span class="p">(</span><span class="n">classdict</span><span class="p">,</span> <span class="n">member_type</span><span class="p">,</span> <span class="n">first_enum</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_find_new_</span><span class="p">(</span><span class="n">classdict</span><span class="p">,</span> <span class="n">member_type</span><span class="p">,</span> <span class="n">first_enum</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the __new__ to be used for creating the enum members.</span>
 
@@ -1016,13 +1016,13 @@ document.write(`
 
 <div class="viewcode-block" id="Enum">
 <a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.components.dataset_item_storage.html#datumaro.components.dataset_item_storage.Enum">[docs]</a>
-<span class="k">class</span> <span class="nc">Enum</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">EnumMeta</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Enum</span><span class="p">(</span><span class="n">metaclass</span><span class="o">=</span><span class="n">EnumMeta</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generic enumeration.</span>
 
 <span class="sd">    Derive from this class to define new enumerations.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="c1"># all enum instances are actually created during class construction</span>
         <span class="c1"># without calling this method; this method is called by the metaclass&#39;</span>
         <span class="c1"># __call__ (i.e. Color(3) ), and by pickle</span>
@@ -1068,7 +1068,7 @@ document.write(`
             <span class="n">exc</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="n">ve_exc</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">_generate_next_value_</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">last_values</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_next_value_</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">last_values</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate the next value when not given.</span>
 
@@ -1086,17 +1086,17 @@ document.write(`
             <span class="k">return</span> <span class="n">start</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_missing_</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_missing_</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">return</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;&lt;</span><span class="si">%s</span><span class="s2">.</span><span class="si">%s</span><span class="s2">: </span><span class="si">%r</span><span class="s2">&gt;&quot;</span> <span class="o">%</span> <span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__dir__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__dir__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns all members and all public methods</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1108,7 +1108,7 @@ document.write(`
                 <span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">m</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span> <span class="k">if</span> <span class="n">m</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;_&#39;</span><span class="p">]</span>
         <span class="k">return</span> <span class="p">([</span><span class="s1">&#39;__class__&#39;</span><span class="p">,</span> <span class="s1">&#39;__doc__&#39;</span><span class="p">,</span> <span class="s1">&#39;__module__&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">added_behavior</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__format__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">format_spec</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__format__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">format_spec</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns format using actual value type unless __str__ has been overridden.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1127,10 +1127,10 @@ document.write(`
             <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_</span>
         <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="fm">__format__</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">format_spec</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_name_</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__reduce_ex__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proto</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__reduce_ex__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proto</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value_</span><span class="p">,</span> <span class="p">)</span>
 
     <span class="c1"># DynamicClassAttribute is used to provide access to the `name` and</span>
@@ -1141,12 +1141,12 @@ document.write(`
     <span class="c1"># used to look them up.</span>
 
     <span class="nd">@DynamicClassAttribute</span>
-    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The name of the Enum member.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_</span>
 
     <span class="nd">@DynamicClassAttribute</span>
-    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The value of the Enum member.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_</span></div>
 
@@ -1154,20 +1154,20 @@ document.write(`
 
 <div class="viewcode-block" id="IntEnum">
 <a class="viewcode-back" href="../docs/reference/_autosummary/datumaro.util.multi_procs_util.html#datumaro.components.dataset_item_storage.IntEnum">[docs]</a>
-<span class="k">class</span> <span class="nc">IntEnum</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">IntEnum</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">Enum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Enum where members are also (and must be) ints&quot;&quot;&quot;</span></div>
 
 
 
-<span class="k">def</span> <span class="nf">_reduce_ex_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proto</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_reduce_ex_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proto</span><span class="p">):</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
 
-<span class="k">class</span> <span class="nc">Flag</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Flag</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Support for flags</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">_generate_next_value_</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">last_values</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_next_value_</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">count</span><span class="p">,</span> <span class="n">last_values</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generate the next value when not given.</span>
 
@@ -1183,11 +1183,11 @@ document.write(`
                 <span class="n">high_bit</span> <span class="o">=</span> <span class="n">_high_bit</span><span class="p">(</span><span class="n">last_value</span><span class="p">)</span>
                 <span class="k">break</span>
             <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Invalid Flag value: </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">last_value</span><span class="p">)</span> <span class="kn">from</span> <span class="kc">None</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Invalid Flag value: </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">last_value</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
         <span class="k">return</span> <span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">high_bit</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_missing_</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_missing_</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns member (possibly creating it) if one can be found for value.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1200,7 +1200,7 @@ document.write(`
         <span class="k">return</span> <span class="n">possible_member</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_create_pseudo_member_</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_pseudo_member_</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a composite member iff value contains only members.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1219,7 +1219,7 @@ document.write(`
             <span class="n">pseudo_member</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_value2member_map_</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">pseudo_member</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">pseudo_member</span>
 
-    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns True if self has at least the same flags set as other.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1229,7 +1229,7 @@ document.write(`
                     <span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="o">.</span><span class="vm">__qualname__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__qualname__</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">other</span><span class="o">.</span><span class="n">_value_</span> <span class="o">&amp;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_value_</span>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="s1">&#39;&lt;</span><span class="si">%s</span><span class="s1">.</span><span class="si">%s</span><span class="s1">: </span><span class="si">%r</span><span class="s1">&gt;&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_</span><span class="p">)</span>
@@ -1240,7 +1240,7 @@ document.write(`
                 <span class="bp">self</span><span class="o">.</span><span class="n">_value_</span><span class="p">,</span>
                 <span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">.</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name_</span><span class="p">)</span>
@@ -1253,25 +1253,25 @@ document.write(`
                     <span class="s1">&#39;|&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">_name_</span> <span class="ow">or</span> <span class="n">m</span><span class="o">.</span><span class="n">_value_</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">members</span><span class="p">]),</span>
                     <span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value_</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__or__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__or__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">NotImplemented</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value_</span> <span class="o">|</span> <span class="n">other</span><span class="o">.</span><span class="n">_value_</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__and__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__and__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">NotImplemented</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value_</span> <span class="o">&amp;</span> <span class="n">other</span><span class="o">.</span><span class="n">_value_</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__xor__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__xor__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">NotImplemented</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value_</span> <span class="o">^</span> <span class="n">other</span><span class="o">.</span><span class="n">_value_</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__invert__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__invert__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">members</span><span class="p">,</span> <span class="n">uncovered</span> <span class="o">=</span> <span class="n">_decompose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value_</span><span class="p">)</span>
         <span class="n">inverted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">:</span>
@@ -1280,13 +1280,13 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">inverted</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">IntFlag</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">Flag</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">IntFlag</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">Flag</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Support for integer-based Flags</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_missing_</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_missing_</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns member (possibly creating it) if one can be found for value.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1296,7 +1296,7 @@ document.write(`
         <span class="k">return</span> <span class="n">new_member</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_create_pseudo_member_</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_create_pseudo_member_</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a composite member iff value contains only members.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1328,18 +1328,18 @@ document.write(`
                 <span class="n">pseudo_member</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_value2member_map_</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">pseudo_member</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">pseudo_member</span>
 
-    <span class="k">def</span> <span class="fm">__or__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__or__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
             <span class="k">return</span> <span class="bp">NotImplemented</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value_</span> <span class="o">|</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="o">.</span><span class="n">_value_</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
 
-    <span class="k">def</span> <span class="fm">__and__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__and__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
             <span class="k">return</span> <span class="bp">NotImplemented</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value_</span> <span class="o">&amp;</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="o">.</span><span class="n">_value_</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__xor__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__xor__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
             <span class="k">return</span> <span class="bp">NotImplemented</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value_</span> <span class="o">^</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="o">.</span><span class="n">_value_</span><span class="p">)</span>
@@ -1348,18 +1348,18 @@ document.write(`
     <span class="fm">__rand__</span> <span class="o">=</span> <span class="fm">__and__</span>
     <span class="fm">__rxor__</span> <span class="o">=</span> <span class="fm">__xor__</span>
 
-    <span class="k">def</span> <span class="fm">__invert__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__invert__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="o">~</span><span class="bp">self</span><span class="o">.</span><span class="n">_value_</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
 
 
-<span class="k">def</span> <span class="nf">_high_bit</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_high_bit</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    returns index of highest bit, or -1 if value is zero or negative</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">bit_length</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span>
 
-<span class="k">def</span> <span class="nf">unique</span><span class="p">(</span><span class="n">enumeration</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">unique</span><span class="p">(</span><span class="n">enumeration</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class decorator for enumerations ensuring unique member values.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1374,7 +1374,7 @@ document.write(`
                 <span class="p">(</span><span class="n">enumeration</span><span class="p">,</span> <span class="n">alias_details</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">enumeration</span>
 
-<span class="k">def</span> <span class="nf">_decompose</span><span class="p">(</span><span class="n">flag</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_decompose</span><span class="p">(</span><span class="n">flag</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extract all members from the value.</span>
 <span class="sd">    &quot;&quot;&quot;</span>

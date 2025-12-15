@@ -27,10 +27,10 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=8b7c274f" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -43,7 +43,7 @@
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../../_static/design-tabs.js?v=36754332"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/components/cli_plugin';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -192,7 +192,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
       
@@ -279,7 +279,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
         
@@ -344,29 +344,28 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">argparse</span>
-<span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Type</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Type</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.cli.util</span> <span class="kn">import</span> <span class="n">MultilineFormatter</span>
-<span class="kn">from</span> <span class="nn">datumaro.util</span> <span class="kn">import</span> <span class="n">to_snake_case</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.cli.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultilineFormatter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">to_snake_case</span>
 
 <span class="n">_plugin_types</span> <span class="o">=</span> <span class="kc">None</span>
 
 
 <div class="viewcode-block" id="plugin_types">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.cli_plugin.html#datumaro.components.cli_plugin.plugin_types">[docs]</a>
-<span class="k">def</span> <span class="nf">plugin_types</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="s2">&quot;CliPlugin&quot;</span><span class="p">]]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plugin_types</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="s2">&quot;CliPlugin&quot;</span><span class="p">]]:</span>
     <span class="k">global</span> <span class="n">_plugin_types</span>
     <span class="k">if</span> <span class="n">_plugin_types</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetBase</span>
-        <span class="kn">from</span> <span class="nn">datumaro.components.exporter</span> <span class="kn">import</span> <span class="n">Exporter</span>
-        <span class="kn">from</span> <span class="nn">datumaro.components.importer</span> <span class="kn">import</span> <span class="n">Importer</span>
-        <span class="kn">from</span> <span class="nn">datumaro.components.launcher</span> <span class="kn">import</span> <span class="n">Launcher</span>
-        <span class="kn">from</span> <span class="nn">datumaro.components.transformer</span> <span class="kn">import</span> <span class="n">Transform</span>
-        <span class="kn">from</span> <span class="nn">datumaro.components.validator</span> <span class="kn">import</span> <span class="n">Validator</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetBase</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.exporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Exporter</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.importer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Importer</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transform</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.validator</span><span class="w"> </span><span class="kn">import</span> <span class="n">Validator</span>
 
-        <span class="n">_plugin_types</span> <span class="o">=</span> <span class="p">[</span><span class="n">Launcher</span><span class="p">,</span> <span class="n">DatasetBase</span><span class="p">,</span> <span class="n">Transform</span><span class="p">,</span> <span class="n">Importer</span><span class="p">,</span> <span class="n">Exporter</span><span class="p">,</span> <span class="n">Validator</span><span class="p">]</span>
+        <span class="n">_plugin_types</span> <span class="o">=</span> <span class="p">[</span><span class="n">DatasetBase</span><span class="p">,</span> <span class="n">Transform</span><span class="p">,</span> <span class="n">Importer</span><span class="p">,</span> <span class="n">Exporter</span><span class="p">,</span> <span class="n">Validator</span><span class="p">]</span>
 
     <span class="k">return</span> <span class="n">_plugin_types</span></div>
 
@@ -374,37 +373,36 @@ document.write(`
 
 <div class="viewcode-block" id="remove_plugin_type">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.cli_plugin.html#datumaro.components.cli_plugin.remove_plugin_type">[docs]</a>
-<span class="k">def</span> <span class="nf">remove_plugin_type</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;transform&quot;</span><span class="p">,</span> <span class="s2">&quot;base&quot;</span><span class="p">,</span> <span class="s2">&quot;exporter&quot;</span><span class="p">,</span> <span class="s2">&quot;launcher&quot;</span><span class="p">,</span> <span class="s2">&quot;importer&quot;</span><span class="p">,</span> <span class="s2">&quot;validator&quot;</span><span class="p">}:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_plugin_type</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;transform&quot;</span><span class="p">,</span> <span class="s2">&quot;base&quot;</span><span class="p">,</span> <span class="s2">&quot;exporter&quot;</span><span class="p">,</span> <span class="s2">&quot;importer&quot;</span><span class="p">,</span> <span class="s2">&quot;validator&quot;</span><span class="p">):</span>
         <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">t</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">s</span></div>
 
 
 
-<span class="k">class</span> <span class="nc">_PluginNameDescriptor</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">objtype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_PluginNameDescriptor</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">objtype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">objtype</span><span class="p">:</span>
             <span class="n">objtype</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">remove_plugin_type</span><span class="p">(</span><span class="n">to_snake_case</span><span class="p">(</span><span class="n">objtype</span><span class="o">.</span><span class="vm">__name__</span><span class="p">))</span>
 
 
 <div class="viewcode-block" id="CliPlugin">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.cli_plugin.CliPlugin">[docs]</a>
-<span class="k">class</span> <span class="nc">CliPlugin</span><span class="p">:</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.importer.html#datumaro.components.cli_plugin.CliPlugin">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">CliPlugin</span><span class="p">:</span>
     <span class="n">NAME</span> <span class="o">=</span> <span class="n">_PluginNameDescriptor</span><span class="p">()</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_get_doc</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_doc</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="n">doc</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="s2">&quot;__doc__&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">doc</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="s2">&quot;__doc__&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">doc</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">plugin_types</span><span class="p">()):</span>
-                <span class="n">doc</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">doc</span> <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="s2">&quot;__doc__&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">doc</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">plugin_types</span><span class="p">()):</span>
+            <span class="n">doc</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">return</span> <span class="n">doc</span>
 
 <div class="viewcode-block" id="CliPlugin.build_cmdline_parser">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.cli_plugin.CliPlugin.build_cmdline_parser">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.importer.html#datumaro.components.cli_plugin.CliPlugin.build_cmdline_parser">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">args</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;prog&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">NAME</span><span class="p">,</span>
             <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_doc</span><span class="p">(</span><span class="bp">cls</span><span class="p">),</span>
@@ -416,18 +414,16 @@ document.write(`
 
 
 <div class="viewcode-block" id="CliPlugin.parse_cmdline">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.sam_transforms.bbox_to_inst_mask.html#datumaro.components.cli_plugin.CliPlugin.parse_cmdline">[docs]</a>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.importer.html#datumaro.components.cli_plugin.CliPlugin.parse_cmdline">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">parse_cmdline</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parse_cmdline</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">args</span> <span class="ow">and</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;--&quot;</span><span class="p">:</span>
             <span class="n">args</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">()</span>
         <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
         <span class="n">args</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 
-        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
-            <span class="s2">&quot;Parsed parameters: </span><span class="se">\n\t</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
-        <span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Parsed parameters: </span><span class="se">\n\t</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n\t</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
 
         <span class="k">return</span> <span class="n">args</span></div>
 </div>

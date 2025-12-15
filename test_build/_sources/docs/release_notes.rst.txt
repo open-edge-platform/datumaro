@@ -3,7 +3,210 @@ Release Notes
 
 .. toctree::
    :maxdepth: 1
-v2.0.0 (2024.04)
+
+Release 1.12.0
+--------------
+
+This release streamlines Datumaro by removing a number of lesser-used features, helping to simplify the tool and reduce its dependencies. These changes are part of an effort to keep Datumaro focused on its core strengths: dataset management and integration with machine learning frameworks. As part of this update, inference-related features have been removed. For inference tasks, we recommend using the [OpenVINO model API](https://github.com/open-edge-platform/model_api). If you rely on a specific feature that is no longer available, you can still access it from [the previous version of Datumaro](https://github.com/open-edge-platform/datumaro/tree/v1.11.1).
+
+Removed features
+^^^^^^^^^^^^^^^^
+
+- CLI commmands:
+  - explain, explore, generate, prune
+  - model: add, remove, run, info
+  - project: add, create, export, import, remove, checkout, commit, log, info, status
+  - source: import, add, remove
+- API features:
+  - Model inference
+  - Model-based transformations
+  - Crypter
+  - Synthetic dataset generation
+  - Data exploration
+  - BBox to mask using SAM
+  - Telemetry
+  - Anchor generation
+  - Missing annotation detection
+  - Model inference explanation
+  - Near-duplicate removal
+  - Pruning
+  - Pseudo-labels
+  - Project
+  - Noisy label detection
+  - Data shift analysis
+- SAM Docker image
+
+New features
+^^^^^^^^^^^^
+
+- Experimental dataset class
+
+Enhancements
+^^^^^^^^^^^^
+- Mark several dependencies as optional
+- Removal of unneeded dependencies
+- Documentation tidy-up
+- DCO introduction; readme, PR template, and contribution guide tidy-up
+- Fix code coverage upload to Codecov in the CI
+- Fix crashes with certain datasets in the compare command
+- Added Semgrep security scan in the CI
+
+v1.11.1 (2024 Q3)
+-----------------
+
+Enhancements
+^^^^^^^^^^^^
+
+- Bump version of NumPy and OpenVINO
+- Support for Python 3.13 and MacOS
+
+v1.11.0 (2024 Q3)
+-----------------
+
+This release includes a significant number of deprecations in the CLI and API.
+This is a one-off action to remove unused features as well as features
+such as inference which do not fit well in Datumaro. We intend to remove those
+features in Datumaro 1.12.0.
+
+New features
+^^^^^^^^^^^^
+- Convert Cuboid2D annotation to/from 3D data
+- Add label groups for hierarchical classification in ImageNet
+
+Enhancements
+^^^^^^^^^^^^
+- Add non-strict mode to JsonPageMapper in rust API and enable it for COCO
+- Enhance 'id_from_image_name' transform to ensure each identifier is unique
+- Optimize path assignment to handle point cloud in JSON without images
+- Add documentation for framework conversion
+
+Bug fixes
+^^^^^^^^^
+- Fix assertion to compare hashkeys against expected value
+- Mark pyemd as optional since it does not support Python 3.12
+
+Deprecations
+^^^^^^^^^^^^
+- The following CLI commmands are deprecated:
+  - explain, explore, generate, prune
+  - model: add, remove, run, info
+  - project: add, create, export, import, remove, checkout, commit, log, info, status
+  - source: import, add, remove
+- The following APIs are deprecated:
+  - Model inference
+  - Model-based transformations
+  - Crypter
+  - Synthetic dataset generation
+  - Data exploration
+  - BBox to mask using SAM
+  - Telemetry
+  - Anchor generation
+  - Missing annotation detection
+  - Model inference explanation
+  - Near-duplicate removal
+  - Pruning
+  - Pseudo-labels
+  - Projects
+  - SAM Docker image
+
+v1.10.0 (2024 Q4)
+-----------------
+
+New features
+^^^^^^^^^^^^
+- Support KITTI 3D format
+- Add PseudoLabeling transform for unlabeled dataset
+
+Enhancements
+^^^^^^^^^^^^
+- Raise an appropriate error when exporting a datumaro dataset if its subset name contains path separators.
+- Update docs for transform plugins
+- Update ov ir model for explorer openvino launcher with CLIP ViT-L/14@336px model
+- Optimize path assignment to handle point cloud in JSON without images
+- Set TabularTransform to process clean transform in parallel
+
+Bug fixes
+^^^^^^^^^
+- Fix datumaro format to load visibility information from Points annotations
+
+v1.9.1 (2024 Q3)
+----------------
+
+Enhancements
+^^^^^^^^^^^^
+- Support multiple labels for kaggle format
+- Use DataFrame.map instead of DataFrame.applymap
+
+Bug fixes
+^^^^^^^^^
+- Fix StreamDataset merging when importing in eager mode
+
+v1.9.0 (2024 Q3)
+----------------
+
+New features
+^^^^^^^^^^^^
+- Add a new CLI command: datum format
+- Support language dataset for DmTorchDataset
+
+Enhancements
+^^^^^^^^^^^^
+- Change _Shape to Shape and add comments for subclasses of Shape
+
+Bug fixes
+^^^^^^^^^
+- Fix KITTI-3D importer and exporter
+
+v1.8.0 (2024 Q3)
+----------------
+
+New features
+^^^^^^^^^^^^
+- Add TabularValidator
+- Add Clean Transform for tabular data type
+
+Enhancements
+^^^^^^^^^^^^
+- Set label name with parents to avoid duplicates for AstypeAnnotations
+- Pass Keyword Argument to TabularDataBase
+
+Bug fixes
+^^^^^^^^^
+- Preserve end_frame information of a video when it is zero.
+- Changed the Datumaro format to ensure exported videos have relative paths and to prevent the same video from being overwritten.
+
+v1.7.0 (2024 Q2)
+----------------
+
+New features
+^^^^^^^^^^^^
+- Add ann_types property for dataset
+- Add AnnotationType.rotated_bbox for oriented object detection
+- Add DOTA data format for oriented object detection task
+- Add AstypeAnnotations Transform
+
+Enhancements
+^^^^^^^^^^^^
+- Fix ambiguous COCO format detector
+- Get target information for tabular dataset
+- Add ExtractedMask and update importers who can use it to use it
+
+v1.6.1 (2024.05)
+----------------
+
+Enhancements
+^^^^^^^^^^^^
+- Prevent AcLauncher for OpenVINO 2024.0
+
+Bug fixes
+^^^^^^^^^
+- Modify lxml dependency constraint
+- Fix CLI error occurring when installed with default option only
+- Relax Pillow dependency constraint
+- Modify Numpy dependency constraint
+- Relax old pandas version constraint
+
+v1.6.0 (2024.04)
 ----------------
 
 New features
@@ -17,7 +220,6 @@ New features
 - Add `__getitem__()` for random accessing with O(1) time complexity
 - Add Data-aware Anchor Generator
 - Support bounding box import within Kaggle extractors and add `KaggleCocoBase`
-- Implement Datumaroapp GUI for datumaro
 
 Enhancements
 ^^^^^^^^^^^^
@@ -298,4 +500,4 @@ Bug fixes
 - Fix a problem found on model remove CLI command
 
 .. note::
-   About the release of the developed version can be read in the `CHANGELOG.md <https://github.com/openvinotoolkit/datumaro/blob/develop/CHANGELOG.md>`_ of the develop branch.
+   About the release of the developed version can be read in the `CHANGELOG.md <https://github.com/open-edge-platform/datumaro/blob/develop/CHANGELOG.md>`_ of the develop branch.

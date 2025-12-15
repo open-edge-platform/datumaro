@@ -27,10 +27,10 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=8b7c274f" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -43,7 +43,7 @@
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../../_static/design-tabs.js?v=36754332"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/cli/util';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -192,7 +192,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
       
@@ -279,7 +279,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
         
@@ -344,50 +344,51 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">argparse</span>
-<span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
-<span class="kn">import</span> <span class="nn">textwrap</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">functools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">operator</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">textwrap</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span>
 
 
 <div class="viewcode-block" id="add_subparser">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.cli.util.html#datumaro.cli.commands.require_project.modification.add.add_subparser">[docs]</a>
-<span class="k">def</span> <span class="nf">add_subparser</span><span class="p">(</span><span class="n">subparsers</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">builder</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.cli.util.html#datumaro.cli.commands.stats.add_subparser">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_subparser</span><span class="p">(</span><span class="n">subparsers</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">builder</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">builder</span><span class="p">(</span><span class="k">lambda</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span></div>
 
 
 
 <div class="viewcode-block" id="MultilineFormatter">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.cli.util.html#datumaro.cli.commands.require_project.modification.add.MultilineFormatter">[docs]</a>
-<span class="k">class</span> <span class="nc">MultilineFormatter</span><span class="p">(</span><span class="n">argparse</span><span class="o">.</span><span class="n">HelpFormatter</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.cli.util.html#datumaro.cli.commands.stats.MultilineFormatter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MultilineFormatter</span><span class="p">(</span><span class="n">argparse</span><span class="o">.</span><span class="n">HelpFormatter</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Keeps line breaks introduced with &#39;|n&#39; separator</span>
 <span class="sd">    and spaces introduced with &#39;|s&#39;,</span>
 <span class="sd">    also removes the &#39;code-block&#39; directives.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keep_natural</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keep_natural</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_keep_natural</span> <span class="o">=</span> <span class="n">keep_natural</span>
 
-    <span class="k">def</span> <span class="nf">_fill_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">indent</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_fill_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">indent</span><span class="p">):</span>
         <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_whitespace_matcher</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
         <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;|s&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.. code-block::&quot;</span><span class="p">,</span> <span class="s2">&quot;|n&quot;</span><span class="p">)</span>
 
         <span class="n">paragraphs</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;|n &quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keep_natural</span><span class="p">:</span>
-            <span class="n">paragraphs</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">((</span><span class="n">p</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> &quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">paragraphs</span><span class="p">),</span> <span class="p">[])</span>
+            <span class="n">paragraphs</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">iadd</span><span class="p">,</span> <span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> &quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">paragraphs</span><span class="p">),</span> <span class="p">[])</span>
 
         <span class="n">multiline_text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">for</span> <span class="n">paragraph</span> <span class="ow">in</span> <span class="n">paragraphs</span><span class="p">:</span>
             <span class="n">formatted_paragraph</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">textwrap</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">paragraph</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">initial_indent</span><span class="o">=</span><span class="n">indent</span><span class="p">,</span> <span class="n">subsequent_indent</span><span class="o">=</span><span class="n">indent</span><span class="p">)</span>
-                <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="n">textwrap</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">paragraph</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">initial_indent</span><span class="o">=</span><span class="n">indent</span><span class="p">,</span> <span class="n">subsequent_indent</span><span class="o">=</span><span class="n">indent</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="p">)</span>
             <span class="n">multiline_text</span> <span class="o">+=</span> <span class="n">formatted_paragraph</span>
         <span class="k">return</span> <span class="n">multiline_text</span>
 
-    <span class="k">def</span> <span class="nf">_format_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_format_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This requires to remove an ugly curly braced list generated by add_subparsers().</span>
 <span class="sd">        Please see the following example.</span>
@@ -411,14 +412,14 @@ document.write(`
 
 
 <div class="viewcode-block" id="required_count">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.cli.util.html#datumaro.cli.commands.require_project.modification.add.required_count">[docs]</a>
-<span class="k">def</span> <span class="nf">required_count</span><span class="p">(</span><span class="n">nmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">nmax</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-    <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">nmin</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">nmax</span> <span class="ow">and</span> <span class="n">nmin</span> <span class="ow">or</span> <span class="n">nmax</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.cli.util.html#datumaro.cli.commands.stats.required_count">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">required_count</span><span class="p">(</span><span class="n">nmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">nmax</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="p">(</span><span class="n">nmin</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">nmax</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">nmin</span><span class="p">)</span> <span class="ow">or</span> <span class="n">nmax</span>
 
-    <span class="k">class</span> <span class="nc">RequiredCount</span><span class="p">(</span><span class="n">argparse</span><span class="o">.</span><span class="n">Action</span><span class="p">):</span>
-        <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">option_string</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">class</span><span class="w"> </span><span class="nc">RequiredCount</span><span class="p">(</span><span class="n">argparse</span><span class="o">.</span><span class="n">Action</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">option_string</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
             <span class="n">k</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="p">((</span><span class="n">nmin</span> <span class="ow">and</span> <span class="p">(</span><span class="n">nmin</span> <span class="o">&lt;=</span> <span class="n">k</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">nmin</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">nmax</span> <span class="ow">and</span> <span class="p">(</span><span class="n">k</span> <span class="o">&lt;=</span> <span class="n">nmax</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">nmax</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(((</span><span class="n">nmin</span> <span class="ow">and</span> <span class="p">(</span><span class="n">nmin</span> <span class="o">&lt;=</span> <span class="n">k</span><span class="p">))</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">nmin</span><span class="p">)</span> <span class="ow">and</span> <span class="p">((</span><span class="n">nmax</span> <span class="ow">and</span> <span class="p">(</span><span class="n">k</span> <span class="o">&lt;=</span> <span class="n">nmax</span><span class="p">))</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">nmax</span><span class="p">)):</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Argument &#39;</span><span class="si">%s</span><span class="s2">&#39; requires&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">dest</span>
                 <span class="k">if</span> <span class="n">nmin</span> <span class="ow">and</span> <span class="n">nmax</span><span class="p">:</span>
                     <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot; from </span><span class="si">%s</span><span class="s2"> to </span><span class="si">%s</span><span class="s2"> arguments&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">nmin</span><span class="p">,</span> <span class="n">nmax</span><span class="p">)</span>
@@ -434,15 +435,15 @@ document.write(`
 
 
 <div class="viewcode-block" id="at_least">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.cli.util.html#datumaro.cli.commands.require_project.modification.add.at_least">[docs]</a>
-<span class="k">def</span> <span class="nf">at_least</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.cli.util.html#datumaro.cli.commands.stats.at_least">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">at_least</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">required_count</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="join_cli_args">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.cli.util.html#datumaro.cli.commands.require_project.modification.add.join_cli_args">[docs]</a>
-<span class="k">def</span> <span class="nf">join_cli_args</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span><span class="p">,</span> <span class="o">*</span><span class="n">names</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.cli.util.html#datumaro.cli.commands.stats.join_cli_args">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">join_cli_args</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">Namespace</span><span class="p">,</span> <span class="o">*</span><span class="n">names</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
     <span class="s2">&quot;Merges arg values in a list&quot;</span>
 
     <span class="n">joined</span> <span class="o">=</span> <span class="p">[]</span>
@@ -457,23 +458,9 @@ document.write(`
 
 
 
-<div class="viewcode-block" id="show_video_import_warning">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.cli.util.html#datumaro.cli.commands.require_project.modification.add.show_video_import_warning">[docs]</a>
-<span class="k">def</span> <span class="nf">show_video_import_warning</span><span class="p">():</span>
-    <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-        <span class="s2">&quot;Using &#39;video_frames&#39; in a project may lead &quot;</span>
-        <span class="s2">&quot;to different results across multiple runs, if the &quot;</span>
-        <span class="s2">&quot;system setup changes (library version, OS, etc.). &quot;</span>
-        <span class="s2">&quot;If you need stable results, consider splitting the video &quot;</span>
-        <span class="s2">&quot;manually using instructions at: &quot;</span>
-        <span class="s2">&quot;https://openvinotoolkit.github.io/datumaro/latest/docs/data-formats/media_formats&quot;</span>
-    <span class="p">)</span></div>
-
-
-
 <div class="viewcode-block" id="make_subcommands_help">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.cli.util.html#datumaro.cli.commands.require_project.modification.add.make_subcommands_help">[docs]</a>
-<span class="k">def</span> <span class="nf">make_subcommands_help</span><span class="p">(</span><span class="n">commands</span><span class="p">,</span> <span class="n">help_line_start</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.cli.util.html#datumaro.cli.commands.stats.make_subcommands_help">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_subcommands_help</span><span class="p">(</span><span class="n">commands</span><span class="p">,</span> <span class="n">help_line_start</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
     <span class="n">desc</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
     <span class="k">for</span> <span class="n">command_name</span><span class="p">,</span> <span class="n">command_type</span><span class="p">,</span> <span class="n">command_help</span> <span class="ow">in</span> <span class="n">commands</span><span class="p">:</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;  %-&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">help_line_start</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;s</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span>

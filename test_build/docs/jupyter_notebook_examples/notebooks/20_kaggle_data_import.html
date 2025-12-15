@@ -28,11 +28,11 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/nbsphinx-code-cells.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/nbsphinx-code-cells.css?v=2aa19091" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=8b7c274f" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -45,7 +45,7 @@
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../../_static/design-tabs.js?v=36754332"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -196,7 +196,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
       
@@ -287,7 +287,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
         
@@ -433,7 +433,7 @@ Downloading flowers-recognition.zip to ./flowers-recognition
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">datumaro</span> <span class="k">as</span> <span class="nn">dm</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dm</span>
 
 <span class="n">dataset_dir</span> <span class="o">=</span> <span class="s2">&quot;./flowers-recognition/flowers&quot;</span>
 <span class="n">formats</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">detect</span><span class="p">(</span><span class="n">dataset_dir</span><span class="p">)</span>
@@ -597,9 +597,7 @@ HAM_0005132,ISIC_0025837,bkl,histo,70.0,female,back
 <span class="n">ann_file</span> <span class="o">=</span> <span class="s2">&quot;./skin-cancer-mnist-ham10000/HAM10000_metadata.csv&quot;</span>
 <span class="n">columns</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;media&quot;</span><span class="p">:</span> <span class="s2">&quot;image_id&quot;</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="s2">&quot;dx&quot;</span><span class="p">}</span>
 
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span>
-    <span class="n">path</span><span class="o">=</span><span class="n">dataset_dir</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;kaggle_image_csv&quot;</span><span class="p">,</span> <span class="n">ann_file</span><span class="o">=</span><span class="n">ann_file</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span>
-<span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">dataset_dir</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;kaggle_image_csv&quot;</span><span class="p">,</span> <span class="n">ann_file</span><span class="o">=</span><span class="n">ann_file</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">columns</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
 </pre></div>
 </div>

@@ -16,16 +16,15 @@ Supported annotation attributes:
 - other arbitrary boolean attributes, which can be specified
   in the annotation file `<image_name>_atr.txt`
 
-## Import ADE20K 2017 dataset
+## Convert ADE20K 2017 dataset
 
-A Datumaro project with an ADE20k source can be created in the following way:
+A Datumaro dataset can be converted in the following way:
 
 ```bash
-datum project create
-datum project import --format ade20k2017 <path/to/dataset>
+datum convert -if ade20k2017 -i <path/to/dataset> -o <output/dir>
 ```
 
-It is also possible to import the dataset using Python API:
+It is also possible to convert the dataset using Python API:
 
 ```python
 import datumaro as dm
@@ -76,7 +75,7 @@ image. Each line in the text file contains:
 - column 5: class name (parsed using wordnet),
 - column 6: double-quoted list of attributes, separated by commas.
 Each column is separated by a `#`. See example of dataset
-[here](https://github.com/openvinotoolkit/datumaro/tree/develop/tests/assets/ade20k2017_dataset).
+[here](https://github.com/open-edge-platform/datumaro/tree/develop/tests/assets/ade20k2017_dataset).
 
 To add custom classes, you can use [`dataset_meta.json`](/docs/data-formats/formats/index.rst#dataset-meta-info-file).
 
@@ -86,16 +85,9 @@ Datumaro can convert an ADE20K dataset into any other format [Datumaro supports]
 To get the expected result, convert the dataset to a format
 that supports segmentation masks.
 
-There are several ways to convert an ADE20k 2017 dataset to other dataset
-formats using CLI:
+You can convert an ADE20k 2017 dataset to other dataset formats using CLI:
 
 ```bash
-datum project create
-datum project import -f ade20k2017 <path/to/dataset>
-datum project export -f coco -o <output/dir> -- --save-media
-```
-or
-``` bash
 datum convert -if ade20k2017 -i <path/to/dataset> \
     -f coco -o <output/dir> -- --save-media
 ```
@@ -112,4 +104,4 @@ dataset.export('save_dir', 'coco')
 ## Examples
 
 Examples of using this format from the code can be found in
-[the format tests](https://github.com/openvinotoolkit/datumaro/blob/develop/tests/unit/test_ade20k2017_format.py)
+[the format tests](https://github.com/open-edge-platform/datumaro/blob/develop/tests/unit/test_ade20k2017_format.py)

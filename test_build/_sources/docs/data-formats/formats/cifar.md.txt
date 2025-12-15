@@ -17,7 +17,7 @@ comes with a "fine" label (the class to which it belongs) and a "coarse" label
 CIFAR formats contain 32 x 32 images. As an extension, Datumaro supports
 reading and writing of arbitrary-sized images.
 
-## Import CIFAR dataset
+## Convert CIFAR dataset
 
 The CIFAR dataset is available for free download:
 
@@ -26,15 +26,12 @@ The CIFAR dataset is available for free download:
 - [cifar-100-python.tar.gz](https://www.cs.toronto.edu/~kriz/cifar-100-python.tar.gz):
   CIFAR-100 python version
 
-A Datumaro project with a CIFAR source can be created in the following way:
+A CIFAR dataset can be converted in the following way:
 
 ``` bash
-datum project create
-datum project import --format cifar <path/to/dataset>
+datum convert --input-format cifar --input-path <path/to/dataset> \
+    --output-format <desired_format> --output-dir <output/dir>
 ```
-
-It is possible to specify project name and project directory. Run
-`datum project create --help` for more information.
 
 CIFAR-10 dataset directory should have the following structure:
 
@@ -109,14 +106,8 @@ There are several ways to convert a CIFAR dataset to other dataset
 formats using CLI:
 
 ``` bash
-datum project create
-datum project import -f cifar <path/to/cifar>
-datum project export -f imagenet -o <output/dir>
-```
-or
-``` bash
-datum convert -if cifar -i <path/to/dataset> \
-    -f imagenet -o <output/dir> -- --save-media
+datum convert --input-format cifar --input-path <path/to/dataset> \
+    --output-format imagenet --output-dir <output/dir> -- --save-media
 ```
 
 Or, using Python API:
@@ -133,14 +124,9 @@ dataset.export('save_dir', 'imagenet', save_media=True)
 There are several ways to convert a dataset to CIFAR format:
 
 ``` bash
-# export dataset into CIFAR format from existing project
-datum project export -p <path/to/project> -f cifar -o <output/dir> \
-    -- --save-media
-```
-``` bash
 # converting to CIFAR format from other format
-datum convert -if imagenet -i <path/to/dataset> \
-    -f cifar -o <output/dir> -- --save-media
+datum convert --input-format imagenet --input-path <path/to/dataset> \
+    --output-format cifar --output-dir <output/dir> -- --save-media
 ```
 
 Extra options for exporting to CIFAR format:
@@ -192,9 +178,9 @@ Convert a CIFAR dataset to ImageNet format, keep only images with the
 # Download CIFAR-10 dataset:
 # https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
 datum convert --input-format cifar --input-path <path/to/cifar> \
-              --output-format imagenet \
-              --filter '/item[annotation/label="dog"]'
+    --output-format imagenet --output-dir <output/dir> \
+    --filter '/item[annotation/label="dog"]'
 ```
 
 Examples of using this format from the code can be found in
-[the format tests](https://github.com/openvinotoolkit/datumaro/blob/develop/tests/unit/test_cifar_format.py)
+[the format tests](https://github.com/open-edge-platform/datumaro/blob/develop/tests/unit/test_cifar_format.py)

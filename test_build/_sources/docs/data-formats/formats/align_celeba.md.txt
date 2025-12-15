@@ -20,17 +20,15 @@ Supported attributes:
   `Wearing_Earrings`, `Wearing_Hat`, `Wearing_Lipstick`, `Wearing_Necklace`,
   `Wearing_Necktie`, `Young` (boolean)
 
-## Import align CelebA dataset
+## Convert align CelebA dataset
 
-A Datumaro project with an align CelebA source can be created
-in the following way:
+A Datumaro dataset can be converted in the following way:
 
 ```bash
-datum project create
-datum project import --format align_celeba <path/to/dataset>
+datum convert -if align_celeba -i <path/to/dataset> -o <output/dir>
 ```
 
-It is also possible to import the dataset using Python API:
+It is also possible to convert the dataset using Python API:
 
 ```python
 import datumaro as dm
@@ -73,16 +71,9 @@ Datumaro can convert an align CelebA dataset into any other format [Datumaro sup
 To get the expected result, convert the dataset to a format
 that supports labels or landmarks.
 
-There are several ways to convert an align CelebA dataset to other dataset
-formats using CLI:
+You can convert an align CelebA dataset to other dataset formats using CLI:
 
 ```bash
-datum project create
-datum project import -f align_celeba <path/to/dataset>
-datum project export -f imagenet_txt -o ./save_dir -- --save-media
-```
-or
-``` bash
 datum convert -if align_celeba -i <path/to/dataset> \
     -f imagenet_txt -o <output/dir> -- --save-media
 ```
@@ -99,4 +90,4 @@ dataset.export('save_dir', 'voc')
 ## Examples
 
 Examples of using this format from the code can be found in
-[the format tests](https://github.com/openvinotoolkit/datumaro/blob/develop/tests/unit/test_align_celeba_format.py)
+[the format tests](https://github.com/open-edge-platform/datumaro/blob/develop/tests/unit/test_align_celeba_format.py)

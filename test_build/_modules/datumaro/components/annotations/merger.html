@@ -27,10 +27,10 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=8b7c274f" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -43,7 +43,7 @@
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../../../_static/design-tabs.js?v=36754332"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/components/annotations/merger';</script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
@@ -192,7 +192,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
       
@@ -279,7 +279,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
         
@@ -344,54 +344,53 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">from</span> <span class="nn">attr</span> <span class="kn">import</span> <span class="n">attrib</span><span class="p">,</span> <span class="n">attrs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">attr</span><span class="w"> </span><span class="kn">import</span> <span class="n">attrib</span><span class="p">,</span> <span class="n">attrs</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">Label</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.errors</span> <span class="kn">import</span> <span class="n">FailedLabelVotingError</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.annotation_util</span> <span class="kn">import</span> <span class="n">mean_bbox</span><span class="p">,</span> <span class="n">segment_iou</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bbox</span><span class="p">,</span> <span class="n">Label</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">FailedLabelVotingError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.annotation_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">mean_bbox</span><span class="p">,</span> <span class="n">segment_iou</span>
 
-<span class="kn">from</span> <span class="nn">.matcher</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.matcher</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">AnnotationMatcher</span><span class="p">,</span>
     <span class="n">BboxMatcher</span><span class="p">,</span>
     <span class="n">CaptionsMatcher</span><span class="p">,</span>
+    <span class="n">Cuboid2DMatcher</span><span class="p">,</span>
     <span class="n">Cuboid3dMatcher</span><span class="p">,</span>
-    <span class="n">FeatureVectorMatcher</span><span class="p">,</span>
-    <span class="n">HashKeyMatcher</span><span class="p">,</span>
     <span class="n">ImageAnnotationMatcher</span><span class="p">,</span>
     <span class="n">LabelMatcher</span><span class="p">,</span>
     <span class="n">LineMatcher</span><span class="p">,</span>
     <span class="n">MaskMatcher</span><span class="p">,</span>
     <span class="n">PointsMatcher</span><span class="p">,</span>
     <span class="n">PolygonMatcher</span><span class="p">,</span>
+    <span class="n">RotatedBboxMatcher</span><span class="p">,</span>
     <span class="n">ShapeMatcher</span><span class="p">,</span>
     <span class="n">TabularMatcher</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;AnnotationMerger&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;LabelMerger&quot;</span><span class="p">,</span>
     <span class="s2">&quot;BboxMerger&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;PolygonMerger&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;MaskMerger&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;PointsMerger&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;LineMerger&quot;</span><span class="p">,</span>
     <span class="s2">&quot;CaptionsMerger&quot;</span><span class="p">,</span>
     <span class="s2">&quot;Cuboid3dMerger&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ImageAnnotationMerger&quot;</span><span class="p">,</span>
     <span class="s2">&quot;EllipseMerger&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;HashKeyMerger&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;FeatureVectorMerger&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ImageAnnotationMerger&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;LabelMerger&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;LineMerger&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;MaskMerger&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PointsMerger&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PolygonMerger&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;RotatedBboxMerger&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
 
 <div class="viewcode-block" id="AnnotationMerger">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.annotations.merger.AnnotationMerger">[docs]</a>
 <span class="nd">@attrs</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">AnnotationMerger</span><span class="p">(</span><span class="n">AnnotationMatcher</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AnnotationMerger</span><span class="p">(</span><span class="n">AnnotationMatcher</span><span class="p">):</span>
 <div class="viewcode-block" id="AnnotationMerger.merge_clusters">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.annotations.merger.AnnotationMerger.merge_clusters">[docs]</a>
-    <span class="k">def</span> <span class="nf">merge_clusters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clusters</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge_clusters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clusters</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 </div>
 
 
@@ -399,12 +398,12 @@ document.write(`
 <div class="viewcode-block" id="LabelMerger">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.annotations.merger.LabelMerger">[docs]</a>
 <span class="nd">@attrs</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">LabelMerger</span><span class="p">(</span><span class="n">AnnotationMerger</span><span class="p">,</span> <span class="n">LabelMatcher</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LabelMerger</span><span class="p">(</span><span class="n">AnnotationMerger</span><span class="p">,</span> <span class="n">LabelMatcher</span><span class="p">):</span>
     <span class="n">quorum</span> <span class="o">=</span> <span class="n">attrib</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
 <div class="viewcode-block" id="LabelMerger.merge_clusters">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.annotations.merger.LabelMerger.merge_clusters">[docs]</a>
-    <span class="k">def</span> <span class="nf">merge_clusters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clusters</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge_clusters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clusters</span><span class="p">):</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
@@ -439,13 +438,13 @@ document.write(`
 
 
 <span class="nd">@attrs</span><span class="p">(</span><span class="n">kw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">_ShapeMerger</span><span class="p">(</span><span class="n">AnnotationMerger</span><span class="p">,</span> <span class="n">ShapeMatcher</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_ShapeMerger</span><span class="p">(</span><span class="n">AnnotationMerger</span><span class="p">,</span> <span class="n">ShapeMatcher</span><span class="p">):</span>
     <span class="n">quorum</span> <span class="o">=</span> <span class="n">attrib</span><span class="p">(</span><span class="n">converter</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">merge_clusters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clusters</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge_clusters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clusters</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">merge_cluster</span><span class="p">,</span> <span class="n">clusters</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">find_cluster_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_cluster_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster</span><span class="p">):</span>
         <span class="n">votes</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">cluster</span><span class="p">:</span>
             <span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">_get_src_label_name</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">label</span><span class="p">)</span>
@@ -462,18 +461,18 @@ document.write(`
         <span class="k">return</span> <span class="n">label</span><span class="p">,</span> <span class="n">score</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_merge_cluster_shape_mean_box_nearest</span><span class="p">(</span><span class="n">cluster</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_merge_cluster_shape_mean_box_nearest</span><span class="p">(</span><span class="n">cluster</span><span class="p">):</span>
         <span class="n">mbbox</span> <span class="o">=</span> <span class="n">Bbox</span><span class="p">(</span><span class="o">*</span><span class="n">mean_bbox</span><span class="p">(</span><span class="n">cluster</span><span class="p">))</span>
         <span class="n">dist</span> <span class="o">=</span> <span class="p">(</span><span class="n">segment_iou</span><span class="p">(</span><span class="n">mbbox</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">cluster</span><span class="p">)</span>
         <span class="n">nearest_pos</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">enumerate</span><span class="p">(</span><span class="n">dist</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">e</span><span class="p">:</span> <span class="n">e</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">cluster</span><span class="p">[</span><span class="n">nearest_pos</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">merge_cluster_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge_cluster_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster</span><span class="p">):</span>
         <span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_cluster_shape_mean_box_nearest</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
         <span class="n">shape_score</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">s</span><span class="p">))</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">cluster</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">shape</span><span class="p">,</span> <span class="n">shape_score</span>
 
-    <span class="k">def</span> <span class="nf">merge_cluster</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge_cluster</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster</span><span class="p">):</span>
         <span class="n">label</span><span class="p">,</span> <span class="n">label_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_cluster_label</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
         <span class="n">shape</span><span class="p">,</span> <span class="n">shape_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">merge_cluster_shape</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
 
@@ -487,7 +486,7 @@ document.write(`
 <div class="viewcode-block" id="BboxMerger">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.annotations.merger.BboxMerger">[docs]</a>
 <span class="nd">@attrs</span>
-<span class="k">class</span> <span class="nc">BboxMerger</span><span class="p">(</span><span class="n">_ShapeMerger</span><span class="p">,</span> <span class="n">BboxMatcher</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">BboxMerger</span><span class="p">(</span><span class="n">_ShapeMerger</span><span class="p">,</span> <span class="n">BboxMatcher</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
@@ -495,7 +494,7 @@ document.write(`
 <div class="viewcode-block" id="PolygonMerger">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.annotations.merger.PolygonMerger">[docs]</a>
 <span class="nd">@attrs</span>
-<span class="k">class</span> <span class="nc">PolygonMerger</span><span class="p">(</span><span class="n">_ShapeMerger</span><span class="p">,</span> <span class="n">PolygonMatcher</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PolygonMerger</span><span class="p">(</span><span class="n">_ShapeMerger</span><span class="p">,</span> <span class="n">PolygonMatcher</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
@@ -503,7 +502,7 @@ document.write(`
 <div class="viewcode-block" id="MaskMerger">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.annotations.merger.MaskMerger">[docs]</a>
 <span class="nd">@attrs</span>
-<span class="k">class</span> <span class="nc">MaskMerger</span><span class="p">(</span><span class="n">_ShapeMerger</span><span class="p">,</span> <span class="n">MaskMatcher</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MaskMerger</span><span class="p">(</span><span class="n">_ShapeMerger</span><span class="p">,</span> <span class="n">MaskMatcher</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
@@ -511,7 +510,7 @@ document.write(`
 <div class="viewcode-block" id="PointsMerger">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.annotations.merger.PointsMerger">[docs]</a>
 <span class="nd">@attrs</span>
-<span class="k">class</span> <span class="nc">PointsMerger</span><span class="p">(</span><span class="n">_ShapeMerger</span><span class="p">,</span> <span class="n">PointsMatcher</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PointsMerger</span><span class="p">(</span><span class="n">_ShapeMerger</span><span class="p">,</span> <span class="n">PointsMatcher</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
@@ -519,7 +518,7 @@ document.write(`
 <div class="viewcode-block" id="LineMerger">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.annotations.merger.LineMerger">[docs]</a>
 <span class="nd">@attrs</span>
-<span class="k">class</span> <span class="nc">LineMerger</span><span class="p">(</span><span class="n">_ShapeMerger</span><span class="p">,</span> <span class="n">LineMatcher</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LineMerger</span><span class="p">(</span><span class="n">_ShapeMerger</span><span class="p">,</span> <span class="n">LineMatcher</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
@@ -527,7 +526,7 @@ document.write(`
 <div class="viewcode-block" id="CaptionsMerger">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.annotations.merger.CaptionsMerger">[docs]</a>
 <span class="nd">@attrs</span>
-<span class="k">class</span> <span class="nc">CaptionsMerger</span><span class="p">(</span><span class="n">AnnotationMerger</span><span class="p">,</span> <span class="n">CaptionsMatcher</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CaptionsMerger</span><span class="p">(</span><span class="n">AnnotationMerger</span><span class="p">,</span> <span class="n">CaptionsMatcher</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
@@ -535,10 +534,10 @@ document.write(`
 <div class="viewcode-block" id="Cuboid3dMerger">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.annotations.merger.Cuboid3dMerger">[docs]</a>
 <span class="nd">@attrs</span>
-<span class="k">class</span> <span class="nc">Cuboid3dMerger</span><span class="p">(</span><span class="n">_ShapeMerger</span><span class="p">,</span> <span class="n">Cuboid3dMatcher</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Cuboid3dMerger</span><span class="p">(</span><span class="n">_ShapeMerger</span><span class="p">,</span> <span class="n">Cuboid3dMatcher</span><span class="p">):</span>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_merge_cluster_shape_mean_box_nearest</span><span class="p">(</span><span class="n">cluster</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_merge_cluster_shape_mean_box_nearest</span><span class="p">(</span><span class="n">cluster</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
         <span class="c1"># mbbox = Bbox(*mean_cuboid(cluster))</span>
         <span class="c1"># dist = (segment_iou(mbbox, s) for s in cluster)</span>
         <span class="c1"># nearest_pos, _ = max(enumerate(dist), key=lambda e: e[1])</span>
@@ -546,7 +545,7 @@ document.write(`
 
 <div class="viewcode-block" id="Cuboid3dMerger.merge_cluster">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.annotations.merger.Cuboid3dMerger.merge_cluster">[docs]</a>
-    <span class="k">def</span> <span class="nf">merge_cluster</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">merge_cluster</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster</span><span class="p">):</span>
         <span class="n">label</span><span class="p">,</span> <span class="n">label_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_cluster_label</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
         <span class="n">shape</span><span class="p">,</span> <span class="n">shape_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">merge_cluster_shape</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
 
@@ -561,7 +560,7 @@ document.write(`
 <div class="viewcode-block" id="ImageAnnotationMerger">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.annotations.merger.ImageAnnotationMerger">[docs]</a>
 <span class="nd">@attrs</span>
-<span class="k">class</span> <span class="nc">ImageAnnotationMerger</span><span class="p">(</span><span class="n">AnnotationMerger</span><span class="p">,</span> <span class="n">ImageAnnotationMatcher</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImageAnnotationMerger</span><span class="p">(</span><span class="n">AnnotationMerger</span><span class="p">,</span> <span class="n">ImageAnnotationMatcher</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
@@ -569,23 +568,7 @@ document.write(`
 <div class="viewcode-block" id="EllipseMerger">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.annotations.merger.EllipseMerger">[docs]</a>
 <span class="nd">@attrs</span>
-<span class="k">class</span> <span class="nc">EllipseMerger</span><span class="p">(</span><span class="n">_ShapeMerger</span><span class="p">,</span> <span class="n">ShapeMatcher</span><span class="p">):</span>
-    <span class="k">pass</span></div>
-
-
-
-<div class="viewcode-block" id="HashKeyMerger">
-<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.annotations.merger.HashKeyMerger">[docs]</a>
-<span class="nd">@attrs</span>
-<span class="k">class</span> <span class="nc">HashKeyMerger</span><span class="p">(</span><span class="n">AnnotationMerger</span><span class="p">,</span> <span class="n">HashKeyMatcher</span><span class="p">):</span>
-    <span class="k">pass</span></div>
-
-
-
-<div class="viewcode-block" id="FeatureVectorMerger">
-<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.annotations.merger.FeatureVectorMerger">[docs]</a>
-<span class="nd">@attrs</span>
-<span class="k">class</span> <span class="nc">FeatureVectorMerger</span><span class="p">(</span><span class="n">AnnotationMerger</span><span class="p">,</span> <span class="n">FeatureVectorMatcher</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">EllipseMerger</span><span class="p">(</span><span class="n">_ShapeMerger</span><span class="p">,</span> <span class="n">ShapeMatcher</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 
@@ -593,7 +576,23 @@ document.write(`
 <div class="viewcode-block" id="TabularMerger">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.annotations.merger.TabularMerger">[docs]</a>
 <span class="nd">@attrs</span>
-<span class="k">class</span> <span class="nc">TabularMerger</span><span class="p">(</span><span class="n">AnnotationMerger</span><span class="p">,</span> <span class="n">TabularMatcher</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TabularMerger</span><span class="p">(</span><span class="n">AnnotationMerger</span><span class="p">,</span> <span class="n">TabularMatcher</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="RotatedBboxMerger">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.annotations.merger.RotatedBboxMerger">[docs]</a>
+<span class="nd">@attrs</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RotatedBboxMerger</span><span class="p">(</span><span class="n">_ShapeMerger</span><span class="p">,</span> <span class="n">RotatedBboxMatcher</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+
+<div class="viewcode-block" id="Cuboid2DMerger">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.merge.intersect_merge.html#datumaro.components.annotations.merger.Cuboid2DMerger">[docs]</a>
+<span class="nd">@attrs</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Cuboid2DMerger</span><span class="p">(</span><span class="n">_ShapeMerger</span><span class="p">,</span> <span class="n">Cuboid2DMatcher</span><span class="p">):</span>
     <span class="k">pass</span></div>
 
 </pre></div>

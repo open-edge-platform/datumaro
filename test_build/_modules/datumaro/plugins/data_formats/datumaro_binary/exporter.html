@@ -27,10 +27,10 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=eafc0fe6" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css?v=8b7c274f" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -43,7 +43,7 @@
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../../../../_static/design-tabs.js?v=36754332"></script>
+    <script src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/plugins/data_formats/datumaro_binary/exporter';</script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
@@ -192,7 +192,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
       
@@ -279,7 +279,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
         
@@ -340,51 +340,46 @@ document.write(`
                 <article class="bd-article">
                   
   <h1>Source code for datumaro.plugins.data_formats.datumaro_binary.exporter</h1><div class="highlight"><pre>
-<span></span><span class="c1"># Copyright (C) 2023 Intel Corporation</span>
+<span></span><span class="c1"># Copyright (C) 2024 Intel Corporation</span>
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
 <span class="c1"># pylint: disable=no-self-use</span>
 
-<span class="kn">import</span> <span class="nn">argparse</span>
-<span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">import</span> <span class="nn">struct</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BufferedWriter</span>
-<span class="kn">from</span> <span class="nn">multiprocessing.pool</span> <span class="kn">import</span> <span class="n">ApplyResult</span><span class="p">,</span> <span class="n">Pool</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">struct</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">multiprocessing.pool</span><span class="w"> </span><span class="kn">import</span> <span class="n">ApplyResult</span><span class="p">,</span> <span class="n">Pool</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.crypter</span> <span class="kn">import</span> <span class="n">NULL_CRYPTER</span><span class="p">,</span> <span class="n">Crypter</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">IDataset</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.errors</span> <span class="kn">import</span> <span class="n">DatumaroError</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.exporter</span> <span class="kn">import</span> <span class="n">ExportContext</span><span class="p">,</span> <span class="n">ExportContextComponent</span><span class="p">,</span> <span class="n">Exporter</span>
-<span class="kn">from</span> <span class="nn">datumaro.plugins.data_formats.datumaro.exporter</span> <span class="kn">import</span> <span class="n">DatumaroExporter</span>
-<span class="kn">from</span> <span class="nn">datumaro.plugins.data_formats.datumaro.exporter</span> <span class="kn">import</span> <span class="n">_SubsetWriter</span> <span class="k">as</span> <span class="n">__SubsetWriter</span>
-<span class="kn">from</span> <span class="nn">datumaro.plugins.data_formats.datumaro.format</span> <span class="kn">import</span> <span class="n">DATUMARO_FORMAT_VERSION</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">IDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatumaroError</span><span class="p">,</span> <span class="n">PathSeparatorInSubsetNameError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.exporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExportContext</span><span class="p">,</span> <span class="n">ExportContextComponent</span><span class="p">,</span> <span class="n">Exporter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.data_formats.datumaro.exporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatumaroExporter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.data_formats.datumaro.exporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">_SubsetWriter</span> <span class="k">as</span> <span class="n">__SubsetWriter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.data_formats.datumaro.format</span><span class="w"> </span><span class="kn">import</span> <span class="n">DATUMARO_FORMAT_VERSION</span>
 
-<span class="kn">from</span> <span class="nn">.format</span> <span class="kn">import</span> <span class="n">DatumaroBinaryPath</span>
-<span class="kn">from</span> <span class="nn">.mapper</span> <span class="kn">import</span> <span class="n">DictMapper</span>
-<span class="kn">from</span> <span class="nn">.mapper.common</span> <span class="kn">import</span> <span class="n">IntListMapper</span>
-<span class="kn">from</span> <span class="nn">.mapper.dataset_item</span> <span class="kn">import</span> <span class="n">DatasetItemMapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.format</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatumaroBinaryPath</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.mapper</span><span class="w"> </span><span class="kn">import</span> <span class="n">DictMapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.mapper.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntListMapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.mapper.dataset_item</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItemMapper</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">BufferedWriter</span>
 
 
-<span class="k">class</span> <span class="nc">_SubsetWriter</span><span class="p">(</span><span class="n">__SubsetWriter</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_SubsetWriter</span><span class="p">(</span><span class="n">__SubsetWriter</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">context</span><span class="p">:</span> <span class="n">Exporter</span><span class="p">,</span>
         <span class="n">subset</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">ann_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">export_context</span><span class="p">:</span> <span class="n">ExportContextComponent</span><span class="p">,</span>
-        <span class="n">secret_key_file</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">no_media_encryption</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">max_blob_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DatumaroBinaryPath</span><span class="o">.</span><span class="n">MAX_BLOB_SIZE</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">subset</span><span class="p">,</span> <span class="n">ann_file</span><span class="p">,</span> <span class="n">export_context</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_crypter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">export_context</span><span class="o">.</span><span class="n">crypter</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">secret_key_file</span> <span class="o">=</span> <span class="n">secret_key_file</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BufferedWriter</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="p">[</span><span class="s2">&quot;items&quot;</span><span class="p">]:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="n">ApplyResult</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -392,8 +387,6 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_item_cnt</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">media_type</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_media_type</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;media_type&quot;</span><span class="p">:</span> <span class="n">media_type</span><span class="o">.</span><span class="n">_type</span><span class="p">}</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_media_encryption</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">no_media_encryption</span>
 
         <span class="k">if</span> <span class="n">max_blob_size</span> <span class="o">!=</span> <span class="n">DatumaroBinaryPath</span><span class="o">.</span><span class="n">MAX_BLOB_SIZE</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
@@ -403,46 +396,39 @@ document.write(`
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_blob_size</span> <span class="o">=</span> <span class="n">max_blob_size</span>
 
-    <span class="k">def</span> <span class="nf">_sign</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_sign</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">DatumaroBinaryPath</span><span class="o">.</span><span class="n">SIGNATURE</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span>
 
-    <span class="k">def</span> <span class="nf">_dump_encryption_field</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_crypter</span><span class="o">.</span><span class="n">key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_crypter</span><span class="o">.</span><span class="n">key</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_crypter</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_dump_encryption_field</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="c1"># Encrypted files are no longer supported in this version of Datumaro.</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;I</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">),</span> <span class="n">msg</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">_dump_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">use_crypter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_dump_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
         <span class="n">msg</span> <span class="o">=</span> <span class="n">DictMapper</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">use_crypter</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_crypter</span><span class="o">.</span><span class="n">key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_crypter</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
         <span class="n">length</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">length</span> <span class="o">+</span> <span class="n">msg</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_dump_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_dump_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dump_header</span><span class="p">(</span>
             <span class="p">{</span>
                 <span class="s2">&quot;dm_format_version&quot;</span><span class="p">:</span> <span class="n">DATUMARO_FORMAT_VERSION</span><span class="p">,</span>
-                <span class="s2">&quot;media_encryption&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_media_encryption</span><span class="p">,</span>
+                <span class="s2">&quot;media_encryption&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
             <span class="p">},</span>
-            <span class="n">use_crypter</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_dump_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_dump_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dump_header</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">infos</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_dump_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_dump_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dump_header</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">categories</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_dump_media_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_dump_media_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dump_header</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_media_type</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">add_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">pool</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Pool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_item</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">pool</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Pool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">pool</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_bytes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="n">pool</span><span class="o">.</span><span class="n">apply_async</span><span class="p">(</span>
@@ -450,25 +436,23 @@ document.write(`
                     <span class="p">(</span>
                         <span class="n">item</span><span class="p">,</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">export_context</span><span class="p">,</span>
-                        <span class="bp">self</span><span class="o">.</span><span class="n">_media_encryption</span><span class="p">,</span>
                     <span class="p">),</span>
                 <span class="p">)</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_bytes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">add_item_impl</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">export_context</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_media_encryption</span><span class="p">)</span>
-            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_bytes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">add_item_impl</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">export_context</span><span class="p">))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_item_cnt</span> <span class="o">+=</span> <span class="mi">1</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">add_item_impl</span><span class="p">(</span>
-        <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">ExportContextComponent</span><span class="p">,</span> <span class="n">media_encryption</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_item_impl</span><span class="p">(</span>
+        <span class="n">item</span><span class="p">:</span> <span class="n">DatasetItem</span><span class="p">,</span>
+        <span class="n">context</span><span class="p">:</span> <span class="n">ExportContextComponent</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bytes</span><span class="p">:</span>
-        <span class="k">with</span> <span class="n">_SubsetWriter</span><span class="o">.</span><span class="n">context_save_media</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">,</span> <span class="n">encryption</span><span class="o">=</span><span class="n">media_encryption</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">_SubsetWriter</span><span class="o">.</span><span class="n">context_save_media</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">DatasetItemMapper</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_dump_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Pool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_dump_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Pool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="c1"># Await async results</span>
         <span class="k">if</span> <span class="n">pool</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_bytes</span> <span class="o">=</span> <span class="p">[</span>
@@ -488,11 +472,10 @@ document.write(`
                 <span class="n">cur_blob</span> <span class="o">=</span> <span class="n">blobs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
         <span class="c1"># Encrypt blobs</span>
-        <span class="n">blobs</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_crypter</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="nb">bytes</span><span class="p">(</span><span class="n">blob</span><span class="p">))</span> <span class="k">for</span> <span class="n">blob</span> <span class="ow">in</span> <span class="n">blobs</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">blob</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">blobs</span> <span class="o">=</span> <span class="p">[</span><span class="nb">bytes</span><span class="p">(</span><span class="n">blob</span><span class="p">)</span> <span class="k">for</span> <span class="n">blob</span> <span class="ow">in</span> <span class="n">blobs</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">blob</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
 
         <span class="c1"># Dump blob sizes first</span>
         <span class="n">blob_sizes</span> <span class="o">=</span> <span class="n">IntListMapper</span><span class="o">.</span><span class="n">forward</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">blob</span><span class="p">)</span> <span class="k">for</span> <span class="n">blob</span> <span class="ow">in</span> <span class="n">blobs</span><span class="p">])</span>
-        <span class="n">blob_sizes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_crypter</span><span class="o">.</span><span class="n">encrypt</span><span class="p">(</span><span class="n">blob_sizes</span><span class="p">)</span>
         <span class="n">n_blob_sizes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">blob_sizes</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&lt;I</span><span class="si">{</span><span class="n">n_blob_sizes</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">,</span> <span class="n">n_blob_sizes</span><span class="p">,</span> <span class="n">blob_sizes</span><span class="p">))</span>
 
@@ -502,19 +485,8 @@ document.write(`
             <span class="n">n_items_bytes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">items_bytes</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">struct</span><span class="o">.</span><span class="n">pack</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="n">n_items_bytes</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">,</span> <span class="n">items_bytes</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Pool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pool</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Pool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_crypter</span><span class="o">.</span><span class="n">is_null_crypter</span><span class="p">:</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                    <span class="s2">&quot;Please see the generated encryption secret key file in the following path.</span><span class="se">\n</span><span class="s2">&quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">secret_key_file</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
-                    <span class="s2">&quot;It must be kept it separate from the dataset to protect your dataset safely. &quot;</span>
-                    <span class="s2">&quot;You also need it to import the encrpted dataset in later, so that be careful not to lose.&quot;</span>
-                <span class="p">)</span>
-
-                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">secret_key_file</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
-                    <span class="n">fp</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_crypter</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">decode</span><span class="p">())</span>
-
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ann_file</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span> <span class="o">=</span> <span class="n">fp</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_sign</span><span class="p">()</span>
@@ -528,49 +500,17 @@ document.write(`
             <span class="bp">self</span><span class="o">.</span><span class="n">_fp</span> <span class="o">=</span> <span class="kc">None</span>
 
 
-<div class="viewcode-block" id="EncryptionAction">
-<a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.exporter.html#datumaro.plugins.data_formats.datumaro_binary.EncryptionAction">[docs]</a>
-<span class="k">class</span> <span class="nc">EncryptionAction</span><span class="p">(</span><span class="n">argparse</span><span class="o">.</span><span class="n">Action</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">option_strings</span><span class="p">,</span> <span class="n">dest</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">option_strings</span><span class="p">,</span> <span class="n">dest</span><span class="p">,</span> <span class="n">nargs</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">,</span> <span class="n">namespace</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">option_string</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="n">encryption</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">option_string</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">option_strings</span> <span class="k">else</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="n">encryption</span><span class="p">:</span>
-            <span class="n">key</span> <span class="o">=</span> <span class="n">Crypter</span><span class="o">.</span><span class="n">gen_key</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">key</span> <span class="o">=</span> <span class="kc">None</span>
-
-        <span class="nb">setattr</span><span class="p">(</span><span class="n">namespace</span><span class="p">,</span> <span class="s2">&quot;encryption_key&quot;</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
-        <span class="nb">delattr</span><span class="p">(</span><span class="n">namespace</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dest</span><span class="p">)</span></div>
-
-
-
 <div class="viewcode-block" id="DatumaroBinaryExporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.exporter.html#datumaro.plugins.data_formats.datumaro_binary.DatumaroBinaryExporter">[docs]</a>
-<span class="k">class</span> <span class="nc">DatumaroBinaryExporter</span><span class="p">(</span><span class="n">DatumaroExporter</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DatumaroBinaryExporter</span><span class="p">(</span><span class="n">DatumaroExporter</span><span class="p">):</span>
     <span class="n">DEFAULT_IMAGE_EXT</span> <span class="o">=</span> <span class="n">DatumaroBinaryPath</span><span class="o">.</span><span class="n">IMAGE_EXT</span>
     <span class="n">PATH_CLS</span> <span class="o">=</span> <span class="n">DatumaroBinaryPath</span>
 
 <div class="viewcode-block" id="DatumaroBinaryExporter.build_cmdline_parser">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.exporter.html#datumaro.plugins.data_formats.datumaro_binary.DatumaroBinaryExporter.build_cmdline_parser">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--encryption&quot;</span><span class="p">,</span>
-            <span class="n">action</span><span class="o">=</span><span class="n">EncryptionAction</span><span class="p">,</span>
-            <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Encrypt your dataset with the auto-generated secret key.&quot;</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s2">&quot;--no-media-encryption&quot;</span><span class="p">,</span>
-            <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Only encrypt the annotation file, not media files. &quot;</span>
-            <span class="s1">&#39;This option is effective only if &quot;--encryption&quot; is enabled.&#39;</span><span class="p">,</span>
-        <span class="p">)</span>
 
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
             <span class="s2">&quot;--num-workers&quot;</span><span class="p">,</span>
@@ -583,7 +523,7 @@ document.write(`
         <span class="k">return</span> <span class="n">parser</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">extractor</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">,</span>
         <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -593,9 +533,6 @@ document.write(`
         <span class="n">default_image_ext</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">save_dataset_meta</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">ctx</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ExportContext</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">encryption_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">no_media_encryption</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">encryption</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">num_workers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
         <span class="n">max_blob_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DatumaroBinaryPath</span><span class="o">.</span><span class="n">MAX_BLOB_SIZE</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
@@ -603,37 +540,17 @@ document.write(`
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        encryption_key</span>
-<span class="sd">            If provided, the dataset is encrypted with this key for export.</span>
-<span class="sd">        no_media_encryption</span>
-<span class="sd">            If true and encryption is enabled, do not encrypt media files and only encrypt annotation files.</span>
-<span class="sd">        encryption</span>
-<span class="sd">            If true and encryption_key is None, generate a random secret key.</span>
 <span class="sd">        num_workers</span>
 <span class="sd">            The number of multi-processing workers for export. If num_workers = 0, do not use multiprocessing.</span>
 <span class="sd">        max_blob_size</span>
 <span class="sd">            The maximum size of DatasetItem serialization blob. Changing from the default is not recommended.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="n">encryption</span> <span class="ow">and</span> <span class="n">encryption_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">encryption_key</span> <span class="o">=</span> <span class="n">Crypter</span><span class="o">.</span><span class="n">gen_key</span><span class="p">()</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_encryption_key</span> <span class="o">=</span> <span class="n">encryption_key</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">save_media</span><span class="p">:</span>
-            <span class="n">no_media_encryption</span> <span class="o">=</span> <span class="kc">True</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_no_media_encryption</span> <span class="o">=</span> <span class="n">no_media_encryption</span>
-
         <span class="k">if</span> <span class="n">num_workers</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;num_workers should be non-negative but num_workers=</span><span class="si">{</span><span class="n">num_workers</span><span class="si">}</span><span class="s2">.&quot;</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">DatumaroError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;num_workers should be non-negative but num_workers=</span><span class="si">{</span><span class="n">num_workers</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span> <span class="o">=</span> <span class="n">num_workers</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_blob_size</span> <span class="o">=</span> <span class="n">max_blob_size</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_crypter</span> <span class="o">=</span> <span class="n">Crypter</span><span class="p">(</span><span class="n">encryption_key</span><span class="p">)</span> <span class="k">if</span> <span class="n">encryption_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">NULL_CRYPTER</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">extractor</span><span class="p">,</span>
@@ -647,32 +564,30 @@ document.write(`
 
 <div class="viewcode-block" id="DatumaroBinaryExporter.create_writer">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.datumaro_binary.exporter.html#datumaro.plugins.data_formats.datumaro_binary.DatumaroBinaryExporter.create_writer">[docs]</a>
-    <span class="k">def</span> <span class="nf">create_writer</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">images_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pcd_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">video_dir</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_SubsetWriter</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_writer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subset</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">images_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pcd_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">video_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_SubsetWriter</span><span class="p">:</span>
         <span class="n">export_context</span> <span class="o">=</span> <span class="n">ExportContextComponent</span><span class="p">(</span>
             <span class="n">save_dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span>
             <span class="n">save_media</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_media</span><span class="p">,</span>
             <span class="n">images_dir</span><span class="o">=</span><span class="n">images_dir</span><span class="p">,</span>
             <span class="n">pcd_dir</span><span class="o">=</span><span class="n">pcd_dir</span><span class="p">,</span>
             <span class="n">video_dir</span><span class="o">=</span><span class="n">video_dir</span><span class="p">,</span>
-            <span class="n">crypter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_crypter</span><span class="p">,</span>
             <span class="n">image_ext</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_image_ext</span><span class="p">,</span>
             <span class="n">default_image_ext</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_default_image_ext</span><span class="p">,</span>
         <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">sep</span> <span class="ow">in</span> <span class="n">subset</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">PathSeparatorInSubsetNameError</span><span class="p">(</span><span class="n">subset</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">_SubsetWriter</span><span class="p">(</span>
             <span class="n">context</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
             <span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span>
             <span class="n">ann_file</span><span class="o">=</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_annotations_dir</span><span class="p">,</span> <span class="n">subset</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">PATH_CLS</span><span class="o">.</span><span class="n">ANNOTATION_EXT</span><span class="p">),</span>
             <span class="n">export_context</span><span class="o">=</span><span class="n">export_context</span><span class="p">,</span>
-            <span class="n">secret_key_file</span><span class="o">=</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">PATH_CLS</span><span class="o">.</span><span class="n">SECRET_KEY_FILE</span><span class="p">),</span>
-            <span class="n">no_media_encryption</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_no_media_encryption</span><span class="p">,</span>
             <span class="n">max_blob_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_blob_size</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_apply_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_workers</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_apply_impl</span><span class="p">()</span>
 

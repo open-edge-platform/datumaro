@@ -1,0 +1,1100 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Data Framework Convert &#8212; Datumaro 2.0.0 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+
+  
+  <link href="../../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/nbsphinx-code-cells.css?v=2aa19091" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=8b7c274f" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="../../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+
+    <script src="../../../_static/documentation_options.js?v=51b770b3"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'docs/jupyter_notebook_examples/notebooks/22_framework_converter';</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Overview" href="../../command-reference/overview.html" />
+    <link rel="prev" title="Train Your OpenVINO™ Model Using YoloV8 Trainer For Any Dataset Format" href="08_e2e_example_yolo_ultralytics_trainer.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/datumaro-logo.png" class="logo__image only-light" alt="Datumaro 2.0.0 documentation - Home"/>
+    <script>document.write(`<img src="../../../_static/datumaro-logo.png" class="logo__image only-dark" alt="Datumaro 2.0.0 documentation - Home"/>`);</script>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../../index.html">
+                        Docs
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary" tabindex="0">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item">
+<nav class="navbar-nav">
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../../index.html">
+                        Docs
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Get Started</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../get-started/introduction.html">Introduction</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../get-started/quick-start-guide/index.html">Quick Start Guide</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../get-started/quick-start-guide/installation.html">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../get-started/quick-start-guide/usage.html">Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../get-started/quick-start-guide/examples.html">Examples</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Level Up</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../level-up/basic_skills/index.html">Basic Skills</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/basic_skills/01_dataset_download.html">Level 1: Dataset download</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/basic_skills/02_dataset_import_export.html">Level 2: Data Import and Export</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/basic_skills/03_detect_data_format.html">Level 3: Detect Data Format from an Unknown Dataset</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../level-up/intermediate_skills/index.html">Intermediate Skills</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/04_data_aggregation.html">Level 4: Data Subset Aggregation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/05_data_comparison.html">Level 6: Data Comparison with Two Heterogeneous Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/06_data_merge.html">Level 6: Merge Two Heterogeneous Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/07_data_validate.html">Level 7: Dataset Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/08_data_filtering.html">Level 8: Dataset Filtering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../level-up/intermediate_skills/09_framework_conversion.html">Level 9: Framework Conversion</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Data Formats</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../data-formats/formats/index.html">Formats</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/ade20k2017.html">ADE20k (v2017)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/ade20k2020.html">ADE20k (v2020)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/align_celeba.html">Align CelebA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/arrow.html">Arrow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/ava_action.html">AVA Action</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/brats.html">BraTS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/brats_numpy.html">BraTS Numpy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/celeba.html">CelebA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/cifar.html">CIFAR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/cityscapes.html">Cityscapes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/coco.html">COCO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/common_semantic_segmentation.html">Common Semantic Segmentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/cvat.html">CVAT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/datumaro.html">Datumaro</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/datumaro_binary.html">DatumaroBinary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/dota.html">DOTA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/icdar.html">ICDAR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/image_zip.html">Image zip</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/imagenet.html">ImageNet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/kaggle.html">Kaggle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/kinetics.html">Kinetics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/kitti.html">KITTI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/kitti_raw.html">Velodyne Points / KITTI Raw 3D</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/labelme.html">LabelMe</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/lfw.html">LFW</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mapillary_vistas.html">Mapillary Vistas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/market1501.html">Market-1501</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mars.html">MARS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mmdet.html">MMDetection COCO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mnist.html">MNIST</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mot.html">Multiple Object Tracking (MOT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mots.html">Multiple Object Tracking and Segmentation (MOTS)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mpii.html">MPII Human Pose</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mpii_json.html">MPII Human Pose JSON</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/mvtec.html">MVTec AD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/nyu_depth_v2.html">NYU Depth Dataset V2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/open_images.html">Open Images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/pascal_voc.html">Pascal VOC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/roboflow.html">Roboflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/segment_anything.html">Segment Anything</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/sly_pointcloud.html">Supervisely Point Cloud</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/synthia.html">SYNTHIA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/tabular.html">Tabular</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/vgg_face2.html">Vgg Face2 CSV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/video.html">Video</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/vott_csv.html">VoTT CSV</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/vott_json.html">VoTT JSON</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/wider_face.html">WIDER Face</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/yolo.html">YOLO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data-formats/formats/yolo_ultralytics.html">YOLO-Ultralytics</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../data-formats/media_formats.html">Supported Media Formats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data-formats/datumaro_format.html">Datumaro Format</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Hands-on Examples</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../dataset_IO.html">Dataset I/O</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="14_import_export_det_data.html">Import and Export Public Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="15_import_export_seg_data.html">Import and Export Public Semantic Segmentation Data</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../manipulate.html">Manipulate</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="01_merge_multiple_datasets_for_classification.html">Merge Multiple Datasets for Classification Tasks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02_merge_heterogeneous_datasets_for_detection.html">Merge Heterogeneous Datasets for Detection</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../refine.html">Refine</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="11_validate.html">Validate Dataset To Detect Anomalies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12_correct_dataset.html">Correct Dataset from Validation Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04_filter.html">Filter Data through Your Query</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../transform.html">Transform</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="05_transform.html">Transform Dataset: Re-id, Reindexing, Remapping, etc.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06_tiling.html">Tile your Dataset to Cope with High-Resolution Images</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../e2e_example.html">From Datumaro to Model Training</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="08_e2e_example_yolo_ultralytics_trainer.html">Train Your OpenVINO™ Model Using YoloV8 Trainer For Any Dataset Format</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Data Framework Convert</a></li>
+</ul>
+</li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Command Line Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/compare.html">Compare</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/convert.html">Convert</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/detect.html">Detect</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/dinfo.html">Info</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/download.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/filter.html">Filter</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/format.html">Format</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/merge.html">Merge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/patch.html">Patch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/stats.html">Stats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/transform.html">Transform</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/util.html">Util</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../command-reference/validate.html">Validate</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../reference/datumaro_module.html">Datumaro Module</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-10"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../reference/_autosummary/datumaro.html">datumaro</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-11"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../reference/_autosummary/datumaro.cli.html">datumaro.cli</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-12"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.cli.commands.html">datumaro.cli.commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.cli.contexts.html">datumaro.cli.contexts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.cli.helpers.html">datumaro.cli.helpers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.cli.util.html">datumaro.cli.util</a></li>
+</ul>
+</li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.html">datumaro.components</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-13"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.abstracts.html">datumaro.components.abstracts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.algorithms.html">datumaro.components.algorithms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.annotation.html">datumaro.components.annotation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.annotations.html">datumaro.components.annotations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.cli_plugin.html">datumaro.components.cli_plugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.comparator.html">datumaro.components.comparator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.config.html">datumaro.components.config</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.config_model.html">datumaro.components.config_model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.contexts.html">datumaro.components.contexts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.dataset.html">datumaro.components.dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.dataset_base.html">datumaro.components.dataset_base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.dataset_item_storage.html">datumaro.components.dataset_item_storage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.dataset_storage.html">datumaro.components.dataset_storage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.environment.html">datumaro.components.environment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.errors.html">datumaro.components.errors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.exporter.html">datumaro.components.exporter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.extractor_tfds.html">datumaro.components.extractor_tfds</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.filter.html">datumaro.components.filter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.format_detection.html">datumaro.components.format_detection</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.generator.html">datumaro.components.generator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.hl_ops.html">datumaro.components.hl_ops</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.importer.html">datumaro.components.importer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.lazy_plugin.html">datumaro.components.lazy_plugin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.media.html">datumaro.components.media</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.merge.html">datumaro.components.merge</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.operations.html">datumaro.components.operations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.progress_reporting.html">datumaro.components.progress_reporting</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.registry.html">datumaro.components.registry</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.transformer.html">datumaro.components.transformer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.validator.html">datumaro.components.validator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.components.visualizer.html">datumaro.components.visualizer</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/_autosummary/datumaro.errors.html">datumaro.errors</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../reference/_autosummary/datumaro.experimental.html">datumaro.experimental</a><input class="toctree-checkbox" id="toctree-checkbox-14" name="toctree-checkbox-14" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-14"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.experimental.categories.html">datumaro.experimental.categories</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.experimental.converters.html">datumaro.experimental.converters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.experimental.data_formats.html">datumaro.experimental.data_formats</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.experimental.dataset.html">datumaro.experimental.dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.experimental.export_import.html">datumaro.experimental.export_import</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.experimental.fields.html">datumaro.experimental.fields</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.experimental.filtering.html">datumaro.experimental.filtering</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.experimental.legacy.html">datumaro.experimental.legacy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.experimental.schema.html">datumaro.experimental.schema</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.experimental.transform.html">datumaro.experimental.transform</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.experimental.type_registry.html">datumaro.experimental.type_registry</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/_autosummary/datumaro.ops.html">datumaro.ops</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.html">datumaro.plugins</a><input class="toctree-checkbox" id="toctree-checkbox-15" name="toctree-checkbox-15" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-15"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.configurable_validator.html">datumaro.plugins.configurable_validator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.data_formats.html">datumaro.plugins.data_formats</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.framework_converter.html">datumaro.plugins.framework_converter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.ndr.html">datumaro.plugins.ndr</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.sampler.html">datumaro.plugins.sampler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.specs.html">datumaro.plugins.specs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.splitter.html">datumaro.plugins.splitter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.tiling.html">datumaro.plugins.tiling</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.transforms.html">datumaro.plugins.transforms</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.plugins.validators.html">datumaro.plugins.validators</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/_autosummary/datumaro.rust_api.html">datumaro.rust_api</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.html">datumaro.util</a><input class="toctree-checkbox" id="toctree-checkbox-16" name="toctree-checkbox-16" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-16"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.annotation_util.html">datumaro.util.annotation_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.attrs_util.html">datumaro.util.attrs_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.definitions.html">datumaro.util.definitions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.deprecation.html">datumaro.util.deprecation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.file_utils.html">datumaro.util.file_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.image.html">datumaro.util.image</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.image_cache.html">datumaro.util.image_cache</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.import_util.html">datumaro.util.import_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.log_utils.html">datumaro.util.log_utils</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.mask_tools.html">datumaro.util.mask_tools</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.meta_file_util.html">datumaro.util.meta_file_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.multi_procs_util.html">datumaro.util.multi_procs_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.os_util.html">datumaro.util.os_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.pickle_util.html">datumaro.util.pickle_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.points_util.html">datumaro.util.points_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.scope.html">datumaro.util.scope</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.tabular_util.html">datumaro.util.tabular_util</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../reference/_autosummary/datumaro.util.tf_util.html">datumaro.util.tf_util</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../reference/_autosummary/datumaro.version.html">datumaro.version</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../reference/supported_plugins.html">Supported Plugins</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Explanation</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../explanation/concept.html">Concepts</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../explanation/architecture.html">Architecture</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Misc</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../user-manual/how_to_use_datumaro.html">How to use Datumaro</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user-manual/model_preparation.html">Model Preparation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user-manual/extending.html">Extending</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">Release Notes</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../release_notes.html">Release Notes</a><input class="toctree-checkbox" id="toctree-checkbox-17" name="toctree-checkbox-17" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-17"><i class="fa-solid fa-chevron-down"></i></label><ul class="simple">
+</ul>
+</li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Docs</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../e2e_example.html" class="nav-link">From Datumaro to Model Training</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">Data...</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="Data-Framework-Convert">
+<h1>Data Framework Convert<a class="headerlink" href="#Data-Framework-Convert" title="Link to this heading">#</a></h1>
+<p>In this notebook, we will demonstrate how to leverage the Datumaro to manage datasets and seamlessly integrate them into a PyTorch training pipeline. This tutorial will walk through preparing a dataset using Datumaro and converting it into a format suitable for PyTorch model training and validation.</p>
+<p>Specifically, we will:</p>
+<ul class="simple">
+<li><p>Load and inspect a dataset using Datumaro.</p></li>
+<li><p>Convert the dataset to a PyTorch-friendly format.</p></li>
+<li><p>Implement a simple training and validation pipeline using PyTorch.</p></li>
+</ul>
+<p>By the end of this notebook, you will understand how Datumaro can simplify dataset management tasks and improve the efficiency of your deep learning pipelines.</p>
+<section id="Prerequisite">
+<h2>Prerequisite<a class="headerlink" href="#Prerequisite" title="Link to this heading">#</a></h2>
+<section id="Download-dataset">
+<h3>Download dataset<a class="headerlink" href="#Download-dataset" title="Link to this heading">#</a></h3>
+<p>We will be using a dataset from Kaggle for this tutorial. First, we’ll download the dataset. Please refer to <a class="reference internal" href="20_kaggle_data_import.html"><span class="doc">this guide</span></a> on how to download datasets from Kaggle.</p>
+<p>In this notebook, we choose <a class="reference external" href="https://www.kaggle.com/datasets/ananthu017/emotion-detection-fer/data">ananthu017/emotion-detection-fer</a> dataset as below.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># !kaggle datasets download ananthu017/emotion-detection-fer --unzip --path ./emotion-detection-fer</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+<section id="Dataset-Preparation">
+<h2>Dataset Preparation<a class="headerlink" href="#Dataset-Preparation" title="Link to this heading">#</a></h2>
+<section id="Import-a-dataset">
+<h3>Import a dataset<a class="headerlink" href="#Import-a-dataset" title="Link to this heading">#</a></h3>
+<p>The dataset is organized in the following directory structure:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>.
+├── test
+│   ├── angry
+│   ├── disgusted
+│   ├── fearful
+│   ├── happy
+│   ├── neutral
+│   ├── sad
+│   └── surprised
+└── train
+    ├── angry
+    ├── disgusted
+    ├── fearful
+    ├── happy
+    ├── neutral
+    ├── sad
+    └── surprised
+</pre></div>
+</div>
+<p>In our <code class="docutils literal notranslate"><span class="pre">emotion_detection_fer</span></code> folder, the dataset is divided into two main directories: <code class="docutils literal notranslate"><span class="pre">train</span></code> and <code class="docutils literal notranslate"><span class="pre">test</span></code>. Each of these directories contains subfolders for each emotion category, including “angry,” “disgusted,” “fearful,” “happy,” “neutral,” “sad,” and “surprised.” Each subfolder contains images corresponding to that emotion, allowing for organized access during training and testing phases. I used <code class="docutils literal notranslate"><span class="pre">datumaro</span></code> to inspect the dataset directory structure, and it appears that the dataset
+is well-structured for a classification task.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">datumaro</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dm</span>
+
+<span class="n">dataset_dir</span> <span class="o">=</span> <span class="s2">&quot;/home/sooah/data/emotion-detection-fer&quot;</span>
+<span class="n">formats</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">detect</span><span class="p">(</span><span class="n">dataset_dir</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Detected data format is &#39;</span><span class="si">{</span><span class="n">formats</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">import_from</span><span class="p">(</span><span class="n">dataset_dir</span><span class="p">,</span> <span class="n">formats</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Detected data format is &#39;imagenet_with_subset_dirs&#39;
+Dataset
+        size=35887
+        source_path=/home/sooah/data/emotion-detection-fer
+        media_type=&lt;class &#39;datumaro.components.media.Image&#39;&gt;
+        ann_types={&lt;AnnotationType.label: 1&gt;}
+        annotated_items_count=35887
+        annotations_count=35887
+subsets
+        test: # of items=7178, # of annotated items=7178, # of annotations=7178
+        train: # of items=28709, # of annotated items=28709, # of annotations=28709
+infos
+        categories
+        1: [&#39;angry&#39;, &#39;disgusted&#39;, &#39;fearful&#39;, &#39;happy&#39;, &#39;neutral&#39;, &#39;sad&#39;, &#39;surprised&#39;]
+
+</pre></div></div>
+</div>
+<p>Based on the information provided:</p>
+<ul class="simple">
+<li><p>The total size of the dataset is 35,887 items.</p></li>
+<li><p>The dataset is divided into two subsets:</p>
+<ul>
+<li><p>The ‘test’ subset contains 7,178 items.</p></li>
+<li><p>The ‘train’ subset contains 28,709 items.</p></li>
+</ul>
+</li>
+</ul>
+<p>This breakdown gives us insight into the scale of our dataset and the distribution of items across its subsets, with a clear emphasis on a larger training set to enhance model performance.</p>
+</section>
+<section id="Convert-Datumaro-dataset-into-PyTorch-dataset">
+<h3>Convert Datumaro dataset into PyTorch dataset<a class="headerlink" href="#Convert-Datumaro-dataset-into-PyTorch-dataset" title="Link to this heading">#</a></h3>
+<p>The process of converting a Datumaro dataset into a PyTorch dataset involves utilizing the <code class="docutils literal notranslate"><span class="pre">FrameworkConverter</span></code> from the Datumaro library. This allows us to seamlessly transform our dataset for compatibility with PyTorch’s training and validation pipeline. In the code, we first define a set of transformations using <code class="docutils literal notranslate"><span class="pre">torchvision.transforms</span></code>, specifically converting images to tensor format. We then create PyTorch-compatible datasets for both the training and testing subsets by specifying the
+respective subset names and the classification task. Finally, we can check the number of items in both datasets to ensure they have been correctly prepared for model training and evaluation. This approach not only streamlines the data preprocessing step but also leverages the robust capabilities of the PyTorch framework for building and deploying deep learning models.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">torchvision</span><span class="w"> </span><span class="kn">import</span> <span class="n">transforms</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.plugins.framework_converter</span><span class="w"> </span><span class="kn">import</span> <span class="n">FrameworkConverter</span>
+
+<span class="n">transform</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">Compose</span><span class="p">([</span><span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">()])</span>
+
+<span class="n">multi_framework_dataset</span> <span class="o">=</span> <span class="n">FrameworkConverter</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="s2">&quot;classification&quot;</span><span class="p">)</span>
+<span class="n">train_dataset</span> <span class="o">=</span> <span class="n">multi_framework_dataset</span><span class="o">.</span><span class="n">to_framework</span><span class="p">(</span>
+    <span class="n">framework</span><span class="o">=</span><span class="s2">&quot;torch&quot;</span><span class="p">,</span>
+    <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">multi_framework_dataset</span> <span class="o">=</span> <span class="n">FrameworkConverter</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">task</span><span class="o">=</span><span class="s2">&quot;classification&quot;</span><span class="p">)</span>
+<span class="n">val_dataset</span> <span class="o">=</span> <span class="n">multi_framework_dataset</span><span class="o">.</span><span class="n">to_framework</span><span class="p">(</span>
+    <span class="n">framework</span><span class="o">=</span><span class="s2">&quot;torch&quot;</span><span class="p">,</span>
+    <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Converted train dataset len is &#39;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">train_dataset</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Converted train dataset len is &#39;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">val_dataset</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+2024-10-23 15:32:28.371272: E external/local_xla/xla/stream_executor/cuda/cuda_fft.cc:485] Unable to register cuFFT factory: Attempting to register factory for plugin cuFFT when one has already been registered
+2024-10-23 15:32:28.383616: E external/local_xla/xla/stream_executor/cuda/cuda_dnn.cc:8454] Unable to register cuDNN factory: Attempting to register factory for plugin cuDNN when one has already been registered
+2024-10-23 15:32:28.387695: E external/local_xla/xla/stream_executor/cuda/cuda_blas.cc:1452] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2024-10-23 15:32:28.396903: I tensorflow/core/platform/cpu_feature_guard.cc:210] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-10-23 15:32:29.470910: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Converted train dataset len is &#39;28709&#39;
+Converted train dataset len is &#39;7178&#39;
+</pre></div></div>
+</div>
+</section>
+</section>
+<section id="Building-the-PyTorch-Training-and-Validation-Pipeline">
+<h2>Building the PyTorch Training and Validation Pipeline<a class="headerlink" href="#Building-the-PyTorch-Training-and-Validation-Pipeline" title="Link to this heading">#</a></h2>
+<section id="Creating-Data-Loaders-for-Efficient-Data-Handling">
+<h3>Creating Data Loaders for Efficient Data Handling<a class="headerlink" href="#Creating-Data-Loaders-for-Efficient-Data-Handling" title="Link to this heading">#</a></h3>
+<p>In this section, we establish our data loaders for both training and validation datasets, which are essential for efficient data handling during the model training process. By utilizing PyTorch’s <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code>, we ensure that our training data is shuffled randomly for better generalization, while the validation data is loaded in a deterministic manner to facilitate accurate performance evaluation. The specified batch size of 4 allows for manageable processing of data during each training
+iteration. With these loaders in place, we can seamlessly feed our datasets into the training loop for effective model training and validation.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLoader</span>
+
+<span class="n">training_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">train_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">validation_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">val_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Training Loader Batches: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">training_loader</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Validation Loader Batches: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">validation_loader</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Training Loader Batches: 449
+Validation Loader Batches: 113
+</pre></div></div>
+</div>
+</section>
+</section>
+<section id="Modeling">
+<h2>Modeling<a class="headerlink" href="#Modeling" title="Link to this heading">#</a></h2>
+<section id="Model-Architecture-Definition">
+<h3>Model Architecture Definition<a class="headerlink" href="#Model-Architecture-Definition" title="Link to this heading">#</a></h3>
+<p>In this section, we define our model architecture by leveraging the pre-trained ResNet-50 model, which is well-suited for image classification tasks. By utilizing transfer learning, we can capitalize on the learned features from the ImageNet dataset, which enhances our model’s performance on the emotion detection task. We modify the final fully connected layer to match the number of classes in our specific dataset, ensuring the model outputs predictions relevant to the emotions present in the
+images. Finally, we transfer the model to the GPU, enabling efficient training and inference processes. This approach helps us build a robust foundation for our emotion detection pipeline.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchvision.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">mobilenet_v2</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">mobilenet_v2</span><span class="p">(</span><span class="n">weights</span><span class="o">=</span><span class="s2">&quot;IMAGENET1K_V1&quot;</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">features</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Conv2d</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">stride</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">padding</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="c1"># Get the number of input features for the last layer</span>
+<span class="n">num_features</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">classifier</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">in_features</span>
+
+<span class="c1"># Create a new classifier layer with the number of classes</span>
+<span class="n">num_classes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">categories</span><span class="p">()[</span><span class="n">dm</span><span class="o">.</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">])</span>
+<span class="n">model</span><span class="o">.</span><span class="n">classifier</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_features</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)</span>
+
+<span class="c1"># Move the model to GPU if available</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>  <span class="c1"># If using GPU</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Training-and-Validation-Loop">
+<h3>Training and Validation Loop<a class="headerlink" href="#Training-and-Validation-Loop" title="Link to this heading">#</a></h3>
+<p>In this section, we implement the training and validation loop for our emotion detection model. The <code class="docutils literal notranslate"><span class="pre">top_k_accuracy</span></code> function calculates the top-k accuracy for the model predictions, allowing us to evaluate performance more robustly. We define a cross-entropy loss function suitable for multi-class classification tasks and use the Stochastic Gradient Descent (SGD) optimizer to adjust the model’s parameters. Throughout the training process, we report the loss for every 100 batches, providing
+insights into the model’s learning progress. After each epoch, we evaluate the model on the validation dataset, calculating the average accuracy to gauge its effectiveness in classifying the emotions.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">top_k_accuracy</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the top-k accuracy given model output and labels.&quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">pred</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">pred</span> <span class="o">=</span> <span class="n">pred</span><span class="o">.</span><span class="n">t</span><span class="p">()</span>
+        <span class="n">correct</span> <span class="o">=</span> <span class="n">pred</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand_as</span><span class="p">(</span><span class="n">pred</span><span class="p">))</span>
+        <span class="n">correct_k</span> <span class="o">=</span> <span class="n">correct</span><span class="p">[:</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">correct_k</span><span class="o">.</span><span class="n">mul_</span><span class="p">(</span><span class="mf">100.0</span> <span class="o">/</span> <span class="n">batch_size</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+
+
+<span class="c1"># Define loss function and optimizer</span>
+<span class="n">loss_fn</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">momentum</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+
+<span class="n">EPOCHS</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">EPOCHS</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;EPOCH </span><span class="si">{</span><span class="n">epoch</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">:&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Training phase</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+    <span class="n">running_loss</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">training_loader</span><span class="p">):</span>
+        <span class="n">inputs</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="n">inputs</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">cuda</span><span class="p">(),</span> <span class="n">labels</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+        <span class="c1"># Gather data and report</span>
+        <span class="n">running_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2"> [TRAIN] batch </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> loss: </span><span class="si">{</span><span class="n">running_loss</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">running_loss</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="c1"># Validation phase</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+    <span class="n">accs</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">vdata</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">validation_loader</span><span class="p">):</span>
+            <span class="n">inputs</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">vdata</span>
+            <span class="n">inputs</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">inputs</span><span class="o">.</span><span class="n">cuda</span><span class="p">(),</span> <span class="n">labels</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
+
+            <span class="n">outputs</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">inputs</span><span class="p">)</span>
+            <span class="n">top1_acc</span> <span class="o">=</span> <span class="n">top_k_accuracy</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">accs</span> <span class="o">+=</span> <span class="n">top1_acc</span>
+
+    <span class="n">avg_accs</span> <span class="o">=</span> <span class="n">accs</span> <span class="o">/</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2"> [VAL] validation accuracy: </span><span class="si">{</span><span class="n">avg_accs</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+EPOCH 1:
+         [TRAIN] batch 100 loss: 1.8547
+         [TRAIN] batch 200 loss: 1.7383
+         [TRAIN] batch 300 loss: 1.6348
+         [TRAIN] batch 400 loss: 1.5933
+         [VAL] validation accuracy: 40.84%
+EPOCH 2:
+         [TRAIN] batch 100 loss: 1.4857
+         [TRAIN] batch 200 loss: 1.4612
+         [TRAIN] batch 300 loss: 1.4012
+         [TRAIN] batch 400 loss: 1.3967
+         [VAL] validation accuracy: 48.21%
+EPOCH 3:
+         [TRAIN] batch 100 loss: 1.2735
+         [TRAIN] batch 200 loss: 1.2806
+         [TRAIN] batch 300 loss: 1.2650
+         [TRAIN] batch 400 loss: 1.2792
+         [VAL] validation accuracy: 51.14%
+EPOCH 4:
+         [TRAIN] batch 100 loss: 1.1394
+         [TRAIN] batch 200 loss: 1.1445
+         [TRAIN] batch 300 loss: 1.1760
+         [TRAIN] batch 400 loss: 1.1557
+         [VAL] validation accuracy: 52.51%
+EPOCH 5:
+         [TRAIN] batch 100 loss: 1.0302
+         [TRAIN] batch 200 loss: 1.0563
+         [TRAIN] batch 300 loss: 1.0757
+         [TRAIN] batch 400 loss: 1.0815
+         [VAL] validation accuracy: 52.39%
+EPOCH 6:
+         [TRAIN] batch 100 loss: 0.9378
+         [TRAIN] batch 200 loss: 0.9302
+         [TRAIN] batch 300 loss: 1.0006
+         [TRAIN] batch 400 loss: 0.9811
+         [VAL] validation accuracy: 51.48%
+EPOCH 7:
+         [TRAIN] batch 100 loss: 0.8105
+         [TRAIN] batch 200 loss: 0.8475
+         [TRAIN] batch 300 loss: 0.9001
+         [TRAIN] batch 400 loss: 0.9265
+         [VAL] validation accuracy: 54.57%
+EPOCH 8:
+         [TRAIN] batch 100 loss: 0.7378
+         [TRAIN] batch 200 loss: 0.7624
+         [TRAIN] batch 300 loss: 0.8293
+         [TRAIN] batch 400 loss: 0.8538
+         [VAL] validation accuracy: 54.17%
+EPOCH 9:
+         [TRAIN] batch 100 loss: 0.6630
+         [TRAIN] batch 200 loss: 0.6890
+         [TRAIN] batch 300 loss: 0.7210
+         [TRAIN] batch 400 loss: 0.7865
+         [VAL] validation accuracy: 52.42%
+EPOCH 10:
+         [TRAIN] batch 100 loss: 0.5968
+         [TRAIN] batch 200 loss: 0.6473
+         [TRAIN] batch 300 loss: 0.6737
+         [TRAIN] batch 400 loss: 0.7167
+         [VAL] validation accuracy: 55.29%
+</pre></div></div>
+</div>
+</section>
+<section id="Model-Fine-Tuning-and-Further-Improvements">
+<h3>Model Fine-Tuning and Further Improvements<a class="headerlink" href="#Model-Fine-Tuning-and-Further-Improvements" title="Link to this heading">#</a></h3>
+<p>While MobileNetV2 provided a solid baseline performance for this emotion detection task, further fine-tuning can help improve results. Experimenting with different architectures—such as ResNet or EfficientNet—or adjusting layers and hyperparameters in MobileNetV2 could yield a better fit to the unique characteristics of the dataset. Additionally, applying transfer learning from models pretrained on large face or emotion recognition datasets might enhance the model’s ability to capture subtle
+facial expressions, leading to higher accuracy in emotion detection.</p>
+</section>
+</section>
+<section id="Conclusion">
+<h2>Conclusion<a class="headerlink" href="#Conclusion" title="Link to this heading">#</a></h2>
+<p>In this notebook, we explored the use of Datumaro for data management, transforming the emotion-detection-fer dataset into a PyTorch-compatible format. This process enabled us to easily handle image-based datasets, including various pre-processing steps and dataset partitioning for training and validation.</p>
+<p>Leveraging MobileNetV2, a lightweight yet effective model architecture, we demonstrated its application for facial emotion recognition. MobileNetV2, with its efficient design and lower computational requirements, performed well on the dataset, making it a practical choice for projects that prioritize speed and model efficiency.</p>
+<p>Through the completed training and validation pipeline, we showcased how MobileNetV2 can be fine-tuned for specific emotion detection tasks. Datumaro’s robust data management features allowed us to streamline the dataset preparation, ensuring efficient handling and compatibility with PyTorch.</p>
+<p>Future improvements could involve experimenting with data augmentation, testing more complex model architectures, or further tuning hyperparameters to optimize accuracy. We hope this notebook serves as a comprehensive guide for leveraging Datumaro and MobileNetV2 in similar emotion detection or classification tasks.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="08_e2e_example_yolo_ultralytics_trainer.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Train Your OpenVINO™ Model Using YoloV8 Trainer For Any Dataset Format</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../../command-reference/overview.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Overview</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Prerequisite">Prerequisite</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Download-dataset">Download dataset</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Dataset-Preparation">Dataset Preparation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Import-a-dataset">Import a dataset</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Convert-Datumaro-dataset-into-PyTorch-dataset">Convert Datumaro dataset into PyTorch dataset</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Building-the-PyTorch-Training-and-Validation-Pipeline">Building the PyTorch Training and Validation Pipeline</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Creating-Data-Loaders-for-Efficient-Data-Handling">Creating Data Loaders for Efficient Data Handling</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Modeling">Modeling</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Model-Architecture-Definition">Model Architecture Definition</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Training-and-Validation-Loop">Training and Validation Loop</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#Model-Fine-Tuning-and-Further-Improvements">Model Fine-Tuning and Further Improvements</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#Conclusion">Conclusion</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../_sources/docs/jupyter_notebook_examples/notebooks/22_framework_converter.ipynb.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.15.2.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -12,16 +12,15 @@ YOLO-Ultralytics format doesn't support attributes for annotations.
 The format only supports three subset names: `train`, `val`, and `test` (optional).
 
 > Note, the YOLO-Ultralytics trainer does not expect any subset names,
-  except `train`, `val`, and `test` (optional). If there is any other subset name in your project,
+  except `train`, `val`, and `test` (optional). If there is any other subset name,
   Datumaro raises an exception when you export the dataset to the YOLO-Ultralytics format.
 
-## Import YOLO dataset
+## Convert YOLO dataset
 
-A Datumaro project with a YOLO source can be created in the following way:
+A Datumaro dataset can be converted in the following way:
 
 ```bash
-datum project create
-datum project import --format yolo <path/to/dataset>
+datum convert -if yolo -i <path/to/dataset> -o <output/dir>
 ```
 
 ### Directory structure
@@ -93,18 +92,12 @@ To add custom classes, you can use [`dataset_meta.json`](/docs/data-formats/form
 ## Export to YOLO-Ultralytics format
 
 Datumaro can convert [any other image dataset format](/docs/data-formats/formats/index.rst) which has bounding box annotations into YOLO-Ultralytics format.
-After the successful conversion, you can train your own detecter with the exported dataset and  [Ultralytics YOLOv8 trainer](https://github.com/ultralytics/ultralytics).
+After the successful conversion, you can train your own detector with the exported dataset and  [Ultralytics YOLOv8 trainer](https://github.com/ultralytics/ultralytics).
 
-> Note, if you want to see the end-to-end Jupyter-notebook example from the dataset conversion to the training, please see this [link](https://github.com/openvinotoolkit/datumaro/blob/develop/notebooks/08_e2e_example_yolo_ultralytics_trainer.ipynb).
+> Note, if you want to see the end-to-end Jupyter-notebook example from the dataset conversion to the training, please see this [link](https://github.com/open-edge-platform/datumaro/blob/develop/notebooks/08_e2e_example_yolo_ultralytics_trainer.ipynb).
 
 There are several ways to convert other dataset formats to the YOLO-Ultralytics format:
 
-```bash
-datum project create
-datum project add -f <any-other-dataset-format> <path/to/dataset/>
-datum project export -f yolo_ultralytics -o <output/dir> -- --save-media
-```
-or
 ```bash
 datum convert -if <any-other-dataset-format> -i <path/to/dataset> \
               -f yolo_ultralytics -o <output/dir> -- --save-media

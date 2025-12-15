@@ -27,10 +27,10 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=8b7c274f" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -43,7 +43,7 @@
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../../../_static/design-tabs.js?v=36754332"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/cli/util/compare';</script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
@@ -192,7 +192,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
       
@@ -279,7 +279,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
         
@@ -347,38 +347,39 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
-<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">auto</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">auto</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">cv2</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">LabelCategories</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset</span> <span class="kn">import</span> <span class="n">IDataset</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.media</span> <span class="kn">import</span> <span class="n">Image</span>
-<span class="kn">from</span> <span class="nn">datumaro.util</span> <span class="kn">import</span> <span class="n">parse_str_enum_value</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.image</span> <span class="kn">import</span> <span class="n">save_image</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.import_util</span> <span class="kn">import</span> <span class="n">lazy_import</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">LabelCategories</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">IDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_str_enum_value</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.image</span><span class="w"> </span><span class="kn">import</span> <span class="n">save_image</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.import_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">lazy_import</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
     <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
-        <span class="kn">import</span> <span class="nn">tensorboardX</span> <span class="k">as</span> <span class="nn">tb</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">tensorboardX</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tb</span>
 <span class="k">else</span><span class="p">:</span>
     <span class="n">tb</span> <span class="o">=</span> <span class="n">lazy_import</span><span class="p">(</span><span class="s2">&quot;tensorboardX&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="DistanceCompareVisualizer">
-<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.cli.util.compare.DistanceCompareVisualizer">[docs]</a>
-<span class="k">class</span> <span class="nc">DistanceCompareVisualizer</span><span class="p">:</span>
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.compare.html#datumaro.cli.util.compare.DistanceCompareVisualizer">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DistanceCompareVisualizer</span><span class="p">:</span>
 <div class="viewcode-block" id="DistanceCompareVisualizer.OutputFormat">
-<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.cli.util.compare.DistanceCompareVisualizer.OutputFormat">[docs]</a>
-    <span class="k">class</span> <span class="nc">OutputFormat</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.compare.html#datumaro.cli.util.compare.DistanceCompareVisualizer.OutputFormat">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">OutputFormat</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
         <span class="n">simple</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
         <span class="n">tensorboard</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span></div>
 
@@ -386,18 +387,14 @@ document.write(`
     <span class="n">DEFAULT_FORMAT</span> <span class="o">=</span> <span class="n">OutputFormat</span><span class="o">.</span><span class="n">simple</span>
     <span class="n">_UNMATCHED_LABEL</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">comparator</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_format</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">OutputFormat</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comparator</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_format</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">OutputFormat</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cmp</span> <span class="o">=</span> <span class="n">comparator</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_output_format</span> <span class="o">=</span> <span class="n">parse_str_enum_value</span><span class="p">(</span>
-            <span class="n">output_format</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">OutputFormat</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DEFAULT_FORMAT</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_output_format</span> <span class="o">=</span> <span class="n">parse_str_enum_value</span><span class="p">(</span><span class="n">output_format</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">OutputFormat</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">DEFAULT_FORMAT</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span> <span class="o">=</span> <span class="n">save_dir</span>
 
-    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_format</span> <span class="ow">is</span> <span class="bp">self</span><span class="o">.</span><span class="n">OutputFormat</span><span class="o">.</span><span class="n">tensorboard</span><span class="p">:</span>
@@ -416,7 +413,7 @@ document.write(`
 
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_format</span> <span class="ow">is</span> <span class="bp">self</span><span class="o">.</span><span class="n">OutputFormat</span><span class="o">.</span><span class="n">tensorboard</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_file_writer</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_file_writer</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -426,8 +423,8 @@ document.write(`
                 <span class="bp">self</span><span class="o">.</span><span class="n">_label_diff_writer</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
 <div class="viewcode-block" id="DistanceCompareVisualizer.save">
-<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.cli.util.compare.DistanceCompareVisualizer.save">[docs]</a>
-    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.compare.html#datumaro.cli.util.compare.DistanceCompareVisualizer.save">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">):</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Datasets have different lengths: </span><span class="si">%s</span><span class="s2"> vs </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">)))</span>
 
@@ -494,8 +491,8 @@ document.write(`
 
 
 <div class="viewcode-block" id="DistanceCompareVisualizer.update_label_confusion">
-<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.cli.util.compare.DistanceCompareVisualizer.update_label_confusion">[docs]</a>
-    <span class="k">def</span> <span class="nf">update_label_confusion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_diff</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.compare.html#datumaro.cli.util.compare.DistanceCompareVisualizer.update_label_confusion">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_label_confusion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_diff</span><span class="p">):</span>
         <span class="n">matches</span><span class="p">,</span> <span class="n">a_unmatched</span><span class="p">,</span> <span class="n">b_unmatched</span> <span class="o">=</span> <span class="n">label_diff</span>
         <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">label_confusion_matrix</span><span class="p">[(</span><span class="n">label</span><span class="p">,</span> <span class="n">label</span><span class="p">)]</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -506,7 +503,7 @@ document.write(`
 
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">_update_segment_confusion</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">matrix</span><span class="p">,</span> <span class="n">diff</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_segment_confusion</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">matrix</span><span class="p">,</span> <span class="n">diff</span><span class="p">):</span>
         <span class="n">matches</span><span class="p">,</span> <span class="n">mispred</span><span class="p">,</span> <span class="n">a_unmatched</span><span class="p">,</span> <span class="n">b_unmatched</span> <span class="o">=</span> <span class="n">diff</span>
         <span class="k">for</span> <span class="n">a_segm</span><span class="p">,</span> <span class="n">b_segm</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">:</span>
             <span class="n">matrix</span><span class="p">[(</span><span class="n">a_segm</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">b_segm</span><span class="o">.</span><span class="n">label</span><span class="p">)]</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -518,27 +515,27 @@ document.write(`
             <span class="n">matrix</span><span class="p">[(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_UNMATCHED_LABEL</span><span class="p">,</span> <span class="n">b_segm</span><span class="o">.</span><span class="n">label</span><span class="p">)]</span> <span class="o">+=</span> <span class="mi">1</span>
 
 <div class="viewcode-block" id="DistanceCompareVisualizer.update_bbox_confusion">
-<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.cli.util.compare.DistanceCompareVisualizer.update_bbox_confusion">[docs]</a>
-    <span class="k">def</span> <span class="nf">update_bbox_confusion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">diff</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.compare.html#datumaro.cli.util.compare.DistanceCompareVisualizer.update_bbox_confusion">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_bbox_confusion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">diff</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_segment_confusion</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bbox_confusion_matrix</span><span class="p">,</span> <span class="n">diff</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="DistanceCompareVisualizer.update_polygon_confusion">
-<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.cli.util.compare.DistanceCompareVisualizer.update_polygon_confusion">[docs]</a>
-    <span class="k">def</span> <span class="nf">update_polygon_confusion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">diff</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.compare.html#datumaro.cli.util.compare.DistanceCompareVisualizer.update_polygon_confusion">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_polygon_confusion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">diff</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_segment_confusion</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">polygon_confusion_matrix</span><span class="p">,</span> <span class="n">diff</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="DistanceCompareVisualizer.update_mask_confusion">
-<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.cli.util.compare.DistanceCompareVisualizer.update_mask_confusion">[docs]</a>
-    <span class="k">def</span> <span class="nf">update_mask_confusion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">diff</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.compare.html#datumaro.cli.util.compare.DistanceCompareVisualizer.update_mask_confusion">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_mask_confusion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">diff</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_update_segment_confusion</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask_confusion_matrix</span><span class="p">,</span> <span class="n">diff</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="DistanceCompareVisualizer.draw_text_with_background">
-<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.cli.util.compare.DistanceCompareVisualizer.draw_text_with_background">[docs]</a>
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.compare.html#datumaro.cli.util.compare.DistanceCompareVisualizer.draw_text_with_background">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">draw_text_with_background</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">draw_text_with_background</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
         <span class="n">frame</span><span class="p">,</span>
         <span class="n">text</span><span class="p">,</span>
@@ -555,8 +552,8 @@ document.write(`
         <span class="n">text_size</span><span class="p">,</span> <span class="n">baseline</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">getTextSize</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">font</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">thickness</span><span class="p">)</span>
         <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span>
             <span class="n">frame</span><span class="p">,</span>
-            <span class="nb">tuple</span><span class="p">((</span><span class="n">origin</span> <span class="o">+</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">baseline</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)),</span>
-            <span class="nb">tuple</span><span class="p">((</span><span class="n">origin</span> <span class="o">+</span> <span class="p">(</span><span class="n">text_size</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="n">text_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)),</span>
+            <span class="nb">tuple</span><span class="p">((</span><span class="n">origin</span> <span class="o">+</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">baseline</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)),</span>  <span class="c1"># noqa: RUF005</span>
+            <span class="nb">tuple</span><span class="p">((</span><span class="n">origin</span> <span class="o">+</span> <span class="p">(</span><span class="n">text_size</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="n">text_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)),</span>  <span class="c1"># noqa: RUF005</span>
             <span class="n">bgcolor</span><span class="p">,</span>
             <span class="n">cv2</span><span class="o">.</span><span class="n">FILLED</span><span class="p">,</span>
         <span class="p">)</span>
@@ -565,8 +562,8 @@ document.write(`
 
 
 <div class="viewcode-block" id="DistanceCompareVisualizer.draw_detection_roi">
-<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.cli.util.compare.DistanceCompareVisualizer.draw_detection_roi">[docs]</a>
-    <span class="k">def</span> <span class="nf">draw_detection_roi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">conf</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.compare.html#datumaro.cli.util.compare.DistanceCompareVisualizer.draw_detection_roi">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">draw_detection_roi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">conf</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
         <span class="n">cv2</span><span class="o">.</span><span class="n">rectangle</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">w</span><span class="p">,</span> <span class="n">y</span> <span class="o">+</span> <span class="n">h</span><span class="p">),</span> <span class="n">color</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 
         <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> </span><span class="si">%.2f%%</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="mf">100.0</span> <span class="o">*</span> <span class="n">conf</span><span class="p">)</span>
@@ -585,48 +582,44 @@ document.write(`
 
 
 <div class="viewcode-block" id="DistanceCompareVisualizer.get_a_label">
-<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.cli.util.compare.DistanceCompareVisualizer.get_a_label">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_a_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_id</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.compare.html#datumaro.cli.util.compare.DistanceCompareVisualizer.get_a_label">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_a_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_id</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_a_classes</span><span class="p">,</span> <span class="n">label_id</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="DistanceCompareVisualizer.get_b_label">
-<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.cli.util.compare.DistanceCompareVisualizer.get_b_label">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_b_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_id</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.compare.html#datumaro.cli.util.compare.DistanceCompareVisualizer.get_b_label">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_b_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_id</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_b_classes</span><span class="p">,</span> <span class="n">label_id</span><span class="p">)</span></div>
 
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_get_label</span><span class="p">(</span><span class="n">cat</span><span class="p">:</span> <span class="n">LabelCategories</span><span class="p">,</span> <span class="n">label_id</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_label</span><span class="p">(</span><span class="n">cat</span><span class="p">:</span> <span class="n">LabelCategories</span><span class="p">,</span> <span class="n">label_id</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">cat</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">label_id</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">cat</span><span class="p">[</span><span class="n">label_id</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
 
 <div class="viewcode-block" id="DistanceCompareVisualizer.draw_bbox">
-<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.cli.util.compare.DistanceCompareVisualizer.draw_bbox">[docs]</a>
-    <span class="k">def</span> <span class="nf">draw_bbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.compare.html#datumaro.cli.util.compare.DistanceCompareVisualizer.draw_bbox">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">draw_bbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
         <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">shape</span><span class="o">.</span><span class="n">get_bbox</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">draw_detection_roi</span><span class="p">(</span>
-            <span class="n">img</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">w</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">h</span><span class="p">),</span> <span class="n">label</span><span class="p">,</span> <span class="n">shape</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;score&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">color</span>
-        <span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">draw_detection_roi</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">w</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">h</span><span class="p">),</span> <span class="n">label</span><span class="p">,</span> <span class="n">shape</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;score&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">color</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="DistanceCompareVisualizer.get_label_diff_file">
-<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.cli.util.compare.DistanceCompareVisualizer.get_label_diff_file">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_label_diff_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.compare.html#datumaro.cli.util.compare.DistanceCompareVisualizer.get_label_diff_file">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_label_diff_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_diff_writer</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_label_diff_writer</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span>
-                <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="s2">&quot;label_diff.txt&quot;</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span>
-            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_label_diff_writer</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="s2">&quot;label_diff.txt&quot;</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>  <span class="c1"># noqa: SIM115</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_diff_writer</span></div>
 
 
 <div class="viewcode-block" id="DistanceCompareVisualizer.save_item_label_diff">
-<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.cli.util.compare.DistanceCompareVisualizer.save_item_label_diff">[docs]</a>
-    <span class="k">def</span> <span class="nf">save_item_label_diff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_a</span><span class="p">,</span> <span class="n">item_b</span><span class="p">,</span> <span class="n">diff</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.compare.html#datumaro.cli.util.compare.DistanceCompareVisualizer.save_item_label_diff">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_item_label_diff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_a</span><span class="p">,</span> <span class="n">item_b</span><span class="p">,</span> <span class="n">diff</span><span class="p">):</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">a_unmatched</span><span class="p">,</span> <span class="n">b_unmatched</span> <span class="o">=</span> <span class="n">diff</span>
 
-        <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">a_unmatched</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">b_unmatched</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">a_unmatched</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">b_unmatched</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_format</span> <span class="ow">is</span> <span class="bp">self</span><span class="o">.</span><span class="n">OutputFormat</span><span class="o">.</span><span class="n">simple</span><span class="p">:</span>
                 <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_label_diff_file</span><span class="p">()</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">item_a</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -643,13 +636,13 @@ document.write(`
 
 
 <div class="viewcode-block" id="DistanceCompareVisualizer.save_item_bbox_diff">
-<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.cli.util.compare.DistanceCompareVisualizer.save_item_bbox_diff">[docs]</a>
-    <span class="k">def</span> <span class="nf">save_item_bbox_diff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_a</span><span class="p">,</span> <span class="n">item_b</span><span class="p">,</span> <span class="n">diff</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.compare.html#datumaro.cli.util.compare.DistanceCompareVisualizer.save_item_bbox_diff">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_item_bbox_diff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_a</span><span class="p">,</span> <span class="n">item_b</span><span class="p">,</span> <span class="n">diff</span><span class="p">):</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">mispred</span><span class="p">,</span> <span class="n">a_unmatched</span><span class="p">,</span> <span class="n">b_unmatched</span> <span class="o">=</span> <span class="n">diff</span>
 
-        <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">a_unmatched</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">b_unmatched</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">mispred</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">a_unmatched</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">b_unmatched</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">mispred</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item_a</span><span class="o">.</span><span class="n">media</span><span class="p">,</span> <span class="n">Image</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">item_a</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">has_data</span><span class="p">:</span>
-                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: item has no image data, &quot;</span> <span class="s2">&quot;it will be skipped&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item_a</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: item has no image data, it will be skipped&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item_a</span><span class="o">.</span><span class="n">id</span><span class="p">))</span>
                 <span class="k">return</span>
             <span class="n">img_a</span> <span class="o">=</span> <span class="n">item_a</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
             <span class="n">img_b</span> <span class="o">=</span> <span class="n">img_a</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -672,8 +665,8 @@ document.write(`
 
 
 <div class="viewcode-block" id="DistanceCompareVisualizer.save_as_tensorboard">
-<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.cli.util.compare.DistanceCompareVisualizer.save_as_tensorboard">[docs]</a>
-    <span class="k">def</span> <span class="nf">save_as_tensorboard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.compare.html#datumaro.cli.util.compare.DistanceCompareVisualizer.save_as_tensorboard">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_as_tensorboard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># to RGB</span>
         <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>  <span class="c1"># to (C, H, W)</span>
         <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
@@ -681,11 +674,11 @@ document.write(`
 
 
 <div class="viewcode-block" id="DistanceCompareVisualizer.save_conf_matrix">
-<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.components.hl_ops.html#datumaro.cli.util.compare.DistanceCompareVisualizer.save_conf_matrix">[docs]</a>
-    <span class="k">def</span> <span class="nf">save_conf_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conf_matrix</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
-        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.cli.util.compare.html#datumaro.cli.util.compare.DistanceCompareVisualizer.save_conf_matrix">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_conf_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conf_matrix</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
-        <span class="k">def</span> <span class="nf">_get_class_map</span><span class="p">(</span><span class="n">label_categories</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_get_class_map</span><span class="p">(</span><span class="n">label_categories</span><span class="p">):</span>
             <span class="n">classes</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="n">label_categories</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">classes</span> <span class="o">=</span> <span class="p">{</span><span class="nb">id</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="nb">id</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">label_categories</span><span class="o">.</span><span class="n">items</span><span class="p">)}</span>

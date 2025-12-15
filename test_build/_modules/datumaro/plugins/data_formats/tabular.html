@@ -27,10 +27,10 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=eafc0fe6" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=8b7c274f" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -43,7 +43,7 @@
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../../../_static/design-tabs.js?v=36754332"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/plugins/data_formats/tabular';</script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
@@ -192,7 +192,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
       
@@ -279,7 +279,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
         
@@ -344,18 +344,20 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">errno</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">errno</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Categories</span><span class="p">,</span> <span class="n">Tabular</span><span class="p">,</span> <span class="n">TabularCategories</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetBase</span><span class="p">,</span> <span class="n">DatasetItem</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.errors</span> <span class="kn">import</span> <span class="n">MediaTypeError</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.exporter</span> <span class="kn">import</span> <span class="n">Exporter</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.importer</span> <span class="kn">import</span> <span class="n">ImportContext</span><span class="p">,</span> <span class="n">Importer</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.media</span> <span class="kn">import</span> <span class="n">Table</span><span class="p">,</span> <span class="n">TableDtype</span><span class="p">,</span> <span class="n">TableRow</span>
-<span class="kn">from</span> <span class="nn">datumaro.util.os_util</span> <span class="kn">import</span> <span class="n">find_files</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Categories</span><span class="p">,</span> <span class="n">Tabular</span><span class="p">,</span> <span class="n">TabularCategories</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetBase</span><span class="p">,</span> <span class="n">DatasetItem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">MediaTypeError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.exporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Exporter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.importer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImportContext</span><span class="p">,</span> <span class="n">Importer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span><span class="p">,</span> <span class="n">TableDtype</span><span class="p">,</span> <span class="n">TableRow</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util.os_util</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_files</span>
 
 <span class="c1"># Only supports &#39;.csv&#39; extention.</span>
 <span class="n">TABULAR_EXTENSIONS</span> <span class="o">=</span> <span class="p">[</span>
@@ -365,16 +367,17 @@ document.write(`
 
 <div class="viewcode-block" id="TabularDataBase">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.tabular.html#datumaro.plugins.data_formats.tabular.TabularDataBase">[docs]</a>
-<span class="k">class</span> <span class="nc">TabularDataBase</span><span class="p">(</span><span class="n">DatasetBase</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TabularDataBase</span><span class="p">(</span><span class="n">DatasetBase</span><span class="p">):</span>
     <span class="n">NAME</span> <span class="o">=</span> <span class="s2">&quot;tabular&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">target</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">dtype</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">TableDtype</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">ctx</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ImportContext</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Read and compose a tabular dataset.</span>
@@ -401,21 +404,22 @@ document.write(`
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">media_type</span><span class="o">=</span><span class="n">TableRow</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ctx</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_infos</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="n">path</span><span class="p">}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">(</span><span class="n">paths</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">dtype</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_parse</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">paths</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-        <span class="n">target</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">dtype</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Type</span><span class="p">[</span><span class="n">TableDtype</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="n">AnnotationType</span><span class="p">,</span> <span class="n">Categories</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        parse tabular files. Each file is regarded as a subset.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            paths (list(str)) : A list of paths to tabular data files(csv files).</span>
-<span class="sd">            target (optional, str or list) : Target column or list of target columns.</span>
-<span class="sd">                If this is not specified (None), the last column is regarded as a target column.</span>
+<span class="sd">            target (optional, dict(str or list)) : Target column or list of target columns for each input and output.</span>
+<span class="sd">                If this is not specified (None), the whole columns are regarded as a target column.</span>
 <span class="sd">                In case of a dataset with no targets, give an empty list as a parameter.</span>
 <span class="sd">            dtype (optional, dict(str,str)) : Dictionay of column name -&gt; type str (&#39;str&#39;, &#39;int&#39;, or &#39;float&#39;).</span>
 <span class="sd">                This can be used when automatic type inferencing is failed.</span>
@@ -428,45 +432,52 @@ document.write(`
         <span class="n">items</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DatasetItem</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">categories</span><span class="p">:</span> <span class="n">TabularCategories</span> <span class="o">=</span> <span class="n">TabularCategories</span><span class="p">()</span>
 
+        <span class="k">if</span> <span class="n">target</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;input&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">target</span> <span class="ow">or</span> <span class="s2">&quot;output&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">target</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Target should have both &quot;input&quot; and &quot;output&quot;&#39;</span><span class="p">)</span>
+
         <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">:</span>
-            <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">from_csv</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">from_csv</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
             <span class="n">targets</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">targets_ann</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">if</span> <span class="n">target</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">targets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># last column</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>  <span class="c1"># add valid column name only</span>
-                    <span class="n">targets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>  <span class="c1"># add valid column names only</span>
-                <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">target</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-                        <span class="n">targets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+                <span class="n">targets</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>  <span class="c1"># add all columns</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># add valid targeted output column name only</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">),</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">target</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                    <span class="n">targets</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">target</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">),</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="n">targets</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">target</span><span class="p">[</span><span class="s2">&quot;input&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;output&quot;</span><span class="p">),</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">target</span><span class="p">[</span><span class="s2">&quot;output&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                    <span class="n">targets_ann</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">target</span><span class="p">[</span><span class="s2">&quot;output&quot;</span><span class="p">])</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;output&quot;</span><span class="p">),</span> <span class="nb">list</span><span class="p">):</span>
+                    <span class="n">targets_ann</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">target</span><span class="p">[</span><span class="s2">&quot;output&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+            <span class="n">targets</span> <span class="o">=</span> <span class="n">targets</span> <span class="o">+</span> <span class="n">targets_ann</span>
 
             <span class="c1"># set categories</span>
-            <span class="k">for</span> <span class="n">target</span> <span class="ow">in</span> <span class="n">targets</span><span class="p">:</span>
-                <span class="n">_</span><span class="p">,</span> <span class="n">category</span> <span class="o">=</span> <span class="n">categories</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
-                <span class="n">target_dtype</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">target_dtype</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
-                    <span class="n">labels</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">features</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">target_</span> <span class="ow">in</span> <span class="n">targets_ann</span><span class="p">:</span>
+                <span class="n">_</span><span class="p">,</span> <span class="n">category</span> <span class="o">=</span> <span class="n">categories</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">target_</span><span class="p">)</span>
+                <span class="n">target_dtype</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">target_</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">target_dtype</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">CategoricalDtype</span><span class="p">()]:</span>
+                    <span class="c1"># &#39;int&#39; can be categorical, but we don&#39;t know this unless user gives information.</span>
+                    <span class="n">labels</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">feature</span> <span class="k">for</span> <span class="n">feature</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">features</span><span class="p">(</span><span class="n">target_</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">feature</span><span class="p">)])</span>
                     <span class="k">if</span> <span class="n">category</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="n">categories</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">target_dtype</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+                        <span class="n">categories</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">target_</span><span class="p">,</span> <span class="n">target_dtype</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>  <span class="c1"># update labels if they are different.</span>
                         <span class="n">category</span><span class="o">.</span><span class="n">labels</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="n">target_dtype</span> <span class="ow">in</span> <span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-                    <span class="c1"># &#39;int&#39; can be categorical, but we don&#39;t know this unless user gives information.</span>
+                <span class="k">elif</span> <span class="n">target_dtype</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">category</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="n">categories</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">target_dtype</span><span class="p">)</span>
+                        <span class="n">categories</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">target_</span><span class="p">,</span> <span class="n">target_dtype</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Unsupported type &#39;</span><span class="si">{</span><span class="n">target_dtype</span><span class="si">}</span><span class="s2">&#39; for target column &#39;</span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
-                    <span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported type &#39;</span><span class="si">{</span><span class="n">target_dtype</span><span class="si">}</span><span class="s2">&#39; for target column &#39;</span><span class="si">{</span><span class="n">target_</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
 
             <span class="c1"># load annotations</span>
             <span class="n">subset</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">path</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">row</span><span class="p">:</span> <span class="n">TableRow</span>
+            <span class="n">table</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">table</span><span class="p">:</span>  <span class="c1"># type: TableRow</span>
                 <span class="nb">id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">row</span><span class="o">.</span><span class="n">index</span><span class="si">}</span><span class="s2">@</span><span class="si">{</span><span class="n">subset</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="n">ann</span> <span class="o">=</span> <span class="p">[</span><span class="n">Tabular</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">row</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">targets</span><span class="p">))]</span> <span class="k">if</span> <span class="n">targets</span> <span class="k">else</span> <span class="kc">None</span>
+                <span class="n">ann</span> <span class="o">=</span> <span class="p">[</span><span class="n">Tabular</span><span class="p">(</span><span class="n">values</span><span class="o">=</span><span class="n">row</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">targets_ann</span><span class="p">))]</span> <span class="k">if</span> <span class="n">targets_ann</span> <span class="k">else</span> <span class="kc">None</span>
                 <span class="n">item</span> <span class="o">=</span> <span class="n">DatasetItem</span><span class="p">(</span>
                     <span class="nb">id</span><span class="o">=</span><span class="nb">id</span><span class="p">,</span>
                     <span class="n">subset</span><span class="o">=</span><span class="n">subset</span><span class="p">,</span>
@@ -479,18 +490,44 @@ document.write(`
 
 <div class="viewcode-block" id="TabularDataBase.categories">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.tabular.html#datumaro.plugins.data_formats.tabular.TabularDataBase.categories">[docs]</a>
-    <span class="k">def</span> <span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_categories</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span></div>
+
+
+
+<div class="viewcode-block" id="string_to_dict">
+<a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.tabular.html#datumaro.plugins.data_formats.tabular.string_to_dict">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">string_to_dict</span><span class="p">(</span><span class="n">input_string</span><span class="p">):</span>
+    <span class="n">pairs</span> <span class="o">=</span> <span class="n">input_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">pair</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">:</span>
+        <span class="n">split_pair</span> <span class="o">=</span> <span class="n">pair</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
+        <span class="c1"># Check if the key is &quot;input&quot; or &quot;output&quot;.</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">split_pair</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">split_pair</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;input&quot;</span> <span class="ow">or</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;output&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+                    <span class="n">result</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">result</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Ignore other keys</span>
+                <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">split_pair</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
 
 
 
 <div class="viewcode-block" id="TabularDataImporter">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.tabular.html#datumaro.plugins.data_formats.tabular.TabularDataImporter">[docs]</a>
-<span class="k">class</span> <span class="nc">TabularDataImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TabularDataImporter</span><span class="p">(</span><span class="n">Importer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Import a tabular dataset.</span>
 <span class="sd">    Each &#39;.csv&#39; file is regarded as a subset.</span>
@@ -501,13 +538,14 @@ document.write(`
 <div class="viewcode-block" id="TabularDataImporter.build_cmdline_parser">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.tabular.html#datumaro.plugins.data_formats.tabular.TabularDataImporter.build_cmdline_parser">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
             <span class="s2">&quot;--target&quot;</span><span class="p">,</span>
-            <span class="nb">type</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">),</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Target column or list of target columns. (ex. &#39;class&#39;, &#39;class,breed&#39;) (default:None) &quot;</span>
-            <span class="s2">&quot;If this is not specified (None), the last column is regarded as a target column.&quot;</span>
+            <span class="nb">type</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">string_to_dict</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Target column or list of target columns for each input and output.&quot;</span>
+            <span class="s2">&quot;(ex. &#39;input:date,output:class&#39;, &#39;input:data,output:class,breed&#39;) (default:None)&quot;</span>
+            <span class="s2">&quot;If this is not specified (None), the whole columns are regarded as a target column.&quot;</span>
             <span class="s2">&quot;In case of a dataset with no targets, give an empty list as a parameter.&quot;</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
@@ -522,7 +560,7 @@ document.write(`
 <div class="viewcode-block" id="TabularDataImporter.find_sources">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.tabular.html#datumaro.plugins.data_formats.tabular.TabularDataImporter.find_sources">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_sources</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
             <span class="n">ext</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">path</span><span class="p">)[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">:]</span>  <span class="c1"># exclude &quot;.&quot;</span>
             <span class="k">if</span> <span class="n">ext</span> <span class="ow">in</span> <span class="n">TABULAR_EXTENSIONS</span><span class="p">:</span>
@@ -536,7 +574,7 @@ document.write(`
 <div class="viewcode-block" id="TabularDataImporter.get_file_extensions">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.tabular.html#datumaro.plugins.data_formats.tabular.TabularDataImporter.get_file_extensions">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_file_extensions</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_file_extensions</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="k">return</span> <span class="nb">list</span><span class="p">({</span><span class="sa">f</span><span class="s2">&quot;.</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">ext</span> <span class="ow">in</span> <span class="n">TABULAR_EXTENSIONS</span><span class="p">})</span></div>
 </div>
 
@@ -544,7 +582,7 @@ document.write(`
 
 <div class="viewcode-block" id="TabularDataExporter">
 <a class="viewcode-back" href="../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.tabular.html#datumaro.plugins.data_formats.tabular.TabularDataExporter">[docs]</a>
-<span class="k">class</span> <span class="nc">TabularDataExporter</span><span class="p">(</span><span class="n">Exporter</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TabularDataExporter</span><span class="p">(</span><span class="n">Exporter</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Export a tabular dataset.</span>
 <span class="sd">    This will save each subset into a &#39;.csv&#39; file regardless of &#39;save_media&#39; value</span>
@@ -554,7 +592,7 @@ document.write(`
     <span class="n">EXPORT_EXT</span> <span class="o">=</span> <span class="s2">&quot;.csv&quot;</span>
     <span class="n">DEFAULT_IMAGE_EXT</span> <span class="o">=</span> <span class="s2">&quot;.jpg&quot;</span>  <span class="c1"># just to avoid assert error.</span>
 
-    <span class="k">def</span> <span class="nf">_apply_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">extractor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span>
 
         <span class="k">if</span> <span class="n">extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">(),</span> <span class="n">TableRow</span><span class="p">):</span>

@@ -27,10 +27,10 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=eafc0fe6" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css?v=8b7c274f" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -43,7 +43,7 @@
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../../../../_static/design-tabs.js?v=36754332"></script>
+    <script src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/plugins/data_formats/sly_pointcloud/exporter';</script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
@@ -192,7 +192,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
       
@@ -279,7 +279,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
         
@@ -347,28 +347,28 @@ document.write(`
 <span class="c1"># The format is described here:</span>
 <span class="c1"># https://docs.supervise.ly/data-organization/00_ann_format_navi</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">import</span> <span class="nn">uuid</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">uuid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">LabelCategories</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">IDataset</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_item_storage</span> <span class="kn">import</span> <span class="n">ItemStatus</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.errors</span> <span class="kn">import</span> <span class="n">DatasetExportError</span><span class="p">,</span> <span class="n">MediaTypeError</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.exporter</span> <span class="kn">import</span> <span class="n">Exporter</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.media</span> <span class="kn">import</span> <span class="n">PointCloud</span>
-<span class="kn">from</span> <span class="nn">datumaro.util</span> <span class="kn">import</span> <span class="n">cast</span><span class="p">,</span> <span class="n">dump_json_file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationType</span><span class="p">,</span> <span class="n">LabelCategories</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetItem</span><span class="p">,</span> <span class="n">IDataset</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_item_storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">ItemStatus</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetExportError</span><span class="p">,</span> <span class="n">MediaTypeError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.exporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Exporter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">PointCloud</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">cast</span><span class="p">,</span> <span class="n">dump_json_file</span>
 
-<span class="kn">from</span> <span class="nn">.format</span> <span class="kn">import</span> <span class="n">PointCloudPath</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.format</span><span class="w"> </span><span class="kn">import</span> <span class="n">PointCloudPath</span>
 
 
-<span class="k">class</span> <span class="nc">_SuperviselyPointCloudDumper</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extractor</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">SuperviselyPointCloudExporter</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_SuperviselyPointCloudDumper</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extractor</span><span class="p">:</span> <span class="n">IDataset</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">SuperviselyPointCloudExporter</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span> <span class="o">=</span> <span class="n">extractor</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_context</span> <span class="o">=</span> <span class="n">context</span>
 
@@ -391,15 +391,11 @@ document.write(`
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_label_cat</span> <span class="o">=</span> <span class="n">extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">,</span> <span class="n">LabelCategories</span><span class="p">())</span>
 
-    <span class="k">def</span> <span class="nf">_write_related_images</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_write_related_images</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="n">img_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_related_images_dir</span>
 
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">img</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">extra_images</span><span class="p">):</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">path</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="s2">&quot;path&quot;</span><span class="p">)</span>
-                <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;extra_image_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">path</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="s2">&quot;path&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;extra_image_</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="n">img_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">img_dir</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="s2">&quot;_pcd&quot;</span><span class="p">,</span> <span class="n">name</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_image_ext</span><span class="p">(</span><span class="n">img</span><span class="p">))</span>
             <span class="k">if</span> <span class="n">img</span><span class="o">.</span><span class="n">has_data</span><span class="p">:</span>
                 <span class="n">img</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">img_path</span><span class="p">)</span>
@@ -416,31 +412,27 @@ document.write(`
 
             <span class="n">dump_json_file</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">img_dir</span><span class="p">,</span> <span class="n">img_path</span> <span class="o">+</span> <span class="s2">&quot;.json&quot;</span><span class="p">),</span> <span class="n">img_data</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_write_pcd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_write_pcd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">_save_point_cloud</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">basedir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_point_cloud_dir</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_write_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_write_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tag_meta</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">tag</span><span class="p">[</span><span class="s2">&quot;value_type&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">tag</span><span class="p">[</span><span class="s2">&quot;value_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;any_string&quot;</span>
             <span class="n">tag</span><span class="p">[</span><span class="s2">&quot;classes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tag</span><span class="p">[</span><span class="s2">&quot;classes&quot;</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_meta_data</span><span class="p">[</span><span class="s2">&quot;tags&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tag_meta</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 
-        <span class="n">dump_json_file</span><span class="p">(</span>
-            <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">PointCloudPath</span><span class="o">.</span><span class="n">META_FILE</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meta_data</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="kc">True</span>
-        <span class="p">)</span>
+        <span class="n">dump_json_file</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">PointCloudPath</span><span class="o">.</span><span class="n">META_FILE</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meta_data</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_write_key_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_write_key_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">objects</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_objects</span>
         <span class="n">key_id_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_key_id_data</span>
 
         <span class="n">key_id_data</span><span class="p">[</span><span class="s2">&quot;objects&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">objects</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 
-        <span class="n">dump_json_file</span><span class="p">(</span>
-            <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">PointCloudPath</span><span class="o">.</span><span class="n">KEY_ID_FILE</span><span class="p">),</span> <span class="n">key_id_data</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="kc">True</span>
-        <span class="p">)</span>
+        <span class="n">dump_json_file</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">PointCloudPath</span><span class="o">.</span><span class="n">KEY_ID_FILE</span><span class="p">),</span> <span class="n">key_id_data</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_write_item_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_write_item_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
         <span class="n">key_id_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_key_id_data</span>
 
         <span class="n">item_id</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;frame&quot;</span><span class="p">),</span> <span class="nb">int</span><span class="p">)</span>
@@ -450,9 +442,7 @@ document.write(`
         <span class="n">item_key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
         <span class="n">key_id_data</span><span class="p">[</span><span class="s2">&quot;videos&quot;</span><span class="p">][</span><span class="n">item_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">item_id</span>
 
-        <span class="n">item_user_info</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">k</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">default_v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">default_v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_user_info</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-        <span class="p">}</span>
+        <span class="n">item_user_info</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">default_v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">default_v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_user_info</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 
         <span class="n">item_ann_data</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;description&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
@@ -468,7 +458,7 @@ document.write(`
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">ann_path</span><span class="p">),</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">dump_json_file</span><span class="p">(</span><span class="n">ann_path</span><span class="p">,</span> <span class="n">item_ann_data</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_export_item_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">item_ann_data</span><span class="p">,</span> <span class="n">item_user_info</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_export_item_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">item_ann_data</span><span class="p">,</span> <span class="n">item_user_info</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">attr_value</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">attr_name</span> <span class="ow">in</span> <span class="n">PointCloudPath</span><span class="o">.</span><span class="n">SPECIAL_ATTRS</span><span class="p">:</span>
                 <span class="k">continue</span>
@@ -486,8 +476,7 @@ document.write(`
             <span class="k">elif</span> <span class="n">tag</span><span class="p">[</span><span class="s2">&quot;value_type&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">value_type</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="n">DatasetExportError</span><span class="p">(</span>
                     <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: mismatching &quot;</span>
-                    <span class="s2">&quot;value types for tag </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2"> vs </span><span class="si">%s</span><span class="s2">&quot;</span>
-                    <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">tag</span><span class="p">[</span><span class="s2">&quot;value_type&quot;</span><span class="p">],</span> <span class="n">value_type</span><span class="p">)</span>
+                    <span class="s2">&quot;value types for tag </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2"> vs </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">tag</span><span class="p">[</span><span class="s2">&quot;value_type&quot;</span><span class="p">],</span> <span class="n">value_type</span><span class="p">)</span>
                 <span class="p">)</span>
 
             <span class="n">tag_key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
@@ -505,7 +494,7 @@ document.write(`
             <span class="n">tag_id</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_key_id_data</span><span class="p">[</span><span class="s2">&quot;tags&quot;</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_key_id_data</span><span class="p">[</span><span class="s2">&quot;tags&quot;</span><span class="p">][</span><span class="n">tag_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">tag_id</span>
 
-    <span class="k">def</span> <span class="nf">_export_item_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">item_ann_data</span><span class="p">,</span> <span class="n">item_user_info</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_export_item_annotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">item_ann_data</span><span class="p">,</span> <span class="n">item_user_info</span><span class="p">):</span>
         <span class="n">objects</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_objects</span>
         <span class="n">tags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tag_meta</span>
         <span class="n">label_cat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_cat</span>
@@ -513,7 +502,7 @@ document.write(`
 
         <span class="n">image_objects</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">ann</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">ann</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">cuboid_3d</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ann</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">cuboid_3d</span><span class="p">:</span>
                 <span class="k">continue</span>
 
             <span class="n">obj_id</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;track_id&quot;</span><span class="p">,</span> <span class="n">ann</span><span class="o">.</span><span class="n">id</span><span class="p">),</span> <span class="nb">int</span><span class="p">)</span>
@@ -526,9 +515,7 @@ document.write(`
             <span class="n">object_key</span> <span class="o">=</span> <span class="n">objects</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">obj_id</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">()))</span>
             <span class="n">object_label</span> <span class="o">=</span> <span class="n">label_cat</span><span class="p">[</span><span class="n">ann</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
             <span class="k">if</span> <span class="n">obj_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">image_objects</span><span class="p">:</span>
-                <span class="n">ann_user_info</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="n">k</span><span class="p">:</span> <span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">default_v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">default_v</span> <span class="ow">in</span> <span class="n">item_user_info</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                <span class="p">}</span>
+                <span class="n">ann_user_info</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">default_v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">default_v</span> <span class="ow">in</span> <span class="n">item_user_info</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 
                 <span class="n">obj_ann_data</span> <span class="o">=</span> <span class="p">{</span>
                     <span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="n">object_key</span><span class="p">,</span>
@@ -572,8 +559,7 @@ document.write(`
                     <span class="k">elif</span> <span class="n">tag</span><span class="p">[</span><span class="s2">&quot;value_type&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">value_type</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="n">DatasetExportError</span><span class="p">(</span>
                             <span class="s2">&quot;Item </span><span class="si">%s</span><span class="s2">: mismatching &quot;</span>
-                            <span class="s2">&quot;value types for tag </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2"> vs </span><span class="si">%s</span><span class="s2">&quot;</span>
-                            <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">tag</span><span class="p">[</span><span class="s2">&quot;value_type&quot;</span><span class="p">],</span> <span class="n">value_type</span><span class="p">)</span>
+                            <span class="s2">&quot;value types for tag </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2"> vs </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">tag</span><span class="p">[</span><span class="s2">&quot;value_type&quot;</span><span class="p">],</span> <span class="n">value_type</span><span class="p">)</span>
                         <span class="p">)</span>
 
                     <span class="n">tag_key</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">uuid</span><span class="o">.</span><span class="n">uuid4</span><span class="p">())</span>
@@ -622,20 +608,20 @@ document.write(`
             <span class="n">key_id_data</span><span class="p">[</span><span class="s2">&quot;figures&quot;</span><span class="p">][</span><span class="n">figure_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">figure_id</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_encode_attr_value</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_encode_attr_value</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="kc">True</span> <span class="ow">or</span> <span class="n">v</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>  <span class="c1"># use is to check the type too</span>
             <span class="n">v</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">v</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_define_attr_type</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_define_attr_type</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
             <span class="n">t</span> <span class="o">=</span> <span class="s2">&quot;any_number&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">t</span> <span class="o">=</span> <span class="s2">&quot;any_string&quot;</span>
         <span class="k">return</span> <span class="n">t</span>
 
-    <span class="k">def</span> <span class="nf">_register_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_register_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">tag</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
             <span class="s2">&quot;value_type&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
@@ -648,7 +634,7 @@ document.write(`
         <span class="n">tag</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tag_meta</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_make_dirs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_make_dirs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">save_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">_save_dir</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span> <span class="o">=</span> <span class="n">save_dir</span>
@@ -668,7 +654,7 @@ document.write(`
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">related_images_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_related_images_dir</span> <span class="o">=</span> <span class="n">related_images_dir</span>
 
-    <span class="k">def</span> <span class="nf">_init_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_init_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_label_cat</span><span class="o">.</span><span class="n">attributes</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_register_tag</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">applicable_type</span><span class="o">=</span><span class="s2">&quot;objectsOnly&quot;</span><span class="p">)</span>
 
@@ -687,11 +673,11 @@ document.write(`
                 <span class="n">tag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_register_tag</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">applicable_type</span><span class="o">=</span><span class="s2">&quot;objectsOnly&quot;</span><span class="p">)</span>
                 <span class="n">tag</span><span class="p">[</span><span class="s2">&quot;classes&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">label</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_find_image_ext</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_find_image_ext</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>
         <span class="n">src_ext</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">ext</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">_image_ext</span> <span class="ow">or</span> <span class="n">src_ext</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context</span><span class="o">.</span><span class="n">_default_image_ext</span>
 
-    <span class="k">def</span> <span class="nf">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_make_dirs</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_init_meta</span><span class="p">()</span>
@@ -716,14 +702,14 @@ document.write(`
 
 <div class="viewcode-block" id="SuperviselyPointCloudExporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.sly_pointcloud.exporter.html#datumaro.plugins.data_formats.sly_pointcloud.exporter.SuperviselyPointCloudExporter">[docs]</a>
-<span class="k">class</span> <span class="nc">SuperviselyPointCloudExporter</span><span class="p">(</span><span class="n">Exporter</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SuperviselyPointCloudExporter</span><span class="p">(</span><span class="n">Exporter</span><span class="p">):</span>
     <span class="n">NAME</span> <span class="o">=</span> <span class="s2">&quot;sly_pointcloud&quot;</span>
     <span class="n">DEFAULT_IMAGE_EXT</span> <span class="o">=</span> <span class="n">PointCloudPath</span><span class="o">.</span><span class="n">DEFAULT_IMAGE_EXT</span>
 
 <div class="viewcode-block" id="SuperviselyPointCloudExporter.build_cmdline_parser">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.sly_pointcloud.exporter.html#datumaro.plugins.data_formats.sly_pointcloud.exporter.SuperviselyPointCloudExporter.build_cmdline_parser">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
             <span class="s2">&quot;--reindex&quot;</span><span class="p">,</span>
@@ -739,17 +725,17 @@ document.write(`
         <span class="k">return</span> <span class="n">parser</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extractor</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="n">reindex</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">allow_undeclared_attrs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extractor</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="n">reindex</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">allow_undeclared_attrs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">extractor</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_reindex</span> <span class="o">=</span> <span class="n">reindex</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_allow_undeclared_attrs</span> <span class="o">=</span> <span class="n">allow_undeclared_attrs</span>
 
-    <span class="k">def</span> <span class="nf">_apply_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">PointCloud</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">MediaTypeError</span><span class="p">(</span><span class="s2">&quot;Media type is not an image&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">subsets</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">subsets</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="s2">&quot;Supervisely pointcloud format supports only a single &quot;</span>
                 <span class="s2">&quot;subset. Subset information will be ignored on export.&quot;</span>
@@ -760,7 +746,7 @@ document.write(`
 <div class="viewcode-block" id="SuperviselyPointCloudExporter.patch">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.sly_pointcloud.exporter.html#datumaro.plugins.data_formats.sly_pointcloud.exporter.SuperviselyPointCloudExporter.patch">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">patch</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">patch</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">patch</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">patch</span><span class="p">,</span> <span class="n">save_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">conv</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">patch</span><span class="o">.</span><span class="n">as_dataset</span><span class="p">(</span><span class="n">dataset</span><span class="p">),</span> <span class="n">save_dir</span><span class="o">=</span><span class="n">save_dir</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">conv</span><span class="o">.</span><span class="n">apply</span><span class="p">()</span>
 
@@ -784,9 +770,7 @@ document.write(`
             <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">ann_path</span><span class="p">):</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">ann_path</span><span class="p">)</span>
 
-            <span class="n">pcd_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                <span class="n">save_dir</span><span class="p">,</span> <span class="n">PointCloudPath</span><span class="o">.</span><span class="n">BASE_DIR</span><span class="p">,</span> <span class="n">PointCloudPath</span><span class="o">.</span><span class="n">POINT_CLOUD_DIR</span><span class="p">,</span> <span class="n">pcd_name</span>
-            <span class="p">)</span>
+            <span class="n">pcd_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_dir</span><span class="p">,</span> <span class="n">PointCloudPath</span><span class="o">.</span><span class="n">BASE_DIR</span><span class="p">,</span> <span class="n">PointCloudPath</span><span class="o">.</span><span class="n">POINT_CLOUD_DIR</span><span class="p">,</span> <span class="n">pcd_name</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">osp</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">pcd_path</span><span class="p">):</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">pcd_path</span><span class="p">)</span>
 

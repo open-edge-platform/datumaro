@@ -11,16 +11,15 @@ Datumaro supports BraTS'17-20.
 Supported annotation types:
 - `Mask`
 
-## Import BraTS dataset
+## Convert BraTS dataset
 
-A Datumaro project with a BraTS source can be created in the following way:
+A Datumaro dataset can be converted in the following way:
 
 ```bash
-datum project create
-datum project import --format brats <path/to/dataset>
+datum convert -if brats -i <path/to/dataset> -o <output/dir>
 ```
 
-It is also possible to import the dataset using Python API:
+It is also possible to convert the dataset using Python API:
 
 ```python
 from datumaro.components.dataset import Dataset
@@ -58,16 +57,10 @@ Datumaro can convert a BraTS dataset into any other format [Datumaro supports](/
 To get the expected result, convert the dataset to a format
 that supports segmentation masks.
 
-There are several ways to convert a BraTS dataset to other dataset
+You can convert a BraTS dataset to other dataset
 formats using CLI:
 
 ```bash
-datum project create
-datum project import -f brats <path/to/dataset>
-datum project export -f voc -o <output/dir> -- --save-media
-```
-or
-``` bash
 datum convert -if brats -i <path/to/dataset> \
     -f voc -o <output/dir> -- --save-media
 ```
@@ -84,4 +77,4 @@ dataset.export('save_dir', 'voc')
 ## Examples
 
 Examples of using this format from the code can be found in
-[the format tests](https://github.com/openvinotoolkit/datumaro/blob/develop/tests/unit/test_brats_format.py)
+[the format tests](https://github.com/open-edge-platform/datumaro/blob/develop/tests/unit/test_brats_format.py)

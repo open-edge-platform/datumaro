@@ -27,10 +27,10 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=8b7c274f" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -43,7 +43,7 @@
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../../_static/design-tabs.js?v=36754332"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/plugins/splitter';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -192,7 +192,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
       
@@ -279,7 +279,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
         
@@ -344,25 +344,25 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">import</span> <span class="nn">logging</span> <span class="k">as</span> <span class="nn">log</span>
-<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">auto</span>
-<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">gcd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">log</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">auto</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">math</span><span class="w"> </span><span class="kn">import</span> <span class="n">gcd</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="n">AnnotationType</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.cli_plugin</span> <span class="kn">import</span> <span class="n">CliPlugin</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DEFAULT_SUBSET_NAME</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.transformer</span> <span class="kn">import</span> <span class="n">Transform</span>
-<span class="kn">from</span> <span class="nn">datumaro.util</span> <span class="kn">import</span> <span class="n">cast</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.cli_plugin</span><span class="w"> </span><span class="kn">import</span> <span class="n">CliPlugin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DEFAULT_SUBSET_NAME</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Transform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">cast</span>
 
 <span class="n">NEAR_ZERO</span> <span class="o">=</span> <span class="mf">1e-7</span>
 
 
 <div class="viewcode-block" id="SplitTask">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.splitter.html#datumaro.plugins.splitter.SplitTask">[docs]</a>
-<span class="k">class</span> <span class="nc">SplitTask</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SplitTask</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="n">classification</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
     <span class="n">detection</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
     <span class="n">segmentation</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
@@ -372,7 +372,7 @@ document.write(`
 
 <div class="viewcode-block" id="Split">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.splitter.html#datumaro.plugins.splitter.Split">[docs]</a>
-<span class="k">class</span> <span class="nc">Split</span><span class="p">(</span><span class="n">Transform</span><span class="p">,</span> <span class="n">CliPlugin</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Split</span><span class="p">(</span><span class="n">Transform</span><span class="p">,</span> <span class="n">CliPlugin</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    - classification split |n</span>
 <span class="sd">    |s|s|s|sSplits dataset into subsets(train/val/test) in class-wise manner. |n</span>
@@ -436,7 +436,7 @@ document.write(`
 <div class="viewcode-block" id="Split.build_cmdline_parser">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.splitter.html#datumaro.plugins.splitter.Split.build_cmdline_parser">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
             <span class="s2">&quot;-t&quot;</span><span class="p">,</span>
@@ -451,8 +451,7 @@ document.write(`
             <span class="n">action</span><span class="o">=</span><span class="s2">&quot;append&quot;</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="bp">cls</span><span class="o">.</span><span class="n">_split_arg</span><span class="p">,</span>
             <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;splits&quot;</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Subsets in the form: &#39;&lt;subset&gt;:&lt;ratio&gt;&#39; &quot;</span>
-            <span class="s2">&quot;(repeatable, default: </span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_default_split</span><span class="p">),</span>
+            <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Subsets in the form: &#39;&lt;subset&gt;:&lt;ratio&gt;&#39; (repeatable, default: </span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_default_split</span><span class="p">),</span>
         <span class="p">)</span>
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
             <span class="s2">&quot;--query&quot;</span><span class="p">,</span>
@@ -472,15 +471,15 @@ document.write(`
 
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_split_arg</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_split_arg</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
         <span class="n">parts</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">argparse</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
 
-            <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentTypeError</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentTypeError</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">float</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">splits</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">attr_for_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">splits</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">attr_for_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">splits</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -492,7 +491,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_subsets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">splitter</span><span class="o">.</span><span class="n">_subsets</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_get_splitter</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">splits</span><span class="p">,</span> <span class="n">seed</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">attr_for_id</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_splitter</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">splits</span><span class="p">,</span> <span class="n">seed</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">attr_for_id</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">task</span> <span class="o">==</span> <span class="n">SplitTask</span><span class="o">.</span><span class="n">classification</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
             <span class="n">splitter</span> <span class="o">=</span> <span class="n">_ClassificationSplit</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span> <span class="n">splits</span><span class="o">=</span><span class="n">splits</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">task</span> <span class="ow">in</span> <span class="p">{</span><span class="n">SplitTask</span><span class="o">.</span><span class="n">detection</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">SplitTask</span><span class="o">.</span><span class="n">segmentation</span><span class="o">.</span><span class="n">name</span><span class="p">}:</span>
@@ -506,13 +505,10 @@ document.write(`
                 <span class="n">attr_for_id</span><span class="o">=</span><span class="n">attr_for_id</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Unknown task &#39;</span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s2">&#39;, available &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;splitter format: </span><span class="si">{</span><span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">SplitTask</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown task &#39;</span><span class="si">{</span><span class="n">task</span><span class="si">}</span><span class="s2">&#39;, available splitter format: </span><span class="si">{</span><span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">SplitTask</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">splitter</span>
 
-    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># lazy splitting</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initialized</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">splitter</span><span class="o">.</span><span class="n">_split_dataset</span><span class="p">()</span>
@@ -522,7 +518,7 @@ document.write(`
 
 <div class="viewcode-block" id="Split.get_subset">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.splitter.html#datumaro.plugins.splitter.Split.get_subset">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="c1"># lazy splitting</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initialized</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">splitter</span><span class="o">.</span><span class="n">_split_dataset</span><span class="p">()</span>
@@ -532,7 +528,7 @@ document.write(`
 
 <div class="viewcode-block" id="Split.subsets">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.plugins.splitter.html#datumaro.plugins.splitter.Split.subsets">[docs]</a>
-    <span class="k">def</span> <span class="nf">subsets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">subsets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># lazy splitting</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initialized</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">splitter</span><span class="o">.</span><span class="n">_split_dataset</span><span class="p">()</span>
@@ -542,8 +538,8 @@ document.write(`
 
 
 
-<span class="k">class</span> <span class="nc">_TaskSpecificSplit</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">splits</span><span class="p">,</span> <span class="n">seed</span><span class="p">,</span> <span class="n">restrict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_TaskSpecificSplit</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">splits</span><span class="p">,</span> <span class="n">seed</span><span class="p">,</span> <span class="n">restrict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span> <span class="o">=</span> <span class="n">dataset</span>
 
         <span class="n">snames</span><span class="p">,</span> <span class="n">sratio</span><span class="p">,</span> <span class="n">subsets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_splits</span><span class="p">(</span><span class="n">splits</span><span class="p">,</span> <span class="n">restrict</span><span class="p">)</span>
@@ -554,20 +550,20 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_seed</span> <span class="o">=</span> <span class="n">seed</span>
 
         <span class="c1"># remove subset name restriction</span>
-        <span class="c1"># https://github.com/openvinotoolkit/datumaro/issues/194</span>
+        <span class="c1"># https://github.com/open-edge-platform/datumaro/issues/194</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_subsets</span> <span class="o">=</span> <span class="n">subsets</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parts</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_length</span> <span class="o">=</span> <span class="s2">&quot;parent&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_initialized</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="k">def</span> <span class="nf">_set_parts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">by_splits</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_parts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">by_splits</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parts</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">subset</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subsets</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_parts</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="nb">set</span><span class="p">(</span><span class="n">by_splits</span><span class="p">[</span><span class="n">subset</span><span class="p">]),</span> <span class="n">subset</span><span class="p">))</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_get_uniq_annotations</span><span class="p">(</span><span class="n">dataset</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_uniq_annotations</span><span class="p">(</span><span class="n">dataset</span><span class="p">):</span>
         <span class="n">annotations</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">unlabeled_or_multi</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -581,22 +577,20 @@ document.write(`
         <span class="k">return</span> <span class="n">annotations</span><span class="p">,</span> <span class="n">unlabeled_or_multi</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_validate_splits</span><span class="p">(</span><span class="n">splits</span><span class="p">,</span> <span class="n">restrict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_splits</span><span class="p">(</span><span class="n">splits</span><span class="p">,</span> <span class="n">restrict</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="n">snames</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">ratios</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">subsets</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="n">valid</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="s2">&quot;val&quot;</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">]</span>
         <span class="k">for</span> <span class="n">subset</span><span class="p">,</span> <span class="n">ratio</span> <span class="ow">in</span> <span class="n">splits</span><span class="p">:</span>
             <span class="c1"># remove subset name restriction</span>
-            <span class="c1"># https://github.com/openvinotoolkit/datumaro/issues/194</span>
+            <span class="c1"># https://github.com/open-edge-platform/datumaro/issues/194</span>
             <span class="k">if</span> <span class="n">restrict</span><span class="p">:</span>
                 <span class="k">assert</span> <span class="n">subset</span> <span class="ow">in</span> <span class="n">valid</span><span class="p">,</span> <span class="s2">&quot;Subset name must be one of </span><span class="si">%s</span><span class="s2">, got </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
                     <span class="n">valid</span><span class="p">,</span>
                     <span class="n">subset</span><span class="p">,</span>
                 <span class="p">)</span>
-            <span class="k">assert</span> <span class="p">(</span>
-                <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">ratio</span> <span class="ow">and</span> <span class="n">ratio</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
-            <span class="p">),</span> <span class="s2">&quot;Ratio is expected to be in the range &quot;</span> <span class="s2">&quot;[0, 1], but got </span><span class="si">%s</span><span class="s2"> for </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="k">assert</span> <span class="n">ratio</span> <span class="o">&gt;=</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">ratio</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;Ratio is expected to be in the range [0, 1], but got </span><span class="si">%s</span><span class="s2"> for </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
                 <span class="n">ratio</span><span class="p">,</span>
                 <span class="n">subset</span><span class="p">,</span>
             <span class="p">)</span>
@@ -613,14 +607,12 @@ document.write(`
 
         <span class="n">total_ratio</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ratios</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">abs</span><span class="p">(</span><span class="n">total_ratio</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">NEAR_ZERO</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-                <span class="s2">&quot;Sum of ratios is expected to be 1, got </span><span class="si">%s</span><span class="s2">, which is </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">splits</span><span class="p">,</span> <span class="n">total_ratio</span><span class="p">)</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Sum of ratios is expected to be 1, got </span><span class="si">%s</span><span class="s2">, which is </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">splits</span><span class="p">,</span> <span class="n">total_ratio</span><span class="p">))</span>
 
         <span class="k">return</span> <span class="n">snames</span><span class="p">,</span> <span class="n">ratios</span><span class="p">,</span> <span class="n">subsets</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_get_required</span><span class="p">(</span><span class="n">ratio</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_required</span><span class="p">(</span><span class="n">ratio</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
             <span class="k">return</span> <span class="mi">1</span>
 
@@ -635,19 +627,17 @@ document.write(`
         <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">iarray</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
             <span class="n">common_divisor</span> <span class="o">=</span> <span class="n">gcd</span><span class="p">(</span><span class="n">common_divisor</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
 
-        <span class="n">required</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">iarray</span> <span class="o">/</span> <span class="n">common_divisor</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">))</span>
-
-        <span class="k">return</span> <span class="n">required</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">iarray</span> <span class="o">/</span> <span class="n">common_divisor</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">))</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_get_sections</span><span class="p">(</span><span class="n">dataset_size</span><span class="p">,</span> <span class="n">ratio</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_sections</span><span class="p">(</span><span class="n">dataset_size</span><span class="p">,</span> <span class="n">ratio</span><span class="p">):</span>
         <span class="n">n_splits</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">dataset_size</span> <span class="o">*</span> <span class="n">r</span><span class="p">))</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">ratio</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
         <span class="n">n_splits</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dataset_size</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">n_splits</span><span class="p">))</span>
 
         <span class="c1"># if there are splits with zero samples even if ratio is not 0,</span>
         <span class="c1"># borrow one from the split who has one or more.</span>
         <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">num_split</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">n_splits</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">num_split</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">NEAR_ZERO</span> <span class="o">&lt;</span> <span class="n">ratio</span><span class="p">[</span><span class="n">ii</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">num_split</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">ratio</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">NEAR_ZERO</span><span class="p">:</span>
                 <span class="n">midx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">n_splits</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">n_splits</span><span class="p">[</span><span class="n">midx</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="n">n_splits</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -656,7 +646,7 @@ document.write(`
         <span class="k">return</span> <span class="n">sections</span><span class="p">,</span> <span class="n">n_splits</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_group_by_attr</span><span class="p">(</span><span class="n">items</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_group_by_attr</span><span class="p">(</span><span class="n">items</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            items: list of (idx_img, ann). ann is the annotation from Label object.</span>
@@ -665,14 +655,11 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># float--&gt; numerical, others(int, string, bool) --&gt; categorical</span>
-        <span class="k">def</span> <span class="nf">_is_float</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_is_float</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="n">casted</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">casted</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">cast</span><span class="p">(</span><span class="n">casted</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="o">==</span> <span class="n">value</span><span class="p">:</span>
-                        <span class="k">return</span> <span class="kc">True</span>
-                <span class="k">return</span> <span class="kc">False</span>
-            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+                <span class="k">return</span> <span class="nb">bool</span><span class="p">(</span><span class="n">casted</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">cast</span><span class="p">(</span><span class="n">casted</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="o">==</span> <span class="n">value</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
                 <span class="n">cast</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
                 <span class="k">return</span> <span class="kc">True</span>
             <span class="k">return</span> <span class="kc">False</span>
@@ -693,12 +680,12 @@ document.write(`
 
         <span class="k">return</span> <span class="n">by_attributes</span>
 
-    <span class="k">def</span> <span class="nf">_split_by_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datasets</span><span class="p">,</span> <span class="n">snames</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">out_splits</span><span class="p">,</span> <span class="n">merge_small_classes</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-        <span class="k">def</span> <span class="nf">_split_indice</span><span class="p">(</span><span class="n">indice</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_split_by_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datasets</span><span class="p">,</span> <span class="n">snames</span><span class="p">,</span> <span class="n">ratio</span><span class="p">,</span> <span class="n">out_splits</span><span class="p">,</span> <span class="n">merge_small_classes</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_split_indice</span><span class="p">(</span><span class="n">indice</span><span class="p">):</span>
             <span class="n">sections</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_sections</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indice</span><span class="p">),</span> <span class="n">ratio</span><span class="p">)</span>
             <span class="n">splits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array_split</span><span class="p">(</span><span class="n">indice</span><span class="p">,</span> <span class="n">sections</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">subset</span><span class="p">,</span> <span class="n">split</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">snames</span><span class="p">,</span> <span class="n">splits</span><span class="p">):</span>
-                <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">split</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">split</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="n">out_splits</span><span class="p">[</span><span class="n">subset</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">split</span><span class="p">)</span>
 
         <span class="n">required</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_required</span><span class="p">(</span><span class="n">ratio</span><span class="p">)</span>
@@ -731,7 +718,7 @@ document.write(`
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">_split_indice</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_split_unlabeled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unlabeled</span><span class="p">,</span> <span class="n">by_splits</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_split_unlabeled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unlabeled</span><span class="p">,</span> <span class="n">by_splits</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        split unlabeled data into subsets (detection, classification)</span>
 <span class="sd">        Args:</span>
@@ -748,20 +735,20 @@ document.write(`
         <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">unlabeled</span><span class="p">)</span>
         <span class="n">splits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array_split</span><span class="p">(</span><span class="n">unlabeled</span><span class="p">,</span> <span class="n">sections</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">subset</span><span class="p">,</span> <span class="n">split</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_snames</span><span class="p">,</span> <span class="n">splits</span><span class="p">):</span>
-            <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">split</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">split</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">by_splits</span><span class="p">[</span><span class="n">subset</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">split</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_find_split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_find_split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">subset_indices</span><span class="p">,</span> <span class="n">subset</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parts</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">subset_indices</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">subset</span>
         <span class="k">return</span> <span class="n">DEFAULT_SUBSET_NAME</span>  <span class="c1"># all the possible remainder --&gt; default</span>
 
-    <span class="k">def</span> <span class="nf">_split_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_split_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
 
-<span class="k">class</span> <span class="nc">_ClassificationSplit</span><span class="p">(</span><span class="n">_TaskSpecificSplit</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_ClassificationSplit</span><span class="p">(</span><span class="n">_TaskSpecificSplit</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Splits dataset into subsets(train/val/test) in class-wise manner. |n</span>
 <span class="sd">    Splits dataset images in the specified ratio, keeping the initial class</span>
@@ -781,7 +768,7 @@ document.write(`
 <span class="sd">    |s|s%(prog)s -t classification --subset train:.5 --subset val:.2 --subset test:.3</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">splits</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">splits</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -794,7 +781,7 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">splits</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_split_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_split_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_seed</span><span class="p">)</span>
 
         <span class="c1"># support only single label for a DatasetItem</span>
@@ -823,7 +810,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_parts</span><span class="p">(</span><span class="n">by_splits</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">_ReidentificationSplit</span><span class="p">(</span><span class="n">_TaskSpecificSplit</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_ReidentificationSplit</span><span class="p">(</span><span class="n">_TaskSpecificSplit</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Splits a dataset for re-identification task.|n</span>
 <span class="sd">    Produces a split with a specified ratio of images, avoiding having same</span>
@@ -866,7 +853,7 @@ document.write(`
 
     <span class="n">_default_query_ratio</span> <span class="o">=</span> <span class="mf">0.5</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">splits</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">attr_for_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">splits</span><span class="p">,</span> <span class="n">query</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">attr_for_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -889,9 +876,7 @@ document.write(`
         <span class="k">if</span> <span class="n">query</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_query_ratio</span>
 
-        <span class="k">assert</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">query</span> <span class="ow">and</span> <span class="n">query</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">(</span>
-            <span class="s2">&quot;Query ratio is expected to be in the range &quot;</span> <span class="s2">&quot;[0, 1], but got </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">query</span>
-        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">query</span> <span class="o">&gt;=</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">query</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;Query ratio is expected to be in the range [0, 1], but got </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">query</span>
         <span class="n">test_splits</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;test-query&quot;</span><span class="p">,</span> <span class="n">query</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;test-gallery&quot;</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">query</span><span class="p">)]</span>
 
         <span class="c1"># remove subset name restriction</span>
@@ -899,7 +884,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_test_splits</span> <span class="o">=</span> <span class="n">test_splits</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_attr_for_id</span> <span class="o">=</span> <span class="n">attr_for_id</span>
 
-    <span class="k">def</span> <span class="nf">_split_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_split_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_seed</span><span class="p">)</span>
 
         <span class="n">id_snames</span><span class="p">,</span> <span class="n">id_ratio</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_snames</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sratio</span>
@@ -919,9 +904,7 @@ document.write(`
         <span class="k">else</span><span class="p">:</span>  <span class="c1"># use attr_for_id</span>
             <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">ann</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">annotations</span><span class="p">):</span>
                 <span class="n">attributes</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ann</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
-                <span class="k">assert</span> <span class="n">attr_for_id</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">,</span> <span class="p">(</span>
-                    <span class="s2">&quot;&#39;</span><span class="si">%s</span><span class="s2">&#39; is expected as an attribute name&quot;</span> <span class="o">%</span> <span class="n">attr_for_id</span>
-                <span class="p">)</span>
+                <span class="k">assert</span> <span class="n">attr_for_id</span> <span class="ow">in</span> <span class="n">attributes</span><span class="p">,</span> <span class="s2">&quot;&#39;</span><span class="si">%s</span><span class="s2">&#39; is expected as an attribute name&quot;</span> <span class="o">%</span> <span class="n">attr_for_id</span>
                 <span class="n">ID</span> <span class="o">=</span> <span class="n">attributes</span><span class="p">[</span><span class="n">attr_for_id</span><span class="p">]</span>
                 <span class="k">if</span> <span class="n">ID</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">by_id</span><span class="p">:</span>
                     <span class="n">by_id</span><span class="p">[</span><span class="n">ID</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
@@ -930,14 +913,13 @@ document.write(`
         <span class="n">required</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_required</span><span class="p">(</span><span class="n">id_ratio</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">by_id</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">required</span><span class="p">:</span>
             <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;There&#39;s not enough IDs, which is </span><span class="si">%s</span><span class="s2">, &quot;</span>
-                <span class="s2">&quot;so train/val/test ratio can&#39;t be guaranteed.&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">by_id</span><span class="p">)</span>
+                <span class="s2">&quot;There&#39;s not enough IDs, which is </span><span class="si">%s</span><span class="s2">, so train/val/test ratio can&#39;t be guaranteed.&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">by_id</span><span class="p">)</span>
             <span class="p">)</span>
 
         <span class="c1"># 1. split dataset into trval and test</span>
         <span class="c1">#    IDs in test set should not exist in train/val set.</span>
         <span class="n">test</span> <span class="o">=</span> <span class="n">id_ratio</span><span class="p">[</span><span class="n">id_snames</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)]</span> <span class="k">if</span> <span class="s2">&quot;test&quot;</span> <span class="ow">in</span> <span class="n">id_snames</span> <span class="k">else</span> <span class="mi">0</span>
-        <span class="k">if</span> <span class="n">NEAR_ZERO</span> <span class="o">&lt;</span> <span class="n">test</span><span class="p">:</span>  <span class="c1"># has testset</span>
+        <span class="k">if</span> <span class="n">test</span> <span class="o">&gt;</span> <span class="n">NEAR_ZERO</span><span class="p">:</span>  <span class="c1"># has testset</span>
             <span class="n">split_ratio</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">test</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">test</span><span class="p">])</span>
             <span class="n">IDs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">by_id</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
             <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">IDs</span><span class="p">)</span>
@@ -959,16 +941,14 @@ document.write(`
             <span class="n">by_splits</span><span class="p">[</span><span class="n">subset</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="c1"># 2. split &#39;test&#39; into &#39;test-gallery&#39; and &#39;test-query&#39;</span>
-        <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">testset</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">testset</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">test_snames</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="n">test_ratio</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">sname</span><span class="p">,</span> <span class="n">ratio</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_test_splits</span><span class="p">:</span>
                 <span class="n">test_snames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sname</span><span class="p">)</span>
                 <span class="n">test_ratio</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">ratio</span><span class="p">))</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">_split_by_attr</span><span class="p">(</span>
-                <span class="n">testset</span><span class="p">,</span> <span class="n">test_snames</span><span class="p">,</span> <span class="n">test_ratio</span><span class="p">,</span> <span class="n">by_splits</span><span class="p">,</span> <span class="n">merge_small_classes</span><span class="o">=</span><span class="kc">False</span>
-            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_split_by_attr</span><span class="p">(</span><span class="n">testset</span><span class="p">,</span> <span class="n">test_snames</span><span class="p">,</span> <span class="n">test_ratio</span><span class="p">,</span> <span class="n">by_splits</span><span class="p">,</span> <span class="n">merge_small_classes</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
         <span class="c1"># 3. split &#39;trval&#39; into  &#39;train&#39; and &#39;val&#39;</span>
         <span class="n">trval_snames</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="s2">&quot;val&quot;</span><span class="p">]</span>
@@ -983,15 +963,10 @@ document.write(`
         <span class="n">total_ratio</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">trval_ratio</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">total_ratio</span> <span class="o">&lt;</span> <span class="n">NEAR_ZERO</span><span class="p">:</span>
             <span class="n">trval_splits</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">([</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="s2">&quot;val&quot;</span><span class="p">],</span> <span class="n">trval_ratio</span><span class="p">))</span>
-            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;Sum of ratios is expected to be positive, &quot;</span>
-                <span class="s2">&quot;got </span><span class="si">%s</span><span class="s2">, which is </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">trval_splits</span><span class="p">,</span> <span class="n">total_ratio</span><span class="p">)</span>
-            <span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Sum of ratios is expected to be positive, got </span><span class="si">%s</span><span class="s2">, which is </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">trval_splits</span><span class="p">,</span> <span class="n">total_ratio</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">trval_ratio</span> <span class="o">/=</span> <span class="n">total_ratio</span>  <span class="c1"># normalize</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_split_by_attr</span><span class="p">(</span>
-                <span class="n">trval</span><span class="p">,</span> <span class="n">trval_snames</span><span class="p">,</span> <span class="n">trval_ratio</span><span class="p">,</span> <span class="n">by_splits</span><span class="p">,</span> <span class="n">merge_small_classes</span><span class="o">=</span><span class="kc">False</span>
-            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_split_by_attr</span><span class="p">(</span><span class="n">trval</span><span class="p">,</span> <span class="n">trval_snames</span><span class="p">,</span> <span class="n">trval_ratio</span><span class="p">,</span> <span class="n">by_splits</span><span class="p">,</span> <span class="n">merge_small_classes</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
         <span class="c1"># split unlabeled data into &#39;not-supported&#39;.</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">unlabeled</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -1001,7 +976,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_parts</span><span class="p">(</span><span class="n">by_splits</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_rebalancing</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">trval</span><span class="p">,</span> <span class="n">expected_count</span><span class="p">,</span> <span class="n">testset_total</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_rebalancing</span><span class="p">(</span><span class="n">test</span><span class="p">,</span> <span class="n">trval</span><span class="p">,</span> <span class="n">expected_count</span><span class="p">,</span> <span class="n">testset_total</span><span class="p">):</span>
         <span class="n">diffs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">id_test</span><span class="p">,</span> <span class="n">items_test</span> <span class="ow">in</span> <span class="n">test</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">count_test</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">items_test</span><span class="p">)</span>
@@ -1036,7 +1011,7 @@ document.write(`
                     <span class="k">if</span> <span class="n">id1</span> <span class="o">==</span> <span class="n">id_test</span> <span class="ow">or</span> <span class="n">id2</span> <span class="o">==</span> <span class="n">id_trval</span><span class="p">:</span>
                         <span class="k">continue</span>
                     <span class="n">new_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">id1</span><span class="p">,</span> <span class="n">id2</span><span class="p">))</span>
-                <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_list</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="n">new_diffs</span><span class="p">[</span><span class="n">diff</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_list</span>
             <span class="n">diffs</span> <span class="o">=</span> <span class="n">new_diffs</span>
             <span class="n">exchanges</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">id_test</span><span class="p">,</span> <span class="n">id_trval</span><span class="p">))</span>
@@ -1047,7 +1022,7 @@ document.write(`
             <span class="n">trval</span><span class="p">[</span><span class="n">id_test</span><span class="p">]</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">id_test</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">_InstanceSpecificSplit</span><span class="p">(</span><span class="n">_TaskSpecificSplit</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_InstanceSpecificSplit</span><span class="p">(</span><span class="n">_TaskSpecificSplit</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Splits a dataset into subsets(train/val/test),</span>
 <span class="sd">    using object annotations as a basis for splitting.|n</span>
@@ -1076,7 +1051,7 @@ document.write(`
 <span class="sd">    |s|s%(prog)s -t segmentation --subset train:.5 --subset val:.2 --subset test:.3</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">splits</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">splits</span><span class="p">,</span> <span class="n">task</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1094,7 +1069,7 @@ document.write(`
         <span class="k">elif</span> <span class="n">task</span> <span class="o">==</span> <span class="n">SplitTask</span><span class="o">.</span><span class="n">segmentation</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">annotation_type</span> <span class="o">=</span> <span class="p">[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">polygon</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_group_by_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_group_by_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
         <span class="n">by_labels</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
         <span class="n">unlabeled</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -1112,7 +1087,7 @@ document.write(`
 
         <span class="k">return</span> <span class="n">by_labels</span><span class="p">,</span> <span class="n">unlabeled</span>
 
-    <span class="k">def</span> <span class="nf">_split_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_split_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_seed</span><span class="p">)</span>
 
         <span class="n">subsets</span><span class="p">,</span> <span class="n">sratio</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_snames</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sratio</span>
@@ -1184,7 +1159,7 @@ document.write(`
                 <span class="n">by_scores</span><span class="p">[</span><span class="n">score</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx_img</span><span class="p">)</span>
 
         <span class="c1"># functions for keep the # of annotations not exceed the target_ins num</span>
-        <span class="k">def</span> <span class="nf">compute_penalty</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span> <span class="n">n_combs</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">compute_penalty</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span> <span class="n">n_combs</span><span class="p">):</span>
             <span class="n">p</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">for</span> <span class="n">idx_comb</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">counts</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="k">if</span> <span class="n">n_combs</span><span class="p">[</span><span class="n">idx_comb</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
@@ -1194,7 +1169,7 @@ document.write(`
 
             <span class="k">return</span> <span class="n">p</span>
 
-        <span class="k">def</span> <span class="nf">update_nc</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span> <span class="n">n_combs</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">update_nc</span><span class="p">(</span><span class="n">counts</span><span class="p">,</span> <span class="n">n_combs</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">idx_comb</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">counts</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">n_combs</span><span class="p">[</span><span class="n">idx_comb</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_combs</span><span class="p">[</span><span class="n">idx_comb</span><span class="p">]</span> <span class="o">-</span> <span class="n">v</span>
 

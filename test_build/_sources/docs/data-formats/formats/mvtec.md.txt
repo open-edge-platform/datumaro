@@ -22,20 +22,17 @@ Supported annotation types:
 - `Bbox` (detection)
 - `Mask` (segmentation)
 
-## Import MVTec AD dataset
+## Convert MVTec AD dataset
 
 The MVTec AD dataset is available for free download
 [here](https://www.mvtec.com/company/research/datasets/mvtec-ad).
 
-A Datumaro project with a MVTec AD source can be created in the following way:
+A MVTec AD dataset can be converted in the following way:
 
 ``` bash
-datum project create
-datum project import --format mvtec_segmentation <path/to/dataset>
+datum convert --input-format mvtec_segmentation --input-path <path/to/dataset> \
+    --output-format <desired_format> --output-dir <output/dir>
 ```
-
-It is possible to specify project name and project directory. Run
-`datum project create --help` for more information.
 
 The MVTec AD dataset directory should have the following structure:
 
@@ -71,9 +68,6 @@ The MVTec AD dataset directory should have the following structure:
        |   └── ...
 ```
 
-To make sure that the selected dataset has been added to the project, you
-can run `datum project info`, which will display the project information.
-
 ## Export to other formats
 
 Datumaro can convert a MVTec AD dataset into any other format
@@ -87,13 +81,8 @@ saved in `ImageNet` format, but not as `COCO keypoints`.
 There are several ways to convert a MVTec AD dataset to other dataset formats:
 
 ``` bash
-datum project create
-datum project import -f mvtec <path/to/mvtec>
-datum project export -f coco -o <output/dir>
-```
-or
-``` bash
-datum convert -if mvtec -i <path/to/mvtec> -f coco -o <output/dir>
+datum convert --input-format mvtec --input-path <path/to/mvtec> \
+    --output-format coco --output-dir <output/dir>
 ```
 
 Or, using Python API:
@@ -107,16 +96,12 @@ dataset.export('save_dir', 'coco', save_media=True)
 
 ## Export to MVTec AD format
 
-There are several ways to convert an existing dataset to Pascal VOC format:
+There are several ways to convert an existing dataset to MVTec AD format:
 
 ``` bash
-# export dataset into MVTec AD format (classification) from existing project
-datum project export -p <path/to/project> -f mvtec -o <output/dir> -- --tasks classification
-```
-``` bash
 # converting to MVTec AD format from other format
-datum convert -if imagenet -i <path/to/dataset> \
-    -f mvtec -o <output/dir> \
+datum convert --input-format imagenet --input-path <path/to/dataset> \
+    --output-format mvtec --output-dir <output/dir> \
     -- \
     --save-media
 ```
@@ -128,10 +113,11 @@ Extra options for exporting to MVTec AD format:
   by default Datumaro uses all tasks.
 
 ```bash
-datum project export -f mvtec -- --tasks detection,classification
+datum convert --input-format <source-format> --input-path <path/to/dataset> \
+    --output-format mvtec --output-dir <output/dir> -- --tasks detection,classification
 ```
 
 ## Examples
 
 Examples of using this format from the code can be found in
-[the format tests](https://github.com/openvinotoolkit/datumaro/blob/develop/tests/unit/test_mvtec_format.py).
+[the format tests](https://github.com/open-edge-platform/datumaro/blob/develop/tests/unit/test_mvtec_format.py).

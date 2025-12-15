@@ -27,10 +27,10 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=8b7c274f" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -43,7 +43,7 @@
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../../_static/design-tabs.js?v=36754332"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/components/registry';</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -192,7 +192,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
       
@@ -279,7 +279,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
         
@@ -344,72 +344,60 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
-<span class="kn">from</span> <span class="nn">inspect</span> <span class="kn">import</span> <span class="n">isclass</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">Dict</span><span class="p">,</span>
-    <span class="n">Generator</span><span class="p">,</span>
-    <span class="n">Generic</span><span class="p">,</span>
-    <span class="n">Iterable</span><span class="p">,</span>
-    <span class="n">Iterator</span><span class="p">,</span>
-    <span class="n">Optional</span><span class="p">,</span>
-    <span class="n">Tuple</span><span class="p">,</span>
-    <span class="n">Type</span><span class="p">,</span>
-    <span class="n">TypeVar</span><span class="p">,</span>
-    <span class="n">Union</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">inspect</span><span class="w"> </span><span class="kn">import</span> <span class="n">isclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Generic</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.cli_plugin</span> <span class="kn">import</span> <span class="n">CliPlugin</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.dataset_base</span> <span class="kn">import</span> <span class="n">DatasetBase</span><span class="p">,</span> <span class="n">SubsetBase</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.exporter</span> <span class="kn">import</span> <span class="n">Exporter</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.generator</span> <span class="kn">import</span> <span class="n">DatasetGenerator</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.importer</span> <span class="kn">import</span> <span class="n">Importer</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.launcher</span> <span class="kn">import</span> <span class="n">Launcher</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.lazy_plugin</span> <span class="kn">import</span> <span class="n">LazyPlugin</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.transformer</span> <span class="kn">import</span> <span class="n">ItemTransform</span><span class="p">,</span> <span class="n">Transform</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.validator</span> <span class="kn">import</span> <span class="n">Validator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.cli_plugin</span><span class="w"> </span><span class="kn">import</span> <span class="n">CliPlugin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.dataset_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetBase</span><span class="p">,</span> <span class="n">SubsetBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.exporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Exporter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.generator</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatasetGenerator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.importer</span><span class="w"> </span><span class="kn">import</span> <span class="n">Importer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.lazy_plugin</span><span class="w"> </span><span class="kn">import</span> <span class="n">LazyPlugin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.transformer</span><span class="w"> </span><span class="kn">import</span> <span class="n">ItemTransform</span><span class="p">,</span> <span class="n">Transform</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.validator</span><span class="w"> </span><span class="kn">import</span> <span class="n">Validator</span>
 
 <span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="Registry">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.registry.html#datumaro.components.registry.Registry">[docs]</a>
-<span class="k">class</span> <span class="nc">Registry</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Registry</span><span class="p">(</span><span class="n">Generic</span><span class="p">[</span><span class="n">T</span><span class="p">]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">T</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
 <div class="viewcode-block" id="Registry.register">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.registry.html#datumaro.components.registry.Registry.register">[docs]</a>
-    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">return</span> <span class="n">value</span></div>
 
 
 <div class="viewcode-block" id="Registry.unregister">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.registry.html#datumaro.components.registry.Registry.unregister">[docs]</a>
-    <span class="k">def</span> <span class="nf">unregister</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">unregister</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="Registry.get">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.registry.html#datumaro.components.registry.Registry.get">[docs]</a>
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a class or a factory function&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">[</span><span class="n">key</span><span class="p">]</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span>
 
-    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Registry.items">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.registry.html#datumaro.components.registry.Registry.items">[docs]</a>
-    <span class="k">def</span> <span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">T</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">T</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span></div>
 </div>
@@ -418,12 +406,12 @@ document.write(`
 
 <div class="viewcode-block" id="PluginRegistry">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.registry.html#datumaro.components.registry.PluginRegistry">[docs]</a>
-<span class="k">class</span> <span class="nc">PluginRegistry</span><span class="p">(</span><span class="n">Registry</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">CliPlugin</span><span class="p">]]):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">PluginRegistry</span><span class="p">(</span><span class="n">Registry</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">CliPlugin</span><span class="p">]]):</span>
     <span class="n">_ACCEPT</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">CliPlugin</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">_SKIP</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">CliPlugin</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">_DECLINE</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">CliPlugin</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ACCEPT</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
@@ -431,22 +419,16 @@ document.write(`
                 <span class="s2">&quot; to specify the accepted type of stored instances.&quot;</span>
             <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
         <span class="n">skip</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_SKIP</span><span class="p">}</span> <span class="k">if</span> <span class="n">isclass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_SKIP</span><span class="p">)</span> <span class="k">else</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_SKIP</span> <span class="ow">or</span> <span class="p">[])</span>
         <span class="n">skip</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">skip</span> <span class="o">|</span> <span class="nb">set</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_ACCEPT</span><span class="p">,)))</span>
-        <span class="k">if</span> <span class="p">(</span>
-            <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ACCEPT</span><span class="p">)</span>
-            <span class="ow">or</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">skip</span>
-            <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_DECLINE</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_DECLINE</span><span class="p">))</span>
-        <span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ACCEPT</span><span class="p">)</span> <span class="ow">or</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">skip</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_DECLINE</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_DECLINE</span><span class="p">)):</span>
             <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="s2">&quot;__not_plugin__&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
-            <span class="k">return</span> <span class="kc">False</span>
-        <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="s2">&quot;__not_plugin__&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
 <div class="viewcode-block" id="PluginRegistry.get">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.registry.html#datumaro.components.registry.PluginRegistry.get">[docs]</a>
-    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">CliPlugin</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span><span class="p">[</span><span class="n">CliPlugin</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a class or a factory function&quot;&quot;&quot;</span>
         <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_items</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">LazyPlugin</span><span class="p">):</span>
@@ -456,7 +438,7 @@ document.write(`
 
 <div class="viewcode-block" id="PluginRegistry.batch_register">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.registry.html#datumaro.components.registry.PluginRegistry.batch_register">[docs]</a>
-    <span class="k">def</span> <span class="nf">batch_register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">CliPlugin</span><span class="p">]]):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">batch_register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">CliPlugin</span><span class="p">]]):</span>
         <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
                 <span class="k">continue</span>
@@ -468,7 +450,7 @@ document.write(`
 
 <div class="viewcode-block" id="DatasetBaseRegistry">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.registry.html#datumaro.components.registry.DatasetBaseRegistry">[docs]</a>
-<span class="k">class</span> <span class="nc">DatasetBaseRegistry</span><span class="p">(</span><span class="n">PluginRegistry</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DatasetBaseRegistry</span><span class="p">(</span><span class="n">PluginRegistry</span><span class="p">):</span>
     <span class="n">_ACCEPT</span> <span class="o">=</span> <span class="n">DatasetBase</span>
     <span class="n">_SKIP</span> <span class="o">=</span> <span class="p">(</span><span class="n">SubsetBase</span><span class="p">,</span> <span class="n">Transform</span><span class="p">,</span> <span class="n">ItemTransform</span><span class="p">)</span>
     <span class="n">_DECLINE</span> <span class="o">=</span> <span class="n">Transform</span></div>
@@ -477,18 +459,16 @@ document.write(`
 
 <div class="viewcode-block" id="ImporterRegistry">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.registry.html#datumaro.components.registry.ImporterRegistry">[docs]</a>
-<span class="k">class</span> <span class="nc">ImporterRegistry</span><span class="p">(</span><span class="n">PluginRegistry</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImporterRegistry</span><span class="p">(</span><span class="n">PluginRegistry</span><span class="p">):</span>
     <span class="n">_ACCEPT</span> <span class="o">=</span> <span class="n">Importer</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">extension_groups</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
 
 <div class="viewcode-block" id="ImporterRegistry.register">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.registry.html#datumaro.components.registry.ImporterRegistry.register">[docs]</a>
-    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">Importer</span><span class="p">],</span> <span class="n">LazyPlugin</span><span class="p">]</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">Importer</span><span class="p">],</span> <span class="n">LazyPlugin</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">Importer</span><span class="p">],</span> <span class="n">LazyPlugin</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Type</span><span class="p">[</span><span class="n">Importer</span><span class="p">],</span> <span class="n">LazyPlugin</span><span class="p">]:</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">LazyPlugin</span><span class="p">):</span>
             <span class="n">file_extensions</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">METADATA</span><span class="p">[</span><span class="s2">&quot;file_extensions&quot;</span><span class="p">]</span>
@@ -501,30 +481,23 @@ document.write(`
 
 
 
-<div class="viewcode-block" id="LauncherRegistry">
-<a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.registry.html#datumaro.components.registry.LauncherRegistry">[docs]</a>
-<span class="k">class</span> <span class="nc">LauncherRegistry</span><span class="p">(</span><span class="n">PluginRegistry</span><span class="p">):</span>
-    <span class="n">_ACCEPT</span> <span class="o">=</span> <span class="n">Launcher</span></div>
-
-
-
 <div class="viewcode-block" id="ExporterRegistry">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.registry.html#datumaro.components.registry.ExporterRegistry">[docs]</a>
-<span class="k">class</span> <span class="nc">ExporterRegistry</span><span class="p">(</span><span class="n">PluginRegistry</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ExporterRegistry</span><span class="p">(</span><span class="n">PluginRegistry</span><span class="p">):</span>
     <span class="n">_ACCEPT</span> <span class="o">=</span> <span class="n">Exporter</span></div>
 
 
 
 <div class="viewcode-block" id="GeneratorRegistry">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.registry.html#datumaro.components.registry.GeneratorRegistry">[docs]</a>
-<span class="k">class</span> <span class="nc">GeneratorRegistry</span><span class="p">(</span><span class="n">PluginRegistry</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GeneratorRegistry</span><span class="p">(</span><span class="n">PluginRegistry</span><span class="p">):</span>
     <span class="n">_ACCEPT</span> <span class="o">=</span> <span class="n">DatasetGenerator</span></div>
 
 
 
 <div class="viewcode-block" id="TransformRegistry">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.registry.html#datumaro.components.registry.TransformRegistry">[docs]</a>
-<span class="k">class</span> <span class="nc">TransformRegistry</span><span class="p">(</span><span class="n">PluginRegistry</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">TransformRegistry</span><span class="p">(</span><span class="n">PluginRegistry</span><span class="p">):</span>
     <span class="n">_ACCEPT</span> <span class="o">=</span> <span class="n">Transform</span>
     <span class="n">_SKIP</span> <span class="o">=</span> <span class="n">ItemTransform</span></div>
 
@@ -532,7 +505,7 @@ document.write(`
 
 <div class="viewcode-block" id="ValidatorRegistry">
 <a class="viewcode-back" href="../../../docs/reference/_autosummary/datumaro.components.registry.html#datumaro.components.registry.ValidatorRegistry">[docs]</a>
-<span class="k">class</span> <span class="nc">ValidatorRegistry</span><span class="p">(</span><span class="n">PluginRegistry</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ValidatorRegistry</span><span class="p">(</span><span class="n">PluginRegistry</span><span class="p">):</span>
     <span class="n">_ACCEPT</span> <span class="o">=</span> <span class="n">Validator</span></div>
 
 </pre></div>

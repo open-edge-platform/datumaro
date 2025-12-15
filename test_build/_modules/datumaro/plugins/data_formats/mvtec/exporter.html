@@ -27,10 +27,10 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=eafc0fe6" />
-    <link rel="stylesheet" type="text/css" href="../../../../../_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/css/custom.css?v=8b7c274f" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -43,7 +43,7 @@
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
-    <script src="../../../../../_static/design-tabs.js?v=36754332"></script>
+    <script src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/datumaro/plugins/data_formats/mvtec/exporter';</script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
@@ -192,7 +192,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
       
@@ -279,7 +279,7 @@ document.write(`
           
           
           
-          <a href="https://github.com/openvinotoolkit/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
+          <a href="https://github.com/open-edge-platform/datumaro" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><img src="../../../../../_static/github_icon.png" class="icon-link-image" alt="GitHub"/></a>
         </li>
 </ul></div>
         
@@ -344,25 +344,25 @@ document.write(`
 <span class="c1">#</span>
 <span class="c1"># SPDX-License-Identifier: MIT</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">os.path</span> <span class="k">as</span> <span class="nn">osp</span>
-<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">auto</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">osp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">enum</span><span class="w"> </span><span class="kn">import</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">auto</span>
 
-<span class="kn">import</span> <span class="nn">cv2</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cv2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">datumaro.components.annotation</span> <span class="kn">import</span> <span class="n">AnnotationType</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.errors</span> <span class="kn">import</span> <span class="n">MediaTypeError</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.exporter</span> <span class="kn">import</span> <span class="n">Exporter</span>
-<span class="kn">from</span> <span class="nn">datumaro.components.media</span> <span class="kn">import</span> <span class="n">Image</span>
-<span class="kn">from</span> <span class="nn">datumaro.util</span> <span class="kn">import</span> <span class="n">parse_str_enum_value</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.annotation</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnnotationType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.errors</span><span class="w"> </span><span class="kn">import</span> <span class="n">MediaTypeError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.exporter</span><span class="w"> </span><span class="kn">import</span> <span class="n">Exporter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.components.media</span><span class="w"> </span><span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datumaro.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_str_enum_value</span>
 
-<span class="kn">from</span> <span class="nn">.format</span> <span class="kn">import</span> <span class="n">MvtecPath</span><span class="p">,</span> <span class="n">MvtecTask</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.format</span><span class="w"> </span><span class="kn">import</span> <span class="n">MvtecPath</span><span class="p">,</span> <span class="n">MvtecTask</span>
 
 
 <div class="viewcode-block" id="LabelmapType">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.mvtec.exporter.html#datumaro.plugins.data_formats.mvtec.exporter.LabelmapType">[docs]</a>
-<span class="k">class</span> <span class="nc">LabelmapType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LabelmapType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
     <span class="n">kitti</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span>
     <span class="n">source</span> <span class="o">=</span> <span class="n">auto</span><span class="p">()</span></div>
 
@@ -370,17 +370,17 @@ document.write(`
 
 <div class="viewcode-block" id="MvtecExporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.mvtec.exporter.html#datumaro.plugins.data_formats.mvtec.exporter.MvtecExporter">[docs]</a>
-<span class="k">class</span> <span class="nc">MvtecExporter</span><span class="p">(</span><span class="n">Exporter</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MvtecExporter</span><span class="p">(</span><span class="n">Exporter</span><span class="p">):</span>
     <span class="n">DEFAULT_IMAGE_EXT</span> <span class="o">=</span> <span class="n">MvtecPath</span><span class="o">.</span><span class="n">IMAGE_EXT</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_split_tasks_string</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_split_tasks_string</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">MvtecTask</span><span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)]</span>
 
 <div class="viewcode-block" id="MvtecExporter.build_cmdline_parser">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.mvtec.exporter.html#datumaro.plugins.data_formats.mvtec.exporter.MvtecExporter.build_cmdline_parser">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">build_cmdline_parser</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">parser</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">build_cmdline_parser</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
@@ -392,7 +392,7 @@ document.write(`
         <span class="k">return</span> <span class="n">parser</span></div>
 
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">extractor</span><span class="p">,</span>
         <span class="n">save_dir</span><span class="p">,</span>
@@ -410,7 +410,7 @@ document.write(`
             <span class="n">tasks</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">parse_str_enum_value</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">MvtecTask</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tasks</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span> <span class="o">=</span> <span class="n">tasks</span>
 
-    <span class="k">def</span> <span class="nf">_apply_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_apply_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">media_type</span><span class="p">(),</span> <span class="n">Image</span><span class="p">):</span>
             <span class="k">raise</span> <span class="n">MediaTypeError</span><span class="p">(</span><span class="s2">&quot;Media type is not an image&quot;</span><span class="p">)</span>
 
@@ -431,9 +431,7 @@ document.write(`
 
                 <span class="n">bboxes</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">bbox</span><span class="p">]</span>
                 <span class="k">if</span> <span class="n">bboxes</span> <span class="ow">and</span> <span class="n">MvtecTask</span><span class="o">.</span><span class="n">detection</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">:</span>
-                    <span class="n">mask_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                        <span class="n">MvtecPath</span><span class="o">.</span><span class="n">MASK_DIR</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="n">MvtecPath</span><span class="o">.</span><span class="n">MASK_POSTFIX</span> <span class="o">+</span> <span class="n">MvtecPath</span><span class="o">.</span><span class="n">MASK_EXT</span>
-                    <span class="p">)</span>
+                    <span class="n">mask_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">MvtecPath</span><span class="o">.</span><span class="n">MASK_DIR</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="n">MvtecPath</span><span class="o">.</span><span class="n">MASK_POSTFIX</span> <span class="o">+</span> <span class="n">MvtecPath</span><span class="o">.</span><span class="n">MASK_EXT</span><span class="p">)</span>
 
                     <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="o">*</span><span class="n">item</span><span class="o">.</span><span class="n">media</span><span class="o">.</span><span class="n">size</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
                     <span class="k">for</span> <span class="n">bbox</span> <span class="ow">in</span> <span class="n">bboxes</span><span class="p">:</span>
@@ -452,19 +450,15 @@ document.write(`
 
                 <span class="n">masks</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">annotations</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">AnnotationType</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span>
                 <span class="k">if</span> <span class="n">masks</span> <span class="ow">and</span> <span class="n">MvtecTask</span><span class="o">.</span><span class="n">segmentation</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tasks</span><span class="p">:</span>
-                    <span class="n">mask_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                        <span class="n">MvtecPath</span><span class="o">.</span><span class="n">MASK_DIR</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="n">MvtecPath</span><span class="o">.</span><span class="n">MASK_POSTFIX</span> <span class="o">+</span> <span class="n">MvtecPath</span><span class="o">.</span><span class="n">MASK_EXT</span>
-                    <span class="p">)</span>
+                    <span class="n">mask_path</span> <span class="o">=</span> <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">MvtecPath</span><span class="o">.</span><span class="n">MASK_DIR</span><span class="p">,</span> <span class="n">item</span><span class="o">.</span><span class="n">id</span> <span class="o">+</span> <span class="n">MvtecPath</span><span class="o">.</span><span class="n">MASK_POSTFIX</span> <span class="o">+</span> <span class="n">MvtecPath</span><span class="o">.</span><span class="n">MASK_EXT</span><span class="p">)</span>
 
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">osp</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">mask_path</span><span class="p">))):</span>
                         <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">osp</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">mask_path</span><span class="p">)))</span>
-                    <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span>
-                        <span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">mask_path</span><span class="p">),</span> <span class="n">masks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span> <span class="o">*</span> <span class="mi">255</span>
-                    <span class="p">)</span>
+                    <span class="n">cv2</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="n">osp</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_dir</span><span class="p">,</span> <span class="n">mask_path</span><span class="p">),</span> <span class="n">masks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span> <span class="o">*</span> <span class="mi">255</span><span class="p">)</span>
 
 <div class="viewcode-block" id="MvtecExporter.get_label">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.mvtec.exporter.html#datumaro.plugins.data_formats.mvtec.exporter.MvtecExporter.get_label">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_id</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label_id</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extractor</span><span class="o">.</span><span class="n">categories</span><span class="p">()[</span><span class="n">AnnotationType</span><span class="o">.</span><span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="n">label_id</span><span class="p">]</span><span class="o">.</span><span class="n">name</span></div>
 </div>
 
@@ -472,8 +466,8 @@ document.write(`
 
 <div class="viewcode-block" id="MvtecClassificationExporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.mvtec.exporter.html#datumaro.plugins.data_formats.mvtec.exporter.MvtecClassificationExporter">[docs]</a>
-<span class="k">class</span> <span class="nc">MvtecClassificationExporter</span><span class="p">(</span><span class="n">MvtecExporter</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MvtecClassificationExporter</span><span class="p">(</span><span class="n">MvtecExporter</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;tasks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">MvtecTask</span><span class="o">.</span><span class="n">classification</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
@@ -481,8 +475,8 @@ document.write(`
 
 <div class="viewcode-block" id="MvtecSegmentationExporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.mvtec.exporter.html#datumaro.plugins.data_formats.mvtec.exporter.MvtecSegmentationExporter">[docs]</a>
-<span class="k">class</span> <span class="nc">MvtecSegmentationExporter</span><span class="p">(</span><span class="n">MvtecExporter</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MvtecSegmentationExporter</span><span class="p">(</span><span class="n">MvtecExporter</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;tasks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">MvtecTask</span><span class="o">.</span><span class="n">segmentation</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
@@ -490,8 +484,8 @@ document.write(`
 
 <div class="viewcode-block" id="MvtecDetectionExporter">
 <a class="viewcode-back" href="../../../../../docs/reference/_autosummary/datumaro.plugins.data_formats.mvtec.exporter.html#datumaro.plugins.data_formats.mvtec.exporter.MvtecDetectionExporter">[docs]</a>
-<span class="k">class</span> <span class="nc">MvtecDetectionExporter</span><span class="p">(</span><span class="n">MvtecExporter</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">MvtecDetectionExporter</span><span class="p">(</span><span class="n">MvtecExporter</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;tasks&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">MvtecTask</span><span class="o">.</span><span class="n">detection</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
