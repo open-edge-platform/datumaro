@@ -1,3 +1,5 @@
+from datumaro.experimental import LazyImage
+
 # Datumaro Experimental Module
 
 The `datumaro.experimental` module provides a modern, type-safe framework for working with machine learning datasets. It offers a declarative approach to defining data schemas, automatic type conversion between different representations, and efficient storage using Polars DataFrames.
@@ -716,28 +718,25 @@ image_array = sample.image.data  # Loads from disk here
 
 ### Image Caching
 
-The module includes a global LRU cache for loaded images with byte-size limiting (default 256 MB):
+The module includes a global LRU cache for loaded images with byte-size limiting (default 256 MB). The cache is managed through the `ImageCache` class:
 
 ```python
-from datumaro.experimental import (
-    set_image_cache_size,
-    get_image_cache_size,
-    get_image_cache_info,
-    clear_image_cache,
-)
+from datumaro.experimental import ImageCache
 
 # Set cache to 512 MB
-set_image_cache_size(512 * 1024 * 1024)
+ImageCache.set_size(512 * 1024 * 1024)
 
 # Check current cache usage
-print(f"Cached images: {get_image_cache_size()}")
+print(f"Cached images: {ImageCache.length()}")
+print(f"Current size: {ImageCache.get_size()} bytes")
+print(f"Max size: {ImageCache.get_max_size()} bytes")
 
 # Get detailed cache info (count, current bytes, max bytes)
-info = get_image_cache_info()
+info = ImageCache.info()
 print(f"Cache: {info['count']} images, {info['current_size'] / 1024 / 1024:.1f} MB used of {info['max_size'] / 1024 / 1024:.1f} MB")
 
 # Clear all cached images
-clear_image_cache()
+ImageCache.clear()
 ```
 
 ---
@@ -781,7 +780,7 @@ For datasets with many large images, use path or callable fields:
 
 ```python
 class EfficientSample(Sample):
-    image: str = image_path_field()  # Store path, load on demand
+    image: LazyImage = image_path_field()  # Store path, load on demand
     image_info: ImageInfo = image_info_field()
 ```
 
@@ -825,14 +824,16 @@ class ValidatedSample(Sample):
 For large datasets, configure the image cache appropriately:
 
 ```python
-# For memory-constrained environments
-set_image_cache_size(10)
+from datumaro.experimental import ImageCache
 
-# For fast iteration over the same images
-set_image_cache_size(1000)
+# For memory-constrained environments (e.g., 64 MB)
+ImageCache.set_size(64 * 1024 * 1024)
+
+# For fast iteration over the same images (e.g., 1 GB)
+ImageCache.set_size(1024 * 1024 * 1024)
 
 # Disable caching entirely
-set_image_cache_size(0)
+ImageCache.set_size(0)
 ```
 
 ---
