@@ -35,14 +35,14 @@ jobs:
       - name: Installing dependencies
         run: |
           sudo apt-get install pandoc graphviz
+          uv lock --check
+          uv sync --frozen --all-extras
 
       - name: Build-Docs
         run: |
-          uv lock --check
-          uv sync --frozen --all-extras
           cd docs
-          make clean
-          make html
+          uv run make clean
+          uv run make html
 
       - name: Create gh-pages branch
         run: |
