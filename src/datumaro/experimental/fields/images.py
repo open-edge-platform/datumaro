@@ -1,13 +1,17 @@
 # Copyright (C) 2025 Intel Corporation
 #
 # SPDX-License-Identifier: MIT
+import types
+import typing
 from dataclasses import dataclass, field
-from typing import Any
+from pathlib import Path
+from typing import Any, Union, get_args, get_origin
 
 import numpy as np
 import polars as pl
 
 from datumaro.experimental.fields.base import Field, T
+from datumaro.experimental.media import LazyImage
 from datumaro.experimental.type_registry import from_polars_data, to_numpy
 
 
@@ -227,38 +231,160 @@ class ImagePathField(Field):
     This field stores image file paths as strings and is typically used
     as input for lazy loading operations where images are loaded on-demand.
 
+    When the target type is `LazyImage`, the field returns a LazyImage instance
+    that provides lazy loading of the actual image data through its `data` property.
+
     Attributes:
         semantic: String tag describing the image path's purpose
+        format: Image color format for LazyImage loading (e.g., "RGB", "BGR")
+        channels_first: Whether LazyImage should return data in channels-first format
+
+    Examples:
+        Using with a string type:
+            >>> class MySample(Sample):
+            ...     image: str = image_path_field()
+            ...
+            >>> sample = MySample(image="/path/to/image.jpg")
+            >>> sample.image  # Returns "/path/to/image.jpg"
+
+        Using with LazyImage type for lazy loading:
+            >>> class MySample(Sample):
+            ...     image: LazyImage = image_path_field()
+            ...
+            >>> sample = MySample(image="/path/to/image.jpg")
+            >>> sample.image.path  # Returns "/path/to/image.jpg"
+            >>> sample.image.data  # Loads and returns numpy array
     """
 
     semantic: str = "default"
+    format: str = "RGB"
+    channels_first: bool = False
     dtype: pl.DataType = field(default_factory=pl.String, init=False)
+
+    def coerce(self, value: Any, target_type: type) -> Any:
+        """
+        Coerce a value to the target type if possible.
+
+        This method is called during Sample initialization to convert
+        input values to the expected type. For ImagePathField, this allows
+        passing a string path when the target type is LazyImage.
+
+        Args:
+            value: The input value to coerce
+            target_type: The expected target type
+
+        Returns:
+            The coerced value, or the original value if no coercion is needed
+        """
+
+        if value is None:
+            return None
+
+        # Check if target type involves LazyImage (direct or in a union)
+        should_convert_to_lazy = False
+
+        if target_type is LazyImage or (isinstance(target_type, type) and issubclass(target_type, LazyImage)):
+            should_convert_to_lazy = True
+        else:
+            # Check for Union types (e.g., str | Path | LazyImage)
+            origin = get_origin(target_type)
+            if origin in (Union, types.UnionType):
+                type_args = get_args(target_type)
+                # If LazyImage is in the union, convert string/Path to LazyImage
+                if LazyImage in type_args:
+                    should_convert_to_lazy = True
+
+        if should_convert_to_lazy:
+            if isinstance(value, str | Path):
+                return LazyImage(path=str(value), format=self.format, channels_first=self.channels_first)
+            if isinstance(value, LazyImage):
+                return value
+
+        return value
 
     def to_polars_schema(self, name: str) -> dict[str, pl.DataType]:
         """Generate schema for string path column."""
         return {name: pl.String()}
 
     def to_polars(self, name: str, value: Any) -> dict[str, pl.Series]:
-        """Convert path string to Polars series."""
-        return {name: pl.Series(name, [str(value) if value is not None else None])}
+        """Convert path string or LazyImage to Polars series."""
+        if value is None:
+            str_value = None
+        elif isinstance(value, LazyImage):
+            str_value = str(value.path)
+        else:
+            str_value = str(value)
+        return {name: pl.Series(name, [str_value])}
 
     def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> Any:
-        """Extract path string from Polars data."""
+        """Extract path string or LazyImage from Polars data."""
+
         data = df[name][row_index]
-        return target_type(data) if data is not None else None
+        if data is None:
+            return None
+
+        # Check if target type involves LazyImage (direct or in a union)
+        should_return_lazy = False
+
+        if target_type is LazyImage or (isinstance(target_type, type) and issubclass(target_type, LazyImage)):
+            should_return_lazy = True
+        else:
+            # Check for Union types (e.g., str | Path | LazyImage)
+            origin = get_origin(target_type)
+            if origin in (Union, types.UnionType):
+                type_args = get_args(target_type)
+                # If LazyImage is in the union, return LazyImage
+                if LazyImage in type_args:
+                    should_return_lazy = True
+
+        if should_return_lazy:
+            return LazyImage(path=data, format=self.format, channels_first=self.channels_first)
+
+        return target_type(data)
 
 
-def image_path_field(semantic: str = "default") -> Any:
+def image_path_field(
+    semantic: str = "default",
+    format: str = "RGB",
+    channels_first: bool = False,
+) -> Any:
     """
-    Create an ImagePathField instance with the specified semantic tags.
+    Create an ImagePathField instance with the specified parameters.
+
+    When used with a `LazyImage` type annotation, this field will return a LazyImage
+    instance that provides lazy loading of the actual image data.
+
+    Since LazyImage accepts str, Path, or LazyImage as input, you can wrap your
+    string path in LazyImage() when constructing the sample for full type safety:
+
+        >>> sample = MySample(image=LazyImage("/path/to/image.jpg"))
 
     Args:
         semantic: String tag describing the image path's purpose (optional)
+        format: Image color format for LazyImage loading (e.g., "RGB", "BGR")
+        channels_first: Whether LazyImage should return data in channels-first format
 
     Returns:
-        ImagePathField instance configured with the given semantic tags
+        ImagePathField instance configured with the given parameters
+
+    Examples:
+        Using with LazyImage type (recommended, type-safe):
+            >>> class MySample(Sample):
+            ...     image: LazyImage = image_path_field()
+            ...
+            >>> sample = MySample(image=LazyImage("/path/to/image.jpg"))
+            >>> sample.image.path  # Returns the path string
+            >>> sample.image.data  # Loads and returns numpy array
+
+        Using with a string type (just stores the path as string):
+            >>> class MySample(Sample):
+            ...     image: str = image_path_field()
+
+        With BGR format and channels-first:
+            >>> class MySample(Sample):
+            ...     image: LazyImage = image_path_field(format="BGR", channels_first=True)
     """
-    return ImagePathField(semantic=semantic)
+    return ImagePathField(semantic=semantic, format=format, channels_first=channels_first)
 
 
 @dataclass(frozen=True)
@@ -283,13 +409,13 @@ class ImageCallableField(Field):
         """Return schema with Object type to store callable."""
         return {name: pl.Object()}
 
-    def to_polars(self, name: str, value: callable) -> dict[str, pl.Series]:
+    def to_polars(self, name: str, value: typing.Callable) -> dict[str, pl.Series]:
         """Store callable as Object in Polars series."""
         if not callable(value) and value is not None:
             raise TypeError(f"Expected callable, got {type(value)}")
         return {name: pl.Series(name, [value])}
 
-    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> callable:  # noqa: ARG002
+    def from_polars(self, name: str, row_index: int, df: pl.DataFrame, target_type: type) -> typing.Callable:  # noqa: ARG002
         """Extract callable from Polars dataframe."""
         value = df[name][row_index]
         if not callable(value) and value is not None:

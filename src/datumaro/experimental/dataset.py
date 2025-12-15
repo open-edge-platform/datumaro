@@ -35,7 +35,15 @@ class Sample:
 
     def __init__(self, **kwargs: Any):
         """Initialize sample with provided attributes."""
+        # Get the schema to allow field coercion
+        schema = self.__class__.infer_schema()
+
         for key, value in kwargs.items():
+            # Check if the field has a coerce method to convert the value
+            if key in schema.attributes:
+                attr_info = schema.attributes[key]
+                if hasattr(attr_info.field, "coerce"):
+                    value = attr_info.field.coerce(value, attr_info.type)  # noqa: PLW2901
             setattr(self, key, value)
         self.__post_init__()
         self.validate()
