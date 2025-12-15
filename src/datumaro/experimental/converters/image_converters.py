@@ -7,7 +7,7 @@ import numpy as np
 import polars as pl
 from PIL import Image
 
-from datumaro.experimental.converters.base import Converter
+from datumaro.experimental.converters.base import Converter, copy_columns_with_shape
 from datumaro.experimental.converters.registry import converter
 from datumaro.experimental.fields import ImageBytesField
 from datumaro.experimental.fields.images import ImageCallableField, ImageField, ImageInfoField, ImagePathField
@@ -396,3 +396,54 @@ class ImageCallableToImageConverter(Converter):
                 pl.Series(output_col + "_shape", image_shapes),
             ]
         )
+
+
+@converter
+class ChannelsFirstConverter(Converter):
+    """
+    Converter that updates the channels_first metadata for image fields.
+
+    This converter handles the transition between channels-first (C, H, W) and
+    channels-last (H, W, C) format specifications. The actual data transposition
+    is handled by the ImageField.from_polars() method when data is accessed,
+    so this converter only needs to update the field metadata.
+
+    Channels-first format: (C, H, W) - commonly used in PyTorch
+    Channels-last format: (H, W, C) - commonly used in TensorFlow and image libraries
+    """
+
+    input_image: AttributeSpec[ImageField]
+    output_image: AttributeSpec[ImageField]
+
+    def filter_output_spec(self) -> bool:
+        """
+        Check if channels_first conversion is needed and configure output.
+
+        Returns:
+            True if the converter should be applied (channels_first differs), False otherwise
+        """
+        input_channels_first = self.input_image.field.channels_first
+        output_channels_first = self.output_image.field.channels_first
+
+        self.output_image = AttributeSpec(
+            name=self.output_image.name,
+            field=ImageField(
+                semantic=self.input_image.field.semantic,
+                dtype=self.input_image.field.dtype,
+                channels_first=output_channels_first,
+                format=self.input_image.field.format,
+            ),
+        )
+
+        # Apply converter only if channels_first status differs
+        return input_channels_first != output_channels_first
+
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+        """
+        Update image field metadata for channels_first change.
+
+        The actual transposition is handled by ImageField.from_polars(),
+        so this just ensures the column names are properly mapped.
+        """
+
+        return copy_columns_with_shape(df, self.input_image.name, self.output_image.name)

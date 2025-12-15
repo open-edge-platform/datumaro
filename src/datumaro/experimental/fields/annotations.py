@@ -379,6 +379,27 @@ class EllipseField(Field):
         return from_polars_data(polars_data, target_type)
 
 
+def ellipse_field(
+    dtype: Any = pl.Float32(),
+    format: str = "x1y1x2y2",
+    normalize: bool = False,
+    semantic: str = "default",
+) -> Any:
+    """
+    Create an EllipseField instance with the specified parameters.
+
+    Args:
+        dtype: Polars data type for coordinate values (defaults to pl.Float32())
+        format: Coordinate format (defaults to "x1y1x2y2")
+        normalize: Whether coordinates are normalized (defaults to False)
+        semantic: String tag describing the ellipse purpose (optional)
+
+    Returns:
+        EllipseField instance configured with the given parameters
+    """
+    return EllipseField(semantic=semantic, dtype=dtype, format=format, normalize=normalize)
+
+
 @dataclass(frozen=True)
 class CaptionField(Field):
     """

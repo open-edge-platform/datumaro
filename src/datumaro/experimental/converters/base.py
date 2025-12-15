@@ -295,3 +295,31 @@ class AttributeRemapperConverter(Converter):
     def filter_output_spec(self) -> bool:
         """Always return True as renaming is always applicable."""
         return True
+
+
+def copy_columns_with_shape(
+    df: pl.DataFrame,
+    input_name: str,
+    output_name: str,
+    has_shape: bool = True,
+) -> pl.DataFrame:
+    """
+    Copy/rename columns from input to output, optionally including shape column.
+
+    This is a helper for metadata-only converters that don't need to modify
+    the actual data, just update field metadata. The data transposition or
+    other transformations are handled by the field's from_polars() method.
+
+    Args:
+        df: Input DataFrame
+        input_name: Name of the input column
+        output_name: Name of the output column
+        has_shape: Whether to also copy the associated _shape column
+
+    Returns:
+        DataFrame with copied/renamed columns
+    """
+    columns = [pl.col(input_name).alias(output_name)]
+    if has_shape:
+        columns.append(pl.col(f"{input_name}_shape").alias(f"{output_name}_shape"))
+    return df.with_columns(columns)

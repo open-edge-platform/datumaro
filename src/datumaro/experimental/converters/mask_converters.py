@@ -8,7 +8,7 @@ import numpy as np
 import polars as pl
 
 from datumaro.experimental.categories import LabelCategories, MaskCategories, RgbColor
-from datumaro.experimental.converters.base import Converter
+from datumaro.experimental.converters.base import Converter, copy_columns_with_shape
 from datumaro.experimental.converters.registry import converter
 from datumaro.experimental.fields.annotations import LabelField, PolygonField
 from datumaro.experimental.fields.images import ImageInfoField
@@ -463,3 +463,52 @@ class MaskCallableToMaskConverter(Converter):
                 pl.Series(f"{output_col}_shape", mask_shapes),
             ]
         ).drop(input_col)
+
+
+@converter
+class MaskChannelsFirstConverter(Converter):
+    """
+    Converter that updates the channels_first metadata for mask fields.
+
+    This converter handles the transition between channels-first and
+    channels-last format specifications for masks. The actual data transposition
+    is handled by the MaskField.from_polars() method when data is accessed,
+    so this converter only needs to update the field metadata.
+    """
+
+    input_mask: AttributeSpec[MaskField]
+    output_mask: AttributeSpec[MaskField]
+
+    def filter_output_spec(self) -> bool:
+        """
+        Check if channels_first conversion is needed and configure output.
+
+        Returns:
+            True if the converter should be applied (channels_first differs), False otherwise
+        """
+        input_channels_first = self.input_mask.field.channels_first
+        output_channels_first = self.output_mask.field.channels_first
+
+        self.output_mask = AttributeSpec(
+            name=self.output_mask.name,
+            field=MaskField(
+                semantic=self.input_mask.field.semantic,
+                dtype=self.input_mask.field.dtype,
+                channels_first=output_channels_first,
+                has_channels_dim=self.input_mask.field.has_channels_dim,
+            ),
+            categories=self.input_mask.categories,
+        )
+
+        # Apply converter only if channels_first status differs
+        return input_channels_first != output_channels_first
+
+    def convert(self, df: pl.DataFrame) -> pl.DataFrame:
+        """
+        Update mask field metadata for channels_first change.
+
+        The actual transposition is handled by MaskField.from_polars(),
+        so this just ensures the column names are properly mapped.
+        """
+
+        return copy_columns_with_shape(df, self.input_mask.name, self.output_mask.name)

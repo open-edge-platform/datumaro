@@ -11,6 +11,7 @@ learning and computer vision applications.
 
 from datumaro.experimental.fields.annotations import (
     BBoxField,
+    CaptionField,
     EllipseField,
     KeypointsField,
     LabelField,
@@ -18,6 +19,7 @@ from datumaro.experimental.fields.annotations import (
     RotatedBBoxField,
     bbox_field,
     caption_field,
+    ellipse_field,
     keypoints_field,
     label_field,
     polygon_field,
@@ -54,6 +56,7 @@ from datumaro.experimental.fields.types import NumericField, bool_field, numeric
 
 __all__ = [
     "BBoxField",
+    "CaptionField",
     "EllipseField",
     "Field",
     "ImageBytesField",
@@ -80,6 +83,7 @@ __all__ = [
     "bool_field",
     "caption_field",
     "convert_numpy_object_array_to_series",
+    "ellipse_field",
     "image_bytes_field",
     "image_callable_field",
     "image_field",

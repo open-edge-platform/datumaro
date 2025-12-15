@@ -5,15 +5,33 @@
 from datumaro.experimental.converters.annotation_converters import (
     BBoxCoordinateConverter,
     BBoxDtypeConverter,
+    BBoxFormatConverter,
+    BBoxToPolygonConverter,
+    EllipseCoordinateConverter,
+    EllipseDtypeConverter,
+    EllipseToBBoxConverter,
+    KeypointsCoordinateConverter,
+    KeypointsDtypeConverter,
+    KeypointsToBBoxConverter,
     LabelDtypeConverter,
     LabelIndexConverter,
+    PolygonCoordinateConverter,
     PolygonDtypeConverter,
     PolygonToBBoxConverter,
+    RotatedBBoxCoordinateConverter,
     RotatedBBoxDtypeConverter,
+    RotatedBBoxToBBoxConverter,
     RotatedBBoxToPolygonConverter,
 )
-from datumaro.experimental.converters.base import AttributeRemapperConverter, ConversionError, Converter, list_eval_ref
+from datumaro.experimental.converters.base import (
+    AttributeRemapperConverter,
+    ConversionError,
+    Converter,
+    copy_columns_with_shape,
+    list_eval_ref,
+)
 from datumaro.experimental.converters.image_converters import (
+    ChannelsFirstConverter,
     ImageBytesToImageConverter,
     ImageCallableToImageConverter,
     ImagePathToImageConverter,
@@ -24,6 +42,7 @@ from datumaro.experimental.converters.image_converters import (
 from datumaro.experimental.converters.mask_converters import (
     InstanceMaskCallableToInstanceMaskConverter,
     MaskCallableToMaskConverter,
+    MaskChannelsFirstConverter,
     PolygonToInstanceMaskConverter,
     PolygonToMaskConverter,
 )
@@ -48,6 +67,9 @@ __all__ = [
     "AttributeRemapperConverter",
     "BBoxCoordinateConverter",
     "BBoxDtypeConverter",
+    "BBoxFormatConverter",
+    "BBoxToPolygonConverter",
+    "ChannelsFirstConverter",
     "ConversionError",
     "ConversionPaths",
     # Base
@@ -55,15 +77,23 @@ __all__ = [
     # Registry
     "ConverterRegistry",
     "ConverterTransform",
+    "EllipseCoordinateConverter",
+    "EllipseDtypeConverter",
+    "EllipseToBBoxConverter",
     "ImageBytesToImageConverter",
     "ImageCallableToImageConverter",
     "ImagePathToImageConverter",
     "ImageToImageInfo",
     "InstanceMaskCallableToInstanceMaskConverter",
+    "KeypointsCoordinateConverter",
+    "KeypointsDtypeConverter",
+    "KeypointsToBBoxConverter",
     "LabelDtypeConverter",
     # Annotation converters
     "LabelIndexConverter",
     "MaskCallableToMaskConverter",
+    "MaskChannelsFirstConverter",
+    "PolygonCoordinateConverter",
     "PolygonDtypeConverter",
     "PolygonToBBoxConverter",
     "PolygonToInstanceMaskConverter",
@@ -71,7 +101,9 @@ __all__ = [
     "PolygonToMaskConverter",
     # Image converters
     "RedBlueColorConverter",
+    "RotatedBBoxCoordinateConverter",
     "RotatedBBoxDtypeConverter",
+    "RotatedBBoxToBBoxConverter",
     "RotatedBBoxToPolygonConverter",
     "UInt8ToFloat32Converter",
     "_can_lazy_converter_handle_conversion",
@@ -84,6 +116,7 @@ __all__ = [
     "_is_converter_lazy",
     "_separate_batch_and_lazy_converters",
     "converter",
+    "copy_columns_with_shape",
     "find_conversion_path",
     "list_eval_ref",
 ]
