@@ -4,7 +4,7 @@
 1. You should install the dependencies for building documents.
 
     ```console
-    pip install -r docs/requirements.txt
+    pip install datumaro[docs]
     ```
 
 2. You should install `graphviz` and `pandoc` to build our documents.
