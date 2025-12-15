@@ -10,14 +10,7 @@ import numpy as np
 import pytest
 from PIL import Image as PILImage
 
-from datumaro.experimental import (
-    Dataset,
-    LazyImage,
-    Sample,
-    clear_image_cache,
-    get_image_cache_size,
-    set_image_cache_size,
-)
+from datumaro.experimental import Dataset, ImageCache, LazyImage, Sample
 from datumaro.experimental.fields import image_path_field
 
 
@@ -56,11 +49,11 @@ class LazyImageClassTest:
 
     def test_lazy_image_path_access_no_load(self, temp_image_path):
         """Test that accessing path doesn't load the image."""
-        clear_image_cache()
+        ImageCache.clear()
         lazy_img = LazyImage(path=temp_image_path)
         _ = lazy_img.path
         # Cache should still be empty - image not loaded
-        assert get_image_cache_size() == 0
+        assert ImageCache.length() == 0
 
     def test_lazy_image_data_loads_image(self, temp_image_path):
         """Test that accessing data loads the image."""
@@ -116,40 +109,35 @@ class LazyImageClassTest:
 
     def test_lazy_image_width_property(self, temp_image_path):
         """Test width property without loading full image."""
-        clear_image_cache()
+        ImageCache.clear()
         lazy_img = LazyImage(path=temp_image_path)
         assert lazy_img.width == 150
         # Should not have cached the full data (width uses PIL directly)
-        assert get_image_cache_size() == 0
+        assert ImageCache.length() == 0
 
     def test_lazy_image_height_property(self, temp_image_path):
         """Test height property without loading full image."""
-        clear_image_cache()
+        ImageCache.clear()
         lazy_img = LazyImage(path=temp_image_path)
         assert lazy_img.height == 100
         # Should not have cached the full data (height uses PIL directly)
-        assert get_image_cache_size() == 0
+        assert ImageCache.length() == 0
 
     def test_lazy_image_size_property(self, temp_image_path):
         """Test size property returns (width, height)."""
-        clear_image_cache()
+        ImageCache.clear()
         lazy_img = LazyImage(path=temp_image_path)
         assert lazy_img.size == (150, 100)
         # Should not have cached the full data (size uses PIL directly)
-        assert get_image_cache_size() == 0
+        assert ImageCache.length() == 0
 
     def test_lazy_image_shape_property(self, temp_image_path):
         """Test shape property (triggers data load)."""
-        clear_image_cache()
+        ImageCache.clear()
         lazy_img = LazyImage(path=temp_image_path)
         assert lazy_img.shape == (100, 150, 3)
         # Should have loaded and cached the data
-        assert get_image_cache_size() == 1
-
-    def test_lazy_image_str(self, temp_image_path):
-        """Test string representation returns path."""
-        lazy_img = LazyImage(path=temp_image_path)
-        assert str(lazy_img) == temp_image_path
+        assert ImageCache.length() == 1
 
     def test_lazy_image_fspath(self, temp_image_path):
         """Test __fspath__ allows use with os.path functions."""
@@ -522,11 +510,11 @@ class ImageCacheLRUTest:
     @pytest.fixture(autouse=True)
     def reset_cache(self):
         """Reset cache before and after each test."""
-        clear_image_cache()
-        set_image_cache_size(self.DEFAULT_CACHE_SIZE)
+        ImageCache.clear()
+        ImageCache.set_size(self.DEFAULT_CACHE_SIZE)
         yield
-        clear_image_cache()
-        set_image_cache_size(self.DEFAULT_CACHE_SIZE)
+        ImageCache.clear()
+        ImageCache.set_size(self.DEFAULT_CACHE_SIZE)
 
     def test_image_is_cached_after_access(self):
         """Test that accessing image data caches it."""
@@ -535,10 +523,10 @@ class ImageCacheLRUTest:
             PILImage.fromarray(np.zeros((50, 50, 3), dtype=np.uint8)).save(path)
 
             lazy_img = LazyImage(path=path)
-            assert get_image_cache_size() == 0
+            assert ImageCache.length() == 0
 
             _ = lazy_img.data
-            assert get_image_cache_size() == 1
+            assert ImageCache.length() == 1
 
     def test_same_image_uses_cache(self):
         """Test that accessing the same image twice uses the cache."""
@@ -550,10 +538,10 @@ class ImageCacheLRUTest:
             lazy_img2 = LazyImage(path=path)
 
             data1 = lazy_img1.data
-            assert get_image_cache_size() == 1
+            assert ImageCache.length() == 1
 
             data2 = lazy_img2.data
-            assert get_image_cache_size() == 1  # Still 1, using cache
+            assert ImageCache.length() == 1  # Still 1, using cache
 
             # Should be the same array object (from cache)
             assert data1 is data2
@@ -568,15 +556,15 @@ class ImageCacheLRUTest:
             lazy_bgr = LazyImage(path=path, format="BGR")
 
             _ = lazy_rgb.data
-            assert get_image_cache_size() == 1
+            assert ImageCache.length() == 1
 
             _ = lazy_bgr.data
-            assert get_image_cache_size() == 2  # Different format = different cache entry
+            assert ImageCache.length() == 2  # Different format = different cache entry
 
     def test_lru_eviction(self):
         """Test that LRU eviction works when cache is full."""
         # Set cache size to fit exactly 3 images (10x10x3 = 300 bytes each)
-        set_image_cache_size(self.SMALL_CACHE_SIZE)
+        ImageCache.set_size(self.SMALL_CACHE_SIZE)
 
         with tempfile.TemporaryDirectory() as temp_dir:
             paths = []
@@ -589,17 +577,17 @@ class ImageCacheLRUTest:
             for i in range(3):
                 _ = LazyImage(path=paths[i]).data
 
-            assert get_image_cache_size() == 3
+            assert ImageCache.length() == 3
 
             # Load 4th image - should evict the first one
             _ = LazyImage(path=paths[3]).data
-            assert get_image_cache_size() == 3  # Still 3
+            assert ImageCache.length() == 3  # Still 3
 
             # Load 5th image - should evict the second one
             _ = LazyImage(path=paths[4]).data
-            assert get_image_cache_size() == 3  # Still 3
+            assert ImageCache.length() == 3  # Still 3
 
-    def test_clear_image_cache(self):
+    def test_image_cache_clear(self):
         """Test clearing the entire cache."""
         with tempfile.TemporaryDirectory() as temp_dir:
             for i in range(5):
@@ -607,15 +595,15 @@ class ImageCacheLRUTest:
                 PILImage.fromarray(np.zeros((10, 10, 3), dtype=np.uint8)).save(path)
                 _ = LazyImage(path=path).data
 
-            assert get_image_cache_size() == 5
+            assert ImageCache.length() == 5
 
-            clear_image_cache()
-            assert get_image_cache_size() == 0
+            ImageCache.clear()
+            assert ImageCache.length() == 0
 
-    def test_set_image_cache_size(self):
+    def test_image_cache_set_size(self):
         """Test setting cache size."""
         # Set cache size to fit exactly 5 images (10x10x3 = 300 bytes each)
-        set_image_cache_size(5 * 300)
+        ImageCache.set_size(5 * 300)
 
         with tempfile.TemporaryDirectory() as temp_dir:
             paths = []
@@ -626,7 +614,7 @@ class ImageCacheLRUTest:
                 _ = LazyImage(path=path).data
 
             # Should only have 5 images cached
-            assert get_image_cache_size() == 5
+            assert ImageCache.length() == 5
 
     def test_set_cache_size_evicts_existing(self):
         """Test that reducing cache size evicts existing items."""
@@ -638,11 +626,11 @@ class ImageCacheLRUTest:
                 paths.append(path)
                 _ = LazyImage(path=path).data
 
-            assert get_image_cache_size() == 10
+            assert ImageCache.length() == 10
 
             # Reduce cache size to fit 3 images - should evict oldest items
-            set_image_cache_size(self.SMALL_CACHE_SIZE)
-            assert get_image_cache_size() == 3
+            ImageCache.set_size(self.SMALL_CACHE_SIZE)
+            assert ImageCache.length() == 3
 
     def test_clear_cache_on_single_image(self):
         """Test clearing cache for a single image."""
@@ -657,14 +645,14 @@ class ImageCacheLRUTest:
 
             _ = lazy1.data
             _ = lazy2.data
-            assert get_image_cache_size() == 2
+            assert ImageCache.length() == 2
 
             lazy1.clear_cache()
-            assert get_image_cache_size() == 1
+            assert ImageCache.length() == 1
 
     def test_cache_zero_size_disables_caching(self):
         """Test that setting cache size to 0 effectively disables caching."""
-        set_image_cache_size(0)
+        ImageCache.set_size(0)
 
         with tempfile.TemporaryDirectory() as temp_dir:
             path = os.path.join(temp_dir, "test.png")
@@ -672,7 +660,7 @@ class ImageCacheLRUTest:
 
             lazy_img = LazyImage(path=path)
             _ = lazy_img.data
-            assert get_image_cache_size() == 0  # Nothing cached
+            assert ImageCache.length() == 0  # Nothing cached
 
     def test_cache_with_channels_first(self):
         """Test that channels_first affects cache key."""
@@ -684,15 +672,15 @@ class ImageCacheLRUTest:
             lazy_hwc = LazyImage(path=path, channels_first=False)
 
             _ = lazy_chw.data
-            assert get_image_cache_size() == 1
+            assert ImageCache.length() == 1
 
             _ = lazy_hwc.data
-            assert get_image_cache_size() == 2  # Different cache entries
+            assert ImageCache.length() == 2  # Different cache entries
 
     def test_lru_access_order(self):
         """Test that accessing an image moves it to the end of LRU."""
         # Set cache size to fit exactly 3 images (10x10x3 = 300 bytes each)
-        set_image_cache_size(self.SMALL_CACHE_SIZE)
+        ImageCache.set_size(self.SMALL_CACHE_SIZE)
 
         with tempfile.TemporaryDirectory() as temp_dir:
             paths = []
@@ -715,7 +703,7 @@ class ImageCacheLRUTest:
             PILImage.fromarray(np.zeros((10, 10, 3), dtype=np.uint8)).save(path_new)
             _ = LazyImage(path=path_new).data
 
-            assert get_image_cache_size() == 3
+            assert ImageCache.length() == 3
 
             # Image 0 should still be in cache (we accessed it recently)
             data0 = lazy_images[0].data
@@ -742,8 +730,8 @@ class ImageCacheLRUTest:
             for sample in dataset:
                 _ = sample.image.data
 
-            assert get_image_cache_size() == 5
+            assert ImageCache.length() == 5
 
             # Clear cache and verify
-            clear_image_cache()
-            assert get_image_cache_size() == 0
+            ImageCache.clear()
+            assert ImageCache.length() == 0
